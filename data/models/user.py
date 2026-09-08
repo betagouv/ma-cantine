@@ -1,15 +1,25 @@
-from django.contrib.auth.models import AbstractUser
+from dirtyfields import DirtyFieldsMixin
 from django.contrib.auth.base_user import BaseUserManager
+from django.contrib.auth.models import AbstractUser
+from django.core.validators import ValidationError
 from django.db import models
-from django.db.models import Count, Q, F
-from django.utils.translation import gettext_lazy as _
+from django.db.models import Count, F, Q, Value, Case, When, BooleanField
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
-import macantine.brevo as brevo
-
-from data.models.geo import Department
+from common.utils import utils as utils_utils
+from common.utils.images import optimize_image
 from data.fields import ChoiceArrayField
-from data.utils import optimize_image
+from data.models.geo import Department
+from data.validators import user as user_validators
+from macantine import brevo
+
+
+def canteen_not_deleted_query():
+    return Q(canteens__deletion_date=None)
 
 
 class UserQuerySet(models.QuerySet):
@@ -20,14 +30,28 @@ class UserQuerySet(models.QuerySet):
         one_day_ago = timezone.now() - timezone.timedelta(days=brevo.CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD_DAYS)
         return self.exclude(brevo_is_deleted=True).filter(brevo_last_update_date__lte=one_day_ago)
 
+    def annotate_with_totp_device(self):
+        return (
+            self.prefetch_related("totpdevice_set")
+            .annotate(totp_device_count=Count("totpdevice", distinct=True))
+            .annotate(
+                has_totp_device=Case(
+                    When(totp_device_count__gt=0, then=Value(True)),
+                    default=Value(False),
+                    output_field=BooleanField(),
+                )
+            )
+        )
+
     def with_canteen_stats(self):
         from data.models import Canteen
 
         return self.prefetch_related("canteens").annotate(
-            nb_cantines=Count("canteens", distinct=True),
+            nb_cantines=Count("canteens", filter=canteen_not_deleted_query(), distinct=True),
             nb_cantines_groupe=Count(
                 "canteens",
-                filter=Q(
+                filter=canteen_not_deleted_query()
+                & Q(
                     canteens__production_type__in=[
                         Canteen.ProductionType.GROUPE,
                         Canteen.ProductionType.CENTRAL,
@@ -37,35 +61,41 @@ class UserQuerySet(models.QuerySet):
                 distinct=True,
             ),
             nb_cantines_site=Count(
-                "canteens", filter=Q(canteens__production_type=Canteen.ProductionType.ON_SITE), distinct=True
+                "canteens",
+                filter=canteen_not_deleted_query() & Q(canteens__production_type=Canteen.ProductionType.ON_SITE),
+                distinct=True,
             ),
             nb_cantines_satellite=Count(
-                "canteens", filter=Q(canteens__production_type=Canteen.ProductionType.ON_SITE_CENTRAL), distinct=True
+                "canteens",
+                filter=canteen_not_deleted_query()
+                & Q(canteens__production_type=Canteen.ProductionType.ON_SITE_CENTRAL),
+                distinct=True,
             ),
             nb_cantines_gestion_concedee=Count(
-                "canteens", filter=Q(canteens__management_type=Canteen.ManagementType.CONCEDED), distinct=True
+                "canteens",
+                filter=canteen_not_deleted_query() & Q(canteens__management_type=Canteen.ManagementType.CONCEDED),
+                distinct=True,
             ),
         )
 
     def with_canteen_diagnostic_stats(self):
-        """
-        # TODO: clarify nb_cantines_td_todo_2025
-        """
         return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
             # bilans
             nb_cantines_bilan_2025=Count(
-                "canteens__diagnostics", filter=Q(canteens__diagnostics__year=2025), distinct=True
+                "canteens__diagnostics",
+                filter=canteen_not_deleted_query() & Q(canteens__diagnostics__year=2025),
+                distinct=True,
             ),
-            nb_cantines_bilan_todo_2025=Count("canteens", distinct=True) - F("nb_cantines_bilan_2025"),
+            nb_cantines_bilan_todo_2025=Count("canteens", filter=canteen_not_deleted_query(), distinct=True)
+            - F("nb_cantines_bilan_2025"),
             # TDs
-            nb_cantines_td_2025=Count("canteens", filter=Q(canteens__declaration_donnees_2025=True), distinct=True),
-            # nb_cantines_td_todo_2025=F("nb_cantines_bilan_2025") - Count(
-            #     "canteens",
-            #     filter=Q(
-            #         canteens__declaration_donnees_2025=False
-            #     ),
-            #     distinct=True
-            # ),
+            nb_cantines_td_2025=Count(
+                "canteens",
+                filter=canteen_not_deleted_query() & Q(canteens__declaration_donnees_2025=True),
+                distinct=True,
+            ),
+            nb_cantines_td_todo_2025=Count("canteens", filter=canteen_not_deleted_query(), distinct=True)
+            - F("nb_cantines_td_2025"),
         )
 
 
@@ -73,7 +103,7 @@ class UserManager(BaseUserManager):
     pass
 
 
-class User(AbstractUser):
+class User(DirtyFieldsMixin, AbstractUser):
     class LawAwareness(models.TextChoices):
         NONE = (
             "NONE",
@@ -145,10 +175,8 @@ class User(AbstractUser):
         "nb_cantines_bilan_2025",
         "nb_cantines_bilan_todo_2025",
         "nb_cantines_td_2025",
-        # "nb_cantines_td_todo_2025",
+        "nb_cantines_td_todo_2025",
     ]
-
-    objects = UserManager.from_queryset(UserQuerySet)()
 
     avatar = models.ImageField("Photo de profil", null=True, blank=True)
     email = models.EmailField(_("email address"), unique=True)
@@ -230,18 +258,57 @@ class User(AbstractUser):
     # Django fields
     # last_login, date_joined, is_active, is_staff, is_superuser
 
-    def save(self, **kwargs):
+    objects = UserManager.from_queryset(UserQuerySet)()
+
+    def __str__(self):
+        return f"{self.get_full_name()} ({self.username})"
+
+    def normalize_fields(self):
+        for field_name in ["email", "username"]:
+            if field_name in self.get_dirty_fields():
+                setattr(self, field_name, utils_utils.normalize_string(getattr(self, field_name)))
+
+    def lowercase_fields(self):
+        for field_name in ["email", "username"]:
+            if field_name in self.get_dirty_fields():
+                value = getattr(self, field_name)
+                if value:
+                    setattr(self, field_name, value.lower())
+
+    def optimize_avatar(self):
         max_avatar_size = 640
         if self.avatar:
             self.avatar = optimize_image(self.avatar, self.avatar.name, max_avatar_size)
+
+    def reset_brevo_fields_if_email_changed(self):
+        """
+        Cases where we need to reset Brevo fields:
+        - if email has changed: reset all Brevo fields (to recreate contact)
+        """
+        if self.id and self.is_dirty():
+            if "email" in self.get_dirty_fields():
+                self.reset_brevo_fields(with_save=False)
+
+    def save(self, skip_validations=False, **kwargs):
+        self.normalize_fields()
+        self.lowercase_fields()
+        self.optimize_avatar()
+        self.reset_brevo_fields_if_email_changed()
+        if not skip_validations:
+            self.full_clean(exclude=["password"])
         super().save(**kwargs)
+
+    def clean(self, *args, **kwargs):
+        validation_errors = utils_utils.merge_validation_errors(
+            user_validators.validate_user_non_staff(self),
+            user_validators.validate_user_superuser(self),
+        )
+        if validation_errors:
+            raise ValidationError(validation_errors)
 
     @property
     def has_mtm_data(self):
         return self.creation_mtm_source or self.creation_mtm_campaign or self.creation_mtm_medium
-
-    def __str__(self):
-        return f"{self.get_full_name()} ({self.username})"
 
     def canteens_count(self):
         return self.canteens.count()
@@ -256,6 +323,12 @@ class User(AbstractUser):
         return self.canteens.exists() and any(
             not x.has_diagnostic_teledeclared_for_year(year) for x in self.canteens.all()
         )
+
+    def reset_brevo_fields(self, with_save=True):
+        self.brevo_last_update_date = None
+        self.brevo_is_deleted = False
+        if with_save:
+            self.save()
 
     def update_data(self):
         # need to have called the user with 'with_canteen_stats' & 'with_canteen_diagnostic_stats' queryset method
@@ -290,3 +363,9 @@ class User(AbstractUser):
             **data_canteen_fields_dict,
             **data_canteen_diagnostic_fields_dict,
         }
+
+
+@receiver(pre_save, sender=TOTPDevice)
+def validate_totp_device_user_is_staff(sender, instance, **kwargs):
+    if instance.user and not instance.user.is_staff:
+        raise ValidationError("Seul les utilisateurs staff sont autorisés à configurer un appareil 2FA (TOTP).")

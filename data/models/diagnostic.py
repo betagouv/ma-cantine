@@ -1,24 +1,38 @@
+import operator
+from functools import reduce
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
-from django.db import models
-from django.db.models import Case, F, IntegerField, Q, Sum, When
-from django.db.models.fields.json import KT
-from django.db.models.functions import Cast
+from django.db import models, transaction
+from django.db.models import DecimalField, F, Func, IntegerField, Q, Sum, Value
+from django.db.models.expressions import RawSQL
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
-from data.models import Canteen
+from data.models import Canteen, AuthenticationMethodHistoricalRecords
 from data.models.creation_source import CreationSource
-from data.utils import CustomJSONEncoder, make_optional_positive_decimal_field, sum_int_with_potential_null
+from data.utils import (
+    CustomJSONEncoder,
+    has_arrayfield_missing_query,
+    make_optional_positive_integer_field,
+    make_optional_positive_decimal_field,
+    make_optional_positive_percentage_decimal_field,
+    sum_int_with_potential_null,
+)
 from data.validators import diagnostic as diagnostic_validators
 from macantine.utils import (
     CAMPAIGN_DATES,
     EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,
+    YEARS_WITH_1TD1SITE,
+    is_in_correction,
     is_in_teledeclaration_or_correction,
+    objectifs_egalim_atteints,
 )
 
 
@@ -51,7 +65,15 @@ def diagnostic_type_complete_query():
 
 
 def valeur_totale_is_filled_query():
-    return Q(valeur_totale__isnull=False) & ~Q(valeur_totale=0)
+    return Q(valeur_totale__isnull=False)
+
+
+def valeur_totale_is_filled_and_not_zero_query():
+    return Q(valeur_totale_is_filled_query() & ~Q(valeur_totale=0))
+
+
+def valeur_bio_agg_is_filled_query():
+    return Q(valeur_bio_agg__isnull=False)
 
 
 def diagnostic_type_simple_is_filled_query():
@@ -65,7 +87,7 @@ def diagnostic_type_simple_is_filled_query():
     after_2025 = Q(year__gte=2025) & Q(
         **{f"{field}__isnull": False for field in Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025}
     )
-    return diagnostic_type_simple_query() & valeur_totale_is_filled_query() & (before_2025 | after_2025)
+    return diagnostic_type_simple_query() & valeur_totale_is_filled_and_not_zero_query() & (before_2025 | after_2025)
 
 
 def diagnostic_type_complete_is_filled_query():
@@ -79,15 +101,111 @@ def diagnostic_type_complete_is_filled_query():
     after_2025 = Q(year__gte=2025) & Q(
         **{f"{field}__isnull": False for field in Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025}
     )
-    return diagnostic_type_complete_query() & valeur_totale_is_filled_query() & (before_2025 | after_2025)
+    return diagnostic_type_complete_query() & valeur_totale_is_filled_and_not_zero_query() & (before_2025 | after_2025)
+
+
+def teledeclaration_mode_satellite_without_appro_query():
+    return Q(teledeclaration_mode=Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO)
+
+
+def canteen_deleted_query():
+    return Q(canteen_id__isnull=True)
+
+
+def canteen_soft_deleted_during_campaign_query(year):
+    year = int(year)
+    return Q(
+        canteen__deletion_date__range=(
+            CAMPAIGN_DATES[year]["teledeclaration_start_date"],
+            CAMPAIGN_DATES[year]["teledeclaration_end_date"],
+        )
+    )
+
+
+def canteen_has_siret_or_siren_unite_legale_query():
+    return Q(
+        ~Q(canteen_snapshot__siret=None) & ~Q(canteen_snapshot__siret="")
+        | ~Q(canteen_snapshot__siren_unite_legale=None) & ~Q(canteen_snapshot__siren_unite_legale="")
+    )
+
+
+def aberrant_values_query():
+    """
+    Ici nous filtrons les TDs dont les déclarations paraissent aberrantes et sont impactantes :
+    - Coût denrées existe et > 20 euros ET valeur d'achat alimentaires > 1 million d'euros
+    Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
+    nous laissons la TD même si la valeur alimentaire est > 1 million d'euros)
+    - En 2025, coût denrées existe et < 0.1 euros
+    """
+    return Q(cout_repas__isnull=False, cout_repas__gt=20, valeur_totale__gt=1000000) | Q(year=2025, cout_repas__lt=0.1)
+
+
+def incoherent_values_query():
+    """
+    Ici nous filtrons les TDs dont les déclarations paraissent incohérentes et sont impactantes :
+    - Durant la campagne 2023, nous avons identifié deux TDs dont les valeurs étaient incohérentes.
+    """
+    return Q(year=2022, teledeclaration_id__in=[9656, 8037])
+
+
+def circuit_court_sup_france_query():
+    """
+    TDs COMPLETE 2025 avec une incohérence sur "origine France dont circuit_court"
+    - En 2025, circuit-court faisait partie d'origine France, mais à parfois été mal télédéclaré
+    - A partir de 2026, circuit-court a été sorti d'origine France
+
+    Note: requires with_label_sum("circuit_court") and with_label_sum("france") annotations
+    """
+    return Q(year=2025, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, circuit_court_sum__gt=F("france_sum"))
+
+
+def local_sup_france_query():
+    """
+    TDs COMPLETE 2025 avec une incohérence sur "origine France dont local"
+    - En 2025, local faisait partie d'origine France, mais à parfois été mal télédéclaré
+    - A partir de 2026, local a été sorti d'origine France
+
+    Note: requires with_label_sum("local") and with_label_sum("france") annotations
+    """
+    return Q(year=2025, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, local_sum__gt=F("france_sum"))
+
+
+def commerce_equitable_sup_bio_query():
+    """
+    TDs SIMPLE & COMPLETE 2025 avec une incohérence sur "bio dont commerce équitable"
+
+    Note: see validators/diagnostics.py#validate_valeur_bio
+    Note: requires with_label_sum("bio_dont_commerce_equitable") and with_label_sum("bio") annotations
+    """
+    return Q(
+        year=2025,
+        diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+        valeur_bio_dont_commerce_equitable__gt=F("valeur_bio"),
+    ) | Q(
+        year=2025, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, bio_dont_commerce_equitable_sum__gt=F("bio_sum")
+    )
+
+
+def has_invalid_reason_list_query():
+    return ~has_arrayfield_missing_query("invalid_reason_list")
+
+
+def is_teledeclared_query():
+    return Q(status=Diagnostic.DiagnosticStatus.SUBMITTED)
 
 
 class DiagnosticQuerySet(models.QuerySet):
     def filled(self):
         return self.filter(diagnostic_type_simple_is_filled_query() | diagnostic_type_complete_is_filled_query())
 
+    def not_teledeclared(self):
+        return self.exclude(is_teledeclared_query())
+
     def teledeclared(self):
-        return self.filter(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        return self.filter(is_teledeclared_query())
+
+    def has_invalid_reason(self):
+        return self.filter(has_invalid_reason_list_query())
 
     def in_year(self, year):
         return self.filter(year=int(year))
@@ -105,57 +223,73 @@ class DiagnosticQuerySet(models.QuerySet):
     def teledeclared_for_year(self, year):
         return self.teledeclared().in_year(year).in_campaign(year)
 
-    def with_meal_price(self):
+    def teledeclared_site_for_year(self, year):
         """
-        Le coût denrées est calculé en divisant la valeur d'achat alimentaire total par le nombre de repas annuels.
-        """
-        return self.annotate(
-            canteen_yearly_meal_count=Cast(KT("canteen_snapshot__yearly_meal_count"), output_field=IntegerField())
-        ).annotate(
-            meal_price=Case(
-                When(canteen_yearly_meal_count__gt=0, then=F("valeur_totale") / F("canteen_yearly_meal_count")),
-                default=None,
-            )
-        )
-
-    def exclude_aberrant_values(self):
-        """
-        Ici nous supprimons les TD dont les déclarations paraissent erronées et sont impactantes.
-        1) Coût denrées existe et > 20 euros ET valeur d'achat alimentaires > 1 million d'euros
-        Dans le cas particulier où le nombre de repas annuel n'est pas renseigné,
-        nous laissons la TD même si la valeur alimentaire est > 1 million d'euros)
-        2) Durant la campagne 2023, nous avons aussi identifié deux TD dont les valeurs étaient aberrantes.
+        Only return site TDs
+        - before 2025: exclude central & central servings
+        - 2025: exclude groupes
         """
         return (
-            self.with_meal_price()
-            .exclude(meal_price__isnull=False, meal_price__gt=20, valeur_totale__gt=1000000)
-            .exclude(year=2022, teledeclaration_id__in=[9656, 8037])
-        )
-
-    def canteen_not_deleted_during_campaign(self, year):
-        year = int(year)
-        return self.exclude(
-            canteen__deletion_date__range=(
-                CAMPAIGN_DATES[year]["teledeclaration_start_date"],
-                CAMPAIGN_DATES[year]["teledeclaration_end_date"],
+            self.teledeclared_for_year(year)
+            .annotate(canteen_snapshot_production_type=F("canteen_snapshot__production_type"))
+            .exclude(
+                canteen_snapshot_production_type__in=[
+                    Canteen.ProductionType.GROUPE,
+                    Canteen.ProductionType.CENTRAL,
+                    Canteen.ProductionType.CENTRAL_SERVING,
+                ]
             )
         )
 
-    def canteen_has_siret_or_siren_unite_legale(self):
+    def with_label_sum(self, label: str):
+        """
+        Sum all appro fields of a given label
+
+        Note: see also label_sum method
+        """
+        sum_expression = reduce(
+            operator.add,
+            (
+                Coalesce(F(f"valeur_{family}_{label}"), Value(0), output_field=DecimalField())
+                for family in Diagnostic.APPRO_FAMILIES
+            ),
+        )
+        return self.annotate(**{f"{label}_sum": sum_expression})
+
+    def with_family_sum(self, family: str):
+        """
+        Sum all appro fields of a given family
+
+        Note: see also family_sum method
+        """
+        sum_expression = reduce(
+            operator.add,
+            (
+                Coalesce(F(f"valeur_{family}_{label}"), Value(0), output_field=DecimalField())
+                for label in Diagnostic.APPRO_LABELS
+            ),
+        )
+        return self.annotate(**{f"{family}_sum": sum_expression})
+
+    def with_satellites_snapshot_stats(self):
         return self.annotate(
-            canteen_siret=F("canteen_snapshot__siret"),
-            canteen_siren_unite_legale=F("canteen_snapshot__siren_unite_legale"),
-        ).filter(
-            ~Q(canteen_siret=None) & ~Q(canteen_siret="")
-            | ~Q(canteen_siren_unite_legale=None) & ~Q(canteen_siren_unite_legale="")
+            satellites_snapshot_count_annotated=Func(
+                "satellites_snapshot", function="jsonb_array_length", output_field=IntegerField()
+            )
+        ).annotate(
+            satellites_snapshot_yearly_meal_count_sum=RawSQL(
+                sql="(SELECT SUM((elem->>'yearly_meal_count')::integer) FROM jsonb_array_elements(satellites_snapshot) AS elem)",
+                params=[],
+                output_field=IntegerField(),
+            )
         )
 
     def canteen_for_stat(self, year):
         return (
             self.select_related("canteen")
-            .exclude(canteen_id__isnull=True)
-            .canteen_not_deleted_during_campaign(year)  # Chaîne de traitement n°6
-            .canteen_has_siret_or_siren_unite_legale()  # Chaîne de traitement n°7
+            .exclude(canteen_deleted_query())
+            .exclude(canteen_soft_deleted_during_campaign_query(year))  # Chaîne de traitement n°6
+            .filter(canteen_has_siret_or_siren_unite_legale_query())  # Chaîne de traitement n°7
         )
 
     def valid_td_by_year(self, year):
@@ -163,35 +297,63 @@ class DiagnosticQuerySet(models.QuerySet):
         if year in CAMPAIGN_DATES.keys():
             return (
                 self.teledeclared_for_year(year)
-                .exclude(teledeclaration_mode=Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO)
-                .filter(valeur_bio_agg__isnull=False)  # Chaîne de traitement n°5
+                .exclude(generated_from_groupe_diagnostic=True)  # just to be sure, in case all_objects is used
+                .exclude(teledeclaration_mode_satellite_without_appro_query())
+                .filter(valeur_bio_agg_is_filled_query())  # Chaîne de traitement n°5
                 .canteen_for_stat(year)  # Chaîne de traitement n°6 & n°7
-                .exclude_aberrant_values()  # Chaîne de traitement n°8
+                .exclude(aberrant_values_query())  # Chaîne de traitement n°8
+                .exclude(incoherent_values_query())  # Chaîne de traitement n°8
             )
         else:
             return self.none()
 
-    def historical_valid_td(self, years: list):
+    def valid_td_site_by_year(self, year):
+        year = int(year)
+        if year in CAMPAIGN_DATES.keys():
+            if year in YEARS_WITH_1TD1SITE:
+                return self.teledeclared_site_for_year(year).exclude(has_invalid_reason_list_query())
+            else:
+                return self.valid_td_by_year(year)
+        else:
+            return self.none()
+
+    def valid_td_all_years(self, years: list):
         results = self.none()
         for year in years:
             results = results | self.valid_td_by_year(year)
         return results.select_related("canteen")
 
+    def valid_td_site_all_years(self, years: list):
+        results = self.none()
+        for year in years:
+            results = results | self.valid_td_site_by_year(year)
+        return results.select_related("canteen")
+
     def publicly_visible(self):
-        # TODO: avoid group (ex-central) TD data in Open Data & stats (after 1TD1Site)
-        return self.exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
+        return (
+            self.select_related("canteen")
+            .exclude(canteen__line_ministry=Canteen.Ministries.ARMEE)
+            .exclude(canteen_snapshot__line_ministry=Canteen.Ministries.ARMEE)
+        )
 
     def with_appro_percent_stats(self):
         """
         Note: we use Sum/default instead of F to better manage None values.
         """
-        return self.annotate(
-            bio_percent=100 * Sum("valeur_bio_agg", default=0) / Sum("valeur_totale"),
-            egalim_percent=100 * F("valeur_egalim_agg") / Sum("valeur_totale"),
+        return self.annotate(valeur_totale_sum=Sum("valeur_totale")).annotate(
+            bio_percent=100 * Sum("valeur_bio_agg", default=0) / F("valeur_totale_sum"),
+            egalim_percent=100 * F("valeur_egalim_agg") / F("valeur_totale_sum"),
         )
 
+    def teledeclaration_objectifs_egalim_atteints(self):
+        """
+        The field 'objectifs_egalim_atteints' is only filled for teledeclared diagnostics.
+        """
+        return self.filter(objectifs_egalim_atteints=True)
+
     def egalim_objectives_reached(self):
-        return self.filter(
+        # TODO: filter on canteen_snapshot__region instead
+        return self.select_related("canteen").filter(
             Q(
                 bio_percent__gte=EGALIM_OBJECTIVES["hexagone"]["bio_percent"],
                 egalim_percent__gte=EGALIM_OBJECTIVES["hexagone"]["egalim_percent"],
@@ -214,18 +376,24 @@ class DiagnosticQuerySet(models.QuerySet):
         )
 
 
-class Diagnostic(models.Model):
-    class Meta:
-        verbose_name = "diagnostic"
-        verbose_name_plural = "diagnostics"
-        constraints = [
-            models.UniqueConstraint(fields=["canteen", "year"], name="annual_diagnostic"),
-        ]
+class DiagnosticManager(models.Manager):
+    queryset_model = DiagnosticQuerySet
 
+    def __init__(self, *args, **kwargs):
+        self.exclude_generated = kwargs.pop("exclude_generated", False)
+        super().__init__(*args, **kwargs)
+
+    def get_queryset(self):
+        if self.exclude_generated:
+            return self.queryset_model(self.model).exclude(generated_from_groupe_diagnostic=True)
+        return self.queryset_model(self.model)
+
+
+class Diagnostic(models.Model):
     class DiagnosticStatus(models.TextChoices):
         DRAFT = "DRAFT", "Brouillon"
+        CORRECTION = "CORRECTION", "En correction"
         SUBMITTED = "SUBMITTED", "Télédéclaré"
-        # CANCELLED = "CANCELLED", "Annulé"
 
     # NB: if the label of the choice changes, double check that the teledeclaration PDF
     # doesn't need an update as well, since the logic in the templates is based on the label
@@ -330,6 +498,28 @@ class Diagnostic(models.Model):
         )
         SITE = "SITE", "Cantine déclarant ses propres données"
 
+    class InvalidReason(models.TextChoices):
+        CANTINE_SUPPRIMEE = "CANTINE_SUPPRIMEE", "Cantine supprimée"
+        CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE = (
+            "CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE",
+            "Cantine soft supprimée pendant la campagne",
+        )
+        CANTINE_SANS_SIRET_OU_SIREN = "CANTINE_SANS_SIRET_OU_SIREN", "Cantine sans siret ou siren"
+        TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO = (
+            "TELEDECLARATION_MODE_SATELLITE_WITHOUT_APPRO",
+            "Télédeclaration mode satellite without appro",
+        )
+        VALEUR_TOTALE_VIDE = "VALEUR_TOTALE_VIDE", "Valeur totale des achats vide"
+        VALEUR_BIO_AGG_VIDE = "VALEUR_BIO_AGG_VIDE", "Valeur totale des achats bio vide"
+        VALEURS_ABERRANTES = "VALEURS_ABERRANTES", "Valeurs aberrantes"
+        VALEURS_INCOHERENTES = "VALEURS_INCOHERENTES", "Valeurs incohérentes"
+        DOUBLON_1TD1SITE = "DOUBLON_1TD1SITE", "Doublon 1TD1Site"
+
+    class WarningReason(models.TextChoices):
+        CIRCUIT_COURT_SUP_FRANCE = "CIRCUIT_COURT_SUP_FRANCE", "Origine France (dont circuit-court) > Origine France"
+        LOCAL_SUP_FRANCE = "LOCAL_SUP_FRANCE", "Origine France (dont local) > Origine France"
+        COMMERCE_EQUITABLE_SUP_BIO = "COMMERCE_EQUITABLE_SUP_BIO", "Bio dont commerce équitable > Bio"
+
     APPRO_FAMILIES = [
         "viandes_volailles",
         "produits_de_la_mer",
@@ -345,7 +535,10 @@ class Diagnostic(models.Model):
         "bio",
         # "bio_dont_commerce_equitable",
         "label_rouge",
-        "aocaop_igp_stg",
+        "aocaop_igp_stg",  # before 2026
+        "aocaop",
+        "igp",
+        "stg",
         "hve",
         "peche_durable",
         "rup",
@@ -357,16 +550,14 @@ class Diagnostic(models.Model):
     APPRO_LABELS_NON_EGALIM = [
         "non_egalim",
     ]
-    APPRO_LABELS_FRANCE = [
-        "france",
-        "circuit_court",
-        "local",
-    ]
+    APPRO_LABELS_ORIGINE = ["europe", "france"]
     APPRO_LABELS = APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM
-    APPRO_LABELS_ALL = APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_FRANCE
+    APPRO_LABELS_ALL = (
+        APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_ORIGINE + ["circuit_court", "local"]
+    )
     APPRO_LABELS_GROUPS_MAPPING = {
         "bio": ["bio"],
-        "siqo": ["label_rouge", "aocaop_igp_stg"],
+        "siqo": ["label_rouge", "aocaop_igp_stg", "aocaop", "igp", "stg"],
         "externalites_performance": ["externalites", "performance"],
         "egalim_autres": ["hve", "peche_durable", "rup", "commerce_equitable", "fermier"],
     }
@@ -414,8 +605,36 @@ class Diagnostic(models.Model):
         "valeur_siqo_agg",
         "valeur_externalites_performance_agg",
         "valeur_egalim_autres_agg",
-        # "valeur_egalim_hors_bio_agg",
-        # "valeur_egalim_agg",
+        "valeur_egalim_hors_bio_agg",
+        "valeur_egalim_agg",
+    ]
+
+    APPRO_FAMILY_FIELDS = [
+        "valeur_viandes_volailles",
+        "valeur_produits_de_la_mer",
+        # new in 2026
+        "valeur_fruits_et_legumes",
+        "valeur_charcuterie",
+        "valeur_produits_laitiers",
+        "valeur_boulangerie",
+        "valeur_boissons",
+        "valeur_autres",
+    ]
+
+    APPRO_LABEL_FIELDS = [
+        "valeur_bio",
+        "valeur_bio_dont_commerce_equitable",
+        "valeur_europe",
+        "valeur_france",
+        "valeur_circuit_court",
+        "valeur_local",
+    ]
+
+    APPRO_LABEL_GROUPE_FIELDS = [
+        "valeur_bio",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
     ]
 
     APPRO_FIELDS = [
@@ -515,6 +734,15 @@ class Diagnostic(models.Model):
         "valeur_boulangerie_non_egalim",
         "valeur_boissons_non_egalim",
         "valeur_autres_non_egalim",
+        # new in 2026
+        # "valeur_viandes_volailles_europe",
+        # "valeur_produits_de_la_mer_europe",
+        # "valeur_fruits_et_legumes_europe",
+        # "valeur_charcuterie_europe",
+        # "valeur_produits_laitiers_europe",
+        # "valeur_boulangerie_europe",
+        # "valeur_boissons_europe",
+        # "valeur_autres_europe",
         "valeur_viandes_volailles_france",
         "valeur_produits_de_la_mer_france",
         "valeur_fruits_et_legumes_france",
@@ -561,7 +789,10 @@ class Diagnostic(models.Model):
         "valeur_autres_fermier",
     ]
 
-    COMPLETE_APPRO_FIELDS = ["valeur_totale", "valeur_viandes_volailles", "valeur_produits_de_la_mer"] + APPRO_FIELDS
+    COMPLETE_APPRO_FIELDS = (
+        ["valeur_totale"] + ["valeur_viandes_volailles", "valeur_produits_de_la_mer"] + APPRO_FIELDS
+    )
+    # COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS  # TODO when updating the imports
 
     COMPLETE_APPRO_FIELDS_REQUIRED_2025 = [
         # removed APPRO_FIELDS_NON_APPLICABLE
@@ -620,6 +851,13 @@ class Diagnostic(models.Model):
         "valeur_produits_laitiers_fermier",
     ]
 
+    EGALIM_STATS_FIELDS = [
+        "pourcentage_bio",
+        "pourcentage_egalim",
+        "pourcentage_egalim_hors_bio",
+        "objectifs_egalim_atteints",
+    ]
+
     WASTE_FIELDS = [
         "has_waste_diagnostic",
         "has_waste_plan",
@@ -664,7 +902,18 @@ class Diagnostic(models.Model):
         "communication_frequency",
     ]
 
+    APPRO_1TD1SITE_FIELDS = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + AGGREGATED_APPRO_FIELDS
+
     NON_APPRO_FIELDS = WASTE_FIELDS + DIVERSIFICATION_FIELDS + PLASTIC_FIELDS + INFO_FIELDS
+
+    OTHER_COMPUTED_FIELDS = [
+        "cout_repas",
+    ]
+
+    CANTEEN_FIELDS = [
+        # new in 2026
+        "nombre_repas_an",
+    ]
 
     META_FIELDS = [
         "id",
@@ -679,7 +928,9 @@ class Diagnostic(models.Model):
     CREATION_META_FIELDS = [
         "creation_date",
         "modification_date",
+        "creation_user",
         "creation_source",
+        "creation_source_api_oauth2_application",
     ]
 
     MATOMO_FIELDS = [
@@ -705,14 +956,29 @@ class Diagnostic(models.Model):
     TELEDECLARATION_SNAPSHOT_FIELDS = [
         "canteen_snapshot",
         "satellites_snapshot",
+        "groupe_snapshot",
         "applicant_snapshot",
     ]
+    TELEDECLARATION_1TD1SITE_FIELDS = [
+        "generated_from_groupe_diagnostic",
+        "groupe_snapshot",
+    ]
+    TELEDECLARATION_DATA_QUALITY_FIELDS = [
+        "invalid_reason_list",
+        "warning_reason_list",
+    ]
 
-    objects = models.Manager.from_queryset(DiagnosticQuerySet)()
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords(excluded_fields=["canteen_snapshot", "satellites_snapshot", "applicant_snapshot"])
+    APPRO_PERCENTAGE_PROPERTY_FIELDS = [
+        "percentage_valeur_totale",
+        "percentage_valeur_bio",
+        "percentage_valeur_siqo",
+        "percentage_valeur_externalites_performance",
+        "percentage_valeur_egalim_autres",
+        "percentage_valeur_viandes_volailles_egalim",
+        "percentage_valeur_viandes_volailles_france",
+        "percentage_valeur_produits_de_la_mer_egalim",
+        "percentage_valeur_produits_de_la_mer_france",
+    ]
 
     canteen = models.ForeignKey(
         Canteen, on_delete=models.SET_NULL, null=True, related_name="diagnostics", verbose_name="cantine"
@@ -731,14 +997,6 @@ class Diagnostic(models.Model):
         verbose_name="status",
     )
 
-    creation_source = models.CharField(
-        max_length=255,
-        choices=CreationSource.choices,
-        blank=True,
-        null=True,
-        verbose_name="Source de création du diagnostic",
-    )
-
     diagnostic_type = models.CharField(
         max_length=255,
         choices=DiagnosticType.choices,
@@ -753,7 +1011,7 @@ class Diagnostic(models.Model):
         choices=CentralKitchenDiagnosticMode.choices,
         blank=True,
         null=True,
-        verbose_name="seulement pertinent pour les cuisines centrales : Quelles données sont déclarées par cette cuisine centrale ?",
+        verbose_name="Quelles données sont déclarées par ce groupe ? (seulement pertinent pour les groupes)",
     )
 
     # progress fields
@@ -790,58 +1048,12 @@ class Diagnostic(models.Model):
         verbose_name="Progrès tunnel information convives",
     )
 
+    # Canteen info
+    nombre_repas_an = make_optional_positive_integer_field(verbose_name="Nombre de repas par an")
+
     # Product origin
     valeur_totale = make_optional_positive_decimal_field(
         verbose_name="Valeur totale annuelle HT",
-    )
-    valeur_bio = make_optional_positive_decimal_field(
-        verbose_name="Bio - Valeur annuelle HT",
-    )
-    valeur_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Bio dont commerce équitable - Valeur annuelle HT",
-    )
-    valeur_fair_trade = make_optional_positive_decimal_field(  # legacy
-        verbose_name="Commerce équitable - Valeur annuelle HT",
-    )
-    valeur_siqo = make_optional_positive_decimal_field(
-        verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT",
-    )
-    valeur_pat = make_optional_positive_decimal_field(  # legacy
-        verbose_name="Produits dans le cadre de Projects Alimentaires Territoriaux - Valeur annuelle HT",
-    )
-    valeur_externalites_performance = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
-    )
-    valeur_egalim_autres = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) des autres achats EGalim",
-    )
-    valeur_egalim_autres_dont_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) des achats commerce équitable (hors bio)",
-    )
-    valeur_viandes_volailles = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées",
-    )
-    valeur_viandes_volailles_egalim = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim",
-    )
-    valeur_viandes_volailles_france = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France",
-    )
-    valeur_produits_de_la_mer = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) poissons et produits aquatiques",
-    )
-    valeur_produits_de_la_mer_egalim = make_optional_positive_decimal_field(
-        verbose_name="Valeur totale (HT) poissons et produits aquatiques, EGalim",
-    )
-
-    valeur_label_rouge = make_optional_positive_decimal_field(
-        verbose_name="Valeur label rouge",
-    )
-    valeur_label_aoc_igp = make_optional_positive_decimal_field(
-        verbose_name="Valeur label AOC/AOP/IGP",
-    )
-    valeur_label_hve = make_optional_positive_decimal_field(
-        verbose_name="Valeur label HVE",
     )
 
     # Food waste
@@ -1057,6 +1269,76 @@ class Diagnostic(models.Model):
         verbose_name="EGalim (Bio + Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
     )
 
+    # per family
+    valeur_viandes_volailles = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées",
+    )
+    valeur_produits_de_la_mer = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) poissons et produits aquatiques",
+    )
+    valeur_fruits_et_legumes = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) fruits et légumes frais ou surgelés",
+    )
+    valeur_charcuterie = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) charcuterie",
+    )
+    valeur_produits_laitiers = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) BOF (Produits laitiers, beurre et œufs)",
+    )
+    valeur_boulangerie = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) boulangerie / pâtisserie fraîches",
+    )
+    valeur_boissons = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) boissons",
+    )
+    valeur_autres = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) autres produits frais, surgelés et d'épicerie",
+    )
+
+    # per label
+    valeur_bio = make_optional_positive_decimal_field(
+        verbose_name="Bio - Valeur annuelle HT",
+    )
+    # TODO: label_rouge, aocaop, igp, stg, hve, peche_durable, rup, commerce_equitable, fermier, externalites, performance ?
+    valeur_europe = make_optional_positive_decimal_field(
+        verbose_name="Origine UE (hors France) - Valeur annuelle HT",
+    )
+    valeur_france = make_optional_positive_decimal_field(
+        verbose_name="Origine France - Valeur annuelle HT",
+    )
+    valeur_circuit_court = make_optional_positive_decimal_field(
+        verbose_name="Circuit court - Valeur annuelle HT",
+    )
+    valeur_local = make_optional_positive_decimal_field(
+        verbose_name="Local - Valeur annuelle HT",
+    )
+
+    # per label group
+    # valeur_bio: voir au-dessus
+    valeur_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Bio dont commerce équitable - Valeur annuelle HT",
+    )
+    valeur_siqo = make_optional_positive_decimal_field(
+        verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT",
+    )
+    valeur_externalites_performance = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
+    )
+    valeur_egalim_autres = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) des autres achats EGalim",
+    )
+    valeur_egalim_autres_dont_commerce_equitable = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) des achats commerce équitable (hors bio)",
+    )
+
+    # other
+    valeur_viandes_volailles_egalim = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim",
+    )
+    valeur_produits_de_la_mer_egalim = make_optional_positive_decimal_field(
+        verbose_name="Valeur totale (HT) poissons et produits aquatiques, EGalim",
+    )
+
     # detailed values
     valeur_viandes_volailles_bio = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Bio",
@@ -1089,10 +1371,10 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Bio dont commerce équitable",
     )
     valeur_boulangerie_bio = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Bio",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Bio",
     )
     valeur_boulangerie_bio_dont_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Bio dont commerce équitable",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Bio dont commerce équitable",
     )
     valeur_boissons_bio = make_optional_positive_decimal_field(
         verbose_name="Boissons, Bio",
@@ -1122,7 +1404,7 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Label rouge",
     )
     valeur_boulangerie_label_rouge = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Label rouge",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Label rouge",
     )
     valeur_boissons_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Boissons, Label rouge (non applicable)",
@@ -1130,29 +1412,77 @@ class Diagnostic(models.Model):
     valeur_autres_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d'épicerie, Label rouge",
     )
-    valeur_viandes_volailles_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG",
+    valeur_viandes_volailles_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, AOC / AOP",
     )
-    valeur_produits_de_la_mer_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Poissons, produits de la mer et de l'aquaculture, AOC / AOP / IGP / STG",
+    valeur_produits_de_la_mer_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, AOC / AOP",
     )
-    valeur_fruits_et_legumes_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG",
+    valeur_fruits_et_legumes_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, AOC / AOP",
     )
-    valeur_charcuterie_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Charcuterie, AOC / AOP / IGP / STG",
+    valeur_charcuterie_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, AOC / AOP",
     )
-    valeur_produits_laitiers_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="BOF (Produits laitiers, beurre et œufs), AOC / AOP / IGP / STG",
+    valeur_produits_laitiers_aocaop = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), AOC / AOP",
     )
-    valeur_boulangerie_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, AOC / AOP / IGP / STG",
+    valeur_boulangerie_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie / Pâtisserie fraîches, AOC / AOP",
     )
-    valeur_boissons_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Boissons, AOC / AOP / IGP / STG",
+    valeur_boissons_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Boissons, AOC / AOP",
     )
-    valeur_autres_aocaop_igp_stg = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d'épicerie, AOC / AOP / IGP / STG",
+    valeur_autres_aocaop = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d'épicerie, AOC / AOP",
+    )
+    valeur_viandes_volailles_igp = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, IGP",
+    )
+    valeur_produits_de_la_mer_igp = make_optional_positive_decimal_field(
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, IGP",
+    )
+    valeur_fruits_et_legumes_igp = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, IGP",
+    )
+    valeur_charcuterie_igp = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, IGP",
+    )
+    valeur_produits_laitiers_igp = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), IGP",
+    )
+    valeur_boulangerie_igp = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie / Pâtisserie fraîches, IGP",
+    )
+    valeur_boissons_igp = make_optional_positive_decimal_field(
+        verbose_name="Boissons, IGP",
+    )
+    valeur_autres_igp = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d'épicerie, IGP",
+    )
+    valeur_viandes_volailles_stg = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, STG",
+    )
+    valeur_produits_de_la_mer_stg = make_optional_positive_decimal_field(
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, STG",
+    )
+    valeur_fruits_et_legumes_stg = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, STG",
+    )
+    valeur_charcuterie_stg = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, STG",
+    )
+    valeur_produits_laitiers_stg = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), STG",
+    )
+    valeur_boulangerie_stg = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie / Pâtisserie fraîches, STG",
+    )
+    valeur_boissons_stg = make_optional_positive_decimal_field(
+        verbose_name="Boissons, STG",
+    )
+    valeur_autres_stg = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d'épicerie, STG",
     )
     valeur_viandes_volailles_hve = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Haute valeur environnementale",
@@ -1170,7 +1500,7 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Haute valeur environnementale",
     )
     valeur_boulangerie_hve = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Haute valeur environnementale",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Haute valeur environnementale",
     )
     valeur_boissons_hve = make_optional_positive_decimal_field(
         verbose_name="Boissons, Haute valeur environnementale",
@@ -1194,7 +1524,7 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Pêche durable (non applicable)",
     )
     valeur_boulangerie_peche_durable = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Pêche durable (non applicable)",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Pêche durable (non applicable)",
     )
     valeur_boissons_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Boissons, Pêche durable (non applicable)",
@@ -1218,7 +1548,7 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Région ultrapériphérique",
     )
     valeur_boulangerie_rup = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Région ultrapériphérique",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Région ultrapériphérique",
     )
     valeur_boissons_rup = make_optional_positive_decimal_field(
         verbose_name="Boissons, Région ultrapériphérique",
@@ -1242,7 +1572,7 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Commerce équitable",
     )
     valeur_boulangerie_commerce_equitable = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Commerce équitable",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Commerce équitable",
     )
     valeur_boissons_commerce_equitable = make_optional_positive_decimal_field(
         verbose_name="Boissons, Commerce équitable",
@@ -1266,7 +1596,7 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Fermier",
     )
     valeur_boulangerie_fermier = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Fermier (non applicable)",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Fermier (non applicable)",
     )
     valeur_boissons_fermier = make_optional_positive_decimal_field(
         verbose_name="Boissons, Fermier (non applicable)",
@@ -1290,7 +1620,7 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
     valeur_boulangerie_externalites = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
     )
     valeur_boissons_externalites = make_optional_positive_decimal_field(
         verbose_name="Boissons, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
@@ -1314,7 +1644,7 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Produits acquis sur la base de leurs performances en matière environnementale",
     )
     valeur_boulangerie_performance = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Produits acquis sur la base de leurs performances en matière environnementale",
     )
     valeur_boissons_performance = make_optional_positive_decimal_field(
         verbose_name="Boissons, Produits acquis sur la base de leurs performances en matière environnementale",
@@ -1338,13 +1668,37 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), non-EGalim",
     )
     valeur_boulangerie_non_egalim = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, non-EGalim",
+        verbose_name="Boulangerie / Pâtisserie fraîches, non-EGalim",
     )
     valeur_boissons_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Boissons, non-EGalim",
     )
     valeur_autres_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d'épicerie, non-EGalim",
+    )
+    valeur_viandes_volailles_europe = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, Origine UE (hors France)",
+    )
+    valeur_produits_de_la_mer_europe = make_optional_positive_decimal_field(
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Origine UE (hors France)",
+    )
+    valeur_fruits_et_legumes_europe = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, Origine UE (hors France)",
+    )
+    valeur_charcuterie_europe = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, Origine UE (hors France)",
+    )
+    valeur_produits_laitiers_europe = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), Origine UE (hors France)",
+    )
+    valeur_boulangerie_europe = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie / Pâtisserie fraîches, Origine UE (hors France)",
+    )
+    valeur_boissons_europe = make_optional_positive_decimal_field(
+        verbose_name="Boissons, Origine UE (hors France)",
+    )
+    valeur_autres_europe = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Origine UE (hors France)",
     )
     valeur_viandes_volailles_france = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Origine France",
@@ -1362,7 +1716,7 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Origine France",
     )
     valeur_boulangerie_france = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Origine France",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Origine France",
     )
     valeur_boissons_france = make_optional_positive_decimal_field(
         verbose_name="Boissons, Origine France",
@@ -1386,7 +1740,7 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Origine France (dont circuit-court)",
     )
     valeur_boulangerie_circuit_court = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Origine France (dont circuit-court)",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Origine France (dont circuit-court)",
     )
     valeur_boissons_circuit_court = make_optional_positive_decimal_field(
         verbose_name="Boissons, Origine France (dont circuit-court)",
@@ -1410,13 +1764,54 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Origine France (dont local)",
     )
     valeur_boulangerie_local = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie/Pâtisserie fraîches et surgelées, Origine France (dont local)",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Origine France (dont local)",
     )
     valeur_boissons_local = make_optional_positive_decimal_field(
         verbose_name="Boissons, Origine France (dont local)",
     )
     valeur_autres_local = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d'épicerie, Origine France (dont local)",
+    )
+
+    # deprecated
+    valeur_label_rouge = make_optional_positive_decimal_field(
+        verbose_name="Valeur label rouge",
+    )
+    valeur_label_aoc_igp = make_optional_positive_decimal_field(
+        verbose_name="Valeur label AOC/AOP/IGP",
+    )
+    valeur_label_hve = make_optional_positive_decimal_field(
+        verbose_name="Valeur label HVE",
+    )
+    valeur_fair_trade = make_optional_positive_decimal_field(  # legacy
+        verbose_name="Commerce équitable - Valeur annuelle HT",
+    )
+    valeur_pat = make_optional_positive_decimal_field(  # legacy
+        verbose_name="Produits dans le cadre de Projects Alimentaires Territoriaux - Valeur annuelle HT",
+    )
+    valeur_viandes_volailles_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG",
+    )
+    valeur_produits_de_la_mer_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, AOC / AOP / IGP / STG",
+    )
+    valeur_fruits_et_legumes_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG",
+    )
+    valeur_charcuterie_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Charcuterie, AOC / AOP / IGP / STG",
+    )
+    valeur_produits_laitiers_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="BOF (Produits laitiers, beurre et œufs), AOC / AOP / IGP / STG",
+    )
+    valeur_boulangerie_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Boulangerie / Pâtisserie fraîches, AOC / AOP / IGP / STG",
+    )
+    valeur_boissons_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Boissons, AOC / AOP / IGP / STG",
+    )
+    valeur_autres_aocaop_igp_stg = make_optional_positive_decimal_field(
+        verbose_name="Autres produits frais, surgelés et d'épicerie, AOC / AOP / IGP / STG",
     )
 
     # Télédéclaration
@@ -1448,6 +1843,7 @@ class Diagnostic(models.Model):
     )
     applicant = models.ForeignKey(
         get_user_model(),
+        related_name="diagnostics_teledeclared",
         verbose_name="déclarant",
         on_delete=models.SET_NULL,
         null=True,
@@ -1460,7 +1856,7 @@ class Diagnostic(models.Model):
         encoder=CustomJSONEncoder,
     )
     satellites_snapshot = models.JSONField(
-        verbose_name="satellites (copie au moment de la télédéclaration)",
+        verbose_name="satellites (copie au moment de la télédéclaration) (seulement pertinent pour les groupes)",
         blank=True,
         null=True,
         encoder=CustomJSONEncoder,
@@ -1472,6 +1868,97 @@ class Diagnostic(models.Model):
         encoder=CustomJSONEncoder,
     )
 
+    # 1TD1Site
+    generated_from_groupe_diagnostic = models.BooleanField(
+        verbose_name="A été automatiquement généré depuis le bilan du groupe (seulement pertinent pour les satellites)",
+        default=False,
+    )
+    groupe_snapshot = models.JSONField(
+        verbose_name="groupe (copie lors de la génération depuis le bilan du groupe) (seulement pertinent pour les satellites)",
+        blank=True,
+        null=True,
+        encoder=CustomJSONEncoder,
+    )
+
+    # EGalim
+    pourcentage_bio = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage bio (champ calculé)",
+    )
+    pourcentage_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage EGalim (champ calculé)",
+    )
+    pourcentage_egalim_hors_bio = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage EGalim hors bio (champ calculé)",
+    )
+    objectifs_egalim_atteints = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="objectifs EGalim atteints (champ calculé)",
+    )
+
+    cout_repas = make_optional_positive_decimal_field(
+        verbose_name="coût repas (champ calculé)",
+        help_text="le coût repas est calculé en divisant la valeur totale annuelle par le nombre de repas annuels de la cantine",
+    )
+
+    # Data quality
+    invalid_reason_list = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=InvalidReason.choices),
+        blank=True,
+        null=True,
+        size=None,
+        verbose_name="bilan ignoré dans les stats (raisons)",
+    )
+    warning_reason_list = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=WarningReason.choices),
+        blank=True,
+        null=True,
+        size=None,
+        verbose_name="bilan avec des problèmes de données (raisons)",
+    )
+
+    creation_user = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="diagnostics_created",
+        verbose_name="utilisateur qui a créé le diagnostic",
+    )
+    creation_source = models.CharField(
+        max_length=255,
+        choices=CreationSource.choices,
+        blank=True,
+        null=True,
+        verbose_name="Source de création du diagnostic",
+    )
+    creation_source_api_oauth2_application = models.ForeignKey(
+        settings.OAUTH2_PROVIDER_APPLICATION_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="diagnostics_created",
+        verbose_name="app OAuth2 (API) qui a créé le diagnostic",
+    )
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords(
+        bases=[AuthenticationMethodHistoricalRecords], excluded_fields=TELEDECLARATION_SNAPSHOT_FIELDS
+    )
+
+    objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)(exclude_generated=True)
+    all_objects = DiagnosticManager.from_queryset(DiagnosticQuerySet)()
+
+    class Meta:
+        verbose_name = "diagnostic"
+        verbose_name_plural = "diagnostics"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["canteen", "year", "generated_from_groupe_diagnostic"], name="annual_diagnostic"
+            ),
+        ]
+
     def __str__(self):
         return f"Diagnostic pour {self.canteen.name} ({self.year})"
 
@@ -1480,12 +1967,14 @@ class Diagnostic(models.Model):
             self.populate_simplified_diagnostic_values()
 
         validation_errors = utils_utils.merge_validation_errors(
-            diagnostic_validators.validate_year(self),
+            diagnostic_validators.validate_year_and_can_edit(self),
             diagnostic_validators.validate_diagnostic_type(self),
+            diagnostic_validators.validate_canteen_fields_required(self),
             diagnostic_validators.validate_appro_fields_required(self),
             diagnostic_validators.validate_valeur_totale(self),
-            diagnostic_validators.validate_valeur_bio(self),
-            diagnostic_validators.validate_valeur_egalim_autres(self),
+            diagnostic_validators.validate_valeur_famille(self),
+            diagnostic_validators.validate_valeur_famille_bio(self),
+            diagnostic_validators.validate_valeur_label(self),
             diagnostic_validators.validate_viandes_volailles_total(self),
             diagnostic_validators.validate_produits_de_la_mer_total(self),
             diagnostic_validators.validate_viandes_volailles_produits_de_la_mer_egalim(self),
@@ -1494,6 +1983,13 @@ class Diagnostic(models.Model):
             raise ValidationError(validation_errors)
 
         return super().clean()
+
+    def save(self, **kwargs):
+        # TODO: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
+        self.populate_aggregated_values()
+        self.populate_egalim_stats()
+        self.populate_cout_repas()
+        return super().save(**kwargs)
 
     def populate_simplified_diagnostic_values(self):
         self.valeur_bio = self.label_group_sum("bio")
@@ -1512,8 +2008,8 @@ class Diagnostic(models.Model):
             family = "produits_de_la_mer"
             total_fish_egalim = total_fish_egalim + (getattr(self, f"valeur_{family}_{label}") or 0)
 
-        # NOTE: stop populating france from APPRO_LABELS_FRANCE
-        # for label in Diagnostic.APPRO_LABELS_FRANCE:
+        # NOTE: stop populating france from ["france", "circuit_court", "local"]
+        # for label in ["france", "circuit_court", "local"]:
         #     family = "viandes_volailles"
         #     total_meat_france = total_meat_france + (getattr(self, f"valeur_{family}_{label}") or 0)
 
@@ -1529,6 +2025,15 @@ class Diagnostic(models.Model):
         # group_group
         self.valeur_egalim_hors_bio_agg = self.label_group_group_sum("egalim_hors_bio")
         self.valeur_egalim_agg = self.label_group_group_sum("egalim")
+
+    def populate_egalim_stats(self):
+        self.pourcentage_bio = self.compute_pourcentage_bio()
+        self.pourcentage_egalim = self.compute_pourcentage_egalim()
+        self.pourcentage_egalim_hors_bio = self.compute_pourcentage_egalim_hors_bio()
+        self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
+
+    def populate_cout_repas(self):
+        self.cout_repas = self.compute_cout_repas()
 
     def label_sum(self, label: str):
         sum = 0
@@ -1558,7 +2063,7 @@ class Diagnostic(models.Model):
 
     def family_sum(self, family: str):
         """
-        NOTE: APPRO_LABELS does not include APPRO_LABELS_FRANCE
+        NOTE: APPRO_LABELS does not include APPRO_LABELS_ORIGINE & circuit_court & local
         """
         sum = 0
         for label in Diagnostic.APPRO_LABELS:
@@ -1572,6 +2077,86 @@ class Diagnostic(models.Model):
         return sum_int_with_potential_null(
             [getattr(self, f"valeur_{group}") for group in Diagnostic.APPRO_LABELS_GROUPS_GROUPS_MAPPING["egalim"]]
         )
+
+    def compute_pourcentage_bio(self):
+        if self.valeur_totale and self.valeur_bio_agg is not None:
+            if self.valeur_totale >= self.valeur_bio_agg:
+                return round(100 * self.valeur_bio_agg / self.valeur_totale, 2)
+
+    def compute_pourcentage_egalim(self):
+        if self.valeur_totale and self.valeur_egalim_agg is not None:
+            if self.valeur_totale >= self.valeur_egalim_agg:
+                return round(100 * self.valeur_egalim_agg / self.valeur_totale, 2)
+
+    def compute_pourcentage_egalim_hors_bio(self):
+        if self.valeur_totale and self.valeur_egalim_hors_bio_agg is not None:
+            if self.valeur_totale >= self.valeur_egalim_hors_bio_agg:
+                return round(100 * self.valeur_egalim_hors_bio_agg / self.valeur_totale, 2)
+
+    def compute_objectifs_egalim_atteints(self):
+        if self.valeur_totale and self.pourcentage_bio is not None and self.pourcentage_egalim is not None:
+            canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
+            return objectifs_egalim_atteints(self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
+
+    def compute_cout_repas(self):
+        """
+        If the diagnostic is not teledeclared, the cout_repas depends on canteen.yearly_meal_count.
+        So if the canteen.yearly_meal_count has changed, but the diagnostic has not been saved, the cout_repas will be different...
+        """
+        if self.valeur_totale and self.canteen_yearly_meal_count:
+            return round(self.valeur_totale / self.canteen_yearly_meal_count, 2)
+
+    @property
+    def percentage_valeur_totale(self) -> float:
+        return 1
+
+    @property
+    def percentage_valeur_bio(self) -> float | None:
+        if self.valeur_totale and self.valeur_bio is not None:
+            return self.valeur_bio / self.valeur_totale
+        return None
+
+    @property
+    def percentage_valeur_siqo(self) -> float | None:
+        if self.valeur_totale and self.valeur_siqo is not None:
+            return self.valeur_siqo / self.valeur_totale
+        return None
+
+    @property
+    def percentage_valeur_externalites_performance(self) -> float | None:
+        if self.valeur_totale and self.valeur_externalites_performance is not None:
+            return self.valeur_externalites_performance / self.valeur_totale
+        return None
+
+    @property
+    def percentage_valeur_egalim_autres(self) -> float | None:
+        if self.valeur_totale and self.valeur_egalim_autres is not None:
+            return self.valeur_egalim_autres / self.valeur_totale
+        return None
+
+    @property
+    def percentage_valeur_viandes_volailles_egalim(self) -> float | None:
+        if self.valeur_viandes_volailles and self.valeur_viandes_volailles_egalim is not None:
+            return self.valeur_viandes_volailles_egalim / self.valeur_viandes_volailles
+        return None
+
+    @property
+    def percentage_valeur_viandes_volailles_france(self) -> float | None:
+        if self.valeur_viandes_volailles and self.valeur_viandes_volailles_france is not None:
+            return self.valeur_viandes_volailles_france / self.valeur_viandes_volailles
+        return None
+
+    @property
+    def percentage_valeur_produits_de_la_mer_egalim(self) -> float | None:
+        if self.valeur_produits_de_la_mer and self.valeur_produits_de_la_mer_egalim is not None:
+            return self.valeur_produits_de_la_mer_egalim / self.valeur_produits_de_la_mer
+        return None
+
+    @property
+    def percentage_valeur_produits_de_la_mer_france(self) -> float | None:
+        if self.valeur_produits_de_la_mer and self.valeur_produits_de_la_mer_france is not None:
+            return self.valeur_produits_de_la_mer_france / self.valeur_produits_de_la_mer
+        return None
 
     @property
     def valeur_totale_is_filled(self):
@@ -1608,6 +2193,10 @@ class Diagnostic(models.Model):
         return self.is_filled_simple or self.is_filled_complete
 
     @property
+    def has_invalid_reason(self):
+        return self.invalid_reason_list and len(self.invalid_reason_list) > 0
+
+    @property
     def is_teledeclared(self):
         return self.status == Diagnostic.DiagnosticStatus.SUBMITTED
 
@@ -1620,6 +2209,14 @@ class Diagnostic(models.Model):
         ]
 
     @property
+    def canteen_yearly_meal_count(self):
+        if self.canteen_snapshot:
+            return self.canteen_snapshot.get("yearly_meal_count")
+        elif self.canteen:
+            return self.canteen.yearly_meal_count
+        return None
+
+    @property
     def canteen_snapshot_sector_lib_list(self):
         from data.models.sector import get_sector_lib_list_from_canteen_snapshot
 
@@ -1630,6 +2227,17 @@ class Diagnostic(models.Model):
         from data.models.sector import get_category_lib_list_from_canteen_snapshot
 
         return get_category_lib_list_from_canteen_snapshot(self.canteen_snapshot)
+
+    @property
+    def canteen_and_satellites_snapshot_id_list(self):
+        id_list = []
+        if self.canteen_snapshot and self.canteen_snapshot.get("id"):
+            id_list.append(self.canteen_snapshot["id"])
+        if self.satellites_snapshot and isinstance(self.satellites_snapshot, list):
+            for satellite in self.satellites_snapshot:
+                if satellite.get("id"):
+                    id_list.append(satellite["id"])
+        return id_list
 
     @property
     def latest_submitted_teledeclaration(self):
@@ -1760,6 +2368,9 @@ class Diagnostic(models.Model):
                     raise ValidationError(
                         f"{self.canteen.satellites_missing_data_count} satellites du groupe associée à ce diagnostic ne sont pas remplis"
                     )
+            if applicant not in self.canteen.managers.all():
+                raise ValidationError("Le déclarant n'est pas un gestionnaire de la cantine associée à ce diagnostic")
+            # TODO: run diagnostic.full_clean() (validators) ?
 
         from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 
@@ -1780,9 +2391,8 @@ class Diagnostic(models.Model):
             "email": applicant.email,
         }
 
-        # aggregated data
-        # TODO: compute on save() instead
-        self.populate_aggregated_values()
+        # computed data (agg & EGalim & cout_repas)
+        # see save()
 
         # metadata
         self.status = Diagnostic.DiagnosticStatus.SUBMITTED
@@ -1791,8 +2401,15 @@ class Diagnostic(models.Model):
         self.teledeclaration_version = TELEDECLARATION_CURRENT_VERSION
         self.teledeclaration_id = self.id
 
-        # save
-        self.save()
+        # update declaration_donnees_year to True & save (for non-SATELLITE_WITHOUT_APPRO TDs)
+        canteen_id_list_to_update = []
+        if self.teledeclaration_mode != Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO:
+            canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
+        with transaction.atomic():
+            Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
+                **{f"declaration_donnees_{self.year}": True}
+            )
+            self.save()
 
     def cancel(self):
         """
@@ -1807,11 +2424,26 @@ class Diagnostic(models.Model):
         if not self.is_teledeclared:
             raise ValidationError("Ce diagnostic doit avoir été télédéclaré")
 
-        self.status = Diagnostic.DiagnosticStatus.DRAFT
-        self.applicant = None
-        self.teledeclaration_date = None
-        self.teledeclaration_mode = None
-        self.teledeclaration_version = None
-        self.teledeclaration_id = None
+        # before deleting the snapshots
+        canteen_id_list_to_update = []
+        if self.teledeclaration_mode != Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO:
+            canteen_id_list_to_update = self.canteen_and_satellites_snapshot_id_list
 
-        self.save()
+        # reset fields
+        self.status = (
+            Diagnostic.DiagnosticStatus.CORRECTION
+            if is_in_correction(self.year)
+            else Diagnostic.DiagnosticStatus.DRAFT
+        )
+        self.applicant = None
+        for field in self.TELEDECLARATION_SNAPSHOT_FIELDS:
+            setattr(self, field, None)
+        for field in self.TELEDECLARATION_FIELDS:
+            setattr(self, field, None)
+
+        # update declaration_donnees_year to True & save (for non-SATELLITE_WITHOUT_APPRO TDs)
+        with transaction.atomic():
+            Canteen.all_objects.filter(id__in=canteen_id_list_to_update).update(
+                **{f"declaration_donnees_{self.year}": False}
+            )
+            self.save()

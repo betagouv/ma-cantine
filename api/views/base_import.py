@@ -95,6 +95,12 @@ class BaseImportView(ABC, APIView):
         """
         pass
 
+    def is_true_value(self, value):
+        """
+        Check if a value is a true value.
+        """
+        return value.strip().lower() in ["oui", "x"]
+
     def post(self, request):
         self.start_time = time.time()
         self._log_import_start()
@@ -125,11 +131,11 @@ class BaseImportView(ABC, APIView):
 
             # Header validation
             user_file_header = validata_response["resource_data"][0]
-            # Custom validation
+            # Custom header validation
             if not self._validate_file_header_custom(user_file_header):
                 self._log_error(f"Echec lors de la validation du header (schema {schema_config['name']} - Validata)")
                 return self._get_success_response()
-            # Generic validation
+            # Generic header validation
             import_expected_header = file_import.get_expected_header_from_schema(schema_config["path"])
             self.errors = validata.process_header_errors(user_file_header, import_expected_header)
             if len(self.errors):
@@ -253,6 +259,8 @@ class BaseImportView(ABC, APIView):
             "errors": self.errors,
             "seconds": time.time() - self.start_time,
         }
+        if len(self.errors) > 0:
+            response_data["count"] = 0
         return JsonResponse({**response_data, **base_response}, status=status.HTTP_200_OK)
 
     def _parse_errors(self, e, row, identifier=None):

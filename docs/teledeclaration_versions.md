@@ -4,7 +4,8 @@ Actuellement les dates sont celles des 1ères créations de TD avec la version c
 
 |Version|Année(s) concernée(s)|Date première TD|Date dernière TD|Nombre de TDs|Changements|
 |-|-|-|-|-|-|
-|17|||||- On retire les anciens sectors (M2M), on ajoute le groupe_id et is_filled|
+|16.2|||||- Ajout des champs Canteen.epci et Canteen.pat_list|
+|16.1|||||- Enlève les anciens sectors (M2M)<br>- Ajout des champs Canteen.groupe_id et Canteen.is_filled|
 |16|2025|12/01/2026||en cours|- Nouveaux champs simplifiée et détaillée<br>- Renommer 'value' en 'valeur', enlever 'ht'<br>- Traduit certains champs en français<br>- Ajout de champs supplémentaires dans les snapshot 'canteen' et 'satellites' (sector_list entre autre)|
 |15||||0|- Modifications sur la façon de stocker Canteen.line_ministry|
 |14|2024|17/03/2025|30/04/2025|15436|- Ajout du champ Canteen.canteen_siren_unite_legale|
@@ -12,7 +13,7 @@ Actuellement les dates sont celles des 1ères créations de TD avec la version c
 |12|2024|07/01/2025|05/03/2025|4879|- Nouveau champ Diagnostic.service_type (et arrêter de remplir Diagnostic.vegetarian_menu_type)|
 |11||||0|- Check pour s'assurer que Diagnostic.declaration_mode est rempli pour les cuisines centrales|
 |10|2022, 2023|26/06/2023|11/06/2024|12123|- Ajout du champ Canteen.department<br>- Ajout du champ Canteen.region|
-|9|2021, 2022|13/02/2023|26/06/2023|4724|- Suppression de certains champs : Diagnostic.value_pat_ht, Diagnostic.value_label_hve, Diagnostic.value_label_rouge, Diagnostic.value_label_aoc_igp, Diagnostic.value_pat_ht<br>- Ajout des champs Declared data>teledeclaration>Year, Gaspi & Vege|
+|9|2022|13/02/2023|26/06/2023|4724|- Suppression de certains champs : Diagnostic.value_pat_ht, Diagnostic.value_label_hve, Diagnostic.value_label_rouge, Diagnostic.value_label_aoc_igp, Diagnostic.value_pat_ht<br>- Ajout des champs Declared data>teledeclaration>Year, Gaspi & Vege<br>- Ajout de satellites_snapshot (id, name, siret, sectors, daily_meal_count, yearly_meal_count)|
 |8||||0||
 |7||||0||
 |6||||0||

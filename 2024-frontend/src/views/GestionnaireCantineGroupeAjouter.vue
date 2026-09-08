@@ -36,7 +36,7 @@ const saveGroup = (props) => {
 const goToNewCanteenPage = (canteen) => {
   const canteenUrl = urlService.getCanteenUrl(canteen)
   router.replace({
-    name: "DashboardManager",
+    name: "GestionnaireCantine",
     params: { canteenUrlComponent: canteenUrl },
   })
 }

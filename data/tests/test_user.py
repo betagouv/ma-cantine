@@ -1,6 +1,7 @@
-from django.test import TestCase
+from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 from freezegun import freeze_time
+from django.core.exceptions import ValidationError
 
 from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
 from data.models import Canteen, User
@@ -34,6 +35,7 @@ class UserModelTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             management_type=Canteen.ManagementType.DIRECT,
             economic_model=Canteen.EconomicModel.PUBLIC,
+            groupe=cls.canteen_groupe,
             managers=[cls.user_with_canteens],
         )
         cls.canteen_site_armee = CanteenFactory(
@@ -48,9 +50,17 @@ class UserModelTest(TestCase):
             economic_model=Canteen.EconomicModel.PRIVATE,
             managers=[cls.user_with_canteens],
         )
+        cls.canteen_site_deleted = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE,
+            managers=[cls.user_with_canteens],
+        )
 
         cls.canteen_centrale_diagnostic_teledeclared = DiagnosticFactory(year=2025, canteen=cls.canteen_centrale)
+        cls.canteen_satellite_diagnostic = DiagnosticFactory(year=2025, canteen=cls.canteen_satellite)
         cls.canteen_site_armee_diagnostic = DiagnosticFactory(year=2025, canteen=cls.canteen_site_armee)
+        cls.canteen_site_deleted_diagnostic = DiagnosticFactory(year=2025, canteen=cls.canteen_site_deleted)
+
+        cls.canteen_site_deleted.delete()
 
         with freeze_time("2026-01-30"):  # during the 2025 campaign
             cls.canteen_centrale_diagnostic_teledeclared.teledeclare(applicant=cls.user_with_canteens)
@@ -80,6 +90,27 @@ class UserModelTest(TestCase):
         User.objects.filter(id=self.user_without_canteens.id).update(brevo_is_deleted=True)
         self.assertEqual(User.objects.brevo_to_update().count(), 0)
 
+    def test_queryset_annotate_with_totp_device(self):
+        user_qs = User.objects.annotate_with_totp_device()
+
+        user_with_canteens = user_qs.get(id=self.user_with_canteens.id)
+
+        self.assertFalse(user_with_canteens.has_totp_device)
+        self.assertEqual(user_with_canteens.totp_device_count, 0)
+
+        # Add 2 TOTP devices to the user
+        from django_otp.plugins.otp_totp.models import TOTPDevice
+
+        self.user_with_canteens.is_staff = True
+        self.user_with_canteens.save(update_fields=["is_staff"])
+        TOTPDevice.objects.create(user=self.user_with_canteens, name="test1", confirmed=True)
+        TOTPDevice.objects.create(user=self.user_with_canteens, name="test2", confirmed=False)
+
+        user_qs = User.objects.annotate_with_totp_device()
+        user_with_canteens = user_qs.get(id=self.user_with_canteens.id)
+        self.assertTrue(user_with_canteens.has_totp_device)
+        self.assertEqual(user_with_canteens.totp_device_count, 2)
+
     def test_queryset_with_canteen_stats(self):
         user_qs = User.objects.with_canteen_stats()
 
@@ -104,15 +135,15 @@ class UserModelTest(TestCase):
         user_with_canteens = user_qs.get(id=self.user_with_canteens.id)
         user_without_canteens = user_qs.get(id=self.user_without_canteens.id)
 
-        self.assertEqual(user_with_canteens.nb_cantines_bilan_2025, 2)
-        self.assertEqual(user_with_canteens.nb_cantines_bilan_todo_2025, 4)  # nb_cantines - nb_bilans_2025
-        self.assertEqual(user_with_canteens.nb_cantines_td_2025, 1)
-        # self.assertEqual(user_with_canteens.nb_cantines_td_todo_2025, 1)  # nb_bilans_2025 - nb_td_2025
+        self.assertEqual(user_with_canteens.nb_cantines_bilan_2025, 3)
+        self.assertEqual(user_with_canteens.nb_cantines_bilan_todo_2025, 3)  # nb_cantines - nb_bilans_2025
+        self.assertEqual(user_with_canteens.nb_cantines_td_2025, 1)  # canteen_centrale
+        self.assertEqual(user_with_canteens.nb_cantines_td_todo_2025, 5)  # nb_cantines - nb_td_2025
 
         self.assertEqual(user_without_canteens.nb_cantines_bilan_2025, 0)
         self.assertEqual(user_without_canteens.nb_cantines_bilan_todo_2025, 0)
         self.assertEqual(user_without_canteens.nb_cantines_td_2025, 0)
-        # self.assertEqual(user_without_canteens.nb_cantines_td_todo_2025, 0)
+        self.assertEqual(user_without_canteens.nb_cantines_td_todo_2025, 0)
 
     def test_model_method_update_data(self):
         self.assertIsNone(self.user_with_canteens.data)
@@ -127,10 +158,10 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user_with_canteens.data["nb_cantines_site"], 2)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_satellite"], 1)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_gestion_concedee"], 1)
-        self.assertEqual(self.user_with_canteens.data["nb_cantines_bilan_2025"], 2)
-        self.assertEqual(self.user_with_canteens.data["nb_cantines_bilan_todo_2025"], 4)
+        self.assertEqual(self.user_with_canteens.data["nb_cantines_bilan_2025"], 3)
+        self.assertEqual(self.user_with_canteens.data["nb_cantines_bilan_todo_2025"], 3)
         self.assertEqual(self.user_with_canteens.data["nb_cantines_td_2025"], 1)
-        # self.assertEqual(self.user_with_canteens.data["nb_cantines_td_todo_2025"], 1)
+        self.assertEqual(self.user_with_canteens.data["nb_cantines_td_todo_2025"], 5)
 
         self.user_without_canteens = user_qs.get(id=self.user_without_canteens.id)
         self.user_without_canteens.update_data()
@@ -144,4 +175,132 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user_without_canteens.data["nb_cantines_bilan_2025"], 0)
         self.assertEqual(self.user_without_canteens.data["nb_cantines_bilan_todo_2025"], 0)
         self.assertEqual(self.user_without_canteens.data["nb_cantines_td_2025"], 0)
-        # self.assertEqual(self.user_without_canteens.data["nb_cantines_td_todo_2025"], 0)
+        self.assertEqual(self.user_without_canteens.data["nb_cantines_td_todo_2025"], 0)
+
+
+class UserModelSaveTest(TransactionTestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+
+    def test_email_unique(self):
+        UserFactory(email="user@example.com")
+        with self.assertRaises(Exception):
+            UserFactory(email="user@example.com")
+
+    def test_username_unique(self):
+        UserFactory(username="user1")
+        with self.assertRaises(Exception):
+            UserFactory(username="user1")
+
+    def test_email_normalized_on_save(self):
+        user = UserFactory(email="user@example.com ")
+        self.assertEqual(user.email, "user@example.com")
+
+    def test_email_lower_on_save(self):
+        user = UserFactory(email="USER@EXAMPLE.COM")
+        self.assertEqual(user.email, "user@example.com")
+
+    def test_email_lower_unique_on_save(self):
+        UserFactory(email="user@example.com")
+        # some old users have capital letters in their email
+        user_duplicate = UserFactory()
+        User.objects.filter(id=user_duplicate.id).update(email="USER@EXAMPLE.COM")
+        user_duplicate.refresh_from_db()
+        # email will not be set to lower
+        user_duplicate.save()
+        # change email. this time it will conflict
+        user_duplicate.email = "USER@example.com"
+        with self.assertRaises(Exception):
+            user_duplicate.save()
+
+    def test_user_dirty_fields_on_save(self):
+        user = UserFactory(email="user1@example.com")
+        self.assertFalse(user.is_dirty())
+        self.assertEqual(user.get_dirty_fields(), {})
+
+        user.email = "user1@example.com"  # same email
+        self.assertFalse(user.is_dirty())
+        self.assertEqual(user.get_dirty_fields(), {})
+
+        user.email = "user2@example.com"  # different email
+        self.assertTrue(user.is_dirty())
+        self.assertEqual(user.get_dirty_fields(), {"email": "user1@example.com"})
+
+        user.save()
+        self.assertEqual(user.email, "user2@example.com")
+        self.assertFalse(user.is_dirty())
+        self.assertEqual(user.get_dirty_fields(), {})
+
+    def test_update_brevo_fields_on_save(self):
+        user = UserFactory(email="user1@example.com", brevo_last_update_date=timezone.now(), brevo_is_deleted=True)
+        user.email = "user2@example.com"  # different email
+        user.save()
+        user.refresh_from_db()
+
+        self.assertEqual(user.brevo_last_update_date, None)
+        self.assertFalse(user.brevo_is_deleted)
+
+
+class UserStaffSuperuserTest(TestCase):
+    def test_cannot_create_superuser_without_staff(self):
+        user = UserFactory.build(is_staff=False, is_superuser=True)
+        self.assertRaises(ValidationError, user.save)
+
+    def test_can_set_user_to_superuser_if_staff(self):
+        user = UserFactory.build(is_staff=True, is_superuser=False)
+        user.save()
+        self.assertFalse(user.is_superuser)
+
+        user.is_superuser = True
+        user.save()
+        self.assertTrue(user.is_superuser)
+
+
+class UserTOTPDeviceTest(TestCase):
+    def test_can_create_and_save_non_staff_without_totp_device(self):
+        user = UserFactory.build(is_staff=False, is_superuser=False)
+        user.save()
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+
+    def test_cannot_add_totp_device_to_user_non_staff(self):
+        from django_otp.plugins.otp_totp.models import TOTPDevice
+
+        user = UserFactory.build(is_staff=False, is_superuser=False)
+        user.save()
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+
+        self.assertRaises(ValidationError, TOTPDevice.objects.create, user=user, name="test-device")
+
+    def test_can_create_and_save_staff_without_totp_device(self):
+        user = UserFactory.build(is_staff=True, is_superuser=False)
+        user.save()
+        self.assertFalse(user.is_superuser)
+
+    def test_can_add_totp_device_to_user_staff(self):
+        from django_otp.plugins.otp_totp.models import TOTPDevice
+
+        user = UserFactory.build(is_staff=True, is_superuser=False)
+        user.save()
+        self.assertFalse(user.is_superuser)
+
+        device = TOTPDevice.objects.create(user=user, name="test-device")
+        self.assertEqual(device.user, user)
+
+    def test_can_create_and_save_superuser_without_totp_device(self):
+        from django_otp.plugins.otp_totp.models import TOTPDevice
+
+        user = UserFactory.build(is_staff=True, is_superuser=False)
+        user.save()
+        self.assertTrue(user.is_staff)
+        self.assertFalse(user.is_superuser)
+
+        user.is_superuser = True
+        user.save()
+        self.assertTrue(user.is_staff)
+        self.assertTrue(user.is_superuser)
+
+        device = TOTPDevice.objects.create(user=user, name="test-device")
+        self.assertEqual(device.user, user)

@@ -1,11 +1,11 @@
 import logging
 from collections import Counter
 
-from django.core.management.base import BaseCommand
 from simple_history.utils import update_change_reason
 
 from data.models import Canteen
 from api.serializers import SatelliteTeledeclarationSerializer
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ def satellite_from_central_dict(canteen_central_dict):
     }
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Rules:
     - CENTRAL => GROUPE
@@ -90,7 +90,7 @@ class Command(BaseCommand):
         apply = options["apply"]
 
         if not apply:
-            print("Dry run mode, no changes will be applied.")
+            logger.info("Dry run mode, no changes will be applied.")
 
         # stats before
         canteen_central_all_qs = Canteen.all_objects.filter(production_type=Canteen.ProductionType.CENTRAL)
@@ -171,4 +171,6 @@ class Command(BaseCommand):
                 f"Found {canteen_central_serving_all_qs.count()} CENTRAL_SERVING canteens to migrate to GROUPE"
             )
             logger.info(f"Found {canteen_groupe_all_qs.count()} existing GROUPE canteens")
-            print(Counter(Canteen.all_objects.exclude(groupe=None).values_list("production_type", flat=True)))
+            logger.info(
+                f"({Counter(Canteen.all_objects.exclude(groupe=None).values_list('production_type', flat=True))})"
+            )

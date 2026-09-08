@@ -16,12 +16,14 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     siren_unite_legale = serializers.CharField(source="canteen_snapshot.siren_unite_legale", read_only=True)
     daily_meal_count = serializers.IntegerField(source="canteen_snapshot.daily_meal_count", read_only=True)
     yearly_meal_count = serializers.IntegerField(source="canteen_snapshot.yearly_meal_count", read_only=True)
-    cout_denrees = serializers.SerializerMethodField()
+    cout_denrees = serializers.FloatField(source="cout_repas", read_only=True)
     cuisine_centrale = serializers.SerializerMethodField()
     central_producer_siret = serializers.CharField(source="canteen_snapshot.central_producer_siret", read_only=True)
     code_insee_commune = serializers.CharField(source="canteen_snapshot.city_insee_code", read_only=True)
-    # epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
+    epci = serializers.CharField(source="canteen_snapshot.epci", read_only=True)
     # epci_lib = serializers.CharField(source="canteen_snapshot.epci_lib", read_only=True)
+    pat_list = serializers.SerializerMethodField()
+    # pat_lib_list = serializers.ListField(source="canteen_snapshot.pat_lib_list", read_only=True)
     departement = serializers.CharField(source="canteen_snapshot.department", read_only=True)
     lib_departement = (
         serializers.SerializerMethodField()
@@ -39,6 +41,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     modele_economique = serializers.CharField(source="canteen_snapshot.economic_model", read_only=True)
     management_type = serializers.CharField(source="canteen_snapshot.management_type", read_only=True)
     production_type = serializers.CharField(source="canteen_snapshot.production_type", read_only=True)
+    is_filled = serializers.BooleanField(source="canteen_snapshot.is_filled", read_only=True)
     declaration_donnees_2021 = serializers.SerializerMethodField()
     declaration_donnees_2022 = serializers.SerializerMethodField()
     declaration_donnees_2023 = serializers.SerializerMethodField()
@@ -97,9 +100,9 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "cuisine_centrale",
             "central_producer_siret",
             "code_insee_commune",
-            # "epci",
+            "epci",
             # "epci_lib",
-            # "pat_list",
+            "pat_list",
             # "pat_lib_list",
             "departement",
             "lib_departement",
@@ -114,6 +117,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
             "modele_economique",
             "management_type",
             "production_type",
+            "is_filled",
             "declaration_donnees_2021",
             "declaration_donnees_2022",
             "declaration_donnees_2023",
@@ -156,9 +160,6 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         )
         read_only_fields = fields
 
-    def get_cout_denrees(self, obj):
-        return obj.meal_price if obj.meal_price else -1
-
     def get_cuisine_centrale(self, obj):
         production_type = obj.canteen_snapshot.get("production_type", None)
         if production_type in ["site", "site_cooked_elsewhere"]:
@@ -173,6 +174,9 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
 
     def get_categorie(self, obj):
         return ",".join(obj.canteen.category_lib_list_from_sector_list or [])
+
+    def get_pat_list(self, obj):
+        return ",".join(obj.canteen_snapshot.get("pat_list", []) or [])
 
     def get_lib_departement(self, obj):
         department = obj.canteen_snapshot.get("department", None)
@@ -241,19 +245,22 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
         return obj.waste_actions and (Diagnostic.WasteActions.REUSE in obj.waste_actions)
 
     def get_ratio_produits_de_la_mer_egalim(self, obj):
-        return utils.compute_ratio(obj.valeur_produits_de_la_mer_egalim, obj.valeur_produits_de_la_mer)
+        return utils.compute_percentage(obj.valeur_produits_de_la_mer_egalim, obj.valeur_produits_de_la_mer)
 
     def get_ratio_viandes_volailles_egalim(self, obj):
-        return utils.compute_ratio(obj.valeur_viandes_volailles_egalim, obj.valeur_viandes_volailles)
+        return utils.compute_percentage(obj.valeur_viandes_volailles_egalim, obj.valeur_viandes_volailles)
 
     def get_ratio_bio(self, obj):
-        return utils.compute_ratio(obj.valeur_bio_agg, obj.valeur_totale)
+        if obj.pourcentage_bio:
+            return obj.pourcentage_bio
 
     def get_ratio_egalim_avec_bio(self, obj):
-        return utils.compute_ratio(obj.valeur_egalim_agg, obj.valeur_totale)
+        if obj.pourcentage_egalim:
+            return obj.pourcentage_egalim
 
     def get_ratio_egalim_sans_bio(self, obj):
-        return utils.compute_ratio(self.get_valeur_somme_egalim_hors_bio(obj), obj.valeur_totale)
+        if obj.pourcentage_egalim_hors_bio:
+            return obj.pourcentage_egalim_hors_bio
 
     def get_genere_par_cuisine_centrale(self, obj):
         return obj.is_teledeclared_by_cc
@@ -345,7 +352,9 @@ class DiagnosticTeledeclaredOpenDataSerializer(serializers.ModelSerializer):
         return None
 
     def get_teledeclaration_ratio_bio(self, obj):
-        return obj.valeur_bio_agg / obj.valeur_totale
+        if obj.pourcentage_bio:
+            return obj.pourcentage_bio / 100
 
     def get_teledeclaration_ratio_egalim_hors_bio(self, obj):
-        return obj.valeur_egalim_hors_bio_agg / obj.valeur_totale
+        if obj.pourcentage_egalim_hors_bio:
+            return obj.pourcentage_egalim_hors_bio / 100

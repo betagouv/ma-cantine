@@ -1,37 +1,36 @@
 import logging
-import os
 
 from drf_base64.fields import Base64ImageField
+from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
-from data.models import Canteen, CanteenImage, SectorM2M
+from api.serializers.utils import set_help_text_from_verbose_name
+from data.models import Canteen
 
+from .canteen_managers import CanteenManagerInvitationSerializer, CanteenManagerSerializer
 from .diagnostic import (
     ApproDiagnosticSerializer,
     CentralKitchenDiagnosticSerializer,
     FullDiagnosticSerializer,
     PublicApproDiagnosticSerializer,
     PublicDiagnosticSerializer,
-    PublicServiceDiagnosticSerializer,
 )
-from .managerinvitation import ManagerInvitationSerializer
 from .resourceaction import ResourceActionFullSerializer
-from .user import CanteenManagerSerializer
+from .canteen_images import CanteenImageSerializer
 
 logger = logging.getLogger(__name__)
 
 
-class CanteenImageSerializer(serializers.ModelSerializer):
-    image = Base64ImageField()
-    id = serializers.IntegerField(required=False)
+REQUIRED_FIELDS = ("name", "siret")
+CREATE_ONLY_FIELDS = ("creation_source", *Canteen.MATOMO_FIELDS)
+# READ_ONLY_FIELDS: see serializers
 
-    class Meta:
-        model = CanteenImage
-        fields = (
-            "id",
-            "image",
-            "alt_text",
-        )
+
+class CanteenCheckSerializer(serializers.Serializer):
+    is_filled = serializers.BooleanField(read_only=True)
+    # infos = serializers.DictField(read_only=True)
+    # warnings = serializers.DictField(read_only=True)
+    errors = serializers.DictField(read_only=True)
 
 
 class MediaListSerializer(serializers.ListSerializer):
@@ -101,7 +100,6 @@ class BadgesSerializer(serializers.ModelSerializer):
 
 
 class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     appro_diagnostic = PublicApproDiagnosticSerializer(source="latest_published_appro_diagnostic", read_only=True)
     lead_image = CanteenImageSerializer()
     badges = BadgesSerializer(source="*", read_only=True)
@@ -123,7 +121,6 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sector_list",
-            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "production_type",
             "management_type",
@@ -135,12 +132,8 @@ class PublicCanteenPreviewSerializer(serializers.ModelSerializer):
 
 
 class PublicCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     appro_diagnostics = PublicApproDiagnosticSerializer(
         source="published_appro_diagnostics", many=True, read_only=True
-    )
-    service_diagnostics = PublicServiceDiagnosticSerializer(
-        source="published_service_diagnostics", many=True, read_only=True
     )
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
@@ -155,7 +148,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "id",
             "name",
             "appro_diagnostics",
-            "service_diagnostics",
             "city",
             "city_insee_code",
             "postal_code",
@@ -168,7 +160,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sector_list",
-            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "production_type",
             "management_type",
@@ -197,7 +188,6 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        read_only_fields = ("publication_status",)
         fields = (
             "id",
             "name",
@@ -227,19 +217,17 @@ class ElectedCanteenSerializer(serializers.ModelSerializer):
             "central_kitchen_diagnostics",
             "publication_status",  # property
         )
+        read_only_fields = ("publication_status",)
 
 
 class SatelliteCanteenSerializer(serializers.ModelSerializer):
     publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
     is_managed_by_user = serializers.BooleanField(read_only=True)
+    can_be_claimed = serializers.BooleanField(read_only=True)
     action = serializers.CharField(allow_null=True)
 
     class Meta:
         model = Canteen
-        read_only_fields = (
-            "id",
-            "publication_status",
-        )
         fields = (
             "id",
             "name",
@@ -248,27 +236,32 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "city",
             "postal_code",
             "daily_meal_count",
+            "yearly_meal_count",
             "can_be_claimed",
             "publication_status",  # property
             "is_managed_by_user",  # annotate
             "action",  # annotate
         )
+        read_only_fields = (
+            "id",
+            "publication_status",
+        )
 
 
+@set_help_text_from_verbose_name
+@extend_schema_serializer(exclude_fields=CREATE_ONLY_FIELDS)
 class FullCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(
-        source="sectors_m2m", many=True, queryset=SectorM2M.objects.all(), required=False
-    )
     diagnostics = FullDiagnosticSerializer(many=True, read_only=True)
     appro_diagnostics = ApproDiagnosticSerializer(many=True, read_only=True)
     logo = Base64ImageField(required=False, allow_null=True)
     managers = CanteenManagerSerializer(many=True, read_only=True)
-    manager_invitations = ManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
+    manager_invitations = CanteenManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
     images = MediaListSerializer(child=CanteenImageSerializer(), required=False)
     groupe = MinimalCanteenSerializer(read_only=True)
     central_kitchen = MinimalCanteenSerializer(read_only=True)
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
     satellites = MinimalCanteenSerializer(many=True, read_only=True)
+    satellites_count = serializers.IntegerField(read_only=True)
     satellites_missing_data_count = serializers.IntegerField(read_only=True)
     satellites_already_teledeclared_count = serializers.IntegerField(read_only=True)
     badges = BadgesSerializer(source="*", read_only=True)
@@ -277,30 +270,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Canteen
-        read_only_fields = (
-            "id",
-            "epci",
-            "epci_lib",
-            "pat_list",
-            "pat_lib_list",
-            "department_lib",
-            "region",
-            "region_lib",
-            "managers",
-            "manager_invitations",
-            "publication_status",
-            "groupe",
-            "central_kitchen",
-            "central_kitchen_diagnostics",
-            "satellites",
-            "satellites_count",
-            "satellites_missing_data_count",
-            "satellites_already_teledeclared_count",
-            "is_satellite",
-            "modification_date",
-            "badges",
-            "resource_actions",
-        )
         fields = (
             "id",
             "name",
@@ -316,7 +285,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "region",
             "region_lib",
             "sector_list",
-            "sectors",  # from "sectors_m2m"
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",
@@ -358,16 +326,45 @@ class FullCanteenSerializer(serializers.ModelSerializer):
             "badges",
             "resource_actions",
         )
+        read_only_fields = (
+            "id",
+            "epci",
+            "epci_lib",
+            "pat_list",
+            "pat_lib_list",
+            "department_lib",
+            "region",
+            "region_lib",
+            "managers",
+            "manager_invitations",
+            "publication_status",
+            "groupe",
+            "central_kitchen",
+            "central_kitchen_diagnostics",
+            "satellites",
+            "satellites_count",
+            "satellites_missing_data_count",
+            "satellites_already_teledeclared_count",
+            "is_satellite",
+            "modification_date",
+            "badges",
+            "resource_actions",
+        )
 
-        extra_kwargs = {"name": {"required": True}, "siret": {"required": True}}
-
-    def __init__(self, *args, **kwargs):
-        action = kwargs.pop("action", None)
-        super().__init__(*args, **kwargs)
-        if action != "create":
-            self.fields.pop("creation_mtm_source")
-            self.fields.pop("creation_mtm_campaign")
-            self.fields.pop("creation_mtm_medium")
+    def get_fields(self):
+        fields = super().get_fields()
+        # some fields are required
+        for field in REQUIRED_FIELDS:
+            fields[field].required = True
+            # fields[field].allow_null = False
+            # fields[field].allow_blank = False
+        # some fields are only available on create
+        # and hidden from the docs (see extend_schema_serializer)
+        for field in CREATE_ONLY_FIELDS:
+            fields[field].write_only = True
+            if self.instance is not None:
+                fields.pop(field, None)
+        return fields
 
     def update(self, instance, validated_data):
         if "images" not in validated_data:
@@ -423,7 +420,7 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
             "department_lib",
             "region",
             "region_lib",
-            "sectors",
+            "sectors",  # from "sectors_m2m"
             "daily_meal_count",
             "yearly_meal_count",
             "siret",
@@ -450,15 +447,6 @@ class CanteenPreviewSerializer(serializers.ModelSerializer):
             "name",
         )
         read_only_fields = fields
-
-
-class ManagingTeamSerializer(serializers.ModelSerializer):
-    managers = CanteenManagerSerializer(many=True, read_only=True)
-    manager_invitations = ManagerInvitationSerializer(source="managerinvitation_set", many=True, read_only=True)
-
-    class Meta:
-        model = Canteen
-        fields = ("id", "managers", "manager_invitations")
 
 
 class CanteenActionsSerializer(serializers.ModelSerializer):
@@ -550,6 +538,8 @@ CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS = (
     "siret",
     "siren_unite_legale",
     "city_insee_code",
+    "epci",
+    "pat_list",
     "department",
     "region",
     "daily_meal_count",
@@ -560,6 +550,7 @@ CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS = (
     "management_type",
     "economic_model",
     "central_producer_siret",
+    # cout_repas,
     "groupe_id",
     "is_filled",
 )
@@ -795,12 +786,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
         return ",".join(obj.pat_lib_list)
 
     def get_logo(self, obj):
-        bucket_url = os.environ.get("CELLAR_HOST")
-        bucket_name = os.environ.get("CELLAR_BUCKET_NAME")
-
-        if obj.logo:
-            return f"{bucket_url}/{bucket_name}/media/{obj.logo}"
-        return ""
+        return obj.logo_full_url
 
     def get_sector_list(self, obj):
         return ",".join(obj.sector_lib_list)

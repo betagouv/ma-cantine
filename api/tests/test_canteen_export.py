@@ -12,13 +12,13 @@ class CanteenListExportApiTest(APITestCase):
     def setUpTestData(cls):
         cls.url = reverse("user_canteen_list_export")
 
-    def test_excel_export_unauthenticated(self):
+    def test_cannot_export_if_unauthenticated(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_excel_export(self):
+    def test_can_export(self):
         CanteenFactory(managers=[authenticate.user])
         CanteenFactory(managers=[authenticate.user])
         CanteenFactory()
@@ -29,7 +29,7 @@ class CanteenListExportApiTest(APITestCase):
         self.assertEqual(len(response.data), 2)
 
     @authenticate
-    def test_excel_export_only_canteens_with_siret(self):
+    def test_can_export_only_canteens_with_siret(self):
         CanteenFactory(
             managers=[authenticate.user],
             siret=None,
@@ -44,7 +44,7 @@ class CanteenListExportApiTest(APITestCase):
 
         self.assertEqual(Canteen.objects.count(), 2)
 
-        response = self.client.get(reverse("user_canteen_list_export"))
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)

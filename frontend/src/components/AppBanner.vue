@@ -1,11 +1,20 @@
 <template>
-  <div class="app-banner">
+  <div class="app-banner text-left">
     <div v-if="show" class="fr-notice fr-notice--info">
       <div class="fr-container">
         <div class="fr-notice__body">
           <p class="mb-0">
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
-            <span class="fr-notice__title">Campagne de télédéclaration 2026 : du 12 janvier au 31 mars 2026.</span>
+            <span class="fr-notice__title">{{ bannerTitle }}</span>
+            <span class="fr-notice__desc">
+              Valable uniquement pour les établissements qui ont validé leur télédéclaration dans les temps. Depuis
+              votre bilan, vous pouvez corriger vos informations si besoin
+              <a :href="bannerLink" target="_blank">
+                voir l’article d’aide pour en savoir plus
+                <v-icon small class="fr-notice__icon ml-1">mdi-open-in-new</v-icon>
+              </a>
+              .
+            </span>
           </p>
         </div>
       </div>
@@ -19,7 +28,19 @@ export default {
   data() {
     return {
       show: window.SHOW_BANNER,
+      publicBannerTitle: "DROIT À L’ERREUR : du 16 au 29 avril 2026.",
+      loggedBannerTitle: "",
+      bannerLink:
+        "https://ma-cantine.crisp.help/fr/article/la-campagne-de-correction-pour-ma-teledeclaration-faq-1sk8ipw/",
     }
+  },
+  computed: {
+    isAuthenticated() {
+      return !!this.$store.state.loggedUser
+    },
+    bannerTitle() {
+      return this.isAuthenticated && this.loggedBannerTitle ? this.loggedBannerTitle : this.publicBannerTitle
+    },
   },
 }
 </script>
@@ -38,6 +59,10 @@ export default {
   &--info {
     background-color: #e8edff;
     color: #0063cb;
+  }
+
+  a {
+    color: inherit;
   }
 
   &__icon {

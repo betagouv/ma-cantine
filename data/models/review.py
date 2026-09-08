@@ -4,13 +4,6 @@ from django.db import models
 
 
 class Review(models.Model):
-    class Meta:
-        verbose_name = "évaluation du site"
-        verbose_name_plural = "évaluations du site"
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name="utilisateur")
     rating = models.PositiveSmallIntegerField(
         verbose_name="score",
@@ -20,3 +13,10 @@ class Review(models.Model):
     page = models.CharField(max_length=100, verbose_name="page")
     hasCanteen = models.BooleanField(default=False, verbose_name="eu une cantine au moment de l'évaluation")
     hasDiagnostic = models.BooleanField(default=False, verbose_name="eu un diagnostic au moment de l'évaluation")
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "évaluation du site"
+        verbose_name_plural = "évaluations du site"

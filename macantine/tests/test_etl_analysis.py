@@ -7,7 +7,7 @@ from django.test import TestCase
 from freezegun import freeze_time
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic, Sector
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
@@ -65,7 +65,7 @@ class CanteenETLAnalysisTest(TestCase):
         self.assertEqual(canteen_site["modele_economique"], "Public")
         self.assertEqual(canteen_site["secteur"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site["categorie"], "Santé,Social / Médico-social")
-        self.assertEqual(canteen_site["ministere_tutelle"], None)
+        self.assertTrue(pd.isna(canteen_site["ministere_tutelle"]))
         self.assertEqual(canteen_site["spe"], "Non")
         self.assertEqual(str(canteen_site["declaration_donnees_2022"]), "True")
         self.assertEqual(str(canteen_site["declaration_donnees_2025"]), "False")
@@ -95,14 +95,14 @@ class TeledeclarationETLAnalysisTest(TestCase):
 
     def test_teledeclaration_extract(self):
         # all years combined
-        # 2022: 3 teledeclarations (1 groupe with 1 satellite)
-        # 2023: 1 teledeclaration (1 is cancelled, 1 armee)
-        # 2024: 2 teledeclarations
-        # 2025: 1 teledeclaration
+        # 2022: 3 teledeclarations: 1 groupe with 1 satellite + 2 sites
+        # 2023: 2 teledeclarations: 1 groupe with 1 satellite + 1 site (1 armee, 1 cancelled)
+        # 2024: 3 teledeclarations: 1 groupe with 1 satellite + 2 sites
+        # 2025: 1 teledeclaration: 1 groupe with 1 satellite
         etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_td.extract_dataset()
 
-        self.assertEqual(etl_td.len_dataset(), 3 + 1 + 2 + 1)
+        self.assertEqual(etl_td.len_dataset(), 3 + 2 + 3 + 1)
         self.assertEqual(
             etl_td.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
         )  # Order by teledeclaration created date ascending
@@ -125,15 +125,15 @@ class TeledeclarationETLAnalysisTest(TestCase):
         etl_td.transform_dataset()
 
         canteen_site_earlier_diagnostic_2024 = etl_td.df[
-            etl_td.df.id == self.canteen_site_earlier_diagnostic_2024.teledeclaration_id
-        ][etl_td.df.year == 2024].iloc[0]
+            (etl_td.df.id == self.canteen_site_earlier_diagnostic_2024.teledeclaration_id) & (etl_td.df.year == 2024)
+        ].iloc[0]
         self.assertEqual(canteen_site_earlier_diagnostic_2024["secteur"], "Supérieur et Universitaire")
         self.assertEqual(
             canteen_site_earlier_diagnostic_2024["line_ministry"], "enseignement_superieur"
         )  # TODO: verbose_name
 
-        canteen_site_diagnostic_2024 = etl_td.df[etl_td.df.id == self.canteen_site_diagnostic_2024.teledeclaration_id][
-            etl_td.df.year == 2024
+        canteen_site_diagnostic_2024 = etl_td.df[
+            (etl_td.df.id == self.canteen_site_diagnostic_2024.teledeclaration_id) & (etl_td.df.year == 2024)
         ].iloc[0]
         self.assertEqual(canteen_site_diagnostic_2024["id"], self.canteen_site_diagnostic_2024.teledeclaration_id)
         self.assertEqual(canteen_site_diagnostic_2024["year"], 2024)
@@ -148,7 +148,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["central_producer_siret"], None)
         self.assertEqual(canteen_site_diagnostic_2024["secteur"], "Hôpitaux,Crèche")
         self.assertEqual(canteen_site_diagnostic_2024["categorie"], "Santé,Social / Médico-social")
-        self.assertEqual(canteen_site_diagnostic_2024["line_ministry"], None)
+        self.assertTrue(pd.isna(canteen_site_diagnostic_2024["line_ministry"]))
         self.assertGreater(
             canteen_site_diagnostic_2024["ratio_bio"],
             0,
@@ -160,46 +160,60 @@ class TeledeclarationETLAnalysisTest(TestCase):
         etl_td.extract_dataset()
         etl_td.transform_dataset()
 
-        canteen_groupe_diagnostic_2022_satellite = etl_td.df[etl_td.df.canteen_id == self.canteen_satellite.id][
-            etl_td.df.year == 2022
+        canteen_groupe_diagnostic_2022_satellite = etl_td.df[
+            (etl_td.df.canteen_id == self.canteen_satellite.id) & (etl_td.df.year == 2022)
         ].iloc[0]
-        self.assertEqual(
-            canteen_groupe_diagnostic_2022_satellite["id"], self.canteen_groupe_diagnostic_2022.teledeclaration_id
-        )
-        self.assertEqual(
-            canteen_groupe_diagnostic_2022_satellite["production_type"], "site_cooked_elsewhere"
-        )  # hardcoded
-        self.assertEqual(
-            canteen_groupe_diagnostic_2022_satellite["management_type"], self.canteen_groupe.management_type
-        )  # groupe management_type
-        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["modele_economique"], None)  # groupe economic_model
-        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["secteur"], "")  # groupe secteur
-        self.assertEqual(canteen_groupe_diagnostic_2022_satellite["categorie"], "")  # groupe categorie
+        # groupe fields
+        for TUPLE_GROUPE in [
+            ("id", self.canteen_groupe_diagnostic_2022.teledeclaration_id),
+            ("management_type", self.canteen_groupe.management_type),
+            ("objectif_zone_geo", "non renseigné"),
+            ("secteur", ""),  # groupe doesn't have a sector
+            ("categorie", ""),  # groupe doesn't have a sector
+        ]:
+            with self.subTest(TUPLE_GROUPE[0]):
+                self.assertEqual(canteen_groupe_diagnostic_2022_satellite[TUPLE_GROUPE[0]], TUPLE_GROUPE[1])
+        # groupe fields (nan)
+        for GROUPE_NAN in ["modele_economique", "departement", "lib_departement"]:
+            with self.subTest(GROUPE_NAN):
+                self.assertTrue(pd.isna(canteen_groupe_diagnostic_2022_satellite[GROUPE_NAN]))
+        # satellite fields
+        for TUPLE_SATELLITE in [
+            ("siret", self.canteen_satellite.siret),
+            ("production_type", "site_cooked_elsewhere"),  # hardcoded
+            ("satellite_canteens_count", 0),  # hardcoded
+        ]:
+            with self.subTest(TUPLE_SATELLITE[0]):
+                self.assertEqual(canteen_groupe_diagnostic_2022_satellite[TUPLE_SATELLITE[0]], TUPLE_SATELLITE[1])
 
     def test_teledeclaration_transform_groupe_since_2025(self):
         etl_td = ETL_ANALYSIS_TELEDECLARATIONS()
         etl_td.extract_dataset()
         etl_td.transform_dataset()
 
-        canteen_groupe_diagnostic_2025_satellite = etl_td.df[etl_td.df.canteen_id == self.canteen_satellite.id][
-            etl_td.df.year == 2025
+        canteen_groupe_diagnostic_2025_satellite = etl_td.df[
+            (etl_td.df.canteen_id == self.canteen_satellite.id) & (etl_td.df.year == 2025)
         ].iloc[0]
-        self.assertEqual(
-            canteen_groupe_diagnostic_2025_satellite["id"], self.canteen_groupe_diagnostic_2025.teledeclaration_id
-        )
-        self.assertEqual(
-            canteen_groupe_diagnostic_2025_satellite["production_type"], self.canteen_satellite.production_type
-        )
-        self.assertEqual(
-            canteen_groupe_diagnostic_2025_satellite["management_type"], self.canteen_satellite.management_type
-        )
-        self.assertEqual(
-            canteen_groupe_diagnostic_2025_satellite["modele_economique"], self.canteen_satellite.economic_model
-        )
-        self.assertEqual(
-            canteen_groupe_diagnostic_2025_satellite["secteur"], "Ecole primaire (maternelle et élémentaire)"
-        )
-        self.assertEqual(canteen_groupe_diagnostic_2025_satellite["categorie"], "Enseignement")
+        # groupe fields
+        for TUPLE_GROUPE in [
+            ("id", self.canteen_groupe_diagnostic_2025.teledeclaration_id),
+        ]:
+            with self.subTest(TUPLE_GROUPE[0]):
+                self.assertEqual(canteen_groupe_diagnostic_2025_satellite[TUPLE_GROUPE[0]], TUPLE_GROUPE[1])
+        # satellite fields
+        for TUPLE_SATELLITE in [
+            ("siret", self.canteen_satellite.siret),
+            ("production_type", self.canteen_satellite.production_type),
+            ("management_type", self.canteen_satellite.management_type),
+            ("modele_economique", self.canteen_satellite.economic_model),
+            ("departement", "38"),
+            ("lib_departement", "Isère"),
+            ("objectif_zone_geo", "France métropolitaine"),
+            ("secteur", "Ecole primaire (maternelle et élémentaire)"),
+            ("categorie", "Enseignement"),
+        ]:
+            with self.subTest(TUPLE_SATELLITE[0]):
+                self.assertEqual(canteen_groupe_diagnostic_2025_satellite[TUPLE_SATELLITE[0]], TUPLE_SATELLITE[1])
 
     def test_get_egalim_sans_bio(self):
         test_cases = [
@@ -244,7 +258,7 @@ class TeledeclarationETLAnalysisTest(TestCase):
                     valeur_externalites_performance=tc["data"]["valeur_externalites_performance_agg"],
                     valeur_egalim_autres=tc["data"]["valeur_egalim_autres_agg"],
                 )
-                diagnostic.teledeclare(applicant=UserFactory())
+                diagnostic.teledeclare(applicant=canteen.managers.first())
 
                 self.serializer_data = {
                     "valeur_totale": tc["data"]["valeur_totale"],
@@ -255,10 +269,10 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 }
 
                 self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-                    instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
+                    instance=Diagnostic.objects.get(id=diagnostic.id)
                 )
                 data = self.serializer.data
-                self.assertEqual(int(data["ratio_egalim_sans_bio"]), tc["expected_outcome"])
+                self.assertEqual(data["ratio_egalim_sans_bio"], tc["expected_outcome"])
 
     def test_transform_sector_column(self):
         data = {
@@ -308,14 +322,14 @@ class TeledeclarationETLAnalysisTest(TestCase):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_ok = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
             diagnostic = DiagnosticFactory(canteen=canteen_ok, year=2022, valeur_totale=1000)
-            diagnostic.teledeclare(applicant=UserFactory())
+            diagnostic.teledeclare(applicant=canteen_ok.managers.first())
 
             self.serializer_data = {
                 "yearly_meal_count": canteen_ok.yearly_meal_count,
                 "valeur_totale": diagnostic.valeur_totale,
             }
             self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-                instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
+                instance=Diagnostic.objects.get(id=diagnostic.id)
             )
             data = self.serializer.data
 
@@ -327,22 +341,27 @@ class TeledeclarationETLAnalysisTest(TestCase):
             canteen_invalid_yearly_meal_count.save(skip_validations=True)
             canteen_invalid_yearly_meal_count.refresh_from_db()
             diagnostic = DiagnosticFactory(canteen=canteen_invalid_yearly_meal_count, year=2021, valeur_totale=1000)
-            diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+            diagnostic.teledeclare(applicant=canteen_invalid_yearly_meal_count.managers.first(), skip_validations=True)
 
             self.serializer_data = {
                 "yearly_meal_count": canteen_invalid_yearly_meal_count.yearly_meal_count,
                 "valeur_totale": diagnostic.valeur_totale,
             }
             self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-                instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
+                instance=Diagnostic.objects.get(id=diagnostic.id)
             )
             data = self.serializer.data
 
-            self.assertEqual(data["cout_denrees"], -1)
+            self.assertIsNone(data["cout_denrees"])
 
     def test_geo_columns(self):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_with_geo_data = CanteenFactory(
+                pat_list=["1294", "1295"],
+                pat_lib_list=[
+                    "PAT du Département de l'Isère",
+                    "Projet Alimentaire inter Territorial de la Grande région grenobloise",
+                ],
                 department="38",
                 department_lib="Isère",
                 region="84",
@@ -351,13 +370,13 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 epci_lib="Grenoble-Alpes-Métropole",
             )
             diagnostic = DiagnosticFactory(canteen=canteen_with_geo_data, year=2022)
-            diagnostic.teledeclare(applicant=UserFactory())
+            diagnostic.teledeclare(applicant=canteen_with_geo_data.managers.first())
 
-        self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-            instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
-        )
+        self.serializer = DiagnosticTeledeclaredAnalysisSerializer(instance=Diagnostic.objects.get(id=diagnostic.id))
         data = self.serializer.data
 
+        self.assertEqual(data["epci"], "200040715")
+        self.assertEqual(data["pat_list"], "1294,1295")
         self.assertEqual(data["departement"], "38")
         self.assertEqual(data["lib_departement"], "Isère")
         self.assertEqual(data["region"], "84")
@@ -365,21 +384,25 @@ class TeledeclarationETLAnalysisTest(TestCase):
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_half_geo_data = CanteenFactory(
+                epci="200040715",
+                epci_lib=None,
+                pat_list=["1294", "1295"],
+                pat_lib_list=[],
                 department="38",
                 department_lib=None,
                 region="84",
                 region_lib=None,
-                epci="200040715",
-                epci_lib=None,
             )
             diagnostic_half_geo = DiagnosticFactory(canteen=canteen_half_geo_data, year=2022)
-            diagnostic_half_geo.teledeclare(applicant=UserFactory())
+            diagnostic_half_geo.teledeclare(applicant=canteen_half_geo_data.managers.first())
 
         self.serializer_half_geo = DiagnosticTeledeclaredAnalysisSerializer(
-            instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_half_geo.id)
+            instance=Diagnostic.objects.get(id=diagnostic_half_geo.id)
         )
         data = self.serializer_half_geo.data
 
+        self.assertEqual(data["epci"], "200040715")
+        self.assertEqual(data["pat_list"], "1294,1295")
         self.assertEqual(data["departement"], "38")
         self.assertEqual(data["lib_departement"], "Isère")  # filled with the serializer
         self.assertEqual(data["region"], "84")
@@ -387,21 +410,25 @@ class TeledeclarationETLAnalysisTest(TestCase):
 
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_without_geo_data = CanteenFactory(
+                epci=None,
+                epci_lib=None,
+                pat_list=[],
+                pat_lib_list=[],
                 department=None,
                 department_lib=None,
                 region=None,
                 region_lib=None,
-                epci=None,
-                epci_lib=None,
             )
             diagnostic_without_geo = DiagnosticFactory(canteen=canteen_without_geo_data, year=2022)
-            diagnostic_without_geo.teledeclare(applicant=UserFactory())
+            diagnostic_without_geo.teledeclare(applicant=canteen_without_geo_data.managers.first())
 
         self.serializer_without_geo = DiagnosticTeledeclaredAnalysisSerializer(
-            instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_without_geo.id)
+            instance=Diagnostic.objects.get(id=diagnostic_without_geo.id)
         )
         data_no_geo = self.serializer_without_geo.data
 
+        self.assertEqual(data_no_geo["epci"], None)
+        self.assertEqual(data_no_geo["pat_list"], "")
         self.assertEqual(data_no_geo["departement"], None)
         self.assertEqual(data_no_geo["lib_departement"], None)
         self.assertEqual(data_no_geo["region"], None)
@@ -415,11 +442,9 @@ class TeledeclarationETLAnalysisTest(TestCase):
                 economic_model=Canteen.EconomicModel.PUBLIC,
             )
             diagnostic = DiagnosticFactory(canteen=canteen_with_line_ministry, year=2022)
-            diagnostic.teledeclare(applicant=UserFactory())
+            diagnostic.teledeclare(applicant=canteen_with_line_ministry.managers.first())
 
-        self.serializer = DiagnosticTeledeclaredAnalysisSerializer(
-            instance=Diagnostic.objects.with_meal_price().get(id=diagnostic.id)
-        )
+        self.serializer = DiagnosticTeledeclaredAnalysisSerializer(instance=Diagnostic.objects.get(id=diagnostic.id))
         data = self.serializer.data
 
         self.assertEqual(data["line_ministry"], Canteen.Ministries.AGRICULTURE)
@@ -428,10 +453,10 @@ class TeledeclarationETLAnalysisTest(TestCase):
         with freeze_time("2023-03-30"):  # during the 2022 campaign
             canteen_without_line_ministry = CanteenFactory(line_ministry=None)
             diagnostic_without_line_ministry = DiagnosticFactory(canteen=canteen_without_line_ministry, year=2022)
-            diagnostic_without_line_ministry.teledeclare(applicant=UserFactory())
+            diagnostic_without_line_ministry.teledeclare(applicant=canteen_without_line_ministry.managers.first())
 
         self.serializer_without_line_ministry = DiagnosticTeledeclaredAnalysisSerializer(
-            instance=Diagnostic.objects.with_meal_price().get(id=diagnostic_without_line_ministry.id)
+            instance=Diagnostic.objects.get(id=diagnostic_without_line_ministry.id)
         )
         data_without_line_ministry = self.serializer_without_line_ministry.data
 
@@ -507,6 +532,8 @@ class TeledeclarationETLAnalysisTest(TestCase):
                         "management_type": "direct",
                         "economic_model": "public",
                         "city_insee_code": "38185",
+                        "epci": "200040715",
+                        "pat_list": ["1294", "1295"],
                         "department": "38",
                         "region": "84",
                         "yearly_meal_count": 120,
@@ -527,6 +554,8 @@ class TeledeclarationETLAnalysisTest(TestCase):
         # central (before 2025)
         self.assertEqual(len(etl.df[etl.df.canteen_id == 20]), 1)
         self.assertTrue(np.isnan(etl.df[etl.df.canteen_id == 20].iloc[0].code_insee_commune))
+        self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].epci))
+        self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].pat_list))
         self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].departement))
         self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].region))
         self.assertTrue(pd.isna(etl.df[etl.df.canteen_id == 20].iloc[0].secteur))
@@ -540,6 +569,8 @@ class TeledeclarationETLAnalysisTest(TestCase):
         )  # Zeros are processed as zeros and not nulls
         # groupe (since 2025)
         self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].code_insee_commune, "38185")  # from satellite
+        self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].epci, "200040715")  # from satellite
+        self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].pat_list, "1294,1295")  # from satellite
         self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].departement, "38")  # from satellite
         self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].region, "84")  # from satellite
         self.assertEqual(etl.df[etl.df.canteen_id == 40].iloc[0].secteur, "Hôpitaux")  # from satellite

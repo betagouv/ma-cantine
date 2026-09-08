@@ -1,32 +1,47 @@
 from drf_base64.fields import Base64FileField
+from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
+from api.serializers.utils import PurchaseField, choice_list_to_choices, set_help_text_from_verbose_name
 from data.models import Purchase
 
-from .utils import appro_to_percentages
 
-
-class PurchaseSerializer(serializers.ModelSerializer):
+class PurchaseOldSerializer(serializers.ModelSerializer):
     canteen = serializers.PrimaryKeyRelatedField(read_only=True)
-    invoice_file = Base64FileField(required=False, allow_null=True)
+    provider = serializers.CharField(source="fournisseur", required=False, allow_blank=True)
+    family = serializers.ChoiceField(
+        source="famille_produits", choices=Purchase.Family.choices, required=False, allow_blank=True
+    )
+    characteristics = serializers.MultipleChoiceField(
+        source="caracteristiques", choices=Purchase.Characteristic.choices, required=False, allow_blank=True
+    )
+    price_ht = serializers.DecimalField(source="prix_ht", max_digits=20, decimal_places=2, required=False)
+    invoice_file = Base64FileField(source="facture", required=False, allow_null=True)
+    local_definition = serializers.ChoiceField(
+        source="definition_local", choices=Purchase.Local.choices, required=False, allow_blank=True
+    )
+    date_unformatted = serializers.DateField(source="date", required=False)
 
     class Meta:
         model = Purchase
         fields = (
             "id",
-            "creation_date",
-            "modification_date",
             "canteen",
             "date",
             "description",
-            "provider",
-            "family",
-            "characteristics",
-            "price_ht",
-            "invoice_file",
-            "local_definition",
+            "date_unformatted",
+            # TODO: update once we finish the translation to French
+            "provider",  # "fournisseur",
+            "family",  # "famille_produits",
+            "characteristics",  # "caracteristiques",
+            "price_ht",  # "prix_ht",
+            "invoice_file",  # "facture",
+            "local_definition",  # "definition_local",
+            "definition_local_km",
             "import_source",
             "creation_source",
+            "creation_date",
+            "modification_date",
         )
         read_only_fields = (
             "id",
@@ -34,17 +49,158 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "modification_date",
         )
 
+    def get_fields(self):
+        fields = super().get_fields()
+        # some fields are only available on create
+        if self.instance is not None:
+            fields.pop("creation_source", None)
+        else:
+            fields["creation_source"].write_only = True
+        return fields
+
+    # TODO: remove once we finish the translation to French
+    @staticmethod
+    def _normalize_characteristics(validated_data):
+        characteristics = validated_data.get("caracteristiques")
+        if isinstance(characteristics, set):
+            ordered_characteristics = [choice for choice, _label in Purchase.Characteristic.choices]
+            validated_data["caracteristiques"] = [
+                choice for choice in ordered_characteristics if choice in characteristics
+            ]
+
     def create(self, validated_data):
+        self._normalize_characteristics(validated_data)
+
         if "canteen" not in validated_data:
             return super().create(validated_data)
 
         validated_data["canteen_id"] = validated_data.pop("canteen").id
         return super().create(validated_data)
 
+    def update(self, instance, validated_data):
+        self._normalize_characteristics(validated_data)
+        return super().update(instance, validated_data)
 
-class PurchaseField(serializers.DecimalField):
-    def __init__(self):
-        super().__init__(max_digits=20, decimal_places=2, required=False)
+
+REQUIRED_FIELDS = ["description", "date", "prix_ht", "famille_produits"]
+CREATE_ONLY_FIELDS = ["creation_source", "import_source"]
+READ_ONLY_FIELDS = ["id", "canteen", "creation_date", "modification_date"]
+
+
+@set_help_text_from_verbose_name
+@extend_schema_serializer(exclude_fields=CREATE_ONLY_FIELDS)
+class PurchaseSerializer(serializers.ModelSerializer):
+    # caracteristiques is split into 4 fields
+    categories_egalim = serializers.MultipleChoiceField(
+        choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_EGALIM),
+        help_text="Catégories EGalim",
+        required=False,
+    )
+    origine = serializers.ChoiceField(
+        choices=choice_list_to_choices(Purchase.CHARACTERISTIC_LABELS_ORIGINE), help_text="Origine", required=False
+    )
+    est_circuit_court = serializers.BooleanField(help_text="Circuit court", required=False)
+    est_local = serializers.BooleanField(help_text="Local", required=False)
+
+    class Meta:
+        model = Purchase
+        fields = (
+            "id",
+            "canteen",
+            "description",
+            "fournisseur",
+            "date",
+            "prix_ht",
+            "famille_produits",
+            "categories_egalim",
+            "origine",
+            "est_circuit_court",
+            "est_local",
+            "definition_local",
+            "definition_local_km",
+            # "facture",
+            "creation_source",
+            "import_source",
+            "creation_date",
+            "modification_date",
+        )
+
+    def get_fields(self):
+        fields = super().get_fields()
+        # some fields are required
+        for field in REQUIRED_FIELDS:
+            fields[field].required = True
+            fields[field].allow_null = False
+            fields[field].allow_blank = False
+        # some fields are only available on create
+        # and hidden from the docs (see extend_schema_serializer)
+        for field in CREATE_ONLY_FIELDS:
+            fields[field].write_only = True
+            if self.instance is not None:
+                fields.pop(field, None)
+        # some fields are readonly
+        for field in READ_ONLY_FIELDS:
+            fields[field].read_only = True
+        return fields
+
+    def to_representation(self, instance):
+        """
+        Useful for read operations (returning data)
+        """
+        representation = super().to_representation(instance)
+        representation["categories_egalim"] = [
+            characteristic
+            for characteristic in (instance.caracteristiques or [])
+            if characteristic in Purchase.CHARACTERISTIC_LABELS_EGALIM
+        ]
+        representation["origine"] = next(
+            (
+                characteristic
+                for characteristic in (instance.caracteristiques or [])
+                if characteristic in Purchase.CHARACTERISTIC_LABELS_ORIGINE
+            ),
+            "",
+        )
+        representation["est_circuit_court"] = any(
+            characteristic == Purchase.Characteristic.CIRCUIT_COURT
+            for characteristic in (instance.caracteristiques or [])
+        )
+        representation["est_local"] = any(
+            characteristic == Purchase.Characteristic.LOCAL for characteristic in (instance.caracteristiques or [])
+        )
+        return representation
+
+    def to_internal_value(self, data):
+        """
+        Useful for write operations (creating/updating data)
+        """
+        internal_value = super().to_internal_value(data)
+
+        caracteristiques = []
+
+        caracteristiques.extend(internal_value.pop("categories_egalim", []))
+
+        origine = internal_value.pop("origine", "")
+        if origine:
+            caracteristiques.append(origine)
+
+        if internal_value.pop("est_circuit_court", False):
+            caracteristiques.append(Purchase.Characteristic.CIRCUIT_COURT)
+
+        if internal_value.pop("est_local", False):
+            caracteristiques.append(Purchase.Characteristic.LOCAL)
+
+        internal_value["caracteristiques"] = caracteristiques
+        return internal_value
+
+
+class PurchaseFactureSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    facture = Base64FileField()
+
+    class Meta:
+        model = Purchase
+        fields = ("id", "facture")
 
 
 # NB: these names reflect the names in the diagnostic model
@@ -185,12 +341,19 @@ class PurchaseSummarySerializer(serializers.Serializer):
     valeur_autres_local = PurchaseField()
 
 
-class PurchasePercentageSummarySerializer(PurchaseSummarySerializer):
+# NB: these names reflect the names in the diagnostic model
+class PurchasePercentageSummarySerializer(serializers.Serializer):
+    year = serializers.IntegerField()
+    percentage_valeur_totale = serializers.FloatField(required=False)
+    percentage_valeur_bio = serializers.FloatField(required=False)
+    percentage_valeur_siqo = serializers.FloatField(required=False)
+    percentage_valeur_externalites_performance = serializers.FloatField(required=False)
+    percentage_valeur_egalim_autres = serializers.FloatField(required=False)
+    percentage_valeur_viandes_volailles_egalim = serializers.FloatField(required=False)
+    percentage_valeur_viandes_volailles_france = serializers.FloatField(required=False)
+    percentage_valeur_produits_de_la_mer_egalim = serializers.FloatField(required=False)
+    percentage_valeur_produits_de_la_mer_france = serializers.FloatField(required=False)
     last_purchase_date = serializers.DateField(required=False)
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance)
 
 
 class PurchaseExportSerializer(serializers.ModelSerializer):
@@ -202,9 +365,9 @@ class PurchaseExportSerializer(serializers.ModelSerializer):
             "date",
             "canteen",
             "description",
-            "provider",
-            "readable_family",
-            "readable_characteristics",
-            "price_ht",
+            "fournisseur",
+            "famille_produits_display",
+            "caracteristiques_display",
+            "prix_ht",
         )
         read_only_fields = fields

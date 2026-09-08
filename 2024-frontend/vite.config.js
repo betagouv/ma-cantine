@@ -1,11 +1,15 @@
 import { fileURLToPath, URL } from "node:url"
+import path from "node:path"
 
 import { defineConfig } from "vite"
 import vue from "@vitejs/plugin-vue"
 import vueDevTools from "vite-plugin-vue-devtools"
-import { djangoVitePlugin } from "django-vite-plugin"
+
+const rootDir = path.dirname(fileURLToPath(import.meta.url))
 
 // https://vitejs.dev/config/
+// Backend integration: https://vitejs.dev/guide/backend-integration.html
+// Django bridge: https://github.com/MrBin99/django-vite
 export default defineConfig({
   plugins: [
     vue({
@@ -17,11 +21,17 @@ export default defineConfig({
       },
     }),
     vueDevTools(),
-    djangoVitePlugin({
-      input: ["src/main.js"],
-      root: "../",
-    }),
   ],
+  base: "/static/",
+  root: rootDir,
+  build: {
+    manifest: "manifest.json",
+    outDir: path.resolve(rootDir, "../build"),
+    emptyOutDir: true,
+    rollupOptions: {
+      input: path.resolve(rootDir, "src/main.js"),
+    },
+  },
   resolve: {
     alias: [
       {
@@ -32,18 +42,12 @@ export default defineConfig({
         find: "vue",
         replacement: fileURLToPath(new URL("./node_modules/vue/index.js", import.meta.url)),
       },
-      {
-        find: "mdi-icons/styles.css",
-        replacement: fileURLToPath(new URL("./node_modules/vue-material-design-icons/styles.css", import.meta.url)),
-      },
-      {
-        find: /^mdi-icons\/([\w]+)/,
-        replacement: fileURLToPath(new URL("./node_modules/vue-material-design-icons/$1.vue", import.meta.url)),
-      },
     ],
   },
   server: {
     host: "0.0.0.0",
-    origin: "http://localhost:8000",
+    port: 5173,
+    strictPort: true,
+    origin: "http://localhost:5173",
   },
 })

@@ -3,12 +3,15 @@
     <CentralKitchenInfo :canteen="canteen" v-if="usesCentralKitchenDiagnostics" />
 
     <p>
-      La loi EGalim impose {{ applicableRules.qualityThreshold }} % de produits durables et de qualité et durable, dont
-      {{ applicableRules.bioThreshold }} % de bio
+      La loi EGalim impose : {{ applicableRules.qualityThreshold }} % de produits durables et de qualité et durable,
+      dont {{ applicableRules.bioThreshold }} % de bio,
       <span v-if="applicableRules.qualityThreshold !== 50">
-        - en respectant
+        en respectant
         <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">les différents seuils fixés pour l'Outre-mer</a>
+        ,
       </span>
+      et 60% à l'ensemble Viandes, volailles et produits de la mer, non indépendamment, cet objectif est fixé à 100%
+      pour les restaurants de l'État.
     </p>
 
     <div v-if="tabs.length" class="mb-8">
@@ -97,12 +100,6 @@
                 <br />
                 EGalim
               </p>
-              <p
-                v-if="applicableRules.viandesVolaillesEgalimThreshold"
-                class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
-              >
-                <i>objectif : {{ applicableRules.viandesVolaillesEgalimThreshold }} %</i>
-              </p>
             </v-col>
             <v-col cols="12" sm="4" class="pa-4">
               <v-icon large class="grey--text text--darken-3 mb-2">$france-line</v-icon>
@@ -125,12 +122,6 @@
                 <br />
                 et aquaculture EGalim
               </p>
-              <p
-                v-if="applicableRules.produitsDeLaMerEgalimThreshold"
-                class="mt-1 mb-0 fr-text-sm grey--text text--darken-1"
-              >
-                <i>objectif : {{ applicableRules.produitsDeLaMerEgalimThreshold }} %</i>
-              </p>
             </v-col>
           </v-row>
         </div>
@@ -150,7 +141,7 @@
 </template>
 
 <script>
-import { applicableDiagnosticRules, getPercentage, toPercentage, latestCreatedDiagnostic } from "@/utils"
+import { applicableDiagnosticRules, toPercentage, latestCreatedDiagnostic } from "@/utils"
 import CentralKitchenInfo from "./CentralKitchenInfo"
 import DsfrSegmentedControl from "@/components/DsfrSegmentedControl"
 import ApproGraph from "@/components/ApproGraph"
@@ -224,32 +215,14 @@ export default {
       const yearMaybe = +this.tab
       return applicableDiagnosticRules(this.canteen, yearMaybe)
     },
-    hasPercentages() {
-      return !!this.diagnosticForYear && "percentageValeurTotale" in this.diagnosticForYear
-    },
     viandesVolaillesEgalimPercentage() {
-      return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValeurViandesVolaillesEgalim)
-        : getPercentage(
-            this.diagnosticForYear.valeurViandesVolaillesEgalim,
-            this.diagnosticForYear.valeurViandesVolailles
-          )
+      return toPercentage(this.diagnosticForYear.percentageValeurViandesVolaillesEgalim)
     },
     viandesVolaillesFrancePercentage() {
-      return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValeurViandesVolaillesFrance)
-        : getPercentage(
-            this.diagnosticForYear.valeurViandesVolaillesFrance,
-            this.diagnosticForYear.valeurViandesVolailles
-          )
+      return toPercentage(this.diagnosticForYear.percentageValeurViandesVolaillesFrance)
     },
     produitsDeLaMerEgalimPercentage() {
-      return this.hasPercentages
-        ? toPercentage(this.diagnosticForYear.percentageValeurProduitsDeLaMerEgalim)
-        : getPercentage(
-            this.diagnosticForYear.valeurProduitsDeLaMerEgalim,
-            this.diagnosticForYear.valeurProduitsDeLaMer
-          )
+      return toPercentage(this.diagnosticForYear.percentageValeurProduitsDeLaMerEgalim)
     },
     graphDiagnostics() {
       if (!this.approData || this.approData.length === 0) return null
@@ -326,7 +299,7 @@ export default {
     },
     getPurchasesSummary() {
       return fetch(
-        `/api/v1/canteenPurchasesPercentageSummary/${this.canteen.id}?year=${this.thisYear}&ignoreRedaction=${this.editable}`
+        `/api/v1/canteens/${this.canteen.id}/purchases/percentageSummary?year=${this.thisYear}&ignoreRedaction=${this.editable}`
       )
         .then((response) => (response.ok ? response.json() : undefined))
         .then((response) => {

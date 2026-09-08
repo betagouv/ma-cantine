@@ -52,8 +52,7 @@ class CanteenPublishedListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body.get("count"), 3)
-
-        results = body.get("results", [])
+        results = body["results"]
 
         for published_canteen in published_canteens:
             self.assertTrue(any(x["id"] == published_canteen.id for x in results))
@@ -77,7 +76,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         response = self.client.get(f"{reverse('published_canteens')}?search={search_term}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
 
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].get("name"), "Mochi")
@@ -90,7 +90,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         response = self.client.get(f"{reverse('published_canteens')}?search={search_term}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
 
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].get("name"), "Wakamé")
@@ -105,7 +106,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         response = self.client.get(f"{reverse('published_canteens')}?search={search_term}")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
 
         self.assertEqual(len(results), 2)
 
@@ -127,7 +129,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].get("name"), "Shiso")
 
@@ -139,7 +142,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 2)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
@@ -152,7 +156,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 0)
 
         # Filters are inclusive, so a value of 25 brings "Umami"
@@ -162,7 +167,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].get("name"), "Umami")
 
@@ -174,7 +180,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?department=69"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].get("name"), "Shiso")
 
@@ -186,7 +193,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?sector={Sector.EDUCATION_PRIMAIRE}"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 2)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
@@ -194,13 +202,15 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?sector={Sector.ENTERPRISE_ENTREPRISE}"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 1)
         self.assertEqual(results[0].get("name"), "Wasabi")
 
         url = f"{reverse('published_canteens')}?sector={Sector.ENTERPRISE_ENTREPRISE}&sector={Sector.SOCIAL_AUTRE}"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 3)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Wasabi", result_names)
@@ -235,7 +245,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 4)
         self.assertEqual(results[0]["name"], "Umami")
         self.assertEqual(results[1]["name"], "Mochi")
@@ -244,7 +255,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?ordering=name"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 4)
         self.assertEqual(results[0]["name"], "Mochi")
         self.assertEqual(results[1]["name"], "Shiso")
@@ -256,7 +268,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?ordering=-modification_date"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 4)
         self.assertEqual(results[0]["name"], "Mochi")
         self.assertEqual(results[1]["name"], "Umami")
@@ -265,7 +278,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?ordering=daily_meal_count"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 4)
         self.assertEqual(results[0]["name"], "Wasabi")
         self.assertEqual(results[1]["name"], "Umami")
@@ -303,7 +317,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?ordering=daily_meal_count"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 4)
         self.assertEqual(results[0]["name"], "Shiso")
         self.assertEqual(results[1]["name"], "Wasabi")
@@ -312,7 +327,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?ordering=-daily_meal_count"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 4)
         self.assertEqual(results[0]["name"], "Umami")
         self.assertEqual(results[1]["name"], "Mochi")
@@ -330,13 +346,13 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             name="Central",
             region=Region.auvergne_rhone_alpes,
             production_type=Canteen.ProductionType.CENTRAL,
-            siret="22730656663081",
+            siret="21380185500015",
         )
         CanteenFactory(
             name="Satellite",
             region=Region.auvergne_rhone_alpes,
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret="22730656663081",
+            central_producer_siret="21380185500015",
         )
         medium_canteen = CanteenFactory(name="Wasabi", region=Region.auvergne_rhone_alpes)
         siqo_canteen = CanteenFactory(name="Umami", region=Region.auvergne_rhone_alpes)
@@ -370,7 +386,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         )
         CanteenFactory(
             name="Cantine sans bilan avec siret cuisine centrale null",
-            siret="21380185500015",
+            siret="21670482500019",
             central_producer_siret=None,
         )
 
@@ -480,7 +496,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?min_portion_bio={0.2}"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 5)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
@@ -489,7 +506,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?min_portion_combined={0.5}"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 7)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
@@ -500,7 +518,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?min_portion_bio={0.1}&min_portion_combined={0.5}"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 6)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
@@ -510,7 +529,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?badge=appro"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 6)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
@@ -521,7 +541,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         # if both badge and thresholds specified, return the results that match the most strict threshold
         url = f"{reverse('published_canteens')}?badge=appro&min_portion_combined={0.01}"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 6)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
@@ -531,7 +552,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?badge=appro&min_portion_combined={0.5}"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 5)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Shiso", result_names)
@@ -540,7 +562,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
         url = f"{reverse('published_canteens')}?min_portion_bio={0.001}"
         response = self.client.get(url)
-        results = response.json().get("results", [])
+        body = response.json()
+        results = body["results"]
         self.assertEqual(len(results), 9)
         result_names = list(map(lambda x: x.get("name"), results))
         self.assertIn("Cantine avec bilan mais siret vide", result_names)
@@ -806,7 +829,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         serialized_diagnostic = body.get("approDiagnostics")[0]
         self.assertEqual(serialized_diagnostic["id"], diagnostic.id)
         self.assertEqual(serialized_diagnostic["percentageValeurTotale"], 1)
-        self.assertNotIn("percentageValeurBio", serialized_diagnostic)
+        self.assertEqual(serialized_diagnostic["percentageValeurBio"], None)
 
     def test_satellite_published_no_type(self):
         """
@@ -870,17 +893,14 @@ class PublishedCanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body.get("id"), canteen_satellite.id)
         self.assertEqual(len(body.get("approDiagnostics")), 2)
-        self.assertEqual(len(body.get("serviceDiagnostics")), 1)
         appro_diagnostics = body.get("approDiagnostics")
         appro_diag_2020 = next(filter(lambda x: x["year"] == 2020, appro_diagnostics))
         appro_diag_2021 = next(filter(lambda x: x["year"] == 2021, appro_diagnostics))
-        service_diag_2021 = body.get("serviceDiagnostics")[0]
         self.assertIn("percentageValeurTotale", appro_diag_2020)
         self.assertNotIn("hasWasteDiagnostic", appro_diag_2020)
         self.assertIn("percentageValeurTotale", appro_diag_2021)
-        self.assertIn("hasWasteDiagnostic", service_diag_2021)
         self.assertNotIn("valeurViandesVolaillesEgalim", appro_diag_2021)
-        # self.assertIn("percentageValeurViandesVolaillesEgalim", appro_diag_2021)
+        self.assertIn("percentageValeurViandesVolaillesEgalim", appro_diag_2021)
         self.assertNotIn("valeurProduitsDeLaMerEgalim", appro_diag_2021)
         self.assertIn("percentageValeurProduitsDeLaMerEgalim", appro_diag_2021)
 
@@ -929,18 +949,18 @@ class PublishedCanteenDetailApiTest(APITestCase):
         The published endpoint should not contain the real economic data, only percentages.
         Even when the meat and fish totals are absent, but EGalim and France totals are present.
         """
-        central_siret = "22730656663081"
+        central_siret = "21380185500015"
         canteen = CanteenFactory(siret=central_siret, production_type=Canteen.ProductionType.ON_SITE)
 
         DiagnosticFactory(
             canteen=canteen,
             year=2021,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_viandes_volailles=None,
             valeur_viandes_volailles_egalim=100,
             valeur_viandes_volailles_france=100,
             valeur_produits_de_la_mer=None,
             valeur_produits_de_la_mer_egalim=100,
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
         )
 
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
@@ -948,9 +968,9 @@ class PublishedCanteenDetailApiTest(APITestCase):
 
         serialized_diag = body.get("approDiagnostics")[0]
 
-        # self.assertIn("percentageValeurViandesVolaillesEgalim", serialized_diag)
-        # self.assertIn("percentageValeurViandesVolaillesFrance", serialized_diag)
-        # self.assertIn("percentageValeurProduitsDeLaMerEgalim", serialized_diag)
+        self.assertIn("percentageValeurViandesVolaillesEgalim", serialized_diag)
+        self.assertIn("percentageValeurViandesVolaillesFrance", serialized_diag)
+        self.assertIn("percentageValeurProduitsDeLaMerEgalim", serialized_diag)
         self.assertNotIn("valeurViandesVolaillesEgalim", serialized_diag)
         self.assertNotIn("valeurViandesVolaillesFrance", serialized_diag)
         self.assertNotIn("valeurProduitsDeLaMerEgalim", serialized_diag)
@@ -972,14 +992,8 @@ class PublishedCanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(len(body.get("serviceDiagnostics")), 3)
         self.assertEqual(len(body.get("approDiagnostics")), 1)
-        serialized_diags = body.get("serviceDiagnostics")
         serialized_appro_diags = body.get("approDiagnostics")
-
-        for diag in serialized_diags:
-            self.assertNotIn("percentageValeurTotale", diag)
-            self.assertNotIn("valeurTotale", diag)
 
         self.assertEqual(serialized_appro_diags[0]["id"], published_appro_diag.id)
         self.assertIn("percentageValeurTotale", serialized_appro_diags[0])
@@ -1124,14 +1138,14 @@ class PublishedCanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 0)
 
+    @freeze_time("2024-02-10")  # during the 2023 campaign
     def test_td_diags_not_redacted(self):
-        """
-        A teledeclared diagnostic cannot be redacted
-        """
-        canteen = CanteenFactory(redacted_appro_years=[2022, 2023])
+        user = UserFactory()
+        canteen = CanteenFactory(redacted_appro_years=[2022, 2023], managers=[user])
 
         DiagnosticFactory(canteen=canteen, year=2022)
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2023, status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2023)
+        diagnostic.teledeclare(applicant=user)
         TeledeclarationFactory(
             diagnostic=diagnostic, status=Teledeclaration.TeledeclarationStatus.SUBMITTED, declared_data={"foo": "bar"}
         )
@@ -1139,100 +1153,18 @@ class PublishedCanteenDetailApiTest(APITestCase):
         response = self.client.get(reverse("single_published_canteen", kwargs={"pk": canteen.id}))
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 1)
-        self.assertEqual(len(body.get("serviceDiagnostics")), 2)
 
-
-class TestPublishedCanteenClaimApiTest(APITestCase):
-    @authenticate
-    def test_canteen_claim_request(self):
-        canteen = CanteenFactory()
-        canteen.managers.clear()
-
-        response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
+    def test_search_by_siren(self):
+        siren = "110070018"
+        canteen_siret = CanteenFactory(siret="11007001800012")
+        canteen_siren = CanteenFactory(siren_unite_legale=siren, siret=None)
+        response = self.client.get(f"{reverse('published_canteens')}?search={siren}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["id"], canteen.id)
-        self.assertEqual(body["name"], canteen.name)
-        user = authenticate.user
-        self.assertEqual(canteen.managers.first().id, user.id)
-        self.assertEqual(canteen.managers.count(), 1)
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.claimed_by, user)
-        self.assertTrue(canteen.has_been_claimed)
-
-    @authenticate
-    def test_canteen_not_filled_can_be_claimed(self):
-        canteen = CanteenFactory()
-        canteen.managers.clear()
-        canteen.siret = None
-        canteen.save(skip_validations=True)
-
-        self.assertIsNone(canteen.siret)
-        self.assertFalse(canteen.is_filled)
-
-        response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["id"], canteen.id)
-        self.assertEqual(body["name"], canteen.name)
-        user = authenticate.user
-        self.assertEqual(canteen.managers.first().id, user.id)
-        self.assertEqual(canteen.managers.count(), 1)
-        canteen.refresh_from_db()
-        self.assertEqual(canteen.claimed_by, user)
-        self.assertTrue(canteen.has_been_claimed)
-
-    @authenticate
-    def test_canteen_claim_request_fails_when_already_claimed(self):
-        canteen = CanteenFactory()
-        self.assertGreater(canteen.managers.count(), 0)
-        user = authenticate.user
-        self.assertFalse(canteen.managers.filter(id=user.id).exists())
-
-        response = self.client.post(reverse("claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertFalse(canteen.managers.filter(id=user.id).exists())
-        canteen.refresh_from_db()
-        self.assertFalse(canteen.has_been_claimed)
-
-    @authenticate
-    def test_undo_claim_canteen(self):
-        canteen = CanteenFactory(claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user])
-
-        response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(canteen.managers.filter(id=authenticate.user.id).exists())
-        canteen.refresh_from_db()
-        self.assertIsNone(canteen.claimed_by)
-        self.assertFalse(canteen.has_been_claimed)
-
-    @authenticate
-    def test_undo_claim_for_canteen_not_filled(self):
-        canteen = CanteenFactory(claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user])
-        canteen.siret = None
-        canteen.save(skip_validations=True)
-
-        self.assertIsNone(canteen.siret)
-        self.assertFalse(canteen.is_filled)
-
-        response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(canteen.managers.filter(id=authenticate.user.id).exists())
-        canteen.refresh_from_db()
-        self.assertIsNone(canteen.claimed_by)
-        self.assertFalse(canteen.has_been_claimed)
-
-    @authenticate
-    def test_undo_claim_canteen_fails_if_not_original_claimer(self):
-        other_user = UserFactory()
-        canteen = CanteenFactory(claimed_by=other_user, has_been_claimed=True, managers=[authenticate.user])
-
-        response = self.client.post(reverse("undo_claim_canteen", kwargs={"canteen_pk": canteen.id}), None)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertTrue(canteen.managers.filter(id=authenticate.user.id).exists())
-        canteen.refresh_from_db()
-        self.assertTrue(canteen.has_been_claimed)
-        self.assertEqual(canteen.claimed_by, other_user)
+        results = body.get("results")
+        self.assertEqual(body.get("count"), 2)
+        self.assertEqual(results[0]["id"], canteen_siren.id)
+        self.assertEqual(results[1]["id"], canteen_siret.id)
 
 
 class CanteenPreviewDetailApiTest(APITestCase):

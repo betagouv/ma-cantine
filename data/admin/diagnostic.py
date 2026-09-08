@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
 
+from data.admin.utils import ReadOnlyAdminMixin
 from data.models import Diagnostic
 from data.models.creation_source import CreationSource
 
@@ -22,19 +23,48 @@ class DiagnosticForm(forms.ModelForm):
         }
 
 
-class DiagnosticInline(admin.TabularInline):
+class CanteenDiagnosticInline(ReadOnlyAdminMixin, admin.TabularInline):
     model = Diagnostic
     show_change_link = True
-    fields = ("year", "diagnostic_type", "status", "creation_date", "modification_date")
+    fields = ("year", "diagnostic_type", "status", "applicant", "creation_date", "modification_date")
     readonly_fields = fields
     extra = 0
-    can_delete = False
 
-    def has_add_permission(self, request, obj):
-        return False
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("canteen", "applicant")
 
-    def has_change_permission(self, request, obj=None):
-        return False
+
+class UserDiagnosticInline(ReadOnlyAdminMixin, admin.TabularInline):
+    model = Diagnostic
+    fk_name = "applicant"
+    show_change_link = True
+    fields = ("canteen", "year", "diagnostic_type", "status", "creation_date", "modification_date")
+    readonly_fields = fields
+    extra = 0
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("canteen", "applicant")
+
+
+class AllObjectsFilter(admin.SimpleListFilter):
+    title = "Inclure 1TD1Site ?"
+    parameter_name = "all_objects"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("true", "Oui"),
+            ("false", "Non (par défaut)"),
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == "true":
+            pass
+        else:  # default
+            # restrict get_queryset to .objects() instead of .all_objects()
+            queryset = queryset.exclude(generated_from_groupe_diagnostic=True)
+        return queryset
 
 
 @admin.register(Diagnostic)
@@ -47,7 +77,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "creation_date",
         "modification_date",
     )
-    list_filter = ("year", "diagnostic_type", "status", "creation_source")
+    list_filter = ("year", "diagnostic_type", "status", "creation_source", AllObjectsFilter)
     search_fields = (
         "id",
         "canteen__name",
@@ -70,6 +100,10 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                     "status",
                 )
             },
+        ),
+        (
+            "Informations de la cantine",
+            {"fields": (*Diagnostic.CANTEEN_FIELDS,)},
         ),
         (
             "Plus de produits de qualité et durables dans nos assiettes",
@@ -131,6 +165,16 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             },
         ),
         (
+            "Champs calculés",
+            {
+                "fields": (
+                    *Diagnostic.AGGREGATED_APPRO_FIELDS,
+                    *Diagnostic.EGALIM_STATS_FIELDS,
+                    *Diagnostic.OTHER_COMPUTED_FIELDS,
+                )
+            },
+        ),
+        (
             "Télédéclaration",
             {
                 "fields": (
@@ -143,25 +187,40 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 )
             },
         ),
+        ("1TD1Site", {"fields": (*Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,)}),
         (
             "Metadonnées",
-            {"fields": Diagnostic.CREATION_META_FIELDS},
+            {
+                "fields": (
+                    *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
+                    *Diagnostic.CREATION_META_FIELDS,
+                )
+            },
         ),
     )
     readonly_fields = (
         "status",
         *Diagnostic.MATOMO_FIELDS,
         *Diagnostic.TUNNEL_PROGRESS_FIELDS,
+        *Diagnostic.AGGREGATED_APPRO_FIELDS,
+        *Diagnostic.EGALIM_STATS_FIELDS,
         *Diagnostic.TELEDECLARATION_FIELDS,
+        *Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,
         "applicant",
         "canteen_snapshot_pretty",
         "satellites_snapshot_pretty",
         "applicant_snapshot_pretty",
+        "groupe_snapshot_pretty",
+        *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
         *Diagnostic.CREATION_META_FIELDS,
     )
 
     def get_queryset(self, request):
-        qs = super().get_queryset(request)
+        # override super().get_queryset(request)
+        qs = self.model.all_objects
+        ordering = self.get_ordering(request)
+        if ordering:
+            qs = qs.order_by(*ordering)
         qs = qs.prefetch_related("canteen")
         return qs
 
@@ -172,6 +231,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         """
         obj.full_clean()
         if not change:
+            obj.creation_user = request.user
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
 
@@ -201,3 +261,9 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         return mark_safe(f"<pre>{data}</pre>")
 
     applicant_snapshot_pretty.short_description = Diagnostic._meta.get_field("applicant_snapshot").verbose_name
+
+    def groupe_snapshot_pretty(self, obj):
+        data = json.dumps(obj.groupe_snapshot, indent=2)
+        return mark_safe(f"<pre>{data}</pre>")
+
+    groupe_snapshot_pretty.short_description = Diagnostic._meta.get_field("groupe_snapshot").verbose_name

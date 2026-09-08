@@ -13,7 +13,7 @@ from macantine.utils import is_in_teledeclaration_or_correction
 
 
 @extend_schema_view(
-    get=extend_schema(summary="Lister les restaurants satellites d'un groupe."),
+    get=extend_schema(summary="Lister les restaurants satellites d'un groupe.", tags=["Cantines"]),
 )
 class CanteenGroupeSatellitesListView(ListAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
@@ -21,28 +21,35 @@ class CanteenGroupeSatellitesListView(ListAPIView):
     model = Canteen
     serializer_class = SatelliteCanteenSerializer
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
     def get_queryset(self):
         year = timezone.now().year - 1
-        canteen_pk = self.kwargs["canteen_pk"]
+        canteen_groupe = self._get_canteen()
         user = self.request.user
         return (
-            Canteen.objects.get(pk=canteen_pk)
-            .satellites.annotate_with_is_managed_by_user(user)
+            canteen_groupe.satellites.annotate_with_is_managed_by_user(user)
             .annotate_with_action_for_year(year)
             .order_by("name")
         )
 
 
 @extend_schema_view(
-    post=extend_schema(summary="Ajouter un restaurant satellite à un groupe."),
+    post=extend_schema(summary="Ajouter un restaurant satellite à un groupe.", tags=["Cantines"]),
 )
 class CanteenGroupeSatelliteLinkView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     # required_scopes = ["canteen"]
     serializer_class = FullCanteenSerializer
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
     def post(self, request, canteen_pk, satellite_pk):
-        canteen_groupe = Canteen.objects.get(pk=canteen_pk)
+        canteen_groupe = self._get_canteen()
 
         try:
             canteen_satellite = Canteen.objects.get(pk=satellite_pk)
@@ -62,7 +69,7 @@ class CanteenGroupeSatelliteLinkView(APIView):
             if canteen_groupe.has_diagnostic_teledeclared_for_year(timezone.now().year - 1):
                 return JsonResponse(
                     {
-                        "error": "Vous ne pouvez pas ajouter de restaurant satellite à votre groupe, car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir ajouter le restaurant satellite.",
+                        "error": "Vous ne pouvez pas ajouter de restaurant satellite en cours de campagne avec un bilan télédéclaré. En effet la télédéclaration fige les données, pour effectuer une modification durant la campagne vous devez : aller sur le bilan du groupe et cliquer sur 'corriger' la télédéclaration ; revenir sur cette page pour ajouter le restaurant satellite ; télédéclarer à nouveau le bilan du groupe.",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
@@ -73,15 +80,19 @@ class CanteenGroupeSatelliteLinkView(APIView):
 
 
 @extend_schema_view(
-    post=extend_schema(summary="Enlever un restaurant satellite d'un groupe."),
+    post=extend_schema(summary="Enlever un restaurant satellite d'un groupe.", tags=["Cantines"]),
 )
 class CanteenGroupeSatelliteUnlinkView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     # required_scopes = ["canteen"]
     serializer_class = FullCanteenSerializer
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
     def post(self, request, canteen_pk, satellite_pk):
-        canteen_groupe = Canteen.objects.get(pk=canteen_pk)
+        canteen_groupe = self._get_canteen()
 
         try:
             canteen_satellite = Canteen.objects.get(pk=satellite_pk)
@@ -96,7 +107,7 @@ class CanteenGroupeSatelliteUnlinkView(APIView):
             if canteen_groupe.has_diagnostic_teledeclared_for_year(timezone.now().year - 1):
                 return JsonResponse(
                     {
-                        "error": "Vous ne pouvez pas retirer de restaurant satellite à votre groupe, car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir retirer le restaurant satellite.",
+                        "error": "Vous ne pouvez pas retirer le restaurant satellite en cours de campagne avec un bilan télédéclaré. En effet la télédéclaration fige les données, pour effectuer une modification durant la campagne vous devez : aller sur le bilan du groupe et cliquer sur 'corriger' la télédéclaration ; revenir sur cette page pour retirer le restaurant satellite ; télédéclarer à nouveau le bilan du groupe.",
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )

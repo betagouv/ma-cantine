@@ -4,8 +4,8 @@ from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from common.utils.images import optimize_image
 from data.fields import ChoiceArrayField
-from data.utils import optimize_image
 from data.models.partnertype import PartnerType
 from data.models.sector import SectorM2M, SectorCategory
 from data.models.geo import Department
@@ -31,13 +31,6 @@ class Partner(models.Model):
         VEGE = "vege", "Diversifier mes sources de protéines"
         NETWORK = "network", "Mise en réseau d’acteurs de terrain"
         FINANCIAL = "financial", "Aide financière / matérielle"
-
-    class Meta:
-        verbose_name = "partenaire"
-        verbose_name_plural = "partenaires"
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
 
     name = models.TextField(verbose_name="nom")
     short_description = models.TextField(verbose_name="description courte")
@@ -96,13 +89,15 @@ class Partner(models.Model):
     contact_message = models.TextField(verbose_name="Commentaires sur la demande", blank=True, null=True)
     contact_phone_number = models.CharField("Numéro téléphone", max_length=50, null=True, blank=True)
 
-    @property
-    def url_slug(self):
-        return f"{self.id}--{quote(self.name)}"
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
 
-    @property
-    def url_path(self):
-        return f"/acteurs-de-l-eco-systeme/{self.url_slug}"
+    class Meta:
+        verbose_name = "partenaire"
+        verbose_name_plural = "partenaires"
+
+    def __str__(self):
+        return f'Partenaire "{self.name}"'
 
     def save(self, **kwargs):
         max_image_size = 1600
@@ -110,5 +105,10 @@ class Partner(models.Model):
             self.image = optimize_image(self.image, self.image.name, max_image_size)
         super().save(**kwargs)
 
-    def __str__(self):
-        return f'Partenaire "{self.name}"'
+    @property
+    def url_slug(self):
+        return f"{self.id}--{quote(self.name)}"
+
+    @property
+    def url_path(self):
+        return f"/acteurs-de-l-eco-systeme/{self.url_slug}"

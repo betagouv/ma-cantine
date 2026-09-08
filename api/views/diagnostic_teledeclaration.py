@@ -1,41 +1,45 @@
 import logging
 import os
 
-from django_filters import rest_framework as django_filters
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.http import HttpResponse
 from django.template.loader import get_template
 from django.utils.text import slugify
+from django_filters import rest_framework as django_filters
+from drf_spectacular.openapi import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.generics import get_object_or_404, ListAPIView
+from rest_framework.exceptions import ValidationError
+from rest_framework.generics import ListAPIView, get_object_or_404
 from rest_framework.views import APIView
 from xhtml2pdf import pisa
 
 from api.permissions import (
-    IsAuthenticatedOrTokenHasResourceScope,
     IsAuthenticated,
-    IsLinkedCanteenManager,
-    IsCanteenManager,
+    IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManagerUrlParam,
 )
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer, DiagnosticTeledeclaredOpenDataSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
 from macantine.utils import CAMPAIGN_DATES
 
-
 logger = logging.getLogger(__name__)
 
 
 class DiagnosticTeledeclarationCreateView(APIView):
-    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_object(self):
+        canteen = self._get_canteen()
+        return get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
+
     def post(self, request, *args, **kwargs):
-        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
-        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
-            raise PermissionDenied()
-        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
+        diagnostic = self.get_object()
 
         # if ValidationError, it will be raised (and handled by custom_exception_handler)
         diagnostic.teledeclare(request.user)
@@ -44,14 +48,19 @@ class DiagnosticTeledeclarationCreateView(APIView):
 
 
 class DiagnosticTeledeclarationCancelView(APIView):
-    permission_classes = [IsAuthenticated, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_object(self):
+        canteen = self._get_canteen()
+        return get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
+
     def post(self, request, *args, **kwargs):
-        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
-        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
-            raise PermissionDenied()
-        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
+        diagnostic = self.get_object()
 
         # if ValidationError, it will be raised (and handled by custom_exception_handler)
         diagnostic.cancel()
@@ -60,24 +69,37 @@ class DiagnosticTeledeclarationCancelView(APIView):
 
 
 @extend_schema_view(
-    get=extend_schema(summary="Obtenir une représentation PDF de la télédéclaration.", tags=["teledeclaration"]),
+    get=extend_schema(
+        summary="Obtenir une représentation PDF de la télédéclaration.",
+        tags=["Télédéclaration"],
+        responses={(200, "application/pdf"): OpenApiTypes.BINARY},
+    ),
 )
 class DiagnosticTeledeclarationPdfView(APIView):
     """
     This view returns a PDF for proof of teledeclaration
+    Also works with diagnostics generated (1TD1Site)
     """
 
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["teledeclaration"]
 
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_object(self):
+        canteen = self._get_canteen()
+        return get_object_or_404(Diagnostic.all_objects, pk=self.kwargs["pk"], canteen=canteen)
+
     def get(self, request, *args, **kwargs):
-        canteen = get_object_or_404(Canteen, pk=kwargs.get("canteen_pk"))
-        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
-            raise PermissionDenied()
-        diagnostic = get_object_or_404(Diagnostic, pk=kwargs.get("pk"))
+        diagnostic = self.get_object()
 
         if not diagnostic.is_teledeclared:
             raise ValidationError("Le diagnostic n'a pas été télédéclaré.")
+
+        # if diagnostic.has_invalid_reason:
+        #     raise ValidationError(f"Le diagnostic est télédéclaré mais invalide : {diagnostic.invalid_reason_list}")
 
         template = (
             get_template("teledeclaration_campaign_2024/index.html")
@@ -176,7 +198,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
     @staticmethod
     def _get_canteen_override_data(diagnostic):
         """
-        Returns the JSON data of the canteen parameters that need to be overriden in order for
+        Returns the JSON data of the canteen parameters that need to be overridden in order for
         them to be human-readable (e.g., replacing keys with labels)
         """
         return {
@@ -206,7 +228,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
     @staticmethod
     def _get_teledeclaration_override_data(diagnostic):
         """
-        Returns the JSON data of the teledeclaration parameters that need to be overriden in order for
+        Returns the JSON data of the teledeclaration parameters that need to be overridden in order for
         them to be human-readable (e.g., replacing keys with labels and merging multiple choice with
         "other" editable choices)
         """
@@ -308,11 +330,7 @@ class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
     ordering_fields = ["creation_date"]
 
     def get_queryset(self):
-        return (
-            Diagnostic.objects.with_meal_price()
-            .historical_valid_td(CAMPAIGN_DATES.keys())
-            .order_by("teledeclaration_date")
-        )
+        return Diagnostic.objects.valid_td_all_years(CAMPAIGN_DATES.keys()).order_by("teledeclaration_date")
 
 
 class DiagnosticTeledeclaredOpenDataListView(ListAPIView):

@@ -303,7 +303,7 @@ export default {
             })
           } else {
             this.$router.push({
-              name: "DashboardManager",
+              name: "GestionnaireCantine",
               params: {
                 canteenUrlComponent: this.canteenUrlComponent,
               },

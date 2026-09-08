@@ -51,7 +51,7 @@
             Vous êtes maintenant gestionnaire.
             <router-link
               :to="{
-                name: 'DashboardManager',
+                name: 'GestionnaireCantine',
                 params: {
                   canteenUrlComponent: $store.getters.getCanteenUrlComponent(canteen),
                 },

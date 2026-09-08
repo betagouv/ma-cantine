@@ -5,7 +5,6 @@ from django.db.models import Count, Sum
 from django.utils import timezone
 from rest_framework import serializers
 
-from common.utils.badges import badges_for_queryset
 from data.models import Canteen, SectorCategory
 from macantine.utils import CAMPAIGN_DATES, EGALIM_OBJECTIVES, get_year_campaign_end_date_or_today_date
 
@@ -98,11 +97,9 @@ def calculate_statistics_teledeclarations(teledeclarations, data):
     else:
         data["viandes_volailles_produits_de_la_mer_egalim_percent"] = 0
     # percent of appro
-    badge_querysets = badges_for_queryset(teledeclarations)
+    appro_count = teledeclarations.teledeclaration_objectifs_egalim_atteints().count()
     data["appro_percent"] = (
-        int(100 * badge_querysets["appro"].count() / data["teledeclarations_count"])
-        if data["teledeclarations_count"]
-        else 0
+        int(100 * appro_count / data["teledeclarations_count"]) if data["teledeclarations_count"] else 0
     )
     # return
     return data
@@ -152,6 +149,12 @@ class CanteenStatisticsSerializer(serializers.Serializer):
     @staticmethod
     def generate_notes(year, egalim_group):
         data = {}
+        # Display an alert message while waiting for the stats to be corrected
+        if int(year) < 2024:
+            data["alert"] = {
+                "title": "Les chiffres indiqués sont légèrement inexacts en raison de l’évolution récente de la plateforme ma cantine.",
+                "message": "En effet, le précédent modèle de données reposait sur une déclaration unique pouvant couvrir plusieurs sites, afin de faciliter la déclaration des cuisines centrales. Ce fonctionnement ayant atteint ses limites notamment en matière de transparence des données au niveau des restaurants satellites, nous avons fait évoluer le modèle vers une déclaration par site. Des travaux sont actuellement en cours afin d’adapter les statistiques de l’Observatoire à ce nouveau modèle.",
+            }
         data["warnings"] = [
             "Pour des raisons de confidentialité, les cantines des armées ne sont pas intégrées dans cet observatoire."
         ]
@@ -187,7 +190,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
             for field in CanteenStatisticsSerializer.FIELDS_TO_HIDE_IF_REPORT_NOT_PUBLISHED:
                 data[field] = None
             data["notes"]["campaign_info"] = (
-                f"Le détail des données de {year} télédéclarées durant la campagne {year + 1} seront disponibles d'ici la fin d'année dès lors que le rapport statistique sera validé par le parlement."
+                f"Le détail des données de {year} télédéclarées durant la campagne {year + 1} sera disponible dès la publication du bilan statistique annuel (rapport du gouvernement au parlement)."
             )
         else:
             pass  # report is published, do not hide data

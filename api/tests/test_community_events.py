@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 from data.factories import CommunityEventFactory
 
 
-class TestCommunityEventApiTest(APITestCase):
+class CommunityEventListApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.community_event_past = CommunityEventFactory(
@@ -25,7 +25,7 @@ class TestCommunityEventApiTest(APITestCase):
         )
         cls.url = reverse("community_event_list")
 
-    def test_get_community_events(self):
+    def test_can_get_community_events_if_upcoming(self):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

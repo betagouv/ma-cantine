@@ -1,35 +1,22 @@
-import json
 from decimal import Decimal
+from unittest import skipIf
 
-from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
+from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.diagnostic_import import DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic, ImportFailure, ImportType
 from data.models.creation_source import CreationSource
 
 
-class DiagnosticsSimpleSchemaTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.schema = json.load(open(DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH))
-
-    def get_pattern(self, schema, field_name):
-        field_index = next((i for i, f in enumerate(schema["fields"]) if f["name"] == field_name), None)
-        pattern = schema["fields"][field_index]["constraints"]["pattern"]
-        return pattern
-
-    # no regex patterns to test
-
-
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportApiErrorTest(APITestCase):
-    def test_unauthenticated(self):
+    def test_cannot_import_if_unauthenticated(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         response = self.client.post(reverse("diagnostics_simple_import"))
@@ -199,7 +186,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 17)
+        self.assertEqual(len(errors), 22)
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
@@ -213,65 +200,85 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         )
         self.assertEqual(
             errors[2]["message"],
-            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la valeur (HT) valeur_bio, 1500",
+            "Champ 'Nombre de repas par an' : Ce champ est obligatoire pour l'année 2150.",
         )
         self.assertEqual(
             errors[3]["message"],
-            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 1500",
+            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la valeur (HT) valeur_bio, 1500",
         )
         self.assertEqual(
             errors[4]["message"],
-            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 2000",
+            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 1500",
         )
         self.assertEqual(
             errors[5]["message"],
-            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement pour le label france, 1600",
+            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 2000",
         )
         self.assertEqual(
             errors[6]["message"],
-            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
+            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement pour le label france, 1600",
         )
         self.assertEqual(
             errors[7]["message"],
-            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
             errors[8]["message"],
-            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur (HT) viandes_volailles, 50, est moins que la valeur (HT) viandes_volailles_france, 100",
         )
         self.assertEqual(
             errors[9]["message"],
-            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, Origine France, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
             errors[10]["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+        )
+        self.assertEqual(
+            errors[11]["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur (HT) produits_de_la_mer, 50, est moins que la valeur (HT) produits_de_la_mer_france, 100",
+        )
+        self.assertEqual(
+            errors[12]["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, Origine France, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
+        )
+        self.assertEqual(
+            errors[13]["message"],
             # TODO: is this the best field to point to as being wrong? hors bio could be confusing
             "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons, EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
         )
         self.assertEqual(
-            errors[11]["message"],
+            errors[14]["message"],
             "Champ 'Bio - Valeur annuelle HT' : La valeur (HT) bio dont commerce équitable, 150, est plus que la valeur totale (HT) bio, 50",
         )
         self.assertEqual(
-            errors[12]["message"],
+            errors[15]["message"],
             "Champ 'Valeur totale (HT) des autres achats EGalim' : La valeur (HT) achats commerce équitable (hors bio), 150, est plus que la valeur totale (HT) des autres achats EGalim, 50",
         )
         # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
-            errors[13]["message"],
+            errors[16]["message"],
+            "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur (HT) viandes_volailles, 50, est moins que la valeur (HT) viandes_volailles_france, 60",
+        )
+        self.assertEqual(
+            errors[17]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
-            errors[14]["message"],
+            errors[18]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
-            errors[15]["message"],
+            errors[19]["message"],
+            "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur (HT) produits_de_la_mer, 50, est moins que la valeur (HT) produits_de_la_mer_france, 60",
+        )
+        self.assertEqual(
+            errors[20]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, EGalim, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
-            errors[16]["message"],
+            errors[21]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, Origine France, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
 
@@ -383,7 +390,21 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(errors[0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
+    @authenticate
+    def test_when_errors_count_is_0(self):
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user])
 
+        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_one_error.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertTrue(len(body["errors"]) > 0)
+
+
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
     @freeze_time("2025-02-10")  # during the 2024 campaign
     @authenticate
@@ -434,6 +455,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.valeur_boissons_france, Decimal("1.5"))
         self.assertEqual(diagnostic_1.valeur_autres_france, Decimal("1.6"))
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(diagnostic_1.creation_user, authenticate.user)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
         diagnostic_2 = Diagnostic.objects.get(canteen_id=canteen_2.id)
@@ -528,7 +550,34 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic.valeur_totale, 1000)
         self.assertEqual(diagnostic.valeur_bio, 500)
 
+    @authenticate
+    def test_update_diagnostic_cancelled_during_correction_campaign(self):
+        """
+        If a canteen has a cancelled diagnostic,
+        it can import a new diagnostic during the correction campaign
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
 
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+
+            file_path = (
+                "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+            )
+            with open(file_path) as diag_file:
+                response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            diagnostic.refresh_from_db()
+            self.assertEqual(diagnostic.valeur_totale, 1000)
+            self.assertEqual(diagnostic.valeur_bio, 500)
+
+
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
     @authenticate
     def test_canteen_not_found_with_id(self):
@@ -564,6 +613,7 @@ class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
         self.assertEqual(errors[0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
 
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
     @freeze_time("2025-02-10")  # during the 2024 campaign
     @authenticate

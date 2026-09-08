@@ -1,15 +1,24 @@
 from decimal import Decimal
 
+from django.utils import timezone
+
+from macantine.utils import (
+    get_year_campaign_end_date_or_today_date,
+    get_year_correction_end_date_or_campaign_end_date_or_today_date,
+)
 from common.utils import utils as utils_utils
 from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
 
 
-def validate_year(instance):
+def validate_year_and_can_edit(instance):
     """
     - extra validation:
         - year must be filled
         - year must be an integer
         - year must be between lower and upper limit years
+        - if year is valid:
+            - after teledeclaration end date, DRAFT diagnostic cannot be edited anymore
+            - after correction end date, any diagnostic cannot be edited anymore
     """
     errors = {}
     field_name = "year"
@@ -25,6 +34,22 @@ def validate_year(instance):
             utils_utils.add_validation_error(
                 errors, "year", f"L'année doit être comprise entre {lower_limit_year} et {upper_limit_year}."
             )
+        else:  # valid year, check can_edit validation
+            if instance.pk:
+                now = timezone.now()
+                if now > get_year_campaign_end_date_or_today_date(value):
+                    if instance.status == instance.DiagnosticStatus.DRAFT:
+                        utils_utils.add_validation_error(
+                            errors,
+                            "year",
+                            f"Le diagnostic de l'année {value} ne peut plus être modifié car la campagne de télédéclaration est terminée.",
+                        )
+                if now > get_year_correction_end_date_or_campaign_end_date_or_today_date(value):
+                    utils_utils.add_validation_error(
+                        errors,
+                        "year",
+                        f"Le diagnostic de l'année {value} ne peut plus être modifié car la période de correction est terminée.",
+                    )
     return errors
 
 
@@ -46,11 +71,30 @@ def validate_diagnostic_type(instance):
     return errors
 
 
+def validate_canteen_fields_required(instance):
+    """
+    - clean_fields() (called by full_clean()) already does some checks
+    - extra validation: depending on the year of the diagnostic
+        - [NEW in 2026] nombre_repas_an is required
+    """
+    errors = {}
+    if instance.year:
+        if int(instance.year) >= 2026:
+            required_fields = instance.CANTEEN_FIELDS
+            for field in required_fields:
+                if getattr(instance, field) is None:
+                    utils_utils.add_validation_error(
+                        errors, field, f"Ce champ est obligatoire pour l'année {instance.year}."
+                    )
+    return errors
+
+
 def validate_appro_fields_required(instance):
     """
     - clean_fields() (called by full_clean()) already does some checks
       BUT most of the model fields are optional...
     - extra validation: depending on the year & diagnostic_type of the diagnostic
+        - before 2025, only valeur_totale is required
     """
     errors = {}
     if instance.year:
@@ -114,12 +158,93 @@ def validate_valeur_totale(instance):
     return errors
 
 
-def validate_valeur_bio(instance):
+def validate_valeur_famille(instance):
     """
+    - clean_fields() (called by full_clean()) already does some checks
     - extra validation:
-        - valeur_bio_dont_commerce_equitable must be <= valeur_bio
+        - for each family field:
+            - valeur_*famille* must be >= each of the valeur_*famille*_*label* fields
+            - valeur_*famille* must be >= sum of each label for that family
     """
     errors = {}
+    for family in instance.APPRO_FAMILIES:
+        field_name = f"valeur_{family}"
+        field_value = getattr(instance, field_name)
+        if field_value is not None:
+            for label in instance.APPRO_LABELS_ALL:
+                family_label_field_name = f"valeur_{family}_{label}"
+                family_label_field_value = getattr(instance, family_label_field_name)
+                if family_label_field_value and family_label_field_value > field_value:
+                    utils_utils.add_validation_error(
+                        errors,
+                        field_name,
+                        f"La valeur (HT) {family}, {field_value}, est moins que la valeur (HT) {family}_{label}, {family_label_field_value}",
+                    )
+            family_sum = instance.family_sum(family)
+            if family_sum and family_sum > field_value:
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    f"La valeur (HT) {family}, {field_value}, est moins que la somme des valeurs d'approvisionnement de tous les labels, {family_sum}",
+                )
+    return errors
+
+
+def validate_valeur_famille_bio(instance):
+    """
+    - extra validation:
+        - valeur_*famille*_bio must be >= valeur_*famille*_bio_dont_commerce_equitable
+    """
+    errors = {}
+    for family in instance.APPRO_FAMILIES:
+        field_name = f"valeur_{family}_bio"
+        field_value = getattr(instance, field_name)
+        if field_value is not None:
+            bio_dont_commerce_equitable_field_name = f"{field_name}_dont_commerce_equitable"
+            bio_dont_commerce_equitable_field_value = getattr(instance, bio_dont_commerce_equitable_field_name)
+            if (
+                bio_dont_commerce_equitable_field_value is not None
+                and bio_dont_commerce_equitable_field_value > field_value
+            ):
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    f"La valeur (HT) bio dont commerce équitable, {bio_dont_commerce_equitable_field_value}, est plus que la valeur totale (HT) bio, {field_value}",
+                )
+    return errors
+
+
+def validate_valeur_label(instance):
+    """
+    - extra validation:
+        - for each (existing) label field:
+            - [NEW in 2026] valeur_*label* must be >= each of the valeur_*famille*_*label* fields
+            - [NEW in 2026] valeur_*label* must be >= sum of each family for that label
+        - valeur_bio_dont_commerce_equitable must be <= valeur_bio
+        - valeur_egalim_autres_dont_commerce_equitable must be <= valeur_egalim_autres
+    """
+    errors = {}
+    if instance.year and int(instance.year) >= 2026:
+        for label in instance.APPRO_LABELS_ALL:
+            field_name = f"valeur_{label}"
+            field_value = getattr(instance, field_name, None)  # some don't exist
+            if field_value is not None:
+                for family in instance.APPRO_FAMILIES:
+                    family_label_field_name = f"valeur_{family}_{label}"
+                    family_label_field_value = getattr(instance, family_label_field_name)
+                    if family_label_field_value and family_label_field_value > field_value:
+                        utils_utils.add_validation_error(
+                            errors,
+                            field_name,
+                            f"La valeur (HT) {label}, {field_value}, est moins que la valeur (HT) {family}_{label}, {family_label_field_value}",
+                        )
+                label_sum = instance.label_sum(label)
+                if label_sum and label_sum > field_value:
+                    utils_utils.add_validation_error(
+                        errors,
+                        field_name,
+                        f"La valeur (HT) {label}, {field_value}, est moins que la somme des valeurs d'approvisionnement de toutes les familles, {label_sum}",
+                    )
     if instance.valeur_bio is not None:
         if (
             instance.valeur_bio_dont_commerce_equitable is not None
@@ -130,15 +255,6 @@ def validate_valeur_bio(instance):
                 "valeur_bio",
                 f"La valeur (HT) bio dont commerce équitable, {instance.valeur_bio_dont_commerce_equitable}, est plus que la valeur totale (HT) bio, {instance.valeur_bio}",
             )
-    return errors
-
-
-def validate_valeur_egalim_autres(instance):
-    """
-    - extra validation:
-        - valeur_egalim_autres_dont_commerce_equitable must be <= valeur_egalim_autres
-    """
-    errors = {}
     if instance.valeur_egalim_autres is not None:
         if (
             instance.valeur_egalim_autres_dont_commerce_equitable is not None

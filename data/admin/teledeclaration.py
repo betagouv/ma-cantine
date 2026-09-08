@@ -48,7 +48,7 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "creation_date",
         "status",
     )
-    history_list_display = ["authentication_method"]
+    history_list_display = ["history_source"]
     list_filter = ("year", "status")
     fields = (
         "canteen",

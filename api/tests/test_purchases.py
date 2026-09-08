@@ -1,545 +1,611 @@
+from decimal import Decimal
+
 from django.urls import reverse
 from django.utils import timezone
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
-from api.tests.utils import authenticate
+
+from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
 from data.models import Canteen, Diagnostic, Purchase
 from data.models.creation_source import CreationSource
 
 
-class PurchaseListApiTest(APITestCase):
+class PurchaseCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.url = reverse("purchase_list_create")
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.url = reverse("canteen_purchase_create", kwargs={"canteen_pk": cls.canteen.id})
+        cls.PURCHASE_PAYLOAD = {
+            # "canteen_id": cls.canteen.id,
+            "description": "Saumon",
+            "fournisseur": "Test fournisseur",
+            "date": "2022-01-13",
+            "prix_ht": 15.23,
+            "famille_produits": Purchase.Family.PRODUITS_DE_LA_MER,
+            "categories_egalim": [Purchase.Characteristic.BIO],
+            "origine": Purchase.Characteristic.EUROPE,
+            "est_circuit_court": False,
+            "est_local": False,
+            "definition_local": "",
+        }
 
-    def test_cannot_list_if_unauthenticated(self):
-        response = self.client.get(self.url)
+    def test_cannot_create_purchase_if_unauthenticated(self):
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_can_list_purchases_of_managed_canteens(self):
-        # canteen managed by authenticated user
-        canteen = CanteenFactory(managers=[authenticate.user])
-        PurchaseFactory(canteen=canteen)
-        PurchaseFactory(canteen=canteen)
-        # other user, other canteen, other purchases
-        other_user = UserFactory()
-        other_user_canteen = CanteenFactory(managers=[other_user])
-        PurchaseFactory(canteen=other_user_canteen)
-        canteen_not_managed = CanteenFactory()
-        PurchaseFactory(canteen=canteen_not_managed)
+    def test_cannot_create_purchase_if_canteen_does_not_exist(self):
+        url = reverse("canteen_purchase_create", kwargs={"canteen_pk": 9999})
+        response = self.client.post(url, self.PURCHASE_PAYLOAD)
 
-        response = self.client.get(self.url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Purchase.objects.count(), 4)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
-
-
-class PurchaseListFilterApiTest(APITestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.canteen = CanteenFactory()
-        PurchaseFactory(
-            canteen=cls.canteen,
-            description="avoine",
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            characteristics=[Purchase.Characteristic.BIO],
-            date="2020-01-01",
-        )
-        PurchaseFactory(
-            canteen=cls.canteen,
-            description="tomates",
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.PECHE_DURABLE],
-            date="2020-01-02",
-        )
-        PurchaseFactory(
-            canteen=cls.canteen,
-            description="pommes",
-            family=Purchase.Family.AUTRES,
-            characteristics=[Purchase.Characteristic.PECHE_DURABLE],
-            date="2020-02-01",
-        )
-        cls.other_canteen = CanteenFactory()
-        PurchaseFactory(canteen=cls.other_canteen, description="secret", date="2020-01-01")
-        cls.url = reverse("purchase_list_create")
-
-    @authenticate
-    def test_filter_by_search_text(self):
-        # user is not (yet) the manager of the canteen
-        search_term = "avoine"
-
-        response = self.client.get(f"{self.url}?search={search_term}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 0)
-
-        # set the user as manager of the canteen
-        self.canteen.managers.add(authenticate.user)
-
-        response = self.client.get(f"{self.url}?search={search_term}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0].get("description"), "avoine")
-
-    @authenticate
-    def test_filter_by_canteen(self):
-        # user is not (yet) the manager of any canteen
-        response = self.client.get(f"{self.url}?canteen__id={self.canteen.id}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 0)
-
-        # set the user as manager of the canteen
-        self.canteen.managers.add(authenticate.user)
-
-        response = self.client.get(f"{self.url}?canteen__id={self.canteen.id}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
-
-        # try to filter by a canteen the user doesn't manage
-        response = self.client.get(f"{self.url}?canteen__id={self.other_canteen.id}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 0)
-
-    @authenticate
-    def test_filter_by_characteristic(self):
-        self.canteen.managers.add(authenticate.user)
-
-        response = self.client.get(f"{self.url}?characteristics={Purchase.Characteristic.BIO}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
-
-        response = self.client.get(
-            f"{self.url}?characteristics={Purchase.Characteristic.BIO}&characteristics={Purchase.Characteristic.PECHE_DURABLE}"
-        )
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
-
-    @authenticate
-    def test_filter_by_family(self):
-        self.canteen.managers.add(authenticate.user)
-
-        response = self.client.get(f"{self.url}?family={Purchase.Family.PRODUITS_DE_LA_MER}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
-
-    @authenticate
-    def test_filter_by_date(self):
-        self.canteen.managers.add(authenticate.user)
-
-        response = self.client.get(f"{self.url}?date_after=2020-01-02")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
-
-        response = self.client.get(f"{self.url}?date_before=2020-01-01")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 1)
-
-        response = self.client.get(f"{self.url}?date_after=2020-01-02&date_before=2020-02-01")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 2)
-
-    @authenticate
-    def test_pagination(self):
-        self.canteen.managers.add(authenticate.user)
-
-        response = self.client.get(self.url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["count"], 3)
-        self.assertIn("next", body)
-        self.assertIn("previous", body)
-        self.assertEqual(len(body["results"]), 3)
-        self.assertEqual(len(body["families"]), 2)
-        self.assertEqual(len(body["characteristics"]), 2)
-        self.assertEqual(len(body["canteens"]), 1)
-
-        response = self.client.get(f"{self.url}?limit=1&offset=1")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["count"], 3)
-        self.assertIn("next", body)
-        self.assertIn("previous", body)
-        self.assertEqual(len(body["results"]), 1)
-        # the pagination should not change the available filter options
-        self.assertEqual(len(body["families"]), 2)
-        self.assertEqual(len(body["characteristics"]), 2)
-        self.assertEqual(len(body["canteens"]), 1)
-
-    @authenticate
-    def test_available_filter_options(self):
-        # set the user as manager + add an extra canteen with purchase
-        self.canteen.managers.add(authenticate.user)
-        canteen_2 = CanteenFactory(managers=[authenticate.user])
-        PurchaseFactory(
-            canteen=canteen_2, family=Purchase.Family.AUTRES, characteristics=[Purchase.Characteristic.BIO]
-        )
-
-        with self.assertNumQueries(7):
-            response = self.client.get(self.url)
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(len(body["results"]), 3 + 1)
-        self.assertEqual(len(body["families"]), 2)
-        self.assertEqual(len(body["characteristics"]), 2)
-        self.assertEqual(len(body["canteens"]), 1 + 1)
-
-        response = self.client.get(f"{self.url}?characteristics={Purchase.Characteristic.BIO}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(len(body["results"]), 2 + 1)
-        self.assertEqual(len(body["characteristics"]), 2)
-        self.assertEqual(len(body["families"]), 1 + 1)
-        self.assertEqual(len(body["canteens"]), 1 + 1)
-
-        response = self.client.get(f"{self.url}?family={Purchase.Family.PRODUITS_LAITIERS}")
-
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(len(body["results"]), 0)
-        self.assertEqual(len(body["characteristics"]), 0)
-        self.assertEqual(len(body["families"]), 0)
-        self.assertEqual(len(body["canteens"]), 0)
-
-
-class PurchaseDetailApiTest(APITestCase):
-    def test_cannot_get_purchase_unauthenticated(self):
-        """
-        This endpoint is only available when authenticated
-        """
-        purchase = PurchaseFactory()
-        response = self.client.get(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_get_someone_elses_purchase(self):
-        """
-        This endpoint can only return the purchase of canteens the logged user manages
-        """
-        other_user = UserFactory()
-        other_user_canteen = CanteenFactory(managers=[other_user])
-        purchase = PurchaseFactory(canteen=other_user_canteen)
-
-        response = self.client.get(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_get_purchase(self):
-        """
-        The logged user should get the purchase that concern them
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-        purchase = PurchaseFactory(canteen=canteen)
+    def test_cannot_create_purchase_if_not_canteen_manager(self):
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
-        response = self.client.get(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        self.assertEqual(body["id"], purchase.id)
-
-
-class PurchaseCreateApiTest(APITestCase):
-    def test_create_purchase_unauthenticated(self):
-        """
-        The purchase creation is only available when logged in
-        """
-        payload = {
-            "date": "2022-01-13",
-            "canteen_id": 1,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "family": "PRODUITS_DE_LA_MER",
-            "characteristics": ["BIO"],
-            "price_ht": 15.23,
-        }
-        response = self.client.post(reverse("purchase_list_create"), payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_create_purchase_someone_elses_canteen(self):
-        """
-        A user can only create a purchase of a canteen they manage
-        """
-        other_user = UserFactory()
-        other_user_canteen = CanteenFactory(managers=[other_user])
+    def test_cannot_create_empty_purchase(self):
+        self.canteen.managers.add(authenticate.user)
 
-        payload = {
-            "date": "2022-01-13",
-            "canteen": other_user_canteen.id,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "family": "PRODUITS_DE_LA_MER",
-            "characteristics": ["BIO"],
-            "price_ht": 15.23,
-        }
-        response = self.client.post(reverse("purchase_list_create"), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.post(self.url, {})
 
-    @authenticate
-    def test_create_purchase(self):
-        """
-        A user can create a purchase
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-
-        payload = {
-            "date": "2022-01-13",
-            "canteen": canteen.id,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "family": "PRODUITS_DE_LA_MER",
-            "characteristics": ["BIO", "LOCAL"],
-            "price_ht": 15.23,
-            "local_definition": "AUTOUR_SERVICE",
-        }
-        response = self.client.post(reverse("purchase_list_create"), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        purchase = Purchase.objects.first()
-        self.assertEqual(purchase.local_definition, Purchase.Local.AUTOUR_SERVICE)
-        self.assertEqual(len(purchase.characteristics), 2)
-
-    @authenticate
-    def test_create_purchase_creation_source(self):
-        canteen = CanteenFactory(managers=[authenticate.user])
-
-        payload = {
-            "date": "2022-01-13",
-            "canteen": canteen.id,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "family": "PRODUITS_DE_LA_MER",
-            "characteristics": ["BIO", "LOCAL"],
-            "price_ht": 15.23,
-            "local_definition": "AUTOUR_SERVICE",
-        }
-
-        # from the APP
-        response = self.client.post(reverse("purchase_list_create"), {**payload, "creation_source": "APP"})
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        created_purchase = Purchase.objects.get(pk=body["id"])
-        self.assertEqual(created_purchase.creation_source, CreationSource.APP)
-
-        # defaults to API
-        response = self.client.post(reverse("purchase_list_create"), payload)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        created_purchase = Purchase.objects.get(pk=body["id"])
-        self.assertEqual(created_purchase.creation_source, CreationSource.API)
-
-        # returns a 404 if the creation_source is not valid
-        response = self.client.post(reverse("purchase_list_create"), {**payload, "creation_source": "UNKNOWN"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    def test_create_purchase_nonexistent_canteen(self):
-        """
-        A user cannot create a purchase for an nonexistent canteen
-        """
-        CanteenFactory(managers=[authenticate.user])
+    def test_can_create_minimal_purchase(self):
+        self.canteen.managers.add(authenticate.user)
 
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.description, self.PURCHASE_PAYLOAD["description"])
+        self.assertEqual(purchase.fournisseur, self.PURCHASE_PAYLOAD["fournisseur"])
+        self.assertEqual(float(purchase.prix_ht), self.PURCHASE_PAYLOAD["prix_ht"])
+        self.assertEqual(purchase.famille_produits, Purchase.Family.PRODUITS_DE_LA_MER)
+        self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE])
+        self.assertEqual(purchase.creation_user, authenticate.user)
+
+    def test_can_create_minimal_purchase_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_user, user)
+        self.assertEqual(purchase.creation_source, CreationSource.API)
+        self.assertEqual(purchase.creation_source_api_oauth2_application, token.application)
+
+    @authenticate
+    def test_can_create_purchase_creation_user_and_source(self):
+        self.canteen.managers.add(authenticate.user)
+
+        # from the APP
+        payload = {**self.PURCHASE_PAYLOAD, "creation_source": "APP"}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creationUser", body)
+        self.assertNotIn("creationSource", body)
+        self.assertNotIn("creationSourceApiOauth2Application", body)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_user, authenticate.user)
+        self.assertEqual(purchase.creation_source, CreationSource.APP)
+        self.assertEqual(purchase.creation_source_api_oauth2_application, None)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # defaults to API
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertNotIn("creationUser", body)
+        self.assertNotIn("creationSource", body)
+        self.assertNotIn("creationSourceApiOauth2Application", body)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.creation_user, authenticate.user)
+        self.assertEqual(purchase.creation_source, CreationSource.API)
+        self.assertEqual(purchase.creation_source_api_oauth2_application, None)
+
+    @authenticate
+    def test_cannot_create_purchase_without_required_fields(self):
+        self.canteen.managers.add(authenticate.user)
+
+        for field in ["description", "date", "prix_ht", "famille_produits"]:
+            with self.subTest(field=field):
+                payload = {**self.PURCHASE_PAYLOAD, field: ""}
+                response = self.client.post(self.url, payload)
+
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_can_create_purchase_with_optional_fields(self):
+        self.canteen.managers.add(authenticate.user)
+
+        # fournisseur is optional
+        payload = {**self.PURCHASE_PAYLOAD, "fournisseur": ""}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.fournisseur, "")
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # categories_egalim is optional
+        payload = {**self.PURCHASE_PAYLOAD, "categories_egalim": []}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["categoriesEgalim"], [])
+        purchase = Purchase.objects.first()
+        self.assertEqual(len(purchase.caracteristiques), 1)  # EUROPE
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # origine is optional
+        payload = {**self.PURCHASE_PAYLOAD, "origine": ""}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["origine"], "")
+        purchase = Purchase.objects.first()
+        self.assertEqual(len(purchase.caracteristiques), 1)  # BIO
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # est_circuit_court is optional
+        payload = {**self.PURCHASE_PAYLOAD, "est_circuit_court": False}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["estCircuitCourt"], False)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_circuit_court, False)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # est_local is optional
+        payload = {**self.PURCHASE_PAYLOAD, "est_local": False}
+        response = self.client.post(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["estLocal"], False)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_local, False)
+
+        # definition_local definition_local_km are optional (see below)
+
+    @authenticate
+    def test_create_purchase_with_definition_local(self):
+        self.canteen.managers.add(authenticate.user)
+
+        # definition_local is optional
+        payload = {**self.PURCHASE_PAYLOAD, "est_local": True, "definition_local": ""}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_local, True)
+        self.assertEqual(purchase.definition_local, "")
+        self.assertEqual(purchase.definition_local_km, None)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # definition_local cannot be filled if est_local is False
+        payload = {**self.PURCHASE_PAYLOAD, "est_local": False, "definition_local": Purchase.Local.KM}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+        # definition_local_km is optional
         payload = {
-            "date": "2022-01-13",
-            "canteen": "9999",
-            "description": "Saumon",
-            "provider": "Test provider",
-            "family": "PRODUITS_DE_LA_MER",
-            "characteristics": ["BIO"],
-            "price_ht": 15.23,
+            **self.PURCHASE_PAYLOAD,
+            "est_local": True,
+            "definition_local": Purchase.Local.KM,
+            "definition_local_km": "",
         }
-        response = self.client.post(reverse("purchase_list_create"), payload, format="json")
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_local, True)
+        self.assertEqual(purchase.definition_local, Purchase.Local.KM)
+        self.assertEqual(purchase.definition_local_km, None)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # definition_local_km can be filled if definition_local is KM
+        payload = {
+            **self.PURCHASE_PAYLOAD,
+            "est_local": True,
+            "definition_local": Purchase.Local.KM,
+            "definition_local_km": 10,
+        }
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        purchase = Purchase.objects.first()
+        self.assertEqual(purchase.est_local, True)
+        self.assertEqual(purchase.definition_local, Purchase.Local.KM)
+        self.assertEqual(purchase.definition_local_km, 10)
+
+        # cleanup
+        Purchase.objects.all().delete()
+
+        # definition_local_km cannot be filled if definition_local is not KM
+        payload = {
+            **self.PURCHASE_PAYLOAD,
+            "est_local": True,
+            "definition_local": Purchase.Local.COMMUNE,
+            "definition_local_km": 10,
+        }
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class PurchaseDetailApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.purchase = PurchaseFactory(
+            canteen=cls.canteen,
+            description="tomates",
+            fournisseur="fournisseur",
+            date="2022-01-13",
+            prix_ht=Decimal(4.5),
+            famille_produits=Purchase.Family.FRUITS_ET_LEGUMES,
+            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE],
+            creation_user=cls.user,
+            creation_source=CreationSource.APP,
+            creation_source_api_oauth2_application=None,
+        )
+        cls.url = reverse(
+            "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id}
+        )
+
+    def test_cannot_get_purchase_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_purchase_if_canteen_does_not_exist(self):
+        url = reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": self.purchase.id})
+        response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_get_purchase_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_purchase_if_purchase_does_not_exist(self):
+        self.canteen.managers.add(authenticate.user)
+
+        url = reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.id, "pk": 9999})
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_get_purchase_if_not_corresponding_canteen(self):
+        canteen_other = CanteenFactory()
+        purchase_other = PurchaseFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+
+        url = reverse(
+            "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id}
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if the user manages canteen_other
+        canteen_other.managers.add(authenticate.user)
+
+        url = reverse(
+            "canteen_purchase_retrieve_update_destroy",
+            kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_can_get_purchase(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.purchase.id)
+        self.assertEqual(body["canteen"], self.canteen.id)
+        self.assertEqual(body["description"], "tomates")
+        self.assertEqual(body["fournisseur"], "fournisseur")
+        self.assertEqual(body["date"], "2022-01-13")
+        self.assertEqual(body["prixHt"], 4.5)
+        self.assertNotIn("caracteristiques", body)
+        self.assertEqual(body["familleProduits"], Purchase.Family.FRUITS_ET_LEGUMES)
+        self.assertEqual(body["categoriesEgalim"], [Purchase.Characteristic.BIO])
+        self.assertEqual(body["origine"], Purchase.Characteristic.EUROPE)
+        self.assertEqual(body["estLocal"], False)
+        self.assertEqual(body["estCircuitCourt"], False)
+        self.assertIsNone(body["definitionLocal"])
+        self.assertNotIn("creationUser", body)
+        self.assertNotIn("creationSource", body)
+        self.assertNotIn("importSource", body)
+        self.assertIn("creationDate", body)
+        self.assertIn("modificationDate", body)
+
+    def test_can_get_purchase_via_oauth2_only_if_same_creation_source(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.purchase.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # update the purchase
+        Purchase.objects.filter(id=self.purchase.id).update(
+            creation_user=user,
+            creation_source=CreationSource.API,
+            creation_source_api_oauth2_application=token.application,
+        )
+        self.purchase.refresh_from_db()
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class PurchaseUpdateApiTest(APITestCase):
-    def test_update_purchases_unauthenticated(self):
-        """
-        The purchase update is only available when logged in
-        """
-        purchase = PurchaseFactory()
-        payload = {
-            "id": purchase.id,
-            "price_ht": 15.23,
-        }
-        response = self.client.patch(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.purchase = PurchaseFactory(
+            canteen=cls.canteen,
+            creation_user=cls.user,
+            creation_source=CreationSource.APP,
+            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE],
         )
+        cls.url = reverse(
+            "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id}
+        )
+
+    def test_cannot_update_purchase_if_unauthenticated(self):
+        payload = {
+            "prix_ht": 15.23,
+        }
+        response = self.client.patch(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_cannot_update_purchase_with_put(self):
-        """
-        A user cannot update the data from a purchase object with PUT
-        """
-        purchase = PurchaseFactory()
-        purchase.canteen.managers.add(authenticate.user)
-
+    def test_cannot_update_purchase_if_canteen_does_not_exist(self):
         payload = {
-            "id": purchase.id,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "price_ht": 15.23,
+            "prix_ht": 15.23,
         }
+        url = reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": 9999, "pk": self.purchase.id})
 
-        response = self.client.put(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
-        )
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-
-    @authenticate
-    def test_update_purchase(self):
-        """
-        A user can update the data from a purchase object
-        """
-        purchase = PurchaseFactory()
-        purchase.canteen.managers.add(authenticate.user)
-        new_canteen = CanteenFactory(managers=[authenticate.user])
-
-        payload = {
-            "id": purchase.id,
-            "canteen": new_canteen.id,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "price_ht": 15.23,
-        }
-
-        response = self.client.patch(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-        purchase.refresh_from_db()
-        self.assertEqual(purchase.canteen, new_canteen)
-        self.assertEqual(purchase.description, "Saumon")
-        self.assertEqual(purchase.provider, "Test provider")
-        self.assertEqual(float(purchase.price_ht), 15.23)
-
-    @authenticate
-    def test_update_someone_elses_purchase(self):
-        """
-        A user should not be able to update someone else's purchase object
-        """
-        purchase = PurchaseFactory()
-
-        payload = {
-            "id": purchase.id,
-            "description": "Saumon",
-            "provider": "Test provider",
-            "price_ht": 15.23,
-        }
-
-        response = self.client.patch(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
-        )
+        response = self.client.patch(url, payload)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_update_someone_elses_canteen(self):
-        """
-        A user should not be able to set someone else's canteen in a purchase update
-        """
-        purchase = PurchaseFactory()
-        purchase.canteen.managers.add(authenticate.user)
-        new_canteen = CanteenFactory()
+    def test_cannot_update_purchase_if_not_canteen_manager(self):
+        payload = {
+            "description": "Saumon",
+            "prix_ht": 15.23,
+        }
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_update_purchase_if_purchase_does_not_exist(self):
+        self.canteen.managers.add(authenticate.user)
 
         payload = {
-            "id": purchase.id,
-            "canteen": new_canteen.id,
+            "prix_ht": 15.23,
         }
+        url = reverse("canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": self.canteen.id, "pk": 9999})
 
-        response = self.client.patch(
-            reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}), payload, format="json"
+        response = self.client.patch(url, payload)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_update_purchase_if_not_corresponding_canteen(self):
+        canteen_other = CanteenFactory()
+        purchase_other = PurchaseFactory(canteen=canteen_other)
+        self.canteen.managers.add(authenticate.user)
+
+        payload = {
+            "prix_ht": 15.23,
+        }
+        url = reverse(
+            "canteen_purchase_retrieve_update_destroy",
+            kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
         )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.patch(url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if the user manages canteen_other
+        canteen_other.managers.add(authenticate.user)
+
+        url = reverse(
+            "canteen_purchase_retrieve_update_destroy",
+            kwargs={"canteen_pk": self.canteen.id, "pk": purchase_other.id},
+        )
+        response = self.client.patch(url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_can_update_purchase(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+
+        payload = {
+            "description": "Saumon",
+            "prix_ht": 15.23,
+            "categories_egalim": [Purchase.Characteristic.HVE],
+            "origine": Purchase.Characteristic.FRANCE,
+            "est_circuit_court": False,
+            "est_local": True,
+            "definition_local": Purchase.Local.PAT,
+        }
+        response = self.client.patch(self.url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.description, "Saumon")
+        self.assertEqual(float(self.purchase.prix_ht), 15.23)
+        self.assertEqual(
+            self.purchase.caracteristiques,
+            [
+                Purchase.Characteristic.HVE,
+                Purchase.Characteristic.FRANCE,
+                Purchase.Characteristic.LOCAL,
+            ],
+        )
+
+    def test_can_update_purchase_via_oauth2_only_if_same_creation_source(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.purchase.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.patch(self.url, {"description": "Updated"}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # update the purchase
+        Purchase.objects.filter(id=self.purchase.id).update(
+            creation_user=user,
+            creation_source=CreationSource.API,
+            creation_source_api_oauth2_application=token.application,
+        )
+        self.purchase.refresh_from_db()
+
+        response = self.client.patch(self.url, {"description": "Updated"}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class PurchaseDeleteApiTest(APITestCase):
-    @authenticate
-    def test_delete_purchase(self):
-        """
-        A user can delete a purchase object
-        """
-        purchase = PurchaseFactory()
-        purchase.canteen.managers.add(authenticate.user)
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.purchase = PurchaseFactory(canteen=cls.canteen, creation_user=cls.user)
+        cls.url = reverse(
+            "canteen_purchase_retrieve_update_destroy", kwargs={"canteen_pk": cls.canteen.id, "pk": cls.purchase.id}
+        )
 
-        response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
+    def test_cannot_delete_purchase_if_unauthenticated(self):
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Purchase.objects.count(), 1)
+
+    @authenticate
+    def test_cannot_delete_purchase_if_not_canteen_manager(self):
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Purchase.objects.count(), 1)
+
+    @authenticate
+    def test_can_delete_purchase(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.delete(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(Purchase.objects.count(), 0)
+        self.assertEqual(Purchase.all_objects.count(), 1)
 
-        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 0)
+    def test_can_delete_purchase_via_oauth2_only_if_same_creation_source(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.purchase.canteen.managers.add(user)
 
-    @authenticate
-    def test_delete_unauthorized(self):
-        """
-        A user cannot delete a purchase object of a canteen they don't manage
-        """
-        purchase = PurchaseFactory()
+        self.client.credentials(Authorization=f"Bearer {token}")
+        response = self.client.delete(self.url)
 
-        response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)
-
-    def test_delete_unauthenticated(self):
-        """
-        A user cannot delete a purchase object of a canteen if they're not authenticated
-        """
-        purchase = PurchaseFactory()
-
-        response = self.client.delete(reverse("purchase_retrieve_update_destroy", kwargs={"pk": purchase.id}))
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-        self.assertEqual(Purchase.objects.filter(pk=purchase.id).count(), 1)  #
-
-    @authenticate
-    def test_delete_multiple_purchases(self):
-        """
-        Given a list of purchase ids, soft delete those purchases
-        """
-        purchase_1 = PurchaseFactory(deletion_date=None)
-        purchase_1.canteen.managers.add(authenticate.user)
-        purchase_2 = PurchaseFactory(deletion_date=None)
-        purchase_2.canteen.managers.add(authenticate.user)
-
-        response = self.client.post(
-            reverse("delete_purchases"), {"ids": [purchase_1.id, purchase_2.id]}, format="json"
+        # update the purchase
+        Purchase.objects.filter(id=self.purchase.id).update(
+            creation_user=user,
+            creation_source=CreationSource.API,
+            creation_source_api_oauth2_application=token.application,
         )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        purchase_1.refresh_from_db()
-        purchase_2.refresh_from_db()
-        self.assertIsNotNone(purchase_1.deletion_date)
-        self.assertIsNotNone(purchase_2.deletion_date)
+        self.purchase.refresh_from_db()
+
+        response = self.client.delete(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class PurchaseDeleteMultipleApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.purchase_1 = PurchaseFactory(canteen=cls.canteen)
+        cls.purchase_2 = PurchaseFactory(canteen=cls.canteen)
+
+    def test_cannot_delete_multiple_purchases_if_unauthenticated(self):
+        url = reverse("delete_purchases")
+        payload = {"ids": [self.purchase_1.id, self.purchase_2.id]}
+        response = self.client.post(url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Purchase.objects.count(), 2)
 
     @authenticate
-    def test_delete_invalid_purchases(self):
+    def test_can_delete_multiple_purchases(self):
+        self.assertIsNone(self.purchase_1.deletion_date)
+        self.assertIsNone(self.purchase_2.deletion_date)
+        self.canteen.managers.add(authenticate.user)
+
+        url = reverse("delete_purchases")
+        payload = {"ids": [self.purchase_1.id, self.purchase_2.id]}
+        response = self.client.post(url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Purchase.objects.count(), 0)
+        self.assertEqual(Purchase.all_objects.count(), 2)
+        self.purchase_1.refresh_from_db()
+        self.purchase_2.refresh_from_db()
+        self.assertIsNotNone(self.purchase_1.deletion_date)
+        self.assertIsNotNone(self.purchase_2.deletion_date)
+
+    @authenticate
+    def test_can_delete_invalid_purchases(self):
         """
         Ignore ids that are: non-existant; already deleted; not managed by the user
         And delete what can be deleted
@@ -549,11 +615,14 @@ class PurchaseDeleteApiTest(APITestCase):
         purchase_already_deleted = PurchaseFactory(deletion_date=date)
         purchase_should_delete.canteen.managers.add(authenticate.user)
         purchase_already_deleted.canteen.managers.add(authenticate.user)
-        invalid_id = "999"
+        invalid_id = "9999"
         not_mine = PurchaseFactory(deletion_date=None)
         ids = [purchase_should_delete.id, purchase_already_deleted.id, invalid_id, not_mine.id]
 
-        response = self.client.post(reverse("delete_purchases"), {"ids": ids}, format="json")
+        url = reverse("delete_purchases")
+        payload = {"ids": ids}
+        response = self.client.post(url, payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["count"], 1)
         purchase_should_delete.refresh_from_db()
@@ -566,7 +635,7 @@ class PurchaseDeleteApiTest(APITestCase):
 
 class PurchaseRestoreApiTest(APITestCase):
     @authenticate
-    def test_restore_purchases(self):
+    def test_can_restore_purchases(self):
         """
         This endpoint restores the given IDs of deleted purchases
         """
@@ -578,9 +647,10 @@ class PurchaseRestoreApiTest(APITestCase):
             purchase.canteen.managers.add(authenticate.user)
         not_my_purchase = PurchaseFactory(deletion_date=date)
 
-        response = self.client.post(
-            reverse("restore_purchases"), {"ids": [purchase_1.id, purchase_2.id, not_my_purchase.id]}, format="json"
-        )
+        url = reverse("restore_purchases")
+        payload = {"ids": [purchase_1.id, purchase_2.id, not_my_purchase.id]}
+        response = self.client.post(url, payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["count"], 2)
@@ -594,108 +664,178 @@ class PurchaseRestoreApiTest(APITestCase):
         self.assertEqual(not_my_purchase.deletion_date, date)
 
 
-class PurchaseCanteenSummaryApiTest(APITestCase):
-    @authenticate
-    def test_purchase_not_authorized(self):
-        canteen = CanteenFactory()
+class CanteenPurchasesSummaryApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.url = reverse("canteen_purchases_summary", kwargs={"canteen_pk": cls.canteen.id})
 
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
+    def test_cannot_get_canteen_purchases_summary_if_unauthenticated(self):
+        payload = {"year": 2020}
+        response = self.client.get(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_purchase_nonexistent_canteen(self):
-        response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": 999999}), {"year": 2020})
+    def test_cannot_get_canteen_purchases_summary_if_canteen_does_not_exist(self):
+        payload = {"year": 2020}
+        response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": 9999}), payload)
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_purchase_total_summary(self):
+    def test_cannot_get_canteen_purchases_summary_if_not_canteen_manager(self):
+        payload = {"year": 2020}
+        response = self.client.get(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_can_get_canteen_purchases_summary(self):
+        self.canteen.managers.add(authenticate.user)
+
+        PurchaseFactory(canteen=self.canteen, prix_ht=100, date="2020-01-01")
+        PurchaseFactory(canteen=self.canteen, prix_ht=50, date="2020-12-31")
+        PurchaseFactory(canteen=self.canteen, prix_ht=300, date="2021-01-01")
+        PurchaseFactory(canteen=self.canteen, prix_ht=150, date="2021-12-31")
+        other_canteen = CanteenFactory(managers=[authenticate.user])
+        PurchaseFactory(canteen=other_canteen, prix_ht=999, date="2021-01-01")
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertIn("results", body)
+        self.assertEqual(len(body["results"]), 2)  # multi year
+        self.assertEqual(body["results"][0]["year"], 2020)
+        self.assertEqual(body["results"][0]["valeurTotale"], 150)
+        self.assertIn("valeurBio", body["results"][0])
+        self.assertEqual(body["results"][1]["year"], 2021)
+        self.assertEqual(body["results"][1]["valeurTotale"], 450)
+
+
+class CanteenPurchasesSummaryForYearApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.year = 2020
+        cls.url = reverse(
+            "canteen_purchases_summary_for_year", kwargs={"canteen_pk": cls.canteen.id, "year": cls.year}
+        )
+
+    def test_cannot_get_canteen_purchases_summary_for_year_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_canteen_purchases_summary_for_year_if_canteen_does_not_exist(self):
+        response = self.client.get(
+            reverse("canteen_purchases_summary_for_year", kwargs={"canteen_pk": 9999, "year": self.year})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_get_canteen_purchases_summary_for_year_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_can_get_purchase_total_summary(self):
         """
         Given a year, return spending by category
         Bio category is the sum of all products with either bio or bio en conversion labels
         Every category apart from bio should exlude bio (so bio + label rouge gets counted in bio but not label rouge)
         The categories with multiple labels on them should count items with two or more labels once
         """
-        canteen = CanteenFactory(managers=[authenticate.user])
+        self.canteen.managers.add(authenticate.user)
         # For the year 2020
         # bio (+ rouge)
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
-            price_ht=50,
+            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
+            prix_ht=50,
         )
         # bio en conversion (+ igp)
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-08-01",
-            characteristics=[Purchase.Characteristic.CONVERSION_BIO, Purchase.Characteristic.IGP],
-            price_ht=150,
+            caracteristiques=[Purchase.Characteristic.CONVERSION_BIO, Purchase.Characteristic.IGP],
+            prix_ht=150,
         )
         # bio + commerce équitable
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.COMMERCE_EQUITABLE],
-            price_ht=20,
+            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.COMMERCE_EQUITABLE],
+            prix_ht=20,
         )
         # hve x2 = 10
-        PurchaseFactory(canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.HVE], price_ht=2)
-        PurchaseFactory(canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.HVE], price_ht=8)
-        # rouge x2 = 20
         PurchaseFactory(
-            canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.LABEL_ROUGE], price_ht=12
+            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.HVE], prix_ht=2
         )
         PurchaseFactory(
-            canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.LABEL_ROUGE], price_ht=8
+            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.HVE], prix_ht=8
+        )
+        # rouge x2 = 20
+        PurchaseFactory(
+            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.LABEL_ROUGE], prix_ht=12
+        )
+        PurchaseFactory(
+            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.LABEL_ROUGE], prix_ht=8
         )
         # aoc, igp + igp = 30
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.AOCAOP, Purchase.Characteristic.IGP],
-            price_ht=22,
-        )
-        PurchaseFactory(canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.IGP], price_ht=4)
-        PurchaseFactory(
-            canteen=canteen,
-            date="2020-01-01",
-            characteristics=[Purchase.Characteristic.IGP, Purchase.Characteristic.HVE],
-            price_ht=4,
+            caracteristiques=[Purchase.Characteristic.AOCAOP, Purchase.Characteristic.IGP],
+            prix_ht=22,
         )
         PurchaseFactory(
-            canteen=canteen,
-            date="2020-01-01",
-            characteristics=[Purchase.Characteristic.EXTERNALITES, Purchase.Characteristic.PERFORMANCE],
-            price_ht=30,
+            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.IGP], prix_ht=4
         )
         PurchaseFactory(
-            canteen=canteen, date="2020-01-01", characteristics=[Purchase.Characteristic.PERFORMANCE], price_ht=15
+            canteen=self.canteen,
+            date="2020-01-01",
+            caracteristiques=[Purchase.Characteristic.IGP, Purchase.Characteristic.HVE],
+            prix_ht=4,
+        )
+        PurchaseFactory(
+            canteen=self.canteen,
+            date="2020-01-01",
+            caracteristiques=[Purchase.Characteristic.EXTERNALITES, Purchase.Characteristic.PERFORMANCE],
+            prix_ht=30,
+        )
+        PurchaseFactory(
+            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.PERFORMANCE], prix_ht=15
         )
         # some other durable label
         PurchaseFactory(
-            canteen=canteen, date="2020-01-08", characteristics=[Purchase.Characteristic.PECHE_DURABLE], price_ht=240
+            canteen=self.canteen,
+            date="2020-01-08",
+            caracteristiques=[Purchase.Characteristic.PECHE_DURABLE],
+            prix_ht=240,
         )
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-15",
-            characteristics=[Purchase.Characteristic.COMMERCE_EQUITABLE],
-            price_ht=10,
+            caracteristiques=[Purchase.Characteristic.COMMERCE_EQUITABLE],
+            prix_ht=10,
         )
         # no labels
-        PurchaseFactory(canteen=canteen, date="2020-01-01", characteristics=[], price_ht=500)
+        PurchaseFactory(canteen=self.canteen, date="2020-01-01", caracteristiques=[], prix_ht=500)
 
         # Not in the year 2020 - smoke test for year filtering
         PurchaseFactory(
-            canteen=canteen, date="2019-01-01", characteristics=[Purchase.Characteristic.BIO], price_ht=666
+            canteen=self.canteen, date="2019-01-01", caracteristiques=[Purchase.Characteristic.BIO], prix_ht=666
         )
 
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         body = response.json()
         self.assertEqual(body["valeurTotale"], 1075.0)
         self.assertEqual(body["valeurBio"], 220.0)
@@ -715,93 +855,94 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         The three categories outside of EGalim should get the totals regardless of what other labels they have
         The category of AOC/AOP/IGP/STG should count items with two or more labels once (applicable to extended declaration)
         """
-        canteen = CanteenFactory(managers=[authenticate.user])
+        self.canteen.managers.add(authenticate.user)
         d = "2020-03-01"
 
         # test that bio trumps other labels, but doesn't stop non-EGalim labels
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date=d,
-            family=Purchase.Family.FRUITS_ET_LEGUMES,
-            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.AOCAOP],
-            price_ht=120,
+            famille_produits=Purchase.Family.FRUITS_ET_LEGUMES,
+            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.AOCAOP],
+            prix_ht=120,
         )
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date=d,
-            family=Purchase.Family.FRUITS_ET_LEGUMES,
-            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.COMMERCE_EQUITABLE],
-            price_ht=80,
+            famille_produits=Purchase.Family.FRUITS_ET_LEGUMES,
+            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.COMMERCE_EQUITABLE],
+            prix_ht=80,
         )
 
         # check that sums are separate between families
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date=d,
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            characteristics=[
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            caracteristiques=[
                 Purchase.Characteristic.BIO,
                 Purchase.Characteristic.CIRCUIT_COURT,
                 Purchase.Characteristic.LOCAL,
             ],
-            local_definition=Purchase.Local.AUTRE,
-            price_ht=10,
+            definition_local=Purchase.Local.PAT,
+            prix_ht=10,
         )
 
         # check that AOC and STG are regrouped and do not count bio totals and trump some other labels
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date=d,
-            family=Purchase.Family.FRUITS_ET_LEGUMES,
-            characteristics=[Purchase.Characteristic.AOCAOP],
-            price_ht=20,
+            famille_produits=Purchase.Family.FRUITS_ET_LEGUMES,
+            caracteristiques=[Purchase.Characteristic.AOCAOP],
+            prix_ht=20,
         )
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date=d,
-            family=Purchase.Family.FRUITS_ET_LEGUMES,
-            characteristics=[Purchase.Characteristic.STG, Purchase.Characteristic.COMMERCE_EQUITABLE],
-            price_ht=60,
+            famille_produits=Purchase.Family.FRUITS_ET_LEGUMES,
+            caracteristiques=[Purchase.Characteristic.STG, Purchase.Characteristic.COMMERCE_EQUITABLE],
+            prix_ht=60,
         )
 
-        # check that can have a family with only non-EGalim labels
+        # check that can have a famille_produits with only non-EGalim labels
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date=d,
-            family=Purchase.Family.AUTRES,
-            characteristics=[Purchase.Characteristic.LOCAL],
-            local_definition=Purchase.Local.AUTRE,
-            price_ht=50,
+            famille_produits=Purchase.Family.AUTRES,
+            caracteristiques=[Purchase.Characteristic.LOCAL],
+            definition_local=Purchase.Local.PAT,
+            prix_ht=50,
         )
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date=d,
-            family=Purchase.Family.AUTRES,
-            characteristics=[Purchase.Characteristic.LOCAL],
-            local_definition=Purchase.Local.AUTRE,
-            price_ht=50,
+            famille_produits=Purchase.Family.AUTRES,
+            caracteristiques=[Purchase.Characteristic.LOCAL],
+            definition_local=Purchase.Local.PAT,
+            prix_ht=50,
         )
 
         # check that circuit_court meat will include both this and the bio purchase which is also short dist.
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date=d,
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            characteristics=[Purchase.Characteristic.CIRCUIT_COURT],
-            price_ht=90,
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            caracteristiques=[Purchase.Characteristic.CIRCUIT_COURT],
+            prix_ht=90,
         )
 
         # check that items with no label are included in total
-        PurchaseFactory(canteen=canteen, date=d, family=Purchase.Family.AUTRES, characteristics=[], price_ht=110)
+        PurchaseFactory(
+            canteen=self.canteen, date=d, famille_produits=Purchase.Family.AUTRES, caracteristiques=[], prix_ht=110
+        )
 
         # Not in the year 2020 - smoke test for year filtering
         PurchaseFactory(
-            canteen=canteen, date="2019-01-01", characteristics=[Purchase.Characteristic.BIO], price_ht=666
+            canteen=self.canteen, date="2019-01-01", caracteristiques=[Purchase.Characteristic.BIO], prix_ht=666
         )
 
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["valeurTotale"], 590.0)
@@ -818,216 +959,240 @@ class PurchaseCanteenSummaryApiTest(APITestCase):
         self.assertEqual(body["valeurViandesVolaillesNonEgalim"], 90.0)
         self.assertEqual(body["valeurExternalitesPerformance"], 0.0)
 
-    def test_purchase_summary_unauthenticated(self):
-        canteen = CanteenFactory()
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
     @authenticate
     def test_purchase_meat_totals(self):
-        """
-        The totals for "viandes et volailles" must be included in the payload
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
+        self.canteen.managers.add(authenticate.user)
 
         # Should be counted both on EGalim and Origine France
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[
+            caracteristiques=[
                 Purchase.Characteristic.BIO,
                 Purchase.Characteristic.LABEL_ROUGE,
                 Purchase.Characteristic.FRANCE,
             ],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=50,
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=50,
         )
 
         # Should be counted on EGalim
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.BIO],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=40,
+            caracteristiques=[Purchase.Characteristic.BIO],
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=40,
         )
 
         # Should be counted on EGalim
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.LABEL_ROUGE],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=30,
+            caracteristiques=[Purchase.Characteristic.LABEL_ROUGE],
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=30,
         )
 
         # Should not be counted as EGalim, only included in the total
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=20,
+            caracteristiques=[],
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=20,
         )
 
         # Should be counted on provenance france
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.FRANCE],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=15,
+            caracteristiques=[Purchase.Characteristic.FRANCE],
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=15,
         )
 
         # Not in the year 2020 - should not be included at all
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2019-01-01",
-            characteristics=[],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=10,
+            caracteristiques=[],
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=10,
         )
 
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
         body = response.json()
         self.assertEqual(body["valeurViandesVolailles"], 155.0)
         self.assertEqual(body["valeurViandesVolaillesEgalim"], 120.0)
-        self.assertEqual(body["valeurViandesVolaillesFrance"], 65.0)
+        self.assertEqual(body["valeurViandesVolaillesFrance"], 50.0 + 15.0)
+        self.assertEqual(body["valeurViandesVolaillesLocal"], 0)
 
     @authenticate
     def test_purchase_fish_totals(self):
-        """
-        The totals for "poissons, produits de la mer et de l'aquaculture" must be included in the payload
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
+        self.canteen.managers.add(authenticate.user)
 
         # Should be counted on EGalim only once
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            price_ht=55,
+            caracteristiques=[
+                Purchase.Characteristic.BIO,
+                Purchase.Characteristic.LABEL_ROUGE,
+                Purchase.Characteristic.FRANCE,
+            ],
+            famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
+            prix_ht=55,
         )
 
         # Should be counted on EGalim
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.BIO],
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            price_ht=40,
+            caracteristiques=[Purchase.Characteristic.BIO],
+            famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
+            prix_ht=40,
         )
 
         # Should be counted on EGalim
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.LABEL_ROUGE],
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            price_ht=30,
+            caracteristiques=[Purchase.Characteristic.LABEL_ROUGE],
+            famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
+            prix_ht=30,
         )
 
         # Should not be counted as EGalim, only included in the total
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[],
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            price_ht=20,
+            caracteristiques=[],
+            famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
+            prix_ht=20,
         )
 
-        # Should not be counted as EGalim, only included in the total
+        # Should be counted on provenance france
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2020-01-01",
-            characteristics=[Purchase.Characteristic.FRANCE],
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            price_ht=15,
+            caracteristiques=[Purchase.Characteristic.FRANCE],
+            famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
+            prix_ht=15,
         )
 
         # Not in the year 2020 - should not be included at all
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2019-01-01",
-            characteristics=[],
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            price_ht=10,
+            caracteristiques=[],
+            famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
+            prix_ht=10,
         )
 
-        response = self.client.get(
-            reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2020}
-        )
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get(self.url)
 
-        body = response.json()
-        self.assertEqual(body["valeurProduitsDeLaMer"], 160.0)
-        self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 125.0)
-
-    @authenticate
-    def test_get_multi_year_purchase_statistics(self):
-        """
-        It is possible for a manager to retrieve year-on-year purchase totals for a canteen
-        """
-        canteen = CanteenFactory(managers=[authenticate.user])
-
-        PurchaseFactory(canteen=canteen, price_ht=100, date="2020-01-01")
-        PurchaseFactory(canteen=canteen, price_ht=50, date="2020-12-31")
-        PurchaseFactory(canteen=canteen, price_ht=300, date="2021-01-01")
-        PurchaseFactory(canteen=canteen, price_ht=150, date="2021-12-31")
-
-        other_canteen = CanteenFactory(managers=[authenticate.user])
-        PurchaseFactory(canteen=other_canteen, price_ht=999, date="2021-01-01")
-
-        response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": canteen.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertIn("results", body)
-        self.assertEqual(len(body["results"]), 2)
-        self.assertEqual(body["results"][0]["year"], 2020)
-        self.assertEqual(body["results"][0]["valeurTotale"], 150)
-        self.assertIn("valeurBio", body["results"][0])
-        self.assertEqual(body["results"][1]["year"], 2021)
-        self.assertEqual(body["results"][1]["valeurTotale"], 450)
+        self.assertEqual(body["valeurProduitsDeLaMer"], 15 + 20 + 30 + 40 + 55)
+        self.assertEqual(body["valeurProduitsDeLaMerEgalim"], 55 + 40 + 30)
+        self.assertEqual(body["valeurProduitsDeLaMerFrance"], 55 + 15)
+        self.assertEqual(body["valeurProduitsDeLaMerLocal"], 0)
 
 
-class PurchaseCanteenOptionsApiTest(APITestCase):
-    def test_get_purchase_options_unauthenticated(self):
-        response = self.client.get(reverse("purchase_options"))
+class PurchaseOptionsApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("purchase_options")
+
+    def test_cannot_get_purchase_options_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
-    def test_get_purchase_options(self):
+    def test_can_get_purchase_options(self):
         """
-        A manager should be able to retrieve a list of products and providers that
+        A manager should be able to retrieve a list of products and fournisseurs that
         they've already entered on their own purchases
         """
         canteen = CanteenFactory(managers=[authenticate.user])
-        PurchaseFactory(description="avoine", canteen=canteen, provider="provider1")
-        PurchaseFactory(description="pommes", canteen=canteen, provider="provider2")
-        PurchaseFactory(description="pommes", canteen=canteen, provider="provider1")
-        PurchaseFactory(description=None, canteen=canteen, provider=None)
+        PurchaseFactory(description="avoine", canteen=canteen, fournisseur="fournisseur1")
+        PurchaseFactory(description="pommes", canteen=canteen, fournisseur="fournisseur2")
+        PurchaseFactory(description="pommes", canteen=canteen, fournisseur="fournisseur1")
+        PurchaseFactory(description=None, canteen=canteen, fournisseur=None)
+        PurchaseFactory(description="secret product", fournisseur="secret fournisseur")
 
-        PurchaseFactory(description="secret product", provider="secret provider")
+        response = self.client.get(self.url)
 
-        response = self.client.get(f"{reverse('purchase_options')}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(len(body["products"]), 2)
         self.assertEqual(len(body["providers"]), 2)
         self.assertIn("avoine", body["products"])
-        self.assertIn("provider2", body["providers"])
+        self.assertIn("fournisseur2", body["providers"])
         self.assertNotIn("secret product", body["products"])
-        self.assertNotIn("secret provider", body["providers"])
+        self.assertNotIn("secret fournisseur", body["providers"])
 
 
 class DiagnosticsFromPurchasesApiTest(APITestCase):
+    def test_cannot_create_diagnostics_from_purchases_if_unauthenticated(self):
+        url = reverse("diagnostics_from_purchases", kwargs={"year": 2020})
+        response = self.client.post(url, {})
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_create_diagnostics_from_purchases_if_missing_canteen_ids(self):
+        url = reverse("diagnostics_from_purchases", kwargs={"year": 2021})
+        response = self.client.post(url, {})
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @freeze_time("2024-02-10")  # during the 2023 campaign
+    @authenticate
+    def test_errors_for_create_diagnostics_from_purchases(self):
+        """
+        Handle canteen errors in diagnostic creation gracefully, creating what can be created
+        """
+        year = 2023
+        canteen_with_diagnostic = CanteenFactory(managers=[authenticate.user])
+        canteen_without_purchases = CanteenFactory(managers=[authenticate.user])
+        canteen_ok = CanteenFactory(managers=[authenticate.user])
+        not_my_canteen = CanteenFactory()
+
+        DiagnosticFactory(canteen=canteen_with_diagnostic, year=year)
+        PurchaseFactory(canteen=canteen_ok, date=f"{year}-01-01", prix_ht=100)
+        PurchaseFactory(canteen=canteen_with_diagnostic, date=f"{year}-01-01", prix_ht=666)
+        PurchaseFactory(canteen=not_my_canteen, date=f"{year}-01-01", prix_ht=666)
+
+        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
+        payload = {
+            "canteenIds": [
+                "666",
+                not_my_canteen.id,
+                canteen_with_diagnostic.id,
+                canteen_without_purchases.id,
+                canteen_ok.id,
+            ]
+        }
+        response = self.client.post(url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 1)  # canteen_ok
+        errors = body["errors"]
+        self.assertEqual(len(errors), 4)
+        self.assertEqual(errors[0], "Cantine inconnue : 666")
+        self.assertEqual(errors[1], f"Vous ne gérez pas la cantine : {not_my_canteen.id}")
+        self.assertEqual(
+            errors[2], f"Il existe déjà un diagnostic pour l'année 2023 pour la cantine : {canteen_with_diagnostic.id}"
+        )
+        self.assertEqual(errors[3], f"Aucun achat trouvé pour la cantine : {canteen_without_purchases.id}")
+
     @freeze_time("2022-02-10")  # during the 2021 campaign
     @authenticate
     def test_create_diagnostics_from_purchases(self):
@@ -1035,41 +1200,37 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         Given a list of canteen ids and a year, create diagnostics
         pre-filled with purchase totals for that year
         """
+        year = 2021
         canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
         central_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
-        canteens = [canteen_site, central_groupe]
         # purchases to be included in totals
         PurchaseFactory(
             canteen=canteen_site,
             date="2021-01-01",
-            price_ht=50,
-            family=Purchase.Family.BOISSONS,
-            characteristics=[Purchase.Characteristic.AOCAOP],
+            prix_ht=50,
+            famille_produits=Purchase.Family.BOISSONS,
+            caracteristiques=[Purchase.Characteristic.AOCAOP],
         )
         # TODO: would be nice to double check the AOCAOP IGP STG aggregation vs other labels
         PurchaseFactory(
             canteen=canteen_site,
             date="2021-12-31",
-            price_ht=150,
-            family=Purchase.Family.BOULANGERIE,
-            characteristics=[],
+            prix_ht=150,
+            famille_produits=Purchase.Family.BOULANGERIE,
+            caracteristiques=[],
         )
-
-        PurchaseFactory(canteen=central_groupe, date="2021-01-01", price_ht=5)
-        PurchaseFactory(canteen=central_groupe, date="2021-12-31", price_ht=15)
-
+        PurchaseFactory(canteen=central_groupe, date="2021-01-01", prix_ht=5)
+        PurchaseFactory(canteen=central_groupe, date="2021-12-31", prix_ht=15)
         # purchases to be filtered out from totals
-        PurchaseFactory(canteen=canteen_site, date="2022-01-01", price_ht=666)
-        PurchaseFactory(canteen=central_groupe, date="2020-12-31", price_ht=666)
+        PurchaseFactory(canteen=canteen_site, date="2022-01-01", prix_ht=666)
+        PurchaseFactory(canteen=central_groupe, date="2020-12-31", prix_ht=666)
 
-        year = 2021
-        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=canteens).count(), 0)
+        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site, central_groupe]).count(), 0)
 
-        response = self.client.post(
-            reverse("diagnostics_from_purchases", kwargs={"year": year}),
-            {"canteenIds": [canteen_site.id, central_groupe.id]},
-            format="json",
-        )
+        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
+        payload = {"canteenIds": [canteen_site.id, central_groupe.id]}
+        response = self.client.post(url, payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         results = body["results"]
@@ -1088,141 +1249,185 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         self.assertEqual(diag_cc.valeur_totale, 20)
         self.assertEqual(diag_cc.central_kitchen_diagnostic_mode, "APPRO")
 
-    def test_unauthorised_create_diagnostics_from_purchases(self):
-        """
-        If not logged in, throw a 403
-        """
-        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2020}), {})
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
+    @freeze_time("2026-03-15")  # during the 2025 campaign
     @authenticate
-    def test_missing_canteens_create_diagnostics_from_purchases(self):
+    def test_create_diagnostics_from_purchases_france_value_2025(self):
         """
-        If canteen ids are missing, throw a 400
+        Test that the france total value is calculated correctly : France + Circuit court + Local
         """
-        response = self.client.post(reverse("diagnostics_from_purchases", kwargs={"year": 2021}), {}, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    @freeze_time("2024-02-10")  # during the 2023 campaign
-    @authenticate
-    def test_errors_for_create_diagnostics_from_purchases(self):
-        """
-        Handle errors in diagnostic creation gracefully, creating what can be created
-        """
-        canteen_with_diag = CanteenFactory(managers=[authenticate.user])
-        canteen_without_purchases = CanteenFactory(managers=[authenticate.user])
-        good_canteen = CanteenFactory(managers=[authenticate.user])
-        canteens = [canteen_with_diag, canteen_without_purchases, good_canteen]
-        not_my_canteen = CanteenFactory()
-
-        year = 2023
-        DiagnosticFactory(canteen=canteen_with_diag, year=year)
-        PurchaseFactory(canteen=good_canteen, date=f"{year}-01-01", price_ht=100)
-        PurchaseFactory(canteen=canteen_with_diag, date=f"{year}-01-01", price_ht=666)
-        PurchaseFactory(canteen=not_my_canteen, date=f"{year}-01-01", price_ht=666)
-
-        response = self.client.post(
-            reverse("diagnostics_from_purchases", kwargs={"year": year}),
-            {"canteenIds": ["666", not_my_canteen.id] + [canteen.id for canteen in canteens]},
-            format="json",
+        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
+        PurchaseFactory(
+            canteen=canteen_site,
+            date="2025-01-01",
+            prix_ht=10,
+            caracteristiques=[Purchase.Characteristic.FRANCE],
+            famille_produits=Purchase.Family.BOULANGERIE,
         )
+        PurchaseFactory(
+            canteen=canteen_site,
+            date="2025-01-01",
+            prix_ht=50,
+            caracteristiques=[Purchase.Characteristic.CIRCUIT_COURT],
+            famille_produits=Purchase.Family.BOULANGERIE,
+        )
+        PurchaseFactory(
+            canteen=canteen_site,
+            date="2025-01-01",
+            prix_ht=15,
+            caracteristiques=[Purchase.Characteristic.LOCAL],
+            famille_produits=Purchase.Family.BOULANGERIE,
+        )
+
+        year = 2025
+        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site.id]).count(), 0)
+
+        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
+        payload = {"canteenIds": [canteen_site.id]}
+        response = self.client.post(url, payload, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         results = body["results"]
-        self.assertEqual(len(results), 1)
-        errors = body["errors"]
-        self.assertEqual(errors[0], "Cantine inconnue : 666")
-        self.assertEqual(errors[1], f"Vous ne gérez pas la cantine : {not_my_canteen.id}")
-        self.assertEqual(
-            errors[2], f"Il existe déjà un diagnostic pour l'année 2023 pour la cantine : {canteen_with_diag.id}"
+        diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
+        self.assertIn(diag_site.id, results)
+        self.assertEqual(diag_site.valeur_totale, 75)
+        self.assertEqual(diag_site.valeur_boulangerie_france, 10 + 50 + 15)
+        self.assertEqual(diag_site.valeur_boulangerie_circuit_court, 50)
+        self.assertEqual(diag_site.valeur_boulangerie_local, 15)
+
+    @freeze_time("2024-03-30")  # before the 2025 campaign
+    @authenticate
+    def test_create_diagnostics_from_purchases_france_value_before_2025(self):
+        """
+        Test that the france total value is calculated correctly : France only
+        """
+        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
+        PurchaseFactory(
+            canteen=canteen_site,
+            date="2024-01-01",
+            prix_ht=10,
+            caracteristiques=[Purchase.Characteristic.FRANCE],
+            famille_produits=Purchase.Family.BOULANGERIE,
         )
-        self.assertEqual(errors[3], f"Aucun achat trouvé pour la cantine : {canteen_without_purchases.id}")
-        self.assertEqual(len(errors), 4)
+        PurchaseFactory(
+            canteen=canteen_site,
+            date="2024-01-01",
+            prix_ht=50,
+            caracteristiques=[Purchase.Characteristic.CIRCUIT_COURT],
+            famille_produits=Purchase.Family.BOULANGERIE,
+        )
+        PurchaseFactory(
+            canteen=canteen_site,
+            date="2024-01-01",
+            prix_ht=15,
+            caracteristiques=[Purchase.Characteristic.LOCAL],
+            famille_produits=Purchase.Family.BOULANGERIE,
+        )
+
+        year = 2024
+        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site.id]).count(), 0)
+
+        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
+        payload = {"canteenIds": [canteen_site.id]}
+        response = self.client.post(url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        results = body["results"]
+        diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
+        self.assertIn(diag_site.id, results)
+        self.assertEqual(diag_site.valeur_totale, 75)
+        self.assertEqual(diag_site.valeur_boulangerie_france, 10)
+        self.assertEqual(diag_site.valeur_boulangerie_circuit_court, 50)
+        self.assertEqual(diag_site.valeur_boulangerie_local, 15)
 
 
-class PublicPurchasePublicSummaryApiTest(APITestCase):
-    def test_get_public_purchases_summary(self):
+class PublicPurchasePercentageSummaryApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.year = 2024
+        cls.url = reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": cls.canteen.id})
+
+    def test_can_get_public_purchases_summary(self):
         """
         Return percentages from purchase data for the given year and canteen
         """
-        canteen = CanteenFactory()
-        year = 2024
-
         # bio percent, ignore lesser labels
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-01-01",
-            characteristics=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=10,
+            caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=10,
         )
         # sustainable percent, meat egalim
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-01-01",
-            characteristics=[Purchase.Characteristic.LABEL_ROUGE],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=10,
+            caracteristiques=[Purchase.Characteristic.LABEL_ROUGE],
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=10,
         )
         # externalities percent, meat egalim, meat france
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-01-01",
-            characteristics=[Purchase.Characteristic.EXTERNALITES, Purchase.Characteristic.FRANCE],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=10,
+            caracteristiques=[Purchase.Characteristic.EXTERNALITES, Purchase.Characteristic.FRANCE],
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=10,
         )
         # egalim others, fish egalim
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-01-01",
-            characteristics=[Purchase.Characteristic.PECHE_DURABLE],
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            price_ht=10,
+            caracteristiques=[Purchase.Characteristic.PECHE_DURABLE],
+            famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
+            prix_ht=10,
         )
         # meat france (local and circuit_court not included?)
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-12-31",
-            characteristics=[Purchase.Characteristic.FRANCE],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=10,
+            caracteristiques=[Purchase.Characteristic.FRANCE],
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=10,
         )
         # fish non egalim
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-12-31",
-            characteristics=[Purchase.Characteristic.FRANCE],
-            family=Purchase.Family.PRODUITS_DE_LA_MER,
-            price_ht=10,
+            caracteristiques=[Purchase.Characteristic.FRANCE],
+            famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
+            prix_ht=10,
         )
         # add misc purchase to have nice round total of 100 HT
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2024-12-31",
-            characteristics=[],
-            family=Purchase.Family.AUTRES,
-            price_ht=40,
+            caracteristiques=[],
+            famille_produits=Purchase.Family.AUTRES,
+            prix_ht=40,
         )
 
         # create purchase outside of requested year to check filtering
         PurchaseFactory(
-            canteen=canteen,
+            canteen=self.canteen,
             date="2023-12-31",
-            characteristics=[Purchase.Characteristic.BIO],
-            family=Purchase.Family.VIANDES_VOLAILLES,
-            price_ht=999999,
+            caracteristiques=[Purchase.Characteristic.BIO],
+            famille_produits=Purchase.Family.VIANDES_VOLAILLES,
+            prix_ht=999999,
         )
 
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": year}
-        )
+        payload = {"year": self.year}
+        response = self.client.get(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
-        # total 2024: 100
-        # total 2024 bio: 10
-        self.assertEqual(body["percentageValeurBio"], 0.1)
+        self.assertNotIn("valeurTotale", body)
+        self.assertNotIn("lastPurchaseDate", body)
+        self.assertEqual(body["percentageValeurTotale"], 1)
+        self.assertEqual(body["percentageValeurBio"], 0.1)  # 10/100
         self.assertEqual(body["percentageValeurSiqo"], 0.1)
         self.assertEqual(body["percentageValeurExternalitesPerformance"], 0.1)
         self.assertEqual(body["percentageValeurEgalimAutres"], 0.1)
@@ -1242,54 +1447,55 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         If the canteen has redacted the year return a 404
         TODO: do we really want to use redacted_appro_years to control this?
         """
-        canteen = CanteenFactory(redacted_appro_years=[2024])
-        PurchaseFactory(canteen=canteen, date="2024-01-01")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
-        )
+        self.canteen.redacted_appro_years = [2024]
+        self.canteen.save()
+        PurchaseFactory(canteen=self.canteen, date="2024-01-01")
+
+        payload = {"year": 2024}
+        response = self.client.get(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_no_purchases_for_public_summary(self):
         """
         If the canteen doesn't have purchases for the year requested return a 404
         """
-        canteen = CanteenFactory()
-        PurchaseFactory(canteen=canteen, date="2023-12-31")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
-        )
+        PurchaseFactory(canteen=self.canteen, date="2023-12-31")
+
+        payload = {"year": 2024}
+        response = self.client.get(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_get_last_purchase_date_in_public_summary_if_manager(self):
+    def test_can_get_last_purchase_date_in_public_summary_if_canteen_manager(self):
         """
         The purchases summary should return the last purchase date if the user
         is the manager of the canteen
         """
-        canteen = CanteenFactory(managers=[authenticate.user])
+        self.canteen.managers.add(authenticate.user)
 
-        PurchaseFactory(canteen=canteen, date="2024-12-01")
-        PurchaseFactory(canteen=canteen, date="2024-05-31")
-        PurchaseFactory(canteen=canteen, date="2025-01-01")
+        PurchaseFactory(canteen=self.canteen, date="2024-12-01")
+        PurchaseFactory(canteen=self.canteen, date="2024-05-31")
+        PurchaseFactory(canteen=self.canteen, date="2025-01-01")
 
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
-        )
+        payload = {"year": 2024}
+        response = self.client.get(self.url, payload)
+
         body = response.json()
         self.assertEqual(body["lastPurchaseDate"], "2024-12-01")
 
     @authenticate
-    def test_dont_get_last_purchase_date_in_public_summary_if_not_manager(self):
+    def test_dont_get_last_purchase_date_in_public_summary_if_not_canteen_manager(self):
         """
         The purchases summary should not return the last purchase date if the user
         is not the manager of the canteen, even if authenticated
         """
-        canteen = CanteenFactory()
-        PurchaseFactory(canteen=canteen, date="2024-05-31")
+        PurchaseFactory(canteen=self.canteen, date="2024-05-31")
 
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}), {"year": 2024}
-        )
+        payload = {"year": 2024}
+        response = self.client.get(self.url, payload)
+
         body = response.json()
         self.assertNotIn("lastPurchaseDate", body)
 
@@ -1298,12 +1504,14 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         """
         The manager of the canteen has an option to get redacted data
         """
-        canteen = CanteenFactory(redacted_appro_years=[2024], managers=[authenticate.user])
-        PurchaseFactory(canteen=canteen, date="2024-01-01")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": "true"},
-        )
+        self.canteen.redacted_appro_years = [2024]
+        self.canteen.managers.add(authenticate.user)
+        self.canteen.save()
+        PurchaseFactory(canteen=self.canteen, date="2024-01-01")
+
+        payload = {"year": 2024, "ignoreRedaction": "true"}
+        response = self.client.get(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @authenticate
@@ -1311,12 +1519,14 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         """
         The manager of the canteen has an option to not get redacted data
         """
-        canteen = CanteenFactory(redacted_appro_years=[2024], managers=[authenticate.user])
-        PurchaseFactory(canteen=canteen, date="2024-01-01")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": "false"},
-        )
+        self.canteen.redacted_appro_years = [2024]
+        self.canteen.managers.add(authenticate.user)
+        self.canteen.save()
+        PurchaseFactory(canteen=self.canteen, date="2024-01-01")
+
+        payload = {"year": 2024, "ignoreRedaction": "false"}
+        response = self.client.get(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
@@ -1324,22 +1534,24 @@ class PublicPurchasePublicSummaryApiTest(APITestCase):
         """
         Non-managers cannot get redacted canteen data
         """
-        canteen = CanteenFactory(redacted_appro_years=[2024])
-        PurchaseFactory(canteen=canteen, date="2024-01-01")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": "true"},
-        )
+        self.canteen.redacted_appro_years = [2024]
+        self.canteen.save()
+        PurchaseFactory(canteen=self.canteen, date="2024-01-01")
+
+        payload = {"year": 2024, "ignoreRedaction": "true"}
+        response = self.client.get(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_public_cannot_optionally_get_redacted_purchases_summary(self):
         """
         Public cannot get redacted canteen data
         """
-        canteen = CanteenFactory(redacted_appro_years=[2024])
-        PurchaseFactory(canteen=canteen, date="2024-01-01")
-        response = self.client.get(
-            reverse("canteen_purchases_percentage_summary", kwargs={"canteen_pk": canteen.id}),
-            {"year": 2024, "ignoreRedaction": "true"},
-        )
+        self.canteen.redacted_appro_years = [2024]
+        self.canteen.save()
+        PurchaseFactory(canteen=self.canteen, date="2024-01-01")
+
+        payload = {"year": 2024, "ignoreRedaction": "true"}
+        response = self.client.get(self.url, payload)
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

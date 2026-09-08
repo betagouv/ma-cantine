@@ -8,7 +8,7 @@
 <script>
 import DsfrBadge from "@/components/DsfrBadge"
 // New badge rules implemented in vue3 frontend
-import diagnosticService from "../../../2024-frontend/src/services/diagnostics"
+import diagnosticService from "../../../2024-frontend/src/services/diagnosticsBadge"
 
 export default {
   name: "DataInfoBadge",

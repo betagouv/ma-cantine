@@ -98,7 +98,7 @@ class TeledeclarationQuerySet(models.QuerySet):
         else:
             return self.none()
 
-    def historical_valid_td(self, years: list):
+    def valid_td_all_years(self, years: list):
         results = self.none()
         for year in years:
             results = results | self.valid_td_by_year(year)
@@ -151,16 +151,6 @@ class Teledeclaration(models.Model):
         SUBMITTED = "SUBMITTED", "Télédéclaré"
         CANCELLED = "CANCELLED", "Annulé"
 
-    class Meta:
-        verbose_name = "télédéclaration"
-        verbose_name_plural = "télédéclarations"
-        constraints = [
-            models.UniqueConstraint(
-                fields=["year", "canteen"], condition=models.Q(status="SUBMITTED"), name="unique_submitted_td"
-            )
-        ]
-        indexes = [models.Index(fields=["canteen", "year"])]
-
     class TeledeclarationMode(models.TextChoices):
         SATELLITE_WITHOUT_APPRO = (
             "SATELLITE_WITHOUT_APPRO",
@@ -176,20 +166,6 @@ class Teledeclaration(models.Model):
         )
         SITE = "SITE", "Cantine déclarant ses propres données"
 
-    objects = models.Manager.from_queryset(TeledeclarationQuerySet)()
-
-    # Fields that pertain to the teledeclaration. These fields
-    # will not change and should contain all information to be
-    # sent to the system that will treat the teledeclarations.
-
-    declared_data = models.JSONField(verbose_name="Champs", encoder=CustomJSONEncoder)
-
-    # Structured non-null fields for validation / querying.
-    # These fields cannot be null and will not change if the
-    # canteen or diagnostic objects change.
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
     year = models.IntegerField(verbose_name="année")
     canteen_siret = models.TextField(null=True, blank=True)
     canteen_siren_unite_legale = models.TextField(null=True, blank=True)
@@ -214,11 +190,7 @@ class Teledeclaration(models.Model):
     yearly_meal_count = models.IntegerField(null=True, blank=True, verbose_name="Nombre de repas servis par an")
     meal_price = models.FloatField(null=True, blank=True, verbose_name="Coût denrées")
 
-    history = HistoricalRecords(
-        bases=[
-            AuthenticationMethodHistoricalRecords,
-        ]
-    )
+    history = HistoricalRecords(bases=[AuthenticationMethodHistoricalRecords])
 
     status = models.CharField(
         max_length=255,
@@ -265,6 +237,33 @@ class Teledeclaration(models.Model):
         null=True,
         blank=True,
     )
+
+    # Fields that pertain to the teledeclaration. These fields
+    # will not change and should contain all information to be
+    # sent to the system that will treat the teledeclarations.
+    declared_data = models.JSONField(verbose_name="Champs", encoder=CustomJSONEncoder)
+
+    # Structured non-null fields for validation / querying.
+    # These fields cannot be null and will not change if the
+    # canteen or diagnostic objects change.
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    objects = TeledeclarationQuerySet.as_manager()
+
+    class Meta:
+        verbose_name = "télédéclaration"
+        verbose_name_plural = "télédéclarations"
+        constraints = [
+            models.UniqueConstraint(
+                fields=["year", "canteen"], condition=models.Q(status="SUBMITTED"), name="unique_submitted_td"
+            )
+        ]
+        indexes = [models.Index(fields=["canteen", "year"])]
+
+    def __str__(self):
+        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
+        return f"Télédéclaration pour {self.year} '{canteen_name}'"
 
     @property
     def is_declared_by_cc(self):
@@ -444,7 +443,3 @@ class Teledeclaration(models.Model):
             using=using,
             update_fields=update_fields,
         )
-
-    def __str__(self):
-        canteen_name = self.declared_data["canteen"]["name"] if self.declared_data.get("canteen") else ""
-        return f"Télédéclaration pour {self.year} '{canteen_name}'"

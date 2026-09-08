@@ -1,20 +1,42 @@
 <template>
   <div class="text-left">
     <BreadcrumbsNav />
-    <div class="d-flex">
+    <div class="d-flex mb-8">
       <div>
         <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
           Mes achats
         </h1>
         <p>
-          Une alimentation saine et durable commence par un suivi comptable de vos achats. Des nouvelles fonctionnalités
-          arrivent bientôt dans cet espace !
+          Une alimentation saine et durable commence par un suivi comptable de vos achats.
+          <br />
+          Pour en savoir plus sur le fonctionnement de l'outil,
+          <a
+            target="_blank"
+            href="https://ma-cantine.crisp.help/fr/category/suivis-des-achats-l57vl7/"
+            class="grey--text text--darken-3"
+          >
+            consultez notre documentation
+            <v-icon small class="grey--text text--darken-3 ml-1">mdi-open-in-new</v-icon>
+          </a>
+          .
         </p>
-        <v-row v-if="hasCanteens" align="center" class="px-3">
-          <v-btn color="primary" :to="{ name: 'NewPurchase' }" large class="mr-2 my-3">
-            <v-icon>mdi-plus</v-icon>
-            Ajouter un produit
-          </v-btn>
+        <v-row v-if="hasCanteens" align="center" class="mt-2 px-3">
+          <v-dialog v-model="addPurchaseDialog" width="500">
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn color="primary" large class="mr-2 my-3" v-bind="attrs" v-on="on">
+                <v-icon class="mr-1">mdi-plus</v-icon>
+                Ajouter un produit
+              </v-btn>
+            </template>
+
+            <SelectCanteenCard
+              v-if="addPurchaseDialog"
+              title="Pour quel établissement souhaitez-vous ajouter un produit ?"
+              :canteens="userCanteens"
+              @select="onCanteenSelected"
+              @cancel="addPurchaseDialog = false"
+            />
+          </v-dialog>
           <v-btn text color="primary" :to="{ name: 'GestionnaireImport' }" class="px-0 px-md-2 my-3">
             <v-icon class="mr-2">mdi-file-upload-outline</v-icon>
             Créer plusieurs achats depuis un fichier
@@ -68,7 +90,6 @@
       ></v-img>
     </div>
 
-    <PurchasesToolExplanation class="my-1" />
     <v-card outlined v-if="hasCanteens && visiblePurchases">
       <v-row class="px-4 mt-2" align="center">
         <v-col cols="12" sm="8" class="py-0">
@@ -248,12 +269,25 @@
         @click:row="onRowClick"
         v-model="selectedPurchases"
         show-select
+        :footer-props="{
+          pageText: footerText,
+        }"
       >
         <template v-slot:[`item.description`]="{ item }">
-          <router-link :to="{ name: 'PurchasePage', params: { id: item.id } }">
+          <router-link
+            v-if="item.canteenUrlComponent"
+            :to="{
+              name: 'GestionnaireAchatsModifier',
+              params: { id: item.id, canteenUrlComponent: item.canteenUrlComponent },
+            }"
+          >
             {{ item.description || "[sans description]" }}
             <span class="d-sr-only">, {{ item.date }}</span>
           </router-link>
+          <p v-else>
+            {{ item.description || "[sans description]" }}
+            <span class="d-sr-only">, {{ item.date }}</span>
+          </p>
         </template>
         <template v-slot:[`item.family`]="{ item }">
           <v-chip outlined small :color="getProductFamilyDisplayValue(item.family).color" dark class="font-weight-bold">
@@ -273,7 +307,7 @@
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <div class="d-flex justify-center">
-            <v-icon @click.stop="duplicate(item)" color="primary" :title="duplicatePurchaseInstruction(item)">
+            <v-icon @click.stop="openDuplicateDialog(item)" color="primary" :title="duplicatePurchaseInstruction(item)">
               $file-add-line
             </v-icon>
           </div>
@@ -293,6 +327,16 @@
           </v-btn>
         </div>
       </v-expand-transition>
+      <v-dialog v-model="duplicatePurchaseDialog" width="500">
+        <SelectCanteenCard
+          v-if="duplicatePurchaseDialog"
+          title="Pour quel établissement souhaitez-vous dupliquer ce produit ?"
+          :canteens="userCanteens"
+          :default-canteen-id="purchaseToDuplicate && purchaseToDuplicate.canteen"
+          @select="onDuplicateCanteenSelected"
+          @cancel="closeDuplicateDialog"
+        />
+      </v-dialog>
     </v-card>
     <v-row v-else-if="visiblePurchases" class="mt-4">
       <v-col cols="12" sm="6" md="4" height="100%" class="d-flex flex-column">
@@ -334,7 +378,7 @@ import BreadcrumbsNav from "@/components/BreadcrumbsNav"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import DsfrAutocomplete from "@/components/DsfrAutocomplete"
-import PurchasesToolExplanation from "@/components/PurchasesToolExplanation"
+import SelectCanteenCard from "@/components/SelectCanteenCard"
 
 export default {
   name: "PurchasesHome",
@@ -344,7 +388,7 @@ export default {
     DsfrSelect,
     DsfrSearchField,
     DsfrAutocomplete,
-    PurchasesToolExplanation,
+    SelectCanteenCard,
   },
   data() {
     return {
@@ -352,7 +396,7 @@ export default {
       loading: false,
       visiblePurchases: null,
       purchaseCount: null,
-      limit: 10,
+      limit: 500,
       options: {
         sortBy: [],
         sortDesc: [],
@@ -387,9 +431,17 @@ export default {
         endDate: null,
       },
       selectedPurchases: [],
+      addPurchaseDialog: false,
+      duplicatePurchaseDialog: false,
+      purchaseToDuplicate: null,
     }
   },
   computed: {
+    footerText() {
+      const pageMax = this.offset + this.limit
+      const currentMax = pageMax > this.purchaseCount ? this.purchaseCount : pageMax
+      return `${this.offset + 1} - ${currentMax} des ${this.purchaseCount} achats`
+    },
     offset() {
       return (this.options.page - 1) * this.limit
     },
@@ -399,7 +451,8 @@ export default {
         const canteen = canteens.find((y) => y.id === x.canteen)
         const date = x.date ? formatDate(x.date) : null
         const hasAttachment = !!x.invoiceFile
-        return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment })
+        const canteenUrlComponent = canteen ? this.$store.getters.getCanteenUrlComponent(canteen) : null
+        return Object.assign(x, { canteen__name: canteen?.name, date, hasAttachment, canteenUrlComponent })
       })
     },
     exportUrl() {
@@ -457,6 +510,13 @@ export default {
       const purchaseIndex = this.selectedPurchases.findIndex((p) => p.id === purchase.id)
       if (purchaseIndex === -1) this.selectedPurchases.push(purchase)
       else this.selectedPurchases.splice(purchaseIndex, 1)
+    },
+    onCanteenSelected(canteen) {
+      this.addPurchaseDialog = false
+      this.$router.push({
+        name: "GestionnaireAchatsAjouter",
+        params: { canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen) },
+      })
     },
     // the following requires that purchases are SoftDeletionObjects
     // in 2nd PR: if too many purchase objects in soft deleted state, make weekly bot to clear out purchases that have been deleted for > 1 week (or whatever time period)
@@ -639,8 +699,74 @@ export default {
       this.$watch("$route", this.onRouteChange)
     },
     capitalise: capitalise,
-    duplicate(purchase) {
-      this.$router.push({ name: "PurchasePage", params: { id: purchase.id }, query: { dupliquer: true } })
+    openDuplicateDialog(purchase) {
+      this.purchaseToDuplicate = purchase
+      this.duplicatePurchaseDialog = true
+    },
+    closeDuplicateDialog() {
+      this.duplicatePurchaseDialog = false
+      this.purchaseToDuplicate = null
+    },
+    onDuplicateCanteenSelected(canteen) {
+      const purchase = this.purchaseToDuplicate
+      this.duplicatePurchaseDialog = false
+      if (!purchase) return
+      const payload = this.formatPurchasePayload(purchase)
+      this.$store
+        .dispatch("createPurchase", { canteenId: canteen.id, payload: payload })
+        .then((newPurchase) => {
+          this.purchaseToDuplicate = null
+          this.$router.push({
+            name: "GestionnaireAchatsModifier",
+            params: {
+              id: newPurchase.id,
+              canteenUrlComponent: this.$store.getters.getCanteenUrlComponent(canteen),
+            },
+          })
+        })
+        .catch((e) => {
+          this.purchaseToDuplicate = null
+          this.$store.dispatch("notifyServerError", e)
+        })
+    },
+    formatPurchasePayload(purchase) {
+      // Les caractéristiques d'achats sont divisées en 4 catégories : EGalim, origine, local et circuit court.
+      const localCategories = Constants.PurchaseCharacteristics.local
+      const circuitCourtCategories = Constants.PurchaseCharacteristics.circuitCourt
+      const origineCategories = Constants.PurchaseCharacteristics.origine
+      const egalimCategories = Constants.PurchaseCharacteristics.egalim
+      // Mapping des anciennes caractéristiques vers les nouveaux champs
+      const hasCaracteristiques = purchase.characteristics?.length > 0
+      const localPurchaseCategory = hasCaracteristiques
+        ? purchase.characteristics.filter((c) => localCategories.includes(c))
+        : []
+      const estLocal = localPurchaseCategory.length > 0
+      const localPurchaseCircuitCourt = hasCaracteristiques
+        ? purchase.characteristics.filter((c) => circuitCourtCategories.includes(c))
+        : []
+      const estCircuitCourt = localPurchaseCircuitCourt.length > 0
+      const purchaseOrigine = hasCaracteristiques
+        ? purchase.characteristics.filter((c) => origineCategories.includes(c))
+        : []
+      const purchaseEgalim = hasCaracteristiques
+        ? purchase.characteristics.filter((c) => egalimCategories.includes(c))
+        : []
+      const payload = {
+        description: purchase.description,
+        prixHt: purchase.priceHt,
+        fournisseur: purchase.provider,
+        familleProduits: purchase.family,
+        origine: purchaseOrigine.length > 0 ? purchaseOrigine[0] : null,
+        categoriesEgalim: purchaseEgalim,
+        estCircuitCourt: estCircuitCourt,
+        estLocal: estLocal,
+        definitionLocal: estLocal ? purchase.localDefinition : null,
+        definitionLocalKm: estLocal ? purchase.definitionLocalKm : null,
+        date: purchase.dateUnformatted,
+        importSource: "Duplication",
+      }
+      if (payload.origine === null) delete payload.origine
+      return payload
     },
     duplicatePurchaseInstruction(purchase) {
       const readableDate = purchase.date.toLocaleString("fr-FR", {

@@ -5,6 +5,7 @@ import AppSeparator from "@/components/AppSeparator.vue"
 import CanteenButtonClaim from "@/components/CanteenButtonClaim.vue"
 import CanteenButtonJoin from "@/components/CanteenButtonJoin.vue"
 import CanteenButtonLink from "@/components/CanteenButtonLink.vue"
+import urlService from "@/services/urls"
 
 /* Props */
 const props = defineProps(["name", "siret", "city", "department", "status", "id", "siren", "linkedCanteens", "groupId"])
@@ -31,7 +32,7 @@ const linkedCanteensLabel = computed(() => {
           <p class="fr-mb-0 fr-text--xs">{{ siret ? "SIRET" : "SIREN" }} : {{ siret || siren }}</p>
         </li>
         <li>
-          <p class="fr-mb-0 fr-text--xs">Ville : {{ city }} ({{ department }})</p>
+          <p class="fr-mb-0 fr-text--xs">Ville : {{ city }}<span v-if="department"> ({{ department }})</span></p>
         </li>
       </ul>
     </div>
@@ -89,7 +90,7 @@ const linkedCanteensLabel = computed(() => {
       <p class="fr-mb-0 fr-text--xs">
         La cantine avec le numéro SIRET {{ siret }} existe déjà et fait déjà partie de vos cantines.
         <AppLinkRouter
-          :to="{ name: 'DashboardManager', params: { canteenUrlComponent: id } }"
+          :to="{ name: 'GestionnaireCantine', params: { canteenUrlComponent: urlService.getCanteenUrl({ id, name }) } }"
           title="Accéder à sa fiche"
         />
       </p>

@@ -133,3 +133,7 @@ class HistoryModelTest(TestCase):
 
         # Verify all history items are still there
         self.assertEqual(canteen.history.count(), history_count)
+
+
+# class HistoryModelAuthenticationMethodTest(APITestCase):
+# search for "history_source" in the codebase to see tests in each models

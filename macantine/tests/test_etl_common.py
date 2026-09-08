@@ -13,6 +13,7 @@ def setUpTestData(cls, with_diagnostics=False):
     cls.canteen_site_manager_1 = UserFactory(email="gestionnaire1@example.com")
     cls.canteen_site_manager_2 = UserFactory(email="gestionnaire2@example.com")
     cls.canteen_groupe_manager = UserFactory()
+
     cls.canteen_site = CanteenFactory(
         name="Cantine",
         siret="21380185500015",
@@ -37,6 +38,7 @@ def setUpTestData(cls, with_diagnostics=False):
         declaration_donnees_2024=True,
         declaration_donnees_2025=False,
         managers=[cls.canteen_site_manager_1, cls.canteen_site_manager_2],
+        yearly_meal_count=500,
     )
     cls.canteen_site_without_manager = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[])
     cls.canteen_site_earlier = CanteenFactory(
@@ -73,7 +75,7 @@ def setUpTestData(cls, with_diagnostics=False):
         management_type=Canteen.ManagementType.DIRECT,
         economic_model=Canteen.EconomicModel.PUBLIC,
         groupe=cls.canteen_groupe,
-        central_producer_siret="22730656663081",
+        central_producer_siret="40419443300078",
         city_insee_code="38185",
         epci="200040715",
         epci_lib="Grenoble-Alpes-Métropole",
@@ -90,9 +92,17 @@ def setUpTestData(cls, with_diagnostics=False):
     )
 
     if with_diagnostics:
+        # 2022 campaign
         with freeze_time("2023-05-14"):  # during the 2022 campaign
             cls.canteen_site_diagnostic_2022 = DiagnosticFactory(
-                canteen=cls.canteen_site, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+                canteen=cls.canteen_site,
+                year=2022,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                valeur_totale=1000,
+                valeur_bio=200,
+                valeur_siqo=0,
+                valeur_externalites_performance=0,
+                valeur_egalim_autres=300,
             )
         with freeze_time("2023-05-15"):  # during the 2022 campaign (1 day later)
             cls.canteen_site_earlier_diagnostic_2022 = DiagnosticFactory(
@@ -106,9 +116,22 @@ def setUpTestData(cls, with_diagnostics=False):
                 canteen=cls.canteen_groupe, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             cls.canteen_groupe_diagnostic_2022.teledeclare(cls.canteen_groupe_manager)
+
+        # 2023 campaign
         with freeze_time("2024-04-01"):  # during the 2023 campaign
+            cls.canteen_groupe_diagnostic_2023 = DiagnosticFactory(
+                canteen=cls.canteen_groupe, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            )
+            cls.canteen_groupe_diagnostic_2023.teledeclare(cls.canteen_groupe_manager)
             cls.canteen_site_diagnostic_2023 = DiagnosticFactory(
-                canteen=cls.canteen_site, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+                canteen=cls.canteen_site,
+                year=2023,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                valeur_totale=1000,
+                valeur_bio=200,
+                valeur_siqo=0,
+                valeur_externalites_performance=0,
+                valeur_egalim_autres=300,
             )
             cls.canteen_site_diagnostic_2023.teledeclare(cls.canteen_site_manager_1)
             cls.canteen_site_diagnostic_2023.cancel()  # will not appear in the exports
@@ -116,16 +139,31 @@ def setUpTestData(cls, with_diagnostics=False):
                 canteen=cls.canteen_site_armee, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             cls.canteen_site_armee_diagnostic_2023.teledeclare(cls.canteen_site_manager_2)
+
+        # 2024 campaign
         with freeze_time("2025-03-30"):  # during the 2024 campaign
+            cls.canteen_groupe_diagnostic_2024 = DiagnosticFactory(
+                canteen=cls.canteen_groupe, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            )
+            cls.canteen_groupe_diagnostic_2024.teledeclare(cls.canteen_groupe_manager)
             cls.canteen_site_earlier_diagnostic_2024 = DiagnosticFactory(
                 canteen=cls.canteen_site_earlier, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             cls.canteen_site_earlier_diagnostic_2024.teledeclare(cls.canteen_site_manager_2)
         with freeze_time("2025-04-20"):  # during the 2024 correction campaign
             cls.canteen_site_diagnostic_2024 = DiagnosticFactory(
-                canteen=cls.canteen_site, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+                canteen=cls.canteen_site,
+                year=2024,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                valeur_totale=1000,
+                valeur_bio=400,
+                valeur_siqo=100,
+                valeur_externalites_performance=0,
+                valeur_egalim_autres=200,
             )
             cls.canteen_site_diagnostic_2024.teledeclare(cls.canteen_site_manager_1)
+
+        # 2025 campaign
         with freeze_time("2026-01-30"):  # during the 2025 campaign
             cls.canteen_groupe_diagnostic_2025 = DiagnosticFactory(
                 canteen=cls.canteen_groupe, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE

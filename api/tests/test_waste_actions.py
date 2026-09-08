@@ -2,30 +2,38 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.tests.utils import authenticate
 from data.factories import CanteenFactory, ResourceActionFactory, UserFactory, WasteActionFactory
 from data.models import WasteAction
 
 
-class TestWasteActionsListApi(APITestCase):
+class WasteActionsListApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.waste_action = WasteActionFactory()
+        cls.url = reverse("waste_actions_list")
 
-    def test_get_waste_actions_list(self):
-        response = self.client.get(reverse("waste_actions_list"))
+    def test_can_get_waste_actions_list(self):
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data["results"]), 1)
 
 
-class TestWasteActionsListFiltersApi(APITestCase):
+class WasteActionsListFiltersApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("waste_actions_list")
+
     def test_effort_filter(self):
         WasteActionFactory(effort=WasteAction.Effort.LARGE)
         WasteActionFactory(effort=WasteAction.Effort.MEDIUM)
         WasteActionFactory(effort=WasteAction.Effort.SMALL)
 
-        response = self.client.get(
-            f"{reverse('waste_actions_list')}?effort={WasteAction.Effort.SMALL}&effort={WasteAction.Effort.MEDIUM}"
-        )
+        url = f"{self.url}?effort={WasteAction.Effort.SMALL}&effort={WasteAction.Effort.MEDIUM}"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.data["results"]
         self.assertEqual(len(results), 2)
 
@@ -34,9 +42,12 @@ class TestWasteActionsListFiltersApi(APITestCase):
         WasteActionFactory(waste_origins=[WasteAction.WasteOrigin.PLATE, WasteAction.WasteOrigin.PREP])
         WasteActionFactory(waste_origins=[WasteAction.WasteOrigin.UNSERVED])
 
-        response = self.client.get(
-            f"{reverse('waste_actions_list')}?waste_origins={WasteAction.WasteOrigin.PREP}&waste_origins={WasteAction.WasteOrigin.UNSERVED}"
+        url = (
+            f"{self.url}?waste_origins={WasteAction.WasteOrigin.PREP}&waste_origins={WasteAction.WasteOrigin.UNSERVED}"
         )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.data["results"]
         self.assertEqual(len(results), 2)
 
@@ -48,12 +59,15 @@ class TestWasteActionsListFiltersApi(APITestCase):
         WasteActionFactory(title="Du texte", subtitle="Faire une évaluation")
         WasteActionFactory(title="Autre texte", subtitle="Ne m'évalue pas")
 
-        response = self.client.get(f"{reverse('waste_actions_list')}?search=evaluation")
+        url = f"{self.url}?search=évaluation"
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         results = response.data["results"]
         self.assertEqual(len(results), 2)
 
 
-class TestWasteActionsDetailApi(APITestCase):
+class WasteActionsDetailApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.waste_action = WasteActionFactory()
@@ -62,25 +76,31 @@ class TestWasteActionsDetailApi(APITestCase):
         CanteenFactory()
         cls.canteen = CanteenFactory(managers=[cls.user_with_canteen])
         cls.resource_action = ResourceActionFactory(resource=cls.waste_action, canteen=cls.canteen, is_done=True)
+        cls.url = reverse("waste_action_detail", kwargs={"pk": cls.waste_action.id})
 
-    def test_get_waste_action_detail(self):
-        # anonymous
-        response = self.client.get(reverse("waste_action_detail", kwargs={"pk": self.waste_action.id}))
+    def test_can_get_waste_action_detail_unauthenticated(self):
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], self.waste_action.id)
         self.assertTrue("canteenActions" not in body)
+
+    @authenticate
+    def test_can_get_waste_action_detail(self):
         # logged in user (without canteen)
-        self.client.force_login(user=self.user)
-        response = self.client.get(reverse("waste_action_detail", kwargs={"pk": self.waste_action.id}))
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], self.waste_action.id)
         self.assertTrue("canteenActions" in body)
         self.assertEqual(len(body["canteenActions"]), 0)
+
         # logged in user with canteen & resource action
-        self.client.force_login(user=self.user_with_canteen)
-        response = self.client.get(reverse("waste_action_detail", kwargs={"pk": self.waste_action.id}))
+        self.canteen.managers.add(authenticate.user)
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["id"], self.waste_action.id)

@@ -8,13 +8,6 @@ from data.utils import make_optional_positive_decimal_field
 
 
 class ReservationExpe(models.Model):
-    class Meta:
-        verbose_name = "expérimentation réservation"
-        verbose_name_plural = "expérimentations réservation"
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-
     canteen = models.ForeignKey(Canteen, on_delete=models.CASCADE, verbose_name="cantine")
 
     has_reservation_system = models.BooleanField(
@@ -153,3 +146,10 @@ class ReservationExpe(models.Model):
     money_saved = make_optional_positive_decimal_field(
         verbose_name="Gains générés par l'évitement du gaspillage laimentaire en euros sur 3 ans",
     )
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "expérimentation réservation"
+        verbose_name_plural = "expérimentations réservation"

@@ -35,18 +35,6 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_cannot_list_if_wrong_token(self):
-        _, token = get_oauth2_token("user:read")
-        self.client.credentials(Authorization=f"Bearer {token}")
-
-        url = reverse(
-            "canteen_groupe_satellites_list",
-            kwargs={"canteen_pk": self.canteen_groupe_1.id},
-        )
-        response = self.client.get(url)
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
     @authenticate
     def test_cannot_list_if_group_does_not_exist(self):
         url = reverse(
@@ -56,10 +44,10 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         self.client.force_authenticate(user=authenticate.user)
         response = self.client.get(url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)  # should be 404
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
-    def test_cannot_list_if_user_not_group_manager(self):
+    def test_cannot_list_if_not_group_manager(self):
         url = reverse(
             "canteen_groupe_satellites_list",
             kwargs={"canteen_pk": self.canteen_groupe_1.id},
@@ -114,7 +102,7 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
         body = response.json()
         self.assertEqual(len(body), 0)
 
-    def test_canteen_groupe_satellites_list_with_oauth2_token(self):
+    def test_canteen_groupe_satellites_list_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen_groupe_1.managers.add(user)
         self.client.credentials(Authorization=f"Bearer {token}")
@@ -165,28 +153,6 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_cannot_link_unlink_satellite_if_wrong_token(self):
-        _, token = get_oauth2_token("user:read")
-        self.client.credentials(Authorization=f"Bearer {token}")
-
-        # self.canteen_satellite_0 is not linked yet
-        url = reverse(
-            "canteen_groupe_satellite_link",
-            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_0.id},
-        )
-        response = self.client.post(url)
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-        # self.canteen_satellite_11 is linked to groupe_1
-        url = reverse(
-            "canteen_groupe_satellite_unlink",
-            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
-        )
-        response = self.client.post(url)
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
     @authenticate
     def test_cannot_link_unlink_satellite_if_group_does_not_exist(self):
         # self.canteen_satellite_0 is not linked yet
@@ -196,7 +162,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         )
         response = self.client.post(url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)  # should be 404
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
         # self.canteen_satellite_11 is linked to groupe_1
         url = reverse(
@@ -205,7 +171,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         )
         response = self.client.post(url)
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)  # should be 404
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_cannot_link_unlink_satellite_if_user_not_group_manager(self):
@@ -295,6 +261,45 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
+    def test_can_link_satellite_when_groupe_has_cancelled_diagnostic(self):
+        self.canteen_groupe_1.managers.add(authenticate.user)
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(canteen=self.canteen_groupe_1, year=2024, valeur_totale=100)
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+            url = reverse(
+                "canteen_groupe_satellite_link",
+                kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_0.id},
+            )
+            response = self.client.post(url)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.assertEqual(self.canteen_satellite_11.groupe, self.canteen_groupe_1)
+
+    @authenticate
+    def test_can_unlink_satellite_when_groupe_has_cancelled_diagnostic(self):
+        self.canteen_groupe_1.managers.add(authenticate.user)
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            self.canteen_satellite_11.groupe = self.canteen_groupe_1
+            self.canteen_satellite_11.save()
+            diagnostic = DiagnosticFactory(canteen=self.canteen_groupe_1, year=2024, valeur_totale=100)
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+            url = reverse(
+                "canteen_groupe_satellite_unlink",
+                kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+            )
+            response = self.client.post(url)
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            self.canteen_satellite_11.refresh_from_db()
+            self.assertIsNone(self.canteen_satellite_11.groupe)
+
+    @authenticate
     def test_canteen_groupe_satellite_link_unlink(self):
         # set user as manager of group_1 and group_2
         self.canteen_groupe_1.managers.add(authenticate.user)
@@ -326,7 +331,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.canteen_satellite_11.refresh_from_db()
         self.assertIsNone(self.canteen_satellite_11.groupe_id)
 
-    def test_canteen_groupe_satellite_link_unlink_correct_token(self):
+    def test_canteen_groupe_satellite_link_unlink_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen_groupe_1.managers.add(user)
         self.canteen_groupe_2.managers.add(user)

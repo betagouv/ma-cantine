@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from django.core.management import call_command
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -11,13 +12,14 @@ from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
 
 class DiagnosticToTeledeclareApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.year = 2021
+        cls.url = reverse("diagnostics_to_teledeclare", kwargs={"year": 2021})
+
     @freeze_time("2022-08-30")  # during the 2021 campaign  # but this endpoint doesn't seem to check
     @authenticate
-    def test_get_diagnostics_to_td(self):
-        """
-        Check that the endpoint includes a list of diagnostics that could be teledeclared
-        """
-        last_year = 2021
+    def test_can_get_diagnostics_to_td(self):
         CanteenFactory(  # without diag
             siret="21590350100017",
             production_type=Canteen.ProductionType.ON_SITE,
@@ -34,7 +36,7 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        DiagnosticFactory(canteen=canteen_with_incomplete_diag, year=last_year, valeur_totale=None)
+        DiagnosticFactory(canteen=canteen_with_incomplete_diag, year=self.year, valeur_totale=None)
         canteen_with_complete_diag = CanteenFactory(
             siret="21010034300016",
             production_type=Canteen.ProductionType.ON_SITE,
@@ -43,7 +45,7 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        complete_diag = DiagnosticFactory(canteen=canteen_with_complete_diag, year=last_year, valeur_totale=10000)
+        complete_diag = DiagnosticFactory(canteen=canteen_with_complete_diag, year=self.year, valeur_totale=10000)
 
         # siret needs to be filled for the diag to be teledeclarable
         canteen_with_missing_data = CanteenFactory(
@@ -57,7 +59,7 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
         canteen_with_missing_data.siret = None
         canteen_with_missing_data.save(skip_validations=True)
         canteen_with_missing_data.refresh_from_db()
-        DiagnosticFactory(canteen=canteen_with_missing_data, year=last_year, valeur_totale=10000)
+        DiagnosticFactory(canteen=canteen_with_missing_data, year=self.year, valeur_totale=10000)
 
         canteen_without_line_ministry = CanteenFactory(
             siret="31285246765507",
@@ -72,10 +74,10 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
         canteen_without_line_ministry.line_ministry = None
         canteen_without_line_ministry.save(skip_validations=True)
         canteen_without_line_ministry.refresh_from_db()
-        DiagnosticFactory(canteen=canteen_without_line_ministry, year=last_year, valeur_totale=10000)
+        DiagnosticFactory(canteen=canteen_without_line_ministry, year=self.year, valeur_totale=10000)
 
         # to verify we are returning the correct diag for the canteen, create another diag for a different year
-        DiagnosticFactory(canteen=canteen_with_complete_diag, year=last_year - 1, valeur_totale=10000)
+        DiagnosticFactory(canteen=canteen_with_complete_diag, year=self.year - 1, valeur_totale=10000)
         canteen_with_td = CanteenFactory(
             siret="55476895458384",
             production_type=Canteen.ProductionType.ON_SITE,
@@ -84,14 +86,15 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
         )
-        td_diag = DiagnosticFactory(canteen=canteen_with_td, year=last_year, valeur_totale=2000)
+        td_diag = DiagnosticFactory(canteen=canteen_with_td, year=self.year, valeur_totale=2000)
         Teledeclaration.create_from_diagnostic(td_diag, authenticate.user)
 
-        response = self.client.get(reverse("diagnostics_to_teledeclare", kwargs={"year": last_year}))
-        diagnostics = response.json().get("results")
+        response = self.client.get(self.url)
 
-        self.assertEqual(len(diagnostics), 1)
-        self.assertEqual(diagnostics[0]["id"], complete_diag.id)
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["id"], complete_diag.id)
 
     @authenticate
     def test_get_diagnostics_to_td_none(self):
@@ -99,12 +102,11 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
         Check that the actions endpoint includes an empty list of diagnostics that could be teledeclared
         if there are no diags to TD
         """
-        last_year = 2021
+        response = self.client.get(self.url)
 
-        response = self.client.get(reverse("diagnostics_to_teledeclare", kwargs={"year": last_year}))
-        body = response.json().get("results")
-
-        self.assertEqual(body, [])
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(results, [])
 
     @authenticate
     def test_get_diagnostics_to_td_in_correction_campaign(self):
@@ -163,35 +165,27 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
 
 
 class DiagnosticTeledeclarationCreateApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
     def test_cannot_teledeclare_if_unauthenticated(self):
-        # not canteen manager
-        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
 
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
             )
         )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-        # canteen manager
-        user = UserFactory()
-        diagnostic.canteen.managers.add(user)
-
-        response = self.client.post(
-            reverse(
-                "diagnostic_teledeclaration_create",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
-            )
-        )
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_cannot_teledeclare_if_unknown_canteen_or_diagnostic(self):
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(authenticate.user)
+    def test_cannot_teledeclare_if_canteen_does_not_exist(self):
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
 
         response = self.client.post(
             reverse(
@@ -199,57 +193,98 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
                 kwargs={"canteen_pk": 9999, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_teledeclare_if_diagnostic_does_not_exist(self):
+        DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
 
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": 9999},
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": 9999},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_teledeclare_if_not_canteen_manager(self):
-        diagnostic = DiagnosticFactory(year=2024)
+        user = UserFactory()
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(user)
         # authenticate.user is not a manager of the canteen
 
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_cannot_teledeclare_with_oauth2_token(self):
+    def test_cannot_teledeclare_diagnostic_if_not_corresponding_canteen(self):
+        canteen_other = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        diagnostic_other = DiagnosticFactory(canteen=canteen_other, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_create",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic_other.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if the user manages canteen_other
+        canteen_other.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_create",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic_other.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_teledeclare_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(user)
 
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     @freeze_time("2025-01-01")  # before the 2024 campaign
     def test_cannot_teledeclare_before_campaign(self):
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
 
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["detail"], ["Ce n'est pas possible de télédéclarer hors de la période de la campagne"]
@@ -267,53 +302,57 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["detail"], ["Ce diagnostic n'est pas dans la bonne année de télédéclaration"])
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_teledeclare_if_already_teledeclared(self):
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
         diagnostic.teledeclare(authenticate.user)
 
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["detail"], ["Ce diagnostic a déjà été télédéclaré"])
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_teledeclare_if_diagnostic_not_filled(self):
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
         Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0)
 
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["detail"], ["Ce diagnostic n'est pas rempli"])
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_can_teledeclare_during_campaign(self):
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
 
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         diagnostic.refresh_from_db()
         self.assertTrue(diagnostic.is_teledeclared)
@@ -321,57 +360,125 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
     @authenticate
     @freeze_time("2025-04-20")  # during the 2024 correction campaign
     def test_can_teledeclare_during_correction_campaign(self):
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
 
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         diagnostic.refresh_from_db()
         self.assertTrue(diagnostic.is_teledeclared)
 
 
 class DiagnosticTeledeclarationCancelView(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_cancel_teledeclaration_if_unauthenticated(self):
         user = UserFactory()
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(user)
+        self.canteen_site.managers.add(user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         diagnostic.teledeclare(user)
 
-        # unauthenticated request
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_cancel",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_cannot_cancel_teledeclaration_if_not_canteen_manager(self):
-        diagnostic = DiagnosticFactory(year=2024)
-        # authenticate.user is not a manager of the canteen
+    def test_cannot_cancel_teledeclaration_if_canteen_does_not_exist(self):
+        self.canteen_site.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         diagnostic.teledeclare(authenticate.user)
 
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": 9999, "pk": diagnostic.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_cancel_teledeclaration_if_diagnostic_does_not_exist(self):
+        self.canteen_site.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        diagnostic.teledeclare(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": 9999},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_cancel_teledeclaration_if_not_canteen_manager(self):
+        user = UserFactory()
+        self.canteen_site.managers.add(user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        diagnostic.teledeclare(user)
+
+        # teledeclared by user, but authenticate.user is not a manager
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_cannot_cancel_teledeclaration_with_oauth2_token(self):
+    def test_cannot_cancel_teledeclaration_if_not_corresponding_canteen(self):
+        canteen_other = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        diagnostic_other = DiagnosticFactory(canteen=canteen_other, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic_other.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # even if the user manages canteen_other
+        canteen_other.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_cancel",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic_other.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_cancel_teledeclaration_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(user)
+        self.canteen_site.managers.add(user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         diagnostic.teledeclare(user)
 
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
@@ -381,13 +488,14 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_cancel_teledeclaration_if_diagnostic_not_teledeclared(self):
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(authenticate.user)
+        self.canteen_site.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         # diagnostic not teledeclared
 
         response = self.client.post(
@@ -396,14 +504,15 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["detail"], ["Ce diagnostic doit avoir été télédéclaré"])
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_cancel_teledeclaration_after_campaign(self):
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(authenticate.user)
+        self.canteen_site.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         diagnostic.teledeclare(authenticate.user)
 
         with freeze_time("2025-06-30"):  # after the 2024 campaign
@@ -413,6 +522,7 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
                     kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
                 )
             )
+
             self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
             self.assertEqual(
                 response.json()["detail"],
@@ -422,9 +532,14 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_can_cancel_teledeclaration_during_campaign(self):
-        diagnostic = DiagnosticFactory(year=2024)
-        diagnostic.canteen.managers.add(authenticate.user)
+        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen_site, year=2024)
         diagnostic.teledeclare(authenticate.user)
+
+        self.assertTrue(diagnostic.is_teledeclared)
+        for field in Diagnostic.TELEDECLARATION_FIELDS:
+            with self.subTest(field=field):
+                self.assertIsNotNone(getattr(diagnostic, field))
 
         response = self.client.post(
             reverse(
@@ -432,9 +547,13 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
                 kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         diagnostic.refresh_from_db()
         self.assertFalse(diagnostic.is_teledeclared)
+        for field in Diagnostic.TELEDECLARATION_FIELDS:
+            with self.subTest(field=field):
+                self.assertIsNone(getattr(diagnostic, field))
 
 
 class DiagnosticTeledeclarationPdfApiTest(APITestCase):
@@ -450,37 +569,48 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
                 "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
-    def test_cannot_generate_pdf_if_unknown_canteen_or_diagnostic(self):
+    def test_cannot_generate_pdf_if_canteen_does_not_exist(self):
         diagnostic = DiagnosticFactory(year=2024)
         diagnostic.canteen.managers.add(authenticate.user)
         diagnostic.teledeclare(authenticate.user)
 
-        response = self.client.get(
-            reverse("diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": 9999, "pk": diagnostic.id})
-        )
+        url = reverse("diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": 9999, "pk": diagnostic.id})
+        response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-        response = self.client.get(
-            reverse("diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": 9999})
-        )
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @authenticate
+    def test_cannot_generate_pdf_if_diagnostic_does_not_exist(self):
+        diagnostic = DiagnosticFactory(year=2024)
+        diagnostic.canteen.managers.add(authenticate.user)
+        diagnostic.teledeclare(authenticate.user)
+
+        url = reverse("diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": 9999})
+        response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
     def test_cannot_generate_pdf_if_not_canteen_manager(self):
+        user = UserFactory()
         diagnostic = DiagnosticFactory(year=2024)
-        # authenticate.user is not a manager of the canteen
-        diagnostic.teledeclare(authenticate.user)
+        diagnostic.canteen.managers.add(user)
+        diagnostic.teledeclare(user)
 
+        # teledeclared by user, but authenticate.user is not a manager
         response = self.client.get(
             reverse(
                 "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @freeze_time("2025-03-30")  # during the 2024 campaign
@@ -495,6 +625,7 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
                 "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @freeze_time("2022-08-30")  # during the 2021 campaign
@@ -513,13 +644,16 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
                 "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
             )
         )
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
     def test_can_generate_pdf_central(self):
-        canteen = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
+        canteen_central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(
+            canteen=canteen_central, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         diagnostic.teledeclare(applicant=authenticate.user)
 
         response = self.client.get(
@@ -527,4 +661,55 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
                 "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
             )
         )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
+    def test_can_generate_pdf_groupe_satellite(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
+        canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, managers=[authenticate.user]
+        )
+        diagnostic_satellite = DiagnosticFactory(
+            canteen=canteen_satellite, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        diagnostic_satellite.teledeclare(applicant=authenticate.user)
+        diagnostic_groupe = DiagnosticFactory(
+            canteen=canteen_groupe, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        diagnostic_groupe.teledeclare(applicant=authenticate.user)
+
+        call_command("diagnostic_fill_invalid_warning_reason_list", year=2025, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
+
+        # groupe should be able to generate pdf
+        url = reverse(
+            "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": canteen_groupe.id, "pk": diagnostic_groupe.id}
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # satellite should be able to generate pdf of initial diagnostic
+        # (even if the diagnostic is not valid: DOUBLON_1TD1SITE)
+        url = reverse(
+            "diagnostic_teledeclaration_pdf",
+            kwargs={"canteen_pk": canteen_satellite.id, "pk": diagnostic_satellite.id},
+        )
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # satellite should be able to generate pdf of generated diagnostic
+        diagnostic_satellite_generated = Diagnostic.all_objects.get(
+            canteen=canteen_satellite, year=2025, generated_from_groupe_diagnostic=True
+        )
+
+        url = reverse(
+            "diagnostic_teledeclaration_pdf",
+            kwargs={"canteen_pk": canteen_satellite.id, "pk": diagnostic_satellite_generated.id},
+        )
+        response = self.client.get(url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -29,8 +29,6 @@ if settings.DEBUG:
     # a hack to get icon URLs to work in Vue 3 CSS
     urlpatterns += static("/2024-frontend/node_modules/@gouvfr/dsfr/dist/icons", document_root="static/dsfr/icons")
 
-urlpatterns += (path("", include("django_vite_plugin.urls")),)
-
 if settings.DEBUG_PERFORMANCE:
     import debug_toolbar
 

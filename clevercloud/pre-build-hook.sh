@@ -1,8 +1,5 @@
 #!/bin/bash
 
-mkdir build
-mkdir build/.vite
-cp ./clevercloud/manifest.json build/.vite/
-mkdir 2024-frontend/build
-mkdir 2024-frontend/build/.vite
-cp ./clevercloud/manifest.json 2024-frontend/build/.vite/
+# Ensure Vite build output directories exist before collectstatic / Django startup
+# (STATICFILES_DIRS points at both; django-vite reads each app's manifest.json)
+mkdir -p build frontend/dist

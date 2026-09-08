@@ -1,12 +1,22 @@
 import json
 
-from django.core.management.base import BaseCommand
-
+from common.utils.utils import clean_unicode_string
 from common.api.datagouv import fetch_pats
-from common.api.decoupage_administratif import fetch_communes, fetch_departements, fetch_epcis, fetch_regions
+from common.api.decoupage_administratif import (
+    fetch_communes,
+    fetch_communes_with_more_fields,
+    fetch_departements,
+    fetch_epcis,
+    fetch_regions,
+)
+from common.utils.commands import MaCantineBaseCommand
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
+    """
+    Usage: python manage.py generate_geo_data_to_json --scope region
+    """
+
     help = "Generate geo data to JSON file for a specific scope"
 
     def add_arguments(self, parser):
@@ -14,7 +24,7 @@ class Command(BaseCommand):
             "--scope",
             dest="scope",
             type=str,
-            choices=["region", "department", "pat", "epci", "city"],
+            choices=["region", "department", "pat", "epci", "city", "city_with_epci"],
             required=True,
             help="Scope of the geo data to generate (region, department, pat, epci, city)",
         )
@@ -31,7 +41,7 @@ class Command(BaseCommand):
             # TODO: order by name
             # export to JSON file
             with open(f"{scope}.json", "w", encoding="utf-8") as f:
-                json.dump(region_list, f, ensure_ascii=False, indent=4)
+                json.dump(region_list, f, ensure_ascii=False, indent=2)
 
         elif scope == "department":
             department_list = fetch_departements()
@@ -45,27 +55,27 @@ class Command(BaseCommand):
             ]
             # export to JSON file
             with open(f"{scope}.json", "w", encoding="utf-8") as f:
-                json.dump(department_list_filtered, f, ensure_ascii=False, indent=4)
+                json.dump(department_list_filtered, f, ensure_ascii=False, indent=2)
 
         elif scope == "pat":
             pat_list = fetch_pats()
             pat_list_filtered = [
                 {
                     "code": pat["id"],
-                    "nom": pat["nom_administratif"],
+                    "nom": clean_unicode_string(pat["nom_administratif"]),
                 }
                 for pat in pat_list
             ]
             # export to JSON file
             with open(f"{scope}.json", "w", encoding="utf-8") as f:
-                json.dump(pat_list_filtered, f, ensure_ascii=False, indent=4)
+                json.dump(pat_list_filtered, f, ensure_ascii=False, indent=2)
 
         elif scope == "epci":
             epci_list = fetch_epcis()
             # no need to filter, already contains only the code and name
             # export to JSON file
             with open("epci.json", "w", encoding="utf-8") as f:
-                json.dump(epci_list, f, ensure_ascii=False, indent=4)
+                json.dump(epci_list, f, ensure_ascii=False, indent=2)
 
         elif scope == "city":
             city_list = fetch_communes()
@@ -80,6 +90,24 @@ class Command(BaseCommand):
             ]
             # export to JSON file
             with open(f"{scope}.json", "w", encoding="utf-8") as f:
-                json.dump(city_list_filtered, f, ensure_ascii=False, indent=4)
+                json.dump(city_list_filtered, f, ensure_ascii=False, indent=2)
+
+        elif scope == "city_with_epci":
+            city_list = fetch_communes_with_more_fields()
+            city_list_filtered = [
+                {
+                    "code": city["code"],
+                    "nom": city["nom"],
+                    "siren": city["siren"] if "siren" in city else None,
+                    "population": city["population"] if "population" in city else None,
+                    "codeDepartement": city["codeDepartement"],
+                    "codeRegion": city["codeRegion"],
+                    "codeEpci": city["codeEpci"] if "codeEpci" in city else None,
+                }
+                for city in city_list
+            ]
+            # export to JSON file
+            with open(f"{scope}.json", "w", encoding="utf-8") as f:
+                json.dump(city_list_filtered, f, ensure_ascii=False, indent=2)
 
         self.stdout.write(self.style.SUCCESS(f"Geo data for {scope} has been generated successfully."))

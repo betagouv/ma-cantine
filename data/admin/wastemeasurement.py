@@ -19,6 +19,7 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
         "canteen__siret",
         "canteen__siren_unite_legale",
     )
+    search_help_text = "La recherche est faite sur les champs : cantine (nom, siret, siren de l'unité légale)"
 
     fieldsets = (
         (
@@ -67,17 +68,6 @@ class WasteMeasurementAdmin(SimpleHistoryAdmin):
                 )
             },
         ),
-        (
-            "Metadonnées",
-            {
-                "fields": (
-                    "creation_date",
-                    "modification_date",
-                )
-            },
-        ),
+        ("Metadonnées", {"fields": WasteMeasurement.CREATION_META_FIELDS}),
     )
-    readonly_fields = (
-        "creation_date",
-        "modification_date",
-    )
+    readonly_fields = (*WasteMeasurement.CREATION_META_FIELDS,)

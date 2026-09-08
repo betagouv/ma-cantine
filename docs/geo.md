@@ -22,22 +22,33 @@ Le "pivot" est le champ `city_insee_code`. De là en découle, grâce aux APIs, 
 
 ## Quelles API ?
 
-La principale API utilisée est `Découpage Administratif`. Elle nous permet de récupérer l'ensemble des communes, epci, départements & régions. Plus d'infos dans [common/api/decoupage_administratif.py](../common/api/decoupage_administratif.py). En ajoutant des paramètres à l'API, on peut récupérer des données supplémentaires comme les arrondissements (Paris, Lyon, Marseille), ou certains départments & régions d'outre-mer.
+### Recherche Entreprises
+
+Elle nous permet de récupérer, à partir d'un Siret, le code Insee d'une cantine. Mais aussi d'autres informations géographiques et administratives.
+
+Plus d'infos dans [common/api/recherche_entreprises.py](../common/api/recherche_entreprises.py).
+
+### Découpage Administratif
+
+Elle nous permet de récupérer l'ensemble des communes (dont les arrondissements), epci, départements & régions.
+
+Plus d'infos dans [common/api/decoupage_administratif.py](../common/api/decoupage_administratif.py).
+
+### Data Gouv
+
+Elle nous permet de récupérer l'ensemble des PAT (Projets Alimentaires Territoriaux).
+
+Plus d'infos dans [common/api/datagouv.py](../common/api/datagouv.py).
+
+### Autres
 
 On stock actuellement en dure la liste des départements ([data/department_choices.py](../data/department_choices.py)) et des régions ([data/region_choices.py](../data/region_choices.py)).
 
 ## Comment ça marche ?
 
-* Si la cantine n'a pas de code Insee (champ `city_insee_code` vide), on tente de le récupérer grâce à sont Siret
-    * grâce à une tâche asynchrone
-    * `fill_missing_insee_code_using_siret()`
-    * fréquence : toutes les heures
-    * API : Recherche Entreprises
-* Pour les cantines avec `city_insee_code`, mais dont au moins un des champs géographiques est manquante, on tente de les compléter
-    * grâce à une tâche asynchrone
-    * `fill_missing_geolocation_data_using_insee_code()`
-    * fréquence : toutes les nuits
-    * API : Découpage Administratif
+* Un signal `post_save` est envoyé à chaque fois qu'une cantine est créée ou mise à jour
+* Si la cantine a un `siret` mais pas de `city_insee_code`, on appelle `update_canteen_geo_fields_from_siret`
+* Si la cantine a un `siren_unite_legale` et un `city_insee_code` mais pas de données géographiques, on appelle `update_canteen_geo_data_from_insee_code`
 
 ## FAQ
 
@@ -53,10 +64,21 @@ On stock actuellement en dure la liste des départements ([data/department_choic
 * Pas besoin d'appel API pour récupérer le libellé
 * Il y a un mapping entre départements et régions
 
+### Pourquoi on utilise du cache ?
+
+* Pour éviter de faire des appels API à chaque fois qu'on a besoin de récupérer les données géographiques
+* Vu que les données géo "Découpage Administratif" et "PAT" ne changent (quasiment) jamais
+
 ### Comment gérer la MAJ annuelle des communes et EPCI ?
+
+voir [common/api/decoupage_administratif.py](../common/api/decoupage_administratif.py)
 
 à compléter
 
-### Et les PAT ?
+### Comment gérer la MAJ annuelle des PAT ?
 
-à venir
+voir [common/api/datagouv.py](../common/api/datagouv.py)
+
+* mettre à jour le fichier source
+* reset le cache (`cache.clear()`)
+* lancer la commande de mise à jour des cantines : `python manage.py canteen_update_pat_data_using_city_insee_code` ("apply")

@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from "vue"
 import { useRoute } from "vue-router"
-import documentation from "@/data/documentation.json"
 import ImportExplanation from "@/components/ImportExplanation.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
@@ -14,12 +13,6 @@ const route = useRoute()
 
 /* Data */
 const schemaFile = "cantines_gestionnaires.json"
-const links = [
-  {
-    title: "Aide pour les formats d'import CSV, Excel, ODS",
-    href: documentation.importsFormatsFichiers,
-  },
-]
 
 /* Success */
 const showModal = ref(false)
@@ -33,7 +26,7 @@ const success = (count) => {
 
 <template>
   <h1 class="fr-col-12 fr-col-md-7">{{ route.meta.title }}</h1>
-  <ImportExplanation :links />
+  <ImportExplanation />
   <ImportSchemaTable :schemaFile />
   <ImportAdminCallout />
   <ImportFileUpload

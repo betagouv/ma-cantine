@@ -1,13 +1,14 @@
 import logging
 
-from django.core.management.base import BaseCommand
+from django.db import transaction
 
 from data.models import Canteen, Diagnostic
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Rules:
     - every canteen that has a diagnostic teledeclared for the given year
@@ -25,7 +26,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--year",
-            dest="year",
             type=int,
             required=True,
             help="Year of the teledeclaration campaign to process",
@@ -36,11 +36,8 @@ class Command(BaseCommand):
         logger.info(f"Start task: canteen_fill_declaration_donnees_year_field for year {year}")
         field_name = f"declaration_donnees_{year}"
 
-        logger.info("Step 1: reset the field for all the canteens")
-        Canteen.all_objects.all().update(**{field_name: False})
-
-        logger.info("Step 2: find the canteens that have a teledeclaration for the specified year")
-        diagnostics_teledeclared = Diagnostic.objects.teledeclared_for_year(year)
+        logger.info("Step 1: find the canteens that have a teledeclaration for the specified year")
+        diagnostics_teledeclared = Diagnostic.objects.valid_td_by_year(year)
         logger.info(f"Found {len(diagnostics_teledeclared)} teledeclarations for year {year}")
         canteens_with_teledeclarations = []
         for dtd in diagnostics_teledeclared.values("canteen_snapshot", "satellites_snapshot"):
@@ -49,10 +46,12 @@ class Command(BaseCommand):
                 for satellite in dtd["satellites_snapshot"]:
                     canteens_with_teledeclarations.append(satellite["id"])
 
-        logger.info("Step 3: update the field")
-        Canteen.all_objects.filter(id__in=canteens_with_teledeclarations).update(**{field_name: True})
+        logger.info("Step 2: reset & update the field")
+        with transaction.atomic():
+            Canteen.all_objects.all().update(**{field_name: False})
+            Canteen.all_objects.filter(id__in=canteens_with_teledeclarations).update(**{field_name: True})
 
         # Done!
-        logger.info(
-            f"Task completed: {Canteen.all_objects.filter(**{field_name: True}).count()} canteens teledeclared for year {year}"
-        )
+        result = f"{Canteen.all_objects.filter(**{field_name: True}).count()} canteens teledeclared for year {year}"
+        logger.info(f"Task completed: {result}")
+        return result

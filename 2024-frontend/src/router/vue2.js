@@ -4,10 +4,6 @@ const { law, diag, action } = sectionId
 const vue2routes = [
   {
     path: "/",
-    name: "Vue2Home",
-  },
-  {
-    path: "/accueil",
     name: "LandingPage",
   },
   {
@@ -15,23 +11,10 @@ const vue2routes = [
     name: "MyProgress",
   },
   {
-    path: "/dashboard/:canteenUrlComponent",
-    name: "DashboardManager",
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     meta: {
       title: "Mes achats",
-      siteMap: diag,
-      authenticationRequired: true,
-    },
-  },
-  {
-    path: "/nouvel-achat/",
-    name: "NewPurchase",
-    meta: {
-      title: "Nouvel achat",
       siteMap: diag,
       authenticationRequired: true,
     },
@@ -127,9 +110,9 @@ const vue2routes = [
     },
   },
   {
-    path: "/modifier-ma-cantine/:canteenUrlComponent/gestionnaires",
-    name: "CanteenManagers",
-  },
+    path: '/nos-cantines/:canteenUrlComponent',
+    name: 'CanteenPage',
+  }
 ]
 
 export default vue2routes

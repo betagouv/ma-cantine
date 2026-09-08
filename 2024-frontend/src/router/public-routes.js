@@ -7,6 +7,7 @@ import ConditionsGeneralesUtilisation from "@/views/ConditionsGeneralesUtilisati
 import Contact from "@/views/Contact.vue"
 import Developpeurs from "@/views/Developpeurs.vue"
 import DonneesPersonnelles from "@/views/DonneesPersonnelles.vue"
+import Statistiques from "@/views/Statistiques.vue"
 import MentionsLegales from "@/views/MentionsLegales.vue"
 import Observatoire from "@/views/Observatoire.vue"
 import PlanDuSite from "@/views/PlanDuSite.vue"
@@ -49,6 +50,15 @@ const routes = [
     component: ConditionsGeneralesUtilisation,
     meta: {
       title: "Conditions générales d'utilisation",
+      siteMap: site,
+    },
+  },
+  {
+    path: "/stats",
+    name: "Statistiques",
+    component: Statistiques,
+    meta: {
+      title: "Statistiques",
       siteMap: site,
     },
   },

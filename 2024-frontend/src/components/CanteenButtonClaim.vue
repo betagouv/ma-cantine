@@ -2,7 +2,8 @@
 import { ref } from "vue"
 import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
-import canteensService from "@/services/canteens"
+import managersService from "@/services/managers.js"
+import urlService from "@/services/urls"
 
 const props = defineProps(["id"])
 const loading = ref(false)
@@ -12,15 +13,17 @@ const router = useRouter()
 /* Claim a canteen */
 const claimCanteen = () => {
   loading.value = true
-  canteensService
+  managersService
     .claimCanteen(props.id)
     .then((response) => {
       loading.value = false
       if (response.id) {
         router.push({
-          name: "DashboardManager",
-          params: { canteenUrlComponent: response.id },
+          name: "GestionnaireCantine",
+          params: { canteenUrlComponent: urlService.getCanteenUrl(response) },
         })
+      } else {
+        store.notifyServerError(response)
       }
     })
     .catch((e) => {

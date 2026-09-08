@@ -14,15 +14,15 @@ class PurchaseAdmin(SoftDeletionAdmin):
         "date",
         "canteen_with_link",
         "description",
-        "family",
-        "characteristics",
-        "price_ht",
+        "famille_produits",
+        "caracteristiques",
+        "prix_ht",
         "deleted",
         "creation_date",
     )
     list_filter = (
-        "family",
-        get_arrayfield_list_filter("characteristics", "Caractéristique"),
+        "famille_produits",
+        get_arrayfield_list_filter("caracteristiques", "Caractéristique"),
         SoftDeletionStatusFilter,
         "deletion_date",
     )
@@ -34,38 +34,33 @@ class PurchaseAdmin(SoftDeletionAdmin):
     )
     search_help_text = f"Cherche sur les champs : Cantine (SIRET), {Purchase._meta.get_field('description').verbose_name.capitalize()}, {Purchase._meta.get_field('import_source').verbose_name.capitalize()}"
 
-    fields = (
-        "date",
-        "canteen",
-        "description",
-        "provider",
-        "family",
-        "category",
-        "characteristics",
-        "price_ht",
-        "invoice_file",
-        "local_definition",
-        "import_source",
-        "creation_source",
-        "creation_date",
-        "modification_date",
-        "deletion_date",
-    )
-    readonly_fields = (
-        "canteen",
-        "date",
-        "description",
-        "provider",
-        "family",
-        "category",
-        "characteristics",
-        "price_ht",
-        "invoice_file",
-        "local_definition",
-        "import_source",
-        "creation_source",
-        "creation_date",
-        "modification_date",
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    "date",
+                    "canteen",
+                    "description",
+                    "fournisseur",
+                    "famille_produits",
+                    "category",
+                    "caracteristiques",
+                    "prix_ht",
+                    "definition_local",
+                    "definition_local_km",
+                )
+            },
+        ),
+        ("Facture", {"fields": ("facture",)}),
+        ("Metadonnées", {"fields": (*Purchase.CREATION_META_FIELDS,)}),
+        (
+            "Supprimer (archiver)",
+            {
+                "description": "Un achat supprimé est un achat 'archivé' : il ne sera plus visible sur la plateforme mais il pourra être restauré à tout moment.",
+                "fields": ("deletion_date",),
+            },
+        ),
     )
 
     def get_queryset(self, request):
@@ -73,12 +68,19 @@ class PurchaseAdmin(SoftDeletionAdmin):
         qs = qs.prefetch_related("canteen")
         return qs
 
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
     def save_model(self, request, obj, form, change):
         """
         - run validation (will be run on save())
         - set creation_source (on create)
         """
         if not change:
+            obj.creation_user = request.user
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
 

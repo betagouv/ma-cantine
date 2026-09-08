@@ -8,7 +8,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <h2>Éditeur de la Plateforme</h2>
       <p>
         La Plateforme
-        <router-link :to="{ name: 'Vue2Home' }">https://ma-cantine.agriculture.gouv.fr/</router-link>
+        <router-link :to="{ name: 'LandingPage' }">https://ma-cantine.agriculture.gouv.fr/</router-link>
         est éditée par la Direction générale de l’alimentation du ministère de l’Agriculture, de l’Agro-alimentaire et
         de la Souveraineté alimentaire.
       </p>
@@ -22,7 +22,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
     </section>
     <section>
       <h2>Hébergement de la Plateforme</h2>
-      <p>Cette plateforme est hébergé par:</p>
+      <p>Cette plateforme est hébergée par:</p>
       <address class="fr-mb-3w">
         Clever Cloud
         <br />

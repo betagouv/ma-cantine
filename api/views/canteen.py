@@ -4,18 +4,17 @@ from datetime import date
 
 import redis as r
 from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.core.exceptions import BadRequest, ValidationError
+from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from django.db import IntegrityError, transaction
+from django.db import transaction
 from django.db.models import FloatField, Q, Sum
 from django.db.models.functions import Cast
 from django.http import JsonResponse
 from django_filters import BaseInFilter, CharFilter
 from django_filters import rest_framework as django_filters
+from drf_spectacular.openapi import OpenApiTypes
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -27,9 +26,11 @@ from api.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManager,
+    IsCanteenManagerUrlParam,
     IsElectedOfficial,
 )
 from api.serializers import (
+    CanteenCheckSerializer,
     CanteenActionsLightSerializer,
     CanteenActionsSerializer,
     CanteenAnalysisSerializer,
@@ -40,16 +41,13 @@ from api.serializers import (
     CanteenSummarySerializer,
     ElectedCanteenSerializer,
     FullCanteenSerializer,
-    ManagingTeamSerializer,
-    MinimalCanteenSerializer,
     PublicCanteenPreviewSerializer,
     PublicCanteenSerializer,
 )
-from api.views.utils import update_change_reason_with_auth
-from common.api.adresse import fetch_geo_data_from_code
+from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.api.recherche_entreprises import fetch_geo_data_from_siren, fetch_geo_data_from_siret
 from common.utils import send_mail
-from data.models import Canteen, Diagnostic, ManagerInvitation, Sector, SectorM2M
+from data.models import Canteen, Diagnostic, Sector, SectorM2M
 from data.models.creation_source import CreationSource
 from data.utils import has_charfield_missing_query
 
@@ -248,7 +246,7 @@ class PublishedCanteensView(ListAPIView):
         MaCantineOrderingFilter,
     ]
     # TODO: maybe add city/region/department name?
-    search_fields = ["name", "siret"]
+    search_fields = ["name", "siret", "siren_unite_legale"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
     filterset_class = PublishedCanteenFilterSet
 
@@ -271,15 +269,18 @@ class UserCanteensFilterSet(django_filters.FilterSet):
     get=extend_schema(
         summary="Lister avec une pagination des cantines gérées par l'utilisateur. Représentation complète.",
         description="Une pagination est mise en place pour cet endpoint. La représentation de la cantine est complète.",
+        tags=["Cantines"],
     ),
     post=extend_schema(
         summary="Créer une nouvelle cantine.",
         description="La nouvelle cantine aura comme gestionnaire l'utilisateur identifié.",
+        tags=["Cantines"],
     ),
 )
 class UserCanteensView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    model = Canteen
+    required_scopes = ["canteen"]
+    queryset = Canteen.objects.none()  # see get_queryset
     serializer_class = FullCanteenSerializer
     pagination_class = UserCanteensPagination
     filter_backends = [
@@ -288,15 +289,8 @@ class UserCanteensView(ListCreateAPIView):
         MaCantineOrderingFilter,
     ]
     filterset_class = UserCanteensFilterSet
-    required_scopes = ["canteen"]
     search_fields = ["name", "siret"]
     ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
-
-    def get_serializer(self, *args, **kwargs):
-        kwargs.setdefault("context", self.get_serializer_context())
-        action = "create" if self.request.method == "POST" else None
-        kwargs.setdefault("action", action)
-        return FullCanteenSerializer(*args, **kwargs)
 
     def get_queryset(self):
         return self.request.user.canteens.all()
@@ -304,8 +298,14 @@ class UserCanteensView(ListCreateAPIView):
     @transaction.atomic
     def perform_create(self, serializer):
         serializer.is_valid(raise_exception=True)
+        creation_user = self.request.user
         creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
-        canteen = serializer.save(creation_source=creation_source)
+        creation_source_api_oauth2_application = get_oauth_application(self.request)
+        canteen = serializer.save(
+            creation_user=creation_user,
+            creation_source=creation_source,
+            creation_source_api_oauth2_application=creation_source_api_oauth2_application,
+        )
         canteen.managers.add(self.request.user)
         update_change_reason_with_auth(self, canteen)
 
@@ -337,25 +337,61 @@ class UserCanteensView(ListCreateAPIView):
 
 @extend_schema_view(
     get=extend_schema(
+        summary="Vérifier les erreurs de validation pour une cantine.",
+        description="Retourne toutes les erreurs de validation potentielles pour une cantine (champs manquants, valeurs invalides, etc.).",
+        tags=["Cantines"],
+        responses=CanteenCheckSerializer,
+    )
+)
+class UserCanteenCheckView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, canteen_pk):
+        canteen = self._get_canteen()
+
+        errors = {}
+        try:
+            canteen.full_clean()
+        except ValidationError as e:
+            errors = e.message_dict
+
+        response = {"is_filled": canteen.is_filled, "errors": errors}
+        return Response(CanteenCheckSerializer(response).data)
+
+
+@extend_schema_view(
+    get=extend_schema(
         summary="Lister toutes les cantines gérées par l'utilisateur. Représentation partielle.",
         description="La totalité des cantines gérées par l'utilisateur - par contre seules certaines informations sont incluses.",
-    ),
+        tags=["Cantines"],
+    )
 )
 class UserCanteenPreviews(ListAPIView):
-    model = Canteen
-    serializer_class = CanteenPreviewSerializer
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
+    queryset = Canteen.objects.none()  # see get_queryset
+    serializer_class = CanteenPreviewSerializer
 
     def get_queryset(self):
         return self.request.user.canteens.all()
 
 
+@extend_schema_view(
+    get=extend_schema(
+        summary="",
+        tags=["Cantines"],
+    )
+)
 class UserCanteenSummaries(ListAPIView):
-    model = Canteen
-    serializer_class = CanteenSummarySerializer
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
+    queryset = Canteen.objects.none()  # see get_queryset
+    serializer_class = CanteenSummarySerializer
     pagination_class = UserCanteensPagination
     filter_backends = [
         django_filters.DjangoFilterBackend,
@@ -385,6 +421,7 @@ class UserCanteenActions(ListAPIView):
     get=extend_schema(
         summary="Obtenir les détails d'une cantine.",
         description="Permet d'obtenir toutes les informations sur une cantine spécifique tant que l'utilisateur soit un des gestionnaires.",
+        tags=["Cantines"],
     ),
     put=extend_schema(
         exclude=True,
@@ -392,18 +429,19 @@ class UserCanteenActions(ListAPIView):
     patch=extend_schema(
         summary="Modifier une cantine existante.",
         description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine.",
+        tags=["Cantines"],
     ),
     delete=extend_schema(
         summary="Supprimer une cantine existante.",
         description="Possible si l'utilisateur identifié fait partie des gestionnaires de la cantine. Attention : les diagnostics créés seront aussi supprimés.",
+        tags=["Cantines"],
     ),
 )
 class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManager]
-    model = Canteen
-    serializer_class = FullCanteenSerializer
-    queryset = Canteen.objects.all()
     required_scopes = ["canteen"]
+    queryset = Canteen.objects.all()
+    serializer_class = FullCanteenSerializer
 
     def put(self, request, *args, **kwargs):
         return JsonResponse(
@@ -415,10 +453,6 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
 
     def partial_update(self, request, *args, **kwargs):
         canteen_siret = request.data.get("siret")
-        if "siret" in request.data and not canteen_siret:
-            return JsonResponse(
-                {"siret": ["Le numéro SIRET ne peut pas être vide."]}, status=status.HTTP_400_BAD_REQUEST
-            )
         error_response = get_cantine_from_siret(canteen_siret, request)
         if error_response and error_response.get("id") != kwargs.get("pk"):
             raise DuplicateException(additional_data=error_response)
@@ -432,6 +466,11 @@ class RetrieveUpdateUserCanteenView(RetrieveUpdateDestroyAPIView):
         instance.delete(skip_validations=True)
 
 
+@extend_schema(
+    summary="Obtenir les informations d'une cantine par SIRET.",
+    responses={200: OpenApiTypes.OBJECT, 204: None},
+    tags=["Cantines"],
+)
 class CanteenStatusBySiretView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
@@ -443,13 +482,14 @@ class CanteenStatusBySiretView(APIView):
             response = fetch_geo_data_from_siret(siret)
             if not response:
                 return Response(None, status=status.HTTP_204_NO_CONTENT)
-            city = response.get("city", None)
-            postcode = response.get("postalCode", None)
-            if city and postcode:
-                response = fetch_geo_data_from_code(response)
         return Response(response, status=status.HTTP_200_OK)
 
 
+@extend_schema(
+    summary="Obtenir les informations des cantines d'une unité légale par SIREN.",
+    responses={200: OpenApiTypes.OBJECT, 204: None},
+    tags=["Cantines"],
+)
 class CanteenStatusBySirenView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
     required_scopes = ["canteen"]
@@ -479,143 +519,6 @@ def get_cantine_list_from_siren_unite_legale(siren, request):
             .order_by("name")
         )
         return CanteenStatusSerializer(canteens, many=True, context={"request": request}).data
-
-
-class AddManagerView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        try:
-            email = request.data.get("email").strip() if request.data.get("email") else None
-            validate_email(email)
-            canteen_id = request.data.get("canteen_id")
-            canteen = request.user.canteens.get(id=canteen_id)
-            AddManagerView.add_manager_to_canteen(email, canteen)
-            return Response(ManagingTeamSerializer(canteen).data, status=status.HTTP_200_OK)
-        except ValidationError as e:
-            logger.warning(f"Attempt to add manager with invalid email {email}:\n{e}")
-            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
-        except Canteen.DoesNotExist as e:
-            logger.warning(f"Attempt to add manager to unexistent canteen {canteen_id}:\n{e}")
-            return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
-        except IntegrityError as e:
-            logger.warning(f"Attempt to add existing manager with email {email} to canteen {canteen_id}:\n{e}")
-            return Response(ManagingTeamSerializer(canteen).data, status=status.HTTP_200_OK)
-        except Exception as e:
-            logger.exception(f"Exception occurred while inviting a manager to canteen:\n{e}")
-            return JsonResponse(
-                {"error": "An error has occurred"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-    @staticmethod
-    def add_manager_to_canteen(email, canteen, send_invitation_mail=True):
-        try:
-            user = get_user_model().objects.get(email=email)
-            canteen.managers.add(user)
-            if send_invitation_mail:
-                AddManagerView._send_add_email(email, canteen)
-        except get_user_model().DoesNotExist:
-            # Try to see if the user registered the email with case irregularities
-            user_qs = get_user_model().objects.filter(email__iexact=email)
-            if user_qs.count() == 1:
-                user = user_qs.first()
-                logger.info(f"Adding manager with email in different case : {email}")
-                canteen.managers.add(user)
-                if send_invitation_mail:
-                    AddManagerView._send_add_email(user.email, canteen)
-                return
-
-            if user_qs.count() > 1:
-                logger.info(f"Several users found for the case-insensitive email {email}. Unable to add manager.")
-
-            with transaction.atomic():
-                pm = ManagerInvitation(canteen_id=canteen.id, email=email)
-                pm.save()
-            if send_invitation_mail:
-                AddManagerView._send_invitation_email(pm)
-
-    @staticmethod
-    def _send_invitation_email(manager_invitation):
-        try:
-            context = {
-                "canteen": manager_invitation.canteen.name,
-                "protocol": settings.PROTOCOL,
-                "domain": settings.HOSTNAME,
-            }
-            send_mail(
-                subject="Invitation à gérer une cantine sur ma cantine",
-                template="auth/manager_invitation",
-                context=context,
-                to=[manager_invitation.email],
-            )
-        except ConnectionRefusedError as e:
-            logger.warning(
-                f"The manager invitation email could not be sent to {manager_invitation.email} : Connection Refused. The manager has been added anyway.\n{e}"
-            )
-            return
-        except Exception as e:
-            logger.exception(f"The manager invitation email could not be sent to {manager_invitation.email}\n{e}")
-            raise Exception("Error occurred : the mail could not be sent.") from e
-
-    @staticmethod
-    def _send_add_email(email, canteen):
-        try:
-            protocol = settings.PROTOCOL
-            domain = settings.HOSTNAME
-            canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
-            context = {
-                "canteen": canteen.name,
-                "canteen_url": f"{protocol}://{domain}{canteen_path}",
-            }
-            send_mail(
-                subject=f"Vous pouvez gérer la cantine « {canteen.name} »",
-                template="auth/manager_add_notification",
-                context=context,
-                to=[email],
-            )
-        except ConnectionRefusedError as e:
-            logger.warning(
-                f"The manager add notification email could not be sent to {email} : Connection Refused. The manager has been added anyway.\n{e}"
-            )
-            return
-        except Exception as e:
-            logger.exception(f"The manager add notification email could not be sent to {email}\n{e}")
-            raise Exception("Error occurred : the mail could not be sent.") from e
-
-
-class RemoveManagerView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        try:
-            email = request.data.get("email", "").strip()
-            validate_email(email)
-            canteen_id = request.data.get("canteen_id")
-            canteen = request.user.canteens.get(id=canteen_id)
-
-            try:
-                manager = get_user_model().objects.get(email=email)
-                canteen.managers.remove(manager)
-            except get_user_model().DoesNotExist:
-                try:
-                    invitation = ManagerInvitation.objects.get(canteen_id=canteen.id, email=email)
-                    invitation.delete()
-                except ManagerInvitation.DoesNotExist:
-                    pass
-            return Response(ManagingTeamSerializer(canteen).data, status=status.HTTP_200_OK)
-        except ValidationError as e:
-            logger.warning(f"Attempt to remove manager with invalid email {email}:\n{e}")
-            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
-        except Canteen.DoesNotExist as e:
-            logger.warning(f"Attempt to remove manager from unexistent canteen {canteen_id}:\n{e}")
-            return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
-            logger.exception(f"Exception occurred while removing a manager from a canteen:\n{e}")
-            return JsonResponse(
-                {"error": "An error has occurred"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
 
 
 class SendCanteenNotFoundEmail(APIView):
@@ -655,94 +558,6 @@ class SendCanteenNotFoundEmail(APIView):
             )
 
 
-class TeamJoinRequestView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        try:
-            email = request.data.get("email", "").strip()
-            validate_email(email)
-            name = request.data.get("name")
-            message = request.data.get("message")
-            canteen_id = kwargs.get("pk")
-            canteen = Canteen.objects.get(pk=canteen_id)
-            canteen_path = f"/modifier-ma-cantine/{canteen.url_slug}"
-            url = f"{'https' if settings.SECURE else 'http'}://{settings.HOSTNAME}{canteen_path}/gestionnaires?email={email}"
-
-            context = {
-                "email": email,
-                "name": name,
-                "message": message,
-                "url": url,
-                "canteen": canteen.name,
-                "siret": canteen.siret,
-                "siren_unite_legale": canteen.siren_unite_legale,
-            }
-
-            recipients = list(canteen.managers.values_list("email", flat=True))
-
-            if not recipients:
-                recipients.append(settings.CONTACT_EMAIL)
-
-            send_mail(
-                subject=f"{name} voudrait rejoindre l'équipe de gestion de la cantine {canteen.name}",
-                to=recipients,
-                reply_to=[email],
-                template="canteen_join_request",
-                context=context,
-            )
-
-            return JsonResponse({}, status=status.HTTP_200_OK)
-        except ValidationError:
-            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            logger.exception(f"Exception occurred while sending email:\n{e}")
-            return JsonResponse(
-                {"error": "An error has occurred"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
-
-
-class ClaimCanteenView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    @transaction.atomic
-    def post(self, request, canteen_pk):
-        try:
-            canteen = Canteen.objects.get(pk=canteen_pk)
-        except Canteen.DoesNotExist:
-            raise BadRequest()
-
-        if canteen.managers.exists():
-            raise BadRequest()
-
-        canteen.managers.add(self.request.user)
-        canteen.claimed_by = self.request.user
-        canteen.has_been_claimed = True
-        canteen.save(skip_validations=True)
-        return Response(MinimalCanteenSerializer(canteen).data, status=status.HTTP_200_OK)
-
-
-class UndoClaimCanteenView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    @transaction.atomic
-    def post(self, request, canteen_pk):
-        try:
-            canteen = Canteen.objects.get(pk=canteen_pk)
-        except Canteen.DoesNotExist:
-            raise BadRequest()
-
-        if canteen.claimed_by != self.request.user:
-            raise PermissionDenied()
-
-        canteen.managers.remove(self.request.user)
-        canteen.claimed_by = None
-        canteen.has_been_claimed = False
-        canteen.save(skip_validations=True)
-        return JsonResponse({}, status=status.HTTP_200_OK)
-
-
 class ActionableCanteensListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     model = Canteen
@@ -765,9 +580,9 @@ class ActionableCanteensListView(ListAPIView):
 
 class ActionableCanteenRetrieveView(RetrieveAPIView):
     permission_classes = [IsAuthenticated, IsCanteenManager]
+    required_scopes = ["canteen"]
     model = Canteen
     serializer_class = CanteenActionsSerializer
-    required_scopes = ["canteen"]
 
     def get_queryset(self):
         year = self.request.parser_context.get("kwargs").get("year")
@@ -798,6 +613,7 @@ class TerritoryCanteensListView(ListAPIView):
     get=extend_schema(
         summary="Lister les options pour le ministère de tutelle.",
         description="Certains secteurs nécessite la spécification d'un ministère du tutelle.",
+        tags=["Cantines"],
     ),
 )
 class CanteenMinistriesView(APIView):

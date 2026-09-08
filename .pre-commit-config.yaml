@@ -33,6 +33,7 @@ repos:
       - id: check-json
       - id: pretty-format-json
         args: [--autofix, --no-ensure-ascii]
+        exclude: ^2024-frontend/src/data/.*\.json$
 
   # UV
   - repo: https://github.com/astral-sh/uv-pre-commit
@@ -74,7 +75,7 @@ repos:
 
   # BASH
   - repo: https://github.com/bemeurer/beautysh.git
-    rev: v6.2.1
+    rev: v6.4.3
     hooks:
       - id: beautysh
   - repo: https://github.com/jumanjihouse/pre-commit-hooks
@@ -102,43 +103,6 @@ repos:
     hooks:
       - id: gitlab-ci-linter
 
-  # JS (Vue 2 app)
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.38.0
-    hooks:
-      - id: eslint
-        name: vue2-eslint
-        additional_dependencies:
-          - eslint@7.32.0
-          - vue-eslint-parser@latest
-          - eslint-plugin-vue@latest
-          - eslint-plugin-jquery@latest
-          - eslint-plugin-eslint-plugin@latest
-          - prettier@latest
-          - eslint-config-prettier@latest
-          - eslint-plugin-prettier@latest
-          - babel-eslint
-        args: [-c=frontend/.eslintrc.js, --fix]
-        types:
-          - vue
-        files: ^frontend/
-  - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: v9.38.0
-    hooks:
-      - id: eslint
-        name: js-eslint-v2
-        additional_dependencies:
-          - eslint@7.32.0
-          - vue-eslint-parser@latest
-          - eslint-plugin-vue@latest
-          - eslint-plugin-jquery@latest
-          - eslint-plugin-eslint-plugin@latest
-          - prettier@latest
-          - eslint-config-prettier@latest
-          - eslint-plugin-prettier@latest
-          - babel-eslint
-        args: [-c=frontend/.eslintrc.js, --fix]
-        files: ^frontend/
   # JS (Vue 3 app)
   - repo: https://github.com/pre-commit/mirrors-eslint
     rev: v9.38.0
@@ -146,7 +110,7 @@ repos:
       - id: eslint
         name: vue3-eslint
         additional_dependencies:
-          - eslint@8.55.0
+          - eslint@9.39.3
           - vue-eslint-parser@latest
           - eslint-plugin-vue@latest
           - eslint-plugin-jquery@latest
@@ -155,7 +119,7 @@ repos:
           - eslint-config-prettier@latest
           - eslint-plugin-prettier@latest
           - babel-eslint
-        args: [-c=2024-frontend/.eslintrc.cjs, --fix]
+        args: [-c=2024-frontend/eslint.config.js, --fix]
         types:
           - vue
         files: ^2024-frontend/
@@ -165,7 +129,7 @@ repos:
       - id: eslint
         name: js-eslint-v3
         additional_dependencies:
-          - eslint@8.55.0
+          - eslint@9.39.3
           - vue-eslint-parser@latest
           - eslint-plugin-vue@latest
           - eslint-plugin-jquery@latest
@@ -174,5 +138,5 @@ repos:
           - eslint-config-prettier@latest
           - eslint-plugin-prettier@latest
           - babel-eslint
-        args: [-c=2024-frontend/.eslintrc.cjs, --fix]
+        args: [-c=2024-frontend/eslint.config.js, --fix]
         files: ^2024-frontend/

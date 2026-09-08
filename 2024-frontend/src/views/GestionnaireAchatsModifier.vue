@@ -1,0 +1,165 @@
+<script setup>
+import { ref, onMounted } from "vue"
+import { useRoute, useRouter } from "vue-router"
+import { useRootStore } from "@/stores/root"
+import documentation from "@/data/documentation.json"
+import urlService from "@/services/urls.js"
+import purchasesService from "@/services/purchases.js"
+import AppLoader from "@/components/AppLoader.vue"
+import AppRessources from "@/components/AppRessources.vue"
+import PurchaseForm from "@/components/PurchaseForm.vue"
+import PurchaseInvoice from "@/components/PurchaseInvoice.vue"
+
+/* Router and store */
+const route = useRoute()
+const router = useRouter()
+const store = useRootStore()
+const forceRerender = ref(0)
+const purchaseDeleted = ref(false)
+
+/* Canteen */
+const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
+const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
+
+/* Purchase */
+const isLoading = ref(true)
+const purchaseId = route.params.id
+const purchaseData = ref({})
+const errors = ref({})
+
+const loadPurchase = async () => {
+  isLoading.value = true
+  const response = await purchasesService.fetchPurchase(canteenId, purchaseId)
+  const noPurchase = !response?.id
+  const notSameCanteen = response?.canteen !== Number(canteenId)
+  purchaseData.value = noPurchase || notSameCanteen ? {} : response
+  isLoading.value = false
+}
+
+onMounted(loadPurchase)
+
+/* Save */
+const savePurchase = async (form) => {
+  errors.value = {}
+  const response = await purchasesService.updatePurchase(canteenId, purchaseId, form)
+
+  if (!response?.id) {
+    displayErrors(response)
+    return
+  }
+
+  purchaseData.value = response
+  forceRerender.value++
+
+  store.notify({
+    title: "Achat mis à jour",
+    message: `L'achat « ${form.description} » a bien été mis à jour pour la cantine « ${canteenName} ».`,
+    status: "success",
+  })
+
+  // Pas de redirection car on arrive sur une page vue2 et on va perdre la notification
+  window.scrollTo(0, 0)
+}
+
+const displayErrors = (response) => {
+  store.notifyServerError({
+    title: "Erreur lors de la modification de l'achat",
+    message: "Veuillez vérifier les champs du formulaire et réessayer.",
+    status: "error",
+  })
+  errors.value = response.list
+}
+
+/* Delete */
+const deletePurchase = () => {
+  if (!purchaseId) return
+  purchasesService.deletePurchase(purchaseId)
+    .then(() => {
+      purchaseDeleted.value = true
+      purchaseData.value = {}
+      forceRerender.value++
+    })
+    .catch(error => {
+      store.notifyServerError(error)
+    })
+}
+
+/* Restore */
+const restorePurchase = () => {
+  if (!purchaseId) return
+  purchasesService.restorePurchases([purchaseId])
+    .then(() => {
+      purchaseDeleted.value = false
+      loadPurchase()
+      store.notify({
+        title: "Achat restauré",
+        message: `L'achat a bien été restauré pour la cantine « ${canteenName} ».`,
+        status: "success",
+      })
+    })
+    .catch(error => {
+      store.notifyServerError(error)
+    })
+}
+
+/* Redirect */
+const goToPurchasesList = () => {
+  router.push({ name: "PurchasesHome" })
+}
+</script>
+
+<template>
+  <section class="fr-grid-row fr-grid-row--middle">
+    <div class="fr-col-12 fr-col-md-6 fr-mb-4w fr-mb-md-0">
+      <h1>{{ route.meta.title }}</h1>
+      <p>
+        Pour la cantine «&nbsp;{{ canteenName }}&nbsp;»
+      </p>
+    </div>
+    <div class="fr-col-offset-md-1"></div>
+    <AppRessources>
+      <li>
+        <a :href="documentation.suiviAchatsEgalim" target="_blank">
+          En savoir plus sur l'outil de suivi des achats EGalim
+        </a>
+      </li>
+      <li>
+        <a :href="documentation.critèresQualiteDurabiliteProduits" target="_blank">
+          Comprendre les critères de qualité et durabilité des produits
+        </a>
+      </li>
+    </AppRessources>
+  </section>
+  <section class="fr-mt-4w">
+    <AppLoader v-if="isLoading" />
+    <p v-else-if="!purchaseData.id" class="fr-mb-0" >
+      Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
+    </p>
+    <PurchaseForm
+      v-else-if="purchaseData.id"
+      :key="forceRerender"
+      :purchase-data="purchaseData"
+      :showCancelButton="true"
+      :showDeleteButton="true"
+      :errors="errors"
+      @sendForm="(payload) => savePurchase(payload)"
+      @cancel="goToPurchasesList"
+      @delete="deletePurchase"
+    >
+      <template #additionalContent>
+        <PurchaseInvoice class="fr-mt-2w" :canteenId="canteenId" :purchaseId="purchaseId" />
+      </template>
+    </PurchaseForm>
+    <div v-else-if="purchaseDeleted" class="fr-col-12 fr-col-lg-7">
+      <p>
+        L'achat a bien été supprimé pour la cantine « {{ canteenName }} ». <br />
+        Il s'agit d'une erreur ? Vous pouvez le restaurer en cliquant sur le bouton ci-dessous.
+      </p>
+      <DsfrButton
+        label="Annuler la suppression et restaurer l'achat"
+        tertiary
+        @click="restorePurchase"
+      />
+    </div>
+  </section>
+</template>

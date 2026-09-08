@@ -124,6 +124,9 @@ address {
     background-size: 100% 2px !important
 }
 
+.ma-cantine--table-pagination .fr-select {
+    max-width: 5rem !important;
+}
 
 /* ICON */
 .ma-cantine--icon-xs::before {
@@ -141,6 +144,34 @@ address {
 /* FLEX */
 .ma-cantine--flex-grow {
     flex-grow: 1 !important;
+}
+
+.ma-cantine--flex-end {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.ma-cantine--flex-start {
+    display: flex;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+}
+
+.ma-cantine--flex-between {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.ma-cantine--flex-gap-1 {
+    gap: 1rem;
+}
+
+.ma-cantine--flex-top {
+    align-items: flex-start;
 }
 
 /* BACKGROUND */
@@ -169,8 +200,17 @@ address {
     margin-bottom: -3rem !important;
 }
 
-
 /* TITLE */
 .ma-cantine--tile-no-overflow .fr-tile__pictogram{
    overflow: visible;
+}
+
+/* WHITE SPACE */
+.ma-cantine--white-space-nowrap {
+    white-space: nowrap;
+}
+
+/* FORM */
+.ma-cantine--textarea {
+    resize: vertical !important;
 }

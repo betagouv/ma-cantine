@@ -54,7 +54,7 @@ ma-cantine/
 
 ### Frontend
 
-- Vue 2: Open SSL legacy mode required: `NODE_OPTIONS=--openssl-legacy-provider npm run serve`
+- Vue 2: `npm run dev` (Vite on port 8080)
 - Vue 3: Modern setup with Vite: `npm run dev` (prefer for new features)
 - Both require `npm ci --ignore-scripts` to install dependencies
 
@@ -69,7 +69,7 @@ ma-cantine/
 python manage.py runserver  # Django on port 8000
 
 # Terminal 2: Vue 2 frontend (optional if not working on Vue 2)
-cd frontend && NODE_OPTIONS=--openssl-legacy-provider npm run serve  # Port 8080
+cd frontend && npm run dev  # Port 8080
 
 # Terminal 3: Vue 3 frontend
 cd 2024-frontend && npm run dev  # Port 5173
@@ -95,7 +95,7 @@ cd 2024-frontend && npm run dev  # Port 5173
 
 **Common Pitfalls:**
 - Don't run `python -m pip` directly (use `uv` instead)
-- Node version: Use LTS; Vue 2 needs `--openssl-legacy-provider` flag
+- Node version: Use LTS
 - Campaign dates hardcoded in `macantine.utils.CAMPAIGN_DATES`; use env overrides for testing
 - Remember 2 frontends run simultaneously on different ports; access app via Django port (8000)
 

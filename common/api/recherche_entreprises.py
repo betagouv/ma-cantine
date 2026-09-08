@@ -69,8 +69,8 @@ def fetch_geo_data_from_siren(siren):
             try:
                 etablissement = result["siege"]
                 response["name"] = get_enseigne_name(etablissement) or result["nom_complet"]
-                response["cityInseeCode"] = etablissement["commune"]
-                response["postalCode"] = etablissement["code_postal"]
+                response["city_insee_code"] = etablissement["commune"]
+                response["postal_code"] = etablissement["code_postal"]
                 response["city"] = etablissement["libelle_commune"]
                 response["epci"] = etablissement["epci"]
                 response["department"] = etablissement["departement"]
@@ -124,8 +124,8 @@ def fetch_geo_data_from_siret(siret):
             try:
                 etablissement = result["matching_etablissements"][0]
                 response["name"] = get_enseigne_name(etablissement) or result["nom_complet"]
-                response["cityInseeCode"] = etablissement["commune"]
-                response["postalCode"] = etablissement["code_postal"]
+                response["city_insee_code"] = etablissement["commune"]
+                response["postal_code"] = etablissement["code_postal"]
                 response["city"] = etablissement["libelle_commune"]  # en majuscules
                 response["epci"] = etablissement["epci"]
                 # response["department"] = etablissement["departement"]  # not in response
@@ -172,17 +172,36 @@ MOCK_SIREN_923412845_RESULTS = [
         },
     }
 ]
+MOCK_SIREN_213401722_RESULTS = [
+    {
+        "siren": "213401722",
+        "nom_complet": "COMMUNE DE MONTPELLIER",
+        "siege": {
+            "code_postal": "34070",
+            "commune": "34172",
+            "date_fermeture": None,
+            "departement": "34",
+            "epci": "243400017",
+            "etat_administratif": "A",
+            "libelle_commune": "MONTPELLIER",
+            "liste_enseignes": ["MAIRIE"],
+            "region": "76",
+            "siret": "21340172201787",
+        },
+    }
+]
 
 
 def mock_fetch_geo_data_from_siren(mock, siren, success=True):
     api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siren}"
     if success:
+        results = eval(f"MOCK_SIREN_{siren}_RESULTS")
         mock.get(
             api_url,
             text=json.dumps(
                 {
-                    "results": eval(f"MOCK_SIREN_{siren}_RESULTS"),
-                    "total_results": 1,
+                    "results": results,
+                    "total_results": len(results),
                 }
             ),
         )
@@ -289,12 +308,13 @@ MOCK_SIRET_21380185500072_RESULTS = [
 def mock_fetch_geo_data_from_siret(mock, siret, success=True):
     api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={siret}"
     if success:
+        results = eval(f"MOCK_SIRET_{siret}_RESULTS")
         mock.get(
             api_url,
             text=json.dumps(
                 {
-                    "results": eval(f"MOCK_SIRET_{siret}_RESULTS"),
-                    "total_results": 1,
+                    "results": results,
+                    "total_results": len(results),
                 }
             ),
         )

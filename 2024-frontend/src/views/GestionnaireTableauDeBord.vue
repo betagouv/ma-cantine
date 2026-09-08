@@ -8,20 +8,17 @@ import campaignService from "@/services/campaigns.js"
 import canteensTableService from "@/services/canteensTable.js"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireEmptyCanteen from "@/components/GestionnaireEmptyCanteen.vue"
-import GestionnaireCanteensTable from "@/components/GestionnaireCanteensTable.vue"
+import CanteensTable from "@/components/CanteensTable.vue"
 import CanteenModalExport from "@/components/CanteenModalExport.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppLoader from "@/components/AppLoader.vue"
 import AppJeDonneMonAvis from "@/components/AppJeDonneMonAvis.vue"
+import FilterByBase from "@/components/FilterByBase.vue"
 
-/* INTRO */
+/* DATA */
 const store = useRootStore()
-const canteenSentence = computed(() => {
-  const count = canteensTable.value.length
-  if (count === 0) return "vous n'avez pas encore de cantine"
-  else if (count === 1) return "1 cantine"
-  return `${count} cantines`
-})
+const lastYear = new Date().getFullYear() - 1
+const isLoading = ref(true)
 
 /* BUTTON */
 const links = [
@@ -48,32 +45,22 @@ const clickDropdownMenu = (emitEvent) => {
   if (emitEvent === 'clickExport') modalExportOpened.value = true
 }
 
-/* SEARCH */
+/* SEARCH AND FILTERS */
 const search = ref()
-const isSearching = ref(false)
-const searchIsEmpty = ref(false)
-
-const clicSearch = () => {
-  isSearching.value = true
-  searchCanteens()
-  isSearching.value = false
-}
-
-const updateSearch = () => {
-  const searchValue = search.value.trim()
-  searchIsEmpty.value = searchValue === ""
-  if (searchIsEmpty.value) filteredCanteens.value = []
-}
-
-const searchCanteens = () => {
-  if (!search.value) return
-  filteredCanteens.value = canteensTableService.searchCanteensBySiretOrSirenOrName(search.value, allCanteens.value)
-  if (filteredCanteens.value.length === 0) searchIsEmpty.value = true
-}
+const filterTeledeclaration = ref('')
 
 /* CANTEENS */
-const lastYear = new Date().getFullYear() - 1
-const filteredCanteens = ref([])
+const allCanteens = computedAsync(async () => {
+  const allCanteens = await canteenService.fetchCanteensActions(lastYear)
+  const canteensGroup = allCanteens.filter((canteen) => canteen.productionType === "groupe").map((canteen) => canteen.id)
+  const canteensSatFiltered = allCanteens.filter((canteen) => {
+    const inMyGroup = canteen.productionType === "site_cooked_elsewhere" && canteensGroup.includes(canteen.groupe)
+    return inMyGroup ? false : true
+  })
+  isLoading.value = false
+  return canteensSatFiltered  // Always hide satellites on this page
+}, [])
+
 const canteensGroup = computed(() => {
   const count = allCanteens.value.filter((canteen) => canteen.productionType === "groupe").length
   const title = count > 1 ? `Vos ${count} cuisines centrales ont été transformées en groupes` : "Votre cuisine centrale a été transformée en groupe"
@@ -84,24 +71,29 @@ const canteensGroup = computed(() => {
   }
 })
 
-const allCanteens = computedAsync(async () => {
-  const canteens = await canteenService.fetchCanteensActions(lastYear)
-  const canteensFiltered = hideSatellites(canteens)
-  return canteensFiltered
-}, [])
-
-const canteensTable = computed(() => {
-  return filteredCanteens.value.length > 0 ? filteredCanteens.value : allCanteens.value
+const canteenSentence = computed(() => {
+  const count = canteensTable.value.length
+  if (count === 0 && !tableIsEmpty.value) return "vous n'avez pas encore de cantine"
+  else if (count === 0 && tableIsEmpty.value) return "0 cantine"
+  else if (count === 1) return "1 cantine"
+  return `${count} cantines`
 })
 
-const hideSatellites = (canteens) => {
-  const canteensGroup = canteens.filter((canteen) => canteen.productionType === "groupe").map((canteen) => canteen.id)
-  const canteensSatFiltered = canteens.filter((canteen) => {
-    const inMyGroup = canteen.productionType === "site_cooked_elsewhere" && canteensGroup.includes(canteen.groupe)
-    return inMyGroup ? false : true
-  })
-  return canteensSatFiltered
-}
+const canteensTable = computed(() => {
+  let canteensToDisplay = [...allCanteens.value]
+  if (search.value) canteensToDisplay = canteensTableService.searchCanteensBySiretOrSirenOrName(search.value, canteensToDisplay)
+  if (filterTeledeclaration.value) {
+    const teledeclarationFilterValue = filterTeledeclaration.value === '1'
+    canteensToDisplay = canteensTableService.filterCanteensByTeledeclaration(teledeclarationFilterValue, canteensToDisplay)
+  }
+  return canteensToDisplay
+})
+
+const tableIsEmpty = computed(() => {
+  const hasFilterOrSearchActive = search.value || filterTeledeclaration.value
+  const noCanteenToDisplay = canteensTable.value.length === 0
+  return hasFilterOrSearchActive && noCanteenToDisplay
+})
 
 /* CAMPAIGN */
 const campaign = computedAsync(async () => {
@@ -119,30 +111,51 @@ const campaign = computedAsync(async () => {
   <DsfrAlert v-if="canteensGroup.displayBanner > 0" :title="canteensGroup.title" class="fr-mb-4w">
     <p>Vous pouvez requalifier vos groupes directement depuis ce tableau de bord, <a :href="documentation.groupesRestaurantsSatellites" target="_blank">découvrez comment faire</a></p>
   </DsfrAlert>
-  <GestionnaireEmptyCanteen v-if="store.canteenPreviews.length === 0" />
-  <section v-else-if="store.canteenPreviews.length > 0 && campaign">
-    <div class="fr-grid-row">
-      <div class="fr-col-12 fr-col-md-6">
-        <p class="fr-mb-0 fr-text--lead">{{ canteenSentence }}</p>
+  <AppLoader v-if="isLoading || !campaign" class="fr-mb-4w" />
+  <section v-else>
+    <GestionnaireEmptyCanteen v-if="store.canteenPreviews.length === 0" />
+    <div v-else>
+      <div class="fr-grid-row">
+        <div class="fr-col-12 fr-col-md-6">
+          <p class="fr-mb-0 fr-text--lead">{{ canteenSentence }}</p>
+        </div>
+        <div class="fr-col-12 fr-col-md-6 fr-grid-row fr-grid-row--middle fr-grid-row--right">
+          <FilterByBase label="Filtrer par" class="fr-mr-1w" :number="filterTeledeclaration ? 1 : null" :widthAuto="true">
+            <p class="fr-mb-2w">Statut du bilan</p>
+            <DsfrRadioButtonSet
+              v-model="filterTeledeclaration"
+              :options="[{ label: 'Bilan télédéclaré', value: '1'}, { label: 'Bilan non télédéclaré', value: '0'}]"
+              class="ma-cantine--white-space-nowrap"
+              small
+            />
+            <div v-if="filterTeledeclaration" class="fr-grid-row fr-grid-row--center fr-mt-2w">
+              <DsfrButton
+                icon="fr-icon-close-circle-line"
+                @click="filterTeledeclaration = null"
+                size="small"
+                tertiary
+              >
+                Désélectionner
+              </DsfrButton>
+            </div>
+          </FilterByBase>
+          <DsfrSearchBar
+            v-model="search"
+            label="Rechercher"
+            button-text="Rechercher"
+            placeholder="Chercher un établissement par nom, siret ou siren"
+            class="ma-cantine--flex-grow"
+          />
+        </div>
       </div>
-      <div class="fr-col-12 fr-col-md-6">
-        <DsfrSearchBar
-          v-model="search"
-          label="Rechercher"
-          button-text="Rechercher"
-          placeholder="Rechercher par le nom, siret ou siren de l'établissement"
-          @update:modelValue="updateSearch"
-          @search="clicSearch"
-        />
-      </div>
-    </div>
-    <template v-if="campaign">
-      <AppLoader v-if="isSearching" class="fr-mt-2w fr-mb-4w" />
-      <p class="fr-mt-2w fr-mb-4w" v-if="searchIsEmpty && search">
-        Aucun résultat trouvé pour la recherche « {{ search }} »
+      <p class="fr-mt-2w fr-mb-4w" v-if="tableIsEmpty">
+        Aucun résultat trouvé pour
+        <span v-if="search">la recherche « {{ search }} »</span>
+        <span v-if="search && filterTeledeclaration"> et </span>
+        <span v-if="filterTeledeclaration">un « bilan {{ filterTeledeclaration === '1' ? 'télédéclaré' : 'non télédéclaré' }} »</span>
       </p>
-      <GestionnaireCanteensTable v-else :canteens="canteensTable" :campaign="campaign" />
-    </template>
+      <CanteensTable v-else :canteens="canteensTable" :campaign="campaign" />
+    </div>
   </section>
   <section class="ma-cantine--bg-blue fr-py-4w">
     <GestionnaireGuides />

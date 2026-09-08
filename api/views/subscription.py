@@ -2,12 +2,13 @@ import json
 import logging
 
 import sib_api_v3_sdk
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.views import APIView
+
+from macantine.brevo import create_newsletter_contact
 
 logger = logging.getLogger(__name__)
 
@@ -20,15 +21,7 @@ class SubscribeNewsletter(APIView):
                 raise ValidationError("No email given")
             email = email.strip()
             validate_email(email)
-
-            list_id = settings.NEWSLETTER_SENDINBLUE_LIST_ID
-            configuration = sib_api_v3_sdk.Configuration()
-            configuration.api_key["api-key"] = settings.ANYMAIL.get("SENDINBLUE_API_KEY")
-            api_instance = sib_api_v3_sdk.ContactsApi(sib_api_v3_sdk.ApiClient(configuration))
-            create_contact = sib_api_v3_sdk.CreateContact(email=email)
-            create_contact.list_ids = [int(list_id)]
-            create_contact.update_enabled = True
-            api_instance.create_contact(create_contact)
+            create_newsletter_contact(email)
             return JsonResponse({}, status=status.HTTP_200_OK)
         except sib_api_v3_sdk.rest.ApiException as e:
             contact_exists = json.loads(e.body).get("message") == "Contact already exist"

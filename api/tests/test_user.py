@@ -8,7 +8,39 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import UserFactory
 
 
-class TestLoggedUserApi(APITestCase):
+class LoggedUserApiTest(APITestCase):
+    def test_login_with_email_authenticates_session(self):
+        user = UserFactory(email="user@example.com")
+        user.set_password("testPw1234#!")
+        user.save(update_fields=["password"])
+
+        url = reverse("login")
+        payload = {"username": "USER@example.com", "password": "testPw1234#!"}
+        login_response = self.client.post(url, payload)
+
+        self.assertEqual(login_response.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(self.client.session.get("_auth_user_id"), str(user.id))
+
+        logged_user_response = self.client.get(reverse("logged_user"))
+        self.assertEqual(logged_user_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(logged_user_response.json().get("email"), user.email)
+
+    def test_login_with_username_authenticates_session(self):
+        user = UserFactory(username="testuser")
+        user.set_password("testPw1234#!")
+        user.save(update_fields=["password"])
+
+        url = reverse("login")
+        payload = {"username": "TESTuser", "password": "testPw1234#!"}
+        login_response = self.client.post(url, payload)
+
+        self.assertEqual(login_response.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(self.client.session.get("_auth_user_id"), str(user.id))
+
+        logged_user_response = self.client.get(reverse("logged_user"))
+        self.assertEqual(logged_user_response.status_code, status.HTTP_200_OK)
+        self.assertEqual(logged_user_response.json().get("username"), user.username)
+
     def test_unauthenticated_logged_user_call(self):
         """
         When calling this API unathenticated we expect a 204
@@ -128,7 +160,7 @@ class TestLoggedUserApi(APITestCase):
         self.assertEqual(body["source"], "OTHER")
         self.assertEqual(body["otherSourceDescription"], "Narnia")
 
-    def test_user_update_wrong_token(self):
+    def test_cannot_update_user_with_wrong_oauth2_token(self):
         user, token = get_oauth2_token("user:read")
         self.client.credentials(Authorization=f"Bearer {token}")
         payload = {

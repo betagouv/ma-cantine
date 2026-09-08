@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from data.models import ResourceAction
@@ -27,11 +28,13 @@ class ResourceActionFullSerializer(ResourceActionSerializer):
             "canteen",
         )
 
+    @extend_schema_field(serializers.DictField())
     def get_resource(self, obj):
         from .wasteaction import WasteActionSerializer
 
         return WasteActionSerializer(obj.resource).data
 
+    @extend_schema_field(serializers.DictField())
     def get_canteen(self, obj):
         from .canteen import MinimalCanteenSerializer
 

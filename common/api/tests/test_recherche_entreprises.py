@@ -35,8 +35,8 @@ class TestRechercheEntrepriseAPI(unittest.TestCase):
                 "expected_outcome": {
                     "siret": canteen_siret,
                     "name": "Foo",
-                    "cityInseeCode": "12345",
-                    "postalCode": "75001",
+                    "city_insee_code": "12345",
+                    "postal_code": "75001",
                     "city": "PARIS",
                 },
             },
@@ -65,8 +65,8 @@ class TestRechercheEntrepriseAPI(unittest.TestCase):
                 "expected_outcome": {
                     "siret": canteen_siret,
                     "name": "Foo",
-                    "cityInseeCode": "12345",
-                    "postalCode": "75001",
+                    "city_insee_code": "12345",
+                    "postal_code": "75001",
                     "city": "PARIS",
                 },
             },

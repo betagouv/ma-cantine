@@ -2,7 +2,6 @@
 
 rm -rf static/
 rm -rf build/
-rm -rf 2024-frontend/build/
 bash ./clevercloud/pre-build-hook.sh
 # the following should mirror the tasks in CC_PYTHON_MANAGE_TASKS env config
 python manage.py buildnpm

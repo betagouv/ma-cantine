@@ -11,13 +11,6 @@ class VideoTutorialCategory(models.TextChoices):
 
 
 class VideoTutorial(models.Model):
-    class Meta:
-        verbose_name = "tutoriel vidéo"
-        verbose_name_plural = "tutoriels vidéo"
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-
     title = models.TextField(verbose_name="titre")
     description = models.TextField(verbose_name="description")
     published = models.BooleanField(default=False, verbose_name="publié")
@@ -32,6 +25,13 @@ class VideoTutorial(models.Model):
         verbose_name="catégorie",
     )
     thumbnail = models.ImageField(null=True, blank=True, verbose_name="aperçu")
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "tutoriel vidéo"
+        verbose_name_plural = "tutoriels vidéo"
 
     def __str__(self):
         return self.title

@@ -52,7 +52,7 @@ Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md)
 
 Les dépendances du backend se trouvent dans `pyproject.toml`.
 
-`uv` va installer les dépendances dans un environment virtuel : 
+`uv` va installer les dépendances dans un environment virtuel :
 
 ```
 uv sync
@@ -114,7 +114,6 @@ Pour tester ces tâches en local, vous pouvez renseigner ces variables d'environ
 SECRET= Le secret pour Django (vous pouvez le [générer ici](https://djecrety.ir/))
 DEBUG= `True` pour le développement local ou `False` autrement
 DEBUG_FRONT= `True` pour le développement local du 2024-front ou `False` autrement
-DEBUG_WEBPACK_PROGRESS= `True` pour afficher la progression lors du build de webpack pour le `frontend`
 DB_USER= L'utilisateur de la base de données. Doit avoir les droits de creation de db pour les tests (par ex. 'macantine_egalim_team')
 DB_PASSWORD= Le mot de passe pour accéder à la base de données
 DB_HOST= Le host de la base de données (par ex. '127.0.0.1')
@@ -171,6 +170,7 @@ ENABLE_DASHBOARD= Optionnel - `True` pour montrer la nouvelle page d'accueil des
 ENABLE_VUE3= Optionnel - `True` pour rendre les nouvelles vues disponibles.
 ENABLE_WASTE_MEASUREMENTS= Optionnel - `True` pour rendre l'outil évaluation gaspillage alimentaire disponible
 SHOW_BANNER= Optionnel - `True` pour afficher le bandeau d'information sous le menu
+SHOW_CONTACT_ALERT= Optionnel - `True` pour afficher le message d'alerte service réduit sur la page contact
 ```
 
 ### Mise à jour des métadonnées sur data.gouv.fr
@@ -226,10 +226,8 @@ Pour faire l'équivalent côté frontend, allez sur `./frontend` et lancez le se
 
 ```
 cd frontend
-NODE_OPTIONS=--openssl-legacy-provider npm run serve
+npm run dev
 ```
-
-> Un bug connu de code legacy avec Webpack sur les versions récentes entraine l'erreur suivante `code: 'ERR_OSSL_EVP_UNSUPPORTED'`. Pour éviter d'avoir à configurer une variable d'environnement en local on peut utiliser le script `npm run serve:ssl-legacy` qui intègre la configuration.
 
 ### Terminal Vue3
 
@@ -270,17 +268,8 @@ python manage.py test
 Sur VSCode, ces tests peuvent être debuggés avec la configuration "Python: Tests", présente sur le menu "Run".
 
 Tips :
-- lancer les tests plus rapidement : `python manage.py test --keepdb`
+- lancer les tests plus rapidement : `python manage.py test --keepdb --parallel 2`
 - lancer les tests qui ne nécessitent pas internet : `SKIP_TESTS_THAT_REQUIRE_INTERNET=True python manage.py test`
-
-### Vue2
-
-Il faut d'abord se placer sur `/frontend`, ensuite la commande pour lancer les tests VueJS est :
-
-```
-cd frontend
-npm run test
-```
 
 ## Creation d'un superuser
 
@@ -420,3 +409,10 @@ Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
 - supprimer toutes les lignes dependabot et les remplacer avec une ligne "MAJ dépendances"
 - supprimer la partie "by @username in https://..."
 - faire n'importe quel autre changement pour rendre la liste facilement comprensible par tout le monde
+
+### Autres commandes utiles
+
+#### Installer un package
+
+- Backend : `uv add <package>`
+- Frontend : `npm install <package>`

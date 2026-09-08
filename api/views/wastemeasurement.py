@@ -1,19 +1,17 @@
 import logging
 
-from django.core.exceptions import ObjectDoesNotExist
 from django_filters import rest_framework as django_filters
-from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
-
 from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404
+
 from api.permissions import (
     IsAuthenticatedOrTokenHasResourceScope,
-    IsCanteenManager,
-    IsLinkedCanteenManager,
+    IsCanteenManagerUrlParam,
 )
 from api.serializers import WasteMeasurementSerializer
-from api.views.utils import update_change_reason_with_auth
+from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from data.models import Canteen, WasteMeasurement
+from data.models.creation_source import CreationSource
 
 logger = logging.getLogger(__name__)
 
@@ -31,34 +29,27 @@ class WasteMeasurementFilterSet(django_filters.FilterSet):
 
 
 @extend_schema_view(
+    get=extend_schema(
+        summary="Lister les évaluations du gaspillage alimentaire d'une cantine.",
+        description="",
+        tags=["Évaluations du gaspillage alimentaire"],
+    ),
     post=extend_schema(
         summary="Créer une nouvelle évaluation du gaspillage alimentaire.",
         description="Une évaluation doit être rattachée à une cantine.",
-    )
+        tags=["Évaluations du gaspillage alimentaire"],
+    ),
 )
 class CanteenWasteMeasurementsView(ListCreateAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    model = WasteMeasurement
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    queryset = WasteMeasurement.objects.none()
     serializer_class = WasteMeasurementSerializer
-    filter_backends = [
-        django_filters.DjangoFilterBackend,
-    ]
+    filter_backends = [django_filters.DjangoFilterBackend]
     filterset_class = WasteMeasurementFilterSet
 
     def _get_canteen(self):
-        canteen_id = self.request.parser_context.get("kwargs").get("canteen_pk")
-        try:
-            canteen = Canteen.objects.get(pk=canteen_id)
-        except ObjectDoesNotExist as e:
-            logger.warning(
-                f"Attempt to create/view a waste measurement from an unexistent canteen ID : {canteen_id}: \n{e}"
-            )
-            raise NotFound()
-
-        if not IsCanteenManager().has_object_permission(self.request, self, canteen):
-            raise PermissionDenied()
-
-        return canteen
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
 
     def get_queryset(self):
         canteen = self._get_canteen()
@@ -67,18 +58,40 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
     def perform_create(self, serializer):
         canteen = self._get_canteen()
         serializer.is_valid(raise_exception=True)
-        measurement = serializer.save(canteen=canteen)
-        update_change_reason_with_auth(self, measurement)
+        creation_user = self.request.user
+        creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
+        creation_source_api_oauth2_application = get_oauth_application(self.request)
+        waste_measurement = serializer.save(
+            canteen=canteen,
+            creation_user=creation_user,
+            creation_source=creation_source,
+            creation_source_api_oauth2_application=creation_source_api_oauth2_application,
+        )
+        update_change_reason_with_auth(self, waste_measurement)
 
 
 @extend_schema_view(
-    post=extend_schema(
+    get=extend_schema(
+        summary="Récupérer une évaluation du gaspillage alimentaire existante.",
+        description="",
+        tags=["Évaluations du gaspillage alimentaire"],
+    ),
+    patch=extend_schema(
         summary="Modifier une évaluation du gaspillage alimentaire existante.",
         description="",
-    )
+        tags=["Évaluations du gaspillage alimentaire"],
+    ),
 )
 class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     http_method_names = ["get", "patch"]  # disable "put"
-    queryset = WasteMeasurement.objects.all()
+    model = WasteMeasurement
     serializer_class = WasteMeasurementSerializer
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_object(self):
+        canteen = self._get_canteen()
+        return get_object_or_404(WasteMeasurement, pk=self.kwargs["pk"], canteen=canteen)

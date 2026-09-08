@@ -1,13 +1,12 @@
 import logging
 
-from django.core.management.base import BaseCommand
-
 from data.models import Canteen
+from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
 
-class Command(BaseCommand):
+class Command(MaCantineBaseCommand):
     """
     Usage:
     - python manage.py canteen_fill_is_filled_field
@@ -27,7 +26,7 @@ class Command(BaseCommand):
         apply = options["apply"]
 
         if not apply:
-            print("Dry run mode, no changes will be applied.")
+            logger.info("Dry run mode, no changes will be applied.")
 
         canteens_all_qs = Canteen.all_objects.all()
         logger.info(f"Found {canteens_all_qs.count()} canteens to process")

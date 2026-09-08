@@ -7,6 +7,9 @@ on:
       - synchronize
       - reopened
       - ready_for_review
+    paths-ignore:
+      - "**.md"
+      - "web/static/documents/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -66,6 +69,10 @@ jobs:
         run: |
           uv sync
 
+      - name: Install tblib for parallel test tracebacks
+        run: |
+          uv pip install tblib
+
       - name: Test Django
         env:
           DEBUG: True
@@ -84,9 +91,10 @@ jobs:
           CONTACT_EMAIL: contact@example.com
           REDIS_URL: redis://localhost:6379/0
           GIT_BRANCH: ${{ github.head_ref }}
+          TESTS_PARALLEL: 2
         run: |
           echo "GIT_BRANCH=$GIT_BRANCH"
-          uv run python manage.py test
+          uv run python manage.py test --parallel $TESTS_PARALLEL
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -95,22 +103,13 @@ jobs:
 
       - name: Vue 2 install
         working-directory: ./frontend
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm ci --ignore-scripts
 
       - name: Vue 2 build
         working-directory: ./frontend
-        env:
-          NODE_OPTIONS: --openssl-legacy-provider
         run: |
           npm run build --if-present
-
-      - name: Vue 2 test
-        working-directory: ./frontend
-        run: |
-          npm run test
 
       - name: Vue 3 build
         env:

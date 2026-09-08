@@ -1,10 +1,7 @@
-# isort: skip_file
-
 from .user import UserAdmin  # noqa
 from .canteen import CanteenAdmin  # noqa
 from .diagnostic import DiagnosticAdmin  # noqa
 from .wastemeasurement import WasteMeasurementAdmin  # noqa
-from .sector import SectorM2MAdmin  # noqa
 from .blogpost import BlogPost  # noqa
 from .blogtag import BlogTag  # noqa
 from .managerinvitation import ManagerInvitation  # noqa

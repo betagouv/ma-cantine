@@ -5,6 +5,7 @@ from macantine.tasks import (
     export_dataset_canteen_opendata,
     export_dataset_td_analysis,
     export_dataset_td_opendata,
+    export_dataset_raw_analysis,
 )
 
 
@@ -15,16 +16,17 @@ class Command(BaseCommand):
     - python manage.py export_dataset --model Canteen --destination opendata
     - python manage.py export_dataset --model Teledeclaration --destination analysis
     - python manage.py export_dataset --model Teledeclaration --destination opendata
+    - python manage.py export_dataset --model Raw --destination analysis
     """
 
-    help = "Command to export datasets. 4 choices: Cantines (analysis) ; Cantines (opendata) ; Toutes les TD (analysis) ; TD par années (opendata)"
+    help = "Command to export datasets. 5 choices: Cantines (analysis) ; Cantines (opendata) ; Toutes les TD (analysis) ; TD par années (opendata) ; Raw (analysis)"
 
     def add_arguments(self, parser):
         parser.add_argument(
             "--model",
             dest="model",
             type=str,
-            choices=["Canteen", "Teledeclaration"],
+            choices=["Canteen", "Teledeclaration", "Raw"],
             required=True,
             help="Choose the model to export",
         )
@@ -51,3 +53,6 @@ class Command(BaseCommand):
                 export_dataset_td_analysis()
             elif destination == "opendata":
                 export_dataset_td_opendata()
+        elif model == "Raw":
+            if destination == "analysis":
+                export_dataset_raw_analysis()

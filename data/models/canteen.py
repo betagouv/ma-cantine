@@ -1,40 +1,46 @@
 from urllib.parse import quote
 
-from django.db.models.signals import post_save
-from django.dispatch import receiver
+from django.conf import settings
+from dirtyfields import DirtyFieldsMixin
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import ValidationError
 from django.db import models
-from django.db.models import BooleanField, Case, Count, Exists, F, OuterRef, Q, Subquery, Value, When, Func
-from django.utils import timezone
+from django.db.models import BooleanField, Case, Count, Exists, F, Func, OuterRef, Q, Subquery, Value, When
 from django.db.models.functions import Coalesce, Length
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
 from django.utils.functional import cached_property
 from simple_history.models import HistoricalRecords
 from simple_history.utils import update_change_reason
-from dirtyfields import DirtyFieldsMixin
 
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
+from common.utils.images import optimize_image
 from data.fields import ChoiceArrayField
+from data.models import AuthenticationMethodHistoricalRecords
 from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region, get_region_from_department
 from data.models.sector import (
+    ADMINISTRATION_SECTOR_LIST,
     SECTOR_HAS_LINE_MINISTRY_LIST,
     Sector,
     SectorM2M,
-    ADMINISTRATION_SECTOR_LIST,
     annotate_with_sector_category_list,
 )
 from data.utils import (
     get_diagnostic_lowest_limit_year,
     get_diagnostic_upper_limit_year,
     has_charfield_missing_query,
-    has_arrayfield_missing_query,
-    optimize_image,
 )
 from data.validators import canteen as canteen_validators
-from macantine.utils import get_year_campaign_end_date_or_today_date, is_in_correction, is_in_teledeclaration
+from macantine.utils import (
+    get_year_campaign_end_date_or_today_date,
+    is_in_correction,
+    is_in_teledeclaration,
+    is_in_teledeclaration_or_correction,
+)
 
 from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDeletionQuerySet
 
@@ -100,6 +106,12 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             return self.filter(creation_date__lt=canteen_created_before_date)
         return self.none()
 
+    def not_deleted_before_year_campaign_end_date(self, year):
+        canteen_deleted_after_date = get_year_campaign_end_date_or_today_date(year)
+        if canteen_deleted_after_date:
+            return self.filter(Q(deletion_date__isnull=True) | Q(deletion_date__gt=canteen_deleted_after_date))
+        return self.none()
+
     def is_groupe(self):
         return self.filter(is_groupe_query())
 
@@ -119,29 +131,18 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         return self.filter(is_public_query())
 
     def has_geo_data_missing(self):
+        """
+        Why is pat_list missing? Not all city_insee_code are linked to a PAT
+        """
         return self.filter(
             has_charfield_missing_query("city")
             | has_charfield_missing_query("postal_code")
             | has_charfield_missing_query("epci")
             | has_charfield_missing_query("epci_lib")
-            | has_arrayfield_missing_query("pat_list")
-            | has_arrayfield_missing_query("pat_lib_list")
             | has_charfield_missing_query("department")
             | has_charfield_missing_query("department_lib")
             | has_charfield_missing_query("region")
             | has_charfield_missing_query("region_lib")
-        )
-
-    def candidates_for_siret_to_city_insee_code_bot(self):
-        return self.is_serving().has_siret().has_city_insee_code_missing().order_by("-creation_date")
-
-    def candidates_for_city_insee_code_to_geo_data_bot(self):
-        return (
-            self.is_serving()
-            .has_city_insee_code_and_length_5()
-            .has_geo_data_missing()
-            .filter(geolocation_bot_attempts__lt=20)
-            .order_by("creation_date")
         )
 
     def annotate_with_satellites_in_db_count(self):
@@ -163,7 +164,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def annotate_with_is_managed_by_user(self, user):
         if not user or user.is_anonymous:
             return self.annotate(is_managed_by_user=Value(False, output_field=BooleanField()))
-        return self.annotate(
+        return self.prefetch_related("managers").annotate(
             is_managed_by_user=Exists(
                 self.exclude(managers=None).filter(managers__id=user.id, pk=OuterRef("pk")),
             )
@@ -172,7 +173,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
     def annotate_with_purchases_for_year(self, year):
         from data.models import Purchase
 
-        purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk"), date__year=year)
+        purchases_for_year = Purchase.objects.filter(canteen=OuterRef("pk")).for_year(year)
         return self.annotate(has_purchases_for_year=Exists(purchases_for_year))
 
     def annotate_with_diagnostic_for_year(self, year):
@@ -181,18 +182,27 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         diagnostics = Diagnostic.objects.filter(
             Q(canteen=OuterRef("groupe_id")) | Q(canteen=OuterRef("pk")), year=year
         )
+        canteen_diagnostics = diagnostics.filter(canteen=OuterRef("pk"))
+        groupe_diagnostics = diagnostics.filter(canteen=OuterRef("groupe_id"))
         diagnostics_filled = diagnostics.filled()
         diagnostic_for_year_with_cc_mode = Diagnostic.objects.filter(
-            pk=OuterRef("diagnostic_for_year"),
+            pk=OuterRef("groupe_diagnostic_for_year"),
             central_kitchen_diagnostic_mode__isnull=False,
         ).exclude(central_kitchen_diagnostic_mode="")
         diagnostics_teledeclared = diagnostics.teledeclared()
+        diagnostic_groupe_mode_all = canteen_diagnostics.filter(
+            teledeclaration_mode__in=[Diagnostic.TeledeclarationMode.CENTRAL_ALL]
+        )
         return self.annotate(
             diagnostic_for_year=Subquery(diagnostics.values("id")[:1]),
+            diagnostic_for_year_status=Subquery(diagnostics.values("status")[:1]),
+            groupe_diagnostic_for_year=Subquery(groupe_diagnostics.values("id")[:1]),
+            groupe_diagnostic_for_year_status=Subquery(groupe_diagnostics.values("status")[:1]),
             has_diagnostic_filled_for_year=Exists(Subquery(diagnostics_filled)),
             diagnostic_for_year_cc_mode=Subquery(
                 diagnostic_for_year_with_cc_mode.values("central_kitchen_diagnostic_mode")[:1]
             ),
+            groupe_mode=Subquery(diagnostic_groupe_mode_all.values("teledeclaration_mode")[:1]),
             has_diagnostic_teledeclared_for_year=Exists(Subquery(diagnostics_teledeclared)),
         )
 
@@ -214,6 +224,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
     def annotate_with_sector_category_list(self):
         return annotate_with_sector_category_list(self)
+
+    def annotate_with_image_count(self):
+        return self.prefetch_related("images").annotate(image_count=Count("images", distinct=True))
 
     def has_siret(self):
         return self.exclude(has_charfield_missing_query("siret"))
@@ -263,63 +276,105 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         self = self.annotate_with_purchases_for_year(year)
         self = self.annotate_with_diagnostic_for_year(year)
         # annotate with action
-        conditions = [
+        conditions = []
+        # outside the campaign without a teledeclared diagnostic
+        if not is_in_teledeclaration_or_correction():
+            conditions.append(
+                When(has_diagnostic_teledeclared_for_year=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE))
+            )
+        # in correction but without a teledeclared diagnostic
+        if is_in_correction():
+            conditions.append(
+                When(
+                    is_satellite_query()
+                    & Q(groupe_id__isnull=False)
+                    & Q(
+                        has_diagnostic_teledeclared_for_year=False,
+                        diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                        groupe_diagnostic_for_year_status=Diagnostic.DiagnosticStatus.DRAFT,
+                    ),
+                    then=Value(Canteen.Actions.DID_NOT_TELEDECLARE),
+                )
+            )
+            conditions.append(
+                When(
+                    Q(
+                        has_diagnostic_teledeclared_for_year=False,
+                        diagnostic_for_year_status=Diagnostic.DiagnosticStatus.DRAFT,
+                    ),
+                    then=Value(Canteen.Actions.DID_NOT_TELEDECLARE),
+                )
+            )
+        # anytime of the year
+        conditions.append(
             When(
                 is_satellite_query()
+                & Q(groupe_id__isnull=False)
                 & is_filled_query()
                 & Q(
                     diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                     has_diagnostic_teledeclared_for_year=False,
                 ),
                 then=Value(Canteen.Actions.NOTHING_SATELLITE),
-            ),
+            )
+        )
+        conditions.append(
             When(
                 is_satellite_query()
+                & Q(groupe_id__isnull=False)
                 & Q(
                     diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                     has_diagnostic_teledeclared_for_year=True,
                 ),
                 then=Value(Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED),
-            ),
+            )
+        )
+        conditions.append(
             When(
                 has_diagnostic_teledeclared_for_year=True,
                 then=Value(Canteen.Actions.NOTHING),
-            ),
+            )
+        )
+        conditions.append(
             When(
                 is_groupe_query() & Q(satellites_in_db_count=0),
                 then=Value(Canteen.Actions.ADD_SATELLITES),
-            ),
+            )
+        )
+        conditions.append(
             When(
                 Q(diagnostic_for_year=None) & Q(has_purchases_for_year=True),
                 then=Value(Canteen.Actions.PREFILL_DIAGNOSTIC),
-            ),
-            When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)),
-            When(has_diagnostic_filled_for_year=False, then=Value(Canteen.Actions.FILL_DIAGNOSTIC)),
+            )
+        )
+        conditions.append(When(diagnostic_for_year=None, then=Value(Canteen.Actions.CREATE_DIAGNOSTIC)))
+        conditions.append(When(has_diagnostic_filled_for_year=False, then=Value(Canteen.Actions.FILL_DIAGNOSTIC)))
+        conditions.append(
             When(
-                (is_groupe_query() & Q(diagnostic_for_year_cc_mode=None)),
+                (is_groupe_query() & Q(groupe_mode=Diagnostic.TeledeclarationMode.CENTRAL_ALL)),
                 then=Value(Canteen.Actions.FILL_DIAGNOSTIC),
-            ),
-            When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)),
+            )
+        )
+        conditions.append(When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)))
+        conditions.append(
             When(
                 is_groupe_query() & Q(satellites_in_db_missing_data_count__gt=0),
                 then=Value(Canteen.Actions.FILL_SATELLITE_CANTEEN_DATA),
-            ),
-        ]
+            )
+        )
         if is_in_correction():
-            # TODO: figure out a way to detect that the canteen has indeed teledeclared during the teledeclaration campaign
             conditions.append(
                 When(
-                    Q(has_diagnostic_teledeclared_for_year=False),
+                    Q(
+                        has_diagnostic_teledeclared_for_year=False,
+                        diagnostic_for_year_status=Diagnostic.DiagnosticStatus.CORRECTION,
+                    ),
                     then=Value(Canteen.Actions.TELEDECLARE),
                 )
             )
         if is_in_teledeclaration():
             conditions.append(
                 When(has_diagnostic_teledeclared_for_year=False, then=Value(Canteen.Actions.TELEDECLARE))
-            )
-        else:
-            conditions.append(
-                When(has_diagnostic_teledeclared_for_year=False, then=Value(Canteen.Actions.DID_NOT_TELEDECLARE))
             )
         return self.annotate(action=Case(*conditions, default=Value(Canteen.Actions.NOTHING)))
 
@@ -329,18 +384,6 @@ class CanteenManager(SoftDeletionManager):
 
 
 class Canteen(DirtyFieldsMixin, SoftDeletionModel):
-    objects = CanteenManager.from_queryset(CanteenQuerySet)()
-    all_objects = CanteenManager.from_queryset(CanteenQuerySet)(alive_only=False)
-
-    class Meta:
-        verbose_name = "cantine"
-        verbose_name_plural = "cantines"
-        ordering = ["-creation_date"]
-        indexes = [
-            models.Index(fields=["siret"]),
-            models.Index(fields=["central_producer_siret"]),
-        ]
-
     class ManagementType(models.TextChoices):
         DIRECT = "direct", "Directe"
         CONCEDED = "conceded", "Concédée"
@@ -406,23 +449,21 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         SPORT = "sport", "Sport"
         TRAVAIL = "travail", "Travail"
 
+    GEO_PAT_FIELDS = ["pat_list", "pat_lib_list"]
     GEO_FIELDS = [
         "city_insee_code",
         "city",
         "postal_code",
         "epci",
         "epci_lib",
-        "pat_list",
-        "pat_lib_list",
+        *GEO_PAT_FIELDS,
         "department",
         "department_lib",
         "region",
         "region_lib",
     ]
     # not all city_insee_code are linked to a PAT
-    GEO_FIELDS_WITHOUT_PAT = [
-        field_name for field_name in GEO_FIELDS if field_name not in ("pat_list", "pat_lib_list")
-    ]
+    GEO_FIELDS_WITHOUT_PAT = list(set(GEO_FIELDS) - set(GEO_PAT_FIELDS))
 
     TD_FIELDS = [
         "declaration_donnees_2021",
@@ -441,14 +482,11 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     CREATION_META_FIELDS = [
         "creation_date",
         "modification_date",
+        "creation_user",
         "creation_source",
+        "creation_source_api_oauth2_application",
         "import_source",
     ]
-
-    import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-    history = HistoricalRecords()
 
     name = models.TextField(verbose_name="nom")
 
@@ -604,7 +642,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         blank=True,
         verbose_name="état administratif du siret (obtenu via API Recherche Entreprises)",
     )
-    geolocation_bot_attempts = models.IntegerField(default=0)
 
     # Campaign tracking
     creation_mtm_source = models.TextField(
@@ -617,6 +654,16 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
 
+    import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
+
+    creation_user = models.ForeignKey(
+        get_user_model(),
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="canteens_created",
+        verbose_name="utilisateur qui a créé la cantine",
+    )
     creation_source = models.CharField(
         max_length=255,
         choices=CreationSource.choices,
@@ -624,6 +671,33 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         null=True,
         verbose_name="Source de création de la cantine",
     )
+    creation_source_api_oauth2_application = models.ForeignKey(
+        settings.OAUTH2_PROVIDER_APPLICATION_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="canteens_created",
+        verbose_name="app OAuth2 (API) qui a créé la cantine",
+    )
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords(bases=[AuthenticationMethodHistoricalRecords])
+
+    objects = CanteenManager.from_queryset(CanteenQuerySet)()
+    all_objects = CanteenManager.from_queryset(CanteenQuerySet)(alive_only=False)
+
+    class Meta:
+        verbose_name = "cantine"
+        verbose_name_plural = "cantines"
+        ordering = ["-creation_date"]
+        indexes = [
+            models.Index(fields=["siret"]),
+            models.Index(fields=["central_producer_siret"]),
+        ]
+
+    def __str__(self):
+        return self.name
 
     def normalize_fields(self):
         for field_name in ["siret", "siren_unite_legale", "epci", "central_producer_siret"]:
@@ -634,14 +708,24 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         if self.logo:
             self.logo = optimize_image(self.logo, self.logo.name, max_image_size)
 
-    def reset_geo_fields_if_siret_changed(self):
+    def reset_geo_fields_if_siret_or_city_insee_code_changed(self):
         """
         Cases where we need to reset geo fields:
-        - if siret has changed: reset all geo fields (including city_insee_code)
+        - the canteen already exists in the database
+        - AND the siret has changed (city_insee_code will also be reset)
+        # - OR the siren_unite_legale has changed (TODO. for now the city_insee_code should change as well for geo_fields to be reset)
+        - OR the city_insee_code has changed (and previous city_insee_code must not be have been empty)
         """
         if self.id and self.is_dirty():
-            if "siret" in self.get_dirty_fields():
+            if "siret" in self.get_dirty_fields() and self.siret:
                 self.reset_geo_fields(with_city_insee_code=True, with_save=False)
+            # elif "siren_unite_legale" in self.get_dirty_fields() and self.siren_unite_legale:
+            elif (
+                "city_insee_code" in self.get_dirty_fields()
+                and self.city_insee_code
+                and self.get_dirty_fields()["city_insee_code"]
+            ):
+                self.reset_geo_fields(with_city_insee_code=False, with_save=False)
 
     def set_is_filled(self):
         self.is_filled = self._is_filled()
@@ -670,7 +754,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         """
         self.normalize_fields()
         self.optimize_logo()
-        self.reset_geo_fields_if_siret_changed()
+        self.reset_geo_fields_if_siret_or_city_insee_code_changed()
         if not skip_validations:
             self.full_clean()
         self.set_is_filled()
@@ -808,6 +892,12 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
                 return True
         return False
 
+    @property
+    def logo_full_url(self) -> str | None:
+        if self.logo:
+            return self.logo.url
+        return None
+
     def _is_filled(self) -> bool:
         # basic rules
         is_filled = (
@@ -871,9 +961,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             return Canteen.PublicationStatus.DRAFT
         return Canteen.PublicationStatus.PUBLISHED
 
-    def __str__(self):
-        return f'Cantine "{self.name}"'
-
     def _get_region(self):
         return get_region_from_department(self.department)
 
@@ -896,7 +983,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         self.region_lib = None
         self.siret_inconnu = False
         self.siret_etat_administratif = None
-        self.geolocation_bot_attempts = 0
         if with_save:
             self.save(skip_validations=True)
             update_change_reason(self, "Reset geo fields")
@@ -991,15 +1077,16 @@ def fill_geo_fields_from_siret(sender, instance, created, **kwargs):
     On canteen creation, we need to fill its geo fields
 
     Notes:
-    - if city_insee_code is (already) set, we don't override it
-    - GROUPE canteens don't have siret, so it won't be triggered for them
-    TODO: canteen edit (when the canteen changes siret)
+    - SIRET: if city_insee_code is (already) set, we don't override it
+    - SIREN: if city_insee_code is not set, we can't fill geo fields (we don't know which city to use), so we don't do anything
+    - GROUPE canteens: they don't have siret, so it won't be triggered for them
     """
     from macantine import tasks
 
-    if created:
-        if instance.siret and not instance.city_insee_code:
-            tasks.update_canteen_geo_fields_from_siret(instance)
+    if instance.siret and not instance.city_insee_code:
+        tasks.update_canteen_geo_fields_from_siret(instance)
+    elif instance.siren_unite_legale and instance.city_insee_code:
+        tasks.update_canteen_geo_data_from_insee_code(instance)
 
 
 class CanteenImage(models.Model):
@@ -1008,8 +1095,14 @@ class CanteenImage(models.Model):
     alt_text = models.TextField(
         null=True,
         blank=True,
-        verbose_name="texte alternatif pour les utilisateurs qui voient pas l'image",
+        verbose_name="texte alternatif (pour les utilisateurs qui ne peuvent pas voir l'image)",
     )
+
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["id"]
 
     def save(self, **kwargs):
         self.image = optimize_image(self.image, self.image.name)

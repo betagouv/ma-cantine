@@ -1,94 +1,213 @@
 import logging
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework.exceptions import NotFound, PermissionDenied
-from rest_framework.generics import CreateAPIView, ListAPIView, UpdateAPIView
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.exceptions import DuplicateException
 from api.permissions import (
     IsAuthenticated,
     IsAuthenticatedOrTokenHasResourceScope,
-    IsCanteenManager,
-    IsLinkedCanteenManager,
+    IsCanteenManagerUrlParam,
 )
 from api.serializers import (
     DiagnosticAndCanteenSerializer,
     ManagerDiagnosticSerializer,
+    DiagnosticCheckSerializer,
+    DiagnosticRecapSerializer,
 )
-from api.views.utils import update_change_reason_with_auth
+from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.utils import file_import, send_mail
 from data.models import Canteen, Teledeclaration
 from data.models.creation_source import CreationSource
 from data.models.diagnostic import Diagnostic
-from macantine.utils import is_in_correction
+from macantine.utils import CAMPAIGN_DATES, is_in_correction
 
 logger = logging.getLogger(__name__)
 
 
+class LongPagination(LimitOffsetPagination):
+    default_limit = 100
+    max_limit = 100
+
+
 @extend_schema_view(
+    get=extend_schema(
+        summary="Lister les bilans d'une cantine.",
+        description="Retourne la liste des bilans d'une cantine.",
+        tags=["Bilans"],
+    ),
     post=extend_schema(
-        summary="Créer un nouveau diagnostic.",
-        description="Un diagnostic doit être rattaché a une cantine.",
-    )
+        summary="Créer un nouveau bilan.",
+        description="Un bilan doit être rattaché à une cantine.",
+        tags=["Bilans"],
+    ),
 )
-class DiagnosticCreateView(CreateAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
+class DiagnosticListCreateView(ListCreateAPIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
     model = Diagnostic
     serializer_class = ManagerDiagnosticSerializer
+    pagination_class = LongPagination
 
-    def get_serializer(self, *args, **kwargs):
-        kwargs.setdefault("context", self.get_serializer_context())
-        kwargs.setdefault("action", "create")
-        return ManagerDiagnosticSerializer(*args, **kwargs)
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_queryset(self):
+        canteen = self._get_canteen()
+        return canteen.diagnostics.all().order_by("year")
 
     def perform_create(self, serializer):
         try:
-            canteen_id = self.request.parser_context.get("kwargs").get("canteen_pk")
-            canteen = Canteen.objects.get(pk=canteen_id)
-            if not IsCanteenManager().has_object_permission(self.request, self, canteen):
-                raise PermissionDenied()
+            canteen = self._get_canteen()
             serializer.is_valid(raise_exception=True)
+            creation_user = self.request.user
             creation_source = serializer.validated_data.get("creation_source") or CreationSource.API
-            diagnostic = serializer.save(canteen=canteen, creation_source=creation_source)
+            creation_source_api_oauth2_application = get_oauth_application(self.request)
+            diagnostic = serializer.save(
+                canteen=canteen,
+                creation_user=creation_user,
+                creation_source=creation_source,
+                creation_source_api_oauth2_application=creation_source_api_oauth2_application,
+            )
             update_change_reason_with_auth(self, diagnostic)
-        except ObjectDoesNotExist as e:
-            logger.warning(f"Attempt to create a diagnostic from an unexistent canteen ID : {canteen_id}: \n{e}")
-            raise NotFound()
         except IntegrityError as e:
-            logger.warning(f"Attempt to create an existing diagnostic for canteen ID {canteen_id}:\n{e}")
+            logger.warning(
+                f"Attempt to create an existing diagnostic for canteen ID {self.kwargs['canteen_pk']}:\n{e}"
+            )
             raise DuplicateException()
 
 
 @extend_schema_view(
-    patch=extend_schema(
-        summary="Modifier un diagnostic existant.",
-        description="À noter qu'un diagnostic ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
+    get=extend_schema(
+        summary="Récupérer un bilan existant.",
+        description="",
+        tags=["Bilans"],
     ),
-    put=extend_schema(
-        exclude=True,
+    patch=extend_schema(
+        summary="Modifier un bilan existant.",
+        description="À noter qu'un bilan ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
+        tags=["Bilans"],
     ),
 )
-class DiagnosticUpdateView(UpdateAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsLinkedCanteenManager]
+class DiagnosticRetrieveUpdateView(RetrieveUpdateAPIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
-    http_method_names = ["patch"]  # disable "put"
-    queryset = Diagnostic.objects.all()
+    http_method_names = ["get", "patch"]  # disable "put"
+    model = Diagnostic
     serializer_class = ManagerDiagnosticSerializer
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get_object(self):
+        canteen = self._get_canteen()
+        return get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
 
     def perform_update(self, serializer):
         if self.get_object().is_teledeclared:
+            # if the user wants to cancel, see DiagnosticTeledeclarationCancelView
             raise PermissionDenied("Ce n'est pas possible de modifier un bilan télédéclaré.")
         serializer.is_valid(raise_exception=True)
         diagnostic = serializer.save()
         update_change_reason_with_auth(self, diagnostic)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Récupérer le récapitulatif par année des bilans d'une cantine.",
+        description="",
+        tags=["Bilans"],
+        responses=DiagnosticRecapSerializer(many=True),
+    ),
+)
+class DiagnosticListRecapView(APIView):
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, canteen_pk):
+        canteen = self._get_canteen()
+        canteen_diagnostics = Diagnostic.all_objects.filter(canteen=canteen)
+        result = []
+        for year in CAMPAIGN_DATES.keys():
+            # skip years where the canteen was not yet created
+            if canteen.creation_date > CAMPAIGN_DATES[year]["teledeclaration_end_date"]:
+                continue
+            # is_teledeclared: if at least 1 of the canteen's diagnostics is SUBMITTED
+            is_teledeclared = any(d.year == year and d.is_teledeclared for d in canteen_diagnostics)
+            # declaration_donnees: copy the canteeen's field value
+            declaration_donnees = getattr(canteen, f"declaration_donnees_{year}", None)
+            # canteen_diagnostic: the canteen's own diagnostic (if it exists)
+            canteen_diagnostic = next(
+                (d for d in canteen_diagnostics if d.year == year and not d.generated_from_groupe_diagnostic), None
+            )
+            canteen_diagnostic_id = canteen_diagnostic.id if canteen_diagnostic else None
+            # generated_from_groupe_diagnostic: the canteen's generated diagnostic (from its groupe) (if it exists)
+            generated_from_groupe_diagnostic = next(
+                (d for d in canteen_diagnostics if d.year == year and d.generated_from_groupe_diagnostic), None
+            )
+            generated_from_groupe_diagnostic_id = (
+                generated_from_groupe_diagnostic.id if generated_from_groupe_diagnostic else None
+            )
+            generated_from_groupe_diagnostic_mode = (
+                generated_from_groupe_diagnostic.central_kitchen_diagnostic_mode
+                if generated_from_groupe_diagnostic
+                else None
+            )
+            result.append(
+                {
+                    "year": year,
+                    "is_teledeclared": is_teledeclared,
+                    "declaration_donnees": declaration_donnees,
+                    "canteen_diagnostic_id": canteen_diagnostic_id,
+                    "generated_from_groupe_diagnostic_id": generated_from_groupe_diagnostic_id,
+                    "generated_from_groupe_diagnostic_mode": generated_from_groupe_diagnostic_mode,
+                }
+            )
+        return Response(DiagnosticRecapSerializer(result, many=True).data)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Vérifier les erreurs de validation pour un bilan.",
+        description="Retourne toutes les erreurs de validation potentielles pour un bilan (champs manquants, valeurs invalides, etc.).",
+        tags=["Bilans"],
+        responses=DiagnosticCheckSerializer,
+    )
+)
+class DiagnosticCheckView(APIView):
+    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, canteen_pk, pk):
+        canteen = self._get_canteen()
+        diagnostic = get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
+
+        errors = {}
+        try:
+            diagnostic.full_clean()
+        except ValidationError as e:
+            errors = e.message_dict
+
+        response = {"is_filled": diagnostic.is_filled, "errors": errors}
+        return Response(DiagnosticCheckSerializer(response).data)
 
 
 class EmailDiagnosticImportFileView(APIView):
@@ -127,16 +246,11 @@ class EmailDiagnosticImportFileView(APIView):
         return HttpResponse()
 
 
-class DiagnosticsToTeledeclarePagination(LimitOffsetPagination):
-    default_limit = 100
-    max_limit = 100
-
-
 class DiagnosticsToTeledeclareListView(ListAPIView):
     permission_classes = [IsAuthenticated]
     model = Diagnostic
     serializer_class = DiagnosticAndCanteenSerializer
-    pagination_class = DiagnosticsToTeledeclarePagination
+    pagination_class = LongPagination
     ordering = "modification_date"
 
     def get_queryset(self):

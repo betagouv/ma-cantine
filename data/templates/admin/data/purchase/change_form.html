@@ -1,0 +1,38 @@
+{% extends "admin/change_form.html" %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteLink = document.querySelector('a.deletelink');
+            if (deleteLink) {
+                // If purchase is deleted (has deletion_date), convert to restore button
+                {% if original.deletion_date %}
+                    const form = deleteLink.closest('form');
+
+                    // Change the link to a button
+                    deleteLink.removeAttribute('href');
+                    deleteLink.setAttribute('type', 'submit');
+                    deleteLink.style.cursor = 'pointer';
+
+                    // Change the text
+                    deleteLink.innerText = '🔄 Restaurer';
+
+                    // Add onclick handler to submit form with restore_action
+                    deleteLink.onclick = function(e) {
+                        e.preventDefault();
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'restore_action';
+                        input.value = '1';
+                        form.appendChild(input);
+                        form.submit();
+                    };
+                {% else %}
+                    // If purchase is active, just rename the Delete button
+                    deleteLink.innerText = '🗑️ Supprimer (archiver)';
+                {% endif %}
+            }
+        });
+    </script>
+{% endblock %}

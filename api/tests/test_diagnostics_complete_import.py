@@ -1,34 +1,21 @@
-import json
+from unittest import skipIf
 
-from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from django.conf import settings
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from api.views.diagnostic_import import DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic, ImportFailure, ImportType
 from data.models.creation_source import CreationSource
 
 
-class DiagnosticsCompleteSchemaTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.schema = json.load(open(DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH))
-
-    def get_pattern(self, schema, field_name):
-        field_index = next((i for i, f in enumerate(schema["fields"]) if f["name"] == field_name), None)
-        pattern = schema["fields"][field_index]["constraints"]["pattern"]
-        return pattern
-
-    # no regex patterns to test
-
-
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsCompleteImportApiErrorTest(APITestCase):
-    def test_unauthenticated(self):
+    def test_cannot_import_if_unauthenticated(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         response = self.client.post(reverse("diagnostics_complete_import"))
@@ -277,7 +264,21 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(errors[0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
+    @authenticate
+    def test_when_errors_count_is_0(self):
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user])
 
+        file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_bad_one_error.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertTrue(len(body["errors"]) > 0)
+
+
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
     @freeze_time("2025-02-10")  # during the 2024 campaign
     @authenticate
@@ -311,6 +312,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.valeur_totale, 2000)
         # TODO: add more assertions with Decimal
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        self.assertEqual(diagnostic_1.creation_user, authenticate.user)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
         diagnostic_2 = Diagnostic.objects.get(canteen_id=canteen_2.id)
@@ -318,6 +320,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_2.valeur_totale, 200)
         # TODO: add more assertions with Decimal & None
         self.assertEqual(diagnostic_2.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        self.assertEqual(diagnostic_2.creation_user, authenticate.user)
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
 
     @freeze_time("2025-02-10")  # during the 2024 campaign
@@ -372,3 +375,29 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.valeur_totale, 2000)
         self.assertEqual(diagnostic.valeur_bio, 400)
+
+    @authenticate
+    def test_update_diagnostic_cancelled_during_correction_campaign(self):
+        """
+        If a canteen has a cancelled diagnostic,
+        it can import a new diagnostic during the correction campaign
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1000, valeur_bio=200)
+
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+
+            file_path = (
+                "./api/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
+            )
+            with open(file_path) as diag_file:
+                response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            diagnostic.refresh_from_db()
+            self.assertEqual(diagnostic.valeur_totale, 2000)
+            self.assertEqual(diagnostic.valeur_bio, 400)

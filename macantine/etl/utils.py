@@ -60,9 +60,14 @@ def sum_int_and_none(values_to_sum: list):
     return int(np.sum(values_to_sum))
 
 
-def compute_ratio(valueKey, totalKey):
+def compute_percentage(valueKey, totalKey, ratio=False):
+    """
+    Compute a percentage (between 0 and 100) or a ratio (between 0 and 1).
+    """
     if totalKey and valueKey:
         if totalKey > 0 and valueKey >= 0:
+            if ratio:
+                return float(valueKey / totalKey)
             return float(100 * valueKey / totalKey)
 
 
@@ -157,6 +162,32 @@ def datetimes_to_str(df):
     date_columns = df.select_dtypes(include=["datetime64[ns, UTC]"]).columns
     for date_column in date_columns:
         df[date_column] = df[date_column].apply(lambda x: x.strftime("%Y-%m-%d %H:%M"))
+    return df
+
+
+def arrays_to_json(df):
+    """
+    Convert list/array columns and dict/JSON columns to JSON strings to prevent pandas to_sql type confusion.
+    PostgreSQL ArrayFields come through as Python lists and JSONFields as dicts.
+    Both types may contain datetime objects which need special handling.
+    """
+    import json
+    from datetime import datetime
+
+    class DateTimeEncoder(json.JSONEncoder):
+        """Custom JSON encoder that handles datetime objects."""
+
+        def default(self, obj):
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+            return super().default(obj)
+
+    for column in df.columns:
+        # Check if column contains lists/arrays or dicts/JSON objects
+        if df[column].apply(lambda x: isinstance(x, (list, dict))).any():
+            df[column] = df[column].apply(
+                lambda x: json.dumps(x, cls=DateTimeEncoder) if isinstance(x, (list, dict)) else x
+            )
     return df
 
 

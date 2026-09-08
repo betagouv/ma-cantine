@@ -146,14 +146,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_bio",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Bio",
+      "title": "Boulangerie / Pâtisserie fraîches, Bio",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_bio_dont_commerce_equitable",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Bio dont commerce équitable",
+      "title": "Boulangerie / Pâtisserie fraîches, Bio dont commerce équitable",
       "type": "number"
     },
     {
@@ -247,7 +247,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_label_rouge",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Label rouge",
+      "title": "Boulangerie / Pâtisserie fraîches, Label rouge",
       "type": "number"
     },
     {
@@ -324,7 +324,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_aocaop_igp_stg",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, AOC / AOP / IGP / STG",
+      "title": "Boulangerie / Pâtisserie fraîches, AOC / AOP / IGP / STG",
       "type": "number"
     },
     {
@@ -404,7 +404,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_hve",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Haute valeur environnementale",
+      "title": "Boulangerie / Pâtisserie fraîches, Haute valeur environnementale",
       "type": "number"
     },
     {
@@ -466,7 +466,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_peche_durable",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Pêche durable (non applicable)",
+      "title": "Boulangerie / Pâtisserie fraîches, Pêche durable (non applicable)",
       "type": "number"
     },
     {
@@ -540,7 +540,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_rup",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Région ultrapériphérique",
+      "title": "Boulangerie / Pâtisserie fraîches, Région ultrapériphérique",
       "type": "number"
     },
     {
@@ -620,7 +620,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_commerce_equitable",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Commerce équitable",
+      "title": "Boulangerie / Pâtisserie fraîches, Commerce équitable",
       "type": "number"
     },
     {
@@ -691,7 +691,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_fermier",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Fermier (non applicable)",
+      "title": "Boulangerie / Pâtisserie fraîches, Fermier (non applicable)",
       "type": "number"
     },
     {
@@ -747,7 +747,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_externalites",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Boulangerie / Pâtisserie fraîches, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
       "type": "number"
     },
     {
@@ -803,7 +803,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_performance",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Boulangerie / Pâtisserie fraîches, Produits acquis sur la base de leurs performances en matière environnementale",
       "type": "number"
     },
     {
@@ -859,7 +859,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_non_egalim",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, non-EGalim",
+      "title": "Boulangerie / Pâtisserie fraîches, non-EGalim",
       "type": "number"
     },
     {
@@ -915,7 +915,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_france",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Origine France",
+      "title": "Boulangerie / Pâtisserie fraîches, Origine France",
       "type": "number"
     },
     {
@@ -971,7 +971,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_circuit_court",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Origine France (dont circuit-court)",
+      "title": "Boulangerie / Pâtisserie fraîches, Origine France (dont circuit-court)",
       "type": "number"
     },
     {
@@ -1027,7 +1027,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_local",
-      "title": "Boulangerie/Pâtisserie fraîches et surgelées, Origine France (dont local)",
+      "title": "Boulangerie / Pâtisserie fraîches, Origine France (dont local)",
       "type": "number"
     },
     {

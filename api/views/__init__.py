@@ -2,49 +2,53 @@ from .blog import BlogPostsView, BlogPostView  # noqa: F401
 from .canteen import (  # noqa: F401
     ActionableCanteenRetrieveView,
     ActionableCanteensListView,
-    AddManagerView,
     CanteenMinistriesView,
     CanteenStatusBySirenView,
     CanteenStatusBySiretView,
-    ClaimCanteenView,
     PublicCanteenPreviewView,
     PublishedCanteenSingleView,
     PublishedCanteensView,
-    RemoveManagerView,
     RetrieveUpdateUserCanteenView,
     SendCanteenNotFoundEmail,
-    TeamJoinRequestView,
     TerritoryCanteensListView,
-    UndoClaimCanteenView,
     UserCanteenActions,
+    UserCanteenCheckView,
     UserCanteenPreviews,
     UserCanteenSummaries,
     UserCanteensView,
 )
-from .purchase_export import PurchaseListExportView  # noqa: F401
+from .canteen_create_import import CanteensCreateImportView  # noqa: F401
 from .canteen_export import UserCanteenListExportView  # noqa: F401
 from .canteen_groupe import (  # noqa: F401
-    CanteenGroupeSatellitesListView,
     CanteenGroupeSatelliteLinkView,
+    CanteenGroupeSatellitesListView,
     CanteenGroupeSatelliteUnlinkView,
 )  # noqa: F401
-from .canteen_create_import import CanteensCreateImportView  # noqa: F401
-from .canteen_update_import import CanteensUpdateImportView  # noqa: F401
+from .canteen_images import (  # noqa: F401
+    UserCanteenImagesListView,
+    UserCanteenImagesRetrieveUpdateDestroyView,
+    UserCanteenLogoView,
+)
+from .canteen_managers import (  # noqa: F401
+    AddManagerView,
+    ClaimCanteenView,
+    RemoveManagerView,
+    TeamJoinRequestView,
+    UndoClaimCanteenView,
+    UserCanteenManagersInvitationsView,
+    UserCanteenManagersView,
+)
 from .canteen_managers_import import CanteensManagersImportView  # noqa: F401
+from .canteen_update_import import CanteensUpdateImportView  # noqa: F401
 from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
-    DiagnosticCreateView,
+    DiagnosticListCreateView,
+    DiagnosticListRecapView,
+    DiagnosticCheckView,
+    DiagnosticRetrieveUpdateView,
     DiagnosticsToTeledeclareListView,
-    DiagnosticUpdateView,
     EmailDiagnosticImportFileView,
 )
-
-# from .diagnostic_import_old import (  # noqa: F401
-#     ImportCompleteCentralKitchenView,
-#     ImportCompleteDiagnosticsView,
-#     ImportSimpleCentralKitchenView,
-#     ImportSimpleDiagnosticsView,
-# )
 from .diagnostic_import import DiagnosticsCompleteImportView, DiagnosticsSimpleImportView  # noqa: F401
 from .diagnostic_teledeclaration import (  # noqa: F401
     DiagnosticTeledeclarationCancelView,
@@ -59,14 +63,20 @@ from .partnertype import PartnerTypeListView  # noqa: F401
 from .purchase import (  # noqa: F401
     CanteenPurchasesPercentageSummaryView,
     CanteenPurchasesSummaryView,
+    CanteenPurchasesSummaryForYearView,
     DiagnosticsFromPurchasesView,
-    PurchaseListCreateView,
+    PurchaseCreateView,
+    PurchaseFactureView,
+    PurchaseOldListCreateView,
+    PurchaseOldRetrieveUpdateDestroyView,
     PurchaseOptionsView,
     PurchaseRetrieveUpdateDestroyView,
     PurchasesDeleteView,
     PurchasesRestoreView,
 )
+from .purchase_export import PurchaseListExportView  # noqa: F401
 from .purchase_import import PurchasesImportView  # noqa: F401
+from .purchase_import_old import PurchasesImportOldView  # noqa: F401
 from .reservationexpe import ReservationExpeView  # noqa: F401
 from .resourceaction import ResourceActionView  # noqa: F401
 from .review import ReviewView  # noqa: F401

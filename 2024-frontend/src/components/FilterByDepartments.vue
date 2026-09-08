@@ -27,7 +27,9 @@ if (query.department) storeFilters.setFromQuery("departments", query.department,
 <template>
   <FilterByBase label="Départements">
     <DsfrSearchBar v-model="search" placeholder="Rechercher un département" />
+    <p v-if="search.length > 0 && options.length === 0" class="fr-error-text fr-mb-0">Aucun département trouvé pour la recherche « {{ search }} »</p>
     <DsfrCheckboxSet
+      v-if="options.length > 0"
       :modelValue="departmentsSelected"
       @update:modelValue="storeFilters.set('departments', $event)"
       :options="options"

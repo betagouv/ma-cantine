@@ -2,7 +2,7 @@
 {% load analytics %}
 {% load environment %}
 {% load featureflags %}
-{% load vite %}
+{% load django_vite %}
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -43,6 +43,7 @@
     window.IS_WIDGET = "{{ is_widget }}"
     window.SHOW_JE_DONNE_MON_AVIS = "{% show_je_donne_mon_avis %}" === "True"
     window.SHOW_BANNER = "{% show_banner %}" === "True"
+    window.SHOW_CONTACT_ALERT = "{% show_contact_alert %}" === "True"
     window.GIT_BRANCH = "{% git_branch %}"
   </script>
 
@@ -211,54 +212,14 @@
     })();
   </script>
   {% endif %}
-  <style>
-    @font-face {
-      font-family: 'Marianne';
-      src: url({% static 'fonts/Marianne-Regular.woff2' %}) format('woff2'),
-      url({% static 'fonts/Marianne-Regular.woff' %}) format('woff'),
-      url({% static 'fonts/Marianne-Regular.ttf' %}) format('truetype');
-      font-weight: 400;
-    }
-
-    @font-face {
-      font-family: 'Marianne';
-      src: url({% static 'fonts/Marianne-Medium.woff2' %}) format('woff2'),
-      url({% static 'fonts/Marianne-Medium.woff' %}) format('woff');
-      font-weight: 500;
-    }
-
-    @font-face {
-      font-family: 'Marianne';
-      src: url({% static 'fonts/Marianne-Light.woff2' %}) format('woff2'),
-      url({% static 'fonts/Marianne-Light.woff' %}) format('woff'),
-      url({% static 'fonts/Marianne-Light.ttf' %}) format('truetype');
-      font-weight: 100 300;
-    }
-
-    @font-face {
-      font-family: 'Marianne';
-      src: url({% static 'fonts/Marianne-Bold.woff2' %}) format('woff2'),
-      url({% static 'fonts/Marianne-Bold.woff' %}) format('woff'),
-      url({% static 'fonts/Marianne-Bold.ttf' %}) format('truetype');
-      font-weight: 600 700;
-    }
-
-    @font-face {
-      font-family: 'Marianne';
-      src: url({% static 'fonts/Marianne-ExtraBold.woff2' %}) format('woff2'),
-      url({% static 'fonts/Marianne-ExtraBold.woff' %}) format('woff'),
-      url({% static 'fonts/Marianne-ExtraBold.ttf' %}) format('truetype');
-      font-weight: 800 900;
-    }
-  </style>
 
   <!-- DSFR Charts -->
   <script type="module" src="{% static 'dsfr/dist/dsfr.module.min.js' %}"></script>
   <script src="{% static 'dsfr/charts/PieChart/pie-chart.umd.js' %}"></script>
   <link rel="stylesheet" href="{% static 'dsfr/charts/PieChart/pie-chart.css' %}">
 
-  {% vite %}
-  {% vite '2024-frontend/src/main.js' %}
+  {% vite_hmr_client %}
+  {% vite_asset 'src/main.js' %}
 </head>
 
 <body>

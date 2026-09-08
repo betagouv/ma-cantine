@@ -27,7 +27,9 @@ if (query.region) storeFilters.setFromQuery("regions", query.region, allRegions)
 <template>
   <FilterByBase label="Régions">
     <DsfrSearchBar v-model="search" placeholder="Rechercher une région" />
+    <p v-if="search.length > 0 && options.length === 0" class="fr-error-text fr-mb-0">Aucune région trouvée pour la recherche « {{ search }} »</p>
     <DsfrCheckboxSet
+      v-if="options.length > 0"
       :modelValue="regionsSelected"
       @update:modelValue="storeFilters.set('regions', $event)"
       :options="options"

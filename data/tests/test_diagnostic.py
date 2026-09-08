@@ -7,7 +7,16 @@ from django.utils import timezone
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Diagnostic, Sector
+from data.models import Canteen, Sector
+from data.models.diagnostic import (
+    Diagnostic,
+    aberrant_values_query,
+    canteen_has_siret_or_siren_unite_legale_query,
+    canteen_soft_deleted_during_campaign_query,
+    circuit_court_sup_france_query,
+    commerce_equitable_sup_bio_query,
+    local_sup_france_query,
+)
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
@@ -44,10 +53,29 @@ VALID_DIAGNOSTIC_SIMPLE_2025 = {
     "valeur_produits_de_la_mer_egalim": 40,
 }
 
+VALID_DIAGNOSTIC_SIMPLE_2026 = {
+    "year": 2026,
+    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
+    "nombre_repas_an": 1000,
+    "valeur_totale": 1000,
+    "valeur_bio": 200,
+    "valeur_siqo": 100,
+    "valeur_externalites_performance": 100,
+    "valeur_egalim_autres": 100,
+    "valeur_viandes_volailles": 100,
+    "valeur_viandes_volailles_bio": 30,
+    "valeur_viandes_volailles_egalim": 50,
+    "valeur_viandes_volailles_france": 20,
+    "valeur_produits_de_la_mer": 80,
+    "valeur_produits_de_la_mer_bio": 30,
+    "valeur_produits_de_la_mer_egalim": 40,
+}
+
 
 class DiagnosticModelSaveTest(TransactionTestCase):
+    @freeze_time("2026-01-30")  # during the 2025 campaign  # TODO: change to 2026
     def test_year_validation(self):
-        VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
         VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
         # on save
         for VALUE_OK_ON_SAVE in [None, -2000, 0, 1991, 2024, "2023"]:
@@ -64,7 +92,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         last_year = datetime.now().date().year - 1
         next_year = datetime.now().date().year + 1
         last_two_years = datetime.now().date().year - 2
-        next_two_years = datetime.now().date().year - 2
+        next_two_years = datetime.now().date().year + 2
         for TUPLE_OK_ON_FULL_CLEAN in [
             (this_year, this_year),
             (f"{this_year}", this_year),
@@ -82,6 +110,42 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(year=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    def test_can_edit_status_draft_validation(self):
+        # DRAFT diagnostic cannot be edited during the campaign but not after
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
+            diagnostic.full_clean()  # should not raise
+        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+            self.assertRaises(ValidationError, diagnostic.full_clean)
+        with freeze_time("2025-08-30"):  # after the 2024 correction campaign
+            self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_can_edit_status_correction_validation(self):
+        # CORRECTION diagnostic can be edited during the campaign & correction but not after correction
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+            diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
+        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+            diagnostic.cancel()
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
+            diagnostic.full_clean()  # should not raise
+        with freeze_time("2025-08-30"):  # after the 2024 correction campaign
+            self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    def test_can_edit_status_submitted_validation(self):
+        # SUBMITTED diagnostic can be edited during the campaign & correction but not after campaign
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
+            diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
+            self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
+            diagnostic.full_clean()  # should not raise
+        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+            diagnostic.full_clean()  # should not raise
+        with freeze_time("2025-08-30"):  # after the 2024 correction campaign
+            self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_type_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_TYPE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_TYPE.pop("diagnostic_type")
@@ -121,6 +185,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
         diagnostic.full_clean()
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_simple_appro_fields_required_after_2025_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE.pop("valeur_totale")
@@ -130,6 +195,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
         diagnostic.full_clean()
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_complete_appro_fields_required_after_2025_validation(self):
         VALID_DIAGNOSTIC_COMPLETE_2025 = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_COMPLETE_2025["diagnostic_type"] = Diagnostic.DiagnosticType.COMPLETE
@@ -141,6 +207,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
         diagnostic.full_clean()
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_totale_validation(self):
         # TODO: add tests against each simple field / sum of each label / sum of egalim fields
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
@@ -152,12 +219,20 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                     valeur_totale=VALEUR_TOTALE_VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE
                 )
                 self.assertEqual(diagnostic.valeur_totale, VALEUR_TOTALE_VALUE_OK_ON_SAVE)
-        for VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE in ["", "  ", "invalid"]:
-            with self.subTest(valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE):
+        for VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE_VALUEERROR in [""]:
+            with self.subTest(valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE_VALUEERROR):
                 self.assertRaises(
                     (ValueError, ValidationError),
                     DiagnosticFactory,
-                    valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE,
+                    valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE_VALUEERROR,
+                    **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE,
+                )
+        for VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE_TYPEERROR in ["  ", "invalid"]:
+            with self.subTest(valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE_TYPEERROR):
+                self.assertRaises(
+                    (TypeError, ValidationError),
+                    DiagnosticFactory,
+                    valeur_totale=VALEUR_TOTALE_VALUE_NOT_OK_ON_SAVE_TYPEERROR,
                     **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE,
                 )
         # on full_clean
@@ -173,6 +248,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_totale_extra_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT.pop("valeur_totale")
@@ -194,6 +270,119 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(valeur_totale=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
+    def test_diagnostic_valeur_famille(self):
+        VALID_DIAGNOSTIC_COMPLETE_2025 = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
+        # default: ok
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
+        self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertEqual(diagnostic.family_sum("viandes_volailles"), 0)  # only APPRO_LABELS
+        diagnostic.full_clean()  # should not raise
+        # 1 valeur_famille_label cannot be > valeur_famille
+        diagnostic.valeur_viandes_volailles_bio = 200
+        diagnostic.valeur_viandes_volailles_fermier = 50
+        diagnostic.save()
+        self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        # even for non-egalim labels
+        diagnostic.valeur_viandes_volailles_bio = 10
+        diagnostic.valeur_viandes_volailles_fermier = 10
+        diagnostic.valeur_viandes_volailles_europe = 200
+        diagnostic.save()
+        self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        # sum of valeur_famille_label cannot be > valeur_famille
+        diagnostic.valeur_viandes_volailles_bio = 10
+        diagnostic.valeur_viandes_volailles_label_rouge = 10
+        diagnostic.valeur_viandes_volailles_aocaop_igp_stg = 10
+        diagnostic.valeur_viandes_volailles_hve = 10
+        diagnostic.valeur_viandes_volailles_peche_durable = 10
+        diagnostic.valeur_viandes_volailles_rup = 10
+        diagnostic.valeur_viandes_volailles_commerce_equitable = 10
+        diagnostic.valeur_viandes_volailles_fermier = 10
+        diagnostic.valeur_viandes_volailles_externalites = 10
+        diagnostic.valeur_viandes_volailles_performance = 10
+        diagnostic.valeur_viandes_volailles_non_egalim = 10
+        diagnostic.valeur_viandes_volailles_europe = 10
+        diagnostic.valeur_viandes_volailles_france = 10
+        diagnostic.valeur_viandes_volailles_circuit_court = 10
+        diagnostic.valeur_viandes_volailles_local = 10
+        diagnostic.save()
+        self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertEqual(diagnostic.family_sum("viandes_volailles"), 110)  # only APPRO_LABELS
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2026-01-30")  # during the 2025 campaign
+    def test_diagnostic_valeur_famille_bio(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
+        # default (None): ok
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, None)
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio_dont_commerce_equitable, None)
+        diagnostic.full_clean()  # should not raise
+        # filled: ok
+        diagnostic.valeur_viandes_volailles_bio = 50
+        diagnostic.valeur_viandes_volailles_bio_dont_commerce_equitable = 10
+        diagnostic.save()
+        diagnostic.full_clean()  # should not raise
+        # bio_dont_commerce_equitable cannot be > bio
+        diagnostic.valeur_viandes_volailles_bio_dont_commerce_equitable = 60
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_valeur_label(self):
+        VALID_DIAGNOSTIC_COMPLETE_2026 = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
+        # default: ok
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2026)
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.label_sum("bio"), 60)
+        # 1 valeur_famille_label cannot be > valeur_label
+        diagnostic.valeur_viandes_volailles_bio = 200
+        diagnostic.save()
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        # sum of valeur_famille_label cannot be > valeur_label
+        diagnostic.valeur_viandes_volailles_bio = 30
+        diagnostic.valeur_fruits_et_legumes = 150
+        diagnostic.valeur_fruits_et_legumes_bio = 150
+        diagnostic.save()
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.label_sum("bio"), 210)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        # default (None): ok
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.valeur_bio_dont_commerce_equitable, None)
+        diagnostic.full_clean()  # should not raise
+        # filled: ok
+        diagnostic.valeur_bio_dont_commerce_equitable = 10
+        diagnostic.save()
+        diagnostic.full_clean()  # should not raise
+        # bio_dont_commerce_equitable cannot be > bio
+        diagnostic.valeur_bio_dont_commerce_equitable = 210
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_valeur_egalim_autres_dont_commerce_equitable(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        # default (None): ok
+        self.assertEqual(diagnostic.valeur_egalim_autres, 100)
+        self.assertEqual(diagnostic.valeur_egalim_autres_dont_commerce_equitable, None)
+        diagnostic.full_clean()  # should not raise
+        # filled: ok
+        diagnostic.valeur_egalim_autres_dont_commerce_equitable = 10
+        diagnostic.save()
+        diagnostic.full_clean()  # should not raise
+        # egalim_autres_dont_commerce_equitable cannot be > egalim_autres
+        diagnostic.valeur_egalim_autres_dont_commerce_equitable = 110
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_viandes_volailles_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
@@ -214,6 +403,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_produits_de_la_mer_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER.pop("valeur_produits_de_la_mer")
@@ -227,58 +417,66 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
 
+@freeze_time("2024-02-10")  # during the 2023 campaign
 class Diagnostic2024ModelSaveTest(TransactionTestCase):
-    @freeze_time("2024-02-10")  # during the 2023 campaign
-    def test_diagnostic_simple_2024(self):
-        # valid
+    def test_diagnostic_simple_2024_valid(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
         diagnostic.full_clean()
-        # valid (valeur_bio is optional)
+
+    def test_diagnostic_simple_2024_valid_without_valeur_bio(self):
+        # valeur_bio is optional
         VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_BIO = {**VALID_DIAGNOSTIC_SIMPLE_2024, "valeur_bio": None}
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_BIO)
         diagnostic.full_clean()
-        # not valid (valeur_totale is required)
+
+    def test_diagnostic_simple_2024_not_valid_without_valeur_totale(self):
+        # valeur_totale is required
         VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_TOTALE = {**VALID_DIAGNOSTIC_SIMPLE_2024, "valeur_totale": None}
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_WITHOUT_VALEUR_TOTALE)
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2024-02-10")  # during the 2023 campaign
-    def test_diagnostic_complete_2024(self):
-        # valid
-        VALID_DIAGNOSTIC_SIMPLE_2024_COMPLETE = {
+    def test_diagnostic_complete_2024_valid(self):
+        VALID_DIAGNOSTIC_COMPLETE_2024 = {
             **VALID_DIAGNOSTIC_SIMPLE_2024,
             "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
         }
-        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024_COMPLETE)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2024)
         diagnostic.full_clean()
 
 
+@freeze_time("2026-01-30")  # during the 2025 campaign
 class Diagnostic2025ModelSaveTest(TransactionTestCase):
-    def test_diagnostic_simple_2025(self):
-        # valid
+    def test_diagnostic_simple_2025_valid(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
         diagnostic.full_clean()
-        # not valid (valeur_bio is required)
+
+    def test_diagnostic_simple_2025_not_valid_without_appro_fields(self):
+        # valeur_bio is required
         VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_BIO = {**VALID_DIAGNOSTIC_SIMPLE_2025, "valeur_bio": None}
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_BIO)
         self.assertRaises(ValidationError, diagnostic.full_clean)
-        # not valid (valeur_totale is required)
+        # valeur_totale is required
         VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_TOTALE = {**VALID_DIAGNOSTIC_SIMPLE_2025, "valeur_totale": None}
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_WITHOUT_VALEUR_TOTALE)
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    def test_diagnostic_complete_2025(self):
-        # valid (because DiagnosticFactory sets default values)
-        VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE = {
+    def test_diagnostic_complete_2025_valid(self):
+        # valid because DiagnosticFactory sets default values
+        VALID_DIAGNOSTIC_COMPLETE_2025 = {
             **VALID_DIAGNOSTIC_SIMPLE_2025,
             "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
         }
-        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
         diagnostic.full_clean()
-        # not valid (valeur_produits_de_la_mer is required)
-        diagnostic = DiagnosticFactory(
-            **VALID_DIAGNOSTIC_SIMPLE_2025_COMPLETE
-        )  # sets a value for valeur_produits_de_la_mer
+
+    def test_diagnostic_complete_2025_not_valid_without_appro_fields(self):
+        # valeur_produits_de_la_mer is required
+        VALID_DIAGNOSTIC_COMPLETE_2025_WITHOUT_VALEUR_PRODUITS_DE_LA_MER = {
+            **VALID_DIAGNOSTIC_SIMPLE_2025,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
+            "valeur_produits_de_la_mer": None,  # will be overridden by DiagnosticFactory
+        }
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025_WITHOUT_VALEUR_PRODUITS_DE_LA_MER)
         diagnostic.valeur_produits_de_la_mer = None
         diagnostic.save()
         self.assertRaises(ValidationError, diagnostic.full_clean)
@@ -313,7 +511,7 @@ class DiagnosticQuerySetTest(TestCase):
         cls.canteen_missing_siret.siret = ""  # missing data
         cls.canteen_missing_siret.save(skip_validations=True)
         cls.canteen_missing_siret.refresh_from_db()
-        cls.canteen_meal_price_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)
+        cls.canteen_cout_repas_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)
         cls.canteen_valeur_totale_aberrant = CanteenFactory(siret="21630113500010", yearly_meal_count=100000)
         cls.canteen_aberrant = CanteenFactory(siret="21130055300016", yearly_meal_count=1000)
         cls.canteen_deleted = CanteenFactory(
@@ -345,7 +543,7 @@ class DiagnosticQuerySetTest(TestCase):
                 valeur_egalim_autres=100.00,
             )
             with freeze_time(date_in_teledeclaration_campaign):
-                diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+                diagnostic.teledeclare(applicant=canteen.managers.first(), skip_validations=True)
             diagnostic_last_year = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data - 1,
@@ -355,8 +553,9 @@ class DiagnosticQuerySetTest(TestCase):
                 valeur_bio=200.00,
             )
             with freeze_time(date_in_last_teledeclaration_campaign):
-                diagnostic_last_year.teledeclare(applicant=UserFactory(), skip_validations=True)
+                diagnostic_last_year.teledeclare(applicant=canteen.managers.first(), skip_validations=True)
             setattr(cls, f"diagnostic_canteen_valid_{index + 1}", diagnostic)
+            setattr(cls, f"diagnostic_last_year_canteen_valid_{index + 1}", diagnostic_last_year)
 
         cls.diagnostic_canteen_missing_siret = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -365,42 +564,68 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.canteen_missing_siret,
             valeur_totale=1000.00,
             valeur_bio=200.00,
+            invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SANS_SIRET_OU_SIREN],
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_missing_siret.teledeclare(applicant=UserFactory(), skip_validations=True)
+            cls.diagnostic_canteen_missing_siret.teledeclare(
+                applicant=cls.canteen_missing_siret.managers.first(), skip_validations=True
+            )
 
-        cls.diagnostic_canteen_meal_price_aberrant = DiagnosticFactory(
+        cls.diagnostic_canteen_cout_repas_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
-            canteen=cls.canteen_meal_price_aberrant,
-            valeur_totale=1000000.00,  # meal_price > 20
+            canteen=cls.canteen_cout_repas_aberrant,
+            valeur_totale=1000000.00,  # cout_repas > 20
             valeur_bio=200.00,
+            invalid_reason_list=[],  # not aberrant
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_meal_price_aberrant.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_cout_repas_aberrant.teledeclare(
+                applicant=cls.canteen_cout_repas_aberrant.managers.first(), skip_validations=True
+            )
 
         cls.diagnostic_canteen_valeur_totale_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.canteen_valeur_totale_aberrant,
-            valeur_totale=1000001.00,  # aberrant but meal_price < 20
+            valeur_totale=1000001.00,  # aberrant but cout_repas < 20
             valeur_bio=200.00,
+            invalid_reason_list=[],
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_valeur_totale_aberrant.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_valeur_totale_aberrant.teledeclare(
+                applicant=cls.canteen_valeur_totale_aberrant.managers.first(), skip_validations=True
+            )
 
         cls.diagnostic_canteen_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
             creation_date=date_in_teledeclaration_campaign,
             canteen=cls.canteen_aberrant,
-            valeur_totale=1000001.00,  # aberrant AND meal_price > 20
+            valeur_totale=1000001.00,  # aberrant AND cout_repas > 20
             valeur_bio=200.00,
+            invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_aberrant.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_aberrant.teledeclare(
+                applicant=cls.canteen_aberrant.managers.first(), skip_validations=True
+            )
+
+        cls.diagnostic_canteen_aberrant_2025 = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            year=2025,
+            creation_date=date_in_teledeclaration_campaign,
+            canteen=cls.canteen_aberrant,
+            valeur_totale=50,  # cout_repas < 0.1
+            valeur_bio=20,
+            invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
+        )
+        with freeze_time("2026-03-15"):  # during the 2025 campaign
+            cls.diagnostic_canteen_aberrant_2025.teledeclare(
+                applicant=cls.canteen_aberrant.managers.first(), skip_validations=True
+            )
 
         cls.diagnostic_canteen_deleted = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -409,31 +634,33 @@ class DiagnosticQuerySetTest(TestCase):
             canteen=cls.canteen_deleted,
             valeur_totale=1000.00,
             valeur_bio=200.00,
+            invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE],
         )
         with freeze_time(date_in_teledeclaration_campaign):
-            cls.diagnostic_canteen_deleted.teledeclare(applicant=UserFactory())
+            cls.diagnostic_canteen_deleted.teledeclare(
+                applicant=cls.canteen_deleted.managers.first(), skip_validations=True
+            )
 
-    def test_canteen_not_deleted_during_campaign(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.canteen_not_deleted_during_campaign(year_data)
-        self.assertEqual(diagnostics.count(), 16)
-        self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)
+    def test_count(self):
+        self.assertEqual(Diagnostic.objects.count(), 18)
 
-    def test_canteen_has_siret_or_siren_unite_legale(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.canteen_has_siret_or_siren_unite_legale()
-        self.assertEqual(diagnostics.count(), 16)
+    def test_canteen_soft_deleted_during_campaign_query(self):
+        diagnostics = Diagnostic.objects.filter(canteen_soft_deleted_during_campaign_query(year_data))
+        self.assertEqual(diagnostics.count(), 1)
+        self.assertIn(self.diagnostic_canteen_deleted, diagnostics)
+
+    def test_canteen_has_siret_or_siren_unite_legale_query(self):
+        diagnostics = Diagnostic.objects.filter(canteen_has_siret_or_siren_unite_legale_query())
+        self.assertEqual(diagnostics.count(), 17)
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)
 
     def test_canteen_for_stat(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.canteen_for_stat(year_data)
-        self.assertEqual(diagnostics.count(), 15)
+        self.assertEqual(diagnostics.count(), 16)
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
         self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
     def test_teledeclared_for_year(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.teledeclared_for_year(year_data)
         self.assertEqual(diagnostics.count(), 11)
         self.assertIn(self.diagnostic_canteen_valid_1, diagnostics)
@@ -443,47 +670,62 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(diagnostics.count(), 6)
 
     def test_valid_td_by_year(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
+        diagnostics = Diagnostic.objects.valid_td_by_year(year_data - 1)
+        self.assertEqual(diagnostics.count(), 6)
+        self.assertIn(self.diagnostic_last_year_canteen_valid_1, diagnostics)  # groupe (but 2023)
         diagnostics = Diagnostic.objects.valid_td_by_year(year_data)
         self.assertEqual(diagnostics.count(), 8)
-        self.assertIn(self.diagnostic_canteen_valid_1, diagnostics)
+        self.assertIn(self.diagnostic_canteen_valid_1, diagnostics)  # groupe (and 2024)
         self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
         self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
 
-    def test_historical_valid_td(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.historical_valid_td([year_data])
-        self.assertEqual(diagnostics.count(), 8)
-        diagnostics = Diagnostic.objects.historical_valid_td([year_data - 1])
+    def test_valid_td_site_by_year(self):
+        self.assertEqual(Diagnostic.all_objects.count(), 18)  # we didn't generate 1TD1Site for now
+        diagnostics = Diagnostic.all_objects.valid_td_site_by_year(year_data - 1)
         self.assertEqual(diagnostics.count(), 6)
-        diagnostics = Diagnostic.objects.historical_valid_td([year_data, year_data - 1])
+        self.assertIn(self.diagnostic_last_year_canteen_valid_1, diagnostics)  # groupe (but 2023)
+        diagnostics = Diagnostic.all_objects.valid_td_site_by_year(year_data)
+        self.assertEqual(diagnostics.count(), 7)
+        self.assertNotIn(self.diagnostic_canteen_valid_1, diagnostics)  # groupe (and 2024)  # difference
+        self.assertNotIn(self.diagnostic_canteen_missing_siret, diagnostics)  # canteen without siret/siren
+        self.assertNotIn(self.diagnostic_canteen_deleted, diagnostics)  # canteen deleted during campaign
+
+    def test_valid_td_all_years(self):
+        diagnostics = Diagnostic.objects.valid_td_all_years([year_data])
+        self.assertEqual(diagnostics.count(), 8)
+        diagnostics = Diagnostic.objects.valid_td_all_years([year_data - 1])
+        self.assertEqual(diagnostics.count(), 6)
+        diagnostics = Diagnostic.objects.valid_td_all_years([year_data, year_data - 1])
         self.assertEqual(diagnostics.count(), 8 + 6)
 
-    def test_with_meal_price(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.with_meal_price()
-        self.assertEqual(diagnostics.count(), 17)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).canteen_yearly_meal_count, 1000)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_1.id).meal_price, 1.0)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).canteen_yearly_meal_count, 0)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).meal_price, None)
+    def test_valid_td_site_all_years(self):
+        self.assertEqual(Diagnostic.all_objects.count(), 18)  # we didn't generate 1TD1Site for now
+        diagnostics = Diagnostic.all_objects.valid_td_site_all_years([year_data])
+        self.assertEqual(diagnostics.count(), 7)  # difference
+        diagnostics = Diagnostic.all_objects.valid_td_site_all_years([year_data - 1])
+        self.assertEqual(diagnostics.count(), 6)
+        diagnostics = Diagnostic.all_objects.valid_td_site_all_years([year_data, year_data - 1])
+        self.assertEqual(diagnostics.count(), 7 + 6)
 
     def test_exclude_aberrant_values(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        diagnostics = Diagnostic.objects.exclude_aberrant_values()
+        diagnostics = Diagnostic.objects.exclude(aberrant_values_query())
         self.assertEqual(diagnostics.count(), 16)
         self.assertNotIn(self.diagnostic_canteen_aberrant, diagnostics)
+        self.assertNotIn(self.diagnostic_canteen_aberrant_2025, diagnostics)
 
     def test_publicly_visible(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
-        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 15)  # army excluded
+        self.assertEqual(Diagnostic.objects.publicly_visible().count(), 16)  # army excluded
 
     def test_with_appro_percent_stats(self):
-        self.assertEqual(Diagnostic.objects.count(), 17)
         diagnostics = Diagnostic.objects.with_appro_percent_stats()
-        self.assertEqual(diagnostics.count(), 17)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).bio_percent, 20)
-        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).egalim_percent, 50)
+        self.assertEqual(diagnostics.count(), 18)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).pourcentage_bio, 20)
+        self.assertEqual(diagnostics.get(id=self.diagnostic_canteen_valid_4.id).pourcentage_egalim, 50)
+
+    def test_exclude_generated(self):
+        DiagnosticFactory(generated_from_groupe_diagnostic=True)
+        self.assertEqual(Diagnostic.objects.count(), 18)
+        self.assertEqual(Diagnostic.all_objects.count(), 18 + 1)
 
 
 class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
@@ -570,11 +812,362 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
                 self.assertFalse(diagnostic.is_filled)
 
 
+class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.diagnostic_simple = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_bio_dont_commerce_equitable=50,
+            valeur_viandes_volailles=100,
+            valeur_viandes_volailles_egalim=50,
+            valeur_viandes_volailles_france=20,
+            valeur_autres_france=30,
+        )
+        cls.diagnostic_complete_1 = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_viandes_volailles_bio=10,
+            valeur_viandes_volailles_bio_dont_commerce_equitable=5,
+            valeur_viandes_volailles_label_rouge=7,
+            valeur_viandes_volailles_france=20,
+            valeur_produits_de_la_mer_bio=15,
+            valeur_produits_de_la_mer_bio_dont_commerce_equitable=None,
+            valeur_produits_de_la_mer_label_rouge=8,
+            valeur_produits_de_la_mer_france=25,
+        )
+        cls.diagnostic_complete_2 = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_viandes_volailles_bio=10,
+            valeur_viandes_volailles_bio_dont_commerce_equitable=None,
+            valeur_viandes_volailles_label_rouge=7,
+            valeur_viandes_volailles_france=20,
+            valeur_produits_de_la_mer_bio=15,
+            valeur_produits_de_la_mer_bio_dont_commerce_equitable=10,
+            valeur_produits_de_la_mer_label_rouge=8,
+            valeur_produits_de_la_mer_france=25,
+        )
+
+    def test_with_label_sum_queryset(self):
+        diagnostic_qs = (
+            Diagnostic.objects.with_label_sum("bio")
+            .with_label_sum("bio_dont_commerce_equitable")
+            .with_label_sum("label_rouge")
+            .with_label_sum("france")
+        )
+        diagnostic_simple = diagnostic_qs.get(id=self.diagnostic_simple.id)
+        self.assertEqual(diagnostic_simple.bio_sum, 0)
+        self.assertEqual(diagnostic_simple.bio_dont_commerce_equitable_sum, 0)
+        self.assertEqual(diagnostic_simple.label_rouge_sum, 0)
+        self.assertEqual(diagnostic_simple.france_sum, 20 + 30)
+        diagnostic_complete_1 = diagnostic_qs.get(id=self.diagnostic_complete_1.id)
+        self.assertEqual(diagnostic_complete_1.bio_sum, 10 + 15)
+        self.assertEqual(diagnostic_complete_1.bio_dont_commerce_equitable_sum, 5 + 0)
+        self.assertEqual(diagnostic_complete_1.label_rouge_sum, 7 + 8)
+        self.assertEqual(diagnostic_complete_1.france_sum, 20 + 25)
+        diagnostic_complete_2 = diagnostic_qs.get(id=self.diagnostic_complete_2.id)
+        self.assertEqual(diagnostic_complete_2.bio_sum, 10 + 15)
+        self.assertEqual(diagnostic_complete_2.bio_dont_commerce_equitable_sum, 0 + 10)
+        self.assertEqual(diagnostic_complete_2.label_rouge_sum, 7 + 8)
+        self.assertEqual(diagnostic_complete_2.france_sum, 20 + 25)
+
+    def test_label_sum_property(self):
+        self.assertEqual(self.diagnostic_simple.label_sum("bio"), None)
+        self.assertEqual(self.diagnostic_simple.label_sum("bio_dont_commerce_equitable"), None)
+        self.assertEqual(self.diagnostic_simple.label_sum("label_rouge"), None)
+        self.assertEqual(self.diagnostic_simple.label_sum("france"), 20 + 30)
+        self.assertEqual(self.diagnostic_complete_1.label_sum("bio"), 10 + 15)
+        self.assertEqual(self.diagnostic_complete_1.label_sum("bio_dont_commerce_equitable"), 5 + 0)
+        self.assertEqual(self.diagnostic_complete_1.label_sum("label_rouge"), 7 + 8)
+        self.assertEqual(self.diagnostic_complete_1.label_sum("france"), 20 + 25)
+        self.assertEqual(self.diagnostic_complete_2.label_sum("bio"), 10 + 15)
+        self.assertEqual(self.diagnostic_complete_2.label_sum("bio_dont_commerce_equitable"), 0 + 10)
+        self.assertEqual(self.diagnostic_complete_2.label_sum("label_rouge"), 7 + 8)
+        self.assertEqual(self.diagnostic_complete_2.label_sum("france"), 20 + 25)
+
+    def test_with_family_sum_queryset(self):
+        diagnostic_qs = Diagnostic.objects.with_family_sum("viandes_volailles").with_family_sum("produits_de_la_mer")
+        diagnostic_simple = diagnostic_qs.get(id=self.diagnostic_simple.id)
+        self.assertEqual(diagnostic_simple.viandes_volailles_sum, 0)
+        self.assertEqual(diagnostic_simple.produits_de_la_mer_sum, 0)
+        diagnostic_complete_1 = diagnostic_qs.get(id=self.diagnostic_complete_1.id)
+        self.assertEqual(
+            diagnostic_complete_1.viandes_volailles_sum, 10 + 7
+        )  # bio_dont_commerce_equitable & france are not included
+        self.assertEqual(diagnostic_complete_1.produits_de_la_mer_sum, 15 + 8)
+        diagnostic_complete_2 = diagnostic_qs.get(id=self.diagnostic_complete_2.id)
+        self.assertEqual(diagnostic_complete_2.viandes_volailles_sum, 10 + 7)
+        self.assertEqual(diagnostic_complete_2.produits_de_la_mer_sum, 15 + 8)
+
+    def test_family_sum_property(self):
+        self.assertEqual(self.diagnostic_simple.family_sum("viandes_volailles"), 0)
+        self.assertEqual(self.diagnostic_simple.family_sum("produits_de_la_mer"), 0)
+        self.assertEqual(self.diagnostic_complete_1.family_sum("viandes_volailles"), 10 + 7)
+        self.assertEqual(self.diagnostic_complete_1.family_sum("produits_de_la_mer"), 15 + 8)
+        self.assertEqual(self.diagnostic_complete_2.family_sum("viandes_volailles"), 10 + 7)
+        self.assertEqual(self.diagnostic_complete_2.family_sum("produits_de_la_mer"), 15 + 8)
+
+
+class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.TEST_CASES = [
+            # (valeur_totale, valeur_*, pourcentage_*)
+            (1000, 1000, 100),
+            (1000, 200, 20),
+            (1000, 0, 0),
+            (0, 200, None),
+            (0, 0, None),
+            # TODO: with None input the behavior is sometimes different..
+            # (1000, None, None),
+            # (None, 200, None),
+            # (None, None, None)
+        ]
+
+    def test_compute_pourcentage_bio_method(self):
+        for valeur_totale, valeur_bio, pourcentage_bio in self.TEST_CASES:
+            with self.subTest(valeur_totale=valeur_totale, valeur_bio=valeur_bio):
+                diagnostic = DiagnosticFactory(
+                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                    valeur_totale=valeur_totale,
+                    valeur_bio=valeur_bio,
+                )
+                self.assertEqual(diagnostic.valeur_bio_agg, valeur_bio)
+                self.assertEqual(diagnostic.compute_pourcentage_bio(), pourcentage_bio)
+                self.assertEqual(diagnostic.pourcentage_bio, pourcentage_bio)
+
+    def test_compute_pourcentage_egalim_method(self):
+        for valeur_totale, valeur_siqo, pourcentage_egalim in self.TEST_CASES:
+            with self.subTest(valeur_totale=valeur_totale, valeur_siqo=valeur_siqo):
+                diagnostic = DiagnosticFactory(
+                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                    valeur_totale=valeur_totale,
+                    valeur_bio=0,
+                    valeur_siqo=valeur_siqo,
+                    valeur_externalites_performance=0,
+                    valeur_egalim_autres=0,
+                )
+                self.assertEqual(diagnostic.valeur_egalim_agg, valeur_siqo)
+                self.assertEqual(diagnostic.compute_pourcentage_egalim(), pourcentage_egalim)
+                self.assertEqual(diagnostic.pourcentage_egalim, pourcentage_egalim)
+
+    def test_compute_pourcentage_egalim_hors_bio_method(self):
+        for valeur_totale, valeur_externalites_performance, pourcentage_egalim_hors_bio in self.TEST_CASES:
+            with self.subTest(
+                valeur_totale=valeur_totale, valeur_externalites_performance=valeur_externalites_performance
+            ):
+                diagnostic = DiagnosticFactory(
+                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                    valeur_totale=valeur_totale,
+                    valeur_bio=1000,
+                    valeur_siqo=0,
+                    valeur_externalites_performance=valeur_externalites_performance,
+                    valeur_egalim_autres=0,
+                )
+                self.assertEqual(diagnostic.valeur_egalim_hors_bio_agg, valeur_externalites_performance)
+                self.assertEqual(diagnostic.compute_pourcentage_egalim_hors_bio(), pourcentage_egalim_hors_bio)
+                self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, pourcentage_egalim_hors_bio)
+
+    def test_compute_objectifs_egalim_atteints_method(self):
+        # see more tests in tests/test_utils.py::TestEgalimObjectives
+        diagnostic = DiagnosticFactory(
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_siqo=100,
+            valeur_externalites_performance=100,
+            valeur_egalim_autres=100,
+        )
+        self.assertEqual(diagnostic.pourcentage_bio, 20)
+        self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, 30)
+        self.assertEqual(diagnostic.pourcentage_egalim, 20 + 30)
+        self.assertTrue(diagnostic.compute_objectifs_egalim_atteints())
+        self.assertTrue(diagnostic.objectifs_egalim_atteints)
+
+
+class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_empty = CanteenFactory()
+        Canteen.objects.filter(id=cls.canteen_empty.id).update(yearly_meal_count=None)
+        cls.canteen_empty.refresh_from_db()
+        cls.diagnostic_draft_canteen_empty = DiagnosticFactory(
+            canteen=cls.canteen_empty,
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=200,
+        )
+        cls.diagnostic_draft_empty = DiagnosticFactory(
+            canteen=CanteenFactory(yearly_meal_count=1000),
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=None,
+            valeur_bio=None,
+        )
+        Diagnostic.objects.filter(id=cls.diagnostic_draft_empty.id).update(valeur_totale=None, valeur_bio=None)
+        cls.diagnostic_draft_empty.refresh_from_db()
+        cls.diagnostic_draft_filled = DiagnosticFactory(
+            canteen=CanteenFactory(yearly_meal_count=1000),
+            year=year_data,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=200,
+        )
+        with freeze_time(date_in_teledeclaration_campaign):
+            cls.canteen_groupe_teledeclared = CanteenFactory(
+                production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=2000
+            )
+            cls.canteen_satellite_teledeclared = CanteenFactory(
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                groupe=cls.canteen_groupe_teledeclared,
+                yearly_meal_count=1300,
+            )
+            cls.canteen_satellite_draft = CanteenFactory(
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                groupe=cls.canteen_groupe_teledeclared,
+                yearly_meal_count=700,
+            )
+            cls.diagnostic_groupe_teledeclared = DiagnosticFactory(
+                canteen=cls.canteen_groupe_teledeclared,
+                year=year_data,
+                central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                valeur_totale=Decimal("100000.50"),
+                valeur_bio=2000,
+            )
+            cls.diagnostic_groupe_teledeclared.teledeclare(applicant=cls.canteen_groupe_teledeclared.managers.first())
+            cls.diagnostic_satellite_teledeclared = DiagnosticFactory(
+                canteen=cls.canteen_satellite_teledeclared, year=year_data, valeur_totale=None
+            )
+            cls.diagnostic_satellite_teledeclared.teledeclare(
+                applicant=cls.canteen_satellite_teledeclared.managers.first()
+            )
+            cls.diagnostic_satellite_draft = DiagnosticFactory(
+                canteen=cls.canteen_satellite_draft, year=year_data, valeur_totale=None
+            )
+
+    def test_canteen_yearly_meal_count_property(self):
+        self.assertEqual(self.diagnostic_draft_canteen_empty.canteen_yearly_meal_count, None)
+        self.assertEqual(self.diagnostic_draft_empty.canteen_yearly_meal_count, 1000)
+        self.assertEqual(self.diagnostic_draft_filled.canteen_yearly_meal_count, 1000)
+        self.assertEqual(self.diagnostic_groupe_teledeclared.canteen_yearly_meal_count, 2000)
+        self.assertEqual(self.diagnostic_satellite_teledeclared.canteen_yearly_meal_count, 1300)
+
+        # if canteen changes yearly_meal_count, but diagnostic is not teledeclared, take the new canteen value
+        self.canteen_empty.yearly_meal_count = 500
+        self.canteen_empty.save()
+        self.diagnostic_draft_canteen_empty.refresh_from_db()
+        self.assertEqual(self.diagnostic_draft_canteen_empty.canteen_yearly_meal_count, 500)  # updated
+
+        # if canteen changes yearly_meal_count, but diagnostic is teledeclared, stick with the canteen_snapshot
+        self.canteen_groupe_teledeclared.yearly_meal_count = 500
+        self.canteen_groupe_teledeclared.save()
+        self.diagnostic_groupe_teledeclared.refresh_from_db()
+        self.assertEqual(self.diagnostic_groupe_teledeclared.canteen_yearly_meal_count, 2000)  # unchanged
+
+    def test_compute_cout_repas_method(self):
+        self.assertEqual(self.diagnostic_draft_canteen_empty.compute_cout_repas(), None)
+        self.assertEqual(self.diagnostic_draft_canteen_empty.cout_repas, None)
+        self.assertEqual(self.diagnostic_draft_empty.compute_cout_repas(), None)
+        self.assertEqual(self.diagnostic_draft_empty.cout_repas, None)
+        self.assertEqual(self.diagnostic_draft_filled.compute_cout_repas(), 1.0)
+        self.assertEqual(self.diagnostic_draft_filled.cout_repas, 1.0)
+        self.assertEqual(
+            self.diagnostic_groupe_teledeclared.compute_cout_repas(), Decimal("50.00")
+        )  # rounded (instead of 50.00025)
+        self.assertEqual(self.diagnostic_groupe_teledeclared.cout_repas, Decimal("50.00"))
+        self.assertEqual(self.diagnostic_satellite_teledeclared.compute_cout_repas(), None)  # valeur_totale is None
+        self.assertEqual(self.diagnostic_satellite_teledeclared.cout_repas, None)  # valeur_totale is None
+
+        # if canteen changes yearly_meal_count, but diagnostic is not teledeclared, take the new canteen value
+        self.canteen_empty.yearly_meal_count = 500
+        self.canteen_empty.save()
+        self.diagnostic_draft_canteen_empty.refresh_from_db()
+        self.assertEqual(self.diagnostic_draft_canteen_empty.compute_cout_repas(), 2.0)  # updated
+        self.assertEqual(self.diagnostic_draft_canteen_empty.cout_repas, None)  # unchanged (diagnostic not re-saved)
+
+        # if canteen changes yearly_meal_count, but diagnostic is teledeclared, stick with the canteen_snapshot
+        self.canteen_groupe_teledeclared.yearly_meal_count = 500
+        self.canteen_groupe_teledeclared.save()
+        self.diagnostic_groupe_teledeclared.refresh_from_db()
+        self.assertEqual(self.diagnostic_groupe_teledeclared.compute_cout_repas(), Decimal("50.00"))  # unchanged
+        self.assertEqual(self.diagnostic_groupe_teledeclared.cout_repas, Decimal("50.00"))  # unchanged
+
+
+class DiagnosticInvalidWarningQueriesTest(TestCase):
+    def test_circuit_court_sup_france_query(self):
+        diagnostic_complete = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_viandes_volailles_france=20,
+            valeur_viandes_volailles_circuit_court=25,
+        )
+
+        diagnostic_qs = (
+            Diagnostic.objects.with_label_sum("france")
+            .with_label_sum("circuit_court")
+            .filter(circuit_court_sup_france_query())
+        )
+
+        self.assertEqual(diagnostic_qs.count(), 1)
+        self.assertIn(diagnostic_complete, diagnostic_qs)
+
+    def test_local_sup_france_query(self):
+        diagnostic_complete = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_produits_de_la_mer_france=25,
+            valeur_produits_de_la_mer_local=30,
+        )
+
+        diagnostic_qs = (
+            Diagnostic.objects.with_label_sum("france").with_label_sum("local").filter(local_sup_france_query())
+        )
+
+        self.assertEqual(diagnostic_qs.count(), 1)
+        self.assertIn(diagnostic_complete, diagnostic_qs)
+
+    def test_commerce_equitable_sup_bio_query(self):
+        diagnostic_simple = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_bio=10,
+            valeur_bio_dont_commerce_equitable=15,
+        )
+        diagnostic_complete = DiagnosticFactory(
+            year=2025,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_viandes_volailles_bio=10,
+            valeur_viandes_volailles_bio_dont_commerce_equitable=15,
+        )
+
+        diagnostic_qs = (
+            Diagnostic.objects.with_label_sum("bio")
+            .with_label_sum("bio_dont_commerce_equitable")
+            .filter(commerce_equitable_sup_bio_query())
+        )
+
+        self.assertEqual(diagnostic_qs.count(), 2)
+        self.assertIn(diagnostic_simple, diagnostic_qs)
+        self.assertIn(diagnostic_complete, diagnostic_qs)
+
+
 class DiagnosticModelDeleteTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user])
         cls.diagnostic = DiagnosticFactory(
             canteen=cls.canteen_site,
             year=year_data,

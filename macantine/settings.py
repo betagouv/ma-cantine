@@ -19,6 +19,7 @@ import dotenv  # noqa
 import sentry_sdk
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
+from botocore.config import Config as BotoConfig
 
 from macantine.sentry import before_send
 
@@ -54,7 +55,16 @@ ENVIRONMENT = os.getenv("ENVIRONMENT")
 
 INTERNAL_IPS = []
 
-# Application definition
+DJANGO_APPS = [
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
+    "django.contrib.postgres",
+]
 WAGTAIL_INSTALLED_APPS = [
     "wagtail.contrib.forms",
     "wagtail.contrib.redirects",
@@ -72,34 +82,25 @@ WAGTAIL_INSTALLED_APPS = [
     "taggit",
     "cms",
 ]
-INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + [
-    "django.contrib.admin",
-    "django.contrib.auth",
-    "django.contrib.contenttypes",
-    "django.contrib.sessions",
-    "django.contrib.messages",
-    "django.contrib.staticfiles",
-    "django.contrib.sitemaps",
-    "django.contrib.postgres",
-    "django_vite_plugin",
-    "webpack_loader",
+THIRD_PARTY_APPS = [
+    "django_vite",
     "rest_framework",
     "oauth2_provider",
     "ckeditor",
     "ckeditor_uploader",
-    "macantine",
-    "data",
-    "api",
-    "web",
     "magicauth",
     "django_extensions",
     "django_filters",
     "django_celery_results",
-    "common",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "simple_history",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_static",
 ]
+LOCAL_APPS = ["macantine", "data", "api", "web", "common"]
+INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -113,8 +114,12 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
     "csp.middleware.CSPMiddleware",
+    # django-simple-history
     "simple_history.middleware.HistoryRequestMiddleware",
+    # wagtail
     "wagtail.contrib.redirects.middleware.RedirectMiddleware",
+    # django_otp
+    "django_otp.middleware.OTPMiddleware",
 ]
 CSRF_COOKIE_NAME = "csrftoken"
 ROOT_URLCONF = "macantine.urls"
@@ -149,7 +154,8 @@ DATABASES = {
         "PASSWORD": os.getenv("DB_PASSWORD"),
         "HOST": os.getenv("DB_HOST"),
         "PORT": os.getenv("DB_PORT"),
-        "CONN_MAX_AGE": 60,
+        "CONN_MAX_AGE": int(os.getenv("CONN_MAX_AGE", 60)),
+        "CONN_HEALTH_CHECKS": True,
     }
 }
 
@@ -216,6 +222,10 @@ if default_file_storage == "storages.backends.s3.S3Storage":
     AWS_STORAGE_BUCKET_NAME = os.getenv("CELLAR_BUCKET_NAME")
     AWS_LOCATION = "media"
     AWS_QUERYSTRING_AUTH = False
+    # see https://github.com/jschneier/django-storages/issues/1482
+    AWS_S3_CLIENT_CONFIG = BotoConfig(
+        request_checksum_calculation="when_required", response_checksum_validation="when_required"
+    )
 
 MEDIA_ROOT = os.getenv("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
 MEDIA_URL = "/media/"
@@ -236,6 +246,13 @@ LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/s-identifier"
 
 HOSTNAME = os.getenv("HOSTNAME")
+
+
+# django-otp (2FA)
+# https://django-otp-official.readthedocs.io/en/stable/index.html
+# ------------------------------------------------------------------------------
+
+OTP_TOTP_ISSUER = f"ma-cantine-{ENVIRONMENT}"
 
 
 # Github repo
@@ -319,6 +336,15 @@ SPECTACULAR_SETTINGS = {
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
     ],
+    "TAGS": [
+        {"name": "Cantines"},
+        {"name": "Achats"},
+        {"name": "Bilans"},
+        {"name": "Télédéclaration"},
+        {"name": "Évaluations du gaspillage alimentaire"},
+        {"name": "Utilisateurs"},
+        {"name": "Statistiques"},
+    ],
     # Oauth2 related settings. used for example by django-oauth2-toolkit.
     # https://spec.openapis.org/oas/v3.0.3#oauth-flows-object
     "OAUTH2_FLOWS": ["authorizationCode"],
@@ -328,26 +354,30 @@ SPECTACULAR_SETTINGS = {
 }
 
 
-# Frontend: Vue 2 & Vue 3 with django-vite-plugin
-# https://github.com/protibimbok/django-vite-plugin
+# Frontend: Vue 2 & Vue 3 with django-vite
+# https://github.com/MrBin99/django-vite
 # ------------------------------------------------------------------------------
 
-FRONTEND_DIR = os.path.join(BASE_DIR, "frontend")
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "frontend/dist/"),
     os.path.join(BASE_DIR, "build/"),
 ]
-WEBPACK_LOADER = {
-    "DEFAULT": {
-        "CACHE": DEBUG,
-        "BUNDLE_DIR_NAME": "/bundles/",
-        "STATS_FILE": os.path.join(FRONTEND_DIR, "dist/webpack-stats.json"),
-    }
-}
 
-DJANGO_VITE_PLUGIN = {
-    "DEV_MODE": DEBUG_FRONT,
-    "BUILD_DIR": "build",
+DJANGO_VITE = {
+    "default": {
+        "dev_mode": DEBUG_FRONT,
+        "dev_server_protocol": "http",
+        "dev_server_host": "localhost",
+        "dev_server_port": 5173,
+        "manifest_path": BASE_DIR / "build" / "manifest.json",
+    },
+    "vue2": {
+        "dev_mode": DEBUG_FRONT,
+        "dev_server_protocol": "http",
+        "dev_server_host": "localhost",
+        "dev_server_port": 8080,
+        "manifest_path": BASE_DIR / "frontend" / "dist" / "manifest.json",
+    },
 }
 
 
@@ -374,6 +404,8 @@ OAUTH2_PROVIDER = {
         "canteen:write": "Modifier les données de votre cantine",
     },
 }
+
+OAUTH2_PROVIDER_APPLICATION_MODEL = "oauth2_provider.Application"
 
 AUTHLIB_OAUTH_CLIENTS = {
     "moncomptepro": {
@@ -519,7 +551,6 @@ CSP_CONNECT_SRC = (
     "'self'",
     "stats.beta.gouv.fr",
     "ws:",
-    "api-adresse.data.gouv.fr",
     "geo.api.gouv.fr",
     "client.crisp.chat",
     "wss://client.relay.crisp.chat",
@@ -527,6 +558,7 @@ CSP_CONNECT_SRC = (
     "plateforme.adresse.data.gouv.fr",
     "raw.githubusercontent.com/betagouv/ma-cantine/",  # data/schemas/imports/
     "api.iconify.design",  # dsfr icon
+    "api-adresse.data.gouv.fr",  # search "Trouver une cantine"
 )
 if DEBUG:
     CSP_CONNECT_SRC += CSP_DEBUG_DOMAINS
@@ -663,6 +695,7 @@ ENABLE_VUE3 = os.getenv("ENABLE_VUE3") == "True"
 ENABLE_WASTE_MEASUREMENTS = os.getenv("ENABLE_WASTE_MEASUREMENTS") == "True"
 SHOW_BANNER = os.getenv("SHOW_BANNER") == "True"
 SHOW_JE_DONNE_MON_AVIS = os.getenv("SHOW_JE_DONNE_MON_AVIS") == "True"
+SHOW_CONTACT_ALERT = os.getenv("SHOW_CONTACT_ALERT") == "True"
 
 
 # ma cantine: history cleanup

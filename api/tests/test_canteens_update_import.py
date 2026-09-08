@@ -2,18 +2,23 @@ from unittest import skipIf
 
 from django.conf import settings
 from django.urls import reverse
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, authenticate
-from data.factories import CanteenFactory
+from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, ImportFailure, ImportType, Sector
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteensUpdateImportApiErrorTest(APITestCase):
-    def test_unauthenticated(self):
-        response = self.client.post(reverse("canteens_update_import"))
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("canteens_update_import")
+
+    def test_cannot_import_if_unauthenticated(self):
+        response = self.client.post(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -26,8 +31,8 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         canteen.managers.add(authenticate.user)
 
         file_path = "./api/tests/files/canteens/canteens_update_bad_no_header.csv"
-        with open(file_path, "rb") as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+        with open(file_path) as canteen_file:
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, file_path)
@@ -48,7 +53,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         """
         file_path = "./api/tests/files/canteens/canteens_update_bad_canteen_not_found.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, file_path)
@@ -69,7 +74,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_update_bad_permission_denied.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, file_path)
@@ -90,7 +95,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_update_bad_invalid_insee_code.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, file_path)
@@ -114,7 +119,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_update_bad_invalid_email.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, file_path)
@@ -138,7 +143,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_update_bad_invalid_siret.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, file_path)
@@ -159,7 +164,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_update_bad_missing_insee_code.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         assert_import_failure_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, file_path)
@@ -173,9 +178,145 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
             "Champ 'Code INSEE' : Le code INSEE est obligatoire pour les cantines avec le 'siren_unite_legale' de renseigné.",
         )
 
+    @authenticate
+    def test_when_errors_count_is_0(self):
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=9999999993)
+
+        file_path = "./api/tests/files/canteens/canteens_update_bad_one_error.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(self.url, {"file": canteen_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertTrue(len(body["errors"]) > 0)
+
+
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
+class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.groupe_canteen = CanteenFactory(id=9999999992, production_type=Canteen.ProductionType.GROUPE)
+        cls.satellite_canteen = CanteenFactory(
+            id=9999999991,
+            siret=None,
+            siren_unite_legale="213401722",
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=cls.groupe_canteen,
+        )
+        cls.teledeclaration = DiagnosticFactory(canteen=cls.groupe_canteen, year=2024)
+        cls.url = reverse("canteens_update_import")
+
+    @freeze_time("2025-02-20")  # during the 2024 campaign
+    @authenticate
+    def test_error_groupe_with_teledeclaration_during_campaign(self):
+        """
+        User cannot add a satellite to a groupe that has a teledeclared diagnostic for the current campaign during the teledeclaration campaign
+        """
+        # Create a teledeclared diagnostic for the groupe
+        self.groupe_canteen.managers.add(authenticate.user)
+        self.satellite_canteen.managers.add(authenticate.user)
+        self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        # Import
+        file_path = "./api/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(self.url, {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["canteens"]), 0)
+        self.assertEqual(len(errors), 1)
+        self.assertIn(
+            "Vous ne pouvez pas ajouter de restaurant satellite au groupe « 9999999992 », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir ajouter le(s) restaurant(s) satellite(s).",
+            errors[0]["message"],
+        )
+
+    @authenticate
+    def test_success_groupe_with_teledeclaration_cancelled_during_correction_campaign(self):
+        """
+        User can add it canteen to a groupe if the groupe has cancelled its teledeclaration
+        """
+        self.groupe_canteen.managers.add(authenticate.user)
+        self.satellite_canteen.managers.add(authenticate.user)
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+            self.teledeclaration.cancel()
+
+            file_path = "./api/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
+            with open(file_path) as canteen_file:
+                response = self.client.post(self.url, {"file": canteen_file})
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            errors = body["errors"]
+            self.assertEqual(body["count"], 1)
+            self.assertEqual(len(body["canteens"]), 1)
+            self.assertEqual(len(errors), 0)
+            self.assertEqual(self.satellite_canteen.groupe, self.groupe_canteen)
+
+    @authenticate
+    def test_success_groupe_with_teledeclaration_after_campaign(self):
+        """
+        User can add a satellite to a groupe that has a teledeclared diagnostic for the current campaign after the teledeclaration campaign
+        """
+        self.groupe_canteen.managers.add(authenticate.user)
+        self.satellite_canteen.managers.add(authenticate.user)
+
+        # Create a teledeclared diagnostic for the groupe and the satellite
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        # Import
+        with freeze_time("2025-07-20"):
+            file_path = "./api/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
+            with open(file_path) as canteen_file:
+                response = self.client.post(self.url, {"file": canteen_file})
+
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            errors = body["errors"]
+            self.assertEqual(body["count"], 1)
+            self.assertEqual(len(body["canteens"]), 1)
+            self.assertEqual(len(errors), 0)
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @authenticate
+    def test_success_groupe_teledeclaration_cancelled_during_campaign(self):
+        """
+        User can add a satellite to a groupe that does not have a teledeclared diagnostic for the current campaign during the campaign
+        """
+        # Create a teledeclared diagnostic for the groupe
+        self.groupe_canteen.managers.add(authenticate.user)
+        self.satellite_canteen.managers.add(authenticate.user)
+        self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        # Cancel the teledeclared diagnostic
+        self.teledeclaration.cancel()
+
+        # Import
+        file_path = "./api/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(self.url, {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["canteens"]), 1)
+        self.assertEqual(len(errors), 0)
+
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class CanteensUpdateImportApiSuccessTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("canteens_update_import")
+
     @authenticate
     def test_update_multiple_canteens(self):
         """
@@ -214,7 +355,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_update_good_multiple.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -272,7 +413,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_update_good_insee.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -302,7 +443,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_update_good_one.csv"
         with open(file_path) as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -329,7 +470,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
 
         file_path = "./api/tests/files/canteens/canteens_update_good_one.xlsx"
         with open(file_path, "rb") as canteen_file:
-            response = self.client.post(reverse("canteens_update_import"), {"file": canteen_file})
+            response = self.client.post(self.url, {"file": canteen_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()

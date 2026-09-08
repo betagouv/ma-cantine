@@ -1,15 +1,17 @@
 import json
 import os
+from decimal import Decimal
 
 import pandas as pd
 import requests_mock
 from django.core.files.storage import default_storage
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from freezegun import freeze_time
 
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.datagouv import update_dataset_resources
+from common.api.validata import mock_post_validate_file_against_schema
 from data.models import Canteen, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
@@ -64,7 +66,7 @@ class CanteenETLOpenDataTest(TestCase):
         self.assertEqual(canteen_site["production_type"], "site")
         self.assertEqual(canteen_site["economic_model"], "public")
         self.assertEqual(canteen_site["sector_list"], "Hôpitaux,Crèche")
-        self.assertEqual(canteen_site["line_ministry"], None)
+        self.assertTrue(pd.isna(canteen_site["line_ministry"]))
         self.assertTrue(canteen_site["declaration_donnees_2022"])
         self.assertFalse(canteen_site["declaration_donnees_2025"])
         self.assertTrue(canteen_site["active_on_ma_cantine"])
@@ -80,9 +82,9 @@ class CanteenETLOpenDataTest(TestCase):
         canteen_satellite = etl.df[etl.df.id == self.canteen_satellite.id].iloc[0]
         self.assertEqual(canteen_satellite["groupe_id"], self.canteen_groupe.id)
 
-    @override_settings(STATICFILES_STORAGE="django.contrib.staticfiles.storage.StaticFilesStorage")
     def test_canteen_load_dataset(self, mock):
-        # Making sure the code will not enter online dataset validation by forcing local filesystem management
+        mock_post_validate_file_against_schema(mock)
+
         test_cases = [
             {
                 "name": " Load valid dataset",
@@ -95,6 +97,7 @@ class CanteenETLOpenDataTest(TestCase):
                 "expected_length": 1,
             },
         ]
+
         etl = ETL_OPEN_DATA_CANTEEN()
         etl.dataset_name += "_test"  # Avoid interferring with other files
 
@@ -104,7 +107,6 @@ class CanteenETLOpenDataTest(TestCase):
             with default_storage.open(f"open_data/{etl.dataset_name}.csv", "r") as csv_file:
                 output_dataframe = pd.read_csv(csv_file, sep=";")
             self.assertEqual(tc["expected_length"], len(output_dataframe))
-
             self.assertTrue(default_storage.exists(f"open_data/{etl.dataset_name}.xlsx"))
 
             # Cleaning files
@@ -130,21 +132,21 @@ class TeledeclarationETLOpenDataTest(TestCase):
             etl_td_2022.df.iloc[0]["id"], self.canteen_site_earlier_diagnostic_2022.teledeclaration_id
         )  # Order by teledeclaration created date ascending
 
-        # 2023: 1 teledeclaration (1 is cancelled, 1 is hidden (armee))
+        # 2023: 2 teledeclarations (1 groupe, 1 is cancelled, 1 is hidden (armee))
         etl_td_2023 = ETL_OPEN_DATA_TELEDECLARATIONS(2023)
         etl_td_2023.extract_dataset()
 
-        self.assertEqual(Diagnostic.objects.filter(year=2023).count(), 2)
-        self.assertEqual(Diagnostic.objects.filter(year=2023).teledeclared().count(), 1)
-        self.assertEqual(etl_td_2023.len_dataset(), 0)
+        self.assertEqual(Diagnostic.objects.filter(year=2023).count(), 3)
+        self.assertEqual(Diagnostic.objects.filter(year=2023).teledeclared().count(), 2)
+        self.assertEqual(etl_td_2023.len_dataset(), 1)
 
-        # 2024: 2 teledeclaratios
+        # 2024: 3 teledeclarations
         etl_td_2024 = ETL_OPEN_DATA_TELEDECLARATIONS(2024)
         etl_td_2024.extract_dataset()
 
-        self.assertEqual(Diagnostic.objects.filter(year=2024).count(), 2)
-        self.assertEqual(Diagnostic.objects.filter(year=2024).teledeclared().count(), 2)
-        self.assertEqual(etl_td_2024.len_dataset(), 2)
+        self.assertEqual(Diagnostic.objects.filter(year=2024).count(), 3)
+        self.assertEqual(Diagnostic.objects.filter(year=2024).teledeclared().count(), 3)
+        self.assertEqual(etl_td_2024.len_dataset(), 3)
 
         # 2025: 1 teledeclaration (1 groupe) (TODO after 1TD1Site: remove groupe and split data by satellite)
         etl_td_2025 = ETL_OPEN_DATA_TELEDECLARATIONS(2025)
@@ -170,7 +172,7 @@ class TeledeclarationETLOpenDataTest(TestCase):
         # Check the schema matching
         self.assertEqual(len(etl_td_2024.df.columns), len(schema_cols))
         self.assertEqual(set(etl_td_2024.df.columns), set(schema_cols))
-        self.assertEqual(etl_td_2024.len_dataset(), 2)
+        self.assertEqual(etl_td_2024.len_dataset(), 3)
 
         canteen_site_earlier_diagnostic_2024 = etl_td_2024.df[
             etl_td_2024.df.canteen_id == self.canteen_site_earlier.id
@@ -204,12 +206,9 @@ class TeledeclarationETLOpenDataTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["canteen_region"], "84")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_region_lib"], "Auvergne-Rhône-Alpes")
         self.assertEqual(canteen_site_diagnostic_2024["canteen_sector_list"], "Hôpitaux,Crèche")
-        self.assertEqual(canteen_site_diagnostic_2024["canteen_line_ministry"], None)
-        self.assertGreater(
-            canteen_site_diagnostic_2024["teledeclaration_ratio_bio"],
-            0,
-            "The bio value is aggregated from bio fields and should be greater than 0",
-        )
+        self.assertTrue(pd.isna(canteen_site_diagnostic_2024["canteen_line_ministry"]))
+        self.assertEqual(canteen_site_diagnostic_2024["teledeclaration_ratio_bio"], Decimal("0.4"))
+        self.assertEqual(canteen_site_diagnostic_2024["teledeclaration_ratio_egalim_hors_bio"], Decimal("0.3"))
 
     @freeze_time("2023-05-14")  # during the 2022 campaign
     def test_update_ressource(self, mock):
@@ -259,7 +258,7 @@ class TeledeclarationETLOpenDataTest(TestCase):
             f"https://www.data.gouv.fr/api/1/datasets/{dataset_id}/resources/{resource_id}",
             headers=expected_header,
             json={
-                "url": "https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim-prod/media/open_data/registre_cantines.xlsx?v=230514"
+                "url": "https://cellar-c2.services.clever-cloud.com/ma-cantine-egalim-prod/media/open_data/registre_cantines.xlsx?v=2305140000"
             },
             status_code=200,
         )

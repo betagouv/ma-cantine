@@ -106,7 +106,7 @@ export default Object.freeze({
       color: "deep-orange darken-4",
     },
     BOULANGERIE: {
-      text: "Boulangerie / Pâtisserie fraîches et surgelées",
+      text: "Boulangerie / Pâtisserie fraîches",
       shortText: "boulangerie / pâtisserie",
       color: "deep-purple darken-3",
     },
@@ -123,7 +123,6 @@ export default Object.freeze({
   },
   Characteristics: {
     // NB: the order of these keys reflects the priority of the label in EGalim sum calculations
-    // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
     BIO: { text: "Bio" },
     LABEL_ROUGE: { text: "Label rouge" },
     AOCAOP: { text: "AOC / AOP", longText: "Appellation d'origine (AOC / AOP)" },
@@ -144,9 +143,29 @@ export default Object.freeze({
       longText:
         "Produit acquis sur la base de ses performances en matière de protection de l'environnement et d'approvisionnement direct",
     },
+    EUROPE: { text: "Origine UE (hors France)" },
     FRANCE: { text: "Origine France" },
-    CIRCUIT_COURT: { text: "Origine France (dont circuit-court)" },
-    LOCAL: { text: "Origine France (dont local)" },
+    CIRCUIT_COURT: { text: "Circuit court" },
+    LOCAL: { text: "Local" },
+  },
+  PurchaseCharacteristics: {
+    egalim: [
+      "BIO",
+      "LABEL_ROUGE",
+      "AOCAOP",
+      "IGP",
+      "STG",
+      "HVE",
+      "PECHE_DURABLE",
+      "RUP",
+      "COMMERCE_EQUITABLE",
+      "FERMIER",
+      "EXTERNALITES",
+      "PERFORMANCE",
+    ],
+    origine: ["FRANCE", "EUROPE"],
+    local: ["LOCAL"],
+    circuitCourt: ["CIRCUIT_COURT"],
   },
   TeledeclarationCharacteristics: {
     // NB: the order of these can affect the aesthetics of the display on PurchasePage, esp for long texts
@@ -183,14 +202,17 @@ export default Object.freeze({
       color: "pink",
     },
     NON_EGALIM: { text: "Non-EGalim", color: "blue-grey lighten-2" },
+    // EUROPE: { text: "Origine UE (hors France)", additional: true },
     FRANCE: { text: "Origine France", additional: true },
     CIRCUIT_COURT: { text: "Origine France : dont circuit-court", additional: true },
     LOCAL: { text: "Origine France : dont local", additional: true },
   },
   LocalDefinitions: {
-    AUTOUR_SERVICE: { text: "200 km autour du lieu de service", value: "AUTOUR_SERVICE" },
-    DEPARTEMENT: { text: "Provenant du même département", value: "DEPARTEMENT" },
     REGION: { text: "Provenant de la même région", value: "REGION" },
+    DEPARTEMENT: { text: "Provenant du même département", value: "DEPARTEMENT" },
+    PAT: { text: "Issu du Projet Alimentaire Territorial (PAT)", value: "PAT" },
+    COMMUNE: { text: "Provenant de la même commune", value: "COMMUNE" },
+    KM: { text: "Distance en km", value: "KM" },
     AUTRE: { text: "Autre", value: "AUTRE" },
   },
   TeledeclarationCharacteristicGroups: {
@@ -482,6 +504,10 @@ export default Object.freeze({
       icon: "mdi-dots-horizontal",
       color: "grey",
     },
+    // EUROPE: {
+    //   icon: "$europe-line",
+    //   color: "blue",
+    // },
     FRANCE: {
       icon: "$france-line",
       color: "indigo",

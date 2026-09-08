@@ -1,8 +1,12 @@
+import requests_mock
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase, TransactionTestCase
 from freezegun import freeze_time
 
+from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
+from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
+from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret, mock_fetch_geo_data_from_siren
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, SectorCategory, Teledeclaration
 from data.models.creation_source import CreationSource
@@ -254,7 +258,7 @@ class CanteenModelSaveTest(TransactionTestCase):
                     self.assertRaises(
                         IntegrityError, CanteenFactory, production_type=production_type, sector_list=VALUE_NOT_OK
                     )
-            for VALUE_NOT_OK in [[Sector.EDUCATION_PRIMAIRE], [999], ["invalid"], [Sector.EDUCATION_PRIMAIRE, 999]]:
+            for VALUE_NOT_OK in [[Sector.EDUCATION_PRIMAIRE], [9999], ["invalid"], [Sector.EDUCATION_PRIMAIRE, 9999]]:
                 with self.subTest(production_type=production_type, sector_list=VALUE_NOT_OK):
                     self.assertRaises(
                         ValidationError, CanteenFactory, production_type=production_type, sector_list=VALUE_NOT_OK
@@ -294,7 +298,7 @@ class CanteenModelSaveTest(TransactionTestCase):
                 ],
                 [999],
                 ["invalid"],
-                [Sector.EDUCATION_PRIMAIRE, 999],
+                [Sector.EDUCATION_PRIMAIRE, 9999],
             ]:
                 with self.subTest(production_type=production_type, sector_list=VALUE_NOT_OK):
                     self.assertRaises(
@@ -367,7 +371,7 @@ class CanteenModelSaveTest(TransactionTestCase):
                 with self.subTest(groupe=TUPLE_OK[0]):
                     canteen = CanteenFactory(production_type=production_type, groupe=TUPLE_OK[0])
                     self.assertEqual(canteen.groupe, TUPLE_OK[1])
-            for VALUE_NOT_OK in [canteen_groupe.id, canteen_groupe_deleted.id, canteen_site.id, 999, "", "invalid"]:
+            for VALUE_NOT_OK in [canteen_groupe.id, canteen_groupe_deleted.id, canteen_site.id, 9999, "", "invalid"]:
                 with self.subTest(groupe=VALUE_NOT_OK):
                     self.assertRaises(ValueError, CanteenFactory, production_type=production_type, groupe=VALUE_NOT_OK)
         # satellite: can be filled
@@ -380,10 +384,10 @@ class CanteenModelSaveTest(TransactionTestCase):
                 with self.subTest(groupe_id=TUPLE_OK[0]):
                     canteen = CanteenFactory(production_type=production_type, groupe_id=TUPLE_OK[0])
                     self.assertEqual(canteen.groupe, TUPLE_OK[1])
-            for VALUE_NOT_OK in [canteen_site.id, canteen_groupe_deleted.id, 999, "", "invalid"]:
+            for VALUE_NOT_OK in [canteen_site.id, canteen_groupe_deleted.id, 9999, "", "invalid"]:
                 with self.subTest(groupe=VALUE_NOT_OK):
                     self.assertRaises(ValueError, CanteenFactory, production_type=production_type, groupe=VALUE_NOT_OK)
-            for VALUE_NOT_OK in [canteen_site.id, 999]:
+            for VALUE_NOT_OK in [canteen_site.id, 9999]:
                 with self.subTest(groupe_id=VALUE_NOT_OK):
                     self.assertRaises(
                         ValidationError, CanteenFactory, production_type=production_type, groupe_id=VALUE_NOT_OK
@@ -454,22 +458,115 @@ class CanteenModelSaveTest(TransactionTestCase):
             with self.subTest(creation_source=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, creation_source=VALUE_NOT_OK)
 
-    def test_canteen_reset_geo_fields_when_siret_change_on_save(self):
+    @requests_mock.Mocker()
+    def test_canteen_siret_change_save_reset_and_refetch_geo_fields(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="21380185500072", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
         canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
         self.assertEqual(canteen.city_insee_code, "34172")
 
-        canteen.siret = "21380185500015"
+        canteen.siret = "21380185500072"
         canteen.save()
 
-        self.assertEqual(canteen.city_insee_code, None)
+        self.assertEqual(canteen.city_insee_code, "38185")
+        self.assertEqual(canteen.department, "38")
+        self.assertEqual(canteen.region, "84")
+
+    def test_canteen_siret_city_insee_code_change_save_reset_geo_fields(self):
+        canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
+        self.assertEqual(canteen.city_insee_code, "34172")
+
+        canteen.city_insee_code = "13055"
+        canteen.save()
+
+        self.assertEqual(canteen.city_insee_code, "13055")
         self.assertEqual(canteen.department, None)
         self.assertEqual(canteen.region, None)
-        # geobot will run again
+        # post_save is not triggered
+        # but geobot will run again
+
+    def test_canteen_siren_unite_legale_change_save_do_not_reset_geo_fields(self):
+        canteen = CanteenFactory(siret=None, siren_unite_legale="923412845", city_insee_code="59512")
+        self.assertEqual(canteen.city_insee_code, "59512")
+
+        canteen.siren_unite_legale = "213401722"
+        canteen.save()
+
+        self.assertEqual(canteen.city_insee_code, "59512")
+        # reset_geo_fields_if_siret_or_city_insee_code_changed was not triggered
+
+    @requests_mock.Mocker()
+    def test_canteen_siren_unite_legale_city_insee_code_change_save_reset_geo_fields(self, mock):
+        mock_fetch_geo_data_from_siren(mock, siren="213401722", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        canteen = CanteenFactory(siret=None, siren_unite_legale="923412845", city_insee_code="59512")
+        self.assertEqual(canteen.city_insee_code, "59512")
+
+        canteen.siren_unite_legale = "213401722"
+        canteen.city_insee_code = "34172"
+        canteen.save()
+
+        self.assertEqual(canteen.city_insee_code, "34172")
+        self.assertEqual(canteen.department, "34")
+        self.assertEqual(canteen.region, "76")
+
+    @requests_mock.Mocker()
+    def test_canteen_siret_change_to_siren_unite_legale_reset_geo_fields(self, mock):
+        mock_fetch_geo_data_from_siren(mock, siren="923412845", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
+        self.assertEqual(canteen.city_insee_code, "34172")
+
+        canteen.siret = None
+        canteen.siren_unite_legale = "923412845"
+        canteen.city_insee_code = "59512"
+        canteen.save()
+
+        self.assertEqual(canteen.siren_unite_legale, "923412845")
+        self.assertEqual(canteen.city_insee_code, "59512")
+        self.assertEqual(canteen.department, "59")
+        self.assertEqual(canteen.region, "32")
+
+    @requests_mock.Mocker()
+    def test_canteen_siren_unite_legale_change_to_siret_reset_geo_fields(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+
+        canteen = CanteenFactory(siret=None, siren_unite_legale="923412845", city_insee_code="59512")
+        self.assertEqual(canteen.city_insee_code, "59512")
+
+        canteen.siret = "21340172201787"
+        canteen.siren_unite_legale = None
+        canteen.save()
+
+        self.assertEqual(canteen.siret, "21340172201787")
+        self.assertEqual(canteen.city_insee_code, "34172")
+        self.assertEqual(canteen.department, "34")
+        self.assertEqual(canteen.region, "76")
 
     def test_canteen_skip_validations_on_save(self):
         canteen = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
         canteen.siret = None
-        # should not raise
+
+        # without skip_validations
+        self.assertRaises(ValidationError, canteen.save)
+
+        # with skip_validations
         canteen.save(skip_validations=True)
         self.assertEqual(canteen.siret, None)
 
@@ -491,7 +588,13 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertFalse(canteen.is_dirty())
         self.assertEqual(canteen.get_dirty_fields(), {})
 
-    def test_update_geo_fields_on_save(self):
+    @requests_mock.Mocker()
+    def test_canteen_siret_create_fill_geo_fields(self, mock):
+        mock_fetch_geo_data_from_siret(mock, siret="21340172201787", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
         # CanteenFactory skips the post_save signal
         # so we need to call save() to trigger the signal
         canteen = CanteenFactory.build(
@@ -502,8 +605,37 @@ class CanteenModelSaveTest(TransactionTestCase):
 
         self.assertEqual(canteen.city_insee_code, "34172")
         self.assertEqual(canteen.city, "Montpellier")
+        self.assertEqual(canteen.epci, "243400017")
+        self.assertEqual(canteen.pat_list, ["1554", "1555"])
         self.assertEqual(canteen.department, "34")
         self.assertEqual(canteen.region, "76")
+
+    @requests_mock.Mocker()
+    def test_canteen_siren_create_fill_geo_fields(self, mock):
+        # mock_fetch_geo_data_from_siren(mock, siren="923412845", success=True)
+        mock_fetch_communes(mock)
+        mock_fetch_epcis(mock)
+        mock_get_pat_dataset_resource(mock)
+        mock_get_pat_csv(mock)
+        # CanteenFactory skips the post_save signal
+        # so we need to call save() to trigger the signal
+        canteen = CanteenFactory.build(
+            siret=None,
+            siren_unite_legale="923412845",
+            city_insee_code="59512",
+            city=None,
+            department=None,
+            region=None,
+        )
+        canteen.save()
+        canteen.refresh_from_db()
+
+        self.assertEqual(canteen.city_insee_code, "59512")
+        self.assertEqual(canteen.city, "Roubaix")
+        self.assertEqual(canteen.epci, "200093201")
+        self.assertEqual(canteen.pat_list, ["1415"])
+        self.assertEqual(canteen.department, "59")
+        self.assertEqual(canteen.region, "32")
 
 
 class CanteenModelDeleteTest(TestCase):
@@ -659,9 +791,29 @@ class CanteenCreatedBeforeQuerySetTest(TestCase):
         self.assertEqual(Canteen.objects.created_before_year_campaign_end_date(2025).count(), 4)
 
 
+class CanteenNotDeletedBeforeQuerySetTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        CanteenFactory()
+        canteen_deleted_before_2024_campaign_end = CanteenFactory()
+        canteen_deleted_during_2024_campaign = CanteenFactory()
+        canteen_deleted_after_2024_campaign = CanteenFactory()
+        with freeze_time("2025-01-01"):  # before the 2024 campaign
+            canteen_deleted_before_2024_campaign_end.delete()
+        with freeze_time("2025-03-30"):  # during the 2024 campaign
+            canteen_deleted_during_2024_campaign.delete()
+        with freeze_time("2025-06-30"):  # after the 2024 campaign
+            canteen_deleted_after_2024_campaign.delete()
+
+    def test_not_deleted_before_year_campaign_end_date(self):
+        self.assertEqual(Canteen.all_objects.count(), 4)
+        self.assertEqual(Canteen.all_objects.not_deleted_before_year_campaign_end_date(2024).count(), 2)
+
+
 class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user = UserFactory()
         cls.canteen_groupe_with_satellite = CanteenFactory(
             siren_unite_legale="756656218", production_type=Canteen.ProductionType.GROUPE, economic_model=None
         )
@@ -751,8 +903,9 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_already_teledeclared_count, 0)
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_count, 1)
         # create a diagnostic for the autonomous satellite and teledeclare it
+        self.canteen_satellite_4.managers.add(self.user)
         diagnostic_satellite_4 = DiagnosticFactory(canteen=self.canteen_satellite_4, year=2025)
-        diagnostic_satellite_4.teledeclare(applicant=UserFactory())
+        diagnostic_satellite_4.teledeclare(applicant=self.user)
         self.assertEqual(diagnostic_satellite_4.is_teledeclared, True)
         # link satellite to groupe
         self.canteen_satellite_4.groupe = self.canteen_groupe_with_satellite
@@ -831,9 +984,10 @@ class CanteenPurchaseQuerySetTest(TestCase):
 class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        user = UserFactory()
         CanteenFactory()
-        canteen_with_diagnostic_teledeclared = CanteenFactory()
-        canteen_with_diagnostic_cancelled = CanteenFactory()
+        canteen_with_diagnostic_teledeclared = CanteenFactory(managers=[user])
+        canteen_with_diagnostic_cancelled = CanteenFactory(managers=[user])
         cls.diagnostic_filled_teledeclared = DiagnosticFactory(
             canteen=canteen_with_diagnostic_teledeclared,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -853,8 +1007,8 @@ class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
             valeur_totale=None,
         )  # missing data
         with freeze_time("2025-03-30"):  # during the 2024 campaign
-            cls.diagnostic_filled_teledeclared.teledeclare(applicant=UserFactory())
-            cls.diagnostic_filled_cancelled.teledeclare(applicant=UserFactory())
+            cls.diagnostic_filled_teledeclared.teledeclare(applicant=user)
+            cls.diagnostic_filled_cancelled.teledeclare(applicant=user)
             cls.diagnostic_filled_cancelled.cancel()
 
     def test_annotate_with_diagnostic_for_year(self):
@@ -1341,7 +1495,7 @@ class CanteenModelPropertiesTest(TestCase):
         )
 
     @freeze_time("2024-01-20")
-    def test_appro_and_service_diagnostics_in_past_ordered_year_desc(self):
+    def test_appro_in_past_ordered_year_desc(self):
         canteen = CanteenFactory()
         DiagnosticFactory(canteen=canteen, year=2024)
         DiagnosticFactory(canteen=canteen, year=2022)
@@ -1350,6 +1504,4 @@ class CanteenModelPropertiesTest(TestCase):
 
         self.assertEqual(canteen.appro_diagnostics.count(), 2)
         self.assertEqual(canteen.appro_diagnostics.first().year, 2023)
-        self.assertEqual(canteen.service_diagnostics.count(), 2)
-        self.assertEqual(canteen.service_diagnostics.first().year, 2023)
         self.assertEqual(canteen.latest_published_year, 2023)

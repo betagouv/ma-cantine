@@ -21,10 +21,6 @@ const links = [
   {
     title: "Liste des champs à renseigner pour importer un bilan détaillé",
     href: documentation.importBilanDetaille,
-  },
-  {
-    title: "Aide pour les formats d'import CSV, Excel, ODS",
-    href: documentation.importsFormatsFichiers,
   }
 ]
 

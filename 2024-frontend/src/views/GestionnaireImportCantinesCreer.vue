@@ -26,10 +26,6 @@ const filePreviews = {
 }
 const links = [
   {
-    title: "Aide pour les formats d'import CSV, Excel, ODS",
-    href: documentation.importsFormatsFichiers,
-  },
-  {
     title: "Bien calculer son nombre de couverts",
     href: documentation.calculerNombreCouverts,
   },

@@ -1,12 +1,13 @@
 import logging
 import zoneinfo
 from datetime import datetime
+from decimal import Decimal
 
 import redis as r
 from django.conf import settings
 from django.utils import timezone
 
-from data.models.geo import Region, REGION_HEXAGONE_LIST
+from data.models.geo import REGION_HEXAGONE_LIST, Region
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -15,6 +16,7 @@ redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 # increment this when the teledeclaration format changes
 # and update docs/teledeclaration_versions.md
 TELEDECLARATION_CURRENT_VERSION = 16
+YEARS_WITH_1TD1SITE = [2024, 2025]
 
 
 def convert_date_string_to_datetime(date_string, time_start_or_end="start"):
@@ -77,6 +79,37 @@ def get_egalim_group(region_list):
     return "hexagone"  # default
 
 
+def objectifs_egalim_atteints(pourcentage_bio, pourcentage_egalim, canteen_region):
+    """
+    Determine if the EGALIM objectives are met.
+
+    Args:
+        pourcentage_bio (float): The percentage of organic products.
+        pourcentage_egalim (float): The percentage of EGALIM-compliant products.
+        canteen_region (str): The region of the canteen.
+
+    Returns:
+        bool: True if the objectives are met, False otherwise.
+    """
+    # default thresholds
+    bio_threshold = EGALIM_OBJECTIVES["hexagone"]["bio_percent"]
+    egalim_threshold = EGALIM_OBJECTIVES["hexagone"]["egalim_percent"]
+
+    # override thresholds for specific regions
+    if canteen_region:
+        if canteen_region in EGALIM_OBJECTIVES["groupe_1"]["region_list"]:
+            bio_threshold = EGALIM_OBJECTIVES["groupe_1"]["bio_percent"]
+            egalim_threshold = EGALIM_OBJECTIVES["groupe_1"]["egalim_percent"]
+        elif canteen_region in EGALIM_OBJECTIVES["groupe_2"]["region_list"]:
+            bio_threshold = EGALIM_OBJECTIVES["groupe_2"]["bio_percent"]
+            egalim_threshold = EGALIM_OBJECTIVES["groupe_2"]["egalim_percent"]
+        elif canteen_region in EGALIM_OBJECTIVES["groupe_3"]["region_list"]:
+            bio_threshold = EGALIM_OBJECTIVES["groupe_3"]["bio_percent"]
+            egalim_threshold = EGALIM_OBJECTIVES["groupe_3"]["egalim_percent"]
+
+    return pourcentage_bio >= bio_threshold and pourcentage_egalim >= egalim_threshold
+
+
 CAMPAIGN_DATES = {
     2021: {
         "teledeclaration_start_date": datetime(2022, 7, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
@@ -85,6 +118,7 @@ CAMPAIGN_DATES = {
         ),
         "correction_start_date": None,
         "correction_end_date": None,
+        "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2022-09-29",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2022.pdf",
     },
     2022: {
@@ -94,6 +128,7 @@ CAMPAIGN_DATES = {
         ),
         "correction_start_date": None,
         "correction_end_date": None,
+        "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2022-09-29",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2023.pdf",
     },
     2023: {
@@ -103,6 +138,7 @@ CAMPAIGN_DATES = {
         ),
         "correction_start_date": datetime(2024, 6, 3, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "correction_end_date": datetime(2024, 6, 12, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2024-04-13",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2024.pdf",
     },
     2024: {
@@ -110,19 +146,32 @@ CAMPAIGN_DATES = {
         "teledeclaration_end_date": datetime(2025, 4, 6, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "correction_start_date": datetime(2025, 4, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "correction_end_date": datetime(2025, 4, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2024-04-13",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2025.pdf",
     },
     2025: {
+        "teledeclaration_start_date": datetime(2026, 1, 12, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "teledeclaration_end_date": datetime(
+            2026, 4, 15, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")
+        ),
+        "correction_start_date": datetime(2026, 4, 16, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "correction_end_date": datetime(2026, 4, 29, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
+        "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2025-12-04",
+        "rapport_parlement_url": None,
+    },
+    # NOTE: dates approximates ! on en a besoin pour les tests.
+    2026: {
         "teledeclaration_start_date": (
             convert_date_string_to_datetime(settings.TELEDECLARATION_START_DATE_OVERRIDE)
-            or datetime(2026, 1, 12, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+            or datetime(2027, 1, 1, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
         "teledeclaration_end_date": (
             convert_date_string_to_datetime(settings.TELEDECLARATION_END_DATE_OVERRIDE, "end")
-            or datetime(2026, 3, 31, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
+            or datetime(2027, 3, 31, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris"))
         ),
-        "correction_start_date": (convert_date_string_to_datetime(settings.CORRECTION_START_DATE_OVERRIDE) or None),
-        "correction_end_date": (convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end") or None),
+        "correction_start_date": convert_date_string_to_datetime(settings.CORRECTION_START_DATE_OVERRIDE) or None,
+        "correction_end_date": convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end") or None,
+        "legifrance_url": None,
         "rapport_parlement_url": None,
     },
     # Note: au moment d'ajouter une nouvelle année :
@@ -173,11 +222,129 @@ def is_in_teledeclaration_or_correction(year=None):
     return is_in_teledeclaration(year) or is_in_correction(year)
 
 
-def get_year_campaign_end_date_or_today_date(year):
+def get_year_campaign_start_date(year):
     year = int(year)
-    if year in CAMPAIGN_DATES.keys():
-        return CAMPAIGN_DATES[year]["teledeclaration_end_date"]
-    elif year >= timezone.now().year:
-        return timezone.now()
+    if year in CAMPAIGN_DATES:
+        return CAMPAIGN_DATES[year]["teledeclaration_start_date"]
     else:
         return None
+
+
+def get_year_campaign_end_date_or_today_date(year):
+    """
+    Return the year's campaign end date
+    """
+    year = int(year)
+    now = timezone.now()
+    if year in CAMPAIGN_DATES.keys():
+        return CAMPAIGN_DATES[year]["teledeclaration_end_date"]
+    elif year >= now.year:
+        return now
+    else:
+        return None
+
+
+def get_year_correction_end_date_or_campaign_end_date_or_today_date(year):
+    """
+    Return the year's correction end date
+    Fallback to the year's campaign end date if it doens't exist
+    """
+    year = int(year)
+    now = timezone.now()
+    if year in CAMPAIGN_DATES.keys():
+        if CAMPAIGN_DATES[year]["correction_end_date"]:
+            return CAMPAIGN_DATES[year]["correction_end_date"]
+        else:
+            return get_year_campaign_end_date_or_today_date(year)
+    elif year >= now.year:
+        return now
+    else:
+        return None
+
+
+def set_satellite_common_fields_from_groupe_diagnostic(diagnostic, satellite_dict) -> dict:
+    """
+    Generate a dict with common fields values for a satellite from a groupe diagnostic
+
+    Rules:
+    - before 2025, we override the satellite with the groupe's values: geo data, sector_list, line_ministry. We also change the yearly_meal_count (divided by the number of satellites)
+    - in 2025, we stop overriding fields
+    """
+    from data.models import Canteen  # avoid circular import
+
+    updated_common_fields = {}
+
+    # some hard-coded rules
+    updated_common_fields["production_type"] = Canteen.ProductionType.ON_SITE_CENTRAL
+    updated_common_fields["satellite_canteens_count"] = 0
+
+    # rules depending on the campaign year
+    if diagnostic.year <= 2024:
+        fields_overridden_by_groupe = [
+            "city_insee_code",
+            "epci",
+            "pat_list",
+            "department",
+            "region",
+            "sector_list",
+            "line_ministry",
+        ]
+    elif diagnostic.year == 2025:
+        fields_overridden_by_groupe = []
+
+    # build dict
+    for field in fields_overridden_by_groupe:
+        if field in diagnostic.canteen_snapshot:
+            updated_common_fields[field] = diagnostic.canteen_snapshot[field]
+
+    # yearly_meal_count (before 2025)
+    if diagnostic.year <= 2024:
+        divisor = len(diagnostic.satellites_snapshot) if diagnostic.satellites_snapshot else 0
+        try:
+            updated_common_fields["yearly_meal_count"] = int(
+                diagnostic.canteen_snapshot["yearly_meal_count"] / divisor
+            )
+        except (TypeError, ZeroDivisionError):
+            updated_common_fields["yearly_meal_count"] = None
+
+    return updated_common_fields
+
+
+def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, satellite_dict) -> dict:
+    """
+    Generate a dict with appro values distributed to satellites from a groupe diagnostic
+
+    Note:
+    - we divide only the APPRO values
+    - the EGALIM_STATS_FIELDS (pourcentage_* & objectifs_egalim_atteints) stay the same
+    - the other fields (WASTE_FIELDS, DIVERSIFICATION_FIELDS, PLASTIC_FIELDS, INFO_FIELDS) stay the same
+
+    Rules:
+    - before 2025, we divide by the number of satellites
+    - in 2025, we divide by the satellite's yearly_meal_count (ratio)
+        - Note: requires with_satellites_snapshot_stats() queryset
+    """
+    from data.models import Diagnostic  # avoid circular import
+
+    appro_fields_satellite = {}
+
+    # get the divisor
+    if diagnostic.year <= 2024:
+        divisor = len(diagnostic.satellites_snapshot) if diagnostic.satellites_snapshot else 0
+        # no +1 for central_serving? we already added it in canteen_migrate_central_to_groupe.py
+    elif diagnostic.year == 2025:
+        divisor = (
+            diagnostic.satellites_snapshot_yearly_meal_count_sum / satellite_dict.get("yearly_meal_count")
+            if satellite_dict.get("yearly_meal_count")
+            else 0
+        )
+
+    # build dict
+    for field in Diagnostic.APPRO_1TD1SITE_FIELDS:
+        try:
+            value = getattr(diagnostic, field) / Decimal(divisor)
+            appro_fields_satellite[field] = round(value, 2)
+        except (TypeError, ZeroDivisionError):
+            appro_fields_satellite[field] = None
+
+    return appro_fields_satellite

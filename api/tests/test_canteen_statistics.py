@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.core.management import call_command
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -7,15 +8,17 @@ from rest_framework.test import APITestCase
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, SectorCategory
+from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 
 year_data = 2023
 date_in_2023_teledeclaration_campaign = "2024-04-01"  # during the 2023 campaign
-STATS_ENDPOINT_QUERY_COUNT = 8
+STATS_ENDPOINT_QUERY_COUNT = 7
 
 
 class CanteenStatsApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
+        user = UserFactory()
         with freeze_time(date_in_2023_teledeclaration_campaign):
             cls.canteen_1 = CanteenFactory(
                 siret="21010034300016",
@@ -28,6 +31,7 @@ class CanteenStatsApiTest(APITestCase):
                 management_type=Canteen.ManagementType.DIRECT,
                 production_type=Canteen.ProductionType.CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
+                managers=[user],
             )
             canteen_diagnostic_1 = DiagnosticFactory(
                 canteen=cls.canteen_1,
@@ -44,7 +48,7 @@ class CanteenStatsApiTest(APITestCase):
                 plastic_tableware_substituted=False,
                 communicates_on_food_quality=False,
             )
-            canteen_diagnostic_1.teledeclare(applicant=UserFactory())
+            canteen_diagnostic_1.teledeclare(applicant=user)
             cls.canteen_2 = CanteenFactory(
                 siret="40419443300078",
                 city_insee_code="69123",
@@ -56,6 +60,7 @@ class CanteenStatsApiTest(APITestCase):
                 management_type=Canteen.ManagementType.DIRECT,
                 production_type=Canteen.ProductionType.CENTRAL_SERVING,
                 economic_model=Canteen.EconomicModel.PUBLIC,
+                managers=[user],
             )
             canteen_diagnostic_2 = DiagnosticFactory(
                 canteen=cls.canteen_2,
@@ -76,7 +81,7 @@ class CanteenStatsApiTest(APITestCase):
                 plastic_tableware_substituted=True,
                 communicates_on_food_quality=True,
             )
-            canteen_diagnostic_2.teledeclare(applicant=UserFactory())
+            canteen_diagnostic_2.teledeclare(applicant=user)
             cls.canteen_3 = CanteenFactory(
                 siret="21380185500015",
                 city_insee_code="38185",
@@ -88,6 +93,7 @@ class CanteenStatsApiTest(APITestCase):
                 management_type=Canteen.ManagementType.CONCEDED,
                 production_type=Canteen.ProductionType.ON_SITE,
                 economic_model=Canteen.EconomicModel.PRIVATE,
+                managers=[user],
             )
             canteen_diagnostic_3 = DiagnosticFactory(
                 canteen=cls.canteen_3,
@@ -104,7 +110,7 @@ class CanteenStatsApiTest(APITestCase):
                 plastic_tableware_substituted=True,
                 communicates_on_food_quality=True,
             )
-            canteen_diagnostic_3.teledeclare(applicant=UserFactory())
+            canteen_diagnostic_3.teledeclare(applicant=user)
             cls.canteen_4 = CanteenFactory(
                 siret="21590350100017",
                 city_insee_code="59350",
@@ -152,6 +158,7 @@ class CanteenStatsApiTest(APITestCase):
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=1990,
             )
+        cls.url = reverse("canteen_statistics")
 
     def setUp(self):
         cache.clear()  # clear cache before each test
@@ -161,11 +168,37 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 4)
         self.assertEqual(Diagnostic.objects.teledeclared().count(), 3)
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT + CACHE_GET_QUERY_COUNT + CACHE_SET_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+            response = self.client.get(self.url, {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_canteen_count_include_deletion_and_creation_dates(self):
+        # During the campaign
+        with freeze_time(date_in_2023_teledeclaration_campaign):
+            self.canteen_1.delete()
+
+        # After the campaign
+        with freeze_time("2024-06-15"):
+            self.canteen_3.delete()
+            CanteenFactory()
+
+        # We have :
+        # - 5 canteens created before or during the campaign in the setup
+        # - 1 canteen deleted during the campaign
+        # - 1 canteen deleted after the campaign
+        # - 1 canteen created after the campaign
+        response = self.client.get(self.url, {"year": year_data})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)  # 5 - 1
+
+        response = self.client.get(self.url, {"year": 2025})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["canteenCount"], 4)  # 5 - 1 - 1 + 1
+
     def test_canteen_statistics(self):
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        response = self.client.get(self.url, {"year": year_data})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 5)
@@ -203,7 +236,8 @@ class CanteenStatsApiTest(APITestCase):
         date_in_2022_teledeclaration_campaign = "2022-08-30"
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
-            canteen = CanteenFactory(siret="11007001800012")
+            user = UserFactory()
+            canteen = CanteenFactory(siret="11007001800012", managers=[user])
             # Diagnostic that should display 20% Bio and 45% other EGalim
             canteen_diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -221,9 +255,10 @@ class CanteenStatsApiTest(APITestCase):
                 valeur_produits_de_la_mer=10,
                 valeur_produits_de_la_mer_egalim=8,
             )
-            canteen_diagnostic.teledeclare(applicant=UserFactory())
+            canteen_diagnostic.teledeclare(applicant=user)
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
+        response = self.client.get(self.url, {"year": past_year})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 1)  # canteens created in 2024 are not returned
@@ -245,7 +280,8 @@ class CanteenStatsApiTest(APITestCase):
         date_in_2022_teledeclaration_campaign = "2022-08-30"
 
         with freeze_time(date_in_2022_teledeclaration_campaign):
-            canteen = CanteenFactory(siret="11007001800012")
+            user = UserFactory()
+            canteen = CanteenFactory(siret="11007001800012", managers=[user])
             # Diagnostic that should display 20% Bio and 45% other EGalim
             canteen_diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
@@ -263,9 +299,10 @@ class CanteenStatsApiTest(APITestCase):
                 valeur_produits_de_la_mer=10,
                 valeur_produits_de_la_mer_egalim=8,
             )
-            canteen_diagnostic.teledeclare(applicant=UserFactory())
+            canteen_diagnostic.teledeclare(applicant=user)
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": past_year})
+        response = self.client.get(self.url, {"year": past_year})
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 1)  # canteens created in 2024 are not returned
@@ -283,38 +320,38 @@ class CanteenStatsApiTest(APITestCase):
         # Database
         self.assertEqual(Canteen.objects.count(), 6)
         # API endpoint
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        response = self.client.get(self.url, {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 5)  # canteen_old_armee filtered out
 
     def test_filter_by_year(self):
         # without year: 400
-        response = self.client.get(reverse("canteen_statistics"))
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         # year with campaign and report published
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        response = self.client.get(self.url, {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 5)
         self.assertEqual(body["teledeclarationsCount"], 3)
         self.assertFalse("campaignInfo" in body["notes"])
         # year without campaign (past)
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 100})
+        response = self.client.get(self.url, {"year": year_data - 100})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 0)
         self.assertEqual(body["teledeclarationsCount"], None)
         self.assertTrue("campaignInfo" in body["notes"])
         # year without campaign (future)
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data + 100})
+        response = self.client.get(self.url, {"year": year_data + 100})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 5)
         self.assertEqual(body["teledeclarationsCount"], None)
         self.assertTrue("campaignInfo" in body["notes"])
         # year with campaign but report not published yet
-        response = self.client.get(reverse("canteen_statistics"), {"year": "2025"})
+        response = self.client.get(self.url, {"year": "2025"})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 5)
@@ -322,70 +359,79 @@ class CanteenStatsApiTest(APITestCase):
         self.assertTrue("campaignInfo" in body["notes"])
 
     def test_filter_by_region(self):
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84"]})
+        response = self.client.get(self.url, {"year": year_data, "region": ["84"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 3)
+        self.assertEqual(body["teledeclarationsCount"], 3)
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": ["84", "32"]})
+        response = self.client.get(self.url, {"year": year_data, "region": ["84", "32"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 3 + 1)
+        self.assertEqual(body["teledeclarationsCount"], 3 + 0)
 
     def test_filter_by_department(self):
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "department": ["01"]})
+        response = self.client.get(self.url, {"year": year_data, "department": ["01"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 1)
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "department": ["01", "38"]})
+        response = self.client.get(self.url, {"year": year_data, "department": ["01", "38"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 1 + 1)
+        self.assertEqual(body["teledeclarationsCount"], 1 + 1)
 
     def test_filter_by_epci(self):
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "epci": ["243400017"]})
+        response = self.client.get(self.url, {"year": year_data, "epci": ["243400017"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["teledeclarationsCount"], 2)
 
-        response = self.client.get(
-            reverse("canteen_statistics"), {"year": year_data, "epci": ["243400017", "200040715"]}
-        )
+        response = self.client.get(self.url, {"year": year_data, "epci": ["243400017", "200040715"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2 + 1)
+        self.assertEqual(body["teledeclarationsCount"], 2 + 1)
 
     def test_filter_by_pat(self):
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "pat": ["1"]})
+        response = self.client.get(self.url, {"year": year_data, "pat": ["1"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["teledeclarationsCount"], 2)
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "pat": ["1", "2"]})
+        response = self.client.get(self.url, {"year": year_data, "pat": ["1", "2"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2 + 1)
+        self.assertEqual(body["teledeclarationsCount"], 2 + 1)
 
     def test_filter_by_city(self):
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["01034"]})
+        response = self.client.get(self.url, {"year": year_data, "city": ["01034"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 1)
+        self.assertEqual(body["teledeclarationsCount"], 1)
 
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "city": ["01034", "38185"]})
+        response = self.client.get(self.url, {"year": year_data, "city": ["01034", "38185"]})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 1 + 1)
+        self.assertEqual(body["teledeclarationsCount"], 1 + 1)
 
     def test_filter_by_sectors(self):
         response = self.client.get(
-            reverse("canteen_statistics"),
+            self.url,
             {"year": year_data, "sector": [Sector.EDUCATION_PRIMAIRE, Sector.ENTERPRISE_ENTREPRISE]},
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["teledeclarationsCount"], 2)
         sector_categories = body["sectorCategories"]
         self.assertEqual(sector_categories[SectorCategory.EDUCATION], 1)
         self.assertEqual(sector_categories[SectorCategory.ENTERPRISE], 2)
@@ -393,7 +439,7 @@ class CanteenStatsApiTest(APITestCase):
 
     def test_filter_by_management_type(self):
         response = self.client.get(
-            reverse("canteen_statistics"),
+            self.url,
             {
                 "year": year_data,
                 "management_type": [Canteen.ManagementType.DIRECT],
@@ -402,6 +448,7 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["teledeclarationsCount"], 2)
         management_types = body["managementTypes"]
         self.assertEqual(management_types[Canteen.ManagementType.DIRECT], 2)
         self.assertEqual(management_types[Canteen.ManagementType.CONCEDED], 0)
@@ -409,7 +456,7 @@ class CanteenStatsApiTest(APITestCase):
 
     def test_filter_by_production_type(self):
         response = self.client.get(
-            reverse("canteen_statistics"),
+            self.url,
             {
                 "year": year_data,
                 "production_type": [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING],
@@ -418,6 +465,7 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["teledeclarationsCount"], 2)
         production_types = body["productionTypes"]
         self.assertEqual(production_types[Canteen.ProductionType.CENTRAL], 1)
         self.assertEqual(production_types["centralServing"], 1)  # Canteen.ProductionType.CENTRAL_SERVING
@@ -427,7 +475,7 @@ class CanteenStatsApiTest(APITestCase):
 
     def test_filter_by_economic_model(self):
         response = self.client.get(
-            reverse("canteen_statistics"),
+            self.url,
             {
                 "year": year_data,
                 "economic_model": [Canteen.EconomicModel.PUBLIC],
@@ -436,46 +484,132 @@ class CanteenStatsApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 2)
+        self.assertEqual(body["teledeclarationsCount"], 2)
         economic_models = body["economicModels"]
         self.assertEqual(economic_models[Canteen.EconomicModel.PUBLIC], 2)
         self.assertEqual(economic_models[Canteen.EconomicModel.PRIVATE], 0)
         self.assertEqual(economic_models["inconnu"], 0)
 
     def test_notes(self):
-        response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+        response = self.client.get(self.url, {"year": year_data})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["canteenCount"], 5)
         self.assertEqual(body["teledeclarationsCount"], 3)
         self.assertEqual(len(body["notes"]["warnings"]), 1)
-        self.assertEqual(
-            body["notes"]["canteenCountDescription"], "Au 11 juin 2024"
-        )  # dernier jour de la campagne 2024
         self.assertFalse("campaignInfo" in body["notes"])
+
+    def test_notes_canteen_count_description_during_campaign(self):
+        with freeze_time(date_in_2023_teledeclaration_campaign):
+            response = self.client.get(self.url, {"year": year_data})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(body["notes"]["canteenCountDescription"], "Au 11 juin 2024")  # end of campaign
+
+    def test_notes_canteen_count_description_after_campaign(self):
+        with freeze_time("2024-11-01"):
+            response = self.client.get(self.url, {"year": year_data})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(body["notes"]["canteenCountDescription"], "Au 11 juin 2024")
+
+    def test_notes_canteen_count_description_campaign_not_found(self):
+        with freeze_time(date_in_2023_teledeclaration_campaign):
+            response = self.client.get(self.url, {"year": 9999})
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            body = response.json()
+            self.assertEqual(body["notes"]["canteenCountDescription"], "Au 1 avril 2024")
+
+    def test_notes_alert(self):
+        response_2023 = self.client.get(self.url, {"year": year_data})
+        self.assertEqual(response_2023.status_code, status.HTTP_200_OK)
+        body_2023 = response_2023.json()
+        self.assertEqual(
+            body_2023["notes"]["alert"]["title"],
+            "Les chiffres indiqués sont légèrement inexacts en raison de l’évolution récente de la plateforme ma cantine.",
+        )  # en 2023
+        response_2024 = self.client.get(self.url, {"year": 2024})
+        self.assertEqual(response_2024.status_code, status.HTTP_200_OK)
+        body_2024 = response_2024.json()
+        self.assertNotIn("alert", body_2024["notes"])
 
     def test_cache_mechanism(self):
         # first time: no cache
         self.assertEqual(Canteen.objects.count(), 6)
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT + CACHE_GET_QUERY_COUNT + CACHE_SET_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+            response = self.client.get(self.url, {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # second time: cache hit
         with self.assertNumQueries(0 + CACHE_GET_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data})
+            response = self.client.get(self.url, {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # another year: no cache (1 less query because no TDs during this year)
-        with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT - 1 + CACHE_GET_QUERY_COUNT + CACHE_SET_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 1})
+        # another year: no cache
+        with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT + CACHE_GET_QUERY_COUNT + CACHE_SET_QUERY_COUNT):
+            response = self.client.get(self.url, {"year": year_data - 1})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # another year again: cache hit
         with self.assertNumQueries(0 + CACHE_GET_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data - 1})
+            response = self.client.get(self.url, {"year": year_data - 1})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # same year, but with extra filters: no cache
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "84"})
+            response = self.client.get(self.url, {"year": year_data, "region": "84"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # same year, but with extra filters: still no cache
         with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT):
-            response = self.client.get(reverse("canteen_statistics"), {"year": year_data, "region": "84"})
+            response = self.client.get(self.url, {"year": year_data, "region": "84"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class CanteenStats1Td1SiteApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        ETLCommonSetUpTestData(cls, with_diagnostics=True)
+        call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
+        call_command("teledeclaration_generate_1td1site", year=2023, apply=True)
+        cls.url = reverse("canteen_statistics")
+
+    def test_user_1td1site_diagnostics_for_2025(self):
+        """
+        - 1 groupe teledeclared (has 1 satellite)
+        """
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2025).count(), 1)
+        self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2025).count(), 1 + 1)
+
+        payload = {"year": 2025}
+        response = self.client.get(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["teledeclarationsCount"], 1)  # 1 satellite
+
+    def test_use_1td1site_diagnostics_for_2024(self):
+        """
+        - 1 groupe teledeclared (has 1 satellite)
+        - 2 sites teledeclared
+        """
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2024).count(), 3)
+        self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2024).count(), 3 + 1)
+
+        payload = {"year": 2024}
+        response = self.client.get(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["teledeclarationsCount"], 3)  # 1 satellite + 2 sites
+
+    def test_not_use_1td1site_diagnostics_for_2023(self):
+        """
+        - 1 groupe teledeclared (has 1 satellite)
+        - 1 site teledeclared (armée)
+        """
+        self.assertEqual(Diagnostic.objects.teledeclared_for_year(2023).count(), 2)
+        self.assertEqual(Diagnostic.all_objects.teledeclared_for_year(2023).count(), 2 + 1)
+
+        payload = {"year": 2023}
+        response = self.client.get(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["teledeclarationsCount"], 1)  # 1 groupe

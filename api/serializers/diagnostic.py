@@ -1,25 +1,38 @@
 import logging
 from decimal import Decimal, InvalidOperation
 
+from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
+from api.serializers.utils import set_help_text_from_verbose_name
 from data.models import Diagnostic
 
 from .teledeclaration import ShortTeledeclarationSerializer
-from .utils import appro_to_percentages
 
 logger = logging.getLogger(__name__)
 
 FIELDS = (
     Diagnostic.META_FIELDS
+    + Diagnostic.CANTEEN_FIELDS
     + Diagnostic.SIMPLE_APPRO_FIELDS
     + Diagnostic.COMPLETE_APPRO_FIELDS
     + Diagnostic.NON_APPRO_FIELDS
 )
 REQUIRED_FIELDS = ("year",)
+CREATE_ONLY_FIELDS = ("creation_source", *Diagnostic.MATOMO_FIELDS)
+READ_ONLY_FIELDS = (
+    "id",
+    "status",
+    *Diagnostic.TELEDECLARATION_FIELDS,
+    "generated_from_groupe_diagnostic",
+    *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
+)
 
 
 class DiagnosticSerializer(serializers.ModelSerializer):
+    is_teledeclared = serializers.BooleanField(read_only=True)  # property
+    is_filled = serializers.BooleanField(read_only=True)  # property
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if (
@@ -56,15 +69,22 @@ class DiagnosticSerializer(serializers.ModelSerializer):
         return validated_data
 
 
+class DiagnosticCheckSerializer(serializers.Serializer):
+    is_filled = serializers.BooleanField(read_only=True)
+    # infos = serializers.DictField(read_only=True)
+    # warnings = serializers.DictField(read_only=True)
+    errors = serializers.DictField(read_only=True)
+
+
 class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
     """
     This serializer masks financial data and gives the basic information on appro as percentages
     """
 
     class Meta:
-        fields = FIELDS
-        read_only_fields = fields
         model = Diagnostic
+        fields = FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
+        read_only_fields = fields
 
     def to_representation(self, instance):
         """
@@ -73,7 +93,6 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
         This method pops non-appro fields if that is the case from the JSON representation
         """
         representation = super().to_representation(instance)
-        representation = appro_to_percentages(representation, instance)
         if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
             [representation.pop(field, "") for field in Diagnostic.NON_APPRO_FIELDS]
         if instance.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
@@ -84,49 +103,56 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
 class PublicDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = FIELDS
-        read_ony_fields = FIELDS
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance)
+        fields = FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
+        read_only_fields = fields
 
 
 class PublicApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS
-        read_only_fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance)
+        fields = Diagnostic.META_FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
+        read_only_fields = fields
 
 
 class PublicServiceDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
-        read_only_fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
+        read_only_fields = fields
 
 
+@set_help_text_from_verbose_name
+@extend_schema_serializer(exclude_fields=CREATE_ONLY_FIELDS)
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        read_only_fields = ("id",)
         fields = (
-            FIELDS + Diagnostic.MATOMO_FIELDS + Diagnostic.CREATION_META_FIELDS + Diagnostic.TUNNEL_PROGRESS_FIELDS
+            FIELDS
+            + Diagnostic.MATOMO_FIELDS
+            + ["creation_source", "creation_date", "modification_date"]
+            + Diagnostic.TUNNEL_PROGRESS_FIELDS
+            + Diagnostic.TELEDECLARATION_FIELDS
+            + Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS
+            + ["status", "generated_from_groupe_diagnostic", "creation_source", "creation_date", "modification_date"]
         )
 
-    def __init__(self, *args, **kwargs):
-        action = kwargs.pop("action", None)
-        super().__init__(*args, **kwargs)
-        if action == "create":
-            for field in REQUIRED_FIELDS:
-                self.fields[field].required = True
-        else:
-            for field in Diagnostic.MATOMO_FIELDS:
-                self.fields.pop(field)
+    def get_fields(self):
+        fields = super().get_fields()
+        # some fields are required
+        for field in REQUIRED_FIELDS:
+            fields[field].required = True
+            fields[field].allow_null = False
+            fields[field].allow_blank = False
+        # some fields are only available on create
+        # and hidden from the docs (see extend_schema_serializer)
+        for field in CREATE_ONLY_FIELDS:
+            fields[field].write_only = True
+            if self.instance is not None:
+                fields.pop(field, None)
+        # some fields are readonly
+        for field in READ_ONLY_FIELDS:
+            fields[field].read_only = True
+        return fields
 
     def validate(self, data):
         # TODO: move these rules to the model
@@ -184,12 +210,8 @@ class CompleteTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
 class ApproDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS
-        read_only_fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        return appro_to_percentages(representation, instance, remove_values=False)
+        fields = Diagnostic.META_FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
+        read_only_fields = fields
 
 
 class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
@@ -224,3 +246,12 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
         from .canteen import FullCanteenSerializer
 
         return FullCanteenSerializer(obj.canteen).data
+
+
+class DiagnosticRecapSerializer(serializers.Serializer):
+    year = serializers.IntegerField(read_only=True)
+    is_teledeclared = serializers.BooleanField(read_only=True)
+    declaration_donnees = serializers.JSONField(read_only=True)
+    canteen_diagnostic_id = serializers.IntegerField(read_only=True)
+    generated_from_groupe_diagnostic_id = serializers.IntegerField(read_only=True)
+    generated_from_groupe_diagnostic_mode = serializers.CharField(read_only=True)

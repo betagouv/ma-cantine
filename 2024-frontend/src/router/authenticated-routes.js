@@ -1,18 +1,26 @@
 import { sectionId } from "@/constants/site-map.js"
 
 /* Components */
-import GestionnaireCantineGerer from "@/views/GestionnaireCantineGerer.vue"
+import GestionnaireAchatsAjouter from "@/views/GestionnaireAchatsAjouter.vue"
+import GestionnaireAchatsModifier from "@/views/GestionnaireAchatsModifier.vue"
+import GestionnaireCantine from "@/views/GestionnaireCantine.vue"
 import GestionnaireCantineGroupeAjouter from "@/views/GestionnaireCantineGroupeAjouter.vue"
 import GestionnaireCantineGroupeModifier from "@/views/GestionnaireCantineGroupeModifier.vue"
-import GestionnaireCantineGroupeSatellites from "@/views/GestionnaireCantineGroupeSatellites.vue"
+import GestionnaireCantineGroupe from "@/views/GestionnaireCantineGroupe.vue"
 import GestionnaireCantineRestaurantAjouter from "@/views/GestionnaireCantineRestaurantAjouter.vue"
 import GestionnaireCantineRestaurantModifier from "@/views/GestionnaireCantineRestaurantModifier.vue"
-import GestionnaireCantineSupprimer from "@/views/GestionnaireCantineSupprimer.vue"
+import GestionnaireCantineTeledeclarations from "@/views/GestionnaireCantineTeledeclarations.vue"
+import GestionnaireCantineArchiver from "@/views/GestionnaireCantineArchiver.vue"
+import GestionnaireCantineGestionnaires from "@/views/GestionnaireCantineGestionnaires.vue"
+import GestionnaireCantinePagePublique from "@/views/GestionnaireCantinePagePublique.vue"
+import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 import GestionnaireGaspillageAlimentaire from "@/views/GestionnaireGaspillageAlimentaire.vue"
 import GestionnaireGaspillageAlimentaireModifier from "@/views/GestionnaireGaspillageAlimentaireModifier.vue"
-import GestionnaireImport from "@/views/GestionnaireImport.vue"
-import GestionnaireImportAchats from "@/views/GestionnaireImportAchats.vue"
+import GestionnaireImportAchatsID from "@/views/GestionnaireImportAchatsID.vue"
 import GestionnaireImportAchatsSIRET from "@/views/GestionnaireImportAchatsSIRET.vue"
+import GestionnaireImport from "@/views/GestionnaireImport.vue"
+import GestionnaireImportAchatsIDOld from "@/views/GestionnaireImportAchatsIDOld.vue"
+import GestionnaireImportAchatsSIRETOld from "@/views/GestionnaireImportAchatsSIRETOld.vue"
 import GestionnaireImportBilansSimples from "@/views/GestionnaireImportBilansSimples.vue"
 import GestionnaireImportBilansDetailles from "@/views/GestionnaireImportBilansDetailles.vue"
 import GestionnaireImportBilansSimplesSIRET from "@/views/GestionnaireImportBilansSimplesSIRET.vue"
@@ -46,7 +54,7 @@ const routes = [
       title: "Déchets alimentaires",
       breadcrumbs: [
         { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-        { to: { name: "DashboardManager" }, useCanteenName: true },
+        { to: { name: "GestionnaireCantine" }, useCanteenName: true },
       ],
     },
   },
@@ -72,9 +80,33 @@ const routes = [
         },
       },
       {
-        path: "achats",
-        name: "GestionnaireImportAchats",
-        component: GestionnaireImportAchats,
+        path: "achats-ancien-format",
+        name: "GestionnaireImportAchatsIDOld",
+        component: GestionnaireImportAchatsIDOld,
+        meta: {
+          title: "Ajouter des achats via l'ID de la cantine (ancien format)",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "achats-siret-ancien-format",
+        name: "GestionnaireImportAchatsSIRETOld",
+        component: GestionnaireImportAchatsSIRETOld,
+        meta: {
+          title: "Ajouter des achats via le SIRET de la cantine (ancien format)",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "achats-id",
+        name: "GestionnaireImportAchatsID",
+        component: GestionnaireImportAchatsID,
         meta: {
           title: "Ajouter des achats via l'ID de la cantine",
           breadcrumbs: [
@@ -193,27 +225,78 @@ const routes = [
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/",
     children: [
       {
-        path: "gerer",
-        name: "GestionnaireCantineGerer",
-        component: GestionnaireCantineGerer,
-        meta: {
-          title: "Gérer mon établissement",
-          breadcrumbs: [
-            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
-          ],
-        },
+        path: "",
+        component: LayoutSidebarCanteen,
+        children: [
+          {
+            path: "",
+            name: "GestionnaireCantine",
+            component: GestionnaireCantine,
+            meta: {
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+              ],
+            },
+          },
+          {
+            path: "cantines-groupe",
+            name: "GestionnaireCantineGroupe",
+            component: GestionnaireCantineGroupe,
+            meta: {
+              title: "Cantines du groupe",
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+              ],
+            },
+          },
+          {
+            path: "teledeclarations",
+            name: "GestionnaireCantineTeledeclarations",
+            component: GestionnaireCantineTeledeclarations,
+            meta: {
+              title: "Toutes les télédéclarations",
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+              ],
+            },
+          },
+          {
+            path: "gestionnaires",
+            name: "GestionnaireCantineGestionnaires",
+            component: GestionnaireCantineGestionnaires,
+            meta: {
+              title: "Gestionnaires",
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+              ],
+            },
+          },
+          {
+            path: "page-publique",
+            name: "GestionnaireCantinePagePublique",
+            component: GestionnaireCantinePagePublique,
+            meta: {
+              title: "Page publique et affiche à imprimer",
+              breadcrumbs: [
+                { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+                { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+              ],
+            },
+          },
+        ],
       },
       {
-        path: "supprimer",
-        name: "GestionnaireCantineSupprimer",
-        component: GestionnaireCantineSupprimer,
+        path: "archiver",
+        name: "GestionnaireCantineArchiver",
+        component: GestionnaireCantineArchiver,
         meta: {
-          title: "Supprimer mon établissement",
+          title: "Archiver mon établissement",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
-            { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
           ],
         },
       },
@@ -225,20 +308,7 @@ const routes = [
           title: "Modifier mon établissement",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
-            { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
-          ],
-        },
-      },
-      {
-        path: "satellites",
-        name: "GestionnaireCantineGroupeSatellites",
-        component: GestionnaireCantineGroupeSatellites,
-        meta: {
-          title: "Gérer les restaurants satellites",
-          breadcrumbs: [
-            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
           ],
         },
       },
@@ -250,8 +320,33 @@ const routes = [
           title: "Modifier mon groupe de restaurants satellites",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-            { to: { name: "DashboardManager" }, useCanteenName: true },
-            { to: { name: "GestionnaireCantineGerer" }, title: "Gérer mon établissement" },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+          ],
+        },
+      },
+      {
+        path: "achats/ajouter",
+        name: "GestionnaireAchatsAjouter",
+        component: GestionnaireAchatsAjouter,
+        meta: {
+          title: "Ajouter un achat",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+            { to: { name: "PurchasesHome" }, title: "Mes achats"},
+          ],
+        },
+      },
+      {
+        path: "achats/:id/modifier",
+        name: "GestionnaireAchatsModifier",
+        component: GestionnaireAchatsModifier,
+        meta: {
+          title: "Modifier l'achat",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireCantine" }, useCanteenName: true },
+            { to: { name: "PurchasesHome" }, title: "Mes achats" },
           ],
         },
       },

@@ -67,7 +67,12 @@ class DiagnosticsImportView(BaseImportView):
         diagnostic = (
             Diagnostic.objects.get(canteen=canteen, year=diagnostic_year)
             if diagnostic_exists
-            else Diagnostic(canteen_id=canteen.id, year=diagnostic_year, creation_source=CreationSource.IMPORT)
+            else Diagnostic(
+                canteen_id=canteen.id,
+                year=diagnostic_year,
+                creation_user=self.request.user,
+                creation_source=CreationSource.IMPORT,
+            )
         )
         if diagnostic.is_teledeclared:
             raise ValidationError(

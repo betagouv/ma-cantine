@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from oauth2_provider.contrib.rest_framework import OAuth2Authentication
 from oauth2_provider.contrib.rest_framework.permissions import TokenHasResourceScope
 from rest_framework import permissions
+from rest_framework.generics import get_object_or_404
 
 from data.models import Canteen
 
@@ -65,14 +66,11 @@ class IsCanteenManagerUrlParam(permissions.BasePermission):
     """
 
     def has_permission(self, request, view):
-        canteen_pk = view.kwargs.get("canteen_pk", None)
-        if not canteen_pk:
+        canteen_id = view.kwargs.get("canteen_pk", None)
+        if not canteen_id:
             return False
-        try:
-            canteen = Canteen.objects.only("managers").get(pk=canteen_pk)
-            return canteen.managers.filter(id=request.user.id).exists()
-        except Canteen.DoesNotExist:
-            return False
+        canteen = get_object_or_404(Canteen.objects.only("managers"), pk=canteen_id)
+        return canteen.managers.filter(id=request.user.id).exists()
 
 
 class IsLinkedCanteenManager(permissions.BasePermission):

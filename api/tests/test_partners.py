@@ -6,8 +6,12 @@ from data.factories import PartnerFactory, PartnerTypeFactory, UserFactory
 from data.models import Partner, SectorCategory, SectorM2M
 
 
-class TestPartnersApi(APITestCase):
-    def test_get_partners(self):
+class PartnersListApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("partners_list")
+
+    def test_can_list_partners(self):
         """
         Returns partners and the types that are in use therefore available for filtering
         """
@@ -31,13 +35,12 @@ class TestPartnersApi(APITestCase):
         partners[1].sector_categories = [sector_category_2]
         partners[1].save()
         # don't add type to third partner to check null value filtering
-        response = self.client.get(reverse("partners_list"))
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
         self.assertEqual(body.get("count"), 3)
-
-        results = body.get("results", [])
+        results = body["results"]
         for partner in partners:
             self.assertTrue(any(x["id"] == partner.id for x in results))
 
@@ -57,142 +60,16 @@ class TestPartnersApi(APITestCase):
         self.assertIn(sector_category_2.value, sector_categories)
         self.assertNotIn(sector_category_3.value, sector_categories)
 
-    def test_type_filter(self):
-        """
-        Return the union of all partners based on the types requested
-        """
-        good = PartnerTypeFactory(name="Good")
-        also = PartnerTypeFactory(name="Also good")
-        ignored = PartnerTypeFactory(name="Ignored")
-
-        find_me_1 = PartnerFactory(name="Find me", published=True)
-        find_me_1.types.add(good)
-        find_me_2 = PartnerFactory(name="Find me too", published=True)
-        find_me_2.types.add(ignored)
-        find_me_2.types.add(good)
-        find_me_3 = PartnerFactory(name="Me three", published=True)
-        find_me_3.types.add(also)
-        ignore_me = PartnerFactory(name="Ignore me", published=True)
-        ignore_me.types.add(ignored)
-        PartnerFactory(name="Typeless", published=True)
-
-        url = f"{reverse('partners_list')}?type=Good&type=Also good"
-        response = self.client.get(url)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
-        results = list(map(lambda r: r.get("name"), results))
-        self.assertIn("Find me", results)
-        self.assertIn("Find me too", results)
-        self.assertIn("Me three", results)
-
-    def test_department_filter(self):
-        """
-        Return the union of all partners based on departments requested
-        """
-        PartnerFactory(name="Find me", departments=["09"], published=True)
-        PartnerFactory(name="Find me too", departments=["10"], published=True)
-        PartnerFactory(name="Me three", departments=["10", "11"], published=True)
-        PartnerFactory(name="But not me", departments=["11"], published=True)
-
-        url = f"{reverse('partners_list')}?department=09&department=10"
-        response = self.client.get(url)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
-        results = list(map(lambda r: r.get("name"), results))
-        self.assertIn("Find me", results)
-        self.assertIn("Find me too", results)
-        self.assertIn("Me three", results)
-
-    def test_cost_filter(self):
-        """
-        Return all the free partners
-        """
-        PartnerFactory(name="Find me", gratuity_option=Partner.GratuityOption.FREE, published=True)
-        PartnerFactory(name="But not me", gratuity_option=Partner.GratuityOption.PAID, published=True)
-
-        url = f"{reverse('partners_list')}?gratuityOption=free"
-        response = self.client.get(url)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 1)
-        self.assertEqual(results[0]["name"], "Find me")
-
-    def test_categories_filter(self):
-        """
-        Returns the union of all partners based on categories (aka needs) requested
-        """
-        PartnerFactory(name="Find me", categories=["appro"], published=True)
-        PartnerFactory(name="Find me too", categories=["plastic"], published=True)
-        PartnerFactory(name="Me three", categories=["plastic", "asso"], published=True)
-        PartnerFactory(name="But not me", categories=["asso"], published=True)
-
-        url = f"{reverse('partners_list')}?category=appro&category=plastic"
-        response = self.client.get(url)
-        results = response.json().get("results", [])
-        self.assertEqual(len(results), 3)
-        results = list(map(lambda r: r.get("name"), results))
-        self.assertIn("Find me", results)
-        self.assertIn("Find me too", results)
-        self.assertIn("Me three", results)
-
-    def test_get_single_partner(self):
-        type = PartnerTypeFactory(name="Test type")
-        partner = PartnerFactory(published=True)
-        partner.types.add(type)
-
-        response = self.client.get(reverse("single_partner", kwargs={"pk": partner.id}))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("Test type", response.json()["types"])
-
-    def test_get_published_partners_only(self):
+    def test_can_get_published_partners_only(self):
         PartnerFactory(name="I am published", published=True)
         PartnerFactory(name="I am secret", published=False)
 
-        response = self.client.get(reverse("partners_list"))
-        partners = response.json().get("results")
+        response = self.client.get(self.url)
+
+        body = response.json()
+        partners = body["results"]
         self.assertEqual(len(partners), 1)
         self.assertEqual(partners[0]["name"], "I am published")
-
-    def test_get_published_partner_only(self):
-        partner = PartnerFactory(name="I am secret", published=False)
-
-        response = self.client.get(reverse("single_partner", kwargs={"pk": partner.id}))
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-    def test_create_partner(self):
-        """
-        Test that unauthenticated users can create draft partners
-        """
-        sector_cateory = SectorM2M.Categories.ADMINISTRATION
-        partner_type = PartnerTypeFactory()
-        self.assertEqual(Partner.objects.count(), 0)
-        payload = {
-            "name": "New partner please",
-            "shortDescription": "This is a required field",
-            "published": True,
-            "contactEmail": "test@example.com",
-            "sector_categories": [sector_cateory.value],
-            "types": [partner_type.id],
-        }
-        response = self.client.post(reverse("partners_list"), payload, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Partner.objects.count(), 1, "Exactly one partner added to DB")
-        partner = Partner.objects.first()
-        self.assertEqual(partner.name, "New partner please")
-        self.assertEqual(partner.short_description, "This is a required field")
-        self.assertEqual(partner.contact_email, "test@example.com")
-        self.assertIn(sector_cateory, partner.sector_categories)
-        self.assertEqual(partner.types.count(), 1)
-        self.assertEqual(partner.types.first().id, partner_type.id)
-        self.assertFalse(partner.published, "A user can't create a published partner")
-
-    def test_cannot_fetch_contact_info(self):
-        partner = PartnerFactory(published=True, contact_email="secret@mi5.com")
-
-        response = self.client.get(reverse("partners_list"))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        body = response.json()
-        partner = body["results"][0]
-        self.assertNotIn("contactEmail", partner)
 
     def test_randomized_results(self):
         """
@@ -233,3 +110,148 @@ class TestPartnersApi(APITestCase):
         self.assertEqual(user_1_results_1, user_1_results_2)
         self.assertEqual(user_2_results_1, user_2_results_2)
         self.assertNotEqual(user_1_results_1, user_2_results_1)
+
+    def test_cannot_fetch_contact_info(self):
+        partner = PartnerFactory(published=True, contact_email="secret@mi5.com")
+
+        response = self.client.get(reverse("partners_list"))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        partner = body["results"][0]
+        self.assertNotIn("contactEmail", partner)
+
+
+class PartnersListApiFilterTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("partners_list")
+
+    def test_can_filter_by_type(self):
+        """
+        Return the union of all partners based on the types requested
+        """
+        good = PartnerTypeFactory(name="Good")
+        also = PartnerTypeFactory(name="Also good")
+        ignored = PartnerTypeFactory(name="Ignored")
+
+        find_me_1 = PartnerFactory(name="Find me", published=True)
+        find_me_1.types.add(good)
+        find_me_2 = PartnerFactory(name="Find me too", published=True)
+        find_me_2.types.add(ignored)
+        find_me_2.types.add(good)
+        find_me_3 = PartnerFactory(name="Me three", published=True)
+        find_me_3.types.add(also)
+        ignore_me = PartnerFactory(name="Ignore me", published=True)
+        ignore_me.types.add(ignored)
+        PartnerFactory(name="Typeless", published=True)
+
+        url = f"{self.url}?type=Good&type=Also good"
+        response = self.client.get(url)
+
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 3)
+        results = list(map(lambda r: r.get("name"), results))
+        self.assertIn("Find me", results)
+        self.assertIn("Find me too", results)
+        self.assertIn("Me three", results)
+
+    def test_can_filter_by_department(self):
+        """
+        Return the union of all partners based on departments requested
+        """
+        PartnerFactory(name="Find me", departments=["09"], published=True)
+        PartnerFactory(name="Find me too", departments=["10"], published=True)
+        PartnerFactory(name="Me three", departments=["10", "11"], published=True)
+        PartnerFactory(name="But not me", departments=["11"], published=True)
+
+        url = f"{self.url}?department=09&department=10"
+        response = self.client.get(url)
+
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 3)
+        results = list(map(lambda r: r.get("name"), results))
+        self.assertIn("Find me", results)
+        self.assertIn("Find me too", results)
+        self.assertIn("Me three", results)
+
+    def test_can_filter_by_gratuity_option(self):
+        """
+        Return all the free partners
+        """
+        PartnerFactory(name="Find me", gratuity_option=Partner.GratuityOption.FREE, published=True)
+        PartnerFactory(name="But not me", gratuity_option=Partner.GratuityOption.PAID, published=True)
+
+        url = f"{self.url}?gratuityOption=free"
+        response = self.client.get(url)
+
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["name"], "Find me")
+
+    def test_can_filter_by_category(self):
+        """
+        Returns the union of all partners based on categories (aka needs) requested
+        """
+        PartnerFactory(name="Find me", categories=["appro"], published=True)
+        PartnerFactory(name="Find me too", categories=["plastic"], published=True)
+        PartnerFactory(name="Me three", categories=["plastic", "asso"], published=True)
+        PartnerFactory(name="But not me", categories=["asso"], published=True)
+
+        url = f"{self.url}?category=appro&category=plastic"
+        response = self.client.get(url)
+
+        body = response.json()
+        results = body["results"]
+        self.assertEqual(len(results), 3)
+        results = list(map(lambda r: r.get("name"), results))
+        self.assertIn("Find me", results)
+        self.assertIn("Find me too", results)
+        self.assertIn("Me three", results)
+
+
+class PartnerCreateApiTest(APITestCase):
+    def test_can_create_partner_unauthenticated(self):
+        sector_cateory = SectorM2M.Categories.ADMINISTRATION
+        partner_type = PartnerTypeFactory()
+        self.assertEqual(Partner.objects.count(), 0)
+
+        payload = {
+            "name": "New partner please",
+            "shortDescription": "This is a required field",
+            "published": True,
+            "contactEmail": "test@example.com",
+            "sector_categories": [sector_cateory.value],
+            "types": [partner_type.id],
+        }
+        response = self.client.post(reverse("partners_list"), payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Partner.objects.count(), 1, "Exactly one partner added to DB")
+        partner = Partner.objects.first()
+        self.assertEqual(partner.name, "New partner please")
+        self.assertEqual(partner.short_description, "This is a required field")
+        self.assertEqual(partner.contact_email, "test@example.com")
+        self.assertIn(sector_cateory, partner.sector_categories)
+        self.assertEqual(partner.types.count(), 1)
+        self.assertEqual(partner.types.first().id, partner_type.id)
+        self.assertFalse(partner.published, "A user can't create a published partner")  # draft
+
+
+class PartnerDetailApiTest(APITestCase):
+    def test_can_get_single_partner(self):
+        type = PartnerTypeFactory(name="Test type")
+        partner = PartnerFactory(published=True)
+        partner.types.add(type)
+
+        response = self.client.get(reverse("single_partner", kwargs={"pk": partner.id}))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIn("Test type", response.json()["types"])
+
+    def test_can_get_published_partner_only(self):
+        partner = PartnerFactory(name="I am secret", published=False)
+
+        response = self.client.get(reverse("single_partner", kwargs={"pk": partner.id}))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

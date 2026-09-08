@@ -5,6 +5,9 @@ from django.db.models import Q, Case, When, F, Value
 from django.db.models.functions import Length
 
 def populate_canteen_creation_source(apps, schema_editor):
+    """
+    Note: moved to macantine/management/commands/canteen_fill_creation_user_and_source.py
+    """
     Canteen = apps.get_model("data", "Canteen")
     HistoricalCanteen = apps.get_model("data", "HistoricalCanteen")
     # first set of rules
@@ -44,5 +47,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_canteen_creation_source, undo_populate_canteen_creation_source)
+        # migrations.RunPython(populate_canteen_creation_source, undo_populate_canteen_creation_source)
     ]

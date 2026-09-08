@@ -15,7 +15,7 @@ routes.push(...vue2routes)
 /* Redirects */
 routes.push({
   path: "/v2/tableau-de-bord/cantines/:canteenUrlComponent/satellites/ajouter",
-  redirect: { name: "GestionnaireCantineGroupeSatellites" },
+  redirect: { name: "GestionnaireCantineGroupe" },
 })
 
 /* Create router */
@@ -41,7 +41,7 @@ router.beforeEach(async (to) => {
     await store.fetchInitialData()
   }
   if (!store.loggedUser && to.meta.authenticationRequired) {
-    return { name: "Vue2Home", replace: true }
+    return { name: "LandingPage", replace: true }
   }
 })
 

@@ -226,14 +226,17 @@ export const hasApproGraphData = (diagnostic) => {
 }
 
 export const getSustainableTotal = (diagnostic) => {
-  const sustainableSum =
-    (diagnostic.valeurSiqo || 0) +
-    (diagnostic.valeurExternalitesPerformance || 0) +
-    (diagnostic.valeurEgalimAutres || 0) +
-    (diagnostic.percentageValeurSiqo || 0) +
-    (diagnostic.percentageValeurExternalitesPerformance || 0) +
-    (diagnostic.percentageValeurEgalimAutres || 0)
-  return sustainableSum
+  const valeurSiqo = diagnostic.valeurSiqo || 0
+  const valeurExternalitesPerformance = diagnostic.valeurExternalitesPerformance || 0
+  const valeurEgalimAutres = diagnostic.valeurEgalimAutres || 0
+  const pourcentageSiqo = diagnostic.percentageValeurSiqo || 0
+  const pourcentageExternalitesPerformance = diagnostic.percentageValeurExternalitesPerformance || 0
+  const pourcentageEgalimAutres = diagnostic.percentageValeurEgalimAutres || 0
+
+  const sumAllValues = valeurSiqo + valeurExternalitesPerformance + valeurEgalimAutres
+  const sumAllPourcentages = pourcentageSiqo + pourcentageExternalitesPerformance + pourcentageEgalimAutres
+
+  return diagnostic.percentageValeurTotale ? sumAllPourcentages : sumAllValues
 }
 
 // returns a dict of integers (null/0-100) for the appro %
@@ -509,18 +512,10 @@ export const approTotals = (diagnostic) => {
 
 export const approSummary = (diagnostic) => {
   if (diagnostic.valeurTotale > 0) {
-    const { bioTotal, siqoTotal, externalitesPerformanceTotal, egalimAutresTotal } = approTotals(diagnostic)
-    let qualityTotal
-    if (siqoTotal || externalitesPerformanceTotal || egalimAutresTotal) {
-      qualityTotal = (siqoTotal || 0) + (externalitesPerformanceTotal || 0) + (egalimAutresTotal || 0)
-    }
+    const { bio, allSustainable } = getApproPercentages(diagnostic)
     let summary = []
-    if (hasValue(bioTotal)) {
-      summary.push(`${getPercentage(bioTotal, diagnostic.valeurTotale)} % bio`)
-    }
-    if (hasValue(qualityTotal)) {
-      summary.push(`${getPercentage(qualityTotal, diagnostic.valeurTotale)} % de qualité et durable`)
-    }
+    if (bio) summary.push(`${bio} % bio`)
+    if (allSustainable) summary.push(`${allSustainable} % de qualité et durable`)
     return summary.join(", ")
   }
   return "Incomplet"
@@ -536,14 +531,6 @@ export const selectListToObject = (selectList) => {
     acc[val.value] = val.label
     return acc
   }, {})
-}
-
-function hasValue(val) {
-  if (typeof val === "string") {
-    return !!val
-  } else {
-    return !strictIsNaN(val)
-  }
 }
 
 export const hasStartedMeasureTunnel = (diagnostic, keyMeasure) => {

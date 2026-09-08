@@ -92,6 +92,10 @@ const getCitiesOptionsFromSearch = (search) => {
   return options
 }
 
+const getCitiesCount = () => {
+  return communes.length
+}
+
 const getPATOptionsFromSearch = (search) => {
   const patsOptions = search ? pats.filter((pat) => stringsService.checkIfContains(pat.nom, search)).slice(0, 9) : pats
   const options = patsOptions.map((pat) => {
@@ -101,6 +105,10 @@ const getPATOptionsFromSearch = (search) => {
     }
   })
   return options
+}
+
+const getPATsCount = () => {
+  return pats.length
 }
 
 const getEPCIOptionsFromSearch = (search) => {
@@ -114,6 +122,10 @@ const getEPCIOptionsFromSearch = (search) => {
     }
   })
   return options
+}
+
+const getEPCIsCount = () => {
+  return epcis.length
 }
 
 const getDepartmentsOptionsFromSearch = (search) => {
@@ -146,8 +158,11 @@ export {
   getCharacteristicsOptions,
   getSectorsOptions,
   getCitiesOptionsFromSearch,
+  getCitiesCount,
   getPATOptionsFromSearch,
+  getPATsCount,
   getEPCIOptionsFromSearch,
+  getEPCIsCount,
   getDepartmentsOptionsFromSearch,
   getRegionsOptionsFromSearch,
 }

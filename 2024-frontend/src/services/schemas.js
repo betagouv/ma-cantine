@@ -19,6 +19,7 @@ const getFieldType = (field) => {
     string_enum: "Texte (choix unique)",
     string_enum_multiple: "Texte (choix multiples)",
     année_bilan: "Année (AAAA)",
+    boolean: "Booléen (oui/non)",
   }
 
   let fieldType = ""
@@ -40,9 +41,9 @@ const getFieldType = (field) => {
       // examples: 'caracteristiques'
       fieldType = types[`${field.type}_enum_multiple`]
       break
-    case field.constaints?.pattern && field.doc_pattern:
-      // examples: 'number'
-      fieldType = types[field.doc_pattern]
+    case field.doc_type:
+      // examples: 'prix_ht'
+      fieldType = types[field.doc_type]
       break
     default:
       fieldType = types[field.type]

@@ -6,6 +6,9 @@ from django.db.models.functions import Length
 
 
 def populate_diagnostic_creation_source(apps, schema_editor):
+    """
+    Note: moved to macantine/management/commands/diagnostic_fill_creation_user_and_source.py
+    """
     Diagnostic = apps.get_model("data", "Diagnostic")
     HistoricalDiagnostic = apps.get_model("data", "HistoricalDiagnostic")
     # first set of rules
@@ -45,5 +48,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_diagnostic_creation_source, undo_populate_diagnostic_creation_source)
+        # migrations.RunPython(populate_diagnostic_creation_source, undo_populate_diagnostic_creation_source)
     ]

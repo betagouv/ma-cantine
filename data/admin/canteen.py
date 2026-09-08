@@ -1,11 +1,12 @@
 from django import forms
 from django.contrib import admin
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import format_html
 
 from data.admin.softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
-from data.models import Canteen
 from data.admin.utils import get_arrayfield_list_filter
+from data.models import Canteen
 from data.models.creation_source import CreationSource
 
 last_year = timezone.now().date().year - 1
@@ -65,7 +66,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "siret_or_siren_unite_legale_display",
         "city",
         "télédéclarée",
-        "groupe",
+        "groupe_with_link",
         "central_producer_siret",
         "management_type",
         "production_type",
@@ -95,12 +96,18 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     search_help_text = "La recherche est faite sur les champs : ID, nom, siret, siren de l'unité légale, siret de la cuisine centrale."
 
     form = CanteenForm
-    # inlines = (UserInline, DiagnosticInline,)  # see get_inlines
+    # inlines = (UserInline, CanteenDiagnosticInline,)  # see get_inlines
     autocomplete_fields = ("groupe",)
     filter_vertical = ("managers",)
     fieldsets = (
         (None, {"fields": ("name", "siret", "siren_unite_legale")}),
-        ("Informations géographiques", {"fields": Canteen.GEO_FIELDS}),
+        (
+            "Informations géographiques",
+            {
+                "description": "ℹ️ Les informations ci-dessous viennent de l'annuaire des entreprises et de France PAT. Celles-ci ne sont pas modifiable.</br />ℹ️ Le code INSEE est récupéré automatiquement grâce au SIRET ou code postal pour les cantines sans SIRET. Si ce dernier est incorrect : ne pas le corriger directement mais passer le champ à vide, il sera automatiquement renseigné avec les informations d'annuaires entreprises pour les cantines avec SIRET dans les 24 heures.<br /><br /><hr />",
+                "fields": Canteen.GEO_FIELDS,
+            },
+        ),
         (
             "Informations générales",
             {
@@ -117,20 +124,35 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             },
         ),
         ("Informations groupe", {"fields": ("groupe", "satellites_display")}),
+        ("Images", {"fields": ("logo", "logo_display", "image_count")}),
         (
             "Informations supplémentaires",
-            {"fields": ("logo", "is_filled", "publication_status_display", "has_been_claimed")},
+            {"fields": ("is_filled", "publication_status_display", "has_been_claimed")},
         ),
-        ("Télédéclaration", {"fields": Canteen.TD_FIELDS}),
+        (
+            "Télédéclaration",
+            {
+                "description": "ℹ️ Champ calculé toutes les nuits (pendant la campagne) <br /><br /><hr />",
+                "fields": Canteen.TD_FIELDS,
+            },
+        ),
         (
             "Lien tracké lors de la création",
             {"fields": Canteen.MATOMO_FIELDS},
         ),
         ("Metadonnées", {"fields": Canteen.CREATION_META_FIELDS}),
-        ("Supprimer la cantine", {"fields": ("deletion_date",)}),
+        (
+            "Supprimer (archiver)",
+            {
+                "description": "Une cantine supprimée est une cantine 'archivée' : elle ne sera plus visible sur la plateforme mais elle pourra être restaurée à tout moment.",
+                "fields": ("deletion_date",),
+            },
+        ),
     )
     readonly_fields = (
         "satellites_display",
+        "logo_display",
+        "image_count",
         "is_filled",
         "publication_status_display",
         "has_been_claimed",
@@ -138,25 +160,20 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         *Canteen.TD_FIELDS,
         *Canteen.MATOMO_FIELDS,
         *Canteen.CREATION_META_FIELDS,
+        "deletion_date",
     )
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
-        qs = qs.select_related("groupe")
+        qs = qs.select_related("groupe").annotate_with_image_count()
         return qs
-
-    def get_actions(self, request):
-        actions = super().get_actions(request)
-        if "delete_selected" in actions:
-            del actions["delete_selected"]
-        return actions
 
     def get_inlines(self, request, obj):
         # to avoid circular import error
-        from data.admin.diagnostic import DiagnosticInline
+        from data.admin.diagnostic import CanteenDiagnosticInline
         from data.admin.user import UserInline
 
-        return (UserInline, DiagnosticInline)
+        return (UserInline, CanteenDiagnosticInline)
 
     def save_model(self, request, obj, form, change):
         """
@@ -164,15 +181,21 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         - set creation_source (on create)
         """
         if not change:
+            obj.creation_user = request.user
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
-
-    def has_delete_permission(self, request, obj=None):
-        return False
 
     @admin.display(description="Siret (ou Siren)")
     def siret_or_siren_unite_legale_display(self, obj):
         return obj.siret_or_siren_unite_legale
+
+    def groupe_with_link(self, obj):
+        if not obj.groupe:
+            return "-"
+        url = reverse("admin:data_canteen_change", args=[obj.groupe_id])
+        return format_html(f'<a href="{url}">{obj.groupe}</a>')
+
+    groupe_with_link.short_description = Canteen._meta.get_field("groupe").verbose_name
 
     # TODO: update every year
     @admin.display(description="Télédéclarée (2025)")
@@ -180,6 +203,16 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         return obj.declaration_donnees_2025
 
     télédéclarée.boolean = True
+
+    @admin.display(description="Logo")
+    def logo_display(self, obj):
+        if obj.logo:
+            return format_html(f'<img src="{obj.logo_full_url}" width="100" height="100" />')
+        return "-"
+
+    @admin.display(description="Nombre d'images")
+    def image_count(self, obj):
+        return obj.image_count
 
     @admin.display(description="Visible au public")
     def publication_status_display(self, obj):
@@ -198,10 +231,15 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
 class CanteenInline(admin.TabularInline):
     model = Canteen.managers.through
+    fields = ("canteen", "help")  # and "delete" checkbox
     autocomplete_fields = ("canteen",)
     readonly_fields = ("help",)
     extra = 0
     verbose_name_plural = "Cantines gérées"
+
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        return qs.select_related("canteen", "user")
 
     def has_add_permission(self, request, obj):
         return True

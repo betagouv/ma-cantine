@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 (
                     "period_end_date",
                     models.DateField(
-                        validators=[data.models.wastemeasurement.validate_before_today],
+                        # validators=[data.models.wastemeasurement.validate_before_today],
                         verbose_name="date de fin",
                     ),
                 ),
@@ -228,7 +228,7 @@ class Migration(migrations.Migration):
                 (
                     "period_end_date",
                     models.DateField(
-                        validators=[data.models.wastemeasurement.validate_before_today],
+                        # validators=[data.models.wastemeasurement.validate_before_today],
                         verbose_name="date de fin",
                     ),
                 ),

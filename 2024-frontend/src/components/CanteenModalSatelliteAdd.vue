@@ -6,7 +6,7 @@ import CanteenEstablishmentCard from "@/components/CanteenEstablishmentCard.vue"
 
 /* Setup */
 const props = defineProps(["open", "groupId"])
-const emit = defineEmits(["close", "addedSatellite"])
+const emit = defineEmits(["close", "updateSatellites"])
 const store = useRootStore()
 
 /* Close */
@@ -111,7 +111,7 @@ const updateSatellites = (index) => {
 }
 </script>
 <template>
-  <DsfrModal :opened="open" title="Ajouter un restaurant satellite" @close="closeModal()" size="lg">
+  <DsfrModal :opened="open" title="Ajouter une cantine à mon groupe" @close="closeModal()" size="lg">
     <p>Pour ajouter une cantine à votre groupe cette dernière doit : être enregistrée sur la plateforme, être de type "Restaurant satellite", ne doit pas déjà être associée à un groupe.</p>
     <DsfrRadioButtonSet
       v-model="hasSiret"

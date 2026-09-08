@@ -43,7 +43,9 @@ const updateParamsFromQuery = (allSectors) => {
 <template>
   <FilterByBase label="Secteurs">
     <DsfrSearchBar v-model="search" placeholder="Rechercher un secteur" />
+    <p v-if="search.length > 0 && options.length === 0" class="fr-error-text fr-mb-0">Aucun secteur trouvé pour la recherche « {{ search }} »</p>
     <DsfrCheckboxSet
+      v-if="options.length > 0"
       :modelValue="sectorsSelected"
       @update:modelValue="storeFilters.set('sectors', $event)"
       :options="options"

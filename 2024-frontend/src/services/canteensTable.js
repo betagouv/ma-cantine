@@ -1,5 +1,5 @@
 import urlService from "@/services/urls.js"
-import diagnosticService from "@/services/diagnostics.js"
+import diagnosticService from "@/services/diagnosticsBadge.js"
 import cantines from "@/data/cantines.json"
 import stringService from "@/services/strings.js"
 
@@ -26,14 +26,14 @@ const getSatellitesCountSentence = (satellitesCount) => {
 }
 
 const getSiretOrSirenInfos = (canteen) => {
-  return canteen.siret || canteen.sirenUniteLegale
+  return canteen.siret || canteen.sirenUniteLegale || ""
 }
 
 const getCityInfos = (canteen) => {
   let city = ""
   if (canteen.city) city += canteen.city
   if (canteen.postalCode) city += ` (${canteen.postalCode})`
-  if (!canteen.city && !canteen.postalCode) city = "Non renseigné"
+  if (!canteen.city && !canteen.postalCode) city = "Non renseignée"
   return city
 }
 
@@ -47,20 +47,26 @@ const getProductionTypeInfos = (canteen) => {
 const getDiagnosticInfos = (canteen, campaign) => {
   const action = canteen.action
   const badge = diagnosticService.getBadge(action, campaign)
-  const button = getTeledeclareButton(canteen)
+  const button = getDiagnosticButton(canteen)
   return { badge, button }
 }
 
-const getTeledeclareButton = (canteen) => {
-  const button = diagnosticService.getTeledeclareButton(canteen.action)
-  if (!button) return false
+const getDiagnosticButton = (canteen) => {
+  const teledeclareButton = diagnosticService.getTeledeclareButton(canteen.action)
+  const completeButton = diagnosticService.getCompleteButton(canteen.action)
+  if (!teledeclareButton && !completeButton) return false
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
   const lastYear = new Date().getFullYear() - 1
+  const button = teledeclareButton || completeButton
   return { ...button, canteenUrlComponent, year: lastYear }
 }
 
 const getDailyMealCountInfos = (canteen) => {
   return canteen.dailyMealCount
+}
+
+const getYearlyMealCountInfos = (canteen) => {
+  return canteen.yearlyMealCount
 }
 
 const searchCanteensBySiretOrSirenOrName = (search, allCanteens) => {
@@ -75,6 +81,12 @@ const searchCanteensBySiretOrSirenOrName = (search, allCanteens) => {
   return filteredCanteens
 }
 
+const filterCanteensByTeledeclaration = (hasTeledeclaration, allCanteens) => {
+  if (hasTeledeclaration === null) return allCanteens
+  const teledeclareActions = ['95_nothing', '91_nothing_satellite_teledeclared']
+  return allCanteens.filter((canteen) => hasTeledeclaration ? teledeclareActions.includes(canteen.action) : !teledeclareActions.includes(canteen.action))
+}
+
 export default {
   getNameInfos,
   getSatelliteNameInfos,
@@ -83,5 +95,7 @@ export default {
   getProductionTypeInfos,
   getDiagnosticInfos,
   getDailyMealCountInfos,
+  getYearlyMealCountInfos,
   searchCanteensBySiretOrSirenOrName,
+  filterCanteensByTeledeclaration,
 }

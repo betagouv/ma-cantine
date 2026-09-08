@@ -4,12 +4,13 @@ from rest_framework.test import APITestCase
 
 
 class CanteenMinistriesApiTest(APITestCase):
-    def test_canteen_ministries_list(self):
-        """
-        The API should return all canteen ministries
-        """
-        response = self.client.get(reverse("ministries_list"))
+    @classmethod
+    def setUpTestData(cls):
+        cls.url = reverse("ministries_list")
+
+    def test_can_list_canteen_ministries(self):
+        response = self.client.get(self.url)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-
         self.assertEqual(len(body), 19)
