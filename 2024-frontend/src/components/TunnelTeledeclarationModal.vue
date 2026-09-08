@@ -1,14 +1,23 @@
 <script setup>
 import { computed, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useRootStore } from '@/stores/root'
+import { useStoreDiagnostic } from '@/stores/diagnostic'
+import diagnosticServices from '@/services/diagnostics'
 
 const opened = defineModel(['opened'])
 const emit = defineEmits(['close'])
+const rootStore = useRootStore()
+const storeDiagnostic = useStoreDiagnostic()
+const { diagnosticCurrentCampaign } = storeToRefs(storeDiagnostic)
 const checkBoxeConfirmed = ref(false)
+const loading = ref(false)
+
 const modalActions = computed(() => [
   {
-    label: 'Télédéclarer ces données',
+    label: loading.value ? 'Télédéclaration en cours...' : 'Télédéclarer ces données',
     icon: 'ri-send-plane-line',
-    disabled: !checkBoxeConfirmed.value,
+    disabled: !checkBoxeConfirmed.value || loading.value,
     onClick: teledeclare,
   },
   {
@@ -21,11 +30,38 @@ const modalActions = computed(() => [
 /* Actions */
 const closeModal = () => {
   checkBoxeConfirmed.value = false
+  loading.value = false
   emit('close')
 }
 
 const teledeclare = () => {
-  console.log('teledeclare')
+  const diagnostic = diagnosticCurrentCampaign.value
+  if (!diagnostic) return
+  loading.value = true
+  diagnosticServices
+    .teledeclareDiagnostic(diagnostic.canteenId, diagnostic.id)
+    .then((response) => {
+      if (response?.status === 'error' || response instanceof Error) displayError(response)
+      else displaySuccess()
+    })
+    .catch((e) =>  displayError(e))
+    .finally(() => {
+      loading.value = false
+    })
+}
+
+const displayError = (error) => {
+  rootStore.notifyServerError(error)
+  loading.value = false
+}
+
+const displaySuccess = () => {
+  rootStore.notify({
+    title: 'Télédéclaration prise en compte',
+    status: 'success',
+  })
+  closeModal()
+  console.log('GOTO WHERE ???')
 }
 </script>
 
