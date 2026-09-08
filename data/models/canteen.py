@@ -29,13 +29,10 @@ from data.models.sector import (
     SectorM2M,
     annotate_with_sector_category_list,
 )
-from data.utils import (
-    get_diagnostic_lowest_limit_year,
-    get_diagnostic_upper_limit_year,
-    has_charfield_missing_query,
-)
+from data.utils import has_charfield_missing_query
 from data.validators import canteen as canteen_validators
 from data.models.diagnostic_teledeclaration_dates import (
+    CAMPAIGN_DATES,
     get_year_campaign_end_date_or_today_date,
     is_in_correction,
     is_in_teledeclaration,
@@ -46,7 +43,7 @@ from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDelet
 
 
 def get_diagnostic_year_choices():
-    return [(y, str(y)) for y in range(get_diagnostic_lowest_limit_year(), get_diagnostic_upper_limit_year())]
+    return [(y, str(y)) for y in CAMPAIGN_DATES.keys()]
 
 
 def list_properties(queryset, property):

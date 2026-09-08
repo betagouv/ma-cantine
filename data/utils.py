@@ -1,5 +1,4 @@
 import csv
-import datetime
 import json
 from decimal import Decimal
 
@@ -33,18 +32,6 @@ def array_overlap_query(field_name: str, values: list):
     for value in values:
         query |= Q(**{f"{field_name}__contains": [value]})
     return query
-
-
-def get_diagnostic_lowest_limit_year():
-    return 2019
-
-
-def get_diagnostic_lower_limit_year():
-    return datetime.datetime.now().date().year - 1
-
-
-def get_diagnostic_upper_limit_year():
-    return datetime.datetime.now().date().year + 1
 
 
 def make_optional_positive_integer_field(**kwargs):
