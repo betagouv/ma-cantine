@@ -9,7 +9,7 @@ const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
   /* Init store with purchases summary */
   async function initStore(canteenId) {
     if (canteenSavedId.value === canteenId) return
-    const lastYear = new Date().getFullYear() - 1  // Last year only for now
+    const lastYear = 2026 // Force 2026 for now
     const summary = await purchaseService.fetchPurchasesSummary(canteenId, lastYear)
     purchaseSummary.value[lastYear] = summary
     canteenSavedId.value = canteenId
