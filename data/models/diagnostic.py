@@ -734,15 +734,14 @@ class Diagnostic(models.Model):
         "valeur_boulangerie_non_egalim",
         "valeur_boissons_non_egalim",
         "valeur_autres_non_egalim",
-        # new in 2026
-        # "valeur_viandes_volailles_europe",
-        # "valeur_produits_de_la_mer_europe",
-        # "valeur_fruits_et_legumes_europe",
-        # "valeur_charcuterie_europe",
-        # "valeur_produits_laitiers_europe",
-        # "valeur_boulangerie_europe",
-        # "valeur_boissons_europe",
-        # "valeur_autres_europe",
+        "valeur_viandes_volailles_europe",
+        "valeur_produits_de_la_mer_europe",
+        "valeur_fruits_et_legumes_europe",
+        "valeur_charcuterie_europe",
+        "valeur_produits_laitiers_europe",
+        "valeur_boulangerie_europe",
+        "valeur_boissons_europe",
+        "valeur_autres_europe",
         "valeur_viandes_volailles_france",
         "valeur_produits_de_la_mer_france",
         "valeur_fruits_et_legumes_france",
@@ -911,7 +910,6 @@ class Diagnostic(models.Model):
     ]
 
     CANTEEN_FIELDS = [
-        # new in 2026
         "nombre_repas_an",
     ]
 

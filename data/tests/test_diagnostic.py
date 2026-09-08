@@ -78,11 +78,11 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
         VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
         # on save
-        for VALUE_OK_ON_SAVE in [None, -2000, 0, 1991, 2024, "2023"]:
+        for VALUE_OK_ON_SAVE in [2024, "2023"]:
             with self.subTest(year=VALUE_OK_ON_SAVE):
                 diagnostic = DiagnosticFactory(year=VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertEqual(diagnostic.year, VALUE_OK_ON_SAVE)
-        for VALUE_NOT_OK_ON_SAVE in ["", "  ", "invalid"]:
+        for VALUE_NOT_OK_ON_SAVE in [None, "", "  ", "invalid", -2000, 0, 1991]:
             with self.subTest(year=VALUE_NOT_OK_ON_SAVE):
                 self.assertRaises(
                     ValueError, Diagnostic.objects.create, year=VALUE_NOT_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_YEAR
@@ -150,11 +150,11 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         VALID_DIAGNOSTIC_WITHOUT_TYPE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_TYPE.pop("diagnostic_type")
         # on save
-        for VALUE_OK_ON_SAVE in [None, "", "  ", "invalid", 123, *Diagnostic.DiagnosticType.values]:
+        for VALUE_OK_ON_SAVE in [*Diagnostic.DiagnosticType.values]:
             with self.subTest(diagnostic_type=VALUE_OK_ON_SAVE):
                 diagnostic = DiagnosticFactory(diagnostic_type=VALUE_OK_ON_SAVE, **VALID_DIAGNOSTIC_WITHOUT_TYPE)
                 self.assertEqual(diagnostic.diagnostic_type, VALUE_OK_ON_SAVE)
-        for VALUE_NOT_OK_ON_SAVE in []:
+        for VALUE_NOT_OK_ON_SAVE in [None, "", "  ", "invalid", 123]:
             with self.subTest(diagnostic_type=VALUE_NOT_OK_ON_SAVE):
                 self.assertRaises(
                     (ValueError, ValidationError),

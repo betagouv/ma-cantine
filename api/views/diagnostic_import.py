@@ -9,6 +9,7 @@ from simple_history.utils import update_change_reason
 from api.views.base_import import BaseImportView
 from data.models import Canteen, Diagnostic, ImportType
 from data.models.creation_source import CreationSource
+from data.models import diagnostic_teledeclaration_fields
 
 
 # simple
@@ -152,7 +153,8 @@ class DiagnosticsSimpleImportView(DiagnosticsImportView):
         values_dict = {}
         diagnostic_year = row[1]
         offset_row = 2  # Two columns before value_fields in row
-        for idx, value in enumerate(Diagnostic.SIMPLE_APPRO_FIELDS):
+        fields = diagnostic_teledeclaration_fields.get_fields(diagnostic_year, Diagnostic.DiagnosticType.SIMPLE)
+        for idx, value in enumerate(fields):
             value_idx = idx + offset_row
             values_dict[value] = None if not row[value_idx] else row[value_idx]
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
@@ -172,7 +174,8 @@ class DiagnosticsCompleteImportView(DiagnosticsImportView):
         values_dict = {}
         diagnostic_year = row[1]
         offset_row = 2  # Two columns before value_fields in row
-        for idx, value in enumerate(Diagnostic.COMPLETE_APPRO_FIELDS):
+        fields = diagnostic_teledeclaration_fields.get_fields(diagnostic_year, Diagnostic.DiagnosticType.COMPLETE)
+        for idx, value in enumerate(fields):
             value_idx = idx + offset_row
             values_dict[value] = None if not row[value_idx] else row[value_idx]
         return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE

@@ -7,7 +7,8 @@ from macantine.utils import (
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )
 from common.utils import utils as utils_utils
-from data.utils import get_diagnostic_lower_limit_year, get_diagnostic_upper_limit_year
+from macantine.utils import CAMPAIGN_DATES
+from data.models import diagnostic_teledeclaration_fields
 
 
 def validate_year_and_can_edit(instance):
@@ -15,7 +16,7 @@ def validate_year_and_can_edit(instance):
     - extra validation:
         - year must be filled
         - year must be an integer
-        - year must be between lower and upper limit years
+        - year must be in CAMPAIGN_DATES
         - if year is valid:
             - after teledeclaration end date, DRAFT diagnostic cannot be edited anymore
             - after correction end date, any diagnostic cannot be edited anymore
@@ -28,11 +29,9 @@ def validate_year_and_can_edit(instance):
     elif not (isinstance(value, int) or (isinstance(value, str) and value.isdigit())):
         utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier.")
     else:
-        lower_limit_year = get_diagnostic_lower_limit_year()
-        upper_limit_year = get_diagnostic_upper_limit_year()
-        if not isinstance(value, int) or value < lower_limit_year or value > upper_limit_year:
+        if value not in CAMPAIGN_DATES:
             utils_utils.add_validation_error(
-                errors, "year", f"L'année doit être comprise entre {lower_limit_year} et {upper_limit_year}."
+                errors, "year", f"L'année doit être comprise dans les campagnes disponibles : {CAMPAIGN_DATES.keys()}."
             )
         else:  # valid year, check can_edit validation
             if instance.pk:
@@ -98,14 +97,9 @@ def validate_appro_fields_required(instance):
     """
     errors = {}
     if instance.year:
-        if int(instance.year) >= 2025:
-            required_fields = (
-                instance.SIMPLE_APPRO_FIELDS_REQUIRED_2025
-                if instance.diagnostic_type == instance.DiagnosticType.SIMPLE
-                else instance.COMPLETE_APPRO_FIELDS_REQUIRED_2025
-            )
-        else:
-            required_fields = ["valeur_totale"]
+        required_fields = diagnostic_teledeclaration_fields.get_required_fields(
+            instance.year, instance.diagnostic_type
+        )
         for field in required_fields:
             if getattr(instance, field) is None:
                 utils_utils.add_validation_error(

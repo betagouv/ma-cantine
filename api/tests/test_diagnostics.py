@@ -8,6 +8,7 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from common.utils.camelize import camelize
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Diagnostic, Canteen
@@ -464,6 +465,68 @@ class DiagnosticCreateApiTest(APITestCase):
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_create_diagnostic_with_new_fields_2026(self):
+        self.canteen.managers.add(authenticate.user)
+
+        payload = {
+            "year": 2026,
+            "nombre_repas_an": 1000,
+            # valeur_famille
+            "valeur_fruits_et_legumes": 100,
+            "valeur_charcuterie": 100,
+            "valeur_produits_laitiers": 100,
+            "valeur_boulangerie": 100,
+            "valeur_boissons": 100,
+            "valeur_autres": 100,
+            # valeur_label (non egalim)
+            "valeur_europe": 100,
+            "valeur_france": 100,
+            "valeur_circuit_court": 100,
+            "valeur_local": 100,
+            # aocaop_igp_stg was split
+            "valeur_viandes_volailles_aocaop": 10,
+            "valeur_produits_de_la_mer_aocaop": 10,
+            "valeur_fruits_et_legumes_aocaop": 10,
+            "valeur_charcuterie_aocaop": 10,
+            "valeur_produits_laitiers_aocaop": 10,
+            "valeur_boulangerie_aocaop": 10,
+            "valeur_boissons_aocaop": 10,
+            "valeur_autres_aocaop": 10,
+            "valeur_viandes_volailles_igp": 10,
+            "valeur_produits_de_la_mer_igp": 10,
+            "valeur_fruits_et_legumes_igp": 10,
+            "valeur_charcuterie_igp": 10,
+            "valeur_produits_laitiers_igp": 10,
+            "valeur_boulangerie_igp": 10,
+            "valeur_boissons_igp": 10,
+            "valeur_autres_igp": 10,
+            "valeur_viandes_volailles_stg": 10,
+            "valeur_produits_de_la_mer_stg": 10,
+            "valeur_fruits_et_legumes_stg": 10,
+            "valeur_charcuterie_stg": 10,
+            "valeur_produits_laitiers_stg": 10,
+            "valeur_boulangerie_stg": 10,
+            "valeur_boissons_stg": 10,
+            "valeur_autres_stg": 10,
+            # valeur_famille_europe
+            "valeur_viandes_volailles_europe": 10,
+            "valeur_produits_de_la_mer_europe": 10,
+            "valeur_fruits_et_legumes_europe": 10,
+            "valeur_charcuterie_europe": 10,
+            "valeur_produits_laitiers_europe": 10,
+            "valeur_boulangerie_europe": 10,
+            "valeur_boissons_europe": 10,
+            "valeur_autres_europe": 10,
+        }
+        response = self.client.post(self.url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        print(body)
+        for field_name in payload.keys():
+            self.assertEqual(body[camelize(field_name)], payload[field_name])
 
 
 class DiagnosticDetailApiTest(APITestCase):
