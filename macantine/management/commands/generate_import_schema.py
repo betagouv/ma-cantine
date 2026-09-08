@@ -7,6 +7,10 @@ from django.core.management.base import BaseCommand
 
 from common.api import validata
 from data.models import Diagnostic
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields,
+    get_teledeclaration_required_fields,
+)
 
 COMMON_FIELDS = {
     "cantine_id": {
@@ -70,22 +74,22 @@ SCHEMA_SPECS = {
     "Diagnostic": {
         "simple_id": {
             "file_name": "bilans_simple_id.json",
-            "fields_ordered": ["cantine_id", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS,
-            "fields_required": ["cantine_id", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025,
+            "fields_ordered": ["cantine_id", "année_bilan"] + get_teledeclaration_fields(2025, "SIMPLE"),
+            "fields_required": ["cantine_id", "année_bilan"] + get_teledeclaration_required_fields(2025, "SIMPLE"),
             "schema_name": "import-bilans-simple-id",
             "schema_title": "Schema import des bilans (simple) par ID",
         },
         "simple_siret": {
             "file_name": "bilans_simple_siret.json",
-            "fields_ordered": ["siret", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS,
-            "fields_required": ["siret", "année_bilan"] + Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025,
+            "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_fields(2025, "SIMPLE"),
+            "fields_required": ["siret", "année_bilan"] + get_teledeclaration_required_fields(2025, "SIMPLE"),
             "schema_name": "import-bilans-simple-siret",
             "schema_title": "Schema import des bilans (simple) par SIRET",
         },
         "detaille": {
             "file_name": "bilans_detaille.json",
-            "fields_ordered": ["siret", "année_bilan"] + Diagnostic.COMPLETE_APPRO_FIELDS,
-            "fields_required": ["siret", "année_bilan"] + Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025,
+            "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_fields(2025, "COMPLETE"),
+            "fields_required": ["siret", "année_bilan"] + get_teledeclaration_required_fields(2025, "COMPLETE"),
             "schema_name": "import-bilans-detaille",
             "schema_title": "Schema import des bilans (detaille)",
         },
