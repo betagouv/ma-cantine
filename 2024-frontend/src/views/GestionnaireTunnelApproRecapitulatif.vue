@@ -26,26 +26,36 @@ const icon = computed(() => canTeledeclare.value ? "fr-icon-checkbox-circle-fill
 const isModalOpened = ref(false)
 </script>
 <template>
-  <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-2w">
-    <div class="fr-col-12 fr-col-md-7">
-      <h2 class="fr-h5">Votre télédéclaration vous semble t’elle cohérente ?</h2>
-      <p>Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
-      <TunnelTeledeclarationErrors />
-    </div>
-    <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard
-        :title="sentence"
-        :icon="icon"
-      >
-        <DsfrButton
-          label="Télédéclarer"
-          icon="ri-send-plane-line"
-          :disabled="!canTeledeclare"
-          @click="isModalOpened = true"
-        />
-      </AppHelpCard>
-    </div>
+  <div v-if="diagnosticCurrentCampaign.isTeledeclared">
+    <DsfrAlert
+      title="Votre télédéclaration a été prise en compte"
+      description="Vous pouvez retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits dans votre espace cantine."
+      icon="ri-checkbox-circle-fill"
+      type="success"
+    />
   </div>
-  <TunnelTeledeclarationAccordions />
-  <TunnelTeledeclarationModal v-model:opened="isModalOpened" @close="isModalOpened = false" />
+  <div v-else>
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-2w">
+      <div class="fr-col-12 fr-col-md-7">
+        <h2 class="fr-h5">Votre télédéclaration vous semble t’elle cohérente ?</h2>
+        <p>Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
+        <TunnelTeledeclarationErrors />
+      </div>
+      <div class="fr-col-12 fr-col-md-5">
+        <AppHelpCard
+          :title="sentence"
+          :icon="icon"
+        >
+          <DsfrButton
+            label="Télédéclarer"
+            icon="ri-send-plane-line"
+            :disabled="!canTeledeclare"
+            @click="isModalOpened = true"
+          />
+        </AppHelpCard>
+      </div>
+    </div>
+    <TunnelTeledeclarationAccordions />
+    <TunnelTeledeclarationModal v-model:opened="isModalOpened" @close="isModalOpened = false" />
+  </div>
 </template>
