@@ -55,7 +55,7 @@ const buttons = computed(() => {
 
 </script>
 <template>
-  <div v-if="!diagnosticCurrentCampaign.isTeledeclared">
+  <div v-if="diagnosticCurrentCampaign.isTeledeclared">
     <DsfrAlert
       title="Votre télédéclaration a été prise en compte"
       description="Vous pouvez retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits dans votre espace cantine."
