@@ -50,8 +50,8 @@ from .sector import SectorM2MSerializer  # noqa: F401
 from .partnertype import PartnerTypeSerializer  # noqa: F401
 from .blogpost import BlogPostSerializer  # noqa: F401
 from .password import PasswordSerializer  # noqa: F401
-from .teledeclaration import (  # noqa: F401
-    ShortTeledeclarationSerializer,
+from .teledeclaration import ShortTeledeclarationSerializer  # noqa: F401
+from .diagnostic_teledeclaration_dates import (  # noqa: F401
     CampaignDatesSerializer,
     CampaignDatesFullSerializer,
 )  # noqa: F401
