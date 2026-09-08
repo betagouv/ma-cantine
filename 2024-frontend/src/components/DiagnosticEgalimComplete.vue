@@ -1,5 +1,7 @@
 <script setup>
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
+import AppHelpCard from "@/components/AppHelpCard.vue"
+import documentation from "@/data/documentation.json"
 
 const totalAchatsFields = [
   "valeurViandesVolailles",
@@ -177,14 +179,30 @@ const nonEgalimFields = [
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">8. Certification environnementale - niveau 2 ou 3 (HVE)</h2>
-    <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in hveFields" :key="field" :name="field" size="inline" />
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
+      <div class="fr-col-12 fr-col-md-7">
+        <TunnelTeledeclarationField v-for="field in hveFields" :key="field" :name="field" size="full" />
+      </div>
+      <div class="fr-col-12 fr-col-md-5">
+        <AppHelpCard title="Comment comptabiliser les produits avec la certification environnementale (HVE) ?">
+          <a :href="documentation.hveCertificationEnvironnementale" target="_blank">Consultez la documentation</a>
+        </AppHelpCard>
+      </div>
     </div>
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">9. Ecolabel pêche durable</h2>
-    <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in pecheDurableFields" :key="field" :name="field" size="inline" />
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
+      <div class="fr-col-12 fr-col-md-7">
+        <TunnelTeledeclarationField v-for="field in pecheDurableFields" :key="field" :name="field" size="full" />
+      </div>
+      <div class="fr-col-12 fr-col-md-5">
+        <AppHelpCard title="Comment comptabiliser les produits de pêche durable ?">
+          <a :href="documentation.pecheDurable" target="_blank">Consultez la documentation</a>
+          <br />
+          <a :href="documentation.mscPeche" target="_blank">Les produits MSC entrent-ils dans les 50% ?</a>
+        </AppHelpCard>
+      </div>
     </div>
   </div>
   <div class="fr-mb-4w">
@@ -195,26 +213,54 @@ const nonEgalimFields = [
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">11. Commerce équitable non Bio</h2>
-    <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in commerceEquitableFields" :key="field" :name="field" size="inline" />
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
+      <div class="fr-col-12 fr-col-md-7">
+        <TunnelTeledeclarationField v-for="field in commerceEquitableFields" :key="field" :name="field" size="full" />
+      </div>
+      <div class="fr-col-12 fr-col-md-5">
+        <AppHelpCard title="Comment comptabiliser les produits issus du commerce équitable ?">
+          <a :href="documentation.commerceEquitable" target="_blank">Consultez la documentation</a>
+        </AppHelpCard>
+      </div>
     </div>
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">12. Produits fermiers ou de montagne</h2>
-    <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in fermierFields" :key="field" :name="field" size="inline" />
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
+      <div class="fr-col-12 fr-col-md-7">
+        <TunnelTeledeclarationField v-for="field in fermierFields" :key="field" :name="field" size="full" />
+      </div>
+      <div class="fr-col-12 fr-col-md-5">
+        <AppHelpCard title="Comment comptabiliser les produits fermiers ou de montagne ?">
+          <a :href="documentation.fermier" target="_blank">Consultez la documentation</a>
+        </AppHelpCard>
+      </div>
     </div>
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">13. Critères d’externalités environnementales</h2>
-    <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in externalitesFields" :key="field" :name="field" size="inline" />
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
+      <div class="fr-col-12 fr-col-md-7">
+        <TunnelTeledeclarationField v-for="field in externalitesFields" :key="field" :name="field" size="full" />
+      </div>
+      <div class="fr-col-12 fr-col-md-5">
+        <AppHelpCard title="Comment comptabiliser les produits selon les critères d’externalités environnementales ?">
+          <a :href="documentation.externalites" target="_blank">Consultez la documentation</a>
+        </AppHelpCard>
+      </div>
     </div>
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">14. Critères de performance environnementale et d’approvisionnements directs</h2>
-    <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in performanceFields" :key="field" :name="field" size="inline" />
+    <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
+      <div class="fr-col-12 fr-col-md-7">
+        <TunnelTeledeclarationField v-for="field in performanceFields" :key="field" :name="field" size="full" />
+      </div>
+      <div class="fr-col-12 fr-col-md-5">
+        <AppHelpCard title="Comment comptabiliser les produits selon des critères de performance environnementale ?">
+          <a :href="documentation.performance" target="_blank">Consultez la documentation</a>
+        </AppHelpCard>
+      </div>
     </div>
   </div>
   <div class="fr-mb-4w">
