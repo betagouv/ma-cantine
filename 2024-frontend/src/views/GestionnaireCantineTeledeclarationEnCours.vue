@@ -16,12 +16,12 @@ const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
 const router = useRouter()
 const currentYear = new Date().getFullYear()
-const lastYear = currentYear - 1
 const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Diagnostic */
 const diagnosticStore = useStoreDiagnostic()
 const hasDiagnosticCurrentCampaign = computed(() => diagnosticStore.hasDiagnosticCurrentCampaign())
+const lastYear = diagnosticStore.getLastYear()
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)

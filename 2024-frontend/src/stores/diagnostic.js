@@ -5,7 +5,7 @@ import diagnosticService from "@/services/diagnostics.js"
 const useStoreDiagnostic = defineStore("diagnostic", () => {
   const diagnostics = ref({})
   const canteenSavedId = ref(null)
-  const lastYear = new Date().getFullYear() - 1
+  const lastYear = 2026  // Force for testing, improve ??
   const diagnosticCurrentCampaign = computed(() => diagnostics.value[lastYear])
   const diagnosticCurrentCampaignErrors = ref([])
 
@@ -59,12 +59,18 @@ const useStoreDiagnostic = defineStore("diagnostic", () => {
     diagnosticCurrentCampaignErrors.value = []
   }
 
+  /* Get last year */
+  function getLastYear() {
+    return lastYear
+  }
+
   return {
     diagnostics,
     diagnosticCurrentCampaign,
     diagnosticCurrentCampaignErrors,
     initStore,
     deleteStore,
+    getLastYear,
     hasDiagnosticCurrentCampaign,
     updateDiagnosticCurrentCampaign,
     setDiagnosticCurrentCampaign,
