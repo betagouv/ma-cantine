@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from api.serializers import CampaignDatesSerializer, CampaignDatesFullSerializer
-from macantine.utils import (
+from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
     is_in_correction,
     is_in_teledeclaration,

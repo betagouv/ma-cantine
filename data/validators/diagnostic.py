@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from django.utils import timezone
 
-from macantine.utils import (
+from data.models.diagnostic_teledeclaration_dates import (
     get_year_campaign_end_date_or_today_date,
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )

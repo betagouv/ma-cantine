@@ -9,7 +9,7 @@ from django.utils import timezone
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
 from api.serializers import SatelliteCanteenSerializer, FullCanteenSerializer
 from data.models import Canteen
-from macantine.utils import is_in_teledeclaration_or_correction
+from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
 
 
 @extend_schema_view(
