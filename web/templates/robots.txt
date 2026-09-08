@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ma-cantine.agriculture.gouv.fr/sitemap.xml
