@@ -166,7 +166,7 @@ address {
 .ma-cantine--flex-between {
     display: flex;
     justify-content: space-between;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     align-items: center;
 }
 
@@ -174,8 +174,16 @@ address {
     gap: 1rem;
 }
 
+.ma-cantine--flex-gap-2 {
+    gap: 2rem;
+}
+
 .ma-cantine--flex-top {
     align-items: flex-start;
+}
+
+.ma-cantine--flex-shrink-0 {
+    flex-shrink: 0;
 }
 
 /* BACKGROUND */
