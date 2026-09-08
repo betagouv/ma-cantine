@@ -9,6 +9,8 @@ dependencies = [
     "celery==5.4.0",
     "chardet==5.2.0",
     "datacompy==1.0.0a5",
+    "dbt-core>=1.9.0",
+    "dbt-postgres>=1.9.0",
     "django==5.2.17",
     "django-anymail==12.0",
     "django-celery-results==2.5.1",
