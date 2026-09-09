@@ -980,9 +980,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         The published endpoint returns all diagnostic "service" data in one property,
         and the appro data in another. The latter should be filtered on the redacted years.
         """
-        canteen = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE, redacted_appro_years=[2020, 2021, 2023]
-        )
+        canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, redacted_appro_years=[2021, 2023])
 
         DiagnosticFactory(canteen=canteen, year=2021)
         published_appro_diag = DiagnosticFactory(canteen=canteen, year=2022)

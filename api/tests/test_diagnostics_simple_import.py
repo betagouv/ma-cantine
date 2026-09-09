@@ -196,7 +196,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         )
         self.assertEqual(
             errors[1]["message"],
-            "Champ 'année' : L'année doit être comprise entre 2024 et 2026.",
+            "Champ 'année' : L'année doit être parmi 2021, 2022, 2023, 2024, 2025, 2026.",
         )
         self.assertEqual(
             errors[2]["message"],
