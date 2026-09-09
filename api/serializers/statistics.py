@@ -6,7 +6,8 @@ from django.utils import timezone
 from rest_framework import serializers
 
 from data.models import Canteen, SectorCategory
-from macantine.utils import CAMPAIGN_DATES, EGALIM_OBJECTIVES, get_year_campaign_end_date_or_today_date
+from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES, get_year_campaign_end_date_or_today_date
+from macantine.utils import EGALIM_OBJECTIVES
 
 logger = logging.getLogger(__name__)
 

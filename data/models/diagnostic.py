@@ -25,13 +25,15 @@ from data.utils import (
     sum_int_with_potential_null,
 )
 from data.validators import diagnostic as diagnostic_validators
-from macantine.utils import (
+from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
+    is_in_correction,
+    is_in_teledeclaration_or_correction,
+)
+from macantine.utils import (
     EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,
     YEARS_WITH_1TD1SITE,
-    is_in_correction,
-    is_in_teledeclaration_or_correction,
     objectifs_egalim_atteints,
 )
 

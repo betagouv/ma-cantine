@@ -35,7 +35,7 @@ from data.utils import (
     has_charfield_missing_query,
 )
 from data.validators import canteen as canteen_validators
-from macantine.utils import (
+from data.models.diagnostic_teledeclaration_dates import (
     get_year_campaign_end_date_or_today_date,
     is_in_correction,
     is_in_teledeclaration,

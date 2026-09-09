@@ -21,7 +21,7 @@ from api.permissions import (
 )
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer, DiagnosticTeledeclaredOpenDataSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
-from macantine.utils import CAMPAIGN_DATES
+from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
 

@@ -11,7 +11,7 @@ from api.serializers import FullCanteenSerializer
 from api.views.base_import import BaseImportView
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType, Sector
-from macantine.utils import is_in_teledeclaration_or_correction
+from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
 
 from .canteen_managers import AddManagerView
 from common.utils.camelize import camelize

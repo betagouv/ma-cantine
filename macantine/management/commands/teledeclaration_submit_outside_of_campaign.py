@@ -17,7 +17,7 @@ from simple_history.utils import update_change_reason
 from django.utils import timezone
 
 from data.models import Diagnostic, User
-from macantine.utils import (
+from data.models.diagnostic_teledeclaration_dates import (
     get_year_campaign_start_date,
     get_year_campaign_end_date_or_today_date,
     get_year_correction_end_date_or_campaign_end_date_or_today_date,

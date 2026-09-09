@@ -11,7 +11,8 @@ from simple_history.models import HistoricalRecords
 
 from data.models import AuthenticationMethodHistoricalRecords, Canteen, Diagnostic
 from data.utils import CustomJSONEncoder
-from macantine.utils import CAMPAIGN_DATES, EGALIM_OBJECTIVES, is_in_teledeclaration_or_correction
+from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES, is_in_teledeclaration_or_correction
+from macantine.utils import EGALIM_OBJECTIVES
 
 logger = logging.getLogger(__name__)
 
