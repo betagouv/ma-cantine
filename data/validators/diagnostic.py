@@ -29,19 +29,21 @@ def validate_year_and_can_edit(instance):
     elif not (isinstance(value, int) or (isinstance(value, str) and value.isdigit())):
         utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier.")
     else:
+        # year is an integer
+        now = timezone.now()
+        current_campaign_years = [now.year - 1, now.year]
         if not isinstance(value, int) or value not in CAMPAIGN_DATES:
             utils_utils.add_validation_error(
                 errors, "year", f"L'année doit être parmi {', '.join(map(str, CAMPAIGN_DATES.keys()))}."
             )
-        now = timezone.now()
-        current_campaign_years = [now.year - 1, now.year]
-        if int(value) not in current_campaign_years:
+        elif int(value) not in current_campaign_years:
             utils_utils.add_validation_error(
                 errors,
                 "year",
                 f"L'année doit être dans l'année de campagne en cours ({', '.join(map(str, current_campaign_years))}).",
             )
-        else:  # valid year, check can_edit validation
+        # year is valid, check can_edit validation
+        else:
             if instance.pk:
                 now = timezone.now()
                 if now > get_year_campaign_end_date_or_today_date(value):
