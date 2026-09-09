@@ -235,6 +235,9 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             obj.creation_source = CreationSource.ADMIN
         super().save_model(request, obj, form, change)
 
+    def has_add_permission(self, request):
+        return False
+
     def has_change_permission(self, request, obj=None):
         return obj and not obj.is_teledeclared
 
