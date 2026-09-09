@@ -8,6 +8,7 @@ from simple_history.admin import SimpleHistoryAdmin
 from data.admin.utils import ReadOnlyAdminMixin
 from data.models import Diagnostic
 from data.models.creation_source import CreationSource
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields
 
 
 class DiagnosticForm(forms.ModelForm):
@@ -88,116 +89,6 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
 
     form = DiagnosticForm
     autocomplete_fields = ("canteen",)
-    fieldsets = (
-        (
-            "",
-            {
-                "fields": (
-                    "canteen",
-                    "year",
-                    "diagnostic_type",
-                    "central_kitchen_diagnostic_mode",
-                    "status",
-                )
-            },
-        ),
-        (
-            "Informations de la cantine",
-            {"fields": (*Diagnostic.CANTEEN_FIELDS,)},
-        ),
-        (
-            "Plus de produits de qualité et durables dans nos assiettes",
-            {
-                "fields": (
-                    "tunnel_appro",
-                    *Diagnostic.SIMPLE_APPRO_FIELDS,
-                )
-            },
-        ),
-        (
-            "Lutte contre le gaspillage alimentaire et dons alimentaires",
-            {
-                "fields": (
-                    "tunnel_waste",
-                    *Diagnostic.WASTE_FIELDS,
-                )
-            },
-        ),
-        (
-            "Diversification des sources de protéines et menus végétariens",
-            {
-                "fields": (
-                    "tunnel_diversification",
-                    *Diagnostic.DIVERSIFICATION_FIELDS,
-                )
-            },
-        ),
-        (
-            "Substitution des plastiques",
-            {
-                "fields": (
-                    "tunnel_plastic",
-                    *Diagnostic.PLASTIC_FIELDS,
-                )
-            },
-        ),
-        (
-            "Information des usagers et convives",
-            {
-                "fields": (
-                    "tunnel_info",
-                    *Diagnostic.INFO_FIELDS,
-                )
-            },
-        ),
-        (
-            "Lien tracké lors de la création",
-            {"fields": Diagnostic.MATOMO_FIELDS},
-        ),
-        (
-            "Valeurs détaillés",
-            {
-                "fields": [
-                    field_name
-                    for field_name in Diagnostic.APPRO_FIELDS
-                    if field_name not in Diagnostic.SIMPLE_APPRO_FIELDS
-                ]
-            },
-        ),
-        (
-            "Champs calculés",
-            {
-                "fields": (
-                    *Diagnostic.AGGREGATED_APPRO_FIELDS,
-                    *Diagnostic.EGALIM_STATS_FIELDS,
-                    *Diagnostic.OTHER_COMPUTED_FIELDS,
-                )
-            },
-        ),
-        (
-            "Télédéclaration",
-            {
-                "fields": (
-                    *Diagnostic.TELEDECLARATION_FIELDS,
-                    "applicant",
-                    # *Diagnostic.TELEDECLARATION_SNAPSHOT_FIELDS
-                    "canteen_snapshot_pretty",
-                    "satellites_snapshot_pretty",
-                    "applicant_snapshot_pretty",
-                )
-            },
-        ),
-        ("1TD1Site", {"fields": (*Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,)}),
-        (
-            "Metadonnées",
-            {
-                "fields": (
-                    *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
-                    *Diagnostic.CREATION_META_FIELDS,
-                )
-            },
-        ),
-    )
     readonly_fields = (
         "status",
         *Diagnostic.MATOMO_FIELDS,
@@ -223,6 +114,129 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             qs = qs.order_by(*ordering)
         qs = qs.prefetch_related("canteen")
         return qs
+
+    def get_fieldsets(self, request, obj=None):
+        """
+        The appro fields differ from one year to the next (see diagnostic_teledeclaration_fields.py),
+        so they are resolved dynamically for the diagnostic being edited instead of being hardcoded here.
+        """
+        simple_fields = Diagnostic.SIMPLE_APPRO_FIELDS
+        detailed_fields = [field for field in Diagnostic.APPRO_FIELDS if field not in simple_fields]
+        if obj is not None:
+            try:
+                simple_fields = get_teledeclaration_fields(obj.year, Diagnostic.DiagnosticType.SIMPLE)
+                complete_fields = get_teledeclaration_fields(obj.year, Diagnostic.DiagnosticType.COMPLETE)
+                detailed_fields = [field for field in complete_fields if field not in simple_fields]
+            except ValueError:
+                pass  # year or diagnostic_type not (yet) set or not covered by the registry: fall back to the full historical field list
+
+        return (
+            (
+                "",
+                {
+                    "fields": (
+                        "canteen",
+                        "year",
+                        "diagnostic_type",
+                        "central_kitchen_diagnostic_mode",
+                        "status",
+                    )
+                },
+            ),
+            (
+                "Informations de la cantine",
+                {"fields": (*Diagnostic.CANTEEN_FIELDS,)},
+            ),
+            (
+                "Plus de produits de qualité et durables dans nos assiettes",
+                {
+                    "fields": (
+                        "tunnel_appro",
+                        *simple_fields,
+                    )
+                },
+            ),
+            (
+                "Lutte contre le gaspillage alimentaire et dons alimentaires",
+                {
+                    "fields": (
+                        "tunnel_waste",
+                        *Diagnostic.WASTE_FIELDS,
+                    )
+                },
+            ),
+            (
+                "Diversification des sources de protéines et menus végétariens",
+                {
+                    "fields": (
+                        "tunnel_diversification",
+                        *Diagnostic.DIVERSIFICATION_FIELDS,
+                    )
+                },
+            ),
+            (
+                "Substitution des plastiques",
+                {
+                    "fields": (
+                        "tunnel_plastic",
+                        *Diagnostic.PLASTIC_FIELDS,
+                    )
+                },
+            ),
+            (
+                "Information des usagers et convives",
+                {
+                    "fields": (
+                        "tunnel_info",
+                        *Diagnostic.INFO_FIELDS,
+                    )
+                },
+            ),
+            (
+                "Lien tracké lors de la création",
+                {"fields": Diagnostic.MATOMO_FIELDS},
+            ),
+            (
+                "Valeurs détaillés",
+                {"fields": detailed_fields},
+            ),
+            (
+                "Champs calculés",
+                {
+                    "fields": (
+                        *Diagnostic.AGGREGATED_APPRO_FIELDS,
+                        *Diagnostic.EGALIM_STATS_FIELDS,
+                        *Diagnostic.OTHER_COMPUTED_FIELDS,
+                    )
+                },
+            ),
+            (
+                "Télédéclaration",
+                {
+                    "fields": (
+                        *Diagnostic.TELEDECLARATION_FIELDS,
+                        "applicant",
+                        # *Diagnostic.TELEDECLARATION_SNAPSHOT_FIELDS
+                        "canteen_snapshot_pretty",
+                        "satellites_snapshot_pretty",
+                        "applicant_snapshot_pretty",
+                    )
+                },
+            ),
+            ("1TD1Site", {"fields": (*Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,)}),
+            (
+                "Metadonnées",
+                {
+                    "fields": (
+                        *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
+                        *Diagnostic.CREATION_META_FIELDS,
+                    )
+                },
+            ),
+        )
+
+    def has_add_permission(self, request):
+        return False
 
     def save_model(self, request, obj, form, change):
         """
