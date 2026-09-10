@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from api.serializers import CanteenStatisticsSerializer
 from common.utils.camelize import camelize
+from common.cache.utils import CACHE_TIMEOUT_1_day
 from data.models import Canteen, Diagnostic
 from data.models.sector import Sector
 from data.models.geo import Department, Region
@@ -19,7 +20,6 @@ logger = logging.getLogger(__name__)
 
 
 CACHE_KEY_PREFIX = "canteen_statistics"
-CACHE_TIMEOUT = 60 * 60 * 24  # 24 hours  # TODO: reduce?
 
 FILTER_QUERY_FIELDS_IN = [
     "region",
@@ -134,7 +134,7 @@ class CanteenStatisticsView(APIView):
         if len(request.query_params) == 1 and year:
             cache_key = f"{CACHE_KEY_PREFIX}_{year}"
             if not cache.get(cache_key):
-                cache.set(cache_key, camelize(serializer.data), timeout=CACHE_TIMEOUT)
+                cache.set(cache_key, camelize(serializer.data), timeout=CACHE_TIMEOUT_1_day)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

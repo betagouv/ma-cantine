@@ -7,6 +7,7 @@ from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+from common.cache.utils import CACHE_TIMEOUT_1_day
 from web.sitemaps import BlogPostSitemap, CanteenSitemap, PartnerSitemap, WebSitemap
 from web.views import (
     AccountActivationView,
@@ -127,7 +128,7 @@ urlpatterns = [
     path("token-invalide", RegisterInvalidTokenView.as_view(), name="invalid_token"),
     path(
         "sitemap.xml",
-        cache_page(60 * 60)(sitemap),
+        cache_page(CACHE_TIMEOUT_1_day, key_prefix="sitemap")(sitemap),
         {"sitemaps": sitemaps},
         name="sitemap",
     ),
