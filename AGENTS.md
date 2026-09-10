@@ -1,6 +1,6 @@
-# Copilot Instructions for ma-cantine
+# Agent Instructions for ma-cantine
 
-This file provides guidance to Github Copilot (github.com/features/copilot) when working with code in this repository.
+This file provides guidance to AI coding agents (Claude Code, GitHub Copilot, etc.) when working with code in this repository.
 
 ## Mission & Context
 
@@ -80,7 +80,7 @@ cd 2024-frontend && npm run dev  # Port 5173
 **Python:**
 - Follow Django conventions (see existing `data/models/`, `api/serializers/`)
 - Ruff line length: 119 characters
-- Ruff auto-linting enforced via pre-commit
+- Ruff auto-linting enforced via pre-commit — don't run `ruff`/lint tools manually after edits, pre-commit runs it at commit time
 - Use factory-boy for test data (see `data/factories/`)
 - Models in `data/models/`, serializers in `api/serializers/`, views in `api/views/`
 
