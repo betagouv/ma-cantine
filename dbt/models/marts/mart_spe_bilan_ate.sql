@@ -16,9 +16,9 @@ with waste_base as (
                 then 'Secteurs multiples'
             else (array(select jsonb_array_elements_text(c.sector_list::jsonb)))[1]
         end                                 as secteur
-    from {{ ref('stg_waste_measurements') }} w
-    join {{ ref('stg_canteens') }} c
-        on c.canteen_id = w.canteen_id
+    from {{ ref('stg_waste_measurements') }} as w
+    inner join {{ ref('stg_canteens') }} as c
+        on w.canteen_id = c.canteen_id
         and c.line_ministry = 'administration_territoriale'
         and c.region is not null
         and not (c.sector_list::jsonb @> '["administration_etablissement_public"]'::jsonb)
@@ -103,8 +103,8 @@ nb_inscrites_region as (
         c.region_lib,
         y.annee,
         count(*)                    as nb_inscrites
-    from canteens_ate c
-    cross join years y
+    from canteens_ate as c
+    cross join years as y
     where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
     group by c.region, c.region_lib, y.annee
 ),
@@ -116,8 +116,8 @@ nb_inscrites_region_sector as (
         c.secteur,
         y.annee,
         count(*)                    as nb_inscrites
-    from canteens_ate c
-    cross join years y
+    from canteens_ate as c
+    cross join years as y
     where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
     group by c.region, c.region_lib, c.secteur, y.annee
 ),
@@ -224,7 +224,7 @@ stats_region as (
         sum(atteint_vege_quotidien::int)                                            as nb_vege_quotidien,
         sum(td_volet_diversification_complet::int)                                  as nb_td_diversification_complet
     from td_ate
-    left join overrides_secteur_ate o on o.siret = cantine_siret
+    left join overrides_secteur_ate as o on o.siret = cantine_siret
     where (cantine_line_ministry = 'administration_territoriale' and cantine_region is not null)
        or o.siret is not null
     group by annee, cantine_region, cantine_lib_region
@@ -261,7 +261,7 @@ stats_secteur as (
         sum(atteint_vege_quotidien::int)                                            as nb_vege_quotidien,
         sum(td_volet_diversification_complet::int)                                  as nb_td_diversification_complet
     from td_ate
-    left join overrides_secteur_ate o on o.siret = cantine_siret
+    left join overrides_secteur_ate as o on o.siret = cantine_siret
     where (cantine_line_ministry = 'administration_territoriale' and cantine_region is not null)
        or o.siret is not null
     group by annee, cantine_region, cantine_lib_region, coalesce(o.secteur_force, cantine_secteur)
@@ -282,7 +282,7 @@ medians_base as (
         100.0 * valeur_egalim_agg / nullif(valeur_totale, 0)                           as pct_egalim,
         100.0 * valeur_viandes_volailles_egalim / nullif(valeur_viandes_volailles, 0)  as pct_vv_egalim
     from td_ate
-    left join overrides_secteur_ate o on o.siret = cantine_siret
+    left join overrides_secteur_ate as o on o.siret = cantine_siret
     where (cantine_line_ministry = 'administration_territoriale' and cantine_region is not null)
        or o.siret is not null
 ),
@@ -391,39 +391,39 @@ select
          else null
     end                                                                             as taux_inscription_pct
 
-from all_stats s
-left join nb_inscrites_region i
-    on i.region = s.region
-    and i.annee = s.annee
+from all_stats as s
+left join nb_inscrites_region as i
+    on s.region = i.region
+    and s.annee = i.annee
     and s.est_total_region = true
-left join nb_inscrites_region_sector is_
-    on is_.region = s.region
-    and is_.annee = s.annee
+left join nb_inscrites_region_sector as is_
+    on s.region = is_.region
+    and s.annee = is_.annee
     and is_.secteur is not distinct from s.secteur
     and s.est_total_region = false
-left join ref_cibles_region cr
-    on cr.region = s.region
+left join ref_cibles_region as cr
+    on s.region = cr.region
     and s.est_total_region = true
-left join ref_cibles_region_sector crs
-    on crs.region = s.region
+left join ref_cibles_region_sector as crs
+    on s.region = crs.region
     and crs.secteur is not distinct from s.secteur
     and s.est_total_region = false
-left join waste_by_region wr
-    on wr.region = s.region
-    and wr.annee = s.annee
+left join waste_by_region as wr
+    on s.region = wr.region
+    and s.annee = wr.annee
     and s.est_total_region = true
-left join waste_by_region_sector wrs
-    on wrs.region = s.region
-    and wrs.annee = s.annee
+left join waste_by_region_sector as wrs
+    on s.region = wrs.region
+    and s.annee = wrs.annee
     and wrs.secteur is not distinct from s.secteur
     and s.est_total_region = false
-left join medians_region mr
-    on mr.region = s.region
-    and mr.annee = s.annee
+left join medians_region as mr
+    on s.region = mr.region
+    and s.annee = mr.annee
     and s.est_total_region = true
-left join medians_region_sector mrs
-    on mrs.region = s.region
-    and mrs.annee = s.annee
+left join medians_region_sector as mrs
+    on s.region = mrs.region
+    and s.annee = mrs.annee
     and mrs.secteur is not distinct from s.secteur
     and s.est_total_region = false
 order by s.annee, coalesce(s.lib_region, i.region_lib, s.region), s.est_total_region desc, s.secteur

@@ -43,8 +43,8 @@ nb_cantines_inscrites as (
         c.line_ministry_spe,
         y.year,
         count(*) as nb_cantines_inscrites
-    from canteens_spe c
-    cross join years y
+    from canteens_spe as c
+    cross join years as y
     where c.creation_date <= make_date(y.year::int + 1, 4, 29)
     group by c.line_ministry_spe, y.year
 ),
@@ -59,7 +59,7 @@ td_years_by_canteen as (
         bool_or(t.year = 2024) and bool_or(t.year = 2025)                                                          as iso_2024_2025,
         bool_or(t.year = 2023) and bool_or(t.year = 2024) and bool_or(t.year = 2025)                               as iso_2023_2024_2025,
         bool_or(t.year = 2022) and bool_or(t.year = 2023) and bool_or(t.year = 2024) and bool_or(t.year = 2025)    as iso_2022_2023_2024_2025
-    from teledeclarations t
+    from teledeclarations as t
     where t.production_type != 'groupe'
       and t.teledeclaration_mode != 'SATELLITE_WITHOUT_APPRO'
       and (t.invalid_reason_list is null or t.invalid_reason_list::text = '[]')
@@ -142,7 +142,7 @@ select
     (
         select string_agg(rp.lib_pat, ', ' order by rp.lib_pat)
         from regexp_split_to_table(teledeclarations.pat_list, ', ') as p(code_pat)
-        join ref_pats rp on rp.code_pat = p.code_pat
+        inner join ref_pats as rp on p.code_pat = rp.code_pat
     )                                                   as cantine_pat_lib_liste,
     nbre_cantines_region                                as cantine_nbre_cantines_region,
     objectif_zone_geo                                   as cantine_objectif_zone_geo,
@@ -412,28 +412,28 @@ select
             and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50
     end                                                                     as atteint_bio_et_egalim,
     (valeur_viandes_et_poissons > 0
-        and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >=
-            case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
+        and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0)
+            >= case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
     )                                                                       as atteint_viandes_et_poissons_egalim,
     case
         when department = '976'
             then valeur_bio_agg / nullif(valeur_totale, 0) >= 0.02
                  and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.05
                  and valeur_viandes_et_poissons > 0
-                 and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >=
-                     case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
+                 and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0)
+                     >= case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
         when objectif_zone_geo = 'droms'
             then valeur_bio_agg / nullif(valeur_totale, 0) >= 0.05
                  and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.20
                  and valeur_viandes_et_poissons > 0
-                 and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >=
-                     case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
+                 and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0)
+                     >= case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
         else
             valeur_bio_agg / nullif(valeur_totale, 0) >= 0.20
             and valeur_egalim_agg / nullif(valeur_totale, 0) >= 0.50
             and valeur_viandes_et_poissons > 0
-            and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0) >=
-                case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
+            and valeur_viandes_et_poissons_egalim / nullif(valeur_viandes_et_poissons, 0)
+                >= case when line_ministry is not null and line_ministry != '' then 1.0 else 0.6 end
     end                                                                     as atteint_3_objectifs,
 
     -- SPE — objectif végétarien
@@ -445,18 +445,18 @@ select
     (tunnel_diversification = 'complet')                                   as td_volet_diversification_complet
 
 from teledeclarations
-left join ref_departements on ref_departements.code_departement = teledeclarations.department
-left join ref_regions on ref_regions.code_region = teledeclarations.region
-left join ref_epci on ref_epci.code_epci = teledeclarations.epci
-left join ref_communes on ref_communes.code_insee_commune = teledeclarations.city_insee_code
+left join ref_departements on teledeclarations.department = ref_departements.code_departement
+left join ref_regions on teledeclarations.region = ref_regions.code_region
+left join ref_epci on teledeclarations.epci = ref_epci.code_epci
+left join ref_communes on teledeclarations.city_insee_code = ref_communes.code_insee_commune
 left join nb_cantines_inscrites
-    on nb_cantines_inscrites.line_ministry_spe = teledeclarations.line_ministry
-    and nb_cantines_inscrites.year = teledeclarations.year
-left join td_years_by_canteen tdy
-    on tdy.cid = teledeclarations.canteen_id
+    on teledeclarations.line_ministry = nb_cantines_inscrites.line_ministry_spe
+    and teledeclarations.year = nb_cantines_inscrites.year
+left join td_years_by_canteen as tdy
+    on teledeclarations.canteen_id = tdy.cid
 left join waste
-    on waste.canteen_id = teledeclarations.canteen_id
-    and waste.annee     = teledeclarations.year
+    on teledeclarations.canteen_id = waste.canteen_id
+    and teledeclarations.year     = waste.annee
 where 1=1
   and production_type not in ('groupe', 'central', 'central_serving')
   and teledeclaration_mode != 'SATELLITE_WITHOUT_APPRO'

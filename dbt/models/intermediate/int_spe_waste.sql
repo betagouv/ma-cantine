@@ -42,8 +42,8 @@ by_canteen as (
             when sum(w.total_mass) * 1000 / sum(w.meal_count) <= 95    then 'Niveau 1'
             else                                                             'Non atteint'
         end                                                             as niveau_ademe
-    from waste w
-    join canteens c on c.canteen_id = w.canteen_id and c.year = w.annee
+    from waste as w
+    inner join canteens as c on w.canteen_id = c.canteen_id and w.annee = c.year
     group by w.annee, c.line_ministry, w.canteen_id
     having
         sum(w.meal_count) > 0

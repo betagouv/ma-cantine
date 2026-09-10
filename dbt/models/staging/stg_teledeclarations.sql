@@ -33,7 +33,7 @@ renamed as (
         case
             when canteen_snapshot::jsonb ->> 'line_ministry' = 'justice'
                  and exists(
-                     select 1 from jsonb_array_elements_text(canteen_snapshot::jsonb -> 'sector_list') s
+                     select 1 from jsonb_array_elements_text(canteen_snapshot::jsonb -> 'sector_list') as s
                      where s = 'social_pjj'
                  )
             then 'justice_pjj'

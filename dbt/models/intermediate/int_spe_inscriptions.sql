@@ -26,8 +26,8 @@ by_line_ministry as (
         'line_ministry'             as type_perimetre,
         y.annee,
         count(*)                    as nb_inscrites
-    from canteens_spe c
-    cross join years y
+    from canteens_spe as c
+    cross join years as y
     where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
     group by c.line_ministry, y.annee
 ),

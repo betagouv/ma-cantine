@@ -61,6 +61,7 @@ dev = [
     "pytest-django==4.8.0",
     "requests-mock==1.12.1",
     "ruff>=0.14.2",
+    "sqlfluff>=3.4.2",
 ]
 
 [tool.uv.sources]

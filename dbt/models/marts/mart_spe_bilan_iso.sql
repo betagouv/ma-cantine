@@ -20,8 +20,8 @@ canteens_spe as (
     select
         coalesce(o.line_ministry_force, c.line_ministry) as line_ministry,
         c.creation_date
-    from {{ ref('stg_canteens') }} c
-    left join overrides_spe o on o.siret = c.siret
+    from {{ ref('stg_canteens') }} as c
+    left join overrides_spe as o on c.siret = o.siret
     where c.line_ministry is not null
       and c.line_ministry != ''
       and coalesce(o.exclure, false) = false
@@ -38,8 +38,8 @@ inscriptions_by_ministry as (
         c.line_ministry as perimetre_key,
         y.annee,
         count(*)        as nb_inscrites
-    from canteens_spe c
-    cross join spe_years y
+    from canteens_spe as c
+    cross join spe_years as y
     where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
     group by c.line_ministry, y.annee
 ),
@@ -105,7 +105,7 @@ td_years as (
         annee,
         lag(annee, 1) over (partition by canteen_id order by annee) as prev_1,
         lag(annee, 2) over (partition by canteen_id order by annee) as prev_2
-    from (select distinct canteen_id, annee from base) t
+    from (select distinct canteen_id, annee from base) as t
 ),
 
 -- Echantillon ISO : classification = line_ministry de l'année n (annee_ref)
@@ -116,11 +116,11 @@ iso_sample as (
         t.annee                                                     as annee_ref,
         '2ans'::text                                                as iso_type,
         coalesce(o.line_ministry_force, b_n.cantine_line_ministry)  as perimetre_key
-    from td_years t
-    join base b_n
-        on b_n.canteen_id = t.canteen_id
-        and b_n.annee = t.annee
-    left join overrides_spe o on o.siret = b_n.cantine_siret
+    from td_years as t
+    inner join base as b_n
+        on t.canteen_id = b_n.canteen_id
+        and t.annee = b_n.annee
+    left join overrides_spe as o on b_n.cantine_siret = o.siret
     where t.prev_1 = t.annee - 1
       and b_n.cantine_line_ministry is not null
       and coalesce(o.exclure, false) = false
@@ -132,11 +132,11 @@ iso_sample as (
         t.annee                                                     as annee_ref,
         '3ans'::text                                                as iso_type,
         coalesce(o.line_ministry_force, b_n.cantine_line_ministry)  as perimetre_key
-    from td_years t
-    join base b_n
-        on b_n.canteen_id = t.canteen_id
-        and b_n.annee = t.annee
-    left join overrides_spe o on o.siret = b_n.cantine_siret
+    from td_years as t
+    inner join base as b_n
+        on t.canteen_id = b_n.canteen_id
+        and t.annee = b_n.annee
+    left join overrides_spe as o on b_n.cantine_siret = o.siret
     where t.prev_1 = t.annee - 1
       and t.prev_2 = t.annee - 2
       and b_n.cantine_line_ministry is not null
@@ -168,8 +168,8 @@ iso_td as (
         b.choix_multiple,
         b.atteint_vege_quotidien,
         b.td_volet_diversification_complet
-    from iso_sample s
-    join base b on b.canteen_id = s.canteen_id
+    from iso_sample as s
+    inner join base as b on s.canteen_id = b.canteen_id
     where (s.iso_type = '2ans' and b.annee in (s.annee_ref, s.annee_ref - 1))
        or (s.iso_type = '3ans' and b.annee in (s.annee_ref, s.annee_ref - 1, s.annee_ref - 2))
 ),
@@ -566,18 +566,18 @@ select
     w_n.nb_canteens_avec_mesure                                                     as nb_canteens_mesure_gaspi_n,
     w_n1.nb_canteens_avec_mesure                                                    as nb_canteens_mesure_gaspi_n1
 
-from pivoted p
-join ref_perimetre_with_groupe r on r.perimetre_key = p.perimetre_key
-left join inscriptions i_n
-    on i_n.perimetre_key = r.perimetre_key
-    and i_n.annee = p.annee_ref
-left join inscriptions i_n1
-    on i_n1.perimetre_key = r.perimetre_key
+from pivoted as p
+inner join ref_perimetre_with_groupe as r on p.perimetre_key = r.perimetre_key
+left join inscriptions as i_n
+    on r.perimetre_key = i_n.perimetre_key
+    and p.annee_ref = i_n.annee
+left join inscriptions as i_n1
+    on r.perimetre_key = i_n1.perimetre_key
     and i_n1.annee = p.annee_ref - 1
-left join waste w_n
-    on w_n.perimetre_key = r.perimetre_key
-    and w_n.annee = p.annee_ref
-left join waste w_n1
-    on w_n1.perimetre_key = r.perimetre_key
+left join waste as w_n
+    on r.perimetre_key = w_n.perimetre_key
+    and p.annee_ref = w_n.annee
+left join waste as w_n1
+    on r.perimetre_key = w_n1.perimetre_key
     and w_n1.annee = p.annee_ref - 1
 order by p.annee_ref, p.iso_type, r.sort_order

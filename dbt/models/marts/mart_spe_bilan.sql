@@ -17,8 +17,8 @@ canteens_spe as (
     select
         coalesce(o.line_ministry_force, c.line_ministry)    as line_ministry,
         c.creation_date
-    from {{ ref('stg_canteens') }} c
-    left join overrides_spe o on o.siret = c.siret
+    from {{ ref('stg_canteens') }} as c
+    left join overrides_spe as o on c.siret = o.siret
     where c.line_ministry is not null
       and c.line_ministry != ''
       and coalesce(o.exclure, false) = false
@@ -36,8 +36,8 @@ inscriptions_by_ministry as (
         'line_ministry'                                      as type_perimetre,
         y.annee,
         count(*)                                             as nb_inscrites
-    from canteens_spe c
-    cross join spe_years y
+    from canteens_spe as c
+    cross join spe_years as y
     where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
     group by c.line_ministry, y.annee
 ),
@@ -175,9 +175,9 @@ cible_groupes as (
         r.groupe_spe                                                           as perimetre_key,
         i.annee,
         sum(coalesce(c.cible_etablissements, i.nb_inscrites))                  as cible_etablissements
-    from inscriptions_by_ministry i
-    left join ref_cibles c on c.perimetre_key = i.perimetre
-    join ref_perimetre_with_groupe r on r.perimetre_key = i.perimetre
+    from inscriptions_by_ministry as i
+    left join ref_cibles as c on i.perimetre = c.perimetre_key
+    inner join ref_perimetre_with_groupe as r on i.perimetre = r.perimetre_key
     where r.est_total_groupe = false
       and r.groupe_spe is not null
     group by r.groupe_spe, i.annee
@@ -189,8 +189,8 @@ cible_groupes as (
         'TOTAL'                                                                as perimetre_key,
         i.annee,
         sum(coalesce(c.cible_etablissements, i.nb_inscrites))                  as cible_etablissements
-    from inscriptions_by_ministry i
-    left join ref_cibles c on c.perimetre_key = i.perimetre
+    from inscriptions_by_ministry as i
+    left join ref_cibles as c on i.perimetre = c.perimetre_key
     group by i.annee
 ),
 
@@ -226,7 +226,7 @@ stats as (
         -- diversification : dénominateur = nb_inscrites
         sum(td_volet_diversification_complet::int)                                          as nb_td_diversification_complet
     from {{ ref('mart_teledeclarations') }}
-    left join overrides_spe o on o.siret = cantine_siret
+    left join overrides_spe as o on o.siret = cantine_siret
     where cantine_line_ministry is not null
       and (cantine_secteur != 'administration_etablissement_public' or cantine_line_ministry != 'administration_territoriale')
       and coalesce(o.exclure, false) = false
@@ -258,8 +258,8 @@ stats_groupe as (
         sum(s.nb_choix_multiple)                                                    as nb_choix_multiple,
         sum(s.nb_vege_quotidien)                                                    as nb_vege_quotidien,
         sum(s.nb_td_diversification_complet)                                        as nb_td_diversification_complet
-    from stats s
-    join ref_perimetre_with_groupe r on r.perimetre_key = s.perimetre_key
+    from stats as s
+    inner join ref_perimetre_with_groupe as r on s.perimetre_key = r.perimetre_key
     where r.groupe_spe is not null
       and r.est_total_groupe = false
     group by s.annee, r.groupe_spe
@@ -290,8 +290,8 @@ stats_total as (
         sum(nb_choix_multiple)                       as nb_choix_multiple,
         sum(nb_vege_quotidien)                       as nb_vege_quotidien,
         sum(nb_td_diversification_complet)           as nb_td_diversification_complet
-    from stats s
-    join ref_perimetre_with_groupe r on r.perimetre_key = s.perimetre_key
+    from stats as s
+    inner join ref_perimetre_with_groupe as r on s.perimetre_key = r.perimetre_key
     where r.est_total_groupe = false
     group by s.annee
 ),
@@ -313,7 +313,7 @@ medians_base as (
         100.0 * valeur_egalim_agg / nullif(valeur_totale, 0)                          as pct_egalim,
         100.0 * valeur_viandes_volailles_egalim / nullif(valeur_viandes_volailles, 0) as pct_vv_egalim
     from {{ ref('mart_teledeclarations') }}
-    left join overrides_spe o on o.siret = cantine_siret
+    left join overrides_spe as o on o.siret = cantine_siret
     where cantine_line_ministry is not null
       and (cantine_secteur != 'administration_etablissement_public' or cantine_line_ministry != 'administration_territoriale')
       and coalesce(o.exclure, false) = false
@@ -333,8 +333,8 @@ medians as (
         round(percentile_cont(0.5) within group (order by pct_bio)::numeric,       1),
         round(percentile_cont(0.5) within group (order by pct_egalim)::numeric,    1),
         round(percentile_cont(0.5) within group (order by pct_vv_egalim)::numeric, 1)
-    from medians_base mb
-    join ref_perimetre_with_groupe r on r.perimetre_key = mb.perimetre_key
+    from medians_base as mb
+    inner join ref_perimetre_with_groupe as r on mb.perimetre_key = r.perimetre_key
     where r.groupe_spe is not null and r.est_total_groupe = false
     group by mb.annee, r.groupe_spe
     union all
@@ -445,20 +445,20 @@ select
     -- taux d'inscription : null si pas de cible officielle
     round((100.0 * i.nb_inscrites / nullif(c.cible_etablissements, 0))::numeric, 1) as taux_inscription_pct
 
-from all_stats s
-join ref_perimetre_with_groupe r on r.perimetre_key = s.perimetre_key
-left join inscriptions i
-    on i.perimetre = r.perimetre_key
-    and i.annee    = s.annee
-left join waste w
-    on w.perimetre_key = r.perimetre_key
-    and w.annee        = s.annee
-left join ref_cibles c
-    on c.perimetre_key = r.perimetre_key
-left join cible_groupes cg
-    on cg.perimetre_key = r.perimetre_key
-    and cg.annee        = s.annee
-left join medians m
-    on m.perimetre_key  = r.perimetre_key
-    and m.annee         = s.annee
+from all_stats as s
+inner join ref_perimetre_with_groupe as r on s.perimetre_key = r.perimetre_key
+left join inscriptions as i
+    on r.perimetre_key = i.perimetre
+    and s.annee    = i.annee
+left join waste as w
+    on r.perimetre_key = w.perimetre_key
+    and s.annee        = w.annee
+left join ref_cibles as c
+    on r.perimetre_key = c.perimetre_key
+left join cible_groupes as cg
+    on r.perimetre_key = cg.perimetre_key
+    and s.annee        = cg.annee
+left join medians as m
+    on r.perimetre_key  = m.perimetre_key
+    and s.annee         = m.annee
 order by s.annee, r.sort_order
