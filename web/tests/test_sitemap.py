@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 
 
-class TestSitemaps(TestCase):
+class SitemapTest(TestCase):
     def setUp(self):
         self.client = Client()
 

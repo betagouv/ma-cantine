@@ -1,14 +1,10 @@
 from django.conf import settings
 from django.contrib.auth import views as auth_views
-from django.contrib.sitemaps.views import sitemap
 from django.urls import path, re_path
-from django.views.decorators.cache import cache_page
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
-from common.cache.utils import CACHE_TIMEOUT_1_day
-from web.sitemaps import BlogPostSitemap, CanteenSitemap, PartnerSitemap, WebSitemap
 from web.views import (
     AccountActivationView,
     ActivationTokenView,
@@ -19,16 +15,10 @@ from web.views import (
     RegisterInvalidTokenView,
     RegisterSendMailFailedView,
     RegisterUserView,
+    SitemapView,
     VueAppDisplayView,
     WidgetView,
 )
-
-sitemaps = {
-    "canteens": CanteenSitemap,
-    "blog": BlogPostSitemap,
-    "partners": PartnerSitemap,
-    "other": WebSitemap,
-}
 
 urlpatterns = [
     re_path(r"^widgets/.*$", WidgetView.as_view(), name="widget_app"),
@@ -126,12 +116,7 @@ urlpatterns = [
         name="activate",
     ),
     path("token-invalide", RegisterInvalidTokenView.as_view(), name="invalid_token"),
-    path(
-        "sitemap.xml",
-        cache_page(CACHE_TIMEOUT_1_day, key_prefix="sitemap")(sitemap),
-        {"sitemaps": sitemaps},
-        name="sitemap",
-    ),
+    path("sitemap.xml", SitemapView.as_view(), name="sitemap"),
     path(
         "robots.txt",
         TemplateView.as_view(

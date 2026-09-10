@@ -9,7 +9,7 @@ from rest_framework.test import APITestCase
 from web.forms import RegisterUserForm
 
 
-class TestRegistration(APITestCase):
+class RegistrationTest(APITestCase):
     def test_cannot_register_with_email_as_username(self):
         payload = {
             "first_name": "Tester",
