@@ -6,10 +6,10 @@ resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'emscripten'",
     "python_full_version >= '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
     "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'win32'",
-    "python_full_version < '3.12' and sys_platform == 'win32'",
     "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform == 'emscripten'",
-    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version >= '3.12' and python_full_version < '3.14' and sys_platform != 'emscripten' and sys_platform != 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'win32'",
+    "python_full_version < '3.12' and sys_platform == 'emscripten'",
     "python_full_version < '3.12' and sys_platform != 'emscripten' and sys_platform != 'win32'",
 ]
 
@@ -1362,14 +1362,14 @@ wheels = [
 
 [[package]]
 name = "faker"
-version = "27.0.0"
+version = "40.38.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "python-dateutil" },
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/5f/bf/393fb742dec840c21fe30eaeb46f267f83c18c2fddda922cdecaa14737f6/faker-27.0.0.tar.gz", hash = "sha256:32c78b68d2ba97aaad78422e4035785de2b4bb46b81e428190fc11978da9036c", size = 1764992, upload-time = "2024-08-12T16:26:02.647Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/f2/55/baeae0ecb04ef56c92d6ac1ef7b3b965af0502ac9863fc85db7afc0884fd/faker-40.38.0.tar.gz", hash = "sha256:72e421098664edf38478f4269a5d5a539337de5da18883ce67cb1e6bb96b0b3a", size = 2029190, upload-time = "2026-09-01T19:19:46.958Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0a/3e/dd1107c0f69a55e827281b04745a5e56cd10752d8a0380a412993cb6b2c8/Faker-27.0.0-py3-none-any.whl", hash = "sha256:55ed0c4ed7bf16800c64823805f6fbbe6d4823db4b7c0903f6f890b8e4d6c34b", size = 1802611, upload-time = "2024-08-12T16:25:49.436Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/b8/48cb8733de8448023983f64e81d7f731ce1459c21e93b9b29657e5c48cab/faker-40.38.0-py3-none-any.whl", hash = "sha256:69927515d61759c8a257540b8a91891cd622ba1c24a386b62a0a777e44ba46a9", size = 2065931, upload-time = "2026-09-01T19:19:45.234Z" },
 ]
 
 [[package]]
@@ -2045,7 +2045,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "factory-boy", specifier = "==3.3.3" },
-    { name = "faker", specifier = "==27.0.0" },
+    { name = "faker", specifier = "==40.38.0" },
     { name = "freezegun", specifier = "==1.5.2" },
     { name = "ipython", specifier = ">=9.5.0" },
     { name = "pip-audit", specifier = ">=2.10.1" },
@@ -2684,7 +2684,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "ptyprocess" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
