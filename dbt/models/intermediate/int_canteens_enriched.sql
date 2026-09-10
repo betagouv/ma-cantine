@@ -15,8 +15,8 @@ canteen_managers_agg as (
     select
         m.canteen_id,
         string_agg(u.email, ', ' order by u.email) as manager_emails
-    from managers m
-    inner join users u on u.user_id = m.user_id
+    from managers as m
+    inner join users as u on m.user_id = u.user_id
     group by m.canteen_id
 ),
 
@@ -25,8 +25,8 @@ final as (
         c.*,
         cma.manager_emails,
         c.line_ministry is not null                   as is_spe
-    from canteens c
-    left join canteen_managers_agg cma on cma.canteen_id = c.canteen_id
+    from canteens as c
+    left join canteen_managers_agg as cma on c.canteen_id = cma.canteen_id
 )
 
 select * from final

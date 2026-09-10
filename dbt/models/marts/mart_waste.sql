@@ -76,7 +76,7 @@ select
         else                                                                 'Non atteint'
     end                                                                 as niveau_ademe
 
-from waste w
-left join canteens c on c.canteen_id = w.canteen_id
+from waste as w
+left join canteens as c on w.canteen_id = c.canteen_id
 where w.meal_count > 0
   and (w.total_mass * 1000 / w.meal_count) between 10 and 500
