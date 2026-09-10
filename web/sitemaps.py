@@ -5,7 +5,7 @@ from data.models import BlogPost, Canteen, Partner
 
 class CanteenSitemap(Sitemap):
     def items(self):
-        return Canteen.objects.all().order_by("id")
+        return Canteen.objects.publicly_visible().order_by("id")
 
     def location(self, obj):
         return obj.url_path
@@ -31,7 +31,7 @@ class BlogPostSitemap(Sitemap):
         return obj.modification_date
 
     def changefreq(self, obj):
-        return "monthly"
+        return "weekly"
 
     def priority(self, obj):
         return 0.5
@@ -48,7 +48,7 @@ class PartnerSitemap(Sitemap):
         return obj.modification_date
 
     def changefreq(self, obj):
-        return "monthly"
+        return "weekly"
 
     def priority(self, obj):
         return 0.4
