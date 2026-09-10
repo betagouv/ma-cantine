@@ -68,6 +68,13 @@ class SitemapView(View):
         return sitemap(request, sitemaps)
 
 
+class RobotsTxtView(TemplateView):
+    content_type = "text/plain"
+
+    def get_template_names(self):
+        return ["robots.txt" if settings.ENVIRONMENT == "prod" else "robots-noindex.txt"]
+
+
 class Vue3AppDisplayView(TemplateView):
     """
     This template contains the VueJS app in /frontend
