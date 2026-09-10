@@ -11,8 +11,7 @@ import documentation from "@/data/documentation.json"
 const props = defineProps(["name", "size"])
 const storeTeledeclaration = useStoreTeledeclaration()
 const storePurchaseSummary = useStorePurchaseSummary()
-const { diagnostic } = storeToRefs(storeTeledeclaration)
-const { purchaseSummary } = storeToRefs(storePurchaseSummary)
+const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
 
 /* Informations */
 const field = ref()
@@ -27,8 +26,7 @@ const placeholder = computed(() => data.value?.placeholder)
 const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeTeledeclaration.diagnosticErrors))
 const hint = computed(() => {
   const enablePurchaseSummary = data.value.enablePurchaseSummary
-  const hasPurchaseSummary = storePurchaseSummary.hasPurchaseTotal(diagnostic.value.year)
-  return enablePurchaseSummary && hasPurchaseSummary ? getPurchaseSummaryHint(props.name) : data.value.hint
+  return enablePurchaseSummary && hasPurchaseTotal.value ? getPurchaseSummaryHint(props.name) : data.value.hint
 })
 const img = computed(() => data.value.img)
 const imgAlt = computed(() => data.value.imgAlt)
@@ -37,7 +35,7 @@ const opened = ref(false)
 const options = computed(() => data.value.options)
 
 const getPurchaseSummaryHint = (fieldName) => {
-  const fieldValue = purchaseSummary.value[diagnostic.value.year][fieldName]
+  const fieldValue = purchaseSummary.value?.[fieldName]
   if (!fieldValue) return "0€ dans l'Outil de Suivi des Achats"
   else if (fieldValue === 1) return "1€ renseigné dans l'Outil de Suivi des Achats"
   else return `${formatNumber(fieldValue)}€ sont renseignés dans l'Outil de Suivi des Achats`

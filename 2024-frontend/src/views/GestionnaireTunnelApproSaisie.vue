@@ -23,15 +23,13 @@ const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(field
 const options = computed(() => {
   const newOptions = field.value.options || []
   const autoIndex = newOptions.findIndex(field => field.value === "AUTO")
-  newOptions[autoIndex].disabled = !hasPurchaseSummary.value
-  newOptions[autoIndex].hint = !hasPurchaseSummary.value ? "Aucun achat détecté" : `${formatNumber(purchaseSummary.value[diagYear].valeurTotale)}€ d'achats détectés dans votre suivi des achats`
+  newOptions[autoIndex].disabled = !hasPurchaseTotal.value
+  newOptions[autoIndex].hint = !hasPurchaseTotal.value ? "Aucun achat détecté" : `${formatNumber(purchaseSummary.value?.valeurTotale)}€ d'achats détectés dans votre suivi des achats`
   return newOptions
 })
 
 /* OSA */
-const diagYear = storeTeledeclaration.diagnostic.year
-const { purchaseSummary } = storeToRefs(storePurchaseSummary)
-const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(diagYear))
+const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
 
 /* Prefill */
 const prefillSelect = () => { select.value = storeTeledeclaration.diagnostic[fieldName] || "SIMPLE" } // By defaut to SIMPLE to avoid error because it's not required in backend
