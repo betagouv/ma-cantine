@@ -3,7 +3,7 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useStoreCanteen } from '@/stores/canteen'
-import { useStoreDiagnostic } from '@/stores/diagnostic'
+import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import teledeclaration from '@/data/teledeclaration.json'
 import CanteenDisplayInformations from '@/components/CanteenDisplayInformations.vue'
 import AppSeparator from '@/components/AppSeparator.vue'
@@ -14,9 +14,9 @@ const route = useRoute()
 
 /* Stores */
 const canteenStore = useStoreCanteen()
-const diagnosticStore = useStoreDiagnostic()
+const teledeclarationStore = useStoreTeledeclaration()
 const { canteenInformations } = storeToRefs(canteenStore)
-const { diagnosticCurrentCampaign } = storeToRefs(diagnosticStore)
+const { diagnostic } = storeToRefs(teledeclarationStore)
 
 /* Data */
 const header = [
@@ -26,7 +26,7 @@ const header = [
 
 const getPrettyDiagnosticValue = (field) => {
   const hasOptions = teledeclaration.fields[field]?.options?.length > 0
-  const diagValue = diagnosticCurrentCampaign.value[field]
+  const diagValue = diagnostic.value[field]
   const prettyValue = hasOptions ? teledeclaration.fields[field].options.find(option => option.value === diagValue).labelShort : diagValue
   return prettyValue !== null ? prettyValue : "Non renseigné"
 }
@@ -47,7 +47,7 @@ const getFields = (fields, source) => {
 const activeAccordion = ref()
 const accordions = computed(() => {
   const isGroupe = canteenInformations.value.isGroupe
-  const isSimple = diagnosticCurrentCampaign.value.diagnosticType === "SIMPLE"
+  const isSimple = diagnostic.value.diagnosticType === "SIMPLE"
   return [
     {
       title: isGroupe ? "Informations du groupe" : "Informations de la cantine",

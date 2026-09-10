@@ -56,7 +56,7 @@ const getDiagnosticButton = (canteen) => {
   const completeButton = diagnosticService.getCompleteButton(canteen.action)
   if (!teledeclareButton && !completeButton) return false
   const canteenUrlComponent = urlService.getCanteenUrl(canteen)
-  const lastYear = new Date().getFullYear() - 1
+  const lastYear = window.TELEDECLARATION_YEAR
   const button = teledeclareButton || completeButton
   return { ...button, canteenUrlComponent, year: lastYear }
 }

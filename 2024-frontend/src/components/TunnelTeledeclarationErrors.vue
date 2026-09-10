@@ -1,19 +1,19 @@
 <script setup>
 import { computed } from 'vue'
 import { computedAsync } from '@vueuse/core'
-import { useStoreDiagnostic } from '@/stores/diagnostic'
+import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import { storeToRefs } from 'pinia'
 import diagnosticServices from '@/services/diagnostics'
 import canteenServices from '@/services/canteens'
 import AppErrorList from '@/components/AppErrorList.vue'
 
-const diagnosticStore = useStoreDiagnostic()
-const { diagnosticCurrentCampaign } = storeToRefs(diagnosticStore)
-const canteenId = computed(() => diagnosticCurrentCampaign.value.canteenId)
+const teledeclarationStore = useStoreTeledeclaration()
+const { diagnostic } = storeToRefs(teledeclarationStore)
+const canteenId = computed(() => diagnostic.value.canteenId)
 
 /* Checks */
 const checkCanteen = computedAsync(async () => await canteenServices.checkCanteen(canteenId.value), false)
-const checkDiagnostic = computedAsync(async () => await diagnosticServices.checkDiagnostic(canteenId.value, diagnosticCurrentCampaign.value.id), false)
+const checkDiagnostic = computedAsync(async () => await diagnosticServices.checkDiagnostic(canteenId.value, diagnostic.value.id), false)
 
 /* Errors */
 const hasCanteenErrors = computed(() => checkCanteen.value && !checkCanteen.value?.isFilled)

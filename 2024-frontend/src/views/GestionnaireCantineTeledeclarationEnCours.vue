@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
-import { useStoreDiagnostic } from "@/stores/diagnostic.js"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { useRootStore } from "@/stores/root.js"
 import diagnosticService from "@/services/diagnostics.js"
 import documentation from "@/data/documentation.json"
@@ -18,16 +18,16 @@ const router = useRouter()
 const currentYear = new Date().getFullYear()
 const { canteenInformations } = storeToRefs(canteenStore)
 
-/* Diagnostic */
-const diagnosticStore = useStoreDiagnostic()
-const hasDiagnosticCurrentCampaign = computed(() => diagnosticStore.hasDiagnosticCurrentCampaign())
-const lastYear = diagnosticStore.getLastYear()
+/* Teledeclaration */
+const teledeclarationStore = useStoreTeledeclaration()
+const { hasDiagnostic } = storeToRefs(teledeclarationStore)
+const year = teledeclarationStore.getYear()
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
 const firstBlocTitle = computed(() => canteenInformations.value.isGroupe ? 'Bien préparer sa télédéclaration groupée' : 'Bien préparer sa télédéclaration')
 const buttonTop = computed(() => {
-  const hasDiag = hasDiagnosticCurrentCampaign.value
+  const hasDiag = hasDiagnostic.value
   const label = hasDiag ? 'Reprendre ma télédéclaration' : 'Faire ma télédéclaration'
   const type = hasDiag ? 'secondary' : 'primary'
   const icon = hasDiag ? '' : 'ri-send-plane-line'
@@ -36,16 +36,16 @@ const buttonTop = computed(() => {
 
 /* Navigation */
 const openTunnel = () => {
-  if (!hasDiagnosticCurrentCampaign.value) createDiagnostic()
+  if (!hasDiagnostic.value) createDiagnostic()
   else goToTunnel()
 }
 
 const createDiagnostic = () => {
-  diagnosticService.createDiagnostic(canteenInformations.value.id, { year: lastYear })
+  diagnosticService.createDiagnostic(canteenInformations.value.id, { year })
     .then((response) => {
       if(response.status === "error") showError(response.message)
       else {
-        diagnosticStore.updateDiagnosticCurrentCampaign(response)
+        teledeclarationStore.setDiagnostic(response)
         goToTunnel()
       }
     })
