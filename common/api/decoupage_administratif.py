@@ -2,8 +2,7 @@ import logging
 import json
 import requests
 
-from django.core.cache import cache
-from common.cache.utils import CACHE_TIMEOUT_7_days
+from common.cache.utils import CACHE_TIMEOUT_7_days, get_or_set_cache
 
 logger = logging.getLogger(__name__)
 
@@ -43,22 +42,15 @@ def fetch_communes():
     Fields returned: nom, code, codeDepartement, codeRegion, codesPostaux, population
     - missing: siren, codeEpci
     """
-    cache_key = f"{CACHE_KEY_PREFIX}_communes"
-    cached_response = cache.get(cache_key)
-    if cached_response:
-        return cached_response
 
-    api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes?type=arrondissement-municipal,commune-actuelle"
-    response = requests.get(api_url, timeout=50)
-    response.raise_for_status()
-    response_json = response.json()
+    def compute_communes():
+        api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes?type=arrondissement-municipal,commune-actuelle"
+        response = requests.get(api_url, timeout=50)
+        response.raise_for_status()
+        # order by code
+        return sorted(response.json(), key=lambda x: x["code"])
 
-    # order by code
-    response_json = sorted(response_json, key=lambda x: x["code"])
-
-    # cache mechanism: store the result
-    cache.set(cache_key, response_json, timeout=CACHE_TIMEOUT_7_days)
-    return response_json
+    return get_or_set_cache(f"{CACHE_KEY_PREFIX}_communes", compute_communes, CACHE_TIMEOUT_7_days)
 
 
 def fetch_communes_with_more_fields(with_arrondissements=True):
@@ -67,72 +59,64 @@ def fetch_communes_with_more_fields(with_arrondissements=True):
     - missing: department, region
     - missing: arrondissements (132**, 6938*, 751**)
     """
+
+    def compute_communes_with_more_fields():
+        api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes"
+        response = requests.get(api_url, timeout=50)
+        response.raise_for_status()
+        response_json = response.json()
+
+        if with_arrondissements:
+            # we do another query to also get the arrondissements
+            communes_json = fetch_communes()
+            # keep only the arrondissements
+            code_arrondisement_prefix_list = [city["codeArrondissementPrefix"] for city in CITY_WITH_ARRONDISSEMENTS]
+            communes_json_arrondissements = [
+                commune
+                for commune in communes_json
+                if any(commune["code"].startswith(prefix) for prefix in code_arrondisement_prefix_list)
+            ]
+            # set the extra fields
+            for index, arrondissement in enumerate(communes_json_arrondissements):
+                arrondissement_mapping = next(
+                    (
+                        city
+                        for city in CITY_WITH_ARRONDISSEMENTS
+                        if arrondissement["code"].startswith(city["codeArrondissementPrefix"])
+                    ),
+                    None,
+                )
+                commune = next(
+                    (commune for commune in response_json if commune["code"] == arrondissement_mapping["code"]), None
+                )
+                if commune:
+                    communes_json_arrondissements[index]["siren"] = commune["siren"]
+                    communes_json_arrondissements[index]["population"] = None
+                    communes_json_arrondissements[index]["codeEpci"] = commune["codeEpci"]
+                    # communes_json_arrondissements[index]["codeDepartement"] = commune["codeDepartement"]
+                    # communes_json_arrondissements[index]["codeRegion"] = commune["codeRegion"]
+            # merge the two lists (arrondissements at the top, similar to fetch_communes)
+            response_json = communes_json_arrondissements + response_json
+
+        # order by code
+        return sorted(response_json, key=lambda x: x["code"])
+
     cache_key = f"{CACHE_KEY_PREFIX}_communes_with_more_fields"
-    cached_response = cache.get(cache_key)
-    if cached_response:
-        return cached_response
-
-    api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/communes"
-    response = requests.get(api_url, timeout=50)
-    response.raise_for_status()
-    response_json = response.json()
-
-    if with_arrondissements:
-        # we do another query to also get the arrondissements
-        communes_json = fetch_communes()
-        # keep only the arrondissements
-        code_arrondisement_prefix_list = [city["codeArrondissementPrefix"] for city in CITY_WITH_ARRONDISSEMENTS]
-        communes_json_arrondissements = [
-            commune
-            for commune in communes_json
-            if any(commune["code"].startswith(prefix) for prefix in code_arrondisement_prefix_list)
-        ]
-        # set the extra fields
-        for index, arrondissement in enumerate(communes_json_arrondissements):
-            arrondissement_mapping = next(
-                (
-                    city
-                    for city in CITY_WITH_ARRONDISSEMENTS
-                    if arrondissement["code"].startswith(city["codeArrondissementPrefix"])
-                ),
-                None,
-            )
-            commune = next(
-                (commune for commune in response_json if commune["code"] == arrondissement_mapping["code"]), None
-            )
-            if commune:
-                communes_json_arrondissements[index]["siren"] = commune["siren"]
-                communes_json_arrondissements[index]["population"] = None
-                communes_json_arrondissements[index]["codeEpci"] = commune["codeEpci"]
-                # communes_json_arrondissements[index]["codeDepartement"] = commune["codeDepartement"]
-                # communes_json_arrondissements[index]["codeRegion"] = commune["codeRegion"]
-        # merge the two lists (arrondissements at the top, similar to fetch_communes)
-        response_json = communes_json_arrondissements + response_json
-
-    # order by code
-    response_json = sorted(response_json, key=lambda x: x["code"])
-
-    # cache mechanism: store the result
-    cache.set(cache_key, response_json, timeout=CACHE_TIMEOUT_7_days)
-    return response_json
+    return get_or_set_cache(cache_key, compute_communes_with_more_fields, CACHE_TIMEOUT_7_days)
 
 
 def fetch_epcis():
     """
     Fields returned: nom, code (codesDepartements, codesRegions, population)
     """
-    cache_key = f"{CACHE_KEY_PREFIX}_epcis"
-    cached_response = cache.get(cache_key)
-    if cached_response:
-        return cached_response
 
-    api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code"
-    response = requests.get(api_url, timeout=50)
-    response.raise_for_status()
+    def compute_epcis():
+        api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/epcis?fields=nom,code"
+        response = requests.get(api_url, timeout=50)
+        response.raise_for_status()
+        return response.json()
 
-    # cache mechanism: store the result
-    cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT_7_days)
-    return response.json()
+    return get_or_set_cache(f"{CACHE_KEY_PREFIX}_epcis", compute_epcis, CACHE_TIMEOUT_7_days)
 
 
 def fetch_communes_from_epci(epci):
@@ -149,36 +133,28 @@ def fetch_departements():
     """
     Fields returned: nom, code, codeRegion
     """
-    cache_key = f"{CACHE_KEY_PREFIX}_departements"
-    cached_response = cache.get(cache_key)
-    if cached_response:
-        return cached_response
 
-    api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/departements?zone=metro,drom,com"
-    response = requests.get(api_url, timeout=5)
-    response.raise_for_status()
+    def compute_departements():
+        api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/departements?zone=metro,drom,com"
+        response = requests.get(api_url, timeout=5)
+        response.raise_for_status()
+        return response.json()
 
-    # cache mechanism: store the result
-    cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT_7_days)
-    return response.json()
+    return get_or_set_cache(f"{CACHE_KEY_PREFIX}_departements", compute_departements, CACHE_TIMEOUT_7_days)
 
 
 def fetch_regions():
     """
     Fields returned: nom, code
     """
-    cache_key = f"{CACHE_KEY_PREFIX}_regions"
-    cached_response = cache.get(cache_key)
-    if cached_response:
-        return cached_response
 
-    api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/regions?zone=metro,drom,com"
-    response = requests.get(api_url, timeout=5)
-    response.raise_for_status()
+    def compute_regions():
+        api_url = f"{DECOUPAGE_ADMINISTRATIF_API_URL}/regions?zone=metro,drom,com"
+        response = requests.get(api_url, timeout=5)
+        response.raise_for_status()
+        return response.json()
 
-    # cache mechanism: store the result
-    cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT_7_days)
-    return response.json()
+    return get_or_set_cache(f"{CACHE_KEY_PREFIX}_regions", compute_regions, CACHE_TIMEOUT_7_days)
 
 
 def map_communes_infos():

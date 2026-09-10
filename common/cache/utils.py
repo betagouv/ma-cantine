@@ -1,3 +1,5 @@
+from django.core.cache import cache
+
 # When calling cache.get(key), the following queries are executed:
 # 1. SELECT "cache_key", "value", "expires" FROM "cache" WHERE "cache_key" IN (':1:canteen_statistics_2024')
 CACHE_GET_QUERY_COUNT = 1
@@ -16,3 +18,15 @@ CACHE_SET_QUERY_COUNT = 6
 CACHE_TIMEOUT_1_day = 60 * 60 * 24
 CACHE_TIMEOUT_7_days = 60 * 60 * 24 * 7
 CACHE_TIMEOUT_30_days = 60 * 60 * 24 * 30
+
+
+def get_or_set_cache(cache_key, compute_value, timeout):
+    """
+    Return the cached value for `cache_key`, computing and storing it via
+    `compute_value()` on a cache miss.
+    """
+    value = cache.get(cache_key)
+    if value is None:
+        value = compute_value()
+        cache.set(cache_key, value, timeout=timeout)
+    return value

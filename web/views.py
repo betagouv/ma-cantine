@@ -7,17 +7,16 @@ from django.contrib.auth import get_user_model, login, tokens
 from django.contrib.auth import views as auth_views
 from django.contrib.sitemaps.views import sitemap
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.utils.cache import patch_response_headers
 from django.utils.encoding import force_bytes
 from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_decode, urlsafe_base64_encode
-from django.utils.decorators import method_decorator
-from django.views.decorators.cache import cache_page
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import FormView, TemplateView, View
 
-from common.cache.utils import CACHE_TIMEOUT_1_day
+from common.cache.utils import CACHE_TIMEOUT_1_day, get_or_set_cache
 from common.utils import send_mail
 from web.forms import LoginUserForm, RegisterUserForm
 from web.sitemaps import BlogPostSitemap, CanteenSitemap, PartnerSitemap, WebSitemap
@@ -61,11 +60,20 @@ sitemaps = {
     "other": WebSitemap,
 }
 
+SITEMAP_CACHE_KEY = "sitemap_xml"
 
-@method_decorator(cache_page(CACHE_TIMEOUT_1_day, key_prefix="sitemap"), name="get")
+
 class SitemapView(View):
     def get(self, request, *args, **kwargs):
-        return sitemap(request, sitemaps)
+        def compute_sitemap_content():
+            response = sitemap(request, sitemaps)
+            response.render()
+            return response.content
+
+        content = get_or_set_cache(SITEMAP_CACHE_KEY, compute_sitemap_content, CACHE_TIMEOUT_1_day)
+        response = HttpResponse(content, content_type="application/xml")
+        patch_response_headers(response, cache_timeout=CACHE_TIMEOUT_1_day)
+        return response
 
 
 class RobotsTxtView(TemplateView):

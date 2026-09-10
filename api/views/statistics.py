@@ -1,6 +1,5 @@
 import logging
 
-from django.core.cache import cache
 from django.http import JsonResponse
 from drf_spectacular.utils import OpenApiParameter, extend_schema
 from rest_framework import status
@@ -9,7 +8,7 @@ from rest_framework.views import APIView
 
 from api.serializers import CanteenStatisticsSerializer
 from common.utils.camelize import camelize
-from common.cache.utils import CACHE_TIMEOUT_1_day
+from common.cache.utils import CACHE_TIMEOUT_1_day, get_or_set_cache
 from data.models import Canteen, Diagnostic
 from data.models.sector import Sector
 from data.models.geo import Department, Region
@@ -105,13 +104,19 @@ class CanteenStatisticsView(APIView):
             return JsonResponse({"error": "Expected year"}, status=status.HTTP_400_BAD_REQUEST)
 
         # cache mechanism: only for requests with just the year parameter
-        # TODO: refactor to a dedicated cache config file?
-        if len(request.query_params) == 1 and year:
+        if len(request.query_params) == 1:
             cache_key = f"{CACHE_KEY_PREFIX}_{year}"
-            cached_data = cache.get(cache_key)
-            if cached_data:
-                return JsonResponse(cached_data, status=status.HTTP_200_OK)
+            data = get_or_set_cache(
+                cache_key,
+                lambda: camelize(self._compute_statistics_serializer(request, year).data),
+                CACHE_TIMEOUT_1_day,
+            )
+            return JsonResponse(data, status=status.HTTP_200_OK)
 
+        serializer = self._compute_statistics_serializer(request, year)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def _compute_statistics_serializer(self, request, year):
         filters = self._extract_query_filters(request)
         egalim_group = self._get_egalim_group(filters)
 
@@ -128,15 +133,7 @@ class CanteenStatisticsView(APIView):
         data = self.serializer_class.calculate_statistics(canteens, teledeclarations)
         data["notes"] = self.serializer_class.generate_notes(year, egalim_group)
         data = self.serializer_class.hide_data_if_report_not_published(data, year)
-        serializer = self.serializer_class(data)
-
-        # cache mechanism: store the result if it was not cached (only for requests with just the year parameter)
-        if len(request.query_params) == 1 and year:
-            cache_key = f"{CACHE_KEY_PREFIX}_{year}"
-            if not cache.get(cache_key):
-                cache.set(cache_key, camelize(serializer.data), timeout=CACHE_TIMEOUT_1_day)
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return self.serializer_class(data)
 
     def _extract_query_filters(self, request):
         """

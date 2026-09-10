@@ -12,7 +12,10 @@ from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestD
 
 year_data = 2023
 date_in_2023_teledeclaration_campaign = "2024-04-01"  # during the 2023 campaign
-STATS_ENDPOINT_QUERY_COUNT = 7
+STATS_ENDPOINT_QUERY_COUNT = 6
+# The "region" filter changes the queryset shape (an extra query), so the filtered,
+# never-cached path has a different query count than the cacheable year-only path above.
+STATS_ENDPOINT_FILTERED_QUERY_COUNT = 7
 
 
 class CanteenStatsApiTest(APITestCase):
@@ -552,11 +555,11 @@ class CanteenStatsApiTest(APITestCase):
             response = self.client.get(self.url, {"year": year_data - 1})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # same year, but with extra filters: no cache
-        with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT):
+        with self.assertNumQueries(STATS_ENDPOINT_FILTERED_QUERY_COUNT):
             response = self.client.get(self.url, {"year": year_data, "region": "84"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
         # same year, but with extra filters: still no cache
-        with self.assertNumQueries(STATS_ENDPOINT_QUERY_COUNT):
+        with self.assertNumQueries(STATS_ENDPOINT_FILTERED_QUERY_COUNT):
             response = self.client.get(self.url, {"year": year_data, "region": "84"})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
