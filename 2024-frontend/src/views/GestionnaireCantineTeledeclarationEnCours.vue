@@ -56,6 +56,7 @@ const showError = (message) => rootStore.notifyServerError(message)
 </script>
 
 <template>
+  <DsfrAlert class="fr-mb-4w" title="Nouvelle télédéclaration en cours de développement" description="Dans le cadre d'amélioration de la télédéclaration 2027, cette page est en cours de développement et n'est pas encore complète ou stabilisée. Vous pouvez toutefois déjà commencer à l'utiliser mais il est possible que vous rencontriez des bugs ou des fonctionnalités non disponibles." type="warning" />
   <CanteenSidebarTitle :title="pageTitle">
     <DsfrButton
       v-if="buttonTop"
