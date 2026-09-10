@@ -5,18 +5,22 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, login, tokens
 from django.contrib.auth import views as auth_views
+from django.contrib.sitemaps.views import sitemap
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.http import url_has_allowed_host_and_scheme, urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.generic import FormView, TemplateView, View
-from django.utils.http import url_has_allowed_host_and_scheme
 
+from common.cache.utils import CACHE_TIMEOUT_1_day
 from common.utils import send_mail
 from web.forms import LoginUserForm, RegisterUserForm
+from web.sitemaps import BlogPostSitemap, CanteenSitemap, PartnerSitemap, WebSitemap
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +52,20 @@ class VueAppDisplayView(TemplateView):
     """
 
     template_name = "vue-app.html"
+
+
+sitemaps = {
+    "canteens": CanteenSitemap,
+    "blog": BlogPostSitemap,
+    "partners": PartnerSitemap,
+    "other": WebSitemap,
+}
+
+
+@method_decorator(cache_page(CACHE_TIMEOUT_1_day, key_prefix="sitemap"), name="get")
+class SitemapView(View):
+    def get(self, request, *args, **kwargs):
+        return sitemap(request, sitemaps)
 
 
 class Vue3AppDisplayView(TemplateView):
