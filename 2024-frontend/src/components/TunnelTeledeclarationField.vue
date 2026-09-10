@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from "vue"
-import { useStoreDiagnostic } from "@/stores/diagnostic"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary"
 import { storeToRefs } from "pinia"
 import { formatNumber } from "@/utils.js"
@@ -9,9 +9,9 @@ import documentation from "@/data/documentation.json"
 
 /* Stores */
 const props = defineProps(["name", "size"])
-const storeDiagnostic = useStoreDiagnostic()
+const storeTeledeclaration = useStoreTeledeclaration()
 const storePurchaseSummary = useStorePurchaseSummary()
-const { diagnosticCurrentCampaign } = storeToRefs(storeDiagnostic)
+const { diagnostic } = storeToRefs(storeTeledeclaration)
 const { purchaseSummary } = storeToRefs(storePurchaseSummary)
 
 /* Informations */
@@ -24,10 +24,10 @@ const label = computed(() => data.value.label)
 const tooltip = computed(() => data.value.tooltip)
 const isRelated = computed(() => data.value?.isRelatedField)
 const placeholder = computed(() => data.value?.placeholder)
-const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeDiagnostic.diagnosticCurrentCampaignErrors))
+const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeTeledeclaration.diagnosticErrors))
 const hint = computed(() => {
   const enablePurchaseSummary = data.value.enablePurchaseSummary
-  const hasPurchaseSummary = storePurchaseSummary.hasPurchaseTotal(diagnosticCurrentCampaign.value.year)
+  const hasPurchaseSummary = storePurchaseSummary.hasPurchaseTotal(diagnostic.value.year)
   return enablePurchaseSummary && hasPurchaseSummary ? getPurchaseSummaryHint(props.name) : data.value.hint
 })
 const img = computed(() => data.value.img)
@@ -37,7 +37,7 @@ const opened = ref(false)
 const options = computed(() => data.value.options)
 
 const getPurchaseSummaryHint = (fieldName) => {
-  const fieldValue = purchaseSummary.value[diagnosticCurrentCampaign.value.year][fieldName]
+  const fieldValue = purchaseSummary.value[diagnostic.value.year][fieldName]
   if (!fieldValue) return "0€ dans l'Outil de Suivi des Achats"
   else if (fieldValue === 1) return "1€ renseigné dans l'Outil de Suivi des Achats"
   else return `${formatNumber(fieldValue)}€ sont renseignés dans l'Outil de Suivi des Achats`
@@ -49,8 +49,8 @@ const displayFull = computed(() => !props.size || props.size === "full")
 const displayInline = computed(() => props.size === "inline")
 
 /* Actions */
-const fieldChange = () =>  storeDiagnostic.setDiagnosticCurrentCampaign(props.name, field.value)
-const prefillField = () => field.value = storeDiagnostic.diagnosticCurrentCampaign[props.name]
+const fieldChange = () =>  storeTeledeclaration.setValue(props.name, field.value)
+const prefillField = () => field.value = storeTeledeclaration.diagnostic[props.name]
 onMounted(prefillField)
 </script>
 <template>

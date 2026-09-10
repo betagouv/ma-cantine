@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from "vue"
 import { storeToRefs } from "pinia"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
-import { useStoreDiagnostic } from "@/stores/diagnostic.js"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { formatNumber } from "@/utils.js"
 import diagnosticsFieldsService from "@/services/diagnosticsFields.js"
 import documentation from "@/data/documentation.json"
@@ -11,7 +11,7 @@ import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 /* Stores */
 const storePurchaseSummary = useStorePurchaseSummary()
-const storeDiagnostic = useStoreDiagnostic()
+const storeTeledeclaration = useStoreTeledeclaration()
 
 /* Select */
 const select = ref()
@@ -19,7 +19,7 @@ const fieldName = "diagnosticType"
 const field = computed(() => diagnosticsFieldsService.getField(fieldName))
 const isRequired = computed(() => field.value.required)
 const label = computed(() => field.value.label)
-const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(fieldName, storeDiagnostic.diagnosticCurrentCampaignErrors))
+const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(fieldName, storeTeledeclaration.diagnosticErrors))
 const options = computed(() => {
   const newOptions = field.value.options || []
   const autoIndex = newOptions.findIndex(field => field.value === "AUTO")
@@ -29,18 +29,18 @@ const options = computed(() => {
 })
 
 /* OSA */
-const diagYear = storeDiagnostic.diagnosticCurrentCampaign.year
+const diagYear = storeTeledeclaration.diagnostic.year
 const { purchaseSummary } = storeToRefs(storePurchaseSummary)
 const hasPurchaseSummary = computed(() => storePurchaseSummary.hasPurchaseTotal(diagYear))
 
 /* Prefill */
-const prefillSelect = () => { select.value = storeDiagnostic.diagnosticCurrentCampaign[fieldName] || "SIMPLE" } // By defaut to SIMPLE to avoid error because it's not required in backend
+const prefillSelect = () => { select.value = storeTeledeclaration.diagnostic[fieldName] || "SIMPLE" } // By defaut to SIMPLE to avoid error because it's not required in backend
 onMounted(prefillSelect)
 
 /* Change */
 const selectRadio = () => {
   if (select.value === "AUTO") alert('TODO: Saisie auto')
-  else storeDiagnostic.setDiagnosticCurrentCampaign(fieldName, select.value)
+  else storeTeledeclaration.setValue(fieldName, select.value)
 }
 </script>
 <template>

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from "vue"
 import { useRouter, useRoute } from "vue-router"
-import { useStoreDiagnostic } from "@/stores/diagnostic.js"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { storeToRefs } from "pinia"
 import canteenServices from "@/services/canteens"
@@ -11,17 +11,17 @@ import AppErrorList from "@/components/AppErrorList.vue"
 
 const router = useRouter()
 const route = useRoute()
-const diagnosticStore = useStoreDiagnostic()
+const teledeclarationStore = useStoreTeledeclaration()
 const canteenStore = useStoreCanteen()
 const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
 const { canteenInformations } = storeToRefs(canteenStore)
-const { diagnosticCurrentCampaign, diagnosticCurrentCampaignErrors } = storeToRefs(diagnosticStore)
+const { diagnostic, diagnosticErrors } = storeToRefs(teledeclarationStore)
 
 /* Save */
 const save = async (page) => {
-  diagnosticStore.clearDiagnosticCurrentCampaignErrors()
-  await diagnosticStore.saveDiagnosticCurrentCampaign()
+  teledeclarationStore.clearErrors()
+  await teledeclarationStore.saveDiagnostic()
   const check = await checkIsFilled()
   if (check.isFilled) goTo(page)
   await saveErrors(check.errors)
@@ -31,7 +31,7 @@ const save = async (page) => {
 }
 
 const saveAndQuit = async () => {
-  await diagnosticStore.saveDiagnosticCurrentCampaign()
+  await teledeclarationStore.saveDiagnostic()
   router.push({ name: 'GestionnaireCantineTeledeclarationEnCours' })
 }
 
@@ -43,12 +43,12 @@ const saveErrors = async (errors) => {
   for (let i = 0; i < errorsKeys.length; i++) {
     errorList.push({ field: errorsKeys[i], message: errorsValues[i] })
   }
-  await diagnosticStore.saveDiagnosticCurrentCampaignErrors(errorList)
+  await teledeclarationStore.saveErrors(errorList)
 }
 
 const checkIsFilled = async () => {
-  const canteenId = diagnosticCurrentCampaign.value.canteenId
-  const diagnosticId = diagnosticCurrentCampaign.value.id
+  const canteenId = diagnostic.value.canteenId
+  const diagnosticId = diagnostic.value.id
   const checkCanteen = await canteenServices.checkCanteen(canteenId)
   const checkDiagnostic = await diagnosticServices.checkDiagnostic(canteenId, diagnosticId)
   return { isFilled: checkCanteen.isFilled && checkDiagnostic.isFilled, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
@@ -57,9 +57,9 @@ const checkIsFilled = async () => {
 const filterErrorsOnPage = () => {
   const pageName = route.name
   const canteenIsGroupe = canteenInformations.value.isGroupe
-  const diagnosticIsSimple = diagnosticCurrentCampaign.value.diagnosticType === "SIMPLE"
+  const diagnosticIsSimple = diagnostic.value.diagnosticType === "SIMPLE"
   const fieldsList = diagnosticsFields.getFieldsList(pageName, canteenIsGroupe, diagnosticIsSimple)
-  return diagnosticCurrentCampaignErrors.value.filter(error => fieldsList.includes(error.field))
+  return diagnosticErrors.value.filter(error => fieldsList.includes(error.field))
 }
 
 
