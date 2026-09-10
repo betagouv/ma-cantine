@@ -22,7 +22,7 @@ const { diagnosticCurrentCampaign } = storeToRefs(diagnosticStore)
 
 /* TD CTA */
 const canTeledeclare = computedAsync(async () => {
-  const check = await diagnosticServices.checkDiagnostic(canteenInformations.value.id, diagnosticCurrentCampaign.value.id)
+  const check = await diagnosticServices.checkDiagnostic(diagnosticCurrentCampaign.value.canteenId, diagnosticCurrentCampaign.value.id)
   return check.isFilled
 })
 const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration avant de déclarer")
