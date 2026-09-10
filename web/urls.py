@@ -132,6 +132,14 @@ urlpatterns = [
         name="sitemap",
     ),
     path(
+        "robots.txt",
+        TemplateView.as_view(
+            template_name="robots.txt" if settings.ENVIRONMENT == "prod" else "robots-noindex.txt",
+            content_type="text/plain",
+        ),
+        name="robots_txt",
+    ),
+    path(
         "googlefbd6f06a151f47ee.html",
         TemplateView.as_view(template_name="googlefbd6f06a151f47ee.html"),
         name="google_verification",
