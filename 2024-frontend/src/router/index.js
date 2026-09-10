@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router"
 import { useRootStore } from "@/stores/root"
-import { useStoreDiagnostic } from "@/stores/diagnostic"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { useStoreCanteen } from "@/stores/canteen"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary"
 import urlService from "@/services/urls"
@@ -57,7 +57,7 @@ router.beforeEach(async (to) => {
     const canteenId = urlService.getCanteenId(canteenUrl)
     const stores = {
       canteen: useStoreCanteen(),
-      diagnostic: useStoreDiagnostic(),
+      teledeclaration: useStoreTeledeclaration(),
       purchaseSummary: useStorePurchaseSummary(),
     }
     await Promise.all(to.meta.storesRequired.map((storeName) => stores[storeName].initStore(canteenId)))

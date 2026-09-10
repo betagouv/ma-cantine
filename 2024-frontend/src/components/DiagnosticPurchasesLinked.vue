@@ -7,17 +7,15 @@ import AppBlueCard from "@/components/AppBlueCard.vue"
 
 /* Store */
 const purchaseSummaryStore = useStorePurchaseSummary()
-const { purchaseSummary } = storeToRefs(purchaseSummaryStore)
+const { purchaseSummary, hasPurchaseTotal } = storeToRefs(purchaseSummaryStore)
 
 /* Content */
-const lastYear = new Date().getFullYear() - 1
-const hasPurchase = computed(() => purchaseSummaryStore.hasPurchaseTotal(lastYear))
-const purchaseAmount = computed(() => `${formatNumber(purchaseSummary.value[lastYear]?.valeurTotale)} €`)
+const purchaseAmount = computed(() => `${formatNumber(purchaseSummary.value?.valeurTotale)} €`)
 </script>
 
 <template>
   <AppBlueCard
-    v-if="hasPurchase"
+    v-if="hasPurchaseTotal"
     title="Souhaitez-vous pré-remplir votre déclaration à partir de votre suivi d’achats ?"
     :alert="{
       description: 'Optionnel : cette étape n’est pas obligatoire pour déclarer vos approvisionnements.',

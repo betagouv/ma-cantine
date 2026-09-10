@@ -17,7 +17,7 @@ import FilterByBase from "@/components/FilterByBase.vue"
 
 /* DATA */
 const store = useRootStore()
-const lastYear = new Date().getFullYear() - 1
+const lastYear = window.TELEDECLARATION_YEAR
 const isLoading = ref(true)
 
 /* BUTTON */

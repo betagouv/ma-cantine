@@ -2,14 +2,14 @@
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useRootStore } from '@/stores/root'
-import { useStoreDiagnostic } from '@/stores/diagnostic'
+import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import diagnosticServices from '@/services/diagnostics'
 
 const opened = defineModel(['opened'])
 const emit = defineEmits(['close'])
 const rootStore = useRootStore()
-const storeDiagnostic = useStoreDiagnostic()
-const { diagnosticCurrentCampaign } = storeToRefs(storeDiagnostic)
+const storeTeledeclaration = useStoreTeledeclaration()
+const { diagnostic } = storeToRefs(storeTeledeclaration)
 const checkBoxeConfirmed = ref(false)
 const loading = ref(false)
 
@@ -35,11 +35,10 @@ const closeModal = () => {
 }
 
 const teledeclare = () => {
-  const diagnostic = diagnosticCurrentCampaign.value
-  if (!diagnostic) return
+  if (!diagnostic.value) return
   loading.value = true
   diagnosticServices
-    .teledeclareDiagnostic(diagnostic.canteenId, diagnostic.id)
+    .teledeclareDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
     .then((response) => {
       if (response?.status === 'error' || response instanceof Error) displayError(response)
       else displaySuccess()

@@ -1,15 +1,15 @@
 <script setup>
 import { computed } from "vue"
-import { useStoreDiagnostic } from "@/stores/diagnostic"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { storeToRefs } from "pinia"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 import DiagnosticEgalimSimple from "@/components/DiagnosticEgalimSimple.vue"
 
-const storeDiagnostic = useStoreDiagnostic()
-const { diagnosticCurrentCampaign } = storeToRefs(storeDiagnostic)
-const diagIsSimple = computed(() => diagnosticCurrentCampaign.value.diagnosticType === "SIMPLE")
+const storeTeledeclaration = useStoreTeledeclaration()
+const { diagnostic } = storeToRefs(storeTeledeclaration)
+const diagIsSimple = computed(() => diagnostic.value.diagnosticType === "SIMPLE")
 </script>
 <template>
   <h2 class="fr-h5">1. Total des approvisionnements toutes familles de produits confondus :</h2>

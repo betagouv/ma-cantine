@@ -4,7 +4,7 @@ import { computedAsync } from '@vueuse/core'
 import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { useStoreCanteen } from '@/stores/canteen'
-import { useStoreDiagnostic } from '@/stores/diagnostic'
+import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import diagnosticServices from '@/services/diagnostics'
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import TunnelTeledeclarationAccordions from '@/components/TunnelTeledeclarationAccordions.vue'
@@ -17,12 +17,12 @@ const router = useRouter()
 /* Stores */
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
-const diagnosticStore = useStoreDiagnostic()
-const { diagnosticCurrentCampaign } = storeToRefs(diagnosticStore)
+const teledeclarationStore = useStoreTeledeclaration()
+const { diagnostic } = storeToRefs(teledeclarationStore)
 
 /* TD CTA */
 const canTeledeclare = computedAsync(async () => {
-  const check = await diagnosticServices.checkDiagnostic(canteenInformations.value.id, diagnosticCurrentCampaign.value.id)
+  const check = await diagnosticServices.checkDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
   return check.isFilled
 })
 const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration avant de déclarer")
@@ -55,7 +55,7 @@ const buttons = computed(() => {
 
 </script>
 <template>
-  <div v-if="diagnosticCurrentCampaign.isTeledeclared">
+  <div v-if="diagnostic.isTeledeclared">
     <DsfrAlert
       title="Votre télédéclaration a été prise en compte"
       description="Vous pouvez retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits dans votre espace cantine."

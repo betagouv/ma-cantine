@@ -1,17 +1,20 @@
 import { defineStore } from "pinia"
-import { ref } from "vue"
+import { computed, ref } from "vue"
 import purchaseService from "@/services/purchases.js"
 
 const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
-  const purchaseSummary = ref({})
+  const purchaseSummary = ref(null)
   const canteenSavedId = ref(null)
+  const lastYear = window.TELEDECLARATION_YEAR
+  const hasPurchaseTotal = computed(() => {
+    const total = purchaseSummary.value?.valeurTotale
+    return total != null && total > 0
+  })
 
-  /* Init store with purchases summary */
+  /* Init store with last year purchases summary */
   async function initStore(canteenId) {
     if (canteenSavedId.value === canteenId) return
-    const lastYear = new Date().getFullYear() - 1  // Last year only for now
-    const summary = await purchaseService.fetchPurchasesSummary(canteenId, lastYear)
-    purchaseSummary.value[lastYear] = summary
+    purchaseSummary.value = await purchaseService.fetchPurchasesSummary(canteenId, lastYear)
     canteenSavedId.value = canteenId
   }
 
@@ -22,20 +25,15 @@ const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
 
   /* Empty store */
   function deleteStore() {
-    purchaseSummary.value = {}
+    purchaseSummary.value = null
     canteenSavedId.value = null
-  }
-
-  /* Check if has purchase */
-  function hasPurchaseTotal(year) {
-    return purchaseSummary.value[year]?.valeurTotale && purchaseSummary.value[year]?.valeurTotale > 0
   }
 
   return {
     purchaseSummary,
+    hasPurchaseTotal,
     initStore,
     deleteStore,
-    hasPurchaseTotal,
     refreshStore,
   }
 })
