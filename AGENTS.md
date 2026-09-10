@@ -83,6 +83,7 @@ cd 2024-frontend && npm run dev  # Port 5173
 - Ruff auto-linting enforced via pre-commit — don't run `ruff`/lint tools manually after edits, pre-commit runs it at commit time
 - Use factory-boy for test data (see `data/factories/`)
 - Models in `data/models/`, serializers in `api/serializers/`, views in `api/views/`
+- Django views: use class-based views (CBVs), not function-based views. Don't introduce new function-based views, even to wrap a third-party function view (e.g. `django.contrib.sitemaps.views.sitemap`) — wrap it in a CBV's `get()` instead
 
 **JavaScript/Vue:**
 - Vue 2 in `frontend/` uses Vuetify
