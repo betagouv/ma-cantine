@@ -8,6 +8,7 @@ import requests
 from django.conf import settings
 from django.core.cache import cache
 
+from common.cache.utils import CACHE_TIMEOUT_7_days
 from common.utils.utils import clean_unicode_string
 
 logger = logging.getLogger(__name__)
@@ -67,7 +68,6 @@ PAT_DATAGOUV_CSV_URL = "https://static.data.gouv.fr/resources/pat-projets-alimen
 # Caching
 
 CACHE_KEY_PREFIX = "api_datagouv"
-CACHE_TIMEOUT = 60 * 60 * 24 * 7  # 7 days
 
 
 def get_dataset(dataset_id):
@@ -151,7 +151,7 @@ def fetch_pats():
         # the csv is BIG (4+ MB). So we only keep the fields we need.
         pat_list_filtered = [{field: row[field] for field in FIELDS_TO_KEEP} for row in reader]
         # cache mechanism: store the result
-        cache.set(cache_key, pat_list_filtered)
+        cache.set(cache_key, pat_list_filtered, timeout=CACHE_TIMEOUT_7_days)
         return pat_list_filtered
     except requests.HTTPError as e:
         logger.info(e)

@@ -3,6 +3,7 @@ import json
 import requests
 
 from django.core.cache import cache
+from common.cache.utils import CACHE_TIMEOUT_7_days
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +36,6 @@ CITY_WITH_ARRONDISSEMENTS = [
 # Caching
 
 CACHE_KEY_PREFIX = "api_decoupage_administratif"
-CACHE_TIMEOUT = 60 * 60 * 24 * 7  # 7 days
 
 
 def fetch_communes():
@@ -57,7 +57,7 @@ def fetch_communes():
     response_json = sorted(response_json, key=lambda x: x["code"])
 
     # cache mechanism: store the result
-    cache.set(cache_key, response_json, timeout=CACHE_TIMEOUT)
+    cache.set(cache_key, response_json, timeout=CACHE_TIMEOUT_7_days)
     return response_json
 
 
@@ -113,7 +113,7 @@ def fetch_communes_with_more_fields(with_arrondissements=True):
     response_json = sorted(response_json, key=lambda x: x["code"])
 
     # cache mechanism: store the result
-    cache.set(cache_key, response_json, timeout=CACHE_TIMEOUT)
+    cache.set(cache_key, response_json, timeout=CACHE_TIMEOUT_7_days)
     return response_json
 
 
@@ -131,7 +131,7 @@ def fetch_epcis():
     response.raise_for_status()
 
     # cache mechanism: store the result
-    cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
+    cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT_7_days)
     return response.json()
 
 
@@ -159,7 +159,7 @@ def fetch_departements():
     response.raise_for_status()
 
     # cache mechanism: store the result
-    cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
+    cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT_7_days)
     return response.json()
 
 
@@ -177,7 +177,7 @@ def fetch_regions():
     response.raise_for_status()
 
     # cache mechanism: store the result
-    cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT)
+    cache.set(cache_key, response.json(), timeout=CACHE_TIMEOUT_7_days)
     return response.json()
 
 
