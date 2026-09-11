@@ -6,6 +6,44 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.49.0](https://github.com/betagouv/ma-cantine/compare/v2026.48.0...v2026.49.0) (2026-09-11)
+
+
+### Nouveautés
+
+* **Établissement:** ajout de la page "Télédéclaration de l'année" ([#7020](https://github.com/betagouv/ma-cantine/issues/7020)) ([c99fc34](https://github.com/betagouv/ma-cantine/commit/c99fc34c7463fc161d41ee43aedc0568a4e0a3dc))
+* **Télédéclaration:** affiche les erreurs du bilan ([#7096](https://github.com/betagouv/ma-cantine/issues/7096)) ([6c96b3e](https://github.com/betagouv/ma-cantine/commit/6c96b3e296a89a6e86e21cc085fb8b6ce4899d15))
+* **Télédéclaration:** affiche les informations de la cantine ([#7038](https://github.com/betagouv/ma-cantine/issues/7038)) ([756958f](https://github.com/betagouv/ma-cantine/commit/756958f1d9fa73daabef40a530e636a7e021c84d))
+* **Télédéclaration:** ajout de l'étape couverts annuels pour les cantines ([#7050](https://github.com/betagouv/ma-cantine/issues/7050)) ([985ca40](https://github.com/betagouv/ma-cantine/commit/985ca40fe1577a476c862b81445035bb822ec089))
+* **Télédéclaration:** ajoute l'étape du récapitulatif avant de TD ([#7102](https://github.com/betagouv/ma-cantine/issues/7102)) ([4f07676](https://github.com/betagouv/ma-cantine/commit/4f0767673265747a4074f566175e655986d798d1))
+* **Télédéclaration:** ajoute l'étape EGalim TD simplifiée ([#7053](https://github.com/betagouv/ma-cantine/issues/7053)) ([74ef06c](https://github.com/betagouv/ma-cantine/commit/74ef06ccf348677f6ce81de5d086cd9531b7db66))
+* **Télédéclaration:** ajoute l'étape local et circuit court ([#7056](https://github.com/betagouv/ma-cantine/issues/7056)) ([13008fd](https://github.com/betagouv/ma-cantine/commit/13008fd5c5fff21a4720861c3bd682874bb885a0))
+* **Télédéclaration:** ajoute l'étape origine ([#7055](https://github.com/betagouv/ma-cantine/issues/7055)) ([9ff7ab7](https://github.com/betagouv/ma-cantine/commit/9ff7ab7eb78db35a326291790a371232e29f2419))
+* **Télédéclaration:** ajoute la sélection du mode de saisie ([#7051](https://github.com/betagouv/ma-cantine/issues/7051)) ([99b020a](https://github.com/betagouv/ma-cantine/commit/99b020a92bca715e62601ec855acb0a9afd28153))
+* **Télédéclaration:** ajoute le récapitulatif des approvisionnements ([#7073](https://github.com/betagouv/ma-cantine/issues/7073)) ([c514cba](https://github.com/betagouv/ma-cantine/commit/c514cba471f14c881d7550b17b8dc5fb7924d671))
+* **Télédéclaration:** écran récapitulatif des appros avec une télédéclaration enregistrée ([#7106](https://github.com/betagouv/ma-cantine/issues/7106)) ([e51e6b1](https://github.com/betagouv/ma-cantine/commit/e51e6b16f167e798a4b069e0a0a127aa3a9c7aa7))
+* **Télédéclaration:** met en place la création, modification et l'enregistrement du bilan ([#7043](https://github.com/betagouv/ma-cantine/issues/7043)) ([2a8d67f](https://github.com/betagouv/ma-cantine/commit/2a8d67f5a058159f90247206218d0c6bc1d98de0))
+* **Télédéclaration:** met en place la structure du tunnel ([#7034](https://github.com/betagouv/ma-cantine/issues/7034)) ([3f47d24](https://github.com/betagouv/ma-cantine/commit/3f47d240f6b258944a5ddb481ae537ce81acd57e))
+
+
+### Améliorations
+
+* **Télédéclaration:** affiche la page uniquement en période de TD ([#7120](https://github.com/betagouv/ma-cantine/issues/7120)) ([31fa5fe](https://github.com/betagouv/ma-cantine/commit/31fa5fecaf5baa01f3c8ba698f13d75c02203e30))
+* **Télédéclaration:** diverses améliroations d'UX ou de code ([#7115](https://github.com/betagouv/ma-cantine/issues/7115)) ([81d049b](https://github.com/betagouv/ma-cantine/commit/81d049bb0cc62baf9c2c264b7676749f31df651d))
+* **Télédéclaration:** récupère et affiche les informations d'achats de la cantine pour l'année de la TD ([#7037](https://github.com/betagouv/ma-cantine/issues/7037)) ([649298b](https://github.com/betagouv/ma-cantine/commit/649298bfd0485378e02c06b4167d0340ba304a97))
+* **Télédéclaration:** refactoring de la gestion des stores nécessaires pour la td ([#7059](https://github.com/betagouv/ma-cantine/issues/7059)) ([af2e0e8](https://github.com/betagouv/ma-cantine/commit/af2e0e827d05c67f47be1d90101232a7c0b9807e))
+* **Télédéclaration:** réorganise les pages et les étapes du tunnel pour le volet approvisionnement ([#7057](https://github.com/betagouv/ma-cantine/issues/7057)) ([523995e](https://github.com/betagouv/ma-cantine/commit/523995e94123ce2846a81ff167d87cb6f0ad1a3c))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** met à jour l'endpoint pour récupérer les montants d'achats par année ([#7054](https://github.com/betagouv/ma-cantine/issues/7054)) ([7af0c87](https://github.com/betagouv/ma-cantine/commit/7af0c8793a2b9f8c09567b718f09d5bea51fb463))
+
+
+### Technique
+
+* **Télédéclaration:** supprime la variable d'env frontend ENABLE_TELEDECLARATION ([#6989](https://github.com/betagouv/ma-cantine/issues/6989)) ([dbef342](https://github.com/betagouv/ma-cantine/commit/dbef3423361f42cc41509b3fb5d7139558585595))
+
 ## [2026.48.0](https://github.com/betagouv/ma-cantine/compare/v2026.47.1...v2026.48.0) (2026-09-11)
 
 
