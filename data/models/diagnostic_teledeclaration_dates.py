@@ -83,7 +83,9 @@ def is_in_teledeclaration(year=None):
     If year is passed, double check that it corresponds to the current campaign year.
     """
     now = timezone.now()
-    campaign_year = settings.TELEDECLARATION_YEAR_OVERRIDE or now.year - 1
+    campaign_year = (
+        int(settings.TELEDECLARATION_YEAR_OVERRIDE) if settings.TELEDECLARATION_YEAR_OVERRIDE else now.year - 1
+    )
     if year is not None:
         if year != campaign_year:
             return False
@@ -100,7 +102,9 @@ def is_in_correction(year=None):
     If year is passed, double check that it corresponds to the current campaign year.
     """
     now = timezone.now()
-    campaign_year = settings.TELEDECLARATION_YEAR_OVERRIDE or now.year - 1
+    campaign_year = (
+        int(settings.TELEDECLARATION_YEAR_OVERRIDE) if settings.TELEDECLARATION_YEAR_OVERRIDE else now.year - 1
+    )
     if year is not None:
         if year != campaign_year:
             return False
