@@ -45,6 +45,7 @@ nightly_0_10 = crontab(hour=0, minute=10, day_of_week="*")  # Every day at 12:10
 nightly_0_20 = crontab(hour=0, minute=20, day_of_week="*")  # Every day at 12:20AM
 nightly_0_30 = crontab(hour=0, minute=30, day_of_week="*")  # Every day at 12:30AM
 nightly_1 = crontab(hour=1, minute=0, day_of_week="*")  # Every day at 1AM
+nightly_1_30 = crontab(hour=1, minute=30, day_of_week="*")  # Every day at 1:30AM
 nightly_2 = crontab(hour=1, minute=0, day_of_week="*")  # Every day at 2AM
 nightly_3 = crontab(hour=3, minute=0, day_of_week="*")  # Every day at 3AM
 nightly_4 = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
@@ -94,6 +95,12 @@ app.conf.beat_schedule = {
     "export_dataset_canteen_opendata": {
         "task": "macantine.tasks.export_dataset_canteen_opendata",
         "schedule": nightly_2,  # every_6_hours_20 during campaigns
+    },
+    #########################################################
+    # DBT (Metabase) — depends on export_dataset_raw_analysis (nightly_1)
+    "dbt_run": {
+        "task": "macantine.tasks.dbt_run",
+        "schedule": nightly_1_30,
     },
 }
 
