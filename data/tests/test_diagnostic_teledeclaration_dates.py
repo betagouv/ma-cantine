@@ -7,7 +7,6 @@ from data.models.diagnostic_teledeclaration_dates import (
 )
 
 
-@override_settings(TELEDECLARATION_YEAR_OVERRIDE=2024)
 class TestCampaignDates(TestCase):
     def test_campaign_in_2O25(self):
         with freeze_time("2025-01-06"):  # before campaign

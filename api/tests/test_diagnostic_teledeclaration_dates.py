@@ -1,4 +1,3 @@
-from django.test import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -19,7 +18,6 @@ class TeledeclarationCampaignDatesListApiTest(APITestCase):
         self.assertEqual(body[-1]["year"], 2026)
 
 
-@override_settings(TELEDECLARATION_YEAR_OVERRIDE=2024)
 class TeledeclarationCampaignDatesRetrieveApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):

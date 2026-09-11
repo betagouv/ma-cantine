@@ -1,5 +1,6 @@
 from django import template
 from django.conf import settings
+from django.utils import timezone
 
 register = template.Library()
 
@@ -33,4 +34,6 @@ def git_branch():
 
 @register.simple_tag
 def teledeclaration_year_override():
-    return getattr(settings, "TELEDECLARATION_YEAR_OVERRIDE", "")
+    now = timezone.now()
+    last_year = now.year - 1
+    return getattr(settings, "TELEDECLARATION_YEAR_OVERRIDE", last_year)
