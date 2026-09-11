@@ -33,7 +33,7 @@ def git_branch():
 
 
 @register.simple_tag
-def teledeclaration_year_override():
+def teledeclaration_year():
     now = timezone.now()
     last_year = now.year - 1
     return getattr(settings, "TELEDECLARATION_YEAR_OVERRIDE", last_year)
