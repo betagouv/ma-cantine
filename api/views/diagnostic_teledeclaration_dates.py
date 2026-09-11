@@ -44,7 +44,7 @@ class TeledeclarationCampaignDatesRetrieveView(RetrieveAPIView):
         campaign_dates_for_year = {
             "year": year,
             **CAMPAIGN_DATES[year],
-            "in_teledeclaration": is_in_teledeclaration(),
-            "in_correction": is_in_correction(),
+            "in_teledeclaration": is_in_teledeclaration(year),
+            "in_correction": is_in_correction(year),
         }
         return Response(self.get_serializer(campaign_dates_for_year).data)
