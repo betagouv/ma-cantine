@@ -20,6 +20,7 @@ import sentry_sdk
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from botocore.config import Config as BotoConfig
+from django.utils import timezone
 
 from macantine.sentry import before_send
 
@@ -683,7 +684,9 @@ TELEDECLARATION_START_DATE_OVERRIDE = os.getenv("TELEDECLARATION_START_DATE_OVER
 TELEDECLARATION_END_DATE_OVERRIDE = os.getenv("TELEDECLARATION_END_DATE_OVERRIDE", "")
 CORRECTION_START_DATE_OVERRIDE = os.getenv("CORRECTION_START_DATE_OVERRIDE", "")
 CORRECTION_END_DATE_OVERRIDE = os.getenv("CORRECTION_END_DATE_OVERRIDE", "")
-TELEDECLARATION_YEAR_OVERRIDE = os.getenv("TELEDECLARATION_YEAR_OVERRIDE", None)
+now = timezone.now()
+last_year = now.year - 1
+TELEDECLARATION_YEAR_OVERRIDE = os.getenv("TELEDECLARATION_YEAR_OVERRIDE", last_year)
 
 
 # ma cantine: feature flags
