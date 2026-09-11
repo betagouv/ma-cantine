@@ -1,5 +1,6 @@
 from django import template
 from django.conf import settings
+from datetime import date
 
 register = template.Library()
 
@@ -29,3 +30,8 @@ def hostname():
 @register.simple_tag
 def git_branch():
     return getattr(settings, "GIT_BRANCH", "")
+
+
+@register.simple_tag
+def teledeclaration_year_override():
+    return int(settings.TELEDECLARATION_YEAR_OVERRIDE or date.today().year - 1)

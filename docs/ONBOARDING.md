@@ -158,6 +158,7 @@ TELEDECLARATION_START_DATE_OVERRIDE= Optionnel (exemple : `2025-01-07`)
 TELEDECLARATION_END_DATE_OVERRIDE= Optionnel
 CORRECTION_START_DATE_OVERRIDE= Optionnel
 CORRECTION_END_DATE_OVERRIDE= Optionnel
+TELEDECLARATION_YEAR_OVERRIDE= Optionnel - permet de forcer l'année de télédéclaration
 ```
 
 ### Activer les feature flags
