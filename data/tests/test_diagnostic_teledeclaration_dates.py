@@ -1,4 +1,4 @@
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from freezegun import freeze_time
 from data.models.diagnostic_teledeclaration_dates import (
     is_in_correction,
@@ -62,3 +62,78 @@ class TestCampaignDates(TestCase):
             self.assertFalse(is_in_teledeclaration(2023))
             self.assertFalse(is_in_correction(2023))
             self.assertFalse(is_in_teledeclaration_or_correction(2023))
+
+
+class TestIsInTeledeclarationYearOverride(TestCase):
+    @override_settings(TELEDECLARATION_YEAR_OVERRIDE=2025)
+    def test_uses_override_year_campaign_dates(self):
+        # 2025 campaign runs in early 2026; without override, now.year - 1 would be 2025 too,
+        # but override must select CAMPAIGN_DATES[2025] even if env would force another year.
+        with freeze_time("2026-02-15"):
+            self.assertTrue(is_in_teledeclaration())
+            self.assertTrue(is_in_teledeclaration(2025))
+            self.assertFalse(is_in_teledeclaration(2024))
+
+        with freeze_time("2025-12-01"):  # before 2025 campaign start
+            self.assertFalse(is_in_teledeclaration())
+            self.assertFalse(is_in_teledeclaration(2025))
+
+    @override_settings(TELEDECLARATION_YEAR_OVERRIDE=2024)
+    def test_override_year_differs_from_calendar_year(self):
+        # Frozen in 2026 (calendar campaign year would be 2025), but override forces 2024.
+        with freeze_time("2026-02-15"):
+            self.assertFalse(is_in_teledeclaration())
+            self.assertFalse(is_in_teledeclaration(2025))
+            self.assertFalse(is_in_teledeclaration(2024))
+
+        # Still within the 2024 campaign window via override
+        with freeze_time("2025-03-30"):
+            self.assertTrue(is_in_teledeclaration())
+            self.assertTrue(is_in_teledeclaration(2024))
+            self.assertFalse(is_in_teledeclaration(2025))
+
+    @override_settings(TELEDECLARATION_YEAR_OVERRIDE=2099)
+    def test_unknown_override_year_returns_false(self):
+        with freeze_time("2026-02-15"):
+            self.assertFalse(is_in_teledeclaration())
+            self.assertFalse(is_in_teledeclaration(2099))
+
+
+class TestIsInCorrectionYearOverride(TestCase):
+    @override_settings(TELEDECLARATION_YEAR_OVERRIDE=2025)
+    def test_uses_override_year_campaign_dates(self):
+        with freeze_time("2026-04-20"):  # during 2025 correction
+            self.assertTrue(is_in_correction())
+            self.assertTrue(is_in_correction(2025))
+            self.assertFalse(is_in_correction(2024))
+
+        with freeze_time("2026-04-01"):  # before 2025 correction start
+            self.assertFalse(is_in_correction())
+            self.assertFalse(is_in_correction(2025))
+
+    @override_settings(TELEDECLARATION_YEAR_OVERRIDE=2024)
+    def test_override_year_differs_from_calendar_year(self):
+        # Frozen in 2026 (calendar campaign year would be 2025), but override forces 2024.
+        with freeze_time("2026-04-20"):
+            self.assertFalse(is_in_correction())
+            self.assertFalse(is_in_correction(2025))
+            self.assertFalse(is_in_correction(2024))
+
+        # Still within the 2024 correction window via override
+        with freeze_time("2025-04-20"):
+            self.assertTrue(is_in_correction())
+            self.assertTrue(is_in_correction(2024))
+            self.assertFalse(is_in_correction(2025))
+
+    @override_settings(TELEDECLARATION_YEAR_OVERRIDE=2099)
+    def test_unknown_override_year_returns_false(self):
+        with freeze_time("2026-04-20"):
+            self.assertFalse(is_in_correction())
+            self.assertFalse(is_in_correction(2099))
+
+    @override_settings(TELEDECLARATION_YEAR_OVERRIDE=2021)
+    def test_no_correction_period_returns_false(self):
+        # 2021 has no correction dates
+        with freeze_time("2022-08-01"):
+            self.assertFalse(is_in_correction())
+            self.assertFalse(is_in_correction(2021))
