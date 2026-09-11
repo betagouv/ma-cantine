@@ -15,7 +15,7 @@ import AppRawHTML from "@/components/AppRawHTML.vue"
 const minPagination = 50
 const props = defineProps(["satellites", "groupe"])
 const emit = defineEmits(["showModalRemoveSatellite", "updateSatellites"])
-const lastYear = window.TELEDECLARATION_YEAR
+const lastYear = window.TELEDECLARATION_YEAR_OVERRIDE
 const store = useRootStore()
 const showPagination = computed(() => props.satellites.length > minPagination)
 

@@ -19,13 +19,13 @@ const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Campaign dates */
-const campaign = computedAsync(async () => await campaignService.getYearCampaignDates(window.TELEDECLARATION_YEAR), false)
+const campaign = computedAsync(async () => await campaignService.getYearCampaignDates(window.TELEDECLARATION_YEAR_OVERRIDE), false)
 const isInTeledeclaration = computed(() => campaign.value ? campaign.value?.inTeledeclaration : false)
 const isInCorrection = computed(() => campaign.value ? campaign.value?.isInCorrection : false)
 
 /* Sidebar links */
 const menuItems = computed(() =>  {
-  const currentYear = window.TELEDECLARATION_YEAR
+  const currentYear = window.TELEDECLARATION_YEAR_OVERRIDE
   const isGroupe = canteenInformations.value?.isGroupe
   const cantineActive = currentRoute.value === "GestionnaireCantine"
   const gestionnairesActive = currentRoute.value === "GestionnaireCantineGestionnaires"
