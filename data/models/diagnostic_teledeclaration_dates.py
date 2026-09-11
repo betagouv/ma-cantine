@@ -83,13 +83,13 @@ def is_in_teledeclaration(year=None):
     If year is passed, double check that it corresponds to the current campaign year.
     """
     now = timezone.now()
-    now_campaign_year = now.year - 1
+    campaign_year = int(settings.TELEDECLARATION_YEAR_OVERRIDE) or now.year - 1
     if year is not None:
-        if year != now_campaign_year:
+        if year != campaign_year:
             return False
-    if now_campaign_year in CAMPAIGN_DATES:
-        start_date = CAMPAIGN_DATES[now_campaign_year]["teledeclaration_start_date"]
-        end_date = CAMPAIGN_DATES[now_campaign_year]["teledeclaration_end_date"]
+    if campaign_year in CAMPAIGN_DATES:
+        start_date = CAMPAIGN_DATES[campaign_year]["teledeclaration_start_date"]
+        end_date = CAMPAIGN_DATES[campaign_year]["teledeclaration_end_date"]
         return start_date <= now <= end_date
     return False
 
