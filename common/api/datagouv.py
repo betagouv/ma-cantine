@@ -6,9 +6,8 @@ from datetime import datetime
 
 import requests
 from django.conf import settings
-from django.core.cache import cache
 
-from common.cache.utils import CACHE_TIMEOUT_7_days
+from common.cache.utils import CACHE_TIMEOUT_7_days, get_or_set_cache
 from common.utils.utils import clean_unicode_string
 
 logger = logging.getLogger(__name__)
@@ -138,21 +137,16 @@ def fetch_pats():
     """
     FIELDS_TO_KEEP = ["id", "nom_administratif", "communes_code_insee", "lien_vers_la_fiche_pat"]
 
-    cache_key = f"{CACHE_KEY_PREFIX}_pats"
-    cached_response = cache.get(cache_key)
-    if cached_response:
-        return cached_response
-
-    try:
+    def compute_pats():
         api_url = get_dataset_resource(PAT_DATAGOUV_DATASET_ID, PAT_DATAGOUV_RESOURCE_ID)
         api_response = requests.get(api_url["url"])
         api_response.raise_for_status()
         reader = csv.DictReader(api_response.iter_lines(decode_unicode=True), delimiter=";")
         # the csv is BIG (4+ MB). So we only keep the fields we need.
-        pat_list_filtered = [{field: row[field] for field in FIELDS_TO_KEEP} for row in reader]
-        # cache mechanism: store the result
-        cache.set(cache_key, pat_list_filtered, timeout=CACHE_TIMEOUT_7_days)
-        return pat_list_filtered
+        return [{field: row[field] for field in FIELDS_TO_KEEP} for row in reader]
+
+    try:
+        return get_or_set_cache(f"{CACHE_KEY_PREFIX}_pats", compute_pats, CACHE_TIMEOUT_7_days)
     except requests.HTTPError as e:
         logger.info(e)
         return []
