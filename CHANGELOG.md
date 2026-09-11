@@ -6,6 +6,35 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.48.0](https://github.com/betagouv/ma-cantine/compare/v2026.47.1...v2026.48.0) (2026-09-11)
+
+
+### Nouveautés
+
+* **dbt:** création du projet dbt et de modèles pour metabase ([#6421](https://github.com/betagouv/ma-cantine/issues/6421)) ([64c10d0](https://github.com/betagouv/ma-cantine/commit/64c10d0842b863629a9bb18f2d01399924ebc3a5))
+* **dbt:** tâche asynchrone pour lancer toutes les nuits ([#7118](https://github.com/betagouv/ma-cantine/issues/7118)) ([5964ad0](https://github.com/betagouv/ma-cantine/commit/5964ad090b8aba73eca168bf6aad7cc146398fc2))
+
+
+### Améliorations
+
+* **Diagnostics:** Admin: empecher la création ([#7109](https://github.com/betagouv/ma-cantine/issues/7109)) ([b06ecd7](https://github.com/betagouv/ma-cantine/commit/b06ecd72f0bed92f123fa816fdcfc5607f72637e))
+* **SEO:** ajouter un `robots.txt` pour s'assurer que les moteurs de recherche n'indexent pas staging & demo ([#7099](https://github.com/betagouv/ma-cantine/issues/7099)) ([fde1f81](https://github.com/betagouv/ma-cantine/commit/fde1f8163d726670845c41622a845c6b3d42436e))
+* **SEO:** mettre en cache le `sitemap.xml` 1 jour (au lieu de 1 heure) ([#7111](https://github.com/betagouv/ma-cantine/issues/7111)) ([b3cdeca](https://github.com/betagouv/ma-cantine/commit/b3cdeca863ee1674766cd34324d077593c87efca))
+* **SEO:** quelques ajustements sur notre sitemap (moins de cantines, fréquence 'weekly' au lieu de 'monthly') ([#7100](https://github.com/betagouv/ma-cantine/issues/7100)) ([5588849](https://github.com/betagouv/ma-cantine/commit/5588849bf65101bcc8daaad3a2daacbdb56a8cf6))
+* **Télédéclaration:** variable d'environment pour permettre d'override l'année (pour nos tests) ([#7119](https://github.com/betagouv/ma-cantine/issues/7119)) ([0b239c4](https://github.com/betagouv/ma-cantine/commit/0b239c4ac67c9f17c931df9f403a3f3583b8741f))
+* **Utilisateurs:** Inscription: ne pas autoriser les adresses emails 'jetables' (e.g. yopmail) ([#7060](https://github.com/betagouv/ma-cantine/issues/7060)) ([c2709d4](https://github.com/betagouv/ma-cantine/commit/c2709d4b9c78061d97113b6858f2aad270ebd002))
+
+
+### Technique
+
+* **Cache:** créer une fonction `get_or_set_cache` pour simplifier le code ([#7116](https://github.com/betagouv/ma-cantine/issues/7116)) ([79b6af1](https://github.com/betagouv/ma-cantine/commit/79b6af18559f4f05d03bc94dbb11f249490bcc5b))
+* **dbt:** ajouter sqlfluff (linting) et le lancer à chaque commit ([#7117](https://github.com/betagouv/ma-cantine/issues/7117)) ([6d7d4d7](https://github.com/betagouv/ma-cantine/commit/6d7d4d73d91a89c8537e92b78fb1fb6f1d30f6f4))
+* **IA:** remplacer Github Copilot instructions par AGENTS.md (et simlink CLAUDE.md) ([#7112](https://github.com/betagouv/ma-cantine/issues/7112)) ([7508546](https://github.com/betagouv/ma-cantine/commit/75085461567aca6129d4d236f9738597d9a34afc))
+* **SEO:** bouger la view robots dans une class dédiée ([#7114](https://github.com/betagouv/ma-cantine/issues/7114)) ([6b4ac21](https://github.com/betagouv/ma-cantine/commit/6b4ac214eac360943b6839e81793a17195cf81d3))
+* **SEO:** bouger la view sitemap dans une class dédiée ([#7113](https://github.com/betagouv/ma-cantine/issues/7113)) ([3ce40ce](https://github.com/betagouv/ma-cantine/commit/3ce40ce23cbf492c8eaa735f9016054898ea9679))
+* **Télédéclaration:** bouger CAMPAIGN_DATES dans un nouveau fichier dédié ([#7103](https://github.com/betagouv/ma-cantine/issues/7103)) ([c387375](https://github.com/betagouv/ma-cantine/commit/c387375d08dc6e87e2fa7c6f14cebabf444bb530))
+* **Télédéclaration:** faire la validation du champ year sur CAMPAIGN_DATES ([#7104](https://github.com/betagouv/ma-cantine/issues/7104)) ([b3f5925](https://github.com/betagouv/ma-cantine/commit/b3f5925df7986bcd4d22099ec1e00cb9df8d9f24))
+
 ## [2026.47.1](https://github.com/betagouv/ma-cantine/compare/v2026.47.0...v2026.47.1) (2026-09-07)
 
 
