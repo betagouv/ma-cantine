@@ -7,7 +7,7 @@ import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 
 /* Settings */
 const props = defineProps(["canteens", "campaign"])
-const lastYear = window.TELEDECLARATION_YEAR_OVERRIDE
+const lastYear = window.TELEDECLARATION_YEAR
 const minPagination = 50
 
 /* Table */

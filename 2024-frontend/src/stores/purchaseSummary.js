@@ -5,7 +5,7 @@ import purchaseService from "@/services/purchases.js"
 const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
   const purchaseSummary = ref(null)
   const canteenSavedId = ref(null)
-  const lastYear = window.TELEDECLARATION_YEAR_OVERRIDE
+  const lastYear = window.TELEDECLARATION_YEAR
   const hasPurchaseTotal = computed(() => {
     const total = purchaseSummary.value?.valeurTotale
     return total != null && total > 0
