@@ -2,7 +2,9 @@
 import { computed } from "vue"
 import { useRoute, RouterView } from "vue-router"
 import { storeToRefs } from "pinia"
+import { computedAsync } from "@vueuse/core"
 import { useStoreCanteen } from "@/stores/canteen.js"
+import campaignService from "@/services/campaigns.js"
 import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
@@ -16,9 +18,14 @@ const currentRoute = computed(() => route.name)
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 
+/* Campaign dates */
+const campaign = computedAsync(async () => await campaignService.getYearCampaignDates(window.TELEDECLARATION_YEAR), false)
+const isInTeledeclaration = computed(() => campaign.value ? campaign.value?.inTeledeclaration : false)
+const isInCorrection = computed(() => campaign.value ? campaign.value?.isInCorrection : false)
+
 /* Sidebar links */
-const currentYear = new Date().getFullYear()
 const menuItems = computed(() =>  {
+  const currentYear = window.TELEDECLARATION_YEAR
   const isGroupe = canteenInformations.value?.isGroupe
   const cantineActive = currentRoute.value === "GestionnaireCantine"
   const gestionnairesActive = currentRoute.value === "GestionnaireCantineGestionnaires"
@@ -64,7 +71,7 @@ const menuItems = computed(() =>  {
   pages.push(gestionnairesPage)
   if (isGroupe) pages.push(cantinesGroupePage)
   else pages.push(pagePubliquePage)
-  pages.push(teledeclarationEnCoursPage)
+  if (isInTeledeclaration.value || isInCorrection.value) pages.push(teledeclarationEnCoursPage)
   pages.push(teledeclarationsPage)
 
   return pages
