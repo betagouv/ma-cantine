@@ -2,7 +2,6 @@ import Vue from "vue"
 import VueRouter from "vue-router"
 import store from "@/store/index"
 import LandingPage from "@/views/LandingPage"
-import ManagerLanding from "@/views/ManagerLanding"
 import DiagnosticPage from "@/views/DiagnosticPage"
 import KeyMeasuresHome from "@/views/KeyMeasuresPage/KeyMeasuresHome"
 import GeneratePosterPage from "@/views/GeneratePosterPage"
@@ -41,14 +40,6 @@ const routes = [
     path: "/",
     name: "LandingPage",
     component: LandingPage,
-  },
-  {
-    path: "/accueil-gestionnaire",
-    name: "ManagerLanding",
-    component: ManagerLanding,
-    beforeEnter: (_to, _from, next) => {
-      store.state.loggedUser ? next({ name: "GestionnaireTableauDeBord" }) : next()
-    },
   },
   {
     path: "/mon-compte",
@@ -463,6 +454,16 @@ routes.push({
 routes.push({
   path: "/mesures-phares",
   redirect: { name: "ComprendreMesObligations" },
+})
+
+routes.push({
+  path: "/accueil",
+  redirect: { name: "LandingPage" },
+})
+
+routes.push({
+  path: "/accueil-gestionnaire",
+  redirect: { name: "LandingPage" },
 })
 
 routes.push({
