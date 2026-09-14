@@ -506,7 +506,7 @@ if DEBUG:
 # CSP valid sources of stylesheets or CSS
 CSP_STYLE_SRC = (
     "'self'",
-    "'unsafe-inline'",
+    "'unsafe-inline'",  # TODO: remove if possible
     "client.crisp.chat",
     "netdna.bootstrapcdn.com",
 )
@@ -517,7 +517,7 @@ if DEBUG:
 CSP_SCRIPT_SRC = (
     "'self'",
     "stats.beta.gouv.fr",
-    "'unsafe-inline'",
+    "'unsafe-inline'",  # TODO: remove if possible
     "client.crisp.chat",
 )
 if DEBUG:
@@ -528,7 +528,6 @@ CSP_IMG_SRC = (
     "'self'",
     "cellar-c2.services.clever-cloud.com",
     "voxusagers.numerique.gouv.fr",
-    "'unsafe-inline'",
     "stats.beta.gouv.fr",
     "www.w3.org",
     "data:",
@@ -544,13 +543,13 @@ CSP_FONT_SRC = (
     "client.crisp.chat",
 )
 if DEBUG:
-    CSP_IMG_SRC += CSP_DEBUG_DOMAINS
+    CSP_FONT_SRC += CSP_DEBUG_DOMAINS
 
 # CSP valid sources of AJAX, WebSockets, EventSources, etc
 CSP_CONNECT_SRC = (
     "'self'",
     "stats.beta.gouv.fr",
-    "ws:",
+    "ws:",  # TODO: remove if possible
     "geo.api.gouv.fr",
     "client.crisp.chat",
     "wss://client.relay.crisp.chat",
