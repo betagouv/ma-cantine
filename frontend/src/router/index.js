@@ -466,6 +466,11 @@ routes.push({
 })
 
 routes.push({
+  path: "/accueil",
+  redirect: { name: "LandingPage" },
+})
+
+routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
   name: "NotFound",
