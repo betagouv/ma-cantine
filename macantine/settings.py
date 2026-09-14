@@ -544,7 +544,7 @@ CSP_FONT_SRC = (
     "client.crisp.chat",
 )
 if DEBUG:
-    CSP_IMG_SRC += CSP_FONT_SRC
+    CSP_IMG_SRC += CSP_DEBUG_DOMAINS
 
 # CSP valid sources of AJAX, WebSockets, EventSources, etc
 CSP_CONNECT_SRC = (
