@@ -47,32 +47,38 @@ const accordions = computed(() => {
       title: isGroupe ? "Informations du groupe" : "Informations de la cantine",
       rows: getFields(isGroupe ? teledeclaration.groups.informationsGroupe : teledeclaration.groups.informationsCantine, "canteen"),
       to: { name: isGroupe ? 'GestionnaireCantineGroupeModifier' : 'GestionnaireCantineRestaurantModifier', query: { redirection: route.fullPath } },
-      isCanteenFields: true
+      isCanteenFields: true,
+      fieldsGroupName: isGroupe ? "informationsGroupe" : "informationsCantine"
     },
     {
       title: "Couverts annuels",
       rows: getFields(teledeclaration.groups.couverts, "diagnostic"),
-      to: { name: 'GestionnaireTunnelApproCouverts' }
+      to: { name: 'GestionnaireTunnelApproCouverts' },
+      fieldsGroupName: "couverts"
     },
     {
       title: "Mode de saisie",
       rows: getFields(teledeclaration.groups.saisie, "diagnostic"),
-      to: { name: 'GestionnaireTunnelApproSaisie' }
+      to: { name: 'GestionnaireTunnelApproSaisie' },
+      fieldsGroupName: "saisie"
     },
     {
       title: "EGalim",
       rows: getFields(isSimple ? teledeclaration.groups.egalimSimple : teledeclaration.groups.egalimDetaille, "diagnostic"),
-      to: { name: 'GestionnaireTunnelApproEgalim' }
+      to: { name: 'GestionnaireTunnelApproEgalim' },
+      fieldsGroupName: isSimple ? "egalimSimple" : "egalimDetaille"
     },
     {
       title: "Origine France et UE",
       rows: getFields(teledeclaration.groups.origine, "diagnostic"),
-      to: { name: 'GestionnaireTunnelApproOrigine' }
+      to: { name: 'GestionnaireTunnelApproOrigine' },
+      fieldsGroupName: "origine"
     },
     {
       title: "« Local » et circuit court",
       rows: getFields(teledeclaration.groups.localCircuitCourt, "diagnostic"),
-      to: { name: 'GestionnaireTunnelApproLocalCircuitCourt' }
+      to: { name: 'GestionnaireTunnelApproLocalCircuitCourt' },
+      fieldsGroupName: "localCircuitCourt"
     }
   ]
 })
