@@ -32,6 +32,7 @@ const errorBadge = computed(() => {
 const header = [
   { key: "name", label: "Champ" },
   { key: "value", label: "Valeur" },
+  { key: "error", label: "Erreur" },
 ]
 
 const getPrettyDiagnosticValue = (field) => {
@@ -47,9 +48,11 @@ const rows = computed(() => {
     const isCanteen = props.accordion.isCanteenFields
     const name = isCanteen ? field : teledeclaration.fields[field].label
     const value = isCanteen ? canteenInformations.value[field] : getPrettyDiagnosticValue(field)
+    const hasError = teledeclarationStore.isFieldError(field)
     return {
       name,
-      value,
+      value: value || "Non renseigné",
+      error: hasError ? teledeclarationStore.getErrorMessage(field) : "",
     }
   })
 })
@@ -77,6 +80,11 @@ const goToStep = (page) => router.push(page)
       :rows="rows"
       :no-scroll="true"
       class="fr-mt-0 fr-mb-0"
-    />
+    >
+      <template #cell="{ colKey, cell }">
+        <p v-if="colKey === 'error' && cell" class="fr-message fr-message--error">{{ cell }}</p>
+        <p v-else>{{ cell }}</p>
+      </template>
+    </DsfrDataTable>
   </DsfrAccordion>
 </template>

@@ -85,6 +85,16 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return diagnosticErrors.value.filter((error) => fieldsList.includes(error.field))
   }
 
+  /* Has errors on field */
+  function isFieldError(field) {
+    return diagnosticErrors.value.some((error) => error.field === field)
+  }
+
+  /* Get error message for field */
+  function getErrorMessage(field) {
+    return diagnosticErrors.value.find((error) => error.field === field)?.message.join(". ")
+  }
+
   /* Get year of the current campaign */
   function getYear() {
     return year
@@ -104,6 +114,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     clearErrors,
     getErrorsPage,
     getErrorsGroup,
+    isFieldError,
+    getErrorMessage
   }
 })
 
