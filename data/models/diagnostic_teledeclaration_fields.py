@@ -1086,7 +1086,7 @@ TELEDECLARATION_FIELDS = {
 }
 
 
-def get_fields(year, diagnostic_type, required=False):
+def _get_teledeclaration_fields(year, diagnostic_type, required=False):
     year = int(year) if year else None
     if year not in TELEDECLARATION_FIELDS:
         raise ValueError(f"Field 'year' expected one of {list(TELEDECLARATION_FIELDS.keys())} but got '{year}'.")
@@ -1100,9 +1100,9 @@ def get_fields(year, diagnostic_type, required=False):
     return TELEDECLARATION_FIELDS[year][diagnostic_type]["fields"]
 
 
-def get_teledeclaration_fields(year, diagnostic_type):
-    return get_fields(year, diagnostic_type, required=False)
+def get_teledeclaration_fields_all(year, diagnostic_type):
+    return _get_teledeclaration_fields(year, diagnostic_type, required=False)
 
 
-def get_teledeclaration_required_fields(year, diagnostic_type):
-    return get_fields(year, diagnostic_type, required=True)
+def get_teledeclaration_fields_required(year, diagnostic_type):
+    return _get_teledeclaration_fields(year, diagnostic_type, required=True)
