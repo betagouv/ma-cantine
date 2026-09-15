@@ -45,9 +45,15 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     canteenSavedId.value = null
   }
 
-  /* Save diagnostic errors for the current campaign */
-  function saveErrors(errors) {
-    diagnosticErrors.value = errors
+  /* Set diagnostic errors */
+  function setErrors(errors) {
+    const errorsKeys = Object.keys(errors)
+    const errorsValues = Object.values(errors)
+    const errorList = []
+    for (let i = 0; i < errorsKeys.length; i++) {
+      errorList.push({ field: errorsKeys[i], message: errorsValues[i] })
+    }
+    diagnosticErrors.value = errorList
   }
 
   /* Clear diagnostic errors for the current campaign */
@@ -82,7 +88,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setDiagnostic,
     setValue,
     saveDiagnostic,
-    saveErrors,
+    setErrors,
     clearErrors,
     getErrorsPage,
     getErrorsGroup,

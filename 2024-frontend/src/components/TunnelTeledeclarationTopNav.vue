@@ -23,7 +23,7 @@ const save = async (page) => {
   await teledeclarationStore.saveDiagnostic()
   const check = await checkIsFilled()
   if (check.isFilled) goTo(page)
-  await saveErrors(check.errors)
+  await teledeclarationStore.setErrors(check.errors)
   const pageErrors = teledeclarationStore.getErrorsPage(route.name, canteenInformations.value.isGroupe)
   if (pageErrors.length > 0) displayModal(pageErrors, page)
   else goTo(page)
@@ -35,16 +35,6 @@ const saveAndQuit = async () => {
 }
 
 /* Errors */
-const saveErrors = async (errors) => {
-  const errorsKeys = Object.keys(errors)
-  const errorsValues = Object.values(errors)
-  const errorList = []
-  for (let i = 0; i < errorsKeys.length; i++) {
-    errorList.push({ field: errorsKeys[i], message: errorsValues[i] })
-  }
-  await teledeclarationStore.saveErrors(errorList)
-}
-
 const checkIsFilled = async () => {
   const canteenId = diagnostic.value.canteenId
   const diagnosticId = diagnostic.value.id
@@ -52,7 +42,6 @@ const checkIsFilled = async () => {
   const checkDiagnostic = await diagnosticServices.checkDiagnostic(canteenId, diagnosticId)
   return { isFilled: checkCanteen.isFilled && checkDiagnostic.isFilled, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
 }
-
 
 /* Modal */
 const showModal = ref(false)
