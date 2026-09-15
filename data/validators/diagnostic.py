@@ -8,15 +8,38 @@ from data.models.diagnostic_teledeclaration_dates import (
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )
 from common.utils import utils as utils_utils
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_labels,
+    get_teledeclaration_fields_required,
+)
 
 
-def validate_year_and_can_edit(instance):
+def validate_year(instance):
     """
     - extra validation:
         - year must be filled
         - year must be an integer
         - year must be in CAMPAIGN_DATES
+    """
+    errors = {}
+    field_name = "year"
+    value = getattr(instance, field_name)
+    if value in [None, ""]:
+        utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
+    elif not (isinstance(value, int) or (isinstance(value, str) and value.isdigit())):
+        utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier.")
+    else:
+        # year is an integer
+        if not isinstance(value, int) or value not in CAMPAIGN_DATES:
+            utils_utils.add_validation_error(
+                errors, field_name, f"L'année doit être parmi {', '.join(map(str, CAMPAIGN_DATES.keys()))}."
+            )
+    return errors
+
+
+def validate_year_and_can_edit(instance):
+    """
+    - extra validation:
         - year must be in the current campaign year (now.year - 1 & now.year)
         - if year is valid:
             - after teledeclaration end date, DRAFT diagnostic cannot be edited anymore
@@ -24,42 +47,31 @@ def validate_year_and_can_edit(instance):
     """
     errors = {}
     field_name = "year"
-    value = getattr(instance, "year")
-    if value in [None, ""]:
-        utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
-    elif not (isinstance(value, int) or (isinstance(value, str) and value.isdigit())):
-        utils_utils.add_validation_error(errors, field_name, "Le champ doit être un nombre entier.")
+    value = getattr(instance, field_name)
+    now = timezone.now()
+    current_campaign_years = [now.year - 1, now.year]
+    if int(value) not in current_campaign_years:
+        utils_utils.add_validation_error(
+            errors,
+            field_name,
+            f"L'année doit être dans l'année de campagne en cours ({', '.join(map(str, current_campaign_years))}).",
+        )
+    # year is valid, check can_edit validation
     else:
-        # year is an integer
-        now = timezone.now()
-        current_campaign_years = [now.year - 1, now.year]
-        if not isinstance(value, int) or value not in CAMPAIGN_DATES:
-            utils_utils.add_validation_error(
-                errors, "year", f"L'année doit être parmi {', '.join(map(str, CAMPAIGN_DATES.keys()))}."
-            )
-        elif int(value) not in current_campaign_years:
-            utils_utils.add_validation_error(
-                errors,
-                "year",
-                f"L'année doit être dans l'année de campagne en cours ({', '.join(map(str, current_campaign_years))}).",
-            )
-        # year is valid, check can_edit validation
-        else:
-            if instance.pk:
-                now = timezone.now()
-                if now > get_year_campaign_end_date_or_today_date(value):
-                    if instance.status == instance.DiagnosticStatus.DRAFT:
-                        utils_utils.add_validation_error(
-                            errors,
-                            "year",
-                            f"Le diagnostic de l'année {value} ne peut plus être modifié car la campagne de télédéclaration est terminée.",
-                        )
-                if now > get_year_correction_end_date_or_campaign_end_date_or_today_date(value):
+        if instance.pk:
+            if now > get_year_campaign_end_date_or_today_date(value):
+                if instance.status == instance.DiagnosticStatus.DRAFT:
                     utils_utils.add_validation_error(
                         errors,
-                        "year",
-                        f"Le diagnostic de l'année {value} ne peut plus être modifié car la période de correction est terminée.",
+                        field_name,
+                        f"Le diagnostic de l'année {value} ne peut plus être modifié car la campagne de télédéclaration est terminée.",
                     )
+            if now > get_year_correction_end_date_or_campaign_end_date_or_today_date(value):
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    f"Le diagnostic de l'année {value} ne peut plus être modifié car la période de correction est terminée.",
+                )
     return errors
 
 
@@ -143,7 +155,7 @@ def validate_valeur_totale(instance):
                         "valeur_totale",
                         f"La valeur totale (HT), {instance.valeur_totale}, est moins que la valeur (HT) {field_name}, {field_value}",
                     )
-            for label in instance.APPRO_LABELS_ALL:
+            for label in get_teledeclaration_labels(instance.year, "APPRO_LABELS_ALL"):
                 label_sum = instance.label_sum(label)
                 if label_sum and label_sum > instance.valeur_totale:
                     utils_utils.add_validation_error(
@@ -170,11 +182,11 @@ def validate_valeur_famille(instance):
             - valeur_*famille* must be >= sum of each label for that family
     """
     errors = {}
-    for family in instance.APPRO_FAMILIES:
+    for family in get_teledeclaration_labels(instance.year, "APPRO_FAMILIES"):
         field_name = f"valeur_{family}"
         field_value = getattr(instance, field_name)
         if field_value is not None:
-            for label in instance.APPRO_LABELS_ALL:
+            for label in get_teledeclaration_labels(instance.year, "APPRO_LABELS_ALL"):
                 family_label_field_name = f"valeur_{family}_{label}"
                 family_label_field_value = getattr(instance, family_label_field_name)
                 if family_label_field_value and family_label_field_value > field_value:
@@ -199,7 +211,7 @@ def validate_valeur_famille_bio(instance):
         - valeur_*famille*_bio must be >= valeur_*famille*_bio_dont_commerce_equitable
     """
     errors = {}
-    for family in instance.APPRO_FAMILIES:
+    for family in get_teledeclaration_labels(instance.year, "APPRO_FAMILIES"):
         field_name = f"valeur_{family}_bio"
         field_value = getattr(instance, field_name)
         if field_value is not None:
@@ -228,11 +240,11 @@ def validate_valeur_label(instance):
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:
-        for label in instance.APPRO_LABELS_ALL:
+        for label in get_teledeclaration_labels(instance.year, "APPRO_LABELS_ALL"):
             field_name = f"valeur_{label}"
             field_value = getattr(instance, field_name, None)  # some don't exist
             if field_value is not None:
-                for family in instance.APPRO_FAMILIES:
+                for family in get_teledeclaration_labels(instance.year, "APPRO_FAMILIES"):
                     family_label_field_name = f"valeur_{family}_{label}"
                     family_label_field_value = getattr(instance, family_label_field_name)
                     if family_label_field_value and family_label_field_value > field_value:

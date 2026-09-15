@@ -277,13 +277,15 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.valeur_viandes_volailles_fermier = 50
         diagnostic.save()
         self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertEqual(diagnostic.family_sum("viandes_volailles"), 250)  # only APPRO_LABELS
         self.assertRaises(ValidationError, diagnostic.full_clean)
         # even for non-egalim labels
         diagnostic.valeur_viandes_volailles_bio = 10
         diagnostic.valeur_viandes_volailles_fermier = 10
-        diagnostic.valeur_viandes_volailles_europe = 200
+        diagnostic.valeur_viandes_volailles_circuit_court = 200
         diagnostic.save()
         self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertEqual(diagnostic.family_sum("viandes_volailles"), 20)  # only APPRO_LABELS
         self.assertRaises(ValidationError, diagnostic.full_clean)
         # sum of valeur_famille_label cannot be > valeur_famille
         diagnostic.valeur_viandes_volailles_bio = 10
@@ -889,20 +891,6 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_complete_2.label_sum("bio_dont_commerce_equitable"), 0 + 10)
         self.assertEqual(self.diagnostic_complete_2.label_sum("label_rouge"), 7 + 8)
         self.assertEqual(self.diagnostic_complete_2.label_sum("france"), 20 + 25)
-
-    def test_with_family_sum_queryset(self):
-        diagnostic_qs = Diagnostic.objects.with_family_sum("viandes_volailles").with_family_sum("produits_de_la_mer")
-        diagnostic_simple = diagnostic_qs.get(id=self.diagnostic_simple.id)
-        self.assertEqual(diagnostic_simple.viandes_volailles_sum, 0)
-        self.assertEqual(diagnostic_simple.produits_de_la_mer_sum, 0)
-        diagnostic_complete_1 = diagnostic_qs.get(id=self.diagnostic_complete_1.id)
-        self.assertEqual(
-            diagnostic_complete_1.viandes_volailles_sum, 10 + 7
-        )  # bio_dont_commerce_equitable & france are not included
-        self.assertEqual(diagnostic_complete_1.produits_de_la_mer_sum, 15 + 8)
-        diagnostic_complete_2 = diagnostic_qs.get(id=self.diagnostic_complete_2.id)
-        self.assertEqual(diagnostic_complete_2.viandes_volailles_sum, 10 + 7)
-        self.assertEqual(diagnostic_complete_2.produits_de_la_mer_sum, 15 + 8)
 
     def test_family_sum_property(self):
         self.assertEqual(self.diagnostic_simple.family_sum("viandes_volailles"), 0)
