@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
+import teledeclaration from '@/data/teledeclaration.json'
 import CanteenDisplayInformations from '@/components/CanteenDisplayInformations.vue'
 
 const props = defineProps(["accordion", "id"])
@@ -15,6 +16,7 @@ const router = useRouter()
 const canteenStore = useStoreCanteen()
 const teledeclarationStore = useStoreTeledeclaration()
 const { canteenInformations } = storeToRefs(canteenStore)
+const { diagnostic } = storeToRefs(teledeclarationStore)
 
 /* Errors */
 const errors = computed(() => teledeclarationStore.getErrorsGroup(props.accordion.fieldsGroupName))
@@ -31,6 +33,26 @@ const header = [
   { key: "name", label: "Champ" },
   { key: "value", label: "Valeur" },
 ]
+
+const getPrettyDiagnosticValue = (field) => {
+  const hasOptions = teledeclaration.fields[field]?.options?.length > 0
+  const diagValue = diagnostic.value[field]
+  const prettyValue = hasOptions ? teledeclaration.fields[field].options.find(option => option.value === diagValue).labelShort : diagValue
+  return prettyValue !== null ? prettyValue : "Non renseigné"
+}
+
+const rows = computed(() => {
+  const fields = teledeclaration.groups[props.accordion.fieldsGroupName]
+  return fields.map(field => {
+    const isCanteen = props.accordion.isCanteenFields
+    const name = isCanteen ? field : teledeclaration.fields[field].label
+    const value = isCanteen ? canteenInformations.value[field] : getPrettyDiagnosticValue(field)
+    return {
+      name,
+      value,
+    }
+  })
+})
 
 const goToStep = (page) => router.push(page)
 </script>
@@ -52,7 +74,7 @@ const goToStep = (page) => router.push(page)
       title="Données enregistrées"
       no-caption
       :headersRow="header"
-      :rows="accordion.rows"
+      :rows="rows"
       :no-scroll="true"
       class="fr-mt-0 fr-mb-0"
     />
