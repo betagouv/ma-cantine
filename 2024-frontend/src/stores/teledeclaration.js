@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
 import diagnosticService from "@/services/diagnostics.js"
+import diagnosticsFields from "@/services/diagnosticsFields.js"
 
 const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const diagnostic = ref(null)
@@ -54,6 +55,13 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnosticErrors.value = []
   }
 
+  /* Keep only the errors related to the fields displayed on the given page */
+  function getErrorsPage(pageName, canteenIsGroupe) {
+    const diagnosticIsSimple = diagnostic.value.diagnosticType === "SIMPLE"
+    const fieldsList = diagnosticsFields.getFieldsList(pageName, canteenIsGroupe, diagnosticIsSimple)
+    return diagnosticErrors.value.filter((error) => fieldsList.includes(error.field))
+  }
+
   /* Get year of the current campaign */
   function getYear() {
     return year
@@ -71,6 +79,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     saveDiagnostic,
     saveErrors,
     clearErrors,
+    getErrorsPage,
   }
 })
 
