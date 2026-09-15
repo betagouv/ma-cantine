@@ -19,7 +19,10 @@ const fieldName = "diagnosticType"
 const field = computed(() => diagnosticsFieldsService.getField(fieldName))
 const isRequired = computed(() => field.value.required)
 const label = computed(() => field.value.label)
-const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(fieldName, storeTeledeclaration.diagnosticErrors))
+const errorMessage = computed(() => {
+  const errors = diagnosticsFieldsService.getFieldError(fieldName, storeTeledeclaration.diagnosticErrors)
+  return errors ? errors.join('. ') : ''
+})
 const options = computed(() => {
   const newOptions = field.value.options || []
   const autoIndex = newOptions.findIndex(field => field.value === "AUTO")
@@ -37,6 +40,7 @@ onMounted(prefillSelect)
 
 /* Change */
 const selectRadio = () => {
+  console.log("select", select.value, fieldName)
   if (select.value === "AUTO") alert('TODO: Saisie auto')
   else storeTeledeclaration.setValue(fieldName, select.value)
 }
@@ -60,6 +64,6 @@ const selectRadio = () => {
     :legend="label"
     :options="options"
     @change="selectRadio"
-    :error-message="errorMessage.join('. ')"
+    :error-message="errorMessage"
   />
 </template>
