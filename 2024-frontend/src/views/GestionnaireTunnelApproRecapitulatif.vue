@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router'
 import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import diagnosticServices from '@/services/diagnostics'
+import canteenServices from '@/services/canteens'
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import TunnelTeledeclarationAccordionsGroup from '@/components/TunnelTeledeclarationAccordionsGroup.vue'
 import TunnelTeledeclarationModal from '@/components/TunnelTeledeclarationModal.vue'
@@ -21,8 +22,9 @@ const { diagnostic } = storeToRefs(teledeclarationStore)
 
 /* TD CTA */
 const canTeledeclare = computedAsync(async () => {
-  const check = await diagnosticServices.checkDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
-  return check.isFilled
+  const checkCanteen = await canteenServices.checkCanteen(canteenInformations.value.id)
+  const checkDiagnostic = await diagnosticServices.checkDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
+  return checkDiagnostic.isFilled && checkCanteen.isFilled
 })
 const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration pour la télédéclarer")
 const icon = computed(() => canTeledeclare.value ? "fr-icon-checkbox-circle-fill" : "fr-icon-checkbox-line")
