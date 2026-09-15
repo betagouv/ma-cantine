@@ -312,9 +312,7 @@ class BaseImportView(ABC, APIView):
         value_given = match.group(2) if match else ""
         if field_name:
             verbose_field_name = self._get_verbose_field_name(field_name)
-            self._add_error(
-                errors, f"La valeur '{value_given}' n'est pas valide pour le champ '{verbose_field_name}'."
-            )
+            self._add_error(errors, f"Champ '{verbose_field_name}' : la valeur '{value_given}' n'est pas valide.")
 
     def _get_not_found_message(self, identifier):
         """Get error message for object not found"""

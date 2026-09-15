@@ -27,7 +27,6 @@ class DiagnosticListApiTest(APITestCase):
         cls.diagnostic_2021_teledeclared = DiagnosticFactory(canteen=cls.canteen, year=2021)
         with freeze_time("2022-08-30"):  # during the 2021 campaign
             cls.diagnostic_2021_teledeclared.teledeclare(applicant=cls.user)
-        cls.diagnostic_2020 = DiagnosticFactory(canteen=cls.canteen, year=2020)
         cls.url = reverse("diagnostic_list_create", kwargs={"canteen_pk": cls.canteen.id})
 
     def test_cannot_list_diagnostics_if_unauthenticated(self):
@@ -56,11 +55,10 @@ class DiagnosticListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         results = body["results"]
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 2)
         # ordered by year ascending
-        self.assertEqual(results[0]["id"], self.diagnostic_2020.id)
-        self.assertEqual(results[1]["id"], self.diagnostic_2021_teledeclared.id)
-        self.assertEqual(results[2]["id"], self.diagnostic_2022_cancelled.id)
+        self.assertEqual(results[0]["id"], self.diagnostic_2021_teledeclared.id)
+        self.assertEqual(results[1]["id"], self.diagnostic_2022_cancelled.id)
 
     def test_list_diagnostics_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
@@ -72,7 +70,7 @@ class DiagnosticListApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         results = body["results"]
-        self.assertEqual(len(results), 3)
+        self.assertEqual(len(results), 2)
 
 
 class DiagnosticCreateApiTest(APITestCase):
@@ -81,7 +79,7 @@ class DiagnosticCreateApiTest(APITestCase):
         cls.user = UserFactory()
         cls.canteen = CanteenFactory(managers=[cls.user])
         cls.url = reverse("diagnostic_list_create", kwargs={"canteen_pk": cls.canteen.id})
-        cls.DIAGNOSTIC_PAYLOAD = {"year": 2020}
+        cls.DIAGNOSTIC_PAYLOAD = {"year": 2021}
 
     def test_cannot_create_diagnostic_if_unauthenticated(self):
         response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
@@ -118,7 +116,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         diagnostic = Diagnostic.objects.first()
         self.assertEqual(diagnostic.canteen, self.canteen)
-        self.assertEqual(diagnostic.year, 2020)
+        self.assertEqual(diagnostic.year, 2021)
 
     def test_can_create_minimal_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
@@ -130,7 +128,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         diagnostic = Diagnostic.objects.first()
         self.assertEqual(diagnostic.canteen, self.canteen)
-        self.assertEqual(diagnostic.year, 2020)
+        self.assertEqual(diagnostic.year, 2021)
         self.assertEqual(diagnostic.creation_user, user)
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
         self.assertEqual(diagnostic.creation_source_api_oauth2_application, token.application)
@@ -215,7 +213,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.canteen.managers.add(authenticate.user)
 
         payload = {
-            "year": 2020,
+            "year": 2021,
             "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
             "valeur_bio": 1000,
             "valeur_siqo": 3000,
@@ -370,7 +368,7 @@ class DiagnosticCreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         diagnostic = Diagnostic.objects.get(canteen__id=self.canteen.id)
-        self.assertEqual(diagnostic.year, 2020)
+        self.assertEqual(diagnostic.year, 2021)
         self.assertTrue(diagnostic.cooking_plastic_substituted)
         self.assertFalse(diagnostic.has_donation_agreement)
         self.assertIn("AWARENESS", diagnostic.waste_actions)
@@ -617,13 +615,13 @@ class DiagnosticUpdateApiTest(APITestCase):
     def test_cannot_update_diagnostic_with_put(self):
         self.diagnostic.canteen.managers.add(authenticate.user)
 
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.put(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_cannot_update_diagnostic_if_unauthenticated(self):
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -632,7 +630,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_update_diagnostic_if_canteen_does_not_exist(self):
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -647,7 +645,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
     @authenticate
     def test_cannot_update_diagnostic_if_not_canteen_manager(self):
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -658,7 +656,7 @@ class DiagnosticUpdateApiTest(APITestCase):
     def test_cannot_update_diagnostic_if_diagnostic_does_not_exist(self):
         self.diagnostic.canteen.managers.add(authenticate.user)
 
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -677,7 +675,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         diagnostic_other = DiagnosticFactory(canteen=canteen_other)
         self.canteen.managers.add(authenticate.user)
 
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -691,7 +689,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         # even if the user manages canteen_other
         canteen_other.managers.add(authenticate.user)
 
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -706,18 +704,18 @@ class DiagnosticUpdateApiTest(APITestCase):
     def test_can_update_diagnostic(self):
         self.diagnostic.canteen.managers.add(authenticate.user)
 
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.diagnostic.refresh_from_db()
-        self.assertEqual(self.diagnostic.year, 2020)
+        self.assertEqual(self.diagnostic.year, 2021)
 
     def test_can_update_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.diagnostic.canteen.managers.add(user)
 
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         self.client.credentials(Authorization=f"Bearer {token}")
         response = self.client.patch(self.url, payload)
 
@@ -733,7 +731,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(diagnostic_history.history_source, None)
         self.assertEqual(diagnostic_history.history_source_api_oauth2_application, None)
 
-        payload = {"year": 2020, "creationSource": CreationSource.API}
+        payload = {"year": 2021, "creationSource": CreationSource.API}
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -753,7 +751,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(self.diagnostic.creation_mtm_medium, None)
 
         payload = {
-            "year": 2020,
+            "year": 2021,
             "creation_mtm_source": "mtm_source_value",
             "creation_mtm_campaign": "mtm_campaign_value",
             "creation_mtm_medium": "mtm_medium_value",
@@ -766,7 +764,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertNotIn("creation_mtm_campaign", body)
         self.assertNotIn("creation_mtm_medium", body)
         self.diagnostic.refresh_from_db()
-        self.assertEqual(self.diagnostic.year, 2020)
+        self.assertEqual(self.diagnostic.year, 2021)
         self.assertIsNone(self.diagnostic.creation_mtm_source)
         self.assertIsNone(self.diagnostic.creation_mtm_campaign)
         self.assertIsNone(self.diagnostic.creation_mtm_medium)
@@ -884,7 +882,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         with freeze_time("2022-08-30"):  # during the 2021 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
 
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -905,7 +903,7 @@ class DiagnosticUpdateApiTest(APITestCase):
             diagnostic.teledeclare(applicant=authenticate.user)
             diagnostic.cancel()
 
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.patch(
             reverse(
                 "diagnostic_retrieve_update",
@@ -916,7 +914,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.year, 2020)
+        self.assertEqual(diagnostic.year, 2021)
 
     @authenticate
     def test_can_update_cancelled_diagnostic_during_correction_campaign(self):

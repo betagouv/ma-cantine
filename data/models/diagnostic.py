@@ -30,6 +30,7 @@ from data.models.diagnostic_teledeclaration_dates import (
     is_in_correction,
     is_in_teledeclaration_or_correction,
 )
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_required_fields
 from macantine.utils import (
     EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,
@@ -78,32 +79,25 @@ def valeur_bio_agg_is_filled_query():
     return Q(valeur_bio_agg__isnull=False)
 
 
+def diagnostic_type_is_filled_query(diagnostic_type_query, diagnostic_type):
+    """
+    Required fields change from one year to the next (see diagnostic_teledeclaration_fields.py),
+    so we OR together a per-year Q for every year known to the registry.
+    """
+    year_queries = [
+        Q(year=year)
+        & Q(**{f"{field}__isnull": False for field in get_teledeclaration_required_fields(year, diagnostic_type)})
+        for year in TELEDECLARATION_FIELDS
+    ]
+    return diagnostic_type_query() & valeur_totale_is_filled_and_not_zero_query() & reduce(operator.or_, year_queries)
+
+
 def diagnostic_type_simple_is_filled_query():
-    """
-    - common checks: diagnostic_type & valeur_totale
-    - before/after 2025: required fields change
-    """
-    before_2025 = Q(year__lt=2025) & Q(
-        **{f"{field}__isnull": False for field in Diagnostic.APPRO_FIELDS_REQUIRED_BEFORE_2025}
-    )
-    after_2025 = Q(year__gte=2025) & Q(
-        **{f"{field}__isnull": False for field in Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025}
-    )
-    return diagnostic_type_simple_query() & valeur_totale_is_filled_and_not_zero_query() & (before_2025 | after_2025)
+    return diagnostic_type_is_filled_query(diagnostic_type_simple_query, Diagnostic.DiagnosticType.SIMPLE)
 
 
 def diagnostic_type_complete_is_filled_query():
-    """
-    - common checks: diagnostic_type & valeur_totale
-    - before/after 2025: required fields change
-    """
-    before_2025 = Q(year__lt=2025) & Q(
-        **{f"{field}__isnull": False for field in Diagnostic.APPRO_FIELDS_REQUIRED_BEFORE_2025}
-    )
-    after_2025 = Q(year__gte=2025) & Q(
-        **{f"{field}__isnull": False for field in Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025}
-    )
-    return diagnostic_type_complete_query() & valeur_totale_is_filled_and_not_zero_query() & (before_2025 | after_2025)
+    return diagnostic_type_is_filled_query(diagnostic_type_complete_query, Diagnostic.DiagnosticType.COMPLETE)
 
 
 def teledeclaration_mode_satellite_without_appro_query():
@@ -594,18 +588,6 @@ class Diagnostic(models.Model):
         "valeur_autres_france",
     ]
 
-    APPRO_FIELDS_REQUIRED_BEFORE_2025 = [
-        "valeur_totale",
-    ]
-    SIMPLE_APPRO_FIELDS_REQUIRED_2025 = [
-        "valeur_totale",
-        "valeur_bio",
-        "valeur_siqo",
-        "valeur_egalim_autres",
-        "valeur_viandes_volailles",
-        "valeur_viandes_volailles_egalim",
-    ]
-
     AGGREGATED_APPRO_FIELDS = [
         "valeur_bio_agg",
         "valeur_siqo_agg",
@@ -844,63 +826,6 @@ class Diagnostic(models.Model):
 
     COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS
     # COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS  # TODO when updating the imports
-
-    COMPLETE_APPRO_FIELDS_REQUIRED_2025 = [
-        # removed APPRO_FIELDS_NON_APPLICABLE
-        "valeur_totale",
-        "valeur_viandes_volailles",
-        "valeur_produits_de_la_mer",
-        "valeur_viandes_volailles_bio",
-        "valeur_produits_de_la_mer_bio",
-        "valeur_fruits_et_legumes_bio",
-        "valeur_charcuterie_bio",
-        "valeur_produits_laitiers_bio",
-        "valeur_boulangerie_bio",
-        "valeur_boissons_bio",
-        "valeur_autres_bio",
-        "valeur_viandes_volailles_label_rouge",
-        "valeur_produits_de_la_mer_label_rouge",
-        "valeur_fruits_et_legumes_label_rouge",
-        "valeur_charcuterie_label_rouge",
-        "valeur_produits_laitiers_label_rouge",
-        "valeur_boulangerie_label_rouge",
-        "valeur_autres_label_rouge",
-        "valeur_viandes_volailles_aocaop_igp_stg",
-        "valeur_produits_de_la_mer_aocaop_igp_stg",
-        "valeur_fruits_et_legumes_aocaop_igp_stg",
-        "valeur_charcuterie_aocaop_igp_stg",
-        "valeur_produits_laitiers_aocaop_igp_stg",
-        "valeur_boulangerie_aocaop_igp_stg",
-        "valeur_boissons_aocaop_igp_stg",
-        "valeur_autres_aocaop_igp_stg",
-        "valeur_viandes_volailles_hve",
-        "valeur_produits_de_la_mer_hve",
-        "valeur_fruits_et_legumes_hve",
-        "valeur_charcuterie_hve",
-        "valeur_produits_laitiers_hve",
-        "valeur_boulangerie_hve",
-        "valeur_boissons_hve",
-        "valeur_autres_hve",
-        "valeur_viandes_volailles_rup",
-        "valeur_produits_de_la_mer_rup",
-        "valeur_fruits_et_legumes_rup",
-        "valeur_charcuterie_rup",
-        "valeur_produits_laitiers_rup",
-        "valeur_boulangerie_rup",
-        "valeur_boissons_rup",
-        "valeur_autres_rup",
-        "valeur_viandes_volailles_commerce_equitable",
-        "valeur_produits_de_la_mer_commerce_equitable",
-        "valeur_fruits_et_legumes_commerce_equitable",
-        "valeur_charcuterie_commerce_equitable",
-        "valeur_produits_laitiers_commerce_equitable",
-        "valeur_boulangerie_commerce_equitable",
-        "valeur_boissons_commerce_equitable",
-        "valeur_autres_commerce_equitable",
-        "valeur_viandes_volailles_fermier",
-        "valeur_charcuterie_fermier",
-        "valeur_produits_laitiers_fermier",
-    ]
 
     EGALIM_STATS_FIELDS = [
         "pourcentage_bio",
@@ -2223,21 +2148,25 @@ class Diagnostic(models.Model):
 
     @property
     def is_filled_simple(self):
-        check = self.is_diagnostic_type_simple and self.valeur_totale_is_filled
-        if int(self.year) >= 2025:
-            return check and all(
-                getattr(self, field) is not None for field in Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025
+        return (
+            self.is_diagnostic_type_simple
+            and self.valeur_totale_is_filled
+            and all(
+                getattr(self, field) is not None
+                for field in get_teledeclaration_required_fields(self.year, self.diagnostic_type)
             )
-        return check
+        )
 
     @property
     def is_filled_complete(self):
-        check = self.is_diagnostic_type_complete and self.valeur_totale_is_filled
-        if int(self.year) >= 2025:
-            return check and all(
-                getattr(self, field) is not None for field in Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025
+        return (
+            self.is_diagnostic_type_complete
+            and self.valeur_totale_is_filled
+            and all(
+                getattr(self, field) is not None
+                for field in get_teledeclaration_required_fields(self.year, self.diagnostic_type)
             )
-        return check
+        )
 
     @property
     def is_filled(self):
