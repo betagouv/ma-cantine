@@ -5,7 +5,7 @@ import factory
 from factory import fuzzy
 
 from data.models import Diagnostic
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_required_fields
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
 
 from .canteen import CanteenFactory
 
@@ -49,7 +49,7 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     def fill_required_fields(obj, create, extracted, **kwargs):
         if obj.year and obj.diagnostic_type:
             try:
-                for field_name in get_teledeclaration_required_fields(obj.year, obj.diagnostic_type):
+                for field_name in get_teledeclaration_fields_required(obj.year, obj.diagnostic_type):
                     if getattr(obj, field_name) is None:
                         setattr(obj, field_name, 0)
             except:  # noqa

@@ -8,7 +8,7 @@ from data.models.diagnostic_teledeclaration_dates import (
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )
 from common.utils import utils as utils_utils
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_required_fields
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
 
 
 def validate_year_and_can_edit(instance):
@@ -108,7 +108,7 @@ def validate_appro_fields_required(instance):
     """
     errors = {}
     if instance.year:
-        required_fields = get_teledeclaration_required_fields(instance.year, instance.diagnostic_type)
+        required_fields = get_teledeclaration_fields_required(instance.year, instance.diagnostic_type)
         for field in required_fields:
             if getattr(instance, field) is None:
                 utils_utils.add_validation_error(

@@ -30,7 +30,7 @@ from data.models.diagnostic_teledeclaration_dates import (
     is_in_correction,
     is_in_teledeclaration_or_correction,
 )
-from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_required_fields
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_fields_required
 from macantine.utils import (
     EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,
@@ -86,7 +86,7 @@ def diagnostic_type_is_filled_query(diagnostic_type_query, diagnostic_type):
     """
     year_queries = [
         Q(year=year)
-        & Q(**{f"{field}__isnull": False for field in get_teledeclaration_required_fields(year, diagnostic_type)})
+        & Q(**{f"{field}__isnull": False for field in get_teledeclaration_fields_required(year, diagnostic_type)})
         for year in TELEDECLARATION_FIELDS
     ]
     return diagnostic_type_query() & valeur_totale_is_filled_and_not_zero_query() & reduce(operator.or_, year_queries)
@@ -2153,7 +2153,7 @@ class Diagnostic(models.Model):
             and self.valeur_totale_is_filled
             and all(
                 getattr(self, field) is not None
-                for field in get_teledeclaration_required_fields(self.year, self.diagnostic_type)
+                for field in get_teledeclaration_fields_required(self.year, self.diagnostic_type)
             )
         )
 
@@ -2164,7 +2164,7 @@ class Diagnostic(models.Model):
             and self.valeur_totale_is_filled
             and all(
                 getattr(self, field) is not None
-                for field in get_teledeclaration_required_fields(self.year, self.diagnostic_type)
+                for field in get_teledeclaration_fields_required(self.year, self.diagnostic_type)
             )
         )
 
