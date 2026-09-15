@@ -671,21 +671,21 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
         cls.url = reverse("canteen_purchases_summary", kwargs={"canteen_pk": cls.canteen.id})
 
     def test_cannot_get_canteen_purchases_summary_if_unauthenticated(self):
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.get(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_get_canteen_purchases_summary_if_canteen_does_not_exist(self):
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.get(reverse("canteen_purchases_summary", kwargs={"canteen_pk": 9999}), payload)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @authenticate
     def test_cannot_get_canteen_purchases_summary_if_not_canteen_manager(self):
-        payload = {"year": 2020}
+        payload = {"year": 2021}
         response = self.client.get(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -694,10 +694,10 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
     def test_can_get_canteen_purchases_summary(self):
         self.canteen.managers.add(authenticate.user)
 
-        PurchaseFactory(canteen=self.canteen, prix_ht=100, date="2020-01-01")
-        PurchaseFactory(canteen=self.canteen, prix_ht=50, date="2020-12-31")
-        PurchaseFactory(canteen=self.canteen, prix_ht=300, date="2021-01-01")
-        PurchaseFactory(canteen=self.canteen, prix_ht=150, date="2021-12-31")
+        PurchaseFactory(canteen=self.canteen, prix_ht=100, date="2021-01-01")
+        PurchaseFactory(canteen=self.canteen, prix_ht=50, date="2021-12-31")
+        PurchaseFactory(canteen=self.canteen, prix_ht=300, date="2022-01-01")
+        PurchaseFactory(canteen=self.canteen, prix_ht=150, date="2022-12-31")
         other_canteen = CanteenFactory(managers=[authenticate.user])
         PurchaseFactory(canteen=other_canteen, prix_ht=999, date="2021-01-01")
 
@@ -707,10 +707,10 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
         body = response.json()
         self.assertIn("results", body)
         self.assertEqual(len(body["results"]), 2)  # multi year
-        self.assertEqual(body["results"][0]["year"], 2020)
+        self.assertEqual(body["results"][0]["year"], 2021)
         self.assertEqual(body["results"][0]["valeurTotale"], 150)
         self.assertIn("valeurBio", body["results"][0])
-        self.assertEqual(body["results"][1]["year"], 2021)
+        self.assertEqual(body["results"][1]["year"], 2022)
         self.assertEqual(body["results"][1]["valeurTotale"], 450)
 
 
@@ -718,7 +718,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
-        cls.year = 2020
+        cls.year = 2021
         cls.url = reverse(
             "canteen_purchases_summary_for_year", kwargs={"canteen_pk": cls.canteen.id, "year": cls.year}
         )
@@ -751,86 +751,86 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         The categories with multiple labels on them should count items with two or more labels once
         """
         self.canteen.managers.add(authenticate.user)
-        # For the year 2020
+        # For the year 2021
         # bio (+ rouge)
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.LABEL_ROUGE],
             prix_ht=50,
         )
         # bio en conversion (+ igp)
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-08-01",
+            date="2021-08-01",
             caracteristiques=[Purchase.Characteristic.CONVERSION_BIO, Purchase.Characteristic.IGP],
             prix_ht=150,
         )
         # bio + commerce équitable
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.BIO, Purchase.Characteristic.COMMERCE_EQUITABLE],
             prix_ht=20,
         )
         # hve x2 = 10
         PurchaseFactory(
-            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.HVE], prix_ht=2
+            canteen=self.canteen, date="2021-01-01", caracteristiques=[Purchase.Characteristic.HVE], prix_ht=2
         )
         PurchaseFactory(
-            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.HVE], prix_ht=8
+            canteen=self.canteen, date="2021-01-01", caracteristiques=[Purchase.Characteristic.HVE], prix_ht=8
         )
         # rouge x2 = 20
         PurchaseFactory(
-            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.LABEL_ROUGE], prix_ht=12
+            canteen=self.canteen, date="2021-01-01", caracteristiques=[Purchase.Characteristic.LABEL_ROUGE], prix_ht=12
         )
         PurchaseFactory(
-            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.LABEL_ROUGE], prix_ht=8
+            canteen=self.canteen, date="2021-01-01", caracteristiques=[Purchase.Characteristic.LABEL_ROUGE], prix_ht=8
         )
         # aoc, igp + igp = 30
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.AOCAOP, Purchase.Characteristic.IGP],
             prix_ht=22,
         )
         PurchaseFactory(
-            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.IGP], prix_ht=4
+            canteen=self.canteen, date="2021-01-01", caracteristiques=[Purchase.Characteristic.IGP], prix_ht=4
         )
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.IGP, Purchase.Characteristic.HVE],
             prix_ht=4,
         )
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.EXTERNALITES, Purchase.Characteristic.PERFORMANCE],
             prix_ht=30,
         )
         PurchaseFactory(
-            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.PERFORMANCE], prix_ht=15
+            canteen=self.canteen, date="2021-01-01", caracteristiques=[Purchase.Characteristic.PERFORMANCE], prix_ht=15
         )
         # some other durable label
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-08",
+            date="2021-01-08",
             caracteristiques=[Purchase.Characteristic.PECHE_DURABLE],
             prix_ht=240,
         )
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-15",
+            date="2021-01-15",
             caracteristiques=[Purchase.Characteristic.COMMERCE_EQUITABLE],
             prix_ht=10,
         )
         # no labels
-        PurchaseFactory(canteen=self.canteen, date="2020-01-01", caracteristiques=[], prix_ht=500)
+        PurchaseFactory(canteen=self.canteen, date="2021-01-01", caracteristiques=[], prix_ht=500)
 
-        # Not in the year 2020 - smoke test for year filtering
+        # Not in the year 2021 - smoke test for year filtering
         PurchaseFactory(
-            canteen=self.canteen, date="2019-01-01", caracteristiques=[Purchase.Characteristic.BIO], prix_ht=666
+            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.BIO], prix_ht=666
         )
 
         response = self.client.get(self.url)
@@ -856,7 +856,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         The category of AOC/AOP/IGP/STG should count items with two or more labels once (applicable to extended declaration)
         """
         self.canteen.managers.add(authenticate.user)
-        d = "2020-03-01"
+        d = "2021-03-01"
 
         # test that bio trumps other labels, but doesn't stop non-EGalim labels
         PurchaseFactory(
@@ -936,9 +936,9 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
             canteen=self.canteen, date=d, famille_produits=Purchase.Family.AUTRES, caracteristiques=[], prix_ht=110
         )
 
-        # Not in the year 2020 - smoke test for year filtering
+        # Not in the year 2021 - smoke test for year filtering
         PurchaseFactory(
-            canteen=self.canteen, date="2019-01-01", caracteristiques=[Purchase.Characteristic.BIO], prix_ht=666
+            canteen=self.canteen, date="2020-01-01", caracteristiques=[Purchase.Characteristic.BIO], prix_ht=666
         )
 
         response = self.client.get(self.url)
@@ -966,7 +966,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         # Should be counted both on EGalim and Origine France
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[
                 Purchase.Characteristic.BIO,
                 Purchase.Characteristic.LABEL_ROUGE,
@@ -979,7 +979,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         # Should be counted on EGalim
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.BIO],
             famille_produits=Purchase.Family.VIANDES_VOLAILLES,
             prix_ht=40,
@@ -988,7 +988,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         # Should be counted on EGalim
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.LABEL_ROUGE],
             famille_produits=Purchase.Family.VIANDES_VOLAILLES,
             prix_ht=30,
@@ -997,7 +997,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         # Should not be counted as EGalim, only included in the total
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[],
             famille_produits=Purchase.Family.VIANDES_VOLAILLES,
             prix_ht=20,
@@ -1006,16 +1006,16 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         # Should be counted on provenance france
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.FRANCE],
             famille_produits=Purchase.Family.VIANDES_VOLAILLES,
             prix_ht=15,
         )
 
-        # Not in the year 2020 - should not be included at all
+        # Not in the year 2021 - should not be included at all
         PurchaseFactory(
             canteen=self.canteen,
-            date="2019-01-01",
+            date="2020-01-01",
             caracteristiques=[],
             famille_produits=Purchase.Family.VIANDES_VOLAILLES,
             prix_ht=10,
@@ -1037,7 +1037,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         # Should be counted on EGalim only once
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[
                 Purchase.Characteristic.BIO,
                 Purchase.Characteristic.LABEL_ROUGE,
@@ -1050,7 +1050,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         # Should be counted on EGalim
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.BIO],
             famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
             prix_ht=40,
@@ -1059,7 +1059,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         # Should be counted on EGalim
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.LABEL_ROUGE],
             famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
             prix_ht=30,
@@ -1068,7 +1068,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         # Should not be counted as EGalim, only included in the total
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[],
             famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
             prix_ht=20,
@@ -1077,16 +1077,16 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         # Should be counted on provenance france
         PurchaseFactory(
             canteen=self.canteen,
-            date="2020-01-01",
+            date="2021-01-01",
             caracteristiques=[Purchase.Characteristic.FRANCE],
             famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
             prix_ht=15,
         )
 
-        # Not in the year 2020 - should not be included at all
+        # Not in the year 2021 - should not be included at all
         PurchaseFactory(
             canteen=self.canteen,
-            date="2019-01-01",
+            date="2020-01-01",
             caracteristiques=[],
             famille_produits=Purchase.Family.PRODUITS_DE_LA_MER,
             prix_ht=10,
