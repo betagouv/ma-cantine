@@ -80,6 +80,7 @@ const goToStep = (page) => router.push(page)
       :rows="rows"
       :no-scroll="true"
       class="fr-mt-0 fr-mb-0"
+      size="sm"
     >
       <template #cell="{ colKey, cell }">
         <p v-if="colKey === 'error' && cell" class="fr-message fr-message--error">{{ cell }}</p>
