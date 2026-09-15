@@ -6,7 +6,6 @@ import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import teledeclaration from '@/data/teledeclaration.json'
 import TunnelTeledeclarationAccordionItem from '@/components/TunnelTeledeclarationAccordionItem.vue'
-import AppSeparator from '@/components/AppSeparator.vue'
 
 /* Router */
 const route = useRoute()
@@ -85,8 +84,7 @@ const accordions = computed(() => {
 </script>
 
 <template>
-  <AppSeparator class="fr-mb-3w" />
-  <p class="fr-text--bold fr-text--sm ma-cantine--text-uppercase">Récapitulatif des données saisies :</p>
+  <h3 class="fr-h6">Récapitulatif des données d’approvisionnements saisies :</h3>
   <DsfrAccordionsGroup v-model="activeAccordion" class="fr-mb-4w">
     <TunnelTeledeclarationAccordionItem
       v-for="(accordion, index) in accordions"
