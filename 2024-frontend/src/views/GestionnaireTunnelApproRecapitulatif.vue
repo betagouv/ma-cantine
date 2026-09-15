@@ -8,7 +8,6 @@ import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import diagnosticServices from '@/services/diagnostics'
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import TunnelTeledeclarationAccordionsGroup from '@/components/TunnelTeledeclarationAccordionsGroup.vue'
-import TunnelTeledeclarationErrors from '@/components/TunnelTeledeclarationErrors.vue'
 import TunnelTeledeclarationModal from '@/components/TunnelTeledeclarationModal.vue'
 
 /* Router */
@@ -83,7 +82,6 @@ const buttons = computed(() => {
       <div class="fr-col-12 fr-col-md-7">
         <h2 class="fr-h5">Votre télédéclaration vous semble t’elle cohérente ?</h2>
         <p>Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
-        <TunnelTeledeclarationErrors />
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard
