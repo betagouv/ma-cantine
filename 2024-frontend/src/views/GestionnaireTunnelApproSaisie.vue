@@ -60,6 +60,6 @@ const selectRadio = () => {
     :legend="label"
     :options="options"
     @change="selectRadio"
-    :error-message="errorMessage"
+    :error-message="errorMessage.join('. ')"
   />
 </template>
