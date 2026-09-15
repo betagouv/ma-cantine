@@ -441,6 +441,20 @@ routes.push({
 })
 
 routes.push({
+  path: "/diagnostic-tunnel/:canteenUrlComponent/*",
+  beforeEnter: (to, from, next) => {
+    next({ name: "GestionnaireCantine", params: { canteenUrlComponent: to.params.canteenUrlComponent } })
+  },
+})
+
+routes.push({
+  path: "/ma-progression/:canteenUrlComponent/*",
+  beforeEnter: (to, from, next) => {
+    next({ name: "GestionnaireCantine", params: { canteenUrlComponent: to.params.canteenUrlComponent } })
+  },
+})
+
+routes.push({
   path: "/:catchAll(.*)",
   component: NotFound,
   name: "NotFound",
