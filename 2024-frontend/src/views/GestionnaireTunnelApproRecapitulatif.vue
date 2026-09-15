@@ -7,7 +7,7 @@ import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import diagnosticServices from '@/services/diagnostics'
 import AppHelpCard from '@/components/AppHelpCard.vue'
-import TunnelTeledeclarationAccordions from '@/components/TunnelTeledeclarationAccordions.vue'
+import TunnelTeledeclarationAccordionsGroup from '@/components/TunnelTeledeclarationAccordionsGroup.vue'
 import TunnelTeledeclarationErrors from '@/components/TunnelTeledeclarationErrors.vue'
 import TunnelTeledeclarationModal from '@/components/TunnelTeledeclarationModal.vue'
 
@@ -99,7 +99,7 @@ const buttons = computed(() => {
         </AppHelpCard>
       </div>
     </div>
-    <TunnelTeledeclarationAccordions />
+    <TunnelTeledeclarationAccordionsGroup />
     <TunnelTeledeclarationModal v-model:opened="isModalOpened" @close="isModalOpened = false" />
   </div>
 </template>

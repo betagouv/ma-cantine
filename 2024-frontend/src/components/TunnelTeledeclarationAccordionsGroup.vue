@@ -1,15 +1,14 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import teledeclaration from '@/data/teledeclaration.json'
-import CanteenDisplayInformations from '@/components/CanteenDisplayInformations.vue'
+import TunnelTeledeclarationAccordionItem from '@/components/TunnelTeledeclarationAccordionItem.vue'
 import AppSeparator from '@/components/AppSeparator.vue'
 
 /* Router */
-const router = useRouter()
 const route = useRoute()
 
 /* Stores */
@@ -19,11 +18,6 @@ const { canteenInformations } = storeToRefs(canteenStore)
 const { diagnostic } = storeToRefs(teledeclarationStore)
 
 /* Data */
-const header = [
-  { key: "name", label: "Champ" },
-  { key: "value", label: "Valeur" },
-]
-
 const getPrettyDiagnosticValue = (field) => {
   const hasOptions = teledeclaration.fields[field]?.options?.length > 0
   const diagValue = diagnostic.value[field]
@@ -82,34 +76,17 @@ const accordions = computed(() => {
     }
   ]
 })
-const goToStep = (page) => router.push(page)
 </script>
 
 <template>
   <AppSeparator class="fr-mb-3w" />
   <p class="fr-text--bold fr-text--sm ma-cantine--text-uppercase">Récapitulatif des données saisies :</p>
   <DsfrAccordionsGroup v-model="activeAccordion" class="fr-mb-4w">
-    <DsfrAccordion
+    <TunnelTeledeclarationAccordionItem
       v-for="(accordion, index) in accordions"
       :key="accordion.title"
       :id="`accordion-${index}`"
-      :title="accordion.title"
-    >
-      <CanteenDisplayInformations
-        v-if="index === 0"
-        :canteenInformation="canteenInformations"
-        :canteenIsGroupe="canteenInformations.isGroupe"
-      />
-      <DsfrDataTable
-        v-else
-        title="Données enregistrées"
-        no-caption
-        :headersRow="header"
-        :rows="accordion.rows"
-        :no-scroll="true"
-        class="fr-mb-2w fr-mt-0"
-      />
-      <DsfrButton label="Modifier ces données" @click="goToStep(accordion.to)" icon="ri-pencil-line" secondary size="sm" />
-    </DsfrAccordion>
+      :accordion="accordion"
+    />
   </DsfrAccordionsGroup>
 </template>
