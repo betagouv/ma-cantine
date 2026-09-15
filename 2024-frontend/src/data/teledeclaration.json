@@ -459,7 +459,7 @@
     }
   },
   "groups": {
-    "informationsCantine": ["name", "siret", "sirenUniteLegale", "postalCode", "city", "cityInseeCode", "departmentLib", "regionLib", "patListLib", "epciLib", "sectorList", "lineMinisty", "dailyMealCount", "yearlyMealCount", "economicModel", "productionType", "centralProducerSiret", "publicationComments"],
+    "informationsCantine": ["name", "siret", "sirenUniteLegale", "postalCode", "city", "cityInseeCode", "departmentLib", "regionLib", "patListLib", "epciLib", "sectorList", "lineMinistry", "dailyMealCount", "yearlyMealCount", "economicModel", "productionType", "managementType", "centralProducerSiret", "publicationComments"],
     "informationsGroupe": ["name", "sirenUniteLegale", "managementType", "dailyMealCount", "yearlyMealCount", "centralProducerSiret"],
     "couverts": ["nombreRepasAn"],
     "saisie": ["diagnosticType"],
