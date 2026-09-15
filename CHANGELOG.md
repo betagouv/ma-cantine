@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.49.1](https://github.com/betagouv/ma-cantine/compare/v2026.49.0...v2026.49.1) (2026-09-15)
+
+
+### Corrections (bugs, typos...)
+
+* **Accueil:** supprime la page accueil gestionnaire et ajoute des redirections ([#7122](https://github.com/betagouv/ma-cantine/issues/7122)) ([6adbfe2](https://github.com/betagouv/ma-cantine/commit/6adbfe2bd614c15cfffc9116a687c0c94623f44f))
+* **Settings:** fix une typo dans nos CSP ([#7124](https://github.com/betagouv/ma-cantine/issues/7124)) ([8fa0f0e](https://github.com/betagouv/ma-cantine/commit/8fa0f0e9b66c0ce3d932c98ead91f29021d0ef7c))
+* **Télédéclaration:** corrige le renvoit de None au lieu de l'année précédente pour la variable d'environnement ([#7125](https://github.com/betagouv/ma-cantine/issues/7125)) ([f0323e7](https://github.com/betagouv/ma-cantine/commit/f0323e79533cefc6c5c50394995260a6c1a69c4c))
+
+
+### Technique
+
+* **Vue3:** simplification de la gestion des liens de documentation ([#7126](https://github.com/betagouv/ma-cantine/issues/7126)) ([567f5dd](https://github.com/betagouv/ma-cantine/commit/567f5dda39f1ab2529380a7ea2ec55bc78f0e619))
+
 ## [2026.49.0](https://github.com/betagouv/ma-cantine/compare/v2026.48.0...v2026.49.0) (2026-09-11)
 
 
