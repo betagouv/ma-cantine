@@ -81,7 +81,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Keep only the errors related to the fields displayed on the given page */
   function getErrorsGroup(fieldsGroupName) {
-    return diagnosticsFields.getFieldsListFromGroup(fieldsGroupName)
+    const fieldsList = diagnosticsFields.getFieldsListFromGroup(fieldsGroupName)
+    return diagnosticErrors.value.filter((error) => fieldsList.includes(error.field))
   }
 
   /* Get year of the current campaign */
