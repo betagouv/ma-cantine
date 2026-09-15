@@ -77,7 +77,7 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
         DiagnosticFactory(canteen=canteen_without_line_ministry, year=self.year, valeur_totale=10000)
 
         # to verify we are returning the correct diag for the canteen, create another diag for a different year
-        DiagnosticFactory(canteen=canteen_with_complete_diag, year=self.year - 1, valeur_totale=10000)
+        DiagnosticFactory(canteen=canteen_with_complete_diag, year=self.year + 1, valeur_totale=10000)
         canteen_with_td = CanteenFactory(
             siret="55476895458384",
             production_type=Canteen.ProductionType.ON_SITE,

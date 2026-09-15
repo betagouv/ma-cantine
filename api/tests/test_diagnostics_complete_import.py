@@ -146,7 +146,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         self.assertEqual(errors[9]["field"], "siret")
         self.assertEqual(errors[9]["message"], "Les valeurs de cette colonne doivent être uniques")
 
-    @freeze_time("2025-02-15")  # during the 2024 campaign
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_model_validation_error(self):
         # TODO: update diagnostics_complete_bad.csv and add tests
@@ -191,11 +191,10 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         If a diagnostic with a valid TD already exists for the canteen, throw an error
         If the TD is cancelled, allow update
         """
-        date_in_2024_teledeclaration_campaign = "2025-01-30"
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1, valeur_bio=0.2)
 
-        with freeze_time(date_in_2024_teledeclaration_campaign):
+        with freeze_time("2026-03-30"):  # during the 2025 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
 
             file_path = (
@@ -270,7 +269,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
 
         file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_bad_one_error.csv"
         with open(file_path) as diag_file:
-            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
+            response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
@@ -280,7 +279,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
-    @freeze_time("2025-02-10")  # during the 2024 campaign
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_diagnostics_created(self):
         """
@@ -308,7 +307,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertIn("seconds", body)
 
         diagnostic_1 = Diagnostic.objects.get(canteen_id=canteen_1.id)
-        self.assertEqual(diagnostic_1.year, 2024)
+        self.assertEqual(diagnostic_1.year, 2025)
         self.assertEqual(diagnostic_1.valeur_totale, 2000)
         # TODO: add more assertions with Decimal
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
@@ -316,14 +315,14 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
         diagnostic_2 = Diagnostic.objects.get(canteen_id=canteen_2.id)
-        self.assertEqual(diagnostic_2.year, 2024)
+        self.assertEqual(diagnostic_2.year, 2025)
         self.assertEqual(diagnostic_2.valeur_totale, 200)
         # TODO: add more assertions with Decimal & None
         self.assertEqual(diagnostic_2.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
         self.assertEqual(diagnostic_2.creation_user, authenticate.user)
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
 
-    @freeze_time("2025-02-10")  # during the 2024 campaign
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_diagnostics_created_excel_file(self):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
@@ -343,13 +342,13 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(len(errors), 0, errors)
 
         diagnostic_1 = Diagnostic.objects.get(canteen_id=canteen.id)
-        self.assertEqual(diagnostic_1.year, 2024)
+        self.assertEqual(diagnostic_1.year, 2025)
         self.assertEqual(diagnostic_1.valeur_totale, 2000)
         # TODO: add more assertions with Decimal
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
-    @freeze_time("2025-02-10")  # during the 2024 campaign
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_update_existing_diagnostic(self):
         """
@@ -357,7 +356,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         update the diag with data from import file
         """
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1000, valeur_bio=200)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1000, valeur_bio=200)
 
         file_path = (
             "./api/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
@@ -383,12 +382,12 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         it can import a new diagnostic during the correction campaign
         """
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1000, valeur_bio=200)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1000, valeur_bio=200)
 
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time("2026-03-30"):  # during the 2025 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time("2026-04-17"):  # during the 2025 correction campaign
             diagnostic.cancel()
 
             file_path = (

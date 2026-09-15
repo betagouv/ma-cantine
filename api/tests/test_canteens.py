@@ -275,7 +275,7 @@ class CanteenDetailApiTest(APITestCase):
         Only submitted TDs are returned to the managers
         """
         canteen = CanteenFactory(managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2020)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2021)
 
         # submit a teledeclaration
         teledeclaration = Teledeclaration.create_from_diagnostic(diagnostic, authenticate.user)

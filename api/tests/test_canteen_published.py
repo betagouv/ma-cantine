@@ -786,7 +786,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         )
         diagnostic = DiagnosticFactory(
             canteen=canteen_groupe,
-            year=2020,
+            year=2021,
             valeur_totale=1200,
             valeur_bio=600,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -813,7 +813,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         )
         diagnostic = DiagnosticFactory(
             canteen=canteen_groupe,
-            year=2020,
+            year=2021,
             valeur_totale=1200,
             valeur_bio=None,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -843,7 +843,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         )
         DiagnosticFactory(
             canteen=canteen_groupe,
-            year=2020,
+            year=2021,
             valeur_totale=1200,
             valeur_bio=600,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -869,7 +869,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         )
         DiagnosticFactory(
             canteen=canteen_groupe,
-            year=2020,
+            year=2021,
             valeur_totale=1200,
             valeur_bio=600,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -878,7 +878,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
 
         DiagnosticFactory(
             canteen=canteen_groupe,
-            year=2021,
+            year=2022,
             valeur_totale=1200,
             valeur_bio=600,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
@@ -894,15 +894,15 @@ class PublishedCanteenDetailApiTest(APITestCase):
         self.assertEqual(body.get("id"), canteen_satellite.id)
         self.assertEqual(len(body.get("approDiagnostics")), 2)
         appro_diagnostics = body.get("approDiagnostics")
-        appro_diag_2020 = next(filter(lambda x: x["year"] == 2020, appro_diagnostics))
         appro_diag_2021 = next(filter(lambda x: x["year"] == 2021, appro_diagnostics))
-        self.assertIn("percentageValeurTotale", appro_diag_2020)
-        self.assertNotIn("hasWasteDiagnostic", appro_diag_2020)
+        appro_diag_2022 = next(filter(lambda x: x["year"] == 2022, appro_diagnostics))
         self.assertIn("percentageValeurTotale", appro_diag_2021)
-        self.assertNotIn("valeurViandesVolaillesEgalim", appro_diag_2021)
-        self.assertIn("percentageValeurViandesVolaillesEgalim", appro_diag_2021)
-        self.assertNotIn("valeurProduitsDeLaMerEgalim", appro_diag_2021)
-        self.assertIn("percentageValeurProduitsDeLaMerEgalim", appro_diag_2021)
+        self.assertNotIn("hasWasteDiagnostic", appro_diag_2021)
+        self.assertIn("percentageValeurTotale", appro_diag_2022)
+        self.assertNotIn("valeurViandesVolaillesEgalim", appro_diag_2022)
+        self.assertIn("percentageValeurViandesVolaillesEgalim", appro_diag_2022)
+        self.assertNotIn("valeurProduitsDeLaMerEgalim", appro_diag_2022)
+        self.assertIn("percentageValeurProduitsDeLaMerEgalim", appro_diag_2022)
 
     def test_percentage_values(self):
         """
