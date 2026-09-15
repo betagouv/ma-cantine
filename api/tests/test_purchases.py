@@ -1279,7 +1279,7 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         )
 
         year = 2025
-        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site.id]).count(), 0)
+        self.assertEqual(Diagnostic.objects.filter(year=year, canteen=canteen_site).count(), 0)
 
         url = reverse("diagnostics_from_purchases", kwargs={"year": year})
         payload = {"canteenIds": [canteen_site.id]}
@@ -1325,7 +1325,7 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         )
 
         year = 2024
-        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site.id]).count(), 0)
+        self.assertEqual(Diagnostic.objects.filter(year=year, canteen=canteen_site).count(), 0)
 
         url = reverse("diagnostics_from_purchases", kwargs={"year": year})
         payload = {"canteenIds": [canteen_site.id]}

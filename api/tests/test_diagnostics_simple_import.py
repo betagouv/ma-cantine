@@ -147,7 +147,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(errors[9]["field"], "siret")
         self.assertEqual(errors[9]["message"], "Les valeurs de cette colonne doivent être uniques")
 
-    @freeze_time("2025-02-15")  # during the 2024 campaign
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_model_validation_error(self):
         """
@@ -186,7 +186,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 22)
+        self.assertEqual(len(errors), 21)
         self.assertEqual(errors[0]["row"], 2)
         self.assertEqual(errors[0]["status"], 400)
         self.assertEqual(
@@ -196,89 +196,85 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         )
         self.assertEqual(
             errors[1]["message"],
-            "Champ 'année' : L'année doit être parmi 2021, 2022, 2023, 2024, 2025, 2026.",
+            "Champ 'année' : la valeur '2150' n'est pas valide.",
         )
         self.assertEqual(
             errors[2]["message"],
-            "Champ 'Nombre de repas par an' : Ce champ est obligatoire pour l'année 2150.",
-        )
-        self.assertEqual(
-            errors[3]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la valeur (HT) valeur_bio, 1500",
         )
         self.assertEqual(
-            errors[4]["message"],
+            errors[3]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 1500",
         )
         self.assertEqual(
-            errors[5]["message"],
+            errors[4]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement, 2000",
         )
         self.assertEqual(
-            errors[6]["message"],
+            errors[5]["message"],
             "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 1000, est moins que la somme des valeurs d'approvisionnement pour le label france, 1600",
         )
         self.assertEqual(
-            errors[7]["message"],
+            errors[6]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
-            errors[8]["message"],
+            errors[7]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur (HT) viandes_volailles, 50, est moins que la valeur (HT) viandes_volailles_france, 100",
         )
         self.assertEqual(
-            errors[9]["message"],
+            errors[8]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France, 100, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
-            errors[10]["message"],
+            errors[9]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, EGalim, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
-            errors[11]["message"],
+            errors[10]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur (HT) produits_de_la_mer, 50, est moins que la valeur (HT) produits_de_la_mer_france, 100",
         )
         self.assertEqual(
-            errors[12]["message"],
+            errors[11]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, Origine France, 100, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
-            errors[13]["message"],
+            errors[12]["message"],
             # TODO: is this the best field to point to as being wrong? hors bio could be confusing
             "Champ 'Produits SIQO (hors bio) - Valeur annuelle HT' : La somme des valeurs viandes et poissons, EGalim, 300, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, 200",
         )
         self.assertEqual(
-            errors[14]["message"],
+            errors[13]["message"],
             "Champ 'Bio - Valeur annuelle HT' : La valeur (HT) bio dont commerce équitable, 150, est plus que la valeur totale (HT) bio, 50",
         )
         self.assertEqual(
-            errors[15]["message"],
+            errors[14]["message"],
             "Champ 'Valeur totale (HT) des autres achats EGalim' : La valeur (HT) achats commerce équitable (hors bio), 150, est plus que la valeur totale (HT) des autres achats EGalim, 50",
         )
         # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
-            errors[16]["message"],
+            errors[15]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur (HT) viandes_volailles, 50, est moins que la valeur (HT) viandes_volailles_france, 60",
         )
         self.assertEqual(
-            errors[17]["message"],
+            errors[16]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         self.assertEqual(
-            errors[18]["message"],
+            errors[17]["message"],
             "Champ 'Valeur totale (HT) viandes et volailles fraiches ou surgelées' : La valeur totale (HT) viandes et volailles fraiches ou surgelées, Origine France, 60, est plus que la valeur totale (HT) viandes et volailles, 50",
         )
         # Both totals meat are greater than the total return 2 errors
         self.assertEqual(
-            errors[19]["message"],
+            errors[18]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur (HT) produits_de_la_mer, 50, est moins que la valeur (HT) produits_de_la_mer_france, 60",
         )
         self.assertEqual(
-            errors[20]["message"],
+            errors[19]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, EGalim, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
         self.assertEqual(
-            errors[21]["message"],
+            errors[20]["message"],
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, Origine France, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
 
@@ -321,11 +317,10 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         If a diagnostic with a valid TD already exists for the canteen, throw an error
         If the TD is cancelled, allow update
         """
-        date_in_2024_teledeclaration_campaign = "2025-01-30"
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1, valeur_bio=0.2)
 
-        with freeze_time(date_in_2024_teledeclaration_campaign):
+        with freeze_time("2026-03-30"):  # during the 2025 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
 
             file_path = (
@@ -406,7 +401,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
-    @freeze_time("2025-02-10")  # during the 2024 campaign
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_diagnostics_created(self):
         """
@@ -434,7 +429,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertIn("seconds", body)
 
         diagnostic_1 = Diagnostic.objects.get(canteen_id=canteen_1.id)
-        self.assertEqual(diagnostic_1.year, 2024)
+        self.assertEqual(diagnostic_1.year, 2025)
         self.assertEqual(diagnostic_1.valeur_totale, 1000)
         self.assertEqual(diagnostic_1.valeur_bio, 500)
         self.assertEqual(diagnostic_1.valeur_bio_dont_commerce_equitable, 250)
@@ -459,7 +454,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
         diagnostic_2 = Diagnostic.objects.get(canteen_id=canteen_2.id)
-        self.assertEqual(diagnostic_2.year, 2024)
+        self.assertEqual(diagnostic_2.year, 2025)
         self.assertEqual(diagnostic_2.valeur_totale, 200)
         self.assertEqual(diagnostic_2.valeur_bio, 0)
         self.assertEqual(diagnostic_2.valeur_bio_dont_commerce_equitable, 0)
@@ -482,7 +477,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_2.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
 
-    @freeze_time("2025-02-10")  # during the 2024 campaign
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_diagnostics_created_excel_file(self):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
@@ -502,7 +497,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(len(errors), 0, errors)
 
         diagnostic_1 = Diagnostic.objects.get(canteen_id=canteen.id)
-        self.assertEqual(diagnostic_1.year, 2024)
+        self.assertEqual(diagnostic_1.year, 2025)
         self.assertEqual(diagnostic_1.valeur_totale, 1000)
         self.assertEqual(diagnostic_1.valeur_bio, 500)
         self.assertEqual(diagnostic_1.valeur_bio_dont_commerce_equitable, 250)
@@ -525,7 +520,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
-    @freeze_time("2025-02-10")  # during the 2024 campaign
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_update_existing_diagnostic(self):
         """
@@ -533,7 +528,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         update the diag with data from import file
         """
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1, valeur_bio=0.2)
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
@@ -557,12 +552,12 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         it can import a new diagnostic during the correction campaign
         """
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1, valeur_bio=0.2)
 
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time("2026-01-20"):  # during the 2025 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time("2026-04-17"):  # during the 2025 correction campaign
             diagnostic.cancel()
 
             file_path = (
@@ -615,7 +610,7 @@ class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
-    @freeze_time("2025-02-10")  # during the 2024 campaign
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_import_with_canteen_id(self):
         """
@@ -637,7 +632,7 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
         self.assertEqual(len(errors), 0, errors)
 
         diagnostic = Diagnostic.objects.get(canteen_id=949)
-        self.assertEqual(diagnostic.year, 2024)
+        self.assertEqual(diagnostic.year, 2025)
         self.assertEqual(diagnostic.valeur_totale, 1000)
         self.assertEqual(diagnostic.valeur_bio, 500)
         self.assertEqual(diagnostic.valeur_bio_dont_commerce_equitable, 250)
@@ -660,7 +655,7 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic.creation_source, CreationSource.IMPORT)
 
-    @freeze_time("2025-02-10")  # during the 2024 campaign
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_update_existing_diagnostic_with_id(self):
         """
@@ -668,7 +663,7 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
         update the diag with data from import file
         """
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=949)
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=1, valeur_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1, valeur_bio=0.2)
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
         with open(file_path) as diag_file:

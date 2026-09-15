@@ -5,6 +5,7 @@ import factory
 from factory import fuzzy
 
 from data.models import Diagnostic
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
 
 from .canteen import CanteenFactory
 
@@ -19,7 +20,6 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     year = datetime.date.today().year - 1
     diagnostic_type = fuzzy.FuzzyChoice(list(Diagnostic.DiagnosticType))
 
-    # SIMPLE_APPRO_FIELDS_REQUIRED_2025
     valeur_totale = factory.Faker("random_int", min=6000, max=10000)
     valeur_bio = factory.Faker("random_int", min=0, max=2000)
     valeur_siqo = factory.Faker("random_int", min=0, max=2000)
@@ -46,18 +46,14 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     communicates_on_food_plan = factory.Faker("boolean")
 
     @factory.post_generation
-    def fill_complete_fields(obj, create, extracted, **kwargs):
-        try:
-            if obj.year >= 2025 and obj.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-                for field_name in [
-                    field_name
-                    for field_name in Diagnostic.COMPLETE_APPRO_FIELDS_REQUIRED_2025
-                    if field_name not in Diagnostic.SIMPLE_APPRO_FIELDS_REQUIRED_2025
-                ]:
+    def fill_required_fields(obj, create, extracted, **kwargs):
+        if obj.year and obj.diagnostic_type:
+            try:
+                for field_name in get_teledeclaration_fields_required(obj.year, obj.diagnostic_type):
                     if getattr(obj, field_name) is None:
                         setattr(obj, field_name, 0)
-        except:  # noqa
-            pass
+            except:  # noqa
+                pass
 
 
 class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
