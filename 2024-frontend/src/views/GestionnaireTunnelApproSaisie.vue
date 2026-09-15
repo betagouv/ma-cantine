@@ -35,12 +35,11 @@ const options = computed(() => {
 const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
 
 /* Prefill */
-const prefillSelect = () => { select.value = storeTeledeclaration.diagnostic[fieldName] || "SIMPLE" } // By defaut to SIMPLE to avoid error because it's not required in backend
+const prefillSelect = () => { select.value = storeTeledeclaration.diagnostic[fieldName] }
 onMounted(prefillSelect)
 
 /* Change */
 const selectRadio = () => {
-  console.log("select", select.value, fieldName)
   if (select.value === "AUTO") alert('TODO: Saisie auto')
   else storeTeledeclaration.setValue(fieldName, select.value)
 }
