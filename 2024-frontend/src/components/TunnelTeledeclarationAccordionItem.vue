@@ -41,6 +41,7 @@ const goToStep = (page) => router.push(page)
       {{ accordion.title }}
       <DsfrBadge v-if="hasErrors" :label="errorBadge" type="error" class="fr-ml-2w" />
     </template>
+    <DsfrButton label="Modifier ces données" @click="goToStep(accordion.to)" icon="ri-pencil-line" secondary size="sm" class="fr-mb-2w" />
     <CanteenDisplayInformations
       v-if="accordion.isCanteenFields"
       :canteenInformation="canteenInformations"
@@ -53,8 +54,7 @@ const goToStep = (page) => router.push(page)
       :headersRow="header"
       :rows="accordion.rows"
       :no-scroll="true"
-      class="fr-mb-2w fr-mt-0"
+      class="fr-mt-0 fr-mb-0"
     />
-    <DsfrButton label="Modifier ces données" @click="goToStep(accordion.to)" icon="ri-pencil-line" secondary size="sm" />
   </DsfrAccordion>
 </template>
