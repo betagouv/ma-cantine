@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
 import diagnosticService from "@/services/diagnostics.js"
+import canteenService from "@/services/canteens.js"
 import diagnosticsFields from "@/services/diagnosticsFields.js"
 
 const useStoreTeledeclaration = defineStore("teledeclaration", () => {
@@ -13,9 +14,14 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
     if (canteenSavedId.value === canteenId) return
-    const response = await diagnosticService.fetchDiagnostics(canteenId)
-    diagnostic.value = response["results"].find((result) => result.year === year) || null
-    canteenSavedId.value = canteenId
+    const diagnosticsResponse = await diagnosticService.fetchDiagnostics(canteenId)
+    const diagnosticYear = diagnosticsResponse["results"].find((result) => result.year === year) || null
+    if (!diagnosticYear) return
+    setDiagnostic(diagnosticYear)
+    setCanteenId(canteenId)
+    const diagnosticCheck = await diagnosticService.checkDiagnostic(canteenId, diagnosticYear.id)
+    const canteenCheck = await canteenService.checkCanteen(canteenId)
+    setErrors({...diagnosticCheck.errors, ...canteenCheck.errors})
   }
 
   /* Save diagnostic */
@@ -29,7 +35,12 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return response
   }
 
-  /* Update diagnostic */
+  /* Set canteen id */
+  function setCanteenId(canteenId) {
+    canteenSavedId.value = canteenId
+  }
+
+  /* Set all diagnostic */
   function setDiagnostic(newDiagnostic) {
     diagnostic.value = newDiagnostic
   }
