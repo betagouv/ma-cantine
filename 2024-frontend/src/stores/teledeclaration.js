@@ -58,8 +58,13 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Keep only the errors related to the fields displayed on the given page */
   function getErrorsPage(pageName, canteenIsGroupe) {
     const diagnosticIsSimple = diagnostic.value.diagnosticType === "SIMPLE"
-    const fieldsList = diagnosticsFields.getFieldsList(pageName, canteenIsGroupe, diagnosticIsSimple)
+    const fieldsList = diagnosticsFields.getFieldsListFromPage(pageName, canteenIsGroupe, diagnosticIsSimple)
     return diagnosticErrors.value.filter((error) => fieldsList.includes(error.field))
+  }
+
+  /* Keep only the errors related to the fields displayed on the given page */
+  function getErrorsGroup(fieldsGroupName) {
+    return diagnosticsFields.getFieldsListFromGroup(fieldsGroupName)
   }
 
   /* Get year of the current campaign */
@@ -80,6 +85,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     saveErrors,
     clearErrors,
     getErrorsPage,
+    getErrorsGroup,
   }
 })
 
