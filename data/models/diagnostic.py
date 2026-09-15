@@ -30,7 +30,11 @@ from data.models.diagnostic_teledeclaration_dates import (
     is_in_correction,
     is_in_teledeclaration_or_correction,
 )
-from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_fields_required
+from data.models.diagnostic_teledeclaration_fields import (
+    APPRO_FAMILIES,
+    get_teledeclaration_fields_required,
+    get_teledeclaration_labels,
+)
 from macantine.utils import (
     EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,
@@ -87,7 +91,7 @@ def diagnostic_type_is_filled_query(diagnostic_type_query, diagnostic_type):
     year_queries = [
         Q(year=year)
         & Q(**{f"{field}__isnull": False for field in get_teledeclaration_fields_required(year, diagnostic_type)})
-        for year in TELEDECLARATION_FIELDS
+        for year in CAMPAIGN_DATES
     ]
     return diagnostic_type_query() & valeur_totale_is_filled_and_not_zero_query() & reduce(operator.or_, year_queries)
 
@@ -247,25 +251,10 @@ class DiagnosticQuerySet(models.QuerySet):
             operator.add,
             (
                 Coalesce(F(f"valeur_{family}_{label}"), Value(0), output_field=DecimalField())
-                for family in Diagnostic.APPRO_FAMILIES
+                for family in APPRO_FAMILIES
             ),
         )
         return self.annotate(**{f"{label}_sum": sum_expression})
-
-    def with_family_sum(self, family: str):
-        """
-        Sum all appro fields of a given family
-
-        Note: see also family_sum method
-        """
-        sum_expression = reduce(
-            operator.add,
-            (
-                Coalesce(F(f"valeur_{family}_{label}"), Value(0), output_field=DecimalField())
-                for label in Diagnostic.APPRO_LABELS
-            ),
-        )
-        return self.annotate(**{f"{family}_sum": sum_expression})
 
     def with_satellites_snapshot_stats(self):
         return self.annotate(
@@ -515,52 +504,6 @@ class Diagnostic(models.Model):
         CIRCUIT_COURT_SUP_FRANCE = "CIRCUIT_COURT_SUP_FRANCE", "Origine France (dont circuit-court) > Origine France"
         LOCAL_SUP_FRANCE = "LOCAL_SUP_FRANCE", "Origine France (dont local) > Origine France"
         COMMERCE_EQUITABLE_SUP_BIO = "COMMERCE_EQUITABLE_SUP_BIO", "Bio dont commerce équitable > Bio"
-
-    APPRO_FAMILIES = [
-        "viandes_volailles",
-        "produits_de_la_mer",
-        "fruits_et_legumes",
-        "charcuterie",
-        "produits_laitiers",
-        "boulangerie",
-        "boissons",
-        "autres",
-    ]
-
-    APPRO_LABELS_EGALIM = [
-        "bio",
-        # "bio_dont_commerce_equitable",
-        "label_rouge",
-        "aocaop_igp_stg",  # before 2026
-        "aocaop",
-        "igp",
-        "stg",
-        "hve",
-        "peche_durable",
-        "rup",
-        "commerce_equitable",
-        "fermier",
-        "externalites",
-        "performance",
-    ]
-    APPRO_LABELS_NON_EGALIM = [
-        "non_egalim",
-    ]
-    APPRO_LABELS_ORIGINE = ["europe", "france"]
-    APPRO_LABELS = APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM
-    APPRO_LABELS_ALL = (
-        APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_ORIGINE + ["circuit_court", "local"]
-    )
-    APPRO_LABELS_GROUPS_MAPPING = {
-        "bio": ["bio"],
-        "siqo": ["label_rouge", "aocaop_igp_stg", "aocaop", "igp", "stg"],
-        "externalites_performance": ["externalites", "performance"],
-        "egalim_autres": ["hve", "peche_durable", "rup", "commerce_equitable", "fermier"],
-    }
-    APPRO_LABELS_GROUPS_GROUPS_MAPPING = {
-        "egalim_hors_bio": ["siqo", "externalites_performance", "egalim_autres"],
-        "egalim": ["bio", "siqo", "externalites_performance", "egalim_autres"],
-    }
 
     SIMPLE_APPRO_FIELDS = [
         "valeur_totale",
@@ -1976,7 +1919,7 @@ class Diagnostic(models.Model):
         self.valeur_egalim_autres_dont_commerce_equitable = self.label_sum("commerce_equitable")
 
         total_meat_egalim = total_fish_egalim = 0
-        for label in Diagnostic.APPRO_LABELS_EGALIM:
+        for label in get_teledeclaration_labels(self.year, "APPRO_LABELS_EGALIM"):
             family = "viandes_volailles"
             # need to do or 0 and not give a default value because the value can be explicitly set to None
             total_meat_egalim = total_meat_egalim + (getattr(self, f"valeur_{family}_{label}") or 0)
@@ -2014,7 +1957,7 @@ class Diagnostic(models.Model):
     def label_sum(self, label: str):
         sum = 0
         is_null = True
-        for family in Diagnostic.APPRO_FAMILIES:
+        for family in get_teledeclaration_labels(self.year, "APPRO_FAMILIES"):
             value = getattr(self, f"valeur_{family}_{label}")
             if value is not None:
                 is_null = False
@@ -2024,8 +1967,13 @@ class Diagnostic(models.Model):
 
     def label_group_sum(self, label_group: str):
         if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+            if label_group == "siqo" and self.year and int(self.year) >= 2026:
+                label_group = "siqo_2026"
             return sum_int_with_potential_null(
-                [self.label_sum(label) for label in Diagnostic.APPRO_LABELS_GROUPS_MAPPING[label_group]]
+                [
+                    self.label_sum(label)
+                    for label in get_teledeclaration_labels(self.year, "APPRO_LABELS_GROUPS_MAPPING")[label_group]
+                ]
             )
         return getattr(self, f"valeur_{label_group}")
 
@@ -2033,7 +1981,9 @@ class Diagnostic(models.Model):
         return sum_int_with_potential_null(
             [
                 self.label_group_sum(label_group)
-                for label_group in Diagnostic.APPRO_LABELS_GROUPS_GROUPS_MAPPING[label_group_group]
+                for label_group in get_teledeclaration_labels(self.year, "APPRO_LABELS_GROUPS_GROUPS_MAPPING")[
+                    label_group_group
+                ]
             ]
         )
 
@@ -2042,7 +1992,7 @@ class Diagnostic(models.Model):
         NOTE: APPRO_LABELS does not include APPRO_LABELS_ORIGINE & circuit_court & local
         """
         sum = 0
-        for label in Diagnostic.APPRO_LABELS:
+        for label in get_teledeclaration_labels(self.year, "APPRO_LABELS"):
             value = getattr(self, f"valeur_{family}_{label}")
             if value:
                 sum = sum + value
@@ -2051,7 +2001,10 @@ class Diagnostic(models.Model):
     def egalim_sum(self):
         # return self.label_group_group_sum("egalim")
         return sum_int_with_potential_null(
-            [getattr(self, f"valeur_{group}") for group in Diagnostic.APPRO_LABELS_GROUPS_GROUPS_MAPPING["egalim"]]
+            [
+                getattr(self, f"valeur_{group}")
+                for group in get_teledeclaration_labels(self.year, "APPRO_LABELS_GROUPS_GROUPS_MAPPING")["egalim"]
+            ]
         )
 
     def compute_pourcentage_bio(self):
