@@ -1886,6 +1886,7 @@ class Diagnostic(models.Model):
             self.populate_simplified_diagnostic_values()
 
         validation_errors = utils_utils.merge_validation_errors(
+            diagnostic_validators.validate_year(self),
             diagnostic_validators.validate_year_and_can_edit(self),
             diagnostic_validators.validate_diagnostic_type(self),
             diagnostic_validators.validate_canteen_fields_required(self),
@@ -1904,10 +1905,14 @@ class Diagnostic(models.Model):
         return super().clean()
 
     def save(self, **kwargs):
-        # TODO: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
-        self.populate_aggregated_values()
-        self.populate_egalim_stats()
-        self.populate_cout_repas()
+        # NOTE: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
+        # TODO: don't allow saving a diagnostic if the year is not valid
+        validation_errors = utils_utils.merge_validation_errors(diagnostic_validators.validate_year(self))
+        if not validation_errors:
+            # these methods only work if there is a valid year
+            self.populate_aggregated_values()
+            self.populate_egalim_stats()
+            self.populate_cout_repas()
         return super().save(**kwargs)
 
     def populate_simplified_diagnostic_values(self):
