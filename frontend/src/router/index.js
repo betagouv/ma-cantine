@@ -25,13 +25,11 @@ import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
-import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
 import TerritoryCanteens from "@/views/TerritoryCanteens"
 import VideoTutorial from "@/views/VideoTutorial"
-import MyProgress from "@/views/MyProgress"
 
 Vue.use(VueRouter)
 
@@ -218,17 +216,6 @@ const routes = [
     },
   },
   {
-    path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId",
-    name: "DiagnosticTunnel",
-    component: DiagnosticTunnel,
-    props: true,
-    meta: {
-      title: "Bilan",
-      authenticationRequired: true,
-      fullscreen: true,
-    },
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     component: PurchasesHome,
@@ -273,19 +260,6 @@ const routes = [
     },
   },
 ]
-
-if (window.ENABLE_DASHBOARD) {
-  routes.push({
-    path: "/ma-progression/:canteenUrlComponent/:year/:measure",
-    name: "MyProgress",
-    component: MyProgress,
-    props: true,
-    meta: {
-      title: "Mon bilan annuel",
-      authenticationRequired: true,
-    },
-  })
-}
 
 const vue3Routes = [
   {
