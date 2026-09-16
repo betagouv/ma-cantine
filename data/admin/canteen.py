@@ -23,13 +23,6 @@ class CanteenForm(forms.ModelForm):
 
     class Meta:
         widgets = {
-            "name": forms.Textarea(attrs={"cols": 35, "rows": 1}),
-            "city": forms.Textarea(attrs={"cols": 35, "rows": 1}),
-            "siret": forms.Textarea(attrs={"cols": 35, "rows": 1}),
-            "siren_unite_legale": forms.Textarea(attrs={"cols": 35, "rows": 1}),
-            "import_source": forms.Textarea(attrs={"cols": 55, "rows": 1}),
-            "central_producer_siret": forms.Textarea(attrs={"cols": 35, "rows": 1}),
-            "city_insee_code": forms.Textarea(attrs={"cols": 35, "rows": 1}),
             "publication_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),
             "quality_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),
             "waste_comments": forms.Textarea(attrs={"cols": 70, "rows": 3}),

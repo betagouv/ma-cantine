@@ -709,9 +709,9 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         satellite_siret.management_type = Canteen.ManagementType.DIRECT
         satellite_siret.production_type = Canteen.ProductionType.ON_SITE  # Make it autonomous
         satellite_siret.save(skip_validations=True)
-        satellite_siren.siren_unite_legale = "1234567890"
-        satellite_siren.save(skip_validations=True)
         satellite_siren.refresh_from_db()
+        satellite_siren.siren_unite_legale = "234567890"
+        satellite_siren.save(skip_validations=True)
         satellite_siret.refresh_from_db()
 
         # Run the script
