@@ -1,14 +1,3 @@
-APPRO_FAMILIES = [
-    "viandes_volailles",
-    "produits_de_la_mer",
-    "fruits_et_legumes",
-    "charcuterie",
-    "produits_laitiers",
-    "boulangerie",
-    "boissons",
-    "autres",
-]
-
 TELEDECLARATION_FIELD_GROUPS = {
     2021: {
         "APPRO_FAMILIES": [

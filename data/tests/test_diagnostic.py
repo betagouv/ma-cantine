@@ -892,6 +892,20 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_complete_2.label_sum("label_rouge"), 7 + 8)
         self.assertEqual(self.diagnostic_complete_2.label_sum("france"), 20 + 25)
 
+    def test_with_family_sum_queryset(self):
+        diagnostic_qs = Diagnostic.objects.with_family_sum("viandes_volailles").with_family_sum("produits_de_la_mer")
+        diagnostic_simple = diagnostic_qs.get(id=self.diagnostic_simple.id)
+        self.assertEqual(diagnostic_simple.viandes_volailles_sum, 0)
+        self.assertEqual(diagnostic_simple.produits_de_la_mer_sum, 0)
+        diagnostic_complete_1 = diagnostic_qs.get(id=self.diagnostic_complete_1.id)
+        self.assertEqual(
+            diagnostic_complete_1.viandes_volailles_sum, 10 + 7
+        )  # bio_dont_commerce_equitable & france are not included
+        self.assertEqual(diagnostic_complete_1.produits_de_la_mer_sum, 15 + 8)
+        diagnostic_complete_2 = diagnostic_qs.get(id=self.diagnostic_complete_2.id)
+        self.assertEqual(diagnostic_complete_2.viandes_volailles_sum, 10 + 7)
+        self.assertEqual(diagnostic_complete_2.produits_de_la_mer_sum, 15 + 8)
+
     def test_family_sum_property(self):
         self.assertEqual(self.diagnostic_simple.family_sum("viandes_volailles"), 0)
         self.assertEqual(self.diagnostic_simple.family_sum("produits_de_la_mer"), 0)

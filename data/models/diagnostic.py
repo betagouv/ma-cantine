@@ -6,7 +6,7 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import MaxValueValidator
 from django.db import models, transaction
-from django.db.models import DecimalField, F, Func, IntegerField, Q, Sum, Value
+from django.db.models import Case, DecimalField, F, Func, IntegerField, Q, Sum, Value, When
 from django.db.models.expressions import RawSQL
 from django.db.models.functions import Coalesce
 from django.utils import timezone
@@ -31,7 +31,10 @@ from data.models.diagnostic_teledeclaration_dates import (
     is_in_teledeclaration_or_correction,
 )
 from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
-from data.models.diagnostic_teledeclaration_field_groups import APPRO_FAMILIES, get_teledeclaration_field_groups
+from data.models.diagnostic_teledeclaration_field_groups import (
+    TELEDECLARATION_FIELD_GROUPS,
+    get_teledeclaration_field_groups,
+)
 from macantine.utils import (
     EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,
@@ -240,18 +243,64 @@ class DiagnosticQuerySet(models.QuerySet):
 
     def with_label_sum(self, label: str):
         """
-        Sum all appro fields of a given label
+        Sum all appro fields of a given label.
 
         Note: see also label_sum method
+        Note: the families summed depend on the diagnostic's own year (see
+        diagnostic_teledeclaration_field_groups.py), so we build one sum expression per distinct
+        family list found in the registry and pick the right one per row via Case/When — this
+        works correctly on a queryset spanning multiple years.
         """
-        sum_expression = reduce(
-            operator.add,
-            (
-                Coalesce(F(f"valeur_{family}_{label}"), Value(0), output_field=DecimalField())
-                for family in APPRO_FAMILIES
-            ),
-        )
-        return self.annotate(**{f"{label}_sum": sum_expression})
+        families_by_years = {}
+        for year in TELEDECLARATION_FIELD_GROUPS:
+            families = tuple(get_teledeclaration_field_groups(year, "APPRO_FAMILIES"))
+            families_by_years.setdefault(families, []).append(year)
+
+        cases = [
+            When(
+                year__in=years,
+                then=reduce(
+                    operator.add,
+                    (
+                        Coalesce(F(f"valeur_{family}_{label}"), Value(0), output_field=DecimalField())
+                        for family in families
+                    ),
+                ),
+            )
+            for families, years in families_by_years.items()
+        ]
+        return self.annotate(**{f"{label}_sum": Case(*cases, output_field=DecimalField())})
+
+    def with_family_sum(self, family: str):
+        """
+        Sum all appro fields of a given family.
+
+        Note: see also family_sum method
+        NOTE: APPRO_LABELS does not include APPRO_LABELS_ORIGINE & circuit_court & local
+        Note: the labels summed depend on the diagnostic's own year (see
+        diagnostic_teledeclaration_field_groups.py), so we build one sum expression per distinct
+        label list found in the registry and pick the right one per row via Case/When — this
+        works correctly on a queryset spanning multiple years.
+        """
+        labels_by_years = {}
+        for year in TELEDECLARATION_FIELD_GROUPS:
+            labels = tuple(get_teledeclaration_field_groups(year, "APPRO_LABELS"))
+            labels_by_years.setdefault(labels, []).append(year)
+
+        cases = [
+            When(
+                year__in=years,
+                then=reduce(
+                    operator.add,
+                    (
+                        Coalesce(F(f"valeur_{family}_{label}"), Value(0), output_field=DecimalField())
+                        for label in labels
+                    ),
+                ),
+            )
+            for labels, years in labels_by_years.items()
+        ]
+        return self.annotate(**{f"{family}_sum": Case(*cases, output_field=DecimalField())})
 
     def with_satellites_snapshot_stats(self):
         return self.annotate(
