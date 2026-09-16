@@ -125,6 +125,15 @@ class CanteenModelSaveTest(TransactionTestCase):
         central_kitchen.siret = canteen_existing.siret
         self.assertRaises(ValidationError, central_kitchen.save)
 
+    def test_canteen_city_insee_code_validation(self):
+        for TUPLE_OK in [(None, None), ("", ""), ("  ", "  "), ("12345", "12345"), ("12A45", "12A45")]:
+            with self.subTest(city_insee_code=TUPLE_OK[0]):
+                canteen = CanteenFactory(city_insee_code=TUPLE_OK[0])
+                self.assertEqual(canteen.city_insee_code, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["123456"]:
+            with self.subTest(city_insee_code=VALUE_NOT_OK):
+                self.assertRaises(ValidationError, CanteenFactory, city_insee_code=VALUE_NOT_OK)
+
     def test_canteen_epci_validation(self):
         for TUPLE_OK in [(None, None), ("", ""), ("  ", ""), ("756 656 218", "756656218"), ("756656218", "756656218")]:
             with self.subTest(epci=TUPLE_OK[0]):

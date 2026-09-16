@@ -485,26 +485,38 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         "import_source",
     ]
 
-    name = models.TextField(verbose_name="nom")
+    name = models.CharField(max_length=255, verbose_name="nom")
 
-    siret = models.TextField(null=True, blank=True, validators=[utils_siret.validate_siret])
-    siren_unite_legale = models.TextField(
-        null=True, blank=True, verbose_name="siren de l'unité légale", validators=[utils_siret.validate_siren]
+    siret = models.CharField(max_length=14, null=True, blank=True, validators=[utils_siret.validate_siret])
+    siren_unite_legale = models.CharField(
+        max_length=9,
+        null=True,
+        blank=True,
+        verbose_name="siren de l'unité légale",
+        validators=[utils_siret.validate_siren],
     )
 
-    city_insee_code = models.TextField(
-        null=True, blank=True, verbose_name="Code INSEE"
+    city_insee_code = models.CharField(
+        max_length=5, null=True, blank=True, verbose_name="Code INSEE"
     )  # nécessaire pour remplir les autres champs geo
-    city = models.TextField(null=True, blank=True, verbose_name="ville")
+    city = models.CharField(max_length=255, null=True, blank=True, verbose_name="ville")
     postal_code = models.CharField(max_length=20, null=True, blank=True, verbose_name="code postal")
-    epci = models.CharField(null=True, blank=True, verbose_name="Code EPCI", validators=[utils_siret.validate_siren])
-    epci_lib = models.TextField(null=True, blank=True, verbose_name="nom EPCI")
-    pat_list = ArrayField(base_field=models.CharField(), blank=True, default=list, verbose_name="codes PAT")
-    pat_lib_list = ArrayField(base_field=models.CharField(), blank=True, default=list, verbose_name="noms PAT")
-    department = models.TextField(null=True, blank=True, choices=Department.choices, verbose_name="département")
-    department_lib = models.TextField(null=True, blank=True, verbose_name="nom du département")
-    region = models.TextField(null=True, blank=True, choices=Region.choices, verbose_name="région")
-    region_lib = models.TextField(null=True, blank=True, verbose_name="nom de la région")
+    epci = models.CharField(
+        max_length=9, null=True, blank=True, verbose_name="Code EPCI", validators=[utils_siret.validate_siren]
+    )
+    epci_lib = models.CharField(max_length=255, null=True, blank=True, verbose_name="nom EPCI")
+    pat_list = ArrayField(
+        base_field=models.CharField(max_length=255), blank=True, default=list, verbose_name="codes PAT"
+    )
+    pat_lib_list = ArrayField(
+        base_field=models.CharField(max_length=255), blank=True, default=list, verbose_name="noms PAT"
+    )
+    department = models.CharField(
+        max_length=3, null=True, blank=True, choices=Department.choices, verbose_name="département"
+    )
+    department_lib = models.CharField(max_length=255, null=True, blank=True, verbose_name="nom du département")
+    region = models.CharField(max_length=3, null=True, blank=True, choices=Region.choices, verbose_name="région")
+    region_lib = models.CharField(max_length=255, null=True, blank=True, verbose_name="nom de la région")
 
     sectors_m2m = models.ManyToManyField(SectorM2M, blank=True, verbose_name="secteurs d'activité")
     sector_list = ChoiceArrayField(
@@ -513,8 +525,8 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         blank=True,
         verbose_name="secteurs d'activité",
     )
-    line_ministry = models.TextField(
-        null=True, blank=True, choices=Ministries.choices, verbose_name="Ministère de tutelle"
+    line_ministry = models.CharField(
+        max_length=255, null=True, blank=True, choices=Ministries.choices, verbose_name="Ministère de tutelle"
     )
     managers = models.ManyToManyField(
         get_user_model(),
@@ -543,7 +555,8 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         verbose_name="Groupe",
         on_delete=models.SET_NULL,
     )
-    central_producer_siret = models.TextField(
+    central_producer_siret = models.CharField(
+        max_length=14,
         null=True,
         blank=True,
         verbose_name="siret de la cuisine centrale",
@@ -651,7 +664,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
 
-    import_source = models.TextField(null=True, blank=True, verbose_name="Source de l'import de la cantine")
+    import_source = models.CharField(
+        max_length=255, null=True, blank=True, verbose_name="Source de l'import de la cantine"
+    )
 
     creation_user = models.ForeignKey(
         get_user_model(),
