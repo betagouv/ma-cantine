@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from django.urls import reverse
 from django.utils import timezone
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 
 from data.admin.softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
 from data.admin.utils import get_arrayfield_list_filter
@@ -186,7 +186,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         if not obj.groupe:
             return "-"
         url = reverse("admin:data_canteen_change", args=[obj.groupe_id])
-        return format_html(f'<a href="{url}">{obj.groupe}</a>')
+        return format_html('<a href="{}">{}</a>', url, obj.groupe)
 
     groupe_with_link.short_description = Canteen._meta.get_field("groupe").verbose_name
 
@@ -200,7 +200,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     @admin.display(description="Logo")
     def logo_display(self, obj):
         if obj.logo:
-            return format_html(f'<img src="{obj.logo_full_url}" width="100" height="100" />')
+            return format_html('<img src="{}" width="100" height="100" />', obj.logo_full_url)
         return "-"
 
     @admin.display(description="Nombre d'images")
@@ -213,10 +213,11 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
     @admin.display(description="Restaurants satellites")
     def satellites_display(self, obj):
-        satellites_list = ""
-        for satellite in obj.satellites:
-            satellites_list += f"<a href='/admin/data/canteen/{satellite.id}/change'>{satellite.name} - {satellite.siret_or_siren_unite_legale}</a><br/>"
-        return format_html(satellites_list)
+        return format_html_join(
+            "",
+            "<a href='/admin/data/canteen/{}/change'>{} - {}</a><br/>",
+            ((satellite.id, satellite.name, satellite.siret_or_siren_unite_legale) for satellite in obj.satellites),
+        )
 
     def source_des_données(self, obj):
         return obj.import_source
