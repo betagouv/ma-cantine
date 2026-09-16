@@ -82,7 +82,7 @@ def valeur_bio_agg_is_filled_query():
 def diagnostic_type_is_filled_query(diagnostic_type_query, diagnostic_type):
     """
     Required fields change from one year to the next (see diagnostic_teledeclaration_fields.py),
-    so we OR together a per-year Q for every year known to the registry.
+    so we OR together a per-year Q for every possible year.
     """
     year_queries = [
         Q(year=year)
