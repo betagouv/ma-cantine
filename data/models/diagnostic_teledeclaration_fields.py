@@ -1,83 +1,5 @@
-APPRO_FAMILIES = [
-    "viandes_volailles",
-    "produits_de_la_mer",
-    "fruits_et_legumes",
-    "charcuterie",
-    "produits_laitiers",
-    "boulangerie",
-    "boissons",
-    "autres",
-]
-
-APPRO_LABELS_EGALIM_BEFORE_2026 = [
-    "bio",
-    # "bio_dont_commerce_equitable",
-    "label_rouge",
-    "aocaop_igp_stg",  # split in 2026
-    "hve",
-    "peche_durable",
-    "rup",
-    "commerce_equitable",
-    "fermier",
-    "externalites",
-    "performance",
-]
-APPRO_LABELS_EGALIM = [
-    "bio",
-    # "bio_dont_commerce_equitable",
-    "label_rouge",
-    "aocaop",
-    "igp",
-    "stg",
-    "hve",
-    "peche_durable",
-    "rup",
-    "commerce_equitable",
-    "fermier",
-    "externalites",
-    "performance",
-]
-APPRO_LABELS_NON_EGALIM = [
-    "non_egalim",
-]
-APPRO_LABELS_ORIGINE_BEFORE_2026 = ["france"]  # europe added in 2026
-APPRO_LABELS_ORIGINE = ["europe", "france"]
-APPRO_LABELS_BEFORE_2026 = APPRO_LABELS_EGALIM_BEFORE_2026 + APPRO_LABELS_NON_EGALIM
-APPRO_LABELS = APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM
-APPRO_LABELS_ALL_BEFORE_2026 = (
-    APPRO_LABELS_BEFORE_2026
-    + ["bio_dont_commerce_equitable"]
-    + APPRO_LABELS_ORIGINE_BEFORE_2026
-    + ["circuit_court", "local"]
-)
-APPRO_LABELS_ALL = APPRO_LABELS + ["bio_dont_commerce_equitable"] + APPRO_LABELS_ORIGINE + ["circuit_court", "local"]
-APPRO_LABELS_GROUPS_MAPPING_BEFORE_2026 = {
-    "bio": ["bio"],
-    "siqo": ["label_rouge", "aocaop_igp_stg"],  # split in 2026
-    "externalites_performance": ["externalites", "performance"],
-    "egalim_autres": ["hve", "peche_durable", "rup", "commerce_equitable", "fermier"],
-}
-APPRO_LABELS_GROUPS_MAPPING = {
-    "bio": ["bio"],
-    "siqo_2026": ["label_rouge", "aocaop", "igp", "stg"],
-    "externalites_performance": ["externalites", "performance"],
-    "egalim_autres": ["hve", "peche_durable", "rup", "commerce_equitable", "fermier"],
-}
-APPRO_LABELS_GROUPS_GROUPS_MAPPING = {
-    "egalim_hors_bio": ["siqo", "externalites_performance", "egalim_autres"],
-    "egalim": ["bio", "siqo", "externalites_performance", "egalim_autres"],
-}
-
 TELEDECLARATION_FIELDS = {
     2021: {
-        "APPRO_FAMILIES": APPRO_FAMILIES,
-        "APPRO_LABELS_EGALIM": APPRO_LABELS_EGALIM_BEFORE_2026,
-        "APPRO_LABELS_NON_EGALIM": APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ORIGINE": APPRO_LABELS_ORIGINE_BEFORE_2026,
-        "APPRO_LABELS": APPRO_LABELS_EGALIM_BEFORE_2026 + APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ALL": APPRO_LABELS_ALL_BEFORE_2026,
-        "APPRO_LABELS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_MAPPING_BEFORE_2026,
-        "APPRO_LABELS_GROUPS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_GROUPS_MAPPING,
         "SIMPLE": {"fields": ["valeur_totale", "valeur_bio", "valeur_siqo"], "fields_required": ["valeur_totale"]},
         "COMPLETE": {
             "fields": [
@@ -199,14 +121,6 @@ TELEDECLARATION_FIELDS = {
         },
     },
     2022: {
-        "APPRO_FAMILIES": APPRO_FAMILIES,
-        "APPRO_LABELS_EGALIM": APPRO_LABELS_EGALIM_BEFORE_2026,
-        "APPRO_LABELS_NON_EGALIM": APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ORIGINE": APPRO_LABELS_ORIGINE_BEFORE_2026,
-        "APPRO_LABELS": APPRO_LABELS_EGALIM_BEFORE_2026 + APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ALL": APPRO_LABELS_ALL_BEFORE_2026,
-        "APPRO_LABELS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_MAPPING_BEFORE_2026,
-        "APPRO_LABELS_GROUPS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_GROUPS_MAPPING,
         "SIMPLE": {
             "fields": [
                 "valeur_totale",
@@ -345,14 +259,6 @@ TELEDECLARATION_FIELDS = {
         },
     },
     2023: {
-        "APPRO_FAMILIES": APPRO_FAMILIES,
-        "APPRO_LABELS_EGALIM": APPRO_LABELS_EGALIM_BEFORE_2026,
-        "APPRO_LABELS_NON_EGALIM": APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ORIGINE": APPRO_LABELS_ORIGINE_BEFORE_2026,
-        "APPRO_LABELS": APPRO_LABELS_EGALIM_BEFORE_2026 + APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ALL": APPRO_LABELS_ALL_BEFORE_2026,
-        "APPRO_LABELS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_MAPPING_BEFORE_2026,
-        "APPRO_LABELS_GROUPS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_GROUPS_MAPPING,
         "SIMPLE": {
             "fields": [
                 "valeur_totale",
@@ -491,14 +397,6 @@ TELEDECLARATION_FIELDS = {
         },
     },
     2024: {
-        "APPRO_FAMILIES": APPRO_FAMILIES,
-        "APPRO_LABELS_EGALIM": APPRO_LABELS_EGALIM_BEFORE_2026,
-        "APPRO_LABELS_NON_EGALIM": APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ORIGINE": APPRO_LABELS_ORIGINE_BEFORE_2026,
-        "APPRO_LABELS": APPRO_LABELS_EGALIM_BEFORE_2026 + APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ALL": APPRO_LABELS_ALL_BEFORE_2026,
-        "APPRO_LABELS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_MAPPING_BEFORE_2026,
-        "APPRO_LABELS_GROUPS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_GROUPS_MAPPING,
         "SIMPLE": {
             "fields": [
                 "valeur_totale",
@@ -637,14 +535,6 @@ TELEDECLARATION_FIELDS = {
         },
     },
     2025: {
-        "APPRO_FAMILIES": APPRO_FAMILIES,
-        "APPRO_LABELS_EGALIM": APPRO_LABELS_EGALIM_BEFORE_2026,
-        "APPRO_LABELS_NON_EGALIM": APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ORIGINE": APPRO_LABELS_ORIGINE_BEFORE_2026,
-        "APPRO_LABELS": APPRO_LABELS_EGALIM_BEFORE_2026 + APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ALL": APPRO_LABELS_ALL_BEFORE_2026,
-        "APPRO_LABELS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_MAPPING_BEFORE_2026,
-        "APPRO_LABELS_GROUPS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_GROUPS_MAPPING,
         "SIMPLE": {
             "fields": [
                 "valeur_totale",
@@ -910,14 +800,6 @@ TELEDECLARATION_FIELDS = {
         },
     },
     2026: {
-        "APPRO_FAMILIES": APPRO_FAMILIES,
-        "APPRO_LABELS_EGALIM": APPRO_LABELS_EGALIM,
-        "APPRO_LABELS_NON_EGALIM": APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ORIGINE": APPRO_LABELS_ORIGINE,
-        "APPRO_LABELS": APPRO_LABELS_EGALIM + APPRO_LABELS_NON_EGALIM,
-        "APPRO_LABELS_ALL": APPRO_LABELS_ALL,
-        "APPRO_LABELS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_MAPPING,
-        "APPRO_LABELS_GROUPS_GROUPS_MAPPING": APPRO_LABELS_GROUPS_GROUPS_MAPPING,
         "SIMPLE": {
             "fields": [
                 "valeur_totale",
@@ -1202,16 +1084,6 @@ TELEDECLARATION_FIELDS = {
         },
     },
 }
-
-
-def get_teledeclaration_labels(year, label):
-    year = int(year) if year else None
-    if year not in TELEDECLARATION_FIELDS:
-        raise ValueError(f"Field 'year' expected one of {list(TELEDECLARATION_FIELDS.keys())} but got '{year}'.")
-    if label not in TELEDECLARATION_FIELDS[year]:
-        valid_labels = list(TELEDECLARATION_FIELDS[year].keys())
-        raise ValueError(f"Field 'label' expected one of {valid_labels} but got '{label}'.")
-    return TELEDECLARATION_FIELDS[year][label]
 
 
 def _get_teledeclaration_fields(year, diagnostic_type, required=False):

@@ -14,7 +14,7 @@ from data.models import Canteen
 from data.models.creation_source import CreationSource
 from data.validators import purchase as purchase_validators
 from macantine.etl import utils
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_labels
+from data.models.diagnostic_teledeclaration_field_groups import get_teledeclaration_field_groups
 from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDeletionQuerySet
 
 
@@ -439,9 +439,9 @@ class Purchase(SoftDeletionModel):
         - determines which labels trump others when aggregating purchases
         - (purchases are not double-counted across labels)
         """
-        for family in get_teledeclaration_labels(year, "APPRO_FAMILIES"):
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
-            for label in get_teledeclaration_labels(year, "APPRO_LABELS_EGALIM"):
+            for label in get_teledeclaration_field_groups(year, "APPRO_LABELS_EGALIM"):
                 if label.upper() == "AOCAOP_IGP_STG":
                     purchase_family_label = purchase_family.filter(
                         caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
@@ -469,7 +469,7 @@ class Purchase(SoftDeletionModel):
         - products can be counted twice across caracteristiques
         """
 
-        for family in get_teledeclaration_labels(year, "APPRO_FAMILIES"):
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
             purchase_family_label = purchase_family.filter(
                 Q(caracteristiques__contains=[cls.Characteristic.BIO])
@@ -488,7 +488,7 @@ class Purchase(SoftDeletionModel):
         - NOTE: before 2025, Europe did not exist yet
         """
 
-        for family in get_teledeclaration_labels(year, "APPRO_FAMILIES"):
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
             for label in ["france", "circuit_court", "local"]:
                 purchase_family_label = purchase_family.filter(
@@ -507,7 +507,7 @@ class Purchase(SoftDeletionModel):
         - NOTE: in 2025, Europe did not exist yet
         """
 
-        for family in get_teledeclaration_labels(year, "APPRO_FAMILIES"):
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
             for label in ["circuit_court", "local"]:  # "france" is done just after
                 purchase_family_label = purchase_family.filter(
@@ -534,7 +534,7 @@ class Purchase(SoftDeletionModel):
         - NOTE: in 2026, Europe was added
         """
 
-        for family in get_teledeclaration_labels(year, "APPRO_FAMILIES"):
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
             for label in cls.CHARACTERISTIC_LABELS_INFO:
                 purchase_family_label = purchase_family.filter(
@@ -549,7 +549,7 @@ class Purchase(SoftDeletionModel):
         How we manage Non-EGalim:
         """
 
-        for family in get_teledeclaration_labels(year, "APPRO_FAMILIES"):
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             non_egalim_purchases = purchases.filter(famille_produits=family.upper()).exclude(
                 caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_EGALIM
             )
