@@ -6,6 +6,30 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.49.1](https://github.com/betagouv/ma-cantine/compare/v2026.49.0...v2026.49.1) (2026-09-16)
+
+
+### Améliorations
+
+* **Télédéclarations:** afficher dans l'admin seulement les champs correspondant à l'année et au type de TD ([#7128](https://github.com/betagouv/ma-cantine/issues/7128)) ([320e741](https://github.com/betagouv/ma-cantine/commit/320e741ef98ee863f184c86562f87b0286aa79cc))
+
+
+### Corrections (bugs, typos...)
+
+* **Accueil:** supprime la page accueil gestionnaire et ajoute des redirections ([#7122](https://github.com/betagouv/ma-cantine/issues/7122)) ([6adbfe2](https://github.com/betagouv/ma-cantine/commit/6adbfe2bd614c15cfffc9116a687c0c94623f44f))
+* **Settings:** fix une typo dans nos CSP ([#7124](https://github.com/betagouv/ma-cantine/issues/7124)) ([8fa0f0e](https://github.com/betagouv/ma-cantine/commit/8fa0f0e9b66c0ce3d932c98ead91f29021d0ef7c))
+* **Télédéclaration:** corrige le renvoit de None au lieu de l'année précédente pour la variable d'environnement ([#7125](https://github.com/betagouv/ma-cantine/issues/7125)) ([f0323e7](https://github.com/betagouv/ma-cantine/commit/f0323e79533cefc6c5c50394995260a6c1a69c4c))
+
+
+### Technique
+
+* **Cantines:** réduire la taille maximale de certains champs (name, siret, city, departement, region...) ([#7133](https://github.com/betagouv/ma-cantine/issues/7133)) ([1ac9061](https://github.com/betagouv/ma-cantine/commit/1ac9061b8099cdecd4117e2ce1a572163078283b))
+* **gitignore:** exclure les fichiers .lock (xlsx ouvert avec LibreOffice) ([#7130](https://github.com/betagouv/ma-cantine/issues/7130)) ([3a5b39c](https://github.com/betagouv/ma-cantine/commit/3a5b39c6d8e44fb30376861d952b38bff5267502))
+* **Télédéclarations:** stocker la logique des champs simplifié/détaillé/obligatoires par année dans un fichier dédié ([#7108](https://github.com/betagouv/ma-cantine/issues/7108)) ([47177a4](https://github.com/betagouv/ma-cantine/commit/47177a4861d918bbde842b2b35796de1b3d01cca))
+* **Télédéclarations:** stocker la logique des labels/familles/groupes par année dans un fichier dédié ([#7129](https://github.com/betagouv/ma-cantine/issues/7129)) ([b180c7e](https://github.com/betagouv/ma-cantine/commit/b180c7e3a4a15dd746ea16de4d349b829efb3dac))
+* **Tests:** Achats: FRANCE & EUROPE ne peuvent pas cohabiter, répare une erreur potentielle dans la génération de nos tests ([#7132](https://github.com/betagouv/ma-cantine/issues/7132)) ([38822d6](https://github.com/betagouv/ma-cantine/commit/38822d62acf9618fe6086651da9db88bd0e30417))
+* **Vue3:** simplification de la gestion des liens de documentation ([#7126](https://github.com/betagouv/ma-cantine/issues/7126)) ([567f5dd](https://github.com/betagouv/ma-cantine/commit/567f5dda39f1ab2529380a7ea2ec55bc78f0e619))
+
 ## [2026.49.0](https://github.com/betagouv/ma-cantine/compare/v2026.48.0...v2026.49.0) (2026-09-11)
 
 
