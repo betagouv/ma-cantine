@@ -139,6 +139,10 @@ venv.bak/
 frontend/node_modules
 frontend/dist
 
+# Office lock files (created while a .xlsx/.xls/.docx/... is open)
+.~lock.*#
+~$*
+
 # Log files
 frontend/npm-debug.log*
 frontend/yarn-debug.log*
