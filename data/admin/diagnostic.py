@@ -117,18 +117,11 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
 
     def get_fieldsets(self, request, obj=None):
         """
-        The appro fields differ from one year to the next (see diagnostic_teledeclaration_fields.py),
-        so they are resolved dynamically for the diagnostic being edited instead of being hardcoded here.
+        The appro fields depend on the diagnostic's year & type (see diagnostic_teledeclaration_fields.py).
         """
-        simple_fields = Diagnostic.SIMPLE_APPRO_FIELDS
-        detailed_fields = [field for field in Diagnostic.APPRO_FIELDS if field not in simple_fields]
-        if obj is not None:
-            try:
-                simple_fields = get_teledeclaration_fields_all(obj.year, Diagnostic.DiagnosticType.SIMPLE)
-                complete_fields = get_teledeclaration_fields_all(obj.year, Diagnostic.DiagnosticType.COMPLETE)
-                detailed_fields = [field for field in complete_fields if field not in simple_fields]
-            except ValueError:
-                pass  # year or diagnostic_type not (yet) set or not covered by the registry: fall back to the full historical field list
+        simple_or_complete_fields = (
+            get_teledeclaration_fields_all(obj.year, obj.diagnostic_type) if obj is not None else []
+        )
 
         return (
             (
@@ -152,7 +145,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 {
                     "fields": (
                         "tunnel_appro",
-                        *simple_fields,
+                        *simple_or_complete_fields,
                     )
                 },
             ),
@@ -195,10 +188,6 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             (
                 "Lien tracké lors de la création",
                 {"fields": Diagnostic.MATOMO_FIELDS},
-            ),
-            (
-                "Valeurs détaillés",
-                {"fields": detailed_fields},
             ),
             (
                 "Champs calculés",
