@@ -14,7 +14,7 @@ from data.models import Canteen
 from data.models.creation_source import CreationSource
 from data.validators import purchase as purchase_validators
 from macantine.etl import utils
-
+from data.models.diagnostic_teledeclaration_field_groups import get_teledeclaration_field_groups
 from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDeletionQuerySet
 
 
@@ -421,29 +421,27 @@ class Purchase(SoftDeletionModel):
         """
         Summary for detailed teledeclaration totals, by family and label.
         """
-        cls._complete_diag_data_appro_labels(purchases, data)
-        cls._complete_diag_data_appro_label_bio_dont_commerce_equitable(purchases, data)
+        cls._complete_diag_data_appro_labels(purchases, data, year)
+        cls._complete_diag_data_appro_label_bio_dont_commerce_equitable(purchases, data, year)
         if int(year) < 2025:
-            cls._complete_diag_appro_labels_origine_circuit_court_local_before_2025(purchases, data)
+            cls._complete_diag_appro_labels_origine_circuit_court_local_before_2025(purchases, data, year)
         elif int(year) == 2025:
-            cls._complete_diag_appro_labels_origine_circuit_court_local_2025(purchases, data)
+            cls._complete_diag_appro_labels_origine_circuit_court_local_2025(purchases, data, year)
         else:
-            cls._complete_diag_appro_labels_origine_circuit_court_local(purchases, data)
-        cls._complete_diag_appro_labels_non_egalim(purchases, data)
+            cls._complete_diag_appro_labels_origine_circuit_court_local(purchases, data, year)
+        cls._complete_diag_appro_labels_non_egalim(purchases, data, year)
 
     @classmethod
-    def _complete_diag_data_appro_labels(cls, purchases, data):
+    def _complete_diag_data_appro_labels(cls, purchases, data, year):
         """
         How we manage APPRO_LABELS_EGALIM:
         - order of APPRO_LABELS_EGALIM is significant
         - determines which labels trump others when aggregating purchases
         - (purchases are not double-counted across labels)
         """
-        from data.models import Diagnostic
-
-        for family in Diagnostic.APPRO_FAMILIES:
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
-            for label in Diagnostic.APPRO_LABELS_EGALIM:
+            for label in get_teledeclaration_field_groups(year, "APPRO_LABELS_EGALIM"):
                 if label.upper() == "AOCAOP_IGP_STG":
                     purchase_family_label = purchase_family.filter(
                         caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_AOCAOP_IGP_STG
@@ -464,15 +462,14 @@ class Purchase(SoftDeletionModel):
                 data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_data_appro_label_bio_dont_commerce_equitable(cls, purchases, data):
+    def _complete_diag_data_appro_label_bio_dont_commerce_equitable(cls, purchases, data, year):
         """
         How we manage bio_dont_commerce_equitable:
         - outside of APPRO_LABELS_EGALIM
         - products can be counted twice across caracteristiques
         """
-        from data.models import Diagnostic
 
-        for family in Diagnostic.APPRO_FAMILIES:
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
             purchase_family_label = purchase_family.filter(
                 Q(caracteristiques__contains=[cls.Characteristic.BIO])
@@ -482,7 +479,7 @@ class Purchase(SoftDeletionModel):
             data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_origine_circuit_court_local_before_2025(cls, purchases, data):
+    def _complete_diag_appro_labels_origine_circuit_court_local_before_2025(cls, purchases, data, year):
         """
         How we manage France/Circuit court/local:
         - outside of APPRO_LABELS_EGALIM
@@ -490,9 +487,8 @@ class Purchase(SoftDeletionModel):
         - NOTE: before 2025, circuit_court & local are not counted as France
         - NOTE: before 2025, Europe did not exist yet
         """
-        from data.models import Diagnostic
 
-        for family in Diagnostic.APPRO_FAMILIES:
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
             for label in ["france", "circuit_court", "local"]:
                 purchase_family_label = purchase_family.filter(
@@ -502,7 +498,7 @@ class Purchase(SoftDeletionModel):
                 data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_origine_circuit_court_local_2025(cls, purchases, data):
+    def _complete_diag_appro_labels_origine_circuit_court_local_2025(cls, purchases, data, year):
         """
         How we manage France/Circuit court/local:
         - outside of APPRO_LABELS_EGALIM
@@ -510,9 +506,8 @@ class Purchase(SoftDeletionModel):
         - NOTE: in 2025, circuit_court & local were part of France, so we count them as France
         - NOTE: in 2025, Europe did not exist yet
         """
-        from data.models import Diagnostic
 
-        for family in Diagnostic.APPRO_FAMILIES:
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
             for label in ["circuit_court", "local"]:  # "france" is done just after
                 purchase_family_label = purchase_family.filter(
@@ -530,7 +525,7 @@ class Purchase(SoftDeletionModel):
             data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_origine_circuit_court_local(cls, purchases, data):
+    def _complete_diag_appro_labels_origine_circuit_court_local(cls, purchases, data, year):
         """
         How we manage France/Europe/Circuit court/local:
         - outside of APPRO_LABELS_EGALIM
@@ -538,9 +533,8 @@ class Purchase(SoftDeletionModel):
         - NOTE: circuit_court & local are not counted as France
         - NOTE: in 2026, Europe was added
         """
-        from data.models import Diagnostic
 
-        for family in Diagnostic.APPRO_FAMILIES:
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
             for label in cls.CHARACTERISTIC_LABELS_INFO:
                 purchase_family_label = purchase_family.filter(
@@ -550,13 +544,12 @@ class Purchase(SoftDeletionModel):
                 data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_non_egalim(cls, purchases, data):
+    def _complete_diag_appro_labels_non_egalim(cls, purchases, data, year):
         """
         How we manage Non-EGalim:
         """
-        from data.models import Diagnostic
 
-        for family in Diagnostic.APPRO_FAMILIES:
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             non_egalim_purchases = purchases.filter(famille_produits=family.upper()).exclude(
                 caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_EGALIM
             )

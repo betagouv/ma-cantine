@@ -277,13 +277,15 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.valeur_viandes_volailles_fermier = 50
         diagnostic.save()
         self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertEqual(diagnostic.family_sum("viandes_volailles"), 250)  # only APPRO_LABELS
         self.assertRaises(ValidationError, diagnostic.full_clean)
         # even for non-egalim labels
         diagnostic.valeur_viandes_volailles_bio = 10
         diagnostic.valeur_viandes_volailles_fermier = 10
-        diagnostic.valeur_viandes_volailles_europe = 200
+        diagnostic.valeur_viandes_volailles_circuit_court = 200
         diagnostic.save()
         self.assertEqual(diagnostic.valeur_viandes_volailles, 100)
+        self.assertEqual(diagnostic.family_sum("viandes_volailles"), 20)  # only APPRO_LABELS
         self.assertRaises(ValidationError, diagnostic.full_clean)
         # sum of valeur_famille_label cannot be > valeur_famille
         diagnostic.valeur_viandes_volailles_bio = 10
