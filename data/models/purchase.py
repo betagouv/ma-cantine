@@ -194,12 +194,6 @@ class Purchase(SoftDeletionModel):
 
     CHARACTERISTIC_LABELS_ORIGINE = [Characteristic.EUROPE, Characteristic.FRANCE]
 
-    # when transformed into diagnostics, all labels will be counted
-    CHARACTERISTIC_LABELS_INFO = CHARACTERISTIC_LABELS_ORIGINE + [
-        Characteristic.CIRCUIT_COURT,
-        Characteristic.LOCAL,
-    ]
-
     CREATION_META_FIELDS = [
         "creation_date",
         "modification_date",
@@ -423,9 +417,7 @@ class Purchase(SoftDeletionModel):
         """
         cls._complete_diag_data_appro_labels(purchases, data, year)
         cls._complete_diag_data_appro_label_bio_dont_commerce_equitable(purchases, data, year)
-        if int(year) < 2025:
-            cls._complete_diag_appro_labels_origine_circuit_court_local_before_2025(purchases, data, year)
-        elif int(year) == 2025:
+        if int(year) == 2025:
             cls._complete_diag_appro_labels_origine_circuit_court_local_2025(purchases, data, year)
         else:
             cls._complete_diag_appro_labels_origine_circuit_court_local(purchases, data, year)
@@ -479,25 +471,6 @@ class Purchase(SoftDeletionModel):
             data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_origine_circuit_court_local_before_2025(cls, purchases, data, year):
-        """
-        How we manage France/Circuit court/local:
-        - outside of APPRO_LABELS_EGALIM
-        - products can be counted in multiple of these caracteristiques
-        - NOTE: before 2025, circuit_court & local are not counted as France
-        - NOTE: before 2025, Europe did not exist yet
-        """
-
-        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
-            purchase_family = purchases.filter(famille_produits=family.upper())
-            for label in ["france", "circuit_court", "local"]:
-                purchase_family_label = purchase_family.filter(
-                    Q(caracteristiques__contains=[cls.Characteristic[label.upper()]])
-                )
-                key = "valeur_" + family + "_" + label.lower()
-                data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
-
-    @classmethod
     def _complete_diag_appro_labels_origine_circuit_court_local_2025(cls, purchases, data, year):
         """
         How we manage France/Circuit court/local:
@@ -527,20 +500,22 @@ class Purchase(SoftDeletionModel):
     @classmethod
     def _complete_diag_appro_labels_origine_circuit_court_local(cls, purchases, data, year):
         """
-        How we manage France/Europe/Circuit court/local:
+        How we manage France/(Europe)/Circuit court/local:
         - outside of APPRO_LABELS_EGALIM
         - products can be counted in multiple of these caracteristiques
         - NOTE: circuit_court & local are not counted as France
-        - NOTE: in 2026, Europe was added
+        - NOTE: covers both before 2025 (no Europe) and from 2026 onwards (Europe added) — see
+          APPRO_LABELS_ORIGINE in diagnostic_teledeclaration_field_groups.py. 2025 is a special
+          transitional case handled separately (circuit_court & local counted as France too).
         """
-
+        labels = get_teledeclaration_field_groups(year, "APPRO_LABELS_ORIGINE") + ["circuit_court", "local"]
         for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
             purchase_family = purchases.filter(famille_produits=family.upper())
-            for label in cls.CHARACTERISTIC_LABELS_INFO:
+            for label in labels:
                 purchase_family_label = purchase_family.filter(
-                    Q(caracteristiques__contains=[cls.Characteristic[label]])
+                    Q(caracteristiques__contains=[cls.Characteristic[label.upper()]])
                 )
-                key = "valeur_" + family + "_" + label.lower()
+                key = "valeur_" + family + "_" + label
                 data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
