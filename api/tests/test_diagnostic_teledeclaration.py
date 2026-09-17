@@ -1,4 +1,5 @@
 from unittest.mock import patch
+from unittest import skip
 
 from django.core.management import call_command
 from django.urls import reverse
@@ -339,6 +340,24 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["detail"], ["Ce diagnostic n'est pas rempli"])
+
+    @skip
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_teledeclare_if_bad_total(self):
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
+        Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=100, valeur_bio=1000)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_create",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()["detail"], ["Le total des valeurs ne correspond pas à la valeur totale"])
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
