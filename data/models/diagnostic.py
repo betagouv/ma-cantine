@@ -2090,6 +2090,7 @@ class Diagnostic(models.Model):
             )
             meal_count = Decimal(self.canteen_yearly_meal_count)
             return round(valeur_totale / meal_count, 2)
+        return None
 
     @property
     def percentage_valeur_totale(self) -> float:
