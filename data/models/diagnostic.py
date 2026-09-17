@@ -1,4 +1,5 @@
 import operator
+from decimal import Decimal
 from functools import reduce
 
 from django.conf import settings
@@ -2083,12 +2084,13 @@ class Diagnostic(models.Model):
             return objectifs_egalim_atteints(self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
 
     def compute_cout_repas(self):
-        """
-        If the diagnostic is not teledeclared, the cout_repas depends on canteen.yearly_meal_count.
-        So if the canteen.yearly_meal_count has changed, but the diagnostic has not been saved, the cout_repas will be different...
-        """
         if self.valeur_totale and self.canteen_yearly_meal_count:
-            return round(self.valeur_totale / self.canteen_yearly_meal_count, 2)
+            valeur_totale = (
+                self.valeur_totale if isinstance(self.valeur_totale, Decimal) else Decimal(str(self.valeur_totale))
+            )
+            meal_count = Decimal(self.canteen_yearly_meal_count)
+            return round(valeur_totale / meal_count, 2)
+        return None
 
     @property
     def percentage_valeur_totale(self) -> float:
@@ -2198,10 +2200,13 @@ class Diagnostic(models.Model):
 
     @property
     def canteen_yearly_meal_count(self):
-        if self.canteen_snapshot:
-            return self.canteen_snapshot.get("yearly_meal_count")
-        elif self.canteen:
-            return self.canteen.yearly_meal_count
+        if self.year < 2026:
+            if self.canteen_snapshot:
+                return self.canteen_snapshot.get("yearly_meal_count")
+            elif self.canteen:
+                return self.canteen.yearly_meal_count
+        else:
+            return self.nombre_repas_an
         return None
 
     @property

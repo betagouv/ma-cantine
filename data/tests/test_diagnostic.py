@@ -1021,6 +1021,14 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
             valeur_totale=1000,
             valeur_bio=200,
         )
+        cls.diagnostic_draft_2026 = DiagnosticFactory(
+            canteen=CanteenFactory(yearly_meal_count=1000),
+            year=2026,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            nombre_repas_an=800,
+            valeur_totale=1000,
+            valeur_bio=200,
+        )
         with freeze_time(date_in_teledeclaration_campaign):
             cls.canteen_groupe_teledeclared = CanteenFactory(
                 production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=2000
@@ -1060,6 +1068,7 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_draft_filled.canteen_yearly_meal_count, 1000)
         self.assertEqual(self.diagnostic_groupe_teledeclared.canteen_yearly_meal_count, 2000)
         self.assertEqual(self.diagnostic_satellite_teledeclared.canteen_yearly_meal_count, 1300)
+        self.assertEqual(self.diagnostic_draft_2026.canteen_yearly_meal_count, 800)
 
         # if canteen changes yearly_meal_count, but diagnostic is not teledeclared, take the new canteen value
         self.canteen_empty.yearly_meal_count = 500
@@ -1080,6 +1089,8 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_draft_empty.cout_repas, None)
         self.assertEqual(self.diagnostic_draft_filled.compute_cout_repas(), 1.0)
         self.assertEqual(self.diagnostic_draft_filled.cout_repas, 1.0)
+        self.assertEqual(self.diagnostic_draft_2026.compute_cout_repas(), 1.25)
+        self.assertEqual(self.diagnostic_draft_2026.cout_repas, 1.25)
         self.assertEqual(
             self.diagnostic_groupe_teledeclared.compute_cout_repas(), Decimal("50.00")
         )  # rounded (instead of 50.00025)
@@ -1100,6 +1111,13 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
         self.diagnostic_groupe_teledeclared.refresh_from_db()
         self.assertEqual(self.diagnostic_groupe_teledeclared.compute_cout_repas(), Decimal("50.00"))  # unchanged
         self.assertEqual(self.diagnostic_groupe_teledeclared.cout_repas, Decimal("50.00"))  # unchanged
+
+        # if the nombre_repas_an is emptied, then set the cout_repas to None
+        self.diagnostic_draft_2026.nombre_repas_an = None
+        self.diagnostic_draft_2026.save()
+        self.diagnostic_draft_2026.refresh_from_db()
+        self.assertEqual(self.diagnostic_draft_2026.compute_cout_repas(), None)
+        self.assertEqual(self.diagnostic_draft_2026.cout_repas, None)
 
 
 class DiagnosticInvalidWarningQueriesTest(TestCase):
