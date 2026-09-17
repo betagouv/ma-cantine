@@ -1090,6 +1090,7 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_draft_filled.compute_cout_repas(), 1.0)
         self.assertEqual(self.diagnostic_draft_filled.cout_repas, 1.0)
         self.assertEqual(self.diagnostic_draft_2026.compute_cout_repas(), 1.25)
+        self.assertEqual(self.diagnostic_draft_2026.cout_repas, 1.25)
         self.assertEqual(
             self.diagnostic_groupe_teledeclared.compute_cout_repas(), Decimal("50.00")
         )  # rounded (instead of 50.00025)
@@ -1110,6 +1111,13 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
         self.diagnostic_groupe_teledeclared.refresh_from_db()
         self.assertEqual(self.diagnostic_groupe_teledeclared.compute_cout_repas(), Decimal("50.00"))  # unchanged
         self.assertEqual(self.diagnostic_groupe_teledeclared.cout_repas, Decimal("50.00"))  # unchanged
+
+        # if the nombre_repas_an is emptied, then set the cout_repas to None
+        self.diagnostic_draft_2026.nombre_repas_an = None
+        self.diagnostic_draft_2026.save()
+        self.diagnostic_draft_2026.refresh_from_db()
+        self.assertEqual(self.diagnostic_draft_2026.compute_cout_repas(), None)
+        self.assertEqual(self.diagnostic_draft_2026.cout_repas, None)
 
 
 class DiagnosticInvalidWarningQueriesTest(TestCase):
