@@ -2337,12 +2337,14 @@ class Diagnostic(models.Model):
         - skip_validations: if True, skip validation checks (USE WITH CAUTION) (only for tests)
         """
         if not skip_validations:
+            # status & campaign dates validations
             if not is_in_teledeclaration_or_correction():
                 raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
             if not is_in_teledeclaration_or_correction(self.year):
                 raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
             if self.is_teledeclared:
                 raise ValidationError("Ce diagnostic a déjà été télédéclaré")
+            # canteen validations
             uses_central_kitchen_appro = self._should_use_central_kitchen_appro()
             if not self.is_filled and not uses_central_kitchen_appro:
                 raise ValidationError("Ce diagnostic n'est pas rempli")
@@ -2357,7 +2359,8 @@ class Diagnostic(models.Model):
                     )
             if applicant not in self.canteen.managers.all():
                 raise ValidationError("Le déclarant n'est pas un gestionnaire de la cantine associée à ce diagnostic")
-            # TODO: run diagnostic.full_clean() (validators) ?
+            # field validations
+            self.full_clean()
 
         from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 
