@@ -23,13 +23,13 @@
             src="/static/images/appro-graphs/good-1.svg"
             class="graph"
             alt="Graphe du exemple satisfaisant"
-            title="20 % bio, 30 % durable (hors bio)"
+            title="20 % bio, 30 % EGalim (hors bio)"
           />
           <img
             src="/static/images/appro-graphs/good-2.svg"
             class="graph"
             alt="Graphe du exemple satisfaisant"
-            title="50 % bio, 0 % durable (hors bio)"
+            title="50 % bio, 0 % EGalim (hors bio)"
           />
         </div>
       </div>
@@ -40,13 +40,13 @@
             src="/static/images/appro-graphs/bad-1.svg"
             class="graph"
             alt="Graphe du exemple insuffisant"
-            title="20 % bio, 20 % durable (hors bio)"
+            title="20 % bio, 20 % EGalim (hors bio)"
           />
           <img
             src="/static/images/appro-graphs/bad-2.svg"
             class="graph"
             alt="Graphe du exemple insuffisant"
-            title="15 % bio, 50 % durable (hors bio)"
+            title="15 % bio, 50 % EGalim (hors bio)"
           />
         </div>
       </div>

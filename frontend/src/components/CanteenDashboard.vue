@@ -128,7 +128,7 @@
           </v-card-title>
           <v-card-text>
             <p>
-              L’information convives, par mail et par affichage, de la part de bio, durable et commerce équitable est
+              L’information convives, par mail et par affichage, de la part de bio, d'EGalim et commerce équitable est
               d’ores et déjà en vigueur.
             </p>
             <div class="actions">

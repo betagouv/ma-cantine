@@ -6,7 +6,7 @@
       :options="chartOptions"
       :series="series"
       role="figure"
-      aria-label="Approvisionnement bio et durable"
+      aria-label="Approvisionnement bio et EGalim"
       :aria-description="description"
       height="100px"
       width="100%"

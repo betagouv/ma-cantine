@@ -451,7 +451,7 @@ export default Object.freeze({
       urlSlug: "cantines-et-diagnostics-simples",
       title: "Importer des cantines et bilans simples",
       label: "Diagnostic simple",
-      help: "Vous connaissez les valeurs totales de vos achats bio et de qualité",
+      help: "Vous connaissez les valeurs totales de vos achats bio et EGalim",
       icon: "$bar-chart-box-fill",
     },
     {
@@ -472,7 +472,7 @@ export default Object.freeze({
         "Ce type de fichier vous permet de renseigner vos données d'approvisionnement simplifiées au niveau de la cuisine centrale et de lister vos restaurants satellites seulement avec leurs données d'établissement. Les données d'approvisionnement sont donc rentrées une fois au niveau de la cuisine centrale.",
       label: "Cuisine centrale avec bilan simple",
       help:
-        "Vous voulez renseigner vos restaurants satellites et vous connaissez les valeurs totaux, bio, et de qualité et durable",
+        "Vous voulez renseigner vos restaurants satellites et vous connaissez les valeurs totaux, bio et EGalim",
       icon: "$bar-chart-box-fill",
     },
     {
@@ -741,7 +741,7 @@ export default Object.freeze({
     {
       key: "SIMPLE",
       label: "Télédéclaration - saisie simplifiée",
-      help: "Vous connaissez les valeurs totales de vos achats bio et de qualité",
+      help: "Vous connaissez les valeurs totales de vos achats bio et EGalim",
     },
     {
       key: "COMPLETE",
