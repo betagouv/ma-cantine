@@ -6,7 +6,6 @@ import { useStoreCanteen } from "@/stores/canteen.js"
 import { storeToRefs } from "pinia"
 import canteenServices from "@/services/canteens"
 import diagnosticServices from "@/services/diagnostics"
-import diagnosticsFields from "@/services/diagnosticsFields"
 import AppErrorList from "@/components/AppErrorList.vue"
 
 const router = useRouter()
@@ -16,7 +15,7 @@ const canteenStore = useStoreCanteen()
 const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
 const { canteenInformations } = storeToRefs(canteenStore)
-const { diagnostic, diagnosticErrors } = storeToRefs(teledeclarationStore)
+const { diagnostic } = storeToRefs(teledeclarationStore)
 
 /* Save */
 const save = async (page) => {
@@ -24,8 +23,8 @@ const save = async (page) => {
   await teledeclarationStore.saveDiagnostic()
   const check = await checkIsFilled()
   if (check.isFilled) goTo(page)
-  await saveErrors(check.errors)
-  const pageErrors = filterErrorsOnPage()
+  await teledeclarationStore.setErrors(check.errors)
+  const pageErrors = teledeclarationStore.getErrorsPage(route.name, canteenInformations.value.isGroupe)
   if (pageErrors.length > 0) displayModal(pageErrors, page)
   else goTo(page)
 }
@@ -36,16 +35,6 @@ const saveAndQuit = async () => {
 }
 
 /* Errors */
-const saveErrors = async (errors) => {
-  const errorsKeys = Object.keys(errors)
-  const errorsValues = Object.values(errors)
-  const errorList = []
-  for (let i = 0; i < errorsKeys.length; i++) {
-    errorList.push({ field: errorsKeys[i], message: errorsValues[i] })
-  }
-  await teledeclarationStore.saveErrors(errorList)
-}
-
 const checkIsFilled = async () => {
   const canteenId = diagnostic.value.canteenId
   const diagnosticId = diagnostic.value.id
@@ -53,15 +42,6 @@ const checkIsFilled = async () => {
   const checkDiagnostic = await diagnosticServices.checkDiagnostic(canteenId, diagnosticId)
   return { isFilled: checkCanteen.isFilled && checkDiagnostic.isFilled, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
 }
-
-const filterErrorsOnPage = () => {
-  const pageName = route.name
-  const canteenIsGroupe = canteenInformations.value.isGroupe
-  const diagnosticIsSimple = diagnostic.value.diagnosticType === "SIMPLE"
-  const fieldsList = diagnosticsFields.getFieldsList(pageName, canteenIsGroupe, diagnosticIsSimple)
-  return diagnosticErrors.value.filter(error => fieldsList.includes(error.field))
-}
-
 
 /* Modal */
 const showModal = ref(false)

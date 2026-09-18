@@ -9,7 +9,7 @@ const getFieldError = (fieldName, errors) => {
   return hasError ? hasError.message : null
 }
 
-const getFieldsList = (pageName, canteenIsGroupe, diagnosticIsSimple) => {
+const getFieldsListFromPage = (pageName, canteenIsGroupe, diagnosticIsSimple) => {
   switch (true) {
     case pageName === "GestionnaireTunnelApproInformations" && !canteenIsGroupe:
       return teledeclaration.groups.informationsCantine
@@ -32,4 +32,8 @@ const getFieldsList = (pageName, canteenIsGroupe, diagnosticIsSimple) => {
   }
 }
 
-export default { getField, getFieldError, getFieldsList }
+const getFieldsListFromGroup = (groupName) => {
+  return teledeclaration.groups[groupName]
+}
+
+export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup }
