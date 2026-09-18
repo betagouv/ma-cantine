@@ -6,7 +6,7 @@ import ObservatoryGraphManagementType from "@/components/ObservatoryGraphManagem
 import ObservatoryGraphSectors from "@/components/ObservatoryGraphSectors.vue"
 
 defineProps(["stats"])
-const canteenBadge = "/static/images/badges/canteen.svg"
+const canteenBadge = "/static/images/badges/badge-canteen.svg"
 </script>
 
 <template>
