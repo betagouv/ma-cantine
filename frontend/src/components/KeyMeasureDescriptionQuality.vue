@@ -3,7 +3,7 @@
     <p>
       La loi EGalim, complétée par la loi Climat et Résilience, a défini des obligations en ce qui concerne la qualité
       et la durabilité des produits entrant dans la composition des repas servis en restauration collective. Aussi, en
-      moyenne sur une année, les repas doivent comporter au moins 50 % de produits durables et de qualité, dont au moins
+      moyenne sur une année, les repas doivent comporter au moins 50 % de produits EGalim, dont au moins
       20 % issus de l'agriculture biologique ou en conversion, et ce pour toutes les cantines de France métropolitaine
       (consulter
       <a href="https://ma-cantine.agriculture.gouv.fr/blog/16">notre blog</a>
@@ -13,7 +13,7 @@
       Ces taux (en %) sont calculés à partir de la valeur HT en euros de la somme des achats annuels alimentaires - sur
       l'ensemble des repas, boissons et collations comprises. i.e. Pour 100 euros d'achat, au moins 20 euros doivent
       correspondre à des produits bio ou en conversion et au total au moins 50 euros doivent correspondre à des produits
-      durables et de qualité (bio inclus).
+      EGalim (bio inclus).
     </p>
     <div id="appro-graphs" class="mb-4">
       <div>
@@ -23,13 +23,13 @@
             src="/static/images/appro-graphs/good-1.svg"
             class="graph"
             alt="Graphe du exemple satisfaisant"
-            title="20 % bio, 30 % durable (hors bio)"
+            title="20 % bio, 30 % EGalim (hors bio)"
           />
           <img
             src="/static/images/appro-graphs/good-2.svg"
             class="graph"
             alt="Graphe du exemple satisfaisant"
-            title="50 % bio, 0 % durable (hors bio)"
+            title="50 % bio, 0 % EGalim (hors bio)"
           />
         </div>
       </div>
@@ -40,13 +40,13 @@
             src="/static/images/appro-graphs/bad-1.svg"
             class="graph"
             alt="Graphe du exemple insuffisant"
-            title="20 % bio, 20 % durable (hors bio)"
+            title="20 % bio, 20 % EGalim (hors bio)"
           />
           <img
             src="/static/images/appro-graphs/bad-2.svg"
             class="graph"
             alt="Graphe du exemple insuffisant"
-            title="15 % bio, 50 % durable (hors bio)"
+            title="15 % bio, 50 % EGalim (hors bio)"
           />
         </div>
       </div>
@@ -67,7 +67,7 @@
     </div>
     <p>
       Par ailleurs, la loi Climat et Résilience, a complété cette disposition avec une autre obligation : il est attendu
-      au moins 60 % de produits durables et de qualité dans la famille de denrées « viandes et poissons », ce taux étant
+      au moins 60 % de produits EGalim dans la famille de denrées « viandes et poissons », ce taux étant
       fixé à 100 % pour la restauration de l'Etat, ses établissements publics et les entreprises publiques nationales.
       La viande de synthèse est interdite en restauration collective. Depuis le 1er janvier 2024, ces dispositions
       concernant la qualité des approvisionnements en restauration collective s'appliquent à tous les restaurants

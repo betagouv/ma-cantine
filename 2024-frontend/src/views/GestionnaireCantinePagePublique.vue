@@ -35,7 +35,7 @@ const goToPrintPage = () => {
     <p>
       Conformément à l'article L.230-5-1 du Code rural et de la pêche maritime,
       <strong>les gestionnaires de restauration collective ont l'obligation d'informer les convives,</strong>
-      au moins une fois par an, sur la part des produits durables et de qualité entrant dans la composition des repas.
+      au moins une fois par an, sur la part des produits EGalim entrant dans la composition des repas.
       Cette information doit être diffusée par voie d'affichage, de manière visible et lisible, ainsi que par
       communication électronique.
     </p>
@@ -78,8 +78,8 @@ const goToPrintPage = () => {
     <p>
       Vous pourrez générer automatiquement
       <strong>un PDF à afficher ou à envoyer par mail</strong>
-      à vos convives pour les informer sur la part de produits de qualité et durables et de la part des produits issus
-      de projets alimentaires territoriaux entrant dans la composition des repas servis. Les informations, officielles,
+      à vos convives pour les informer sur la part de produits EGalim et de la part des produits issus de projets
+      alimentaires territoriaux entrant dans la composition des repas servis. Les informations, officielles,
       <strong>sont issues de votre dernière télédéclaration</strong>
       et des informations complémentaires renseignées sur votre page publique.
     </p>

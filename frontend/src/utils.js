@@ -515,7 +515,7 @@ export const approSummary = (diagnostic) => {
     const { bio, allSustainable } = getApproPercentages(diagnostic)
     let summary = []
     if (bio) summary.push(`${bio} % bio`)
-    if (allSustainable) summary.push(`${allSustainable} % de qualité et durable`)
+    if (allSustainable) summary.push(`${allSustainable} % EGalim`)
     return summary.join(", ")
   }
   return "Incomplet"

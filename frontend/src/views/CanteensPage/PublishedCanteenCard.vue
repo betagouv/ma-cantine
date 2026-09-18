@@ -33,7 +33,7 @@
               </span>
               <span class="ma-0" v-if="sustainablePercent">
                 <span class="font-weight-black mr-1">{{ sustainablePercent }} %</span>
-                de qualité et durables
+                EGalim
               </span>
             </span>
           </p>

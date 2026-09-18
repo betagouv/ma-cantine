@@ -146,7 +146,7 @@
               <p class="ma-0">
                 <span class="grey--text text-h5 font-weight-black text--darken-2 mr-1">{{ sustainablePercent }} %</span>
                 <span class="caption">
-                  durables et de qualité (hors bio)
+                  EGalim (hors bio)
                 </span>
               </p>
               <div class="d-flex mt-2 justify-center flex-wrap">

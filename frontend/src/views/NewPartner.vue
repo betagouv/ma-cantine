@@ -227,7 +227,7 @@ export default {
       categories: [
         {
           value: "appro",
-          text: "Améliorer ma part de bio et de produits durables",
+          text: "Améliorer ma part de bio et de produits EGalim",
         },
         {
           value: "suivi",

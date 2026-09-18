@@ -156,7 +156,7 @@
                         class="mr-2"
                       />
                       <DsfrTextField
-                        label="bio, qualité et durable"
+                        label="bio, EGalim"
                         labelClasses="caption pl-1"
                         :value="filters.min_portion_combined.value"
                         ref="min_portion_combined"
