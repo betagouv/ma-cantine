@@ -1,14 +1,15 @@
 <script setup>
 import { computed } from 'vue'
 
-const props = defineProps(["title", "content", "icon"])
+const props = defineProps(["title", "content", "icon", "changeIconColor"])
 const iconDisplay = computed(() => props.icon || "fr-icon-question-fill")
+const iconDefaultColor = computed(() => props.changeIconColor ? "" : "fr-text-title--blue-france")
 </script>
 
 <template>
   <div class="app-help-card fr-card fr-p-7v">
     <div class="app-help-card__content">
-      <span class="fr-text-title--blue-france" :class="iconDisplay" aria-hidden="true"></span>
+      <span :class="`${iconDefaultColor} ${iconDisplay}`" aria-hidden="true"></span>
       <div>
         <p class="ma-cantine--bold fr-mb-1w fr-text--lg">
           {{ title }}
