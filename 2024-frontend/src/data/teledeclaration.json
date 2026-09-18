@@ -512,6 +512,7 @@
       "isRelatedField": true,
       "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Viandes et volailles fraiches ou surgelées",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true,
       "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
@@ -530,6 +531,7 @@
       "isRelatedField": true,
       "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true,
       "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
@@ -548,6 +550,7 @@
       "isRelatedField": true,
       "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Charcuteries",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true,
       "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
@@ -566,6 +569,7 @@
       "isRelatedField": true,
       "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Fruits et légumes frais et surgelés",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true,
       "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
@@ -584,6 +588,7 @@
       "isRelatedField": true,
       "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true,
       "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
@@ -602,6 +607,7 @@
       "isRelatedField": true,
       "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true,
       "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
@@ -620,6 +626,7 @@
       "isRelatedField": true,
       "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true,
       "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
@@ -638,6 +645,7 @@
       "isRelatedField": true,
       "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Boissons",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true,
       "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
@@ -844,6 +852,7 @@
     "valeurProduitsDeLaMerPecheDurable": {
       "label": "Ecolabel pêche durable ou pêche répondant à des exigences environnementales et dont l’origine la traçabilité et la fraîcheur sont garanties ou aquaculture dont l’origine la traçabilité et la fraîcheur sont garanties pour la famille Produits de la mer et aquaculture frais et surgelés",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
@@ -994,96 +1003,112 @@
     "valeurViandesVolaillesExternalites": {
       "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Viandes et volailles fraîches et surgelées",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurProduitsDeLaMerExternalites": {
       "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurCharcuterieExternalites": {
       "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Charcuterie",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurFruitsEtLegumesExternalites": {
       "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Fruits et légumes frais et surgelés",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurProduitsLaitiersExternalites": {
       "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurBoulangerieExternalites": {
       "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurAutresExternalites": {
       "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Autres produits frais, surgelés et d’épicerie",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurCoutsExternalitesBoissons": {
       "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Boissons",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurViandesVolaillesPerformance": {
       "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Viandes et volailles fraîches et surgelées",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurProduitsDeLaMerPerformance": {
       "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurCharcuteriePerformance": {
       "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Charcuterie",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurFruitsEtLegumesPerformance": {
       "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Fruits et légumes frais et surgelés",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurProduitsLaitiersPerformance": {
       "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurBoulangeriePerformance": {
       "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurAutresPerformance": {
       "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Autres produits frais, surgelés et d’épicerie",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     },
     "valeurBoissonsPerformance": {
       "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Boissons",
       "type": "number",
+      "placeholder": "Je ne sais pas",
       "required": false,
       "enablePurchaseSummary": true
     }
