@@ -5,7 +5,7 @@ const tiles = [
     title: "Qualité et durabilité des produits",
     imgSrc: "/static/images/badges/badge-appro.svg",
     details:
-      "Retrouvez la liste des labels éligibles aux 50% de produits de qualité, aux 20% de produits bio et aux 60% de produits de qualité et durables pour les familles cumulées viandes-volailles-poissons.",
+      "Retrouvez la liste des labels éligibles aux 50% de produits EGalim, aux 20% de produits bio et aux 60% de produits EGalim pour les familles cumulées viandes-volailles-poissons.",
     to: documentation.qualiteDurabiliteProduits,
   },
   {
