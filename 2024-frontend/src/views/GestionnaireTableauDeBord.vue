@@ -97,7 +97,7 @@ const tableIsEmpty = computed(() => {
 
 /* CAMPAIGN */
 const campaign = computedAsync(async () => {
-  return await campaignService.getYearCampaignDates(lastYear)
+  return await campaignService.getCampaignDates(lastYear)
 }, false)
 </script>
 

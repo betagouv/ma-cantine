@@ -21,7 +21,7 @@ const showPagination = computed(() => props.satellites.length > minPagination)
 
 /* Campaign */
 const campaign = computedAsync(async () => {
-  return await campaignService.getYearCampaignDates(lastYear)
+  return await campaignService.getCampaignDates(lastYear)
 }, false)
 
 /* Table */

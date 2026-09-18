@@ -1,10 +1,12 @@
 import { verifyResponse } from "@/services/api.js"
 
-const getYearCampaignDates = (year) => {
-  return fetch(`/api/v1/campaignDates/${year}/`, { method: "GET" })
+const getCampaignDates = (year) => {
+  let url = "/api/v1/campaignDates/"
+  if (year) url += `${year}/`
+  return fetch(url, { method: "GET" })
     .then(verifyResponse)
     .then((response) => response)
     .catch((e) => e)
 }
 
-export default { getYearCampaignDates }
+export default { getCampaignDates }
