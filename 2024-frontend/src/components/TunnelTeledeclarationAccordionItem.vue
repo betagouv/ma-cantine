@@ -6,6 +6,7 @@ import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import teledeclaration from '@/data/teledeclaration.json'
 import CanteenDisplayInformations from '@/components/CanteenDisplayInformations.vue'
+import TunnelTeledeclarationIconCheck from '@/components/TunnelTeledeclarationIconCheck.vue'
 
 const props = defineProps(["accordion", "id"])
 
@@ -63,6 +64,7 @@ const goToStep = (page) => router.push(page)
 <template>
   <DsfrAccordion :id="id" :title="accordion.title">
     <template #title>
+      <TunnelTeledeclarationIconCheck :isComplete="!hasErrors" class="fr-mr-1w" />
       {{ accordion.title }}
       <DsfrBadge v-if="hasErrors" :label="errorBadge" type="error" class="fr-ml-2w" />
     </template>
