@@ -5,6 +5,7 @@ import AppBadgeSiretSiren from "@/components/AppBadgeSiretSiren.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import AppHelpCard from "@/components/AppHelpCard.vue"
+import TunnelTeledeclarationIconCheck from "@/components/TunnelTeledeclarationIconCheck.vue"
 import documentation from "@/data/documentation.json"
 
 const props = defineProps(["canteen", "nav", "active"])
@@ -18,12 +19,14 @@ const generateNav = (name) => {
 
   for (let i = 0; i < list.length; i++) {
     const isCurrent = i === activeIndex
+    console.log(list[i].to.name)
     links.push({
       disabled: activeIndex === -1,
       type: isCurrent ? 'secondary' : 'tertiary',
       label: list[i].title,
       to: list[i].to,
       icon: list[i].icon,
+      pageName: list[i].to.name,
     })
   }
   return links
@@ -53,12 +56,13 @@ const goTo = (to) => router.push(to)
               v-for="link in approvisementsNav"
               :key="link.to.name"
               :[link.type]="true"
-              :icon="link.icon || 'fr-icon-checkbox-circle-line'"
               class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              :label="link.label"
-              :disabled="link.disabled"
               @click="goTo(link.to)"
-            />
+            >
+              <TunnelTeledeclarationIconCheck v-if="!link.icon" :fieldsPageName="link.pageName" class="fr-mr-1w" />
+              <span v-else :class="`${link.icon} ma-cantine--icon-xs`" ></span>
+              {{ link.label }}
+            </DsfrButton>
           </nav>
         </div>
         <AppSeparator class="fr-my-2w" />
@@ -68,15 +72,15 @@ const goTo = (to) => router.push(to)
           </h3>
           <nav class="tunnel-teledeclaration-sidebar__nav">
             <DsfrButton
-            v-for="link in thematiquesNav"
-            :key="link.to.name"
-            :[link.type]="true"
-            icon="fr-icon-checkbox-circle-line"
-            class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-            :label="link.label"
-            :disabled="link.disabled"
-            @click="goTo(link.to)"
-            />
+              v-for="link in thematiquesNav"
+              :key="link.to.name"
+              :[link.type]="true"
+              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
+              @click="goTo(link.to)"
+            >
+              <TunnelTeledeclarationIconCheck :fieldsPageName="link.pageName" class="fr-mr-1w" />
+              {{ link.label }}
+            </DsfrButton>
           </nav>
         </div>
         <div class="fr-mt-2w ma-cantine--sticky__bottom">
