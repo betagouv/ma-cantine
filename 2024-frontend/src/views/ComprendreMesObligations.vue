@@ -46,7 +46,7 @@ const closeModal = () => {
       <template #default>
         <iframe
           :title="modal.title"
-          :src="`${modal.to}/reader/compact/`"
+          :src="`${modal.to}/reader/`"
           class="ma-cantine--modal-iframe"
           frameborder="0"
         ></iframe>
