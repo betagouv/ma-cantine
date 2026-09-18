@@ -142,7 +142,7 @@ export default {
           color: this.theme.bio,
         },
         {
-          name: `Durable et de qualité : ${this.sustainablePercentage} %`,
+          name: `EGalim : ${this.sustainablePercentage} %`,
           data: [this.sustainablePercentage],
           color: this.theme.sustainable,
         },
@@ -166,7 +166,7 @@ export default {
       return this.isTruthyOrZero(percentage) ? percentage : "—"
     },
     description() {
-      return `Bio : ${this.bioPercentage} %. Durable et de qualité (hors bio) : ${this.sustainablePercentage} %. Rappel objectif EGalim : ${this.applicableRules.qualityThreshold} % des achats de qualité et durable, dont ${this.applicableRules.bioThreshold} % bio.`
+      return `Bio : ${this.bioPercentage} %. EGalim (hors bio) : ${this.sustainablePercentage} %. Rappel objectif EGalim : ${this.applicableRules.qualityThreshold} % des achats EGalim, dont ${this.applicableRules.bioThreshold} % bio.`
     },
     hasEnoughData() {
       return hasApproGraphData(this.diagnostic)

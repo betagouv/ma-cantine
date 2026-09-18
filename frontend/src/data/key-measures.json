@@ -24,8 +24,8 @@
       {
         "descriptionComponent": "KeyMeasureDescriptionLabels",
         "id": "cinquante",
-        "shortTitle": "50 % de qualité et durables",
-        "title": "Produits de qualité et durables"
+        "shortTitle": "50 % EGalim",
+        "title": "Produits EGalim"
       }
     ],
     "tabText": "Appro.",
@@ -39,7 +39,7 @@
       "loisirs",
       "entreprises"
     ],
-    "title": "Plus de produits de qualité et durables dans nos assiettes"
+    "title": "Plus de produits EGalim dans nos assiettes"
   },
   {
     "badgeId": "waste",
@@ -327,7 +327,7 @@
         "title": "Étiquetage détaillé pour toutes les viandes"
       }
     ],
-    "successExplanation": "La cantine informe ses convives sur la part de produits de qualité et durables, entrant dans la composition des repas servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial).",
+    "successExplanation": "La cantine informe ses convives sur la part de produits EGalim, entrant dans la composition des repas servis, et sur les démarches d’acquisition de produits issus d'un PAT (projet alimentaire territorial).",
     "tabText": "Info. convives",
     "title": "Information des usagers et convives"
   }

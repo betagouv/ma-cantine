@@ -19,13 +19,13 @@
             </p>
             <ol class="mb-4">
               <li v-for="(year, idx) in years" :key="year">
-                {{ year }} : {{ seriesData.bio[idx] }} % bio, {{ seriesData.sustainable[idx] }} % de qualité et durable
-                (hors bio), {{ 100 - seriesData.bio[idx] - seriesData.sustainable[idx] }} % hors EGalim
+                {{ year }} : {{ seriesData.bio[idx] }} % bio, {{ seriesData.sustainable[idx] }} % EGalim (hors bio),
+                {{ 100 - seriesData.bio[idx] - seriesData.sustainable[idx] }} % hors EGalim
               </li>
             </ol>
             <p class="mb-0">
               Rappel de l'objectif : Les repas servis comportent au moins {{ applicableRules.qualityThreshold }} % de
-              produits de qualité et durables dont au moins {{ applicableRules.bioThreshold }} % issus de l'agriculture
+              produits EGalim dont au moins {{ applicableRules.bioThreshold }} % issus de l'agriculture
               biologique ou en conversion, pour les cantines
               {{
                 applicableRules.hasQualityException
@@ -48,7 +48,7 @@ import { getPercentage, getSustainableTotal, regionDisplayName } from "@/utils"
 
 const VALUE_DESCRIPTION = "Pourcentage d'achats"
 const BIO = "Bio"
-const SUSTAINABLE = "Qualité et durable (hors bio)"
+const SUSTAINABLE = "EGalim (hors bio)"
 
 export default {
   components: {

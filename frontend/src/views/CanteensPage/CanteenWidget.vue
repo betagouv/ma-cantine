@@ -9,7 +9,7 @@
         <span class="font-weight-black">{{ bioPercent }} %</span>
         bio,
         <span class="font-weight-black">{{ sustainablePercent }} %</span>
-        de qualité et durable
+        EGalim
       </p>
 
       <v-card class="my-2">
@@ -42,7 +42,7 @@
               <v-card-subtitle v-else :class="!badgeIsEarned(badge) && 'grey--text text--darken-2'">
                 <p class="text-body-2 mb-0">
                   Ce qui est servi dans les assiettes est au moins à {{ applicableRules.qualityThreshold }} % de
-                  produits durables et de qualité, dont {{ applicableRules.bioThreshold }} % bio, en respectant
+                  produits EGalim, dont {{ applicableRules.bioThreshold }} % bio, en respectant
                   <a
                     href="https://ma-cantine.agriculture.gouv.fr/blog/16"
                     target="_blank"

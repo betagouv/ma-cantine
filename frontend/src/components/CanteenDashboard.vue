@@ -11,8 +11,8 @@
           <v-card-text class="pb-0">
             <p class="grey--text text--darken-3">
               La loi EGalim encadre la répartition des produits achetés pour la conception des repas. Les menus doivent
-              comporter, au cours de l'année 2022, {{ applicableRules.qualityThreshold }} % de produits de qualité et
-              durables dont {{ applicableRules.bioThreshold }} % issus de l’agriculture biologique ou en conversion,
+              comporter, au cours de l'année 2022, {{ applicableRules.qualityThreshold }} % de produits EGalim dont
+              {{ applicableRules.bioThreshold }} % issus de l’agriculture biologique ou en conversion,
               pour les cantines
               {{
                 applicableRules.hasQualityException
@@ -134,7 +134,7 @@
             <div class="actions">
               <KeyMeasureAction
                 :isDone="latestDiagnostic.communicatesOnFoodQuality"
-                label="Communication sur la part de produits de qualité et durables entrant dans la composition des repas servis"
+                label="Communication sur la part de produits EGalim entrant dans la composition des repas servis"
               />
               <KeyMeasureAction
                 :isDone="latestDiagnostic.communicatesOnFoodPlan"

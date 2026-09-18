@@ -37,7 +37,7 @@
             <p>
               <span class="percent">{{ sustainablePercent }} %</span>
               <span class="appro-label">
-                durables et de qualité (hors bio)
+                EGalim (hors bio)
               </span>
             </p>
             <div class="d-flex justify-center flex-wrap">
@@ -60,7 +60,7 @@
 
     <p class="previous-year" v-if="showPreviousDiagnostic">
       En {{ infoYear - 1 }}, nos produits étaient à {{ previousBioPercent }}&nbsp;% bio et
-      {{ previousSustainablePercent }}&nbsp;% durables et de qualité (hors bio).
+      {{ previousSustainablePercent }}&nbsp;% EGalim (hors bio).
     </p>
 
     <p class="pat" v-if="patPercentage && patName">
@@ -82,7 +82,7 @@
         ></div>
         <div class="badge-description" v-else>
           Ce qui est servi dans les assiettes est au moins à
-          {{ applicableRules.qualityThreshold }}&nbsp;% de produits durables et de qualité, dont
+          {{ applicableRules.qualityThreshold }}&nbsp;% de produits EGalim, dont
           {{ applicableRules.bioThreshold }}&nbsp;% bio, en respectant les différents seuils fixés pour l'Outre-mer.
         </div>
       </div>
