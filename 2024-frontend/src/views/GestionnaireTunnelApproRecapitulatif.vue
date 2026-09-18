@@ -27,7 +27,7 @@ const canTeledeclare = computedAsync(async () => {
   return checkDiagnostic.isFilled && checkCanteen.isFilled
 })
 const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration pour la télédéclarer")
-const icon = computed(() => canTeledeclare.value ? "fr-icon-checkbox-circle-fill" : "fr-icon-checkbox-line")
+const icon = computed(() => canTeledeclare.value ? "fr-icon-checkbox-circle-fill fr-text-default--success" : "fr-icon-checkbox-line fr-text-mention--grey")
 const isModalOpened = ref(false)
 
 /* Redirects */
@@ -89,6 +89,7 @@ const buttons = computed(() => {
         <AppHelpCard
           :title="sentence"
           :icon="icon"
+          :changeIconColor="true"
         >
           <DsfrButton
             label="Télédéclarer"
