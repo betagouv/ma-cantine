@@ -1,4 +1,4 @@
-const getDefaultErrorMessage = () => 'Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr'
+const getDefaultErrorMessage = () => 'Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à contact@egalim.beta.gouv.fr'
 
 const authenticationError = () => {
   return {

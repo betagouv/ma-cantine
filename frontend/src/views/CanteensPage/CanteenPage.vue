@@ -158,7 +158,7 @@ export default {
           this.undoSucceeded = false
           this.$store.dispatch("notify", {
             message:
-              "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à support-egalim@beta.gouv.fr",
+              "Une erreur est survenue, vous pouvez réessayer plus tard ou nous contacter directement à contact@egalim.beta.gouv.fr",
             status: "error",
           })
         })
