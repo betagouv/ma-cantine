@@ -447,9 +447,9 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.valeur_bio, 10)
 
     @authenticate
-    def test_cannot_create_diagnostic_with_bad_total(self):
+    def test_can_create_diagnostic_with_bad_total(self):
         """
-        Do not create a diagnostic where the sum of the values is > total
+        We do these checks in /check & /teledeclaration/create
         """
         self.canteen.managers.add(authenticate.user)
 
@@ -462,7 +462,7 @@ class DiagnosticCreateApiTest(APITestCase):
         }
         response = self.client.post(self.url, payload)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     @authenticate
     def test_create_diagnostic_with_new_fields_2026(self):
@@ -774,9 +774,9 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertIsNone(self.diagnostic.creation_mtm_medium)
 
     @authenticate
-    def test_cannot_update_diagnostic_with_bad_total(self):
+    def test_can_update_diagnostic_with_bad_total(self):
         """
-        Do not save edits to a diagnostic which make the sum of the values > total
+        We do these checks in /check & /teledeclaration/create
         """
         diagnostic = DiagnosticFactory(year=2025, valeur_totale=10, valeur_bio=5, valeur_siqo=2)
         diagnostic.canteen.managers.add(authenticate.user)
@@ -790,9 +790,9 @@ class DiagnosticUpdateApiTest(APITestCase):
             payload,
         )
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.valeur_siqo, 2)
+        self.assertEqual(diagnostic.valeur_siqo, 999)
 
     @authenticate
     def test_total_leftovers_conversion_update_diagnostic(self):

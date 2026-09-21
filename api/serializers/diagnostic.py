@@ -155,29 +155,6 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
             fields[field].read_only = True
         return fields
 
-    def validate(self, data):
-        # TODO: move these rules to the model
-        total = self.return_value(self, data, "valeur_totale")
-        if total is not None and isinstance(total, Decimal):
-            bio = self.return_value(self, data, "valeur_bio")
-            sustainable = self.return_value(self, data, "valeur_siqo")
-            externality_performance = self.return_value(self, data, "valeur_externalites_performance")
-            egalim_others = self.return_value(self, data, "valeur_egalim_autres")
-            valeur_sum = (bio or 0) + (sustainable or 0) + (externality_performance or 0) + (egalim_others or 0)
-            if valeur_sum > total:
-                raise serializers.ValidationError(
-                    f"La somme des valeurs d'approvisionnement, {valeur_sum}, est plus que le total, {total}"
-                )
-            # TODO: test meat and fish too?
-        return data
-
-    @staticmethod
-    def return_value(serializer, data, field_name):
-        if field_name in data:
-            return data.get(field_name)
-        elif serializer.instance and getattr(serializer.instance, field_name):
-            return getattr(serializer.instance, field_name)
-
 
 class FullDiagnosticSerializer(DiagnosticSerializer):
     teledeclaration = ShortTeledeclarationSerializer(source="latest_submitted_teledeclaration")
