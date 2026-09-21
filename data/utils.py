@@ -46,6 +46,16 @@ def make_optional_positive_integer_field(**kwargs):
     )
 
 
+def to_decimal(value) -> Decimal:
+    """
+    Convert an int / float / Decimal to a Decimal.
+    Model fields are not cast on assignment, so a DecimalField can still hold an int or a float in memory.
+    Dividing those gives a float, and rounding a float leaves binary noise (333.66999999998...)
+    that fails the DecimalField validators (decimal_places) in full_clean().
+    """
+    return value if isinstance(value, Decimal) else Decimal(str(value))
+
+
 def make_optional_positive_decimal_field(**kwargs):
     """
     DecimalField with
