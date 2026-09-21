@@ -55,7 +55,7 @@ router.beforeEach(async (to) => {
   // Load stores if required
   if (to.meta.storesRequired) {
     const canteenUrl = to.params.canteenUrlComponent
-    const canteenId = urlService.getCanteenId(canteenUrl)
+    const canteenId = canteenUrl ? urlService.getCanteenId(canteenUrl) : null
     const stores = {
       canteen: useStoreCanteen(),
       teledeclaration: useStoreTeledeclaration(),
