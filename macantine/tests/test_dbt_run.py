@@ -7,7 +7,7 @@ from macantine import tasks
 
 class DbtRunTest(SimpleTestCase):
     @override_settings(ENVIRONMENT="dev")
-    @mock.patch("macantine.tasks.dbtRunner")
+    @mock.patch("dbt.cli.main.dbtRunner")
     def test_dbt_run_targets_dev_outside_prod(self, dbt_runner_mock):
         dbt_runner_mock.return_value.invoke.return_value = mock.Mock(success=True, exception=None)
 
@@ -23,7 +23,7 @@ class DbtRunTest(SimpleTestCase):
         self.assertIn("dev", run_args)
 
     @override_settings(ENVIRONMENT="prod")
-    @mock.patch("macantine.tasks.dbtRunner")
+    @mock.patch("dbt.cli.main.dbtRunner")
     def test_dbt_run_targets_prod_in_prod(self, dbt_runner_mock):
         dbt_runner_mock.return_value.invoke.return_value = mock.Mock(success=True, exception=None)
 
@@ -32,7 +32,7 @@ class DbtRunTest(SimpleTestCase):
         run_args = dbt_runner_mock.return_value.invoke.call_args_list[1].args[0]
         self.assertIn("prod", run_args)
 
-    @mock.patch("macantine.tasks.dbtRunner")
+    @mock.patch("dbt.cli.main.dbtRunner")
     def test_dbt_run_raises_dbt_exception_on_failure(self, dbt_runner_mock):
         dbt_error = RuntimeError("boom")
         dbt_runner_mock.return_value.invoke.return_value = mock.Mock(success=False, exception=dbt_error)
@@ -44,7 +44,7 @@ class DbtRunTest(SimpleTestCase):
         # "run" should never be attempted if "deps" already failed
         dbt_runner_mock.return_value.invoke.assert_called_once()
 
-    @mock.patch("macantine.tasks.dbtRunner")
+    @mock.patch("dbt.cli.main.dbtRunner")
     def test_dbt_run_raises_generic_error_when_no_exception_attached(self, dbt_runner_mock):
         dbt_runner_mock.return_value.invoke.return_value = mock.Mock(success=False, exception=None)
 
