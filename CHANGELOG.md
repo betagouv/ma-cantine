@@ -6,6 +6,39 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.50.0](https://github.com/betagouv/ma-cantine/compare/v2026.49.1...v2026.50.0) (2026-09-21)
+
+
+### Nouveautés
+
+* **Télédéclaration:** ajout du formulaire de la saisie détaillée ([#7098](https://github.com/betagouv/ma-cantine/issues/7098)) ([bdcfde9](https://github.com/betagouv/ma-cantine/commit/bdcfde93dbdee5f1ae2559ec4ecd7a02017de355))
+
+
+### Améliorations
+
+* **dbt:** mise à jour des cibles SPE (Économie 166, SPM 8, Justice PJ 94) ([#7143](https://github.com/betagouv/ma-cantine/issues/7143)) ([3b53f5a](https://github.com/betagouv/ma-cantine/commit/3b53f5a4c0573c538faf4977ad5ee5fc92e92ff2))
+* **Diagnostics:** à partir de 2026, le cout_repas est calculé à partir du nouveau champ nombre_repas_an ([#7150](https://github.com/betagouv/ma-cantine/issues/7150)) ([1a50c80](https://github.com/betagouv/ma-cantine/commit/1a50c8012463ba59aaf645422246c5e8500de285))
+* **Diagnostics:** API: renvoyer le champ cout_repas ([#7146](https://github.com/betagouv/ma-cantine/issues/7146)) ([08523cc](https://github.com/betagouv/ma-cantine/commit/08523cc37beaee456b5c7a0004ea190188bd2c59))
+* **Télédéclaration:** mise à jour des pictos ([#7140](https://github.com/betagouv/ma-cantine/issues/7140)) ([36253e0](https://github.com/betagouv/ma-cantine/commit/36253e098a923beb318a7c813545918aa700fd1c))
+* **Télédéclaration:** Volet approvisionnement: affiche les erreurs et les indicateurs de remplissage d'étape ([#7139](https://github.com/betagouv/ma-cantine/issues/7139)) ([ce8774a](https://github.com/betagouv/ma-cantine/commit/ce8774aa2bdf0be0fe13c4a5581eb2970e366877))
+
+
+### Corrections (bugs, typos...)
+
+* **Crisp:** remplace l'ancien domaine crisp par celui en .gouv ([#7142](https://github.com/betagouv/ma-cantine/issues/7142)) ([0dae655](https://github.com/betagouv/ma-cantine/commit/0dae6556c9916ff59b900d5b6ba5447cf20f0af8))
+* **Date de campagne:** enregistre les informations dans un store dédié ([#7144](https://github.com/betagouv/ma-cantine/issues/7144)) ([6cc0e85](https://github.com/betagouv/ma-cantine/commit/6cc0e852144746d419e6b9a9c385ab68677475c7))
+* **dbt:** lazy load dbtRunner pour éviter certaines erreurs dans nos tests ([#7145](https://github.com/betagouv/ma-cantine/issues/7145)) ([183613e](https://github.com/betagouv/ma-cantine/commit/183613e8dc8579f1b8574c58f6c30dab1c047fd2))
+* **dbt:** rajouter un import dans les tests pour éviter des conflits avec freeze_time ([#7151](https://github.com/betagouv/ma-cantine/issues/7151)) ([e9eea55](https://github.com/betagouv/ma-cantine/commit/e9eea55992a3bb8c3844d18ea67f84626cd5124e))
+* remplace "durable et de qualité" par EGalim ([#7141](https://github.com/betagouv/ma-cantine/issues/7141)) ([3a7e94e](https://github.com/betagouv/ma-cantine/commit/3a7e94eed88aae09af457414ce1862c5f4511275))
+* **Tableau de bord:** corrige l'erreur de l'initialisation du store pour une page sans canteenId ([#7153](https://github.com/betagouv/ma-cantine/issues/7153)) ([f4aab3b](https://github.com/betagouv/ma-cantine/commit/f4aab3bfa1bbbc2fb4dcf93c1c9638831fa4da51))
+
+
+### Technique
+
+* **Télédéclarations:** enlever les qq règles de validations qui restaient encore dans le serializer ([#7135](https://github.com/betagouv/ma-cantine/issues/7135)) ([434d451](https://github.com/betagouv/ma-cantine/commit/434d45125162f5f0ea14f10c0255aea0f76e4b17))
+* **Télédéclarations:** simplifier un peu la logique de saisie automatique (provenant des achats) (grâce au nouveau fichier de config) ([#7131](https://github.com/betagouv/ma-cantine/issues/7131)) ([95ab5f5](https://github.com/betagouv/ma-cantine/commit/95ab5f51399319570a00c8dbb8c344012b1cab68))
+* **Utils:** ajouter une méthode `to_decimal` pour mieux gérer les calculs de pourcentages ([#7152](https://github.com/betagouv/ma-cantine/issues/7152)) ([8632406](https://github.com/betagouv/ma-cantine/commit/8632406ddaccebcf2bdaf863c5679fb05e4dfc6e))
+
 ## [2026.49.1](https://github.com/betagouv/ma-cantine/compare/v2026.49.0...v2026.49.1) (2026-09-16)
 
 
