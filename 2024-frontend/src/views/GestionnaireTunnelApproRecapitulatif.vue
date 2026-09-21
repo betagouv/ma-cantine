@@ -6,9 +6,9 @@ import { useRouter } from 'vue-router'
 import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import diagnosticServices from '@/services/diagnostics'
+import canteenServices from '@/services/canteens'
 import AppHelpCard from '@/components/AppHelpCard.vue'
-import TunnelTeledeclarationAccordions from '@/components/TunnelTeledeclarationAccordions.vue'
-import TunnelTeledeclarationErrors from '@/components/TunnelTeledeclarationErrors.vue'
+import TunnelTeledeclarationAccordionsGroup from '@/components/TunnelTeledeclarationAccordionsGroup.vue'
 import TunnelTeledeclarationModal from '@/components/TunnelTeledeclarationModal.vue'
 
 /* Router */
@@ -22,11 +22,12 @@ const { diagnostic } = storeToRefs(teledeclarationStore)
 
 /* TD CTA */
 const canTeledeclare = computedAsync(async () => {
-  const check = await diagnosticServices.checkDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
-  return check.isFilled
+  const checkCanteen = await canteenServices.checkCanteen(canteenInformations.value.id)
+  const checkDiagnostic = await diagnosticServices.checkDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
+  return checkDiagnostic.isFilled && checkCanteen.isFilled
 })
-const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration avant de déclarer")
-const icon = computed(() => canTeledeclare.value ? "fr-icon-checkbox-circle-fill" : "fr-icon-checkbox-line")
+const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration pour la télédéclarer")
+const icon = computed(() => canTeledeclare.value ? "fr-icon-checkbox-circle-fill fr-text-default--success" : "fr-icon-checkbox-line fr-text-mention--grey")
 const isModalOpened = ref(false)
 
 /* Redirects */
@@ -82,13 +83,13 @@ const buttons = computed(() => {
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-2w">
       <div class="fr-col-12 fr-col-md-7">
         <h2 class="fr-h5">Votre télédéclaration vous semble t’elle cohérente ?</h2>
-        <p>Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
-        <TunnelTeledeclarationErrors />
+        <p v-if="canTeledeclare">Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard
           :title="sentence"
           :icon="icon"
+          :changeIconColor="true"
         >
           <DsfrButton
             label="Télédéclarer"
@@ -99,7 +100,7 @@ const buttons = computed(() => {
         </AppHelpCard>
       </div>
     </div>
-    <TunnelTeledeclarationAccordions />
+    <TunnelTeledeclarationAccordionsGroup />
     <TunnelTeledeclarationModal v-model:opened="isModalOpened" @close="isModalOpened = false" />
   </div>
 </template>

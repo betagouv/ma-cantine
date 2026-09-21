@@ -19,7 +19,10 @@ const fieldName = "diagnosticType"
 const field = computed(() => diagnosticsFieldsService.getField(fieldName))
 const isRequired = computed(() => field.value.required)
 const label = computed(() => field.value.label)
-const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(fieldName, storeTeledeclaration.diagnosticErrors))
+const errorMessage = computed(() => {
+  const errors = diagnosticsFieldsService.getFieldError(fieldName, storeTeledeclaration.diagnosticErrors)
+  return errors ? errors.join('. ') : ''
+})
 const options = computed(() => {
   const newOptions = field.value.options || []
   const autoIndex = newOptions.findIndex(field => field.value === "AUTO")
@@ -32,7 +35,7 @@ const options = computed(() => {
 const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
 
 /* Prefill */
-const prefillSelect = () => { select.value = storeTeledeclaration.diagnostic[fieldName] || "SIMPLE" } // By defaut to SIMPLE to avoid error because it's not required in backend
+const prefillSelect = () => { select.value = storeTeledeclaration.diagnostic[fieldName] }
 onMounted(prefillSelect)
 
 /* Change */
