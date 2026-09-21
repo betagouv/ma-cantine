@@ -25,6 +25,7 @@ READ_ONLY_FIELDS = (
     *Diagnostic.TELEDECLARATION_FIELDS,
     "generated_from_groupe_diagnostic",
     *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
+    *Diagnostic.OTHER_COMPUTED_FIELDS,
 )
 
 
@@ -132,6 +133,7 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
             + Diagnostic.TUNNEL_PROGRESS_FIELDS
             + Diagnostic.TELEDECLARATION_FIELDS
             + Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS
+            + Diagnostic.OTHER_COMPUTED_FIELDS
             + ["status", "generated_from_groupe_diagnostic", "creation_source", "creation_date", "modification_date"]
         )
 

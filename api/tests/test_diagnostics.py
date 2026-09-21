@@ -471,6 +471,7 @@ class DiagnosticCreateApiTest(APITestCase):
         payload = {
             "year": 2026,
             "nombre_repas_an": 1000,
+            "valeur_totale": 10000,
             # valeur_famille
             "valeur_fruits_et_legumes": 100,
             "valeur_charcuterie": 100,
@@ -522,8 +523,11 @@ class DiagnosticCreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
+        # appro fields
         for field_name in payload.keys():
             self.assertEqual(body[camelize(field_name)], payload[field_name])
+        # computed fields
+        self.assertEqual(body["coutRepas"], 10)
 
 
 class DiagnosticDetailApiTest(APITestCase):
