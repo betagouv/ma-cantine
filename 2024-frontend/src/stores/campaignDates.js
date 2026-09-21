@@ -6,7 +6,7 @@ const useStoreCampaignDates = defineStore("campaignDates", () => {
   const isLoaded = ref(false)
   const allCampaignsInformations = ref({})
   const currentCampaignYear = Number(window.TELEDECLARATION_YEAR)
-  const currentCampaignInformations = computed(allCampaignsInformations.value[currentCampaignYear] || {})
+  const currentCampaignInformations = computed(() => allCampaignsInformations.value[currentCampaignYear] || {})
 
   /* Init store with all campaigns dates */
   async function initStore() {
@@ -22,7 +22,6 @@ const useStoreCampaignDates = defineStore("campaignDates", () => {
   /* Empty store */
   function deleteStore() {
     allCampaignsInformations.value = {}
-    currentCampaignInformations.value = {}
     isLoaded.value = false
   }
 
