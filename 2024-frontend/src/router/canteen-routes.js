@@ -14,7 +14,7 @@ const canteenRoutes = {
   path: "",
   component: LayoutSidebarCanteen,
   meta: {
-    storesRequired: ["canteen", "purchaseSummary", "teledeclaration"],
+    storesRequired: ["canteen", "purchaseSummary", "teledeclaration", "campaignDates"],
   },
   children: [
     {

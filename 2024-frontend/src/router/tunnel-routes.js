@@ -19,7 +19,7 @@ const tunnelRoutes = {
   component: LayoutTunnelTeledeclaration,
   meta: {
     isTunnel: true,
-    storesRequired: ["teledeclaration", "canteen", "purchaseSummary"],
+    storesRequired: ["teledeclaration", "canteen", "purchaseSummary", "campaignDates"],
     nav: {
       approvisionnements: [
         { to: { name: "GestionnaireTunnelApproInformations" }, title: "Informations" },
