@@ -581,6 +581,7 @@ if DEBUG:
 # CSP valid sources for loading frames
 CSP_FRAME_SRC = (
     "'self'",
+    "ma-cantine.crisp.help",
     "documentation.ma-cantine.agriculture.gouv.fr",
     "ma-cantine-metabase.cleverapps.io",
 )
