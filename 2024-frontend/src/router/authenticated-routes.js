@@ -62,6 +62,7 @@ const routes = [
     component: GestionnaireTableauDeBord,
     meta: {
       title: "Mon tableau de bord",
+      storesRequired: ["campaignDates"],
     },
   },
   {

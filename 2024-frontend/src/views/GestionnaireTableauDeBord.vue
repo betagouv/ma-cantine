@@ -1,10 +1,11 @@
 <script setup>
 import { ref, computed } from "vue"
 import { computedAsync } from "@vueuse/core"
+import { storeToRefs } from "pinia"
 import { useRootStore } from "@/stores/root"
+import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import documentation from "@/data/documentation.json"
 import canteenService from "@/services/canteens.js"
-import campaignService from "@/services/campaigns.js"
 import canteensTableService from "@/services/canteensTable.js"
 import GestionnaireGuides from "@/components/GestionnaireGuides.vue"
 import GestionnaireEmptyCanteen from "@/components/GestionnaireEmptyCanteen.vue"
@@ -17,6 +18,8 @@ import FilterByBase from "@/components/FilterByBase.vue"
 
 /* DATA */
 const store = useRootStore()
+const campaignDatesStore = useStoreCampaignDates()
+const { currentCampaignInformations } = storeToRefs(campaignDatesStore)
 const lastYear = window.TELEDECLARATION_YEAR
 const isLoading = ref(true)
 
@@ -94,11 +97,6 @@ const tableIsEmpty = computed(() => {
   const noCanteenToDisplay = canteensTable.value.length === 0
   return hasFilterOrSearchActive && noCanteenToDisplay
 })
-
-/* CAMPAIGN */
-const campaign = computedAsync(async () => {
-  return await campaignService.getCampaignDates(lastYear)
-}, false)
 </script>
 
 <template>
@@ -111,7 +109,7 @@ const campaign = computedAsync(async () => {
   <DsfrAlert v-if="canteensGroup.displayBanner > 0" :title="canteensGroup.title" class="fr-mb-4w">
     <p>Vous pouvez requalifier vos groupes directement depuis ce tableau de bord, <a :href="documentation.groupesRestaurantsSatellites" target="_blank">découvrez comment faire</a></p>
   </DsfrAlert>
-  <AppLoader v-if="isLoading || !campaign" class="fr-mb-4w" />
+  <AppLoader v-if="isLoading" class="fr-mb-4w" />
   <section v-else>
     <GestionnaireEmptyCanteen v-if="store.canteenPreviews.length === 0" />
     <div v-else>
@@ -154,7 +152,7 @@ const campaign = computedAsync(async () => {
         <span v-if="search && filterTeledeclaration"> et </span>
         <span v-if="filterTeledeclaration">un « bilan {{ filterTeledeclaration === '1' ? 'télédéclaré' : 'non télédéclaré' }} »</span>
       </p>
-      <CanteensTable v-else :canteens="canteensTable" :campaign="campaign" />
+      <CanteensTable v-else :canteens="canteensTable" :campaign="currentCampaignInformations" />
     </div>
   </section>
   <section class="ma-cantine--bg-blue fr-py-4w">
