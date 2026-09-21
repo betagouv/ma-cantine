@@ -1,5 +1,4 @@
 import operator
-from decimal import Decimal
 from functools import reduce
 
 from django.conf import settings
@@ -24,6 +23,7 @@ from data.utils import (
     make_optional_positive_decimal_field,
     make_optional_positive_percentage_decimal_field,
     sum_int_with_potential_null,
+    to_decimal,
 )
 from data.validators import diagnostic as diagnostic_validators
 from data.models.diagnostic_teledeclaration_dates import (
@@ -2066,17 +2066,17 @@ class Diagnostic(models.Model):
     def compute_pourcentage_bio(self):
         if self.valeur_totale and self.valeur_bio_agg is not None:
             if self.valeur_totale >= self.valeur_bio_agg:
-                return round(100 * self.valeur_bio_agg / self.valeur_totale, 2)
+                return round(100 * to_decimal(self.valeur_bio_agg) / to_decimal(self.valeur_totale), 2)
 
     def compute_pourcentage_egalim(self):
         if self.valeur_totale and self.valeur_egalim_agg is not None:
             if self.valeur_totale >= self.valeur_egalim_agg:
-                return round(100 * self.valeur_egalim_agg / self.valeur_totale, 2)
+                return round(100 * to_decimal(self.valeur_egalim_agg) / to_decimal(self.valeur_totale), 2)
 
     def compute_pourcentage_egalim_hors_bio(self):
         if self.valeur_totale and self.valeur_egalim_hors_bio_agg is not None:
             if self.valeur_totale >= self.valeur_egalim_hors_bio_agg:
-                return round(100 * self.valeur_egalim_hors_bio_agg / self.valeur_totale, 2)
+                return round(100 * to_decimal(self.valeur_egalim_hors_bio_agg) / to_decimal(self.valeur_totale), 2)
 
     def compute_objectifs_egalim_atteints(self):
         if self.valeur_totale and self.pourcentage_bio is not None and self.pourcentage_egalim is not None:
@@ -2085,11 +2085,7 @@ class Diagnostic(models.Model):
 
     def compute_cout_repas(self):
         if self.valeur_totale and self.canteen_yearly_meal_count:
-            valeur_totale = (
-                self.valeur_totale if isinstance(self.valeur_totale, Decimal) else Decimal(str(self.valeur_totale))
-            )
-            meal_count = Decimal(self.canteen_yearly_meal_count)
-            return round(valeur_totale / meal_count, 2)
+            return round(to_decimal(self.valeur_totale) / to_decimal(self.canteen_yearly_meal_count), 2)
         return None
 
     @property

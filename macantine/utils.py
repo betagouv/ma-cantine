@@ -1,10 +1,10 @@
 import logging
-from decimal import Decimal
 
 import redis as r
 from django.conf import settings
 
 from data.models.geo import REGION_HEXAGONE_LIST, Region
+from data.utils import to_decimal
 
 logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
@@ -168,10 +168,12 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
 
     # build dict
     for field in Diagnostic.APPRO_1TD1SITE_FIELDS:
+        value = getattr(diagnostic, field)
         try:
-            value = getattr(diagnostic, field) / Decimal(divisor)
-            appro_fields_satellite[field] = round(value, 2)
-        except (TypeError, ZeroDivisionError):
+            appro_fields_satellite[field] = (
+                None if value is None else round(to_decimal(value) / to_decimal(divisor), 2)
+            )
+        except ZeroDivisionError:
             appro_fields_satellite[field] = None
 
     return appro_fields_satellite
