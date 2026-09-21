@@ -2,7 +2,6 @@ import logging
 import time
 
 import redis as r
-from dbt.cli.main import dbtRunner
 from django.conf import settings
 from django.core.management import call_command
 from django.utils import timezone
@@ -347,6 +346,9 @@ def export_dataset_canteen_opendata():
 
 
 def _invoke_dbt(command: str, dbt_project_dir: str):
+    # imported here: dbt is heavy, and importing it at module level breaks the (lazy) imports of this module
+    from dbt.cli.main import dbtRunner
+
     target = "prod" if settings.ENVIRONMENT == "prod" else "dev"
     result = dbtRunner().invoke(
         [
