@@ -10,11 +10,11 @@ import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 
 /* Route */
 const currentYear = new Date().getFullYear()
-const cantineRoutes = {
+const canteenRoutes = {
   path: "",
   component: LayoutSidebarCanteen,
   meta: {
-    storesRequired: ["canteen", "purchaseSummary", "teledeclaration"],
+    storesRequired: ["canteen", "purchaseSummary", "teledeclaration", "campaignDates"],
   },
   children: [
     {
@@ -89,4 +89,4 @@ const cantineRoutes = {
   ],
 }
 
-export default cantineRoutes
+export default canteenRoutes

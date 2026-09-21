@@ -2,9 +2,8 @@
 import { computed } from "vue"
 import { useRoute, RouterView } from "vue-router"
 import { storeToRefs } from "pinia"
-import { computedAsync } from "@vueuse/core"
 import { useStoreCanteen } from "@/stores/canteen.js"
-import campaignService from "@/services/campaigns.js"
+import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
@@ -16,12 +15,13 @@ const currentRoute = computed(() => route.name)
 
 /* Store */
 const canteenStore = useStoreCanteen()
+const campaignDatesStore = useStoreCampaignDates()
 const { canteenInformations } = storeToRefs(canteenStore)
+const { currentCampaignInformations } = storeToRefs(campaignDatesStore)
 
 /* Campaign dates */
-const campaign = computedAsync(async () => await campaignService.getYearCampaignDates(window.TELEDECLARATION_YEAR), false)
-const isInTeledeclaration = computed(() => campaign.value ? campaign.value?.inTeledeclaration : false)
-const isInCorrection = computed(() => campaign.value ? campaign.value?.isInCorrection : false)
+const isInTeledeclaration = computed(() => currentCampaignInformations.value.inTeledeclaration || false)
+const isInCorrection = computed(() => currentCampaignInformations.value.inCorrection || false)
 
 /* Sidebar links */
 const menuItems = computed(() =>  {

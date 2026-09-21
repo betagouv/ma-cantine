@@ -3,6 +3,7 @@ import { useRootStore } from "@/stores/root"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { useStoreCanteen } from "@/stores/canteen"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary"
+import { useStoreCampaignDates } from "@/stores/campaignDates"
 import urlService from "@/services/urls"
 
 import vue3routes from "./vue3.js"
@@ -59,6 +60,7 @@ router.beforeEach(async (to) => {
       canteen: useStoreCanteen(),
       teledeclaration: useStoreTeledeclaration(),
       purchaseSummary: useStorePurchaseSummary(),
+      campaignDates: useStoreCampaignDates(),
     }
     await Promise.all(to.meta.storesRequired.map((storeName) => stores[storeName].initStore(canteenId)))
   }

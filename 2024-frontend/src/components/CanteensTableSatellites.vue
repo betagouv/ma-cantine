@@ -1,10 +1,10 @@
 <script setup>
 import { computed } from "vue"
-import { computedAsync } from "@vueuse/core"
+import { storeToRefs } from "pinia"
 import { useRootStore } from "@/stores/root"
+import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import { formatSiretOrSiren } from "@/utils"
 import diagnosticService from "@/services/diagnosticsBadge.js"
-import campaignService from "@/services/campaigns.js"
 import managersService from "@/services/managers.js"
 import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
@@ -20,9 +20,8 @@ const store = useRootStore()
 const showPagination = computed(() => props.satellites.length > minPagination)
 
 /* Campaign */
-const campaign = computedAsync(async () => {
-  return await campaignService.getYearCampaignDates(lastYear)
-}, false)
+const campaignDatesStore = useStoreCampaignDates()
+const { currentCampaignInformations } = storeToRefs(campaignDatesStore)
 
 /* Table */
 const tableHeaders = [
@@ -61,7 +60,7 @@ const tableRows = computed(() => {
         const siretSiren = formatSiretOrSiren(canteenSiretOrSiren)
         const city = canteensTableService.getCityInfos(sat)
         const yearlyMealCount = canteensTableService.getYearlyMealCountInfos(sat)
-        const diagnostic = diagnosticService.getBadge(sat.action, campaign.value)
+        const diagnostic = diagnosticService.getBadge(sat.action, currentCampaignInformations.value)
         const actions =  {
           links: getDropdownLinks(sat),
           canteen: sat,
