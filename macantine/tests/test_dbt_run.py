@@ -4,6 +4,11 @@ from django.test import SimpleTestCase, override_settings
 
 from macantine import tasks
 
+# dbt must be imported at collection time: importing it while freezegun is active (freeze_time) raises
+# "TypeError: metaclass conflict" (pydantic.v1 subclasses datetime.date, which freezegun replaces).
+# mock.patch("dbt.cli.main.dbtRunner") would otherwise trigger that first import in the middle of a test.
+import dbt.cli.main  # noqa: E402, F401
+
 
 class DbtRunTest(SimpleTestCase):
     @override_settings(ENVIRONMENT="dev")
