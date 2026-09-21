@@ -2200,13 +2200,13 @@ class Diagnostic(models.Model):
 
     @property
     def canteen_yearly_meal_count(self):
-        if self.year < 2026:
+        if self.year >= 2026:
+            return self.nombre_repas_an
+        else:
             if self.canteen_snapshot:
                 return self.canteen_snapshot.get("yearly_meal_count")
             elif self.canteen:
                 return self.canteen.yearly_meal_count
-        else:
-            return self.nombre_repas_an
         return None
 
     @property
