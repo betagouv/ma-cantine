@@ -24,7 +24,7 @@ import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportC
 import GestionnaireTableauDeBord from "@/views/GestionnaireTableauDeBord.vue"
 
 /* Sub routes */
-import cantineRoutes from "./cantine-routes"
+import canteenRoutes from "./canteen-routes"
 import tunnelRoutes from "./tunnel-routes"
 
 /* Sitemap section id */
@@ -222,7 +222,7 @@ const routes = [
   {
     path: "/tableau-de-bord/cantines/:canteenUrlComponent/",
     children: [
-      cantineRoutes,
+      canteenRoutes,
       tunnelRoutes,
       {
         path: "archiver",
