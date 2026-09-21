@@ -147,7 +147,7 @@ ref_cibles_region_sector as (
         ('32', 'administration_inter_administratif',   4, 'Cible ferme'),
         ('32', 'administration_administratif',          1, 'Cible ferme'),
         -- Île-de-France
-        ('11', 'administration_inter_administratif',   7, 'Cible ferme'),
+        ('11', 'administration_inter_administratif',   6, 'Cible ferme'),
         ('11', 'administration_administratif',          3, 'Cible ferme'),
         -- Normandie
         ('28', 'administration_inter_administratif',   7, 'Cible ferme'),
