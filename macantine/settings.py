@@ -582,6 +582,7 @@ if DEBUG:
 CSP_FRAME_SRC = (
     "'self'",
     "ma-cantine.crisp.help",
+    "documentation.ma-cantine.agriculture.gouv.fr",
     "ma-cantine-metabase.cleverapps.io",
 )
 if DEBUG:
