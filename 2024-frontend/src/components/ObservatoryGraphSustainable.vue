@@ -7,7 +7,7 @@ import GraphGauge from "@/components/GraphGauge.vue"
 
 const props = defineProps(["egalimPercent", "egalimObjective", "bioPercent", "bioObjective"])
 const storeFilters = useStoreFilters()
-const title = "Produits durables et de qualité dont les produits bio"
+const title = "Produits EGalim dont les produits bio"
 const objectives = reactive([
   {
     name: stringsService.prettyPercent(props.egalimObjective),
@@ -19,7 +19,7 @@ const objectives = reactive([
   },
 ])
 const stats = reactive([props.egalimPercent, props.bioPercent])
-const legends = ["durables et de qualité dont bio", "bio et en conversion bio"]
+const legends = ["EGalim dont bio", "bio et en conversion bio"]
 
 /* Description */
 const getResultsDescription = () => {

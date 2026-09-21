@@ -128,7 +128,7 @@ const goToPurchasesList = () => {
       </li>
       <li>
         <a :href="documentation.critèresQualiteDurabiliteProduits" target="_blank">
-          Comprendre les critères de qualité et durabilité des produits
+          Comprendre les critères EGalim des produits
         </a>
       </li>
     </AppRessources>

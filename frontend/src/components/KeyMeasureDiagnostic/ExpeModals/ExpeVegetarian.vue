@@ -419,8 +419,8 @@
                     >
                       <template v-slot:label>
                         <span class="body-2 grey--text text--darken-3">
-                          Les économies réalisées ont été réinvesties pour augmenter la part de produits durables et de
-                          qualité (Bio, SIQO…)
+                          Les économies réalisées ont été réinvesties pour augmenter la part de produits EGalim (Bio,
+                          SIQO…)
                         </span>
                       </template>
                     </v-checkbox>

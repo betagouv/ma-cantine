@@ -14,7 +14,7 @@
     </p>
     <p class="text-body-2">
       En remplissant ce formulaire, vous pourrez générer un PDF à afficher ou à envoyer par mail à vos convives pour les
-      informer sur la part de produits de qualité et durables et de la part des produits issus de projets alimentaires
+      informer sur la part de produits EGalim et de la part des produits issus de projets alimentaires
       territoriaux entrant dans la composition des repas servis dans votre restaurant. Cette information est obtenue à
       partir de vos données annuelles d’achat.
     </p>
@@ -198,7 +198,7 @@
               validate-on-blur
             />
             correspondaient à des
-            <label for="sustainable">produits de qualité et durables (hors bio)</label>
+            <label for="sustainable">produits EGalim (hors bio)</label>
             .
           </p>
           <label for="pat-percent">Part de produits provenant d'un PAT</label>

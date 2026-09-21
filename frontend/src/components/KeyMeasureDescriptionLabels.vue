@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>
-      Les autres produits durables et de qualité au sens de l'objectif fixé par la loi EGalim sont ceux bénéficiant des
+      Les autres produits EGalim au sens de l'objectif fixé par la loi EGalim sont ceux bénéficiant des
       labels / certifications / mentions suivantes :
     </p>
     <ul class="no-bullets">
@@ -15,7 +15,7 @@
       </li>
     </ul>
     <p>
-      D'autres catégories permettent de comptabiliser les produits durables et de qualité, produits qui auront fait
+      D'autres catégories permettent de comptabiliser les produits EGalim, produits qui auront fait
       l'objet d'une sélection particulière lors de la procédure d'achat :
     </p>
     <ul class="no-bullets">

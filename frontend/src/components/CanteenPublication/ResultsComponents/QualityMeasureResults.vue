@@ -3,7 +3,7 @@
     <CentralKitchenInfo :canteen="canteen" v-if="usesCentralKitchenDiagnostics" />
 
     <p>
-      La loi EGalim impose : {{ applicableRules.qualityThreshold }} % de produits durables et de qualité et durable,
+      La loi EGalim impose : {{ applicableRules.qualityThreshold }} % de produits EGalim,
       dont {{ applicableRules.bioThreshold }} % de bio,
       <span v-if="applicableRules.qualityThreshold !== 50">
         en respectant

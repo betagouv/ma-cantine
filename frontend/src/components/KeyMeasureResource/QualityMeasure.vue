@@ -1,7 +1,7 @@
 <template>
   <div>
     <p>
-      Pour plus d'informations sur les catégories de produits durables et de qualité et pour des explications concernant
+      Pour plus d'informations sur les catégories de produits EGalim et pour des explications concernant
       la catégorie « les produits acquis principalement sur la base de leurs performances en matière environnementale et
       d'approvisionnements directs » :
     </p>

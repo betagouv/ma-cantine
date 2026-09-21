@@ -13,11 +13,10 @@ const approBadge = "/static/images/badges/badge-appro.svg"
 
 <template>
   <div class="observatory-purchases">
-    <ObservatoryBadgeTitle class="fr-mb-4w" :image="approBadge" color="#316341" title="Produits durables et de qualité">
-      Distribuer {{ stringsService.prettyPercent(50) }} de produits de qualité dont
+    <ObservatoryBadgeTitle class="fr-mb-4w" :image="approBadge" color="#316341" title="Produits EGalim">
+      Distribuer {{ stringsService.prettyPercent(50) }} de produits EGalim dont
       {{ stringsService.prettyPercent(20) }} de produits bio et distribuer au moins
-      {{ stringsService.prettyPercent(60) }} de produits durables et de qualité dans la famille de denrées "viandes et
-      poissons".
+      {{ stringsService.prettyPercent(60) }} de produits EGalim dans la famille de denrées "viandes et poissons".
       <AppLinkRouter
         :to="{ name: 'ComprendreMesObligations' }"
         title="En savoir plus sur la loi"

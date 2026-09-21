@@ -29,7 +29,7 @@
     />
 
     <label :for="'sustainable-' + diagnostic.year" class="body-2 mb-1 mt-4">
-      ...en autres produits de qualité et durables (hors bio)
+      ...en autres produits EGalim (hors bio)
     </label>
     <DsfrCurrencyField
       :id="'sustainable-' + diagnostic.year"
