@@ -856,6 +856,20 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
             valeur_produits_de_la_mer_label_rouge=8,
             valeur_produits_de_la_mer_france=25,
         )
+        # in 2026, siqo's aocaop_igp_stg label was split into 3 separate labels: aocaop, igp & stg
+        cls.diagnostic_complete_2026 = DiagnosticFactory(
+            year=2026,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_viandes_volailles_label_rouge=7,
+            valeur_viandes_volailles_aocaop=3,
+            valeur_viandes_volailles_igp=2,
+            valeur_viandes_volailles_stg=1,
+            valeur_produits_de_la_mer_label_rouge=8,
+            valeur_produits_de_la_mer_aocaop=4,
+            valeur_produits_de_la_mer_igp=2,
+            valeur_produits_de_la_mer_stg=1,
+        )
 
     def test_with_label_sum_queryset(self):
         diagnostic_qs = (
@@ -907,6 +921,8 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_complete_2.label_group_sum("siqo"), 7 + 8)
         self.assertEqual(self.diagnostic_complete_2.label_group_sum("externalites_performance"), 0)
         self.assertEqual(self.diagnostic_complete_2.label_group_sum("egalim_autres"), 0)
+        # siqo group sum was changed in 2026
+        self.assertEqual(self.diagnostic_complete_2026.label_group_sum("siqo"), (7 + 3 + 2 + 1) + (8 + 4 + 2 + 1))
 
     def test_label_group_group_sum_property(self):
         self.assertEqual(self.diagnostic_simple.label_group_group_sum("egalim_hors_bio"), 300 + 10)
