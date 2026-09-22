@@ -1,4 +1,4 @@
-name: Ma Cantine CI - Backend
+name: "ma cantine: backend"
 
 on:
   pull_request:
@@ -16,8 +16,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  backend:
-    name: "ma-cantine: backend tests"
+  tests:
+    name: "tests"
     runs-on: ubuntu-latest
     services:
       postgres:

@@ -1,4 +1,4 @@
-name: Ma Cantine CI - Frontend
+name: "ma cantine: frontend"
 
 on:
   pull_request:
@@ -16,8 +16,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  frontend:
-    name: "ma-cantine: frontend build and lint"
+  tests:
+    name: "build and lint"
     runs-on: ubuntu-latest
     # Skip if PR is in draft
     if: ${{ !github.event.pull_request.draft }}
