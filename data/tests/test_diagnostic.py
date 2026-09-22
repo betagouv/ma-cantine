@@ -823,6 +823,8 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
             valeur_totale=1000,
             valeur_bio=200,
             valeur_bio_dont_commerce_equitable=50,
+            valeur_siqo=300,
+            valeur_egalim_autres=10,
             valeur_viandes_volailles=100,
             valeur_viandes_volailles_egalim=50,
             valeur_viandes_volailles_france=20,
@@ -891,6 +893,28 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_complete_2.label_sum("bio_dont_commerce_equitable"), 0 + 10)
         self.assertEqual(self.diagnostic_complete_2.label_sum("label_rouge"), 7 + 8)
         self.assertEqual(self.diagnostic_complete_2.label_sum("france"), 20 + 25)
+
+    def test_label_group_sum_property(self):
+        self.assertEqual(self.diagnostic_simple.label_group_sum("bio"), 200)
+        self.assertEqual(self.diagnostic_simple.label_group_sum("siqo"), 300)
+        self.assertEqual(self.diagnostic_simple.label_group_sum("externalites_performance"), None)
+        self.assertEqual(self.diagnostic_simple.label_group_sum("egalim_autres"), 10)
+        self.assertEqual(self.diagnostic_complete_1.label_group_sum("bio"), 10 + 15)
+        self.assertEqual(self.diagnostic_complete_1.label_group_sum("siqo"), 7 + 8)
+        self.assertEqual(self.diagnostic_complete_1.label_group_sum("externalites_performance"), 0)
+        self.assertEqual(self.diagnostic_complete_1.label_group_sum("egalim_autres"), 0)
+        self.assertEqual(self.diagnostic_complete_2.label_group_sum("bio"), 10 + 15)
+        self.assertEqual(self.diagnostic_complete_2.label_group_sum("siqo"), 7 + 8)
+        self.assertEqual(self.diagnostic_complete_2.label_group_sum("externalites_performance"), 0)
+        self.assertEqual(self.diagnostic_complete_2.label_group_sum("egalim_autres"), 0)
+
+    def test_label_group_group_sum_property(self):
+        self.assertEqual(self.diagnostic_simple.label_group_group_sum("egalim_hors_bio"), 300 + 10)
+        self.assertEqual(self.diagnostic_simple.label_group_group_sum("egalim"), 200 + 300 + 10)
+        self.assertEqual(self.diagnostic_complete_1.label_group_group_sum("egalim_hors_bio"), 7 + 8)
+        self.assertEqual(self.diagnostic_complete_1.label_group_group_sum("egalim"), 10 + 15 + 7 + 8)
+        self.assertEqual(self.diagnostic_complete_2.label_group_group_sum("egalim_hors_bio"), 7 + 8)
+        self.assertEqual(self.diagnostic_complete_2.label_group_group_sum("egalim"), 10 + 15 + 7 + 8)
 
     def test_with_family_sum_queryset(self):
         diagnostic_qs = Diagnostic.objects.with_family_sum("viandes_volailles").with_family_sum("produits_de_la_mer")
