@@ -6,7 +6,7 @@ import documentation from "@/data/documentation.json"
 const store = useRootStore()
 
 const show = window.SHOW_BANNER
-const publicBannerTitle = "DROIT À L’ERREUR : du 16 au 29 avril 2026."
+const publicBannerTitle = "La réglementation évolue."
 const loggedBannerTitle = ""
 const bannerTitle = computed(() => {
   return !!store.loggedUser && loggedBannerTitle ? loggedBannerTitle : publicBannerTitle
@@ -16,8 +16,8 @@ const bannerTitle = computed(() => {
 <template>
   <DsfrNotice v-if="show" type="info" :title="bannerTitle">
     <template #desc>
-      Valable uniquement pour les établissements qui ont validé leur télédéclaration dans les temps. Depuis votre bilan, vous pouvez corriger vos informations si besoin
-      <a :href="documentation.correctionCampaign" target="_blank">voir l’article d’aide pour en savoir plus</a>.
+      La loi d’urgence pour la protection et la souveraineté agricoles, publiée le 19 août 2026, introduit de nouvelles dispositions. Elle modifie également certaines mesures relatives aux approvisionnements et fait évoluer les modalités de télédéclaration. La documentation <em>ma cantine</em> est progressivement mise à jour pour intégrer ces changements. Plus d'informations sur
+      <a :href="documentation.loiUPSA" target="_blank">notre centre documentaire</a>.
     </template>
   </DsfrNotice>
 </template>
