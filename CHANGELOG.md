@@ -6,6 +6,14 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.50.1](https://github.com/betagouv/ma-cantine/compare/v2026.50.0...v2026.50.1) (2026-09-22)
+
+
+### Améliorations
+
+* **Bandeaux:** ajoute le bandeau pour la loi UPSA ([#7155](https://github.com/betagouv/ma-cantine/issues/7155)) ([3ad0a9d](https://github.com/betagouv/ma-cantine/commit/3ad0a9d8e676d85835698dff7148762ff63dd924))
+* **Email:** garde une adresse email unique contact@egalim.beta.gouv.fr ([#7154](https://github.com/betagouv/ma-cantine/issues/7154)) ([ddefd3a](https://github.com/betagouv/ma-cantine/commit/ddefd3aa409fa3386b6237c8394d6d1df07d2db3))
+
 ## [2026.50.0](https://github.com/betagouv/ma-cantine/compare/v2026.49.1...v2026.50.0) (2026-09-21)
 
 
