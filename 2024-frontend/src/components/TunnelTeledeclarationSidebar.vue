@@ -19,7 +19,6 @@ const generateNav = (name) => {
 
   for (let i = 0; i < list.length; i++) {
     const isCurrent = i === activeIndex
-    console.log(list[i].to.name)
     links.push({
       disabled: activeIndex === -1,
       type: isCurrent ? 'secondary' : 'tertiary',
