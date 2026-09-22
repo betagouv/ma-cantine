@@ -9,7 +9,7 @@ import GestionnaireCantinePagePublique from "@/views/GestionnaireCantinePagePubl
 import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
 
 /* Route */
-const currentYear = new Date().getFullYear()
+const currentYear = window.TELEDECLARATION_YEAR
 const canteenRoutes = {
   path: "",
   component: LayoutSidebarCanteen,
