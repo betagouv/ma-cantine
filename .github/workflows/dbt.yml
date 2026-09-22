@@ -7,9 +7,9 @@ on:
       - synchronize
       - reopened
       - ready_for_review
-    paths-ignore:
-      - "**.md"
-      - "web/static/documents/**"
+    paths:
+      - "dbt/**"
+      - ".github/workflows/dbt.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
