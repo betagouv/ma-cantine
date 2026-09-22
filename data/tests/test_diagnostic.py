@@ -480,6 +480,25 @@ class Diagnostic2025ModelSaveTest(TransactionTestCase):
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
 
+class Diagnostic2026ModelSaveTest(TransactionTestCase):
+    def test_diagnostic_2026_without_type_is_not_populated(self):
+        diagnostic = Diagnostic.objects.create(year=2026)  # DiagnosticFactory fills the required fields
+        self.assertIsNone(diagnostic.diagnostic_type)
+        self.assertIsNone(diagnostic.valeur_totale)
+        self.assertIsNone(diagnostic.valeur_bio)  # not populated
+        self.assertIsNone(diagnostic.valeur_siqo)  # not populated
+
+    def test_diagnostic_2026_simple_required_fields_are_populated(self):
+        diagnostic = Diagnostic.objects.create(
+            year=2026, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_siqo=10
+        )
+        self.assertIsNone(diagnostic.valeur_totale)
+        self.assertEqual(diagnostic.valeur_bio, 0)  # populated
+        self.assertEqual(diagnostic.valeur_siqo, 10)  # not overriden
+        self.assertIsNone(diagnostic.valeur_viandes_volailles_igp)  # not populated (not required)
+        self.assertIsNone(diagnostic.nombre_repas_an)  # not populated (not covered)
+
+
 class DiagnosticQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):

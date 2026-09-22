@@ -5,27 +5,9 @@ import factory
 from factory import fuzzy
 
 from data.models import Diagnostic
-from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_fields_required
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS
 
 from .canteen import CanteenFactory
-
-
-def _fill_required_fields(obj):
-    """
-    Fill any required (appro & canteen) field left at None with 0, so full_clean() doesn't reject the diagnostic.
-    NOTE: valeur_totale must be > 0 (see validate_valeur_totale), so it's left as is.
-    """
-    if not (obj.year and obj.diagnostic_type):
-        return
-    try:
-        required_fields = get_teledeclaration_fields_required(obj.year, obj.diagnostic_type)
-    except ValueError:
-        return
-    if int(obj.year) >= 2026:
-        required_fields = list(required_fields) + Diagnostic.CANTEEN_FIELDS
-    for field_name in required_fields:
-        if field_name != "valeur_totale" and getattr(obj, field_name) is None:
-            setattr(obj, field_name, 0)
 
 
 class DiagnosticFactory(factory.django.DjangoModelFactory):
@@ -77,9 +59,14 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     communication_support_url = factory.Faker("uri")
     communicates_on_food_plan = factory.Faker("boolean")
 
+    # NOTE: here because we want to ensure valid Diagnostic are created (regarding full_clean)
     @factory.post_generation
     def fill_required_fields(obj, create, extracted, **kwargs):
-        _fill_required_fields(obj)
+        obj.populate_required_fields_with_zero()
+        if obj.year and obj.diagnostic_type and int(obj.year) >= 2026:
+            for field_name in Diagnostic.CANTEEN_FIELDS:
+                if getattr(obj, field_name) is None:
+                    setattr(obj, field_name, 0)
 
 
 class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
@@ -126,6 +113,11 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     communication_support_url = factory.Faker("uri")
     communicates_on_food_plan = factory.Faker("boolean")
 
+    # NOTE: here because we want to ensure valid Diagnostic are created (regarding full_clean)
     @factory.post_generation
     def fill_required_fields(obj, create, extracted, **kwargs):
-        _fill_required_fields(obj)
+        obj.populate_required_fields_with_zero()
+        if obj.year and obj.diagnostic_type and int(obj.year) >= 2026:
+            for field_name in Diagnostic.CANTEEN_FIELDS:
+                if getattr(obj, field_name) is None:
+                    setattr(obj, field_name, 0)

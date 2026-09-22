@@ -1958,14 +1958,24 @@ class Diagnostic(models.Model):
 
     def save(self, **kwargs):
         # NOTE: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
-        # TODO: don't allow saving a diagnostic if the year is not valid
         validation_errors = utils_utils.merge_validation_errors(diagnostic_validators.validate_year(self))
         if not validation_errors:
             # these methods only work if there is a valid year
+            self.populate_required_fields_with_zero()
             self.populate_aggregated_values()
             self.populate_egalim_stats()
             self.populate_cout_repas()
         return super().save(**kwargs)
+
+    def populate_required_fields_with_zero(self):
+        """
+        Default any still-empty required field (for this diagnostic's year & diagnostic_type) to 0.
+        NOTE: valeur_totale is excluded, it must be > 0 (see validate_valeur_totale).
+        """
+        if self.year and self.diagnostic_type and int(self.year) >= 2026:
+            for field_name in get_teledeclaration_fields_required(self.year, self.diagnostic_type):
+                if field_name != "valeur_totale" and getattr(self, field_name) is None:
+                    setattr(self, field_name, 0)
 
     def populate_simplified_diagnostic_values(self):
         self.valeur_bio = self.label_group_sum("bio")
