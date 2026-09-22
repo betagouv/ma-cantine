@@ -7,10 +7,12 @@
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
             <span class="fr-notice__title">{{ bannerTitle }}</span>
             <span class="fr-notice__desc">
-              Valable uniquement pour les établissements qui ont validé leur télédéclaration dans les temps. Depuis
-              votre bilan, vous pouvez corriger vos informations si besoin
+              La loi d’urgence pour la protection et la souveraineté agricoles, publiée le 19 août 2026, introduit de
+              nouvelles dispositions. Elle modifie également certaines mesures relatives aux approvisionnements et fait
+              évoluer les modalités de télédéclaration. La documentation <span class="font-italic">ma cantine</span> est progressivement mise à jour pour
+              intégrer ces changements. Plus d'informations sur
               <a :href="bannerLink" target="_blank">
-                voir l’article d’aide pour en savoir plus
+                notre centre documentaire
                 <v-icon small class="fr-notice__icon ml-1">mdi-open-in-new</v-icon>
               </a>
               .
@@ -28,10 +30,9 @@ export default {
   data() {
     return {
       show: window.SHOW_BANNER,
-      publicBannerTitle: "DROIT À L’ERREUR : du 16 au 29 avril 2026.",
+      publicBannerTitle: "La réglementation évolue.",
       loggedBannerTitle: "",
-      bannerLink:
-        "https://ma-cantine.crisp.help/fr/article/la-campagne-de-correction-pour-ma-teledeclaration-faq-1sk8ipw/",
+      bannerLink: "https://documentation.ma-cantine.agriculture.gouv.fr/fr/article/gqqij4/",
     }
   },
   computed: {
