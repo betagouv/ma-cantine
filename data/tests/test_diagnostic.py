@@ -482,7 +482,7 @@ class Diagnostic2025ModelSaveTest(TransactionTestCase):
 
 class Diagnostic2026ModelSaveTest(TransactionTestCase):
     def test_diagnostic_2026_without_type_is_not_populated(self):
-        diagnostic = Diagnostic.objects.create(year=2026)  # DiagnosticFactory fills the required fields
+        diagnostic = Diagnostic.objects.create(year=2026)  # DiagnosticFactory would fill the required fields
         self.assertIsNone(diagnostic.diagnostic_type)
         self.assertIsNone(diagnostic.valeur_totale)
         self.assertIsNone(diagnostic.valeur_bio)  # not populated
@@ -492,7 +492,7 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
         diagnostic = Diagnostic.objects.create(
             year=2026, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_siqo=10
         )
-        self.assertIsNone(diagnostic.valeur_totale)
+        self.assertIsNone(diagnostic.valeur_totale)  # not populated (not covered)
         self.assertEqual(diagnostic.valeur_bio, 0)  # populated
         self.assertEqual(diagnostic.valeur_siqo, 10)  # not overriden
         self.assertIsNone(diagnostic.valeur_viandes_volailles_igp)  # not populated (not required)
@@ -812,23 +812,27 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
 
     def test_is_filled_property(self):
         # filled
-        for diagnostic in [
-            self.diagnostic_2024_simple_filled,
-            self.diagnostic_2024_complete_filled,
-            self.diagnostic_2025_simple_filled,
-            self.diagnostic_2025_complete_filled,
-        ]:
-            with self.subTest(diagnostic=diagnostic):
+        for index, diagnostic in enumerate(
+            [
+                self.diagnostic_2024_simple_filled,
+                self.diagnostic_2024_complete_filled,
+                self.diagnostic_2025_simple_filled,
+                self.diagnostic_2025_complete_filled,
+            ]
+        ):
+            with self.subTest(index=index, diagnostic=diagnostic):
                 self.assertTrue(diagnostic.is_filled)
         # not filled
-        for diagnostic in [
-            self.diagnostic_2024_simple_not_filled,
-            self.diagnostic_2024_complete_not_filled,
-            self.diagnostic_2025_simple_not_filled,
-            self.diagnostic_2025_complete_not_filled,
-        ]:
+        for index, diagnostic in enumerate(
+            [
+                self.diagnostic_2024_simple_not_filled,
+                self.diagnostic_2024_complete_not_filled,
+                self.diagnostic_2025_simple_not_filled,
+                self.diagnostic_2025_complete_not_filled,
+            ]
+        ):
             diagnostic.refresh_from_db()
-            with self.subTest(diagnostic=diagnostic):
+            with self.subTest(index=index, diagnostic=diagnostic):
                 self.assertFalse(diagnostic.is_filled)
 
 

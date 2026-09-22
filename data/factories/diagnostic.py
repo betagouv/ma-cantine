@@ -10,6 +10,22 @@ from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS
 from .canteen import CanteenFactory
 
 
+def _fill_required_fields(obj):
+    """
+    Ensure the generated Diagnostic passes full_clean(): fill required appro fields via the model's own
+    logic, plus, since 2026, canteen fields too (nombre_repas_an) -- the model intentionally doesn't
+    default that one on its own (see Diagnostic2026ModelSaveTest), so it's a factory-only concern here.
+    """
+    try:
+        obj.populate_required_fields_with_zero()
+    except ValueError:
+        pass
+    if obj.year and obj.diagnostic_type and int(obj.year) >= 2026:
+        for field_name in Diagnostic.CANTEEN_FIELDS:
+            if getattr(obj, field_name) is None:
+                setattr(obj, field_name, 0)
+
+
 class DiagnosticFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Diagnostic
@@ -62,11 +78,7 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     # NOTE: here because we want to ensure valid Diagnostic are created (regarding full_clean)
     @factory.post_generation
     def fill_required_fields(obj, create, extracted, **kwargs):
-        obj.populate_required_fields_with_zero()
-        if obj.year and obj.diagnostic_type and int(obj.year) >= 2026:
-            for field_name in Diagnostic.CANTEEN_FIELDS:
-                if getattr(obj, field_name) is None:
-                    setattr(obj, field_name, 0)
+        _fill_required_fields(obj)
 
 
 class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
@@ -116,8 +128,4 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     # NOTE: here because we want to ensure valid Diagnostic are created (regarding full_clean)
     @factory.post_generation
     def fill_required_fields(obj, create, extracted, **kwargs):
-        obj.populate_required_fields_with_zero()
-        if obj.year and obj.diagnostic_type and int(obj.year) >= 2026:
-            for field_name in Diagnostic.CANTEEN_FIELDS:
-                if getattr(obj, field_name) is None:
-                    setattr(obj, field_name, 0)
+        _fill_required_fields(obj)
