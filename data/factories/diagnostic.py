@@ -39,10 +39,21 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     diagnostic_type = fuzzy.FuzzyChoice(list(Diagnostic.DiagnosticType))
 
     valeur_totale = factory.Faker("random_int", min=6000, max=10000)
-    valeur_bio = factory.Faker("random_int", min=0, max=2000)
-    valeur_siqo = factory.Faker("random_int", min=0, max=2000)
-    valeur_egalim_autres = factory.Faker("random_int", min=0, max=20)
-    valeur_viandes_volailles = factory.Faker("random_int", min=0, max=20)
+    # bio/siqo/egalim_autres are derived from valeur_totale (not independently random), so that overriding
+    # valeur_totale in a test (e.g. to a small round number) can't make their sum exceed it (see validate_valeur_totale)
+    valeur_bio = factory.LazyAttribute(
+        lambda o: random.randint(0, min(2000, int(o.valeur_totale) // 4)) if o.valeur_totale else 0
+    )
+    valeur_siqo = factory.LazyAttribute(
+        lambda o: random.randint(0, min(2000, int(o.valeur_totale) // 4)) if o.valeur_totale else 0
+    )
+    valeur_egalim_autres = factory.LazyAttribute(
+        lambda o: random.randint(0, min(20, int(o.valeur_totale) // 20)) if o.valeur_totale else 0
+    )
+    # also derived from valeur_totale, for the same reason as bio/siqo/egalim_autres above
+    valeur_viandes_volailles = factory.LazyAttribute(
+        lambda o: random.randint(0, min(20, int(o.valeur_totale) // 20)) if o.valeur_totale else 0
+    )
     # the egalim part cannot be more than the family total
     valeur_viandes_volailles_egalim = factory.LazyAttribute(
         lambda o: random.randint(0, o.valeur_viandes_volailles or 0)

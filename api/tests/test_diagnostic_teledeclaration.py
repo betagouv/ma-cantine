@@ -1,5 +1,4 @@
 from unittest.mock import patch
-from unittest import skip
 
 from django.core.management import call_command
 from django.urls import reverse
@@ -341,11 +340,12 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.json()["detail"], ["Ce diagnostic n'est pas rempli"])
 
-    @skip
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_teledeclare_if_bad_total(self):
-        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_site, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
         self.canteen_site.managers.add(authenticate.user)
         Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=100, valeur_bio=1000)
 
@@ -357,7 +357,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
         )
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(response.json()["detail"], ["Le total des valeurs ne correspond pas à la valeur totale"])
+        self.assertIn("valeurTotale", response.json())
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
@@ -378,7 +378,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
     @authenticate
     @freeze_time("2025-04-20")  # during the 2024 correction campaign
-    def test_can_teledeclare_during_correction_campaign(self):
+    def test_cannot_teledeclare_draft_during_correction_campaign(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         self.canteen_site.managers.add(authenticate.user)
 
@@ -389,9 +389,14 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
             )
         )
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         diagnostic.refresh_from_db()
-        self.assertTrue(diagnostic.is_teledeclared)
+        self.assertEqual(
+            response.json()["year"],
+            [
+                "Le diagnostic de l'année 2024 ne peut plus être modifié car la campagne de télédéclaration est terminée."
+            ],
+        )
 
 
 class DiagnosticTeledeclarationCancelView(APITestCase):

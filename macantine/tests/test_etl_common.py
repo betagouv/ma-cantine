@@ -150,7 +150,6 @@ def setUpTestData(cls, with_diagnostics=False):
                 canteen=cls.canteen_site_earlier, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             cls.canteen_site_earlier_diagnostic_2024.teledeclare(cls.canteen_site_manager_2)
-        with freeze_time("2025-04-20"):  # during the 2024 correction campaign
             cls.canteen_site_diagnostic_2024 = DiagnosticFactory(
                 canteen=cls.canteen_site,
                 year=2024,
