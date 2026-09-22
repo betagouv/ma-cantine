@@ -2019,8 +2019,6 @@ class Diagnostic(models.Model):
 
     def label_group_sum(self, label_group: str):
         if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            if label_group == "siqo" and self.year and int(self.year) >= 2026:
-                label_group = "siqo_2026"
             return sum_int_with_potential_null(
                 [
                     self.label_sum(label)
