@@ -12,13 +12,12 @@ Ran on 2026-04-15 (last day of 2025 campaign)
 
 import logging
 
-from django.db import transaction
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from simple_history.utils import update_change_reason
 
-from data.models import Diagnostic
 from common.utils.commands import MaCantineBaseCommand
-
+from data.models import Diagnostic
 
 logger = logging.getLogger(__name__)
 

@@ -5,6 +5,8 @@ import pandas as pd
 from django.core.files.storage import default_storage
 
 import macantine.etl.utils
+from api.views.canteen import CanteenOpenDataListView
+from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredOpenDataListView
 from common.api.datagouv import (
     MA_CANTINE_DATAGOUV_CANTEEN_DATASET_ID,
     MA_CANTINE_DATAGOUV_CANTEEN_SCHEMA_FILE_PATH,
@@ -12,10 +14,10 @@ from common.api.datagouv import (
     MA_CANTINE_DATAGOUV_TELEDECLARATION_DATASET_ID,
     MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_FILE_PATH,
     MA_CANTINE_DATAGOUV_TELEDECLARATION_SCHEMA_URL,
+    fetch_commune_pat_list,
+    map_pat_list_to_communes_insee_code,
+    update_dataset_resources,
 )
-from api.views.canteen import CanteenOpenDataListView
-from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredOpenDataListView
-from common.api.datagouv import update_dataset_resources, map_pat_list_to_communes_insee_code, fetch_commune_pat_list
 from common.api.decoupage_administratif import (
     fetch_commune_detail,
     fetch_epci_name,

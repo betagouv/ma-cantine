@@ -6,9 +6,9 @@ from django.utils.translation import gettext_lazy as _
 
 from common.utils.images import optimize_image
 from data.fields import ChoiceArrayField
-from data.models.partnertype import PartnerType
-from data.models.sector import SectorM2M, SectorCategory
 from data.models.geo import Department
+from data.models.partnertype import PartnerType
+from data.models.sector import SectorCategory, SectorM2M
 
 
 class Partner(models.Model):

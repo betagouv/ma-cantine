@@ -1,13 +1,13 @@
-from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework.generics import ListAPIView
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
 from django.http import JsonResponse
 from django.utils import timezone
+from drf_spectacular.utils import extend_schema, extend_schema_view
+from rest_framework import status
+from rest_framework.generics import ListAPIView
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
-from api.serializers import SatelliteCanteenSerializer, FullCanteenSerializer
+from api.serializers import FullCanteenSerializer, SatelliteCanteenSerializer
 from data.models import Canteen
 from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
 

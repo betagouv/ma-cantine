@@ -5,9 +5,9 @@ from pathlib import Path
 from django.core.management.base import CommandError
 
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
+from common.utils.commands import MaCantineBaseCommand
 from data.models import Canteen
 from data.utils import read_csv
-from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 

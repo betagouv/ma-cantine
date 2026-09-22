@@ -1,9 +1,9 @@
 from django.core.management import call_command
-from rest_framework.test import APITestCase
 from django.urls import reverse
+from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import WasteMeasurementFactory, CanteenFactory
+from data.factories import CanteenFactory, WasteMeasurementFactory
 from data.models import WasteMeasurement
 from data.models.creation_source import CreationSource
 

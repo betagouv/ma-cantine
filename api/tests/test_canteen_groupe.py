@@ -1,7 +1,7 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
-from rest_framework import status
 from freezegun import freeze_time
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory

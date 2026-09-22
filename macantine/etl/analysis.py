@@ -8,11 +8,11 @@ import pandas as pd
 from api.views.canteen import CanteenAnalysisListView
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredAnalysisListView
 from data.models import Canteen, Diagnostic, Purchase, User, WasteMeasurement
+from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
+from data.models.geo import Department, Region
 from data.models.sector import get_category_lib_list_from_canteen_snapshot, get_sector_lib_list_from_canteen_snapshot
 from macantine.etl import etl, utils
 from macantine.etl.data_ware_house import DataWareHouse
-from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
-from data.models.geo import Department, Region
 
 logger = logging.getLogger(__name__)
 

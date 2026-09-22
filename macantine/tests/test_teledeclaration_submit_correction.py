@@ -1,11 +1,11 @@
 from django.core.management import call_command
+from django.db.models.signals import post_save
 from django.test import TestCase
 from freezegun import freeze_time
-from django.db.models.signals import post_save
 
-from data.models.canteen import Canteen, fill_geo_fields_from_siret
-from data.models import Diagnostic
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.models import Diagnostic
+from data.models.canteen import Canteen, fill_geo_fields_from_siret
 
 
 class TeledeclarationSubmitCorrectionScriptTest(TestCase):

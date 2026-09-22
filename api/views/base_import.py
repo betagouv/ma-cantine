@@ -50,13 +50,11 @@ class BaseImportView(ABC, APIView):
     @abstractmethod
     def import_type(self):
         """ImportType enum for logging failures"""
-        pass
 
     @property
     @abstractmethod
     def model_class(self):
         """Main Django model being imported"""
-        pass
 
     @abstractmethod
     def _get_schema_config(self):
@@ -70,7 +68,6 @@ class BaseImportView(ABC, APIView):
                     'url': 'https://...'
                 }
         """
-        pass
 
     @abstractmethod
     def _save_data_from_row(self, row):
@@ -83,7 +80,6 @@ class BaseImportView(ABC, APIView):
         Returns:
             Created or updated model instance
         """
-        pass
 
     @abstractmethod
     def _get_response_data(self):
@@ -93,7 +89,6 @@ class BaseImportView(ABC, APIView):
         Returns:
             dict: Response data to merge with base response
         """
-        pass
 
     def is_true_value(self, value):
         """
@@ -186,7 +181,6 @@ class BaseImportView(ABC, APIView):
         - Call _save_data_from_row() for each row
         - Handle exceptions and add to self.errors
         """
-        pass
 
     def _post_process_file(self):
         """
@@ -194,7 +188,6 @@ class BaseImportView(ABC, APIView):
 
         Override in subclasses if needed (e.g., geo-location updates).
         """
-        pass
 
     def _get_row_identifier(self, row):
         """

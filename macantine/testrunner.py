@@ -10,5 +10,5 @@ class MaCantineTestRunner(DiscoverRunner):
         override_seed = settings.OVERRIDE_TEST_SEED
         seed = int(override_seed) if override_seed else randint(0, 65535)
         factory.random.reseed_random(seed)
-        print("Using seed: {}".format(seed))
+        print(f"Using seed: {seed}")
         super().setup_test_environment(**kwargs)

@@ -1,17 +1,17 @@
 from decimal import Decimal
 
-from django.core.management import call_command
 from django.core.exceptions import BadRequest
+from django.core.management import call_command
 from django.db import transaction
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from common.utils.camelize import camelize
 from api.tests.utils import authenticate, get_oauth2_token
+from common.utils.camelize import camelize
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Diagnostic, Canteen
+from data.models import Canteen, Diagnostic
 from data.models.creation_source import CreationSource
 
 
@@ -524,7 +524,7 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         # appro fields
-        for field_name in payload.keys():
+        for field_name in payload:
             self.assertEqual(body[camelize(field_name)], payload[field_name])
         # computed fields
         self.assertEqual(body["coutRepas"], 10)
@@ -836,7 +836,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.total_leftovers, Decimal("1.23456"))
-        self.assertEqual(diagnostic.bread_leftovers, Decimal("100"))
+        self.assertEqual(diagnostic.bread_leftovers, Decimal(100))
 
     @authenticate
     def test_total_leftovers_conversion_update_diagnostic_bad_values(self):

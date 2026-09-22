@@ -6,12 +6,12 @@ from django.db.models import F, Func, Value
 from django.db.utils import IntegrityError
 
 from api.serializers import CanteenTeledeclarationSerializer
+from common.utils.commands import MaCantineBaseCommand
 from data.models import Canteen, Diagnostic
 from macantine.utils import (
     set_satellite_common_fields_from_groupe_diagnostic,
     set_satellite_diagnostic_appro_values_from_groupe_diagnostic,
 )
-from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +49,7 @@ class Command(MaCantineBaseCommand):
             default=False,
         )
 
-    def handle(self, *args, **options):  # noqa: C901
+    def handle(self, *args, **options):
         year = options["year"]
         apply = options["apply"]
         start_time = time.time()

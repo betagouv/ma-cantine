@@ -3,13 +3,13 @@ from django.test import TestCase
 from data.models.sector import (
     Sector,
     SectorCategory,
-    get_sector_category_from_sector,
-    is_sector_with_line_ministry,
-    get_sector_lib_list_from_sector_list,
-    get_category_lib_list_from_sector_list,
-    get_sector_lib_list_from_canteen_snapshot,
     get_category_lib_list_from_canteen_snapshot,
+    get_category_lib_list_from_sector_list,
+    get_sector_category_from_sector,
+    get_sector_lib_list_from_canteen_snapshot,
+    get_sector_lib_list_from_sector_list,
     get_sector_list_from_old_sector_dict_list,
+    is_sector_with_line_ministry,
 )
 
 

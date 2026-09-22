@@ -31,7 +31,7 @@ class ArrayFieldListFilter(admin.SimpleListFilter):
         value = self.value()
 
         if value:
-            queryset = queryset.filter(**{"{}__contains".format(self.parameter_name): [value]})
+            queryset = queryset.filter(**{f"{self.parameter_name}__contains": [value]})
 
         return queryset
 

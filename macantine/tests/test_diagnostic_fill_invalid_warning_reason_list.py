@@ -8,7 +8,6 @@ from freezegun import freeze_time
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Diagnostic
 
-
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
 date_in_correction_campaign = "2025-04-20"

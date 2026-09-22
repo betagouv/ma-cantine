@@ -1,9 +1,9 @@
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework import status
-from rest_framework.response import Response
 from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.response import Response
 
-from api.serializers import CampaignDatesSerializer, CampaignDatesFullSerializer
+from api.serializers import CampaignDatesFullSerializer, CampaignDatesSerializer
 from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
     is_in_correction,

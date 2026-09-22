@@ -1,12 +1,12 @@
 import logging
 import time
+from itertools import islice  # replace with itertools.batched once on Python 3.12
 
 import redis as r
 from django.conf import settings
 from django.core.management import call_command
 from django.utils import timezone
 
-import macantine.brevo as brevo
 from api.views.utils import update_change_reason
 from common.api.datagouv import (
     fetch_commune_pat_list,
@@ -21,14 +21,15 @@ from common.api.decoupage_administratif import (
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.models import User
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
+from macantine import brevo
 
 from .celery import app
 from .etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
-    ETL_ANALYSIS_CANTEEN_RAW,
     ETL_ANALYSIS_CANTEEN_MANAGER_RAW,
-    ETL_ANALYSIS_TELEDECLARATIONS,
+    ETL_ANALYSIS_CANTEEN_RAW,
     ETL_ANALYSIS_DIAGNOSTIC_RAW,
+    ETL_ANALYSIS_TELEDECLARATIONS,
     ETL_ANALYSIS_USER_RAW,
     ETL_ANALYSIS_WASTE_MEASUREMENT_RAW,
 )
@@ -64,10 +65,6 @@ def update_user_data():
 
 
 #########################################################
-# Taken from itertools recipes. Will be able to remove once we pass to
-# Python 3.12 since they added it as itertools.batched. Server is currently
-# on Python 3.11
-from itertools import islice  # noqa: E402
 
 
 def batched(iterable, n):
@@ -160,7 +157,7 @@ def update_canteen_geo_data_from_insee_code(canteen):
         _update_canteen_geo_data_from_insee_code(canteen)
 
 
-def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
+def _update_canteen_geo_data_from_insee_code(canteen):
     # fetch geo data from API Découpage Administratif & DataGouv
     communes_details = map_communes_infos()
     epcis_names = map_epcis_code_name()

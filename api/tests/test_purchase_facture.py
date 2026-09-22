@@ -4,8 +4,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.models import Purchase
 from data.factories import CanteenFactory, PurchaseFactory
+from data.models import Purchase
 
 
 class PurchaseFactureUploadApiTest(APITestCase):

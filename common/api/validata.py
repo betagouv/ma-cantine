@@ -22,8 +22,9 @@ Possible error keys:
 - type: e.g. 'missing-cell', 'constraint-error', 'type-error', 'blank-row'...
 """
 
-import requests
 import mimetypes
+
+import requests
 
 FRICTIONLESS_SCHEMA_URL = "https://frictionlessdata.io/schemas/table-schema.json"
 VALIDATA_PREPROD_API_URL = "https://preprod-api-validata.dataeng.etalab.studio/validate"

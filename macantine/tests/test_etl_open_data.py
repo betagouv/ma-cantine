@@ -8,9 +8,8 @@ from django.core.files.storage import default_storage
 from django.test import TestCase
 from freezegun import freeze_time
 
-from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
+from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource, update_dataset_resources
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
-from common.api.datagouv import update_dataset_resources
 from common.api.validata import mock_post_validate_file_against_schema
 from data.models import Canteen, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS

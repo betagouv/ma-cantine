@@ -13,17 +13,16 @@ python manage.py teledeclaration_submit_outside_of_campaign --year 2025 --diagno
 import logging
 
 from django.core.exceptions import ValidationError
-from simple_history.utils import update_change_reason
 from django.utils import timezone
+from simple_history.utils import update_change_reason
 
+from common.utils.commands import MaCantineBaseCommand
 from data.models import Diagnostic, User
 from data.models.diagnostic_teledeclaration_dates import (
-    get_year_campaign_start_date,
     get_year_campaign_end_date_or_today_date,
+    get_year_campaign_start_date,
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )
-from common.utils.commands import MaCantineBaseCommand
-
 
 logger = logging.getLogger(__name__)
 

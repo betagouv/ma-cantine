@@ -2,7 +2,6 @@ from django.conf import settings
 
 from api.views.purchase_import_base import BasePurchasesImportView
 
-
 PURCHASE_SIRET_SCHEMA_FILE_NAME = "achats_siret_old.json"
 PURCHASE_SIRET_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SIRET_SCHEMA_FILE_NAME}"
 PURCHASE_SIRET_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SIRET_SCHEMA_FILE_PATH}"

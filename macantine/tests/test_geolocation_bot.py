@@ -1,13 +1,13 @@
 import requests_mock
-from django.test import TestCase
 from django.core.cache import cache
+from django.test import TestCase
 
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 from data.factories import CanteenFactory
-from macantine import tasks
 from data.models import Canteen
+from macantine import tasks
 
 
 @requests_mock.Mocker()

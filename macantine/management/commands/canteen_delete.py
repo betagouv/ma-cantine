@@ -8,8 +8,8 @@ python manage.py canteen_delete --canteen-siret-list 92341284500011,234567890123
 Ran on 2025-04-24
 """
 
-from data.models import Canteen, Diagnostic, Teledeclaration
 from common.utils.commands import MaCantineBaseCommand
+from data.models import Canteen, Diagnostic, Teledeclaration
 
 
 class Command(MaCantineBaseCommand):

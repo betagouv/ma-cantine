@@ -1,6 +1,7 @@
 import json
 
 from django.test import TestCase
+
 from api.views.diagnostic_import import DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH
 
 

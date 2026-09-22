@@ -12,9 +12,8 @@ import logging
 from django.core.exceptions import ValidationError
 from simple_history.utils import update_change_reason
 
-from data.models import Diagnostic, User
 from common.utils.commands import MaCantineBaseCommand
-
+from data.models import Diagnostic, User
 
 logger = logging.getLogger(__name__)
 

@@ -30,10 +30,10 @@ from api.permissions import (
     IsElectedOfficial,
 )
 from api.serializers import (
-    CanteenCheckSerializer,
     CanteenActionsLightSerializer,
     CanteenActionsSerializer,
     CanteenAnalysisSerializer,
+    CanteenCheckSerializer,
     CanteenMinistriesSerializer,
     CanteenOpenDataSerializer,
     CanteenPreviewSerializer,

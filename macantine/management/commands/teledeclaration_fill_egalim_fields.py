@@ -1,7 +1,7 @@
 import logging
 
-from data.models import Diagnostic
 from common.utils.commands import MaCantineBaseCommand
+from data.models import Diagnostic
 
 logger = logging.getLogger(__name__)
 

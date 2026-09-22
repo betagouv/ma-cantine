@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from data.models import ImportFailure
 from data.admin.utils import ReadOnlyAdminMixin
+from data.models import ImportFailure
 
 
 @admin.register(ImportFailure)

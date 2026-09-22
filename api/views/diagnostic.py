@@ -20,9 +20,9 @@ from api.permissions import (
 )
 from api.serializers import (
     DiagnosticAndCanteenSerializer,
-    ManagerDiagnosticSerializer,
     DiagnosticCheckSerializer,
     DiagnosticRecapSerializer,
+    ManagerDiagnosticSerializer,
 )
 from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.utils import file_import, send_mail

@@ -1,9 +1,9 @@
 import logging
 
-from common.api.datagouv import fetch_commune_pat_list, map_pat_list_to_communes_insee_code, PAT_DATAGOUV_DATE
+from common.api.datagouv import PAT_DATAGOUV_DATE, fetch_commune_pat_list, map_pat_list_to_communes_insee_code
+from common.utils.commands import MaCantineBaseCommand
 from data.models import Canteen
 from data.utils import has_charfield_missing_query
-from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 

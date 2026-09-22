@@ -154,7 +154,7 @@ class UsernameSuggestionView(APIView):
 
         if UsernameSuggestionView._is_unique(username_suggestion):
             return username_suggestion
-        new_suggestion = f"{username_suggestion}_{str(random.sample(range(999), 1)[0])}"
+        new_suggestion = f"{username_suggestion}_{random.sample(range(999), 1)[0]!s}"
         return UsernameSuggestionView._generate_username_with_base(new_suggestion, attempt + 1)
 
     @staticmethod

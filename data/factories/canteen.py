@@ -1,7 +1,6 @@
 import random
 
 import factory
-
 from django.db.models.signals import post_save
 
 from data.models import Canteen

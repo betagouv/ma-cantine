@@ -1,10 +1,10 @@
 from decimal import Decimal
 from unittest import skipIf
 
+from django.conf import settings
 from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
-from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 

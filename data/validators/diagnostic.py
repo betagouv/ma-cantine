@@ -2,14 +2,14 @@ from decimal import Decimal
 
 from django.utils import timezone
 
+from common.utils import utils as utils_utils
 from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
     get_year_campaign_end_date_or_today_date,
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )
-from common.utils import utils as utils_utils
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
 from data.models.diagnostic_teledeclaration_field_groups import get_teledeclaration_field_groups
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
 
 
 def validate_year(instance):

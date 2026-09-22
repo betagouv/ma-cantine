@@ -1,10 +1,10 @@
 import json
 
 from django import forms
-from django.utils.safestring import mark_safe
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from data.models import User

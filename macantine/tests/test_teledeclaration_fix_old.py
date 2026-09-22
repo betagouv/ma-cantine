@@ -3,13 +3,13 @@ from django.core.cache import cache
 from django.core.management import call_command
 from django.test import TestCase
 
-from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 from common.api.datagouv import (
     mock_get_pat_csv,
     mock_get_pat_dataset_resource,
 )
 from common.api.decoupage_administratif import mock_fetch_communes
 from data.models import Diagnostic
+from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 
 
 class TestTeledeclarationFixOldCommandTest(TestCase):

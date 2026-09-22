@@ -1,9 +1,9 @@
+from django.core.exceptions import ValidationError
 from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 from freezegun import freeze_time
-from django.core.exceptions import ValidationError
 
-from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, User
 from macantine import tasks
 

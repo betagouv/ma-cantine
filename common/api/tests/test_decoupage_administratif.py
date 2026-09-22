@@ -1,7 +1,6 @@
 import unittest
 
 import requests_mock
-
 from django.core.cache import cache
 
 from common.api.decoupage_administratif import (

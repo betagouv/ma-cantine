@@ -7,6 +7,7 @@ from rest_framework import serializers
 from api.serializers.utils import set_help_text_from_verbose_name
 from data.models import Canteen
 
+from .canteen_images import CanteenImageSerializer
 from .canteen_managers import CanteenManagerInvitationSerializer, CanteenManagerSerializer
 from .diagnostic import (
     ApproDiagnosticSerializer,
@@ -16,7 +17,6 @@ from .diagnostic import (
     PublicDiagnosticSerializer,
 )
 from .resourceaction import ResourceActionFullSerializer
-from .canteen_images import CanteenImageSerializer
 
 logger = logging.getLogger(__name__)
 

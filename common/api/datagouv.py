@@ -166,7 +166,7 @@ def map_pat_list_to_communes_insee_code():
                 insee_code for insee_code in pat["communes_code_insee"].split(",") if insee_code
             ]
             for city_insee_code in pat_city_insee_code_list:
-                if city_insee_code not in pat_mapping.keys():
+                if city_insee_code not in pat_mapping:
                     pat_mapping[city_insee_code] = []
                 pat_mapping[city_insee_code].append(
                     {

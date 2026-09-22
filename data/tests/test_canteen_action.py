@@ -1,8 +1,8 @@
+from django.test import TestCase
 from freezegun import freeze_time
 
-from django.test import TestCase
-from data.models import Canteen, Diagnostic, Sector
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory
+from data.models import Canteen, Diagnostic, Sector
 
 
 class CanteenActionTestCase(TestCase):

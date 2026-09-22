@@ -179,7 +179,7 @@ class Command(BaseCommand):
         return schema
 
     def _build_field_definition(self, name: str, is_required=False) -> dict:
-        if name in COMMON_FIELDS.keys():
+        if name in COMMON_FIELDS:
             return COMMON_FIELDS[name]
 
         title = name

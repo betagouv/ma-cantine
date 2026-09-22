@@ -5,10 +5,10 @@ from simple_history.utils import update_change_reason
 
 from common.api.datagouv import map_pat_list_to_communes_insee_code
 from common.api.decoupage_administratif import map_communes_infos
+from common.utils.commands import MaCantineBaseCommand
 from data.models import Canteen, Diagnostic
 from data.models.sector import get_sector_list_from_old_sector_dict_list
 from data.utils import has_charfield_missing_query
-from common.utils.commands import MaCantineBaseCommand
 
 
 class Command(MaCantineBaseCommand):
