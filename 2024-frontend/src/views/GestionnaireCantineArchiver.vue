@@ -24,7 +24,7 @@ const deleteCanteen = () => {
     .then((response) => {
       if(response.status === "error") displayError(response)
       else {
-        store.notify({message: `L'établissement « ${canteenName} » a bien été archivé, s'il s'agit d'une erreur vous pouvez nous contacter à l'adresse support-egalim@beta.gouv.fr.`, status: "success", title: "Établissement archivé"})
+        store.notify({message: `L'établissement « ${canteenName} » a bien été archivé, s'il s'agit d'une erreur vous pouvez nous contacter à l'adresse contact@egalim.beta.gouv.fr.`, status: "success", title: "Établissement archivé"})
         router.push({name: "GestionnaireTableauDeBord"})
       }
     })

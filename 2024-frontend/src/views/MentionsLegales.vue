@@ -53,7 +53,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <ul>
         <li>
           nous signaler par email :
-          <a rel="noopener" href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
+          <a rel="noopener" href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
         </li>
         <li>
           créer une “issue” sur
@@ -77,7 +77,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <h2>Signaler un dysfonctionnement ou une question</h2>
       <p>
         Envoyez-nous un courriel à
-        <a rel="noopener" href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
+        <a rel="noopener" href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
         .
       </p>
     </section>

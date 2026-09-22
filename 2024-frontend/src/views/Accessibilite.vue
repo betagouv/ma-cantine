@@ -131,7 +131,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <p>
         À noter également qu'il est en contrepartie possible de contacter « ma cantine » depuis le formulaire de contact
         ainsi que par email à l'adresse suivante
-        <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
+        <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
         .
       </p>
       <h3>
@@ -223,7 +223,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
         </li>
         <li>
           Écrivez-nous à l'adresse email :
-          <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
+          <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
           .
         </li>
         <li>Écrivez-nous par voie postale à l'adresse suivante : 20 avenue de Ségur, 75007, Paris</li>

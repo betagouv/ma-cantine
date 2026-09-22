@@ -150,7 +150,7 @@ onMounted(() => {
       <ul>
         <li>
           par voie électronique à :
-          <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
+          <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
         </li>
         <li>
           par voie postale à :

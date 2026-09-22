@@ -1,3 +1,3 @@
 <template>
-  <a href="mailto:support-egalim@beta.gouv.fr">support-egalim@beta.gouv.fr</a>
+  <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
 </template>
