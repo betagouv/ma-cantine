@@ -142,19 +142,17 @@ class DiagnosticTeledeclarationPdfView(APIView):
         return {
             **diagnostic.__dict__,
             **processed_diagnostic_data,
-            **{
-                "diagnostic_type": "détaillée" if diagnostic.is_diagnostic_type_complete else "simplifiée",
-                "year": diagnostic.year,
-                "date": diagnostic.teledeclaration_date,
-                "applicant": diagnostic.applicant_snapshot["name"],
-                "teledeclaration_mode": diagnostic.teledeclaration_mode,
-                "central_kitchen_siret": central_kitchen_siret,
-                "central_kitchen_name": central_kitchen_name,
-                "satellites": diagnostic.satellites_snapshot or [],
-                "canteen": {**canteen_snapshot, **processed_canteen_snapshot},
-                "additional_questions": additional_questions,
-                "complete_appro": structure_complete_appro_data,
-            },
+            "diagnostic_type": "détaillée" if diagnostic.is_diagnostic_type_complete else "simplifiée",
+            "year": diagnostic.year,
+            "date": diagnostic.teledeclaration_date,
+            "applicant": diagnostic.applicant_snapshot["name"],
+            "teledeclaration_mode": diagnostic.teledeclaration_mode,
+            "central_kitchen_siret": central_kitchen_siret,
+            "central_kitchen_name": central_kitchen_name,
+            "satellites": diagnostic.satellites_snapshot or [],
+            "canteen": {**canteen_snapshot, **processed_canteen_snapshot},
+            "additional_questions": additional_questions,
+            "complete_appro": structure_complete_appro_data,
         }
 
     @staticmethod
@@ -192,7 +190,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
 
         # make sure that file exists
         if not os.path.isfile(path):
-            raise Exception("media URI must start with {} or {}".format(sUrl, mUrl))
+            raise Exception(f"media URI must start with {sUrl} or {mUrl}")
         return path
 
     @staticmethod
@@ -276,7 +274,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
     @staticmethod
     def _get_applicable_diagnostic_rules(canteen_snapshot):
         donation_agreement = diversification_plan = False
-        if "daily_meal_count" in canteen_snapshot and canteen_snapshot["daily_meal_count"]:
+        if canteen_snapshot.get("daily_meal_count"):
             donation_agreement = canteen_snapshot["daily_meal_count"] >= 3000
             diversification_plan = canteen_snapshot["daily_meal_count"] >= 200
         return {

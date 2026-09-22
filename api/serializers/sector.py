@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from data.models import SectorM2M, Sector, SectorCategory
+from data.models import Sector, SectorCategory, SectorM2M
 
 
 class SectorSerializer(serializers.Serializer):

@@ -3,9 +3,9 @@ from django.core.management.base import BaseCommand
 from macantine.tasks import (
     export_dataset_canteen_analysis,
     export_dataset_canteen_opendata,
+    export_dataset_raw_analysis,
     export_dataset_td_analysis,
     export_dataset_td_opendata,
-    export_dataset_raw_analysis,
 )
 
 

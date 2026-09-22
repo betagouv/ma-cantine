@@ -11,10 +11,9 @@ from api.serializers import PurchaseSerializer
 from api.views.base_import import BaseImportView
 from common.utils import file_import
 from common.utils import utils as utils_utils
+from common.utils.camelize import camelize
 from data.models import Canteen, ImportType, Purchase
 from data.models.creation_source import CreationSource
-
-from common.utils.camelize import camelize
 
 
 class BasePurchasesImportView(BaseImportView):
@@ -62,17 +61,14 @@ class BasePurchasesImportView(BaseImportView):
     @abstractmethod
     def _get_caracteristiques(self, row):
         """Return the list of `Purchase.Characteristic` values for this row."""
-        pass
 
     @abstractmethod
     def _get_definition_local(self, row):
         """Return the `definition_local` string for this row (or empty string)."""
-        pass
 
     @abstractmethod
     def _get_definition_local_km(self, row):
         """Return the `definition_local_km` string for this row (or empty string)."""
-        pass
 
     def _process_file(self, data):
         """Process file with chunking for better performance"""
@@ -139,7 +135,6 @@ class BasePurchasesImportView(BaseImportView):
 
     def _save_data_from_row(self, row):
         """Not used in purchase import due to chunking, but required by base class"""
-        pass
 
     def _create_purchase_for_canteen(self, identifier, row):
         """Create a purchase object for a canteen from row data"""

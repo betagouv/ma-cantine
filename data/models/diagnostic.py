@@ -14,28 +14,28 @@ from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
-from data.models import Canteen, AuthenticationMethodHistoricalRecords
+from data.models import AuthenticationMethodHistoricalRecords, Canteen
 from data.models.creation_source import CreationSource
-from data.utils import (
-    CustomJSONEncoder,
-    has_arrayfield_missing_query,
-    make_optional_positive_integer_field,
-    make_optional_positive_decimal_field,
-    make_optional_positive_percentage_decimal_field,
-    sum_int_with_potential_null,
-    to_decimal,
-)
-from data.validators import diagnostic as diagnostic_validators
 from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
     is_in_correction,
     is_in_teledeclaration_or_correction,
 )
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
 from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
     get_teledeclaration_field_groups,
 )
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
+from data.utils import (
+    CustomJSONEncoder,
+    has_arrayfield_missing_query,
+    make_optional_positive_decimal_field,
+    make_optional_positive_integer_field,
+    make_optional_positive_percentage_decimal_field,
+    sum_int_with_potential_null,
+    to_decimal,
+)
+from data.validators import diagnostic as diagnostic_validators
 from macantine.utils import (
     EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,

@@ -1,6 +1,5 @@
 import json
 
-from common.utils.utils import clean_unicode_string
 from common.api.datagouv import fetch_pats
 from common.api.decoupage_administratif import (
     fetch_communes,
@@ -10,6 +9,7 @@ from common.api.decoupage_administratif import (
     fetch_regions,
 )
 from common.utils.commands import MaCantineBaseCommand
+from common.utils.utils import clean_unicode_string
 
 
 class Command(MaCantineBaseCommand):

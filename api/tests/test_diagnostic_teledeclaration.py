@@ -1,5 +1,5 @@
-from unittest.mock import patch
 from unittest import skip
+from unittest.mock import patch
 
 from django.core.management import call_command
 from django.urls import reverse

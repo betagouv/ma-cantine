@@ -8,16 +8,15 @@ Admin configuration for the common app
 import json
 
 from django import forms
-from django.contrib.auth.models import Group
 from django.contrib import admin
-from django.contrib.auth import get_user_model
 from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from django.utils.safestring import mark_safe
 
-from common.models import CommandLog
 from common.cache.admin import CacheAdmin  # needed to help Django discover the models in the subfolders  # noqa
+from common.models import CommandLog
 from data.admin.utils import ReadOnlyAdminMixin
-
 
 User = get_user_model()
 admin.site.unregister(Group)

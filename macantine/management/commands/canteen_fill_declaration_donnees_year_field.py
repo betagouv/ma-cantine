@@ -2,8 +2,8 @@ import logging
 
 from django.db import transaction
 
-from data.models import Canteen, Diagnostic
 from common.utils.commands import MaCantineBaseCommand
+from data.models import Canteen, Diagnostic
 
 logger = logging.getLogger(__name__)
 

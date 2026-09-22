@@ -2,8 +2,8 @@ import logging
 from collections import Counter
 
 from common.utils.commands import MaCantineBaseCommand
-from data.utils import has_charfield_missing_query
 from data.models import WasteMeasurement
+from data.utils import has_charfield_missing_query
 
 logger = logging.getLogger(__name__)
 

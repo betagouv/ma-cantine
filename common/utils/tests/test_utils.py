@@ -1,8 +1,8 @@
-from django.test import TestCase
 from django.core.management import call_command
+from django.test import TestCase
 
-from common.utils import utils as utils_utils
 from common.models import CommandLog
+from common.utils import utils as utils_utils
 
 
 class UtilsTest(TestCase):

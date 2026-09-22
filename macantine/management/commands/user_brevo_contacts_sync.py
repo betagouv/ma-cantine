@@ -2,8 +2,8 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-from data.utils import read_csv, has_charfield_missing_query
 from data.models import User
+from data.utils import has_charfield_missing_query, read_csv
 
 logger = logging.getLogger(__name__)
 

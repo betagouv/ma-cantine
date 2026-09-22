@@ -13,7 +13,6 @@ def void(*args, **kwargs):
 
     :return void:
     """
-    pass
 
 
 dotenv.load_dotenv()

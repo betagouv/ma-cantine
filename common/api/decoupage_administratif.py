@@ -1,5 +1,6 @@
-import logging
 import json
+import logging
+
 import requests
 
 from common.cache.utils import CACHE_TIMEOUT_7_days, get_or_set_cache

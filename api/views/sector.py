@@ -4,8 +4,8 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from data.models.sector import Sector, get_sector_category_from_sector, is_sector_with_line_ministry
 from api.serializers.sector import SectorSerializer
+from data.models.sector import Sector, get_sector_category_from_sector, is_sector_with_line_ministry
 
 logger = logging.getLogger(__name__)
 

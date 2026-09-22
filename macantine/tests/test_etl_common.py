@@ -1,8 +1,8 @@
 from django.utils import timezone
 from freezegun import freeze_time
 
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Sector
-from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
 from data.models.diagnostic import Diagnostic
 
 

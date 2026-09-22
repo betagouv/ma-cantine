@@ -1,6 +1,6 @@
 import factory
 
-from data.models import SectorM2M, Sector
+from data.models import Sector, SectorM2M
 
 
 class SectorM2MFactory(factory.django.DjangoModelFactory):

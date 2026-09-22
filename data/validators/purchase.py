@@ -48,8 +48,8 @@ def validate_purchase_definition_local(instance):
     errors = {}
     field_name = "definition_local"
     value = getattr(instance, field_name)
-    definition_local_km = getattr(instance, "definition_local_km")
-    caracteristiques = getattr(instance, "caracteristiques") or []
+    definition_local_km = instance.definition_local_km
+    caracteristiques = instance.caracteristiques or []
     if instance.Characteristic.LOCAL in caracteristiques:
         if value != instance.Local.KM:
             if definition_local_km not in [None, ""]:

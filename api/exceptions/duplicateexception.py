@@ -17,5 +17,5 @@ class DuplicateException(APIException):
         if code is None:
             code = self.default_code
         if isinstance(additional_data, dict):
-            detail = {**{"detail": detail}, **additional_data}
+            detail = {"detail": detail, **additional_data}
         self.detail = detail

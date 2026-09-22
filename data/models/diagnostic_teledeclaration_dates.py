@@ -1,11 +1,10 @@
-from django.utils import timezone
 import zoneinfo
 from datetime import datetime
 
 from django.conf import settings
+from django.utils import timezone
 
 from common.utils.dates import convert_date_string_to_datetime
-
 
 CAMPAIGN_DATES = {
     2021: {
@@ -137,7 +136,7 @@ def get_year_campaign_end_date_or_today_date(year):
     """
     year = int(year)
     now = timezone.now()
-    if year in CAMPAIGN_DATES.keys():
+    if year in CAMPAIGN_DATES:
         return CAMPAIGN_DATES[year]["teledeclaration_end_date"]
     elif year >= now.year:
         return now
@@ -152,7 +151,7 @@ def get_year_correction_end_date_or_campaign_end_date_or_today_date(year):
     """
     year = int(year)
     now = timezone.now()
-    if year in CAMPAIGN_DATES.keys():
+    if year in CAMPAIGN_DATES:
         if CAMPAIGN_DATES[year]["correction_end_date"]:
             return CAMPAIGN_DATES[year]["correction_end_date"]
         else:

@@ -115,7 +115,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Pourcentage de menus végétariens servis par rapport aux autres menus",
     )
 
@@ -174,7 +174,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Parmi les plats à base de céréales, pourcentage des céréales complètes et semi-complètes",
     )
 
@@ -191,7 +191,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Évolution du gaspillage suite au menu végétarien quotidien",
     )
 
@@ -230,7 +230,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Évolution de la fréquentation suite au menu végétarien quotidien",
     )
 
@@ -254,7 +254,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=7,
         decimal_places=2,
-        validators=[MinValueValidator(Decimal("0"))],
+        validators=[MinValueValidator(Decimal(0))],
         verbose_name="Coût moyen du repas végétarien (€ / assiette)",
     )
 
@@ -263,7 +263,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=7,
         decimal_places=2,
-        validators=[MinValueValidator(Decimal("0"))],
+        validators=[MinValueValidator(Decimal(0))],
         verbose_name="Coût moyen du repas non-végétarien (€ / assiette)",
     )
     cost_evolution_t0 = models.CharField(
@@ -281,7 +281,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Évolution du coût en pourcentage",
     )
 
@@ -351,7 +351,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Pourcentage de menus végétariens servis par rapport aux autres menus",
     )
 
@@ -410,7 +410,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Parmi les plats à base de céréales, pourcentage des céréales complètes et semi-complètes",
     )
 
@@ -427,7 +427,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Évolution du gaspillage suite au menu végétarien quotidien",
     )
 
@@ -457,7 +457,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Évolution de la fréquentation suite au menu végétarien quotidien",
     )
 
@@ -479,7 +479,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=7,
         decimal_places=2,
-        validators=[MinValueValidator(Decimal("0"))],
+        validators=[MinValueValidator(Decimal(0))],
         verbose_name="Coût moyen du repas végétarien (€ / assiette)",
     )
     non_vegetarian_cost_t1 = models.DecimalField(
@@ -487,7 +487,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=7,
         decimal_places=2,
-        validators=[MinValueValidator(Decimal("0"))],
+        validators=[MinValueValidator(Decimal(0))],
         verbose_name="Coût moyen du repas non-végétarien (€ / assiette)",
     )
     cost_evolution_t1 = models.CharField(
@@ -505,7 +505,7 @@ class VegetarianExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Évolution du coût en pourcentage",
     )
 

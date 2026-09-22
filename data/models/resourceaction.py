@@ -1,9 +1,10 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
 
+from data.models import AuthenticationMethodHistoricalRecords
+
 from .canteen import Canteen
 from .wasteaction import WasteAction
-from data.models import AuthenticationMethodHistoricalRecords
 
 
 class ResourceActionQuerySet(models.QuerySet):

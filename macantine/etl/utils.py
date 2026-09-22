@@ -1,6 +1,5 @@
 import logging
 import warnings
-from typing import Dict
 
 import numpy as np
 import pandas as pd
@@ -34,7 +33,7 @@ ESTIMATED_NUMBER_CANTEENS_REGION = {
 
 
 def get_nbre_cantines_region(region: int):
-    if region in ESTIMATED_NUMBER_CANTEENS_REGION.keys():
+    if region in ESTIMATED_NUMBER_CANTEENS_REGION:
         return ESTIMATED_NUMBER_CANTEENS_REGION[region]
     else:
         return np.nan
@@ -108,7 +107,7 @@ def filter_empty_values(df: pd.DataFrame, col_name) -> pd.DataFrame:
     return df.dropna(subset=col_name)
 
 
-def format_geo_name(geo_code: int, geo_names: Dict[int, str]):
+def format_geo_name(geo_code: int, geo_names: dict[int, str]):
     """
     Format the name of a region or department from its code
     """
@@ -191,7 +190,7 @@ def arrays_to_json(df):
     return df
 
 
-def filter_dataframe_with_schema_cols(df, schema: Dict):
+def filter_dataframe_with_schema_cols(df, schema: dict):
     columns = [i["name"] for i in schema["fields"]]
     df = df.loc[:, ~df.columns.duplicated()].copy()
     df = df[columns]

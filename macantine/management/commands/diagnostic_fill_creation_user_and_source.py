@@ -1,12 +1,12 @@
 import logging
 from collections import Counter
 
-from django.db.models import Q, Case, When, F, Value
+from django.db.models import Case, F, Q, Value, When
 from django.db.models.functions import Length
 
-from data.utils import has_charfield_missing_query
-from data.models import Diagnostic
 from common.utils.commands import MaCantineBaseCommand
+from data.models import Diagnostic
+from data.utils import has_charfield_missing_query
 
 logger = logging.getLogger(__name__)
 

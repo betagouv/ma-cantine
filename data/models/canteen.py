@@ -1,7 +1,7 @@
 from urllib.parse import quote
 
-from django.conf import settings
 from dirtyfields import DirtyFieldsMixin
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import ValidationError
@@ -21,6 +21,13 @@ from common.utils.images import optimize_image
 from data.fields import ChoiceArrayField
 from data.models import AuthenticationMethodHistoricalRecords
 from data.models.creation_source import CreationSource
+from data.models.diagnostic_teledeclaration_dates import (
+    CAMPAIGN_DATES,
+    get_year_campaign_end_date_or_today_date,
+    is_in_correction,
+    is_in_teledeclaration,
+    is_in_teledeclaration_or_correction,
+)
 from data.models.geo import Department, Region, get_region_from_department
 from data.models.sector import (
     ADMINISTRATION_SECTOR_LIST,
@@ -31,13 +38,6 @@ from data.models.sector import (
 )
 from data.utils import has_charfield_missing_query
 from data.validators import canteen as canteen_validators
-from data.models.diagnostic_teledeclaration_dates import (
-    CAMPAIGN_DATES,
-    get_year_campaign_end_date_or_today_date,
-    is_in_correction,
-    is_in_teledeclaration,
-    is_in_teledeclaration_or_correction,
-)
 
 from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDeletionQuerySet
 

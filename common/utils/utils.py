@@ -1,5 +1,5 @@
-import unicodedata
 import re
+import unicodedata
 
 
 def normalize_string(text) -> str:

@@ -1,8 +1,8 @@
 import unittest
 
 import requests_mock
-
 from django.core.cache import cache
+
 from common.api.datagouv import (
     map_pat_list_to_communes_insee_code,
     mock_get_pat_csv,

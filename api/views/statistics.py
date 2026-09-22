@@ -7,13 +7,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from api.serializers import CanteenStatisticsSerializer
-from common.utils.camelize import camelize
 from common.cache.utils import CACHE_TIMEOUT_1_day, get_or_set_cache
+from common.utils.camelize import camelize
 from data.models import Canteen, Diagnostic
-from data.models.sector import Sector
 from data.models.geo import Department, Region
-from macantine.utils import get_egalim_group
+from data.models.sector import Sector
 from data.utils import array_overlap_query
+from macantine.utils import get_egalim_group
 
 logger = logging.getLogger(__name__)
 

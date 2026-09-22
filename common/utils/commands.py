@@ -1,11 +1,10 @@
-import logging
 import io
+import logging
 
-from django.utils import timezone
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from common.models import CommandLog
-
 
 DJANGO_DEFAULT_OPTIONS = {"no_color", "settings", "traceback", "verbosity", "pythonpath", "force_color", "skip_checks"}
 
@@ -51,7 +50,7 @@ class MaCantineBaseCommand(BaseCommand):
             return result
         except Exception as e:
             end_date = timezone.now()
-            log_contents = log_capture.getvalue() + f"\nERROR: {str(e)}"
+            log_contents = log_capture.getvalue() + f"\nERROR: {e!s}"
 
             CommandLog.objects.create(
                 command_name=command_name,

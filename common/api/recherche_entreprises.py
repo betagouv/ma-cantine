@@ -1,5 +1,6 @@
 import json
 import logging
+
 import requests
 
 from common.utils import siret as utils_siret

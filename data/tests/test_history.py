@@ -1,12 +1,12 @@
 from datetime import timedelta
 
-from django.test import TestCase
 from django.core.management import call_command
-from django.test.utils import override_settings
 from django.db.models.signals import post_save
+from django.test import TestCase
+from django.test.utils import override_settings
 
-from data.models.canteen import Canteen, fill_geo_fields_from_siret
 from data.factories import CanteenFactory
+from data.models.canteen import Canteen, fill_geo_fields_from_siret
 from macantine import tasks
 
 

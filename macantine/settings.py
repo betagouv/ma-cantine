@@ -17,9 +17,9 @@ from pathlib import Path
 
 import dotenv  # noqa
 import sentry_sdk
+from botocore.config import Config as BotoConfig
 from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
-from botocore.config import Config as BotoConfig
 
 from macantine.sentry import before_send
 

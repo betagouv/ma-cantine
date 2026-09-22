@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 
-import common.utils as utils
+from common import utils
 
 logger = logging.getLogger(__name__)
 

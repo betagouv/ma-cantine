@@ -9,13 +9,12 @@ from simple_history.utils import update_change_reason
 from api.serializers import FullCanteenSerializer
 from api.views.base_import import BaseImportView
 from common.utils import utils as utils_utils
+from common.utils.camelize import camelize
 from data.models import Canteen, ImportType, Sector
 from data.models.creation_source import CreationSource
 from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
 
 from .canteen_managers import AddManagerView
-from common.utils.camelize import camelize
-
 
 CANTEEN_SCHEMA_FILE_NAME = "cantines_creer.json"
 CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"

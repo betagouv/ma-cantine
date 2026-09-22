@@ -3,9 +3,9 @@ from collections import Counter
 
 from simple_history.utils import update_change_reason
 
-from data.models import Canteen
 from api.serializers import SatelliteTeledeclarationSerializer
 from common.utils.commands import MaCantineBaseCommand
+from data.models import Canteen
 
 logger = logging.getLogger(__name__)
 

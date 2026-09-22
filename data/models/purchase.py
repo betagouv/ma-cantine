@@ -12,9 +12,10 @@ from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models import Canteen
 from data.models.creation_source import CreationSource
+from data.models.diagnostic_teledeclaration_field_groups import get_teledeclaration_field_groups
 from data.validators import purchase as purchase_validators
 from macantine.etl import utils
-from data.models.diagnostic_teledeclaration_field_groups import get_teledeclaration_field_groups
+
 from .softdeletionmodel import SoftDeletionManager, SoftDeletionModel, SoftDeletionQuerySet
 
 
@@ -226,7 +227,7 @@ class Purchase(SoftDeletionModel):
         max_digits=20,
         decimal_places=2,
         verbose_name="prix HT",
-        validators=[MinValueValidator(Decimal("0"))],
+        validators=[MinValueValidator(Decimal(0))],
     )
     definition_local = models.CharField(
         max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"

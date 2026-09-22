@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
+from common.api.recherche_entreprises import mock_fetch_geo_data_from_siren, mock_fetch_geo_data_from_siret
 from data.factories import CanteenFactory
-from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret, mock_fetch_geo_data_from_siren
 
 
 class CanteenStatusBySiretApiTest(APITestCase):

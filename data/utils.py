@@ -3,7 +3,7 @@ import json
 from decimal import Decimal
 
 from django.core.serializers.json import DjangoJSONEncoder
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.db.models import Q
 
@@ -65,7 +65,7 @@ def make_optional_positive_decimal_field(**kwargs):
     - examples: None, 0, 10.5, 999.99
     """
     return models.DecimalField(
-        max_digits=20, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(Decimal("0"))], **kwargs
+        max_digits=20, decimal_places=2, blank=True, null=True, validators=[MinValueValidator(Decimal(0))], **kwargs
     )
 
 
@@ -82,7 +82,7 @@ def make_optional_positive_percentage_decimal_field(**kwargs):
         decimal_places=2,
         blank=True,
         null=True,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("100"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(100))],
         **kwargs,
     )
 

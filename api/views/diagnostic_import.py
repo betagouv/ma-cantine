@@ -11,7 +11,6 @@ from data.models import Canteen, Diagnostic, ImportType
 from data.models.creation_source import CreationSource
 from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
 
-
 # simple
 DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_NAME = "bilans_simple_siret.json"
 DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_NAME}"
@@ -48,9 +47,12 @@ class DiagnosticsImportView(BaseImportView):
     @transaction.atomic
     def _save_data_from_row(self, row):
         identifier = row[0]
-        if self.is_siret_import and not Canteen.objects.filter(siret=identifier).exists():
-            raise ObjectDoesNotExist()
-        elif not self.is_siret_import and not Canteen.objects.filter(id=identifier).exists():
+        if (
+            self.is_siret_import
+            and not Canteen.objects.filter(siret=identifier).exists()
+            or not self.is_siret_import
+            and not Canteen.objects.filter(id=identifier).exists()
+        ):
             raise ObjectDoesNotExist()
         canteen = Canteen.objects.get(siret=identifier) if self.is_siret_import else Canteen.objects.get(id=identifier)
         if self.request.user not in canteen.managers.all():
@@ -61,7 +63,6 @@ class DiagnosticsImportView(BaseImportView):
     @abstractmethod
     def _validate_diagnostic(self, row):
         """Parse row and return (year, values_dict, diagnostic_type)"""
-        pass
 
     def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
         diagnostic_exists = Diagnostic.objects.filter(canteen=canteen, year=diagnostic_year).exists()

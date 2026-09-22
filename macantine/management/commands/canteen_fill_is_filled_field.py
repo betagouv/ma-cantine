@@ -1,7 +1,7 @@
 import logging
 
-from data.models import Canteen
 from common.utils.commands import MaCantineBaseCommand
+from data.models import Canteen
 
 logger = logging.getLogger(__name__)
 

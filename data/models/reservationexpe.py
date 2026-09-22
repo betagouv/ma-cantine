@@ -3,8 +3,9 @@ from decimal import Decimal
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
-from .canteen import Canteen
 from data.utils import make_optional_positive_decimal_field
+
+from .canteen import Canteen
 
 
 class ReservationExpe(models.Model):
@@ -47,7 +48,7 @@ class ReservationExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Ratio de la part non comestible (g) rapportée à la part comestible (g)",
     )
     avg_weight_preparation_leftover_t0 = make_optional_positive_decimal_field(
@@ -64,7 +65,7 @@ class ReservationExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Taux d’utilisation de la solution de réservation",
     )
     comments_t0 = models.TextField(null=True, blank=True, verbose_name="Commentaires")
@@ -81,7 +82,7 @@ class ReservationExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Ratio de la part non comestible (g) rapportée à la part comestible (g)",
     )
     avg_weight_preparation_leftover_t1 = make_optional_positive_decimal_field(
@@ -110,7 +111,7 @@ class ReservationExpe(models.Model):
         blank=True,
         max_digits=5,
         decimal_places=4,
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("1"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(1))],
         verbose_name="Ratio de la part non comestible (g) rapportée à la part comestible (g)",
     )
     avg_weight_preparation_leftover_t2 = make_optional_positive_decimal_field(
@@ -132,7 +133,7 @@ class ReservationExpe(models.Model):
         null=True,
         blank=True,
         verbose_name="Satisfaction",
-        validators=[MinValueValidator(Decimal("0")), MaxValueValidator(Decimal("5"))],
+        validators=[MinValueValidator(Decimal(0)), MaxValueValidator(Decimal(5))],
     )
     system_cost = make_optional_positive_decimal_field(
         verbose_name="Coût de la solution de réservation sur 3 ans",

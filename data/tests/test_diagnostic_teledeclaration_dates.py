@@ -1,5 +1,6 @@
 from django.test import TestCase, override_settings
 from freezegun import freeze_time
+
 from data.models.diagnostic_teledeclaration_dates import (
     is_in_correction,
     is_in_teledeclaration,

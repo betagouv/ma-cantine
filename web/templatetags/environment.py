@@ -24,7 +24,7 @@ def admin_css_override():
 
 @register.simple_tag
 def hostname():
-    return f"{getattr(settings, 'PROTOCOL')}://{getattr(settings, 'HOSTNAME', '')}"
+    return f"{settings.PROTOCOL}://{getattr(settings, 'HOSTNAME', '')}"
 
 
 @register.simple_tag

@@ -2,6 +2,7 @@ import logging
 
 from django.db.models import F, Func, Value
 
+from common.utils.commands import MaCantineBaseCommand
 from data.models import Diagnostic
 from data.models.diagnostic import (
     aberrant_values_query,
@@ -17,7 +18,6 @@ from data.models.diagnostic import (
     valeur_totale_is_filled_query,
 )
 from data.utils import has_arrayfield_missing_query
-from common.utils.commands import MaCantineBaseCommand
 
 logger = logging.getLogger(__name__)
 

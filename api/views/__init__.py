@@ -23,7 +23,7 @@ from .canteen_groupe import (  # noqa: F401
     CanteenGroupeSatelliteLinkView,
     CanteenGroupeSatellitesListView,
     CanteenGroupeSatelliteUnlinkView,
-)  # noqa: F401
+)
 from .canteen_images import (  # noqa: F401
     UserCanteenImagesListView,
     UserCanteenImagesRetrieveUpdateDestroyView,
@@ -42,9 +42,9 @@ from .canteen_managers_import import CanteensManagersImportView  # noqa: F401
 from .canteen_update_import import CanteensUpdateImportView  # noqa: F401
 from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
+    DiagnosticCheckView,
     DiagnosticListCreateView,
     DiagnosticListRecapView,
-    DiagnosticCheckView,
     DiagnosticRetrieveUpdateView,
     DiagnosticsToTeledeclareListView,
     EmailDiagnosticImportFileView,
@@ -55,6 +55,10 @@ from .diagnostic_teledeclaration import (  # noqa: F401
     DiagnosticTeledeclarationCreateView,
     DiagnosticTeledeclarationPdfView,
 )
+from .diagnostic_teledeclaration_dates import (  # noqa: F401
+    TeledeclarationCampaignDatesListView,
+    TeledeclarationCampaignDatesRetrieveView,
+)
 from .initial import InitialDataView  # noqa: F401
 from .inquiry import InquiryView  # noqa: F401
 from .message import MessageCreateView  # noqa: F401
@@ -62,8 +66,8 @@ from .partner import PartnersView, PartnerView  # noqa: F401
 from .partnertype import PartnerTypeListView  # noqa: F401
 from .purchase import (  # noqa: F401
     CanteenPurchasesPercentageSummaryView,
-    CanteenPurchasesSummaryView,
     CanteenPurchasesSummaryForYearView,
+    CanteenPurchasesSummaryView,
     DiagnosticsFromPurchasesView,
     PurchaseCreateView,
     PurchaseFactureView,
@@ -83,10 +87,6 @@ from .review import ReviewView  # noqa: F401
 from .sector import SectorListView  # noqa: F401
 from .statistics import CanteenStatisticsView  # noqa: F401
 from .subscription import SubscribeNewsletter  # noqa: F401
-from .diagnostic_teledeclaration_dates import (  # noqa: F401
-    TeledeclarationCampaignDatesListView,
-    TeledeclarationCampaignDatesRetrieveView,
-)
 from .user import (  # noqa: F401
     ChangePasswordView,
     LoggedUserView,

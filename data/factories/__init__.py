@@ -1,6 +1,6 @@
-import factory  # noqa
+import factory
 
-factory.Faker._DEFAULT_LOCALE = "fr-fr"  # noqa
+factory.Faker._DEFAULT_LOCALE = "fr-fr"
 
 from .user import UserFactory  # noqa
 from .canteen import CanteenFactory  # noqa

@@ -1,15 +1,14 @@
 import datetime
 
-from freezegun import freeze_time
 from django.urls import reverse
 from django.utils import timezone
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory, CommunityEventFactory, PartnerTypeFactory, VideoTutorialFactory
 from data.models import Canteen
-
 
 INITIAL_DATA_BODY_KEYS = [
     "loggedUser",

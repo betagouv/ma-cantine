@@ -1,10 +1,10 @@
-from decimal import Decimal
 from datetime import date
+from decimal import Decimal
 
-from django.test import TransactionTestCase, TestCase
 from django.core.exceptions import ValidationError
+from django.test import TestCase, TransactionTestCase
 
-from data.factories import PurchaseFactory, CanteenFactory, UserFactory
+from data.factories import CanteenFactory, PurchaseFactory, UserFactory
 from data.models import Purchase
 
 

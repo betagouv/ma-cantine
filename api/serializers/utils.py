@@ -18,7 +18,7 @@ def set_help_text_from_verbose_name(serializer_class):
         model = serializer_class.Meta.model
 
         # Override get_fields to set help_text
-        original_get_fields = getattr(serializer_class, "get_fields")
+        original_get_fields = serializer_class.get_fields
 
         def get_fields(self):
             fields = original_get_fields(self)  # Call original method
@@ -36,7 +36,7 @@ def set_help_text_from_verbose_name(serializer_class):
             return fields
 
         # Replace the method
-        setattr(serializer_class, "get_fields", get_fields)
+        serializer_class.get_fields = get_fields
 
         return serializer_class
 

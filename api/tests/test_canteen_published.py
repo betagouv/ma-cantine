@@ -1,10 +1,10 @@
 import datetime
 import os
-from freezegun import freeze_time
 
 from django.core.files import File
 from django.urls import reverse
 from django.utils import timezone
+from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
