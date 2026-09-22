@@ -1,4 +1,4 @@
-name: Ma Cantine CI
+name: Ma Cantine CI - Backend
 
 on:
   pull_request:
@@ -95,46 +95,3 @@ jobs:
         run: |
           echo "GIT_BRANCH=$GIT_BRANCH"
           uv run python manage.py test --parallel $TESTS_PARALLEL
-
-  frontend:
-    name: "ma-cantine: frontend build and lint"
-    runs-on: ubuntu-latest
-    # Skip if PR is in draft
-    if: ${{ !github.event.pull_request.draft }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20.x"
-          cache: npm
-          cache-dependency-path: |
-            frontend/package-lock.json
-            2024-frontend/package-lock.json
-
-      - name: Vue 2 install
-        working-directory: ./frontend
-        run: |
-          npm ci --ignore-scripts
-
-      - name: Vue 2 build
-        working-directory: ./frontend
-        run: |
-          npm run build --if-present
-
-      - name: Vue 3 install
-        working-directory: ./2024-frontend
-        run: |
-          npm ci --ignore-scripts
-
-      - name: Vue 3 build
-        working-directory: ./2024-frontend
-        run: |
-          npm run build
-
-      - name: Vue 3 lint
-        working-directory: ./2024-frontend
-        run: |
-          npm run lint
