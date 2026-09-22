@@ -23,7 +23,7 @@ const save = async (page) => {
   await teledeclarationStore.saveDiagnostic()
   const check = await checkIsFilled()
   if (check.isFilled) goTo(page)
-  await teledeclarationStore.setErrors(check.errors)
+  await teledeclarationStore.addErrorsFromCheck(check.errors)
   const pageErrors = teledeclarationStore.getErrorsPage(route.name, canteenInformations.value.isGroupe)
   if (pageErrors.length > 0) displayModal(pageErrors, page)
   else goTo(page)

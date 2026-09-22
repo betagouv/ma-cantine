@@ -21,17 +21,16 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setCanteenId(canteenId)
     const diagnosticCheck = await diagnosticService.checkDiagnostic(canteenId, diagnosticYear.id)
     const canteenCheck = await canteenService.checkCanteen(canteenId)
-    setErrors({...diagnosticCheck.errors, ...canteenCheck.errors})
+    addErrorsFromCheck({...diagnosticCheck.errors, ...canteenCheck.errors})
   }
 
   /* Save diagnostic */
   async function saveDiagnostic() {
     if (!diagnostic.value) return
-    const response = await diagnosticService.updateDiagnostic(
-      diagnostic.value.canteenId,
-      diagnostic.value.id,
-      diagnostic.value
-    )
+    const canteenId = diagnostic.value.canteenId
+    const diagnosticValues = diagnostic.value
+    const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
+    if (response.status === "error") addErrorsFromServor(response.list)
     return response
   }
 
@@ -57,14 +56,19 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   }
 
   /* Set diagnostic errors */
-  function setErrors(errors) {
+  function addErrorsFromCheck(errors) {
     const errorsKeys = Object.keys(errors)
     const errorsValues = Object.values(errors)
     const errorList = []
     for (let i = 0; i < errorsKeys.length; i++) {
       errorList.push({ field: errorsKeys[i], message: errorsValues[i] })
     }
-    diagnosticErrors.value = errorList
+    diagnosticErrors.value = [...diagnosticErrors.value, ...errorList]
+  }
+
+  /* Add errors to list */
+  function addErrorsFromServor(errors) {
+    diagnosticErrors.value = [...diagnosticErrors.value, ...errors]
   }
 
   /* Clear diagnostic errors for the current campaign */
@@ -110,7 +114,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setDiagnostic,
     setValue,
     saveDiagnostic,
-    setErrors,
+    addErrorsFromCheck,
     clearErrors,
     getErrorsPage,
     getErrorsGroup,
