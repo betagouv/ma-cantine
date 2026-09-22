@@ -318,7 +318,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         If the TD is cancelled, allow update
         """
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1, valeur_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1)
 
         with freeze_time("2026-03-30"):  # during the 2025 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
@@ -528,7 +528,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         update the diag with data from import file
         """
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1, valeur_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1)
 
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
@@ -552,7 +552,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         it can import a new diagnostic during the correction campaign
         """
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1, valeur_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1)
 
         with freeze_time("2026-01-20"):  # during the 2025 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
@@ -663,7 +663,7 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
         update the diag with data from import file
         """
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=949)
-        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1, valeur_bio=0.2)
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1)
 
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
         with open(file_path) as diag_file:

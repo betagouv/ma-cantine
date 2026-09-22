@@ -75,7 +75,7 @@ class CanteenStatsApiTest(APITestCase):
                 valeur_externalites_performance=0,
                 valeur_egalim_autres=0,
                 has_waste_diagnostic=True,
-                waste_actions=["action1", "action2"],
+                waste_actions=[Diagnostic.WasteActions.INSCRIPTION, Diagnostic.WasteActions.AWARENESS],
                 has_donation_agreement=True,
                 vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.LOW,
                 cooking_plastic_substituted=True,
@@ -247,11 +247,11 @@ class CanteenStatsApiTest(APITestCase):
                 canteen=canteen,
                 year=past_year,
                 creation_date=date_in_2022_teledeclaration_campaign,
-                valeur_totale=100,
-                valeur_bio=20,
-                valeur_siqo=15,
-                valeur_externalites_performance=15,
-                valeur_egalim_autres=15,
+                valeur_totale=1000,
+                valeur_bio=200,
+                valeur_siqo=150,
+                valeur_externalites_performance=150,
+                valeur_egalim_autres=150,
                 valeur_viandes_volailles=200,
                 valeur_viandes_volailles_egalim=100,
                 valeur_viandes_volailles_france=50,
@@ -291,16 +291,16 @@ class CanteenStatsApiTest(APITestCase):
                 canteen=canteen,
                 year=past_year,
                 creation_date=date_in_2022_teledeclaration_campaign,
-                valeur_totale=100,
-                valeur_viandes_volailles_bio=20,  # valeur_bio
-                valeur_produits_de_la_mer_label_rouge=15,  # valeur_siqo
-                valeur_fruits_et_legumes_externalites=15,  # valeur_externalites_performance
-                valeur_charcuterie_hve=15,  # valeur_egalim_autres
+                valeur_totale=1000,
+                valeur_viandes_volailles_bio=100,  # valeur_bio (part 1/2)
+                valeur_boissons_bio=100,  # valeur_bio (part 2/2)
+                valeur_fruits_et_legumes_label_rouge=150,  # valeur_siqo
+                valeur_fruits_et_legumes_externalites=150,  # valeur_externalites_performance
+                valeur_charcuterie_hve=142,  # valeur_egalim_autres (part 1/2)
+                valeur_produits_de_la_mer_hve=8,  # valeur_egalim_autres (part 2/2)
                 valeur_viandes_volailles=200,
-                valeur_viandes_volailles_egalim=100,
                 valeur_viandes_volailles_france=50,
                 valeur_produits_de_la_mer=10,
-                valeur_produits_de_la_mer_egalim=8,
             )
             canteen_diagnostic.teledeclare(applicant=user)
 

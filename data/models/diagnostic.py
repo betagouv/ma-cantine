@@ -1935,17 +1935,22 @@ class Diagnostic(models.Model):
         validation_errors = utils_utils.merge_validation_errors(
             diagnostic_validators.validate_year(self),
             diagnostic_validators.validate_year_and_can_edit(self),
-            diagnostic_validators.validate_diagnostic_type(self),
             diagnostic_validators.validate_canteen_fields_required(self),
-            diagnostic_validators.validate_appro_fields_required(self),
-            diagnostic_validators.validate_valeur_totale(self),
-            diagnostic_validators.validate_valeur_famille(self),
-            diagnostic_validators.validate_valeur_famille_bio(self),
-            diagnostic_validators.validate_valeur_label(self),
-            diagnostic_validators.validate_viandes_volailles_total(self),
-            diagnostic_validators.validate_produits_de_la_mer_total(self),
-            diagnostic_validators.validate_viandes_volailles_produits_de_la_mer_egalim(self),
         )
+        # satellites whose groupe handles appro centrally don't declare their own diagnostic_type/appro fields
+        if not self._should_use_central_kitchen_appro():
+            validation_errors = utils_utils.merge_validation_errors(
+                validation_errors,
+                diagnostic_validators.validate_diagnostic_type(self),
+                diagnostic_validators.validate_appro_fields_required(self),
+                diagnostic_validators.validate_valeur_totale(self),
+                diagnostic_validators.validate_valeur_famille(self),
+                diagnostic_validators.validate_valeur_famille_bio(self),
+                diagnostic_validators.validate_valeur_label(self),
+                diagnostic_validators.validate_viandes_volailles_total(self),
+                diagnostic_validators.validate_produits_de_la_mer_total(self),
+                diagnostic_validators.validate_viandes_volailles_produits_de_la_mer_egalim(self),
+            )
         if validation_errors:
             raise ValidationError(validation_errors)
 
@@ -2337,12 +2342,14 @@ class Diagnostic(models.Model):
         - skip_validations: if True, skip validation checks (USE WITH CAUTION) (only for tests)
         """
         if not skip_validations:
+            # status & campaign dates validations
             if not is_in_teledeclaration_or_correction():
                 raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
             if not is_in_teledeclaration_or_correction(self.year):
                 raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
             if self.is_teledeclared:
                 raise ValidationError("Ce diagnostic a déjà été télédéclaré")
+            # canteen validations
             uses_central_kitchen_appro = self._should_use_central_kitchen_appro()
             if not self.is_filled and not uses_central_kitchen_appro:
                 raise ValidationError("Ce diagnostic n'est pas rempli")
@@ -2357,7 +2364,8 @@ class Diagnostic(models.Model):
                     )
             if applicant not in self.canteen.managers.all():
                 raise ValidationError("Le déclarant n'est pas un gestionnaire de la cantine associée à ce diagnostic")
-            # TODO: run diagnostic.full_clean() (validators) ?
+            # field validations
+            self.full_clean()
 
         from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 

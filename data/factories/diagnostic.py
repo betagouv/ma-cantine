@@ -5,9 +5,27 @@ import factory
 from factory import fuzzy
 
 from data.models import Diagnostic
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_fields_required
 
 from .canteen import CanteenFactory
+
+
+def _fill_required_fields(obj):
+    """
+    Fill any required (appro & canteen) field left at None with 0, so full_clean() doesn't reject the diagnostic.
+    NOTE: valeur_totale must be > 0 (see validate_valeur_totale), so it's left as is.
+    """
+    if not (obj.year and obj.diagnostic_type):
+        return
+    try:
+        required_fields = get_teledeclaration_fields_required(obj.year, obj.diagnostic_type)
+    except ValueError:
+        return
+    if int(obj.year) >= 2026:
+        required_fields = list(required_fields) + Diagnostic.CANTEEN_FIELDS
+    for field_name in required_fields:
+        if field_name != "valeur_totale" and getattr(obj, field_name) is None:
+            setattr(obj, field_name, 0)
 
 
 class DiagnosticFactory(factory.django.DjangoModelFactory):
@@ -21,11 +39,25 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     diagnostic_type = fuzzy.FuzzyChoice(list(Diagnostic.DiagnosticType))
 
     valeur_totale = factory.Faker("random_int", min=6000, max=10000)
-    valeur_bio = factory.Faker("random_int", min=0, max=2000)
-    valeur_siqo = factory.Faker("random_int", min=0, max=2000)
-    valeur_egalim_autres = factory.Faker("random_int", min=0, max=20)
-    valeur_viandes_volailles = factory.Faker("random_int", min=0, max=20)
-    valeur_viandes_volailles_egalim = factory.Faker("random_int", min=0, max=20)
+    # bio/siqo/egalim_autres are derived from valeur_totale (not independently random), so that overriding
+    # valeur_totale in a test (e.g. to a small round number) can't make their sum exceed it (see validate_valeur_totale)
+    valeur_bio = factory.LazyAttribute(
+        lambda o: random.randint(0, min(2000, int(o.valeur_totale) // 4)) if o.valeur_totale else 0
+    )
+    valeur_siqo = factory.LazyAttribute(
+        lambda o: random.randint(0, min(2000, int(o.valeur_totale) // 4)) if o.valeur_totale else 0
+    )
+    valeur_egalim_autres = factory.LazyAttribute(
+        lambda o: random.randint(0, min(20, int(o.valeur_totale) // 20)) if o.valeur_totale else 0
+    )
+    # also derived from valeur_totale, for the same reason as bio/siqo/egalim_autres above
+    valeur_viandes_volailles = factory.LazyAttribute(
+        lambda o: random.randint(0, min(20, int(o.valeur_totale) // 20)) if o.valeur_totale else 0
+    )
+    # the egalim part cannot be more than the family total
+    valeur_viandes_volailles_egalim = factory.LazyAttribute(
+        lambda o: random.randint(0, o.valeur_viandes_volailles or 0)
+    )
 
     has_waste_diagnostic = factory.Faker("boolean")
     has_waste_plan = factory.Faker("boolean")
@@ -47,13 +79,7 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
 
     @factory.post_generation
     def fill_required_fields(obj, create, extracted, **kwargs):
-        if obj.year and obj.diagnostic_type:
-            try:
-                for field_name in get_teledeclaration_fields_required(obj.year, obj.diagnostic_type):
-                    if getattr(obj, field_name) is None:
-                        setattr(obj, field_name, 0)
-            except:  # noqa
-                pass
+        _fill_required_fields(obj)
 
 
 class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
@@ -61,19 +87,26 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
         model = Diagnostic
 
     canteen = factory.SubFactory(CanteenFactory)
-    year = factory.Faker("year")
+    year = fuzzy.FuzzyChoice(TELEDECLARATION_FIELDS.keys())
     diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
     valeur_totale = factory.Faker("random_int", min=6000, max=10000)
     valeur_viandes_volailles_bio = factory.Faker("random_int", min=0, max=20)
-    valeur_boissons_bio = factory.Faker("random_int", min=0, max=20)
+    # valeur_boissons (family total) isn't otherwise set, so it must be >= valeur_boissons_bio (see validate_valeur_famille)
+    valeur_boissons = factory.Faker("random_int", min=0, max=20)
+    valeur_boissons_bio = factory.LazyAttribute(lambda o: random.randint(0, o.valeur_boissons or 0))
 
     valeur_egalim_autres = factory.Faker("random_int", min=0, max=20)
-    valeur_viandes_volailles = factory.Faker("random_int", min=0, max=20)
-    valeur_viandes_volailles_egalim = factory.Faker("random_int", min=0, max=20)
+    # the family totals must be >= each of their label values (bio & france are up to 20 each), and their egalim part
+    valeur_viandes_volailles = factory.Faker("random_int", min=40, max=60)
+    valeur_viandes_volailles_egalim = factory.LazyAttribute(
+        lambda o: random.randint(0, o.valeur_viandes_volailles or 0)
+    )
     valeur_viandes_volailles_france = factory.Faker("random_int", min=0, max=20)
     valeur_produits_de_la_mer = factory.Faker("random_int", min=0, max=20)
-    valeur_produits_de_la_mer_egalim = factory.Faker("random_int", min=0, max=20)
+    valeur_produits_de_la_mer_egalim = factory.LazyAttribute(
+        lambda o: random.randint(0, o.valeur_produits_de_la_mer or 0)
+    )
 
     has_waste_diagnostic = factory.Faker("boolean")
     has_waste_plan = factory.Faker("boolean")
@@ -92,3 +125,7 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     communication_supports = factory.List(random.sample(list(Diagnostic.CommunicationType), random.randint(0, 2)))
     communication_support_url = factory.Faker("uri")
     communicates_on_food_plan = factory.Faker("boolean")
+
+    @factory.post_generation
+    def fill_required_fields(obj, create, extracted, **kwargs):
+        _fill_required_fields(obj)
