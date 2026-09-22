@@ -63,6 +63,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     for (let i = 0; i < errorsKeys.length; i++) {
       errorList.push({ field: errorsKeys[i], message: errorsValues[i] })
     }
+    // DOES NOT WIRK : Errors duplicated with "/check" errors
     diagnosticErrors.value = [...diagnosticErrors.value, ...errorList]
   }
 
