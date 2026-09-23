@@ -1,13 +1,14 @@
 from unittest import skipIf
 
-from django.test.utils import override_settings
+import requests_mock
 from django.conf import settings
+from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.tests.utils import assert_import_failure_created, authenticate
+from api.tests.utils import assert_import_failure_created, authenticate, mock_validata_response
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, ImportFailure, ImportType, Sector
 from data.models.creation_source import CreationSource
@@ -27,14 +28,16 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Canteen.objects.count(), 0)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_missing_header_error(self):
+    def test_validata_missing_header_error(self, mock):
         """
         A file should not be valid if it doesn't contain a valid header
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
         # header missing
+        mock_validata_response(mock, "canteens_bad_no_header.csv")
         file_path = "./api/tests/files/canteens/canteens_bad_no_header.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -52,14 +55,16 @@ class CanteensImportApiErrorTest(APITestCase):
             "Elle doit contenir les bon noms de colonnes ET dans le bon ordre. Veuillez écrire en minuscule, vérifiez les accents, supprimez les espaces avant ou après les noms, supprimez toutes colonnes qui ne sont pas dans le modèle ci-dessus.",
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_wrong_header_error(self):
+    def test_validata_wrong_header_error(self, mock):
         """
         A file should not be valid if it doesn't contain a valid header
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
         # wrong header
+        mock_validata_response(mock, "canteens_bad_wrong_header.csv")
         file_path = "./api/tests/files/canteens/canteens_bad_wrong_header.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -74,13 +79,15 @@ class CanteensImportApiErrorTest(APITestCase):
         for error in errors:
             self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_extra_header_error(self):
+    def test_validata_extra_header_error(self, mock):
         """
         A file should not be valid if it doesn't contain a valid header
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_bad_extra_header.csv")
         file_path = "./api/tests/files/canteens/canteens_bad_extra_header.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -98,13 +105,15 @@ class CanteensImportApiErrorTest(APITestCase):
             "Supprimer les 3 colonnes en excès et toutes les données présentes dans ces dernières. Il se peut qu'un espace ou un symbole invisible soit présent dans votre fichier, en cas de doute faite un copier-coller des données dans un nouveau document.",
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_empty_rows_error(self):
+    def test_validata_empty_rows_error(self, mock):
         """
         A file should not be valid if it contains empty rows (Validata)
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_bad_empty_rows.csv")
         file_path = "./api/tests/files/canteens/canteens_bad_empty_rows.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -121,14 +130,16 @@ class CanteensImportApiErrorTest(APITestCase):
             errors.pop(0)["field"].startswith("ligne vide"),
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_format_error(self):
+    def test_validata_format_error(self, mock):
         """
         If a canteen succeeds and another one doesn't, no canteen should be saved
         and the array of canteens should return zero
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_bad_nearly_good.csv")
         file_path = "./api/tests/files/canteens/canteens_bad_nearly_good.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -151,14 +162,16 @@ class CanteensImportApiErrorTest(APITestCase):
             errors.pop(0)["message"].startswith("Secteur inconnu ne respecte pas le motif imposé"),
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_model_validation_error(self):
+    def test_model_validation_error(self, mock):
         """
         If a canteen doesn't pass model validation, no canteen should be saved
         and the array of canteens should return zero
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_bad.csv")
         file_path = "./api/tests/files/canteens/canteens_bad.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -195,13 +208,15 @@ class CanteensImportApiErrorTest(APITestCase):
             ),
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_sectors_error(self):
+    def test_sectors_error(self, mock):
         """
         - Canteen can't have more than 3 sectors
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteen_bad_sectors.csv")
         file_path = "./api/tests/files/canteens/canteen_bad_sectors.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -217,13 +232,15 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 1, errors)
         self.assertEqual(errors[0]["message"], error_message_min_max)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_error_line_ministry(self):
+    def test_error_line_ministry(self, mock):
         """
         Line ministry should be empty if canteen is private and sector does not require it
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_bad_line_ministry.csv")
         file_path = "./api/tests/files/canteens/canteens_bad_line_ministry.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -243,14 +260,16 @@ class CanteensImportApiErrorTest(APITestCase):
             "Champ 'Ministère de tutelle' : Le champ doit être vide car vous n'avez pas sélectionné de secteur nécessitant un ministère de tutelle.",
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_error_canteen_already_exists(self):
+    def test_error_canteen_already_exists(self, mock):
         """
         User cannot create a canteen that already exists
         """
         CanteenFactory(siret="21340172201787")
         self.assertEqual(Canteen.objects.count(), 1)
 
+        mock_validata_response(mock, "canteens_bad_canteen_already_exists.csv")
         file_path = "./api/tests/files/canteens/canteens_bad_canteen_already_exists.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -268,8 +287,10 @@ class CanteensImportApiErrorTest(APITestCase):
             "Champ 'siret' : Vous ne pouvez pas créer de cantine avec le numéro SIRET « 21340172201787 » car elle existe déjà sur la plateforme.",
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_when_errors_count_is_0(self):
+    def test_when_errors_count_is_0(self, mock):
+        mock_validata_response(mock, "canteens_bad_one_error.csv")
         file_path = "./api/tests/files/canteens/canteens_bad_one_error.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -308,9 +329,10 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
         cls.teledeclaration = DiagnosticFactory(canteen=cls.groupe_canteen, year=2024)
         cls.url = reverse("canteens_create_import")
 
+    @requests_mock.Mocker(real_http=True)
     @freeze_time("2025-02-20")  # during the 2024 campaign
     @authenticate
-    def test_error_groupe_with_teledeclaration_during_campaign(self):
+    def test_error_groupe_with_teledeclaration_during_campaign(self, mock):
         """
         User cannot add a satellite to a groupe that has a teledeclared diagnostic for the current campaign during the teledeclaration campaign
         """
@@ -319,6 +341,7 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
         self.teledeclaration.teledeclare(applicant=authenticate.user)
 
         # Import
+        mock_validata_response(mock, "canteens_create_bad_groupe_teledeclared.csv")
         file_path = "./api/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -334,8 +357,9 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
             errors[0]["message"],
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_success_groupe_with_teledeclaration_after_campaign(self):
+    def test_success_groupe_with_teledeclaration_after_campaign(self, mock):
         """
         User can add a satellite to a groupe that has a teledeclared diagnostic for the current campaign after the teledeclaration campaign
         """
@@ -347,6 +371,7 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
 
         # Import
         with freeze_time("2025-07-20"):
+            mock_validata_response(mock, "canteens_create_bad_groupe_teledeclared.csv")
             file_path = "./api/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
             with open(file_path) as canteen_file:
                 response = self.client.post(self.url, {"file": canteen_file})
@@ -358,9 +383,10 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
             self.assertEqual(len(body["canteens"]), 1)
             self.assertEqual(len(errors), 0)
 
+    @requests_mock.Mocker(real_http=True)
     @freeze_time("2025-01-20")  # during the 2024 campaign
     @authenticate
-    def test_success_groupe_teledeclaration_cancelled_during_campaign(self):
+    def test_success_groupe_teledeclaration_cancelled_during_campaign(self, mock):
         """
         User can add a satellite to a groupe that does not have a teledeclared diagnostic for the current campaign during the campaign
         """
@@ -372,6 +398,7 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
         self.teledeclaration.cancel()
 
         # Import
+        mock_validata_response(mock, "canteens_create_bad_groupe_teledeclared.csv")
         file_path = "./api/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -390,13 +417,15 @@ class CanteensImportApiSuccessTest(APITestCase):
     def setUpTestData(cls):
         cls.url = reverse("canteens_create_import")
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_import_only_canteens(self):
+    def test_import_only_canteens(self, mock):
         """
         Should be able to import canteens
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_good.csv")
         file_path = "./api/tests/files/canteens/canteens_good.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -410,14 +439,16 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(len(body["canteens"]), 3)
         self.assertEqual(len(errors), 0, errors)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_canteens_import_with_managers(self):
+    def test_canteens_import_with_managers(self, mock):
         """
         Should be able to import canteens with managers
         """
         manager = UserFactory(email="manager@example.com")
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_good_add_manager.csv")
         file_path = "./api/tests/files/canteens/canteens_good_add_manager.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -432,13 +463,15 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(len(errors), 0, errors)
         self.assertIn(manager, Canteen.objects.first().managers.all())
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_sectors_apostrophes(self):
+    def test_sectors_apostrophes(self, mock):
         """
         Different apostrophes caracters should be accepted but a unique one should be saved
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_sectors.csv")
         file_path = "./api/tests/files/canteens/canteens_sectors.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -455,13 +488,15 @@ class CanteensImportApiSuccessTest(APITestCase):
         body = response.json()
         self.assertEqual(len(errors), 0, errors)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_sectors_less_or_equal_max(self):
+    def test_sectors_less_or_equal_max(self, mock):
         """
         Canteen can have 3 sectors or less
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_good_max_sectors.csv")
         file_path = "./api/tests/files/canteens/canteens_good_max_sectors.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -474,13 +509,15 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(len(errors), 0, errors)
         self.assertEqual(Canteen.objects.count(), 3)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_import_excel_file(self):
+    def test_import_excel_file(self, mock):
         """
         User can import excel file
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_good.xlsx")
         file_path = "./api/tests/files/canteens/canteens_good.xlsx"
         with open(file_path, "rb") as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -498,13 +535,15 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(canteen.creation_user, authenticate.user)
         self.assertEqual(canteen.creation_source, CreationSource.IMPORT)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_import_with_choices_slug_value(self):
+    def test_import_with_choices_slug_value(self, mock):
         """
         Should be able to import canteens
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_good_choices_slug_values.csv")
         file_path = "./api/tests/files/canteens/canteens_good_choices_slug_values.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -518,8 +557,9 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(len(body["canteens"]), 3)
         self.assertEqual(len(errors), 0, errors)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_import_with_groupe_id(self):
+    def test_import_with_groupe_id(self, mock):
         """
         Should be able to import canteens with groupe id
         """
@@ -528,6 +568,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         )
         self.assertEqual(Canteen.objects.count(), 1)
 
+        mock_validata_response(mock, "canteens_good_groupe.csv")
         file_path = "./api/tests/files/canteens/canteens_good_groupe.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
@@ -543,13 +584,15 @@ class CanteensImportApiSuccessTest(APITestCase):
         canteen_satellite = Canteen.objects.get(siret="50250039850458")
         self.assertEqual(canteen_satellite.groupe, canteen_groupe)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_import_with_line_ministry(self):
+    def test_import_with_line_ministry(self, mock):
         """
         Should be able to import canteens with line ministry
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
+        mock_validata_response(mock, "canteens_good_line_ministry.csv")
         file_path = "./api/tests/files/canteens/canteens_good_line_ministry.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})

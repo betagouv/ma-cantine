@@ -1,0 +1,102 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "message": "La ligne vide doit être retirée de la table",
+        "rowNumber": 3,
+        "tags": [
+          "#table",
+          "#row"
+        ],
+        "title": "Ligne vide",
+        "type": "blank-row"
+      },
+      {
+        "message": "La ligne vide doit être retirée de la table",
+        "rowNumber": 4,
+        "tags": [
+          "#table",
+          "#row"
+        ],
+        "title": "Ligne vide",
+        "type": "blank-row"
+      }
+    ],
+    "stats": {
+      "errors": 2,
+      "fields": 12,
+      "rows": 3,
+      "rows_processed": 3,
+      "seconds": null,
+      "warnings": 0
+    },
+    "valid": false,
+    "warnings": []
+  },
+  "resource_data": [
+    [
+      "siret",
+      "nom",
+      "siret_cuisine_centrale",
+      "nombre_repas_jour",
+      "nombre_repas_an",
+      "secteurs",
+      "type_production",
+      "type_gestion",
+      "modèle_économique",
+      "groupe_id",
+      "administration_tutelle",
+      "gestionnaires_additionnels"
+    ],
+    [
+      "21340172201787",
+      "A canteen",
+      "",
+      "700",
+      "14000",
+      "Cliniques,Hôpitaux",
+      "Restaurant avec cuisine sur place",
+      "Concédée",
+      "Public",
+      "",
+      "",
+      ""
+    ],
+    [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_creer.json",
+  "url": null,
+  "version": "0.12.5"
+}

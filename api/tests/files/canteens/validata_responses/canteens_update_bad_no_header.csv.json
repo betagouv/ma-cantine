@@ -1,0 +1,38 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "message": "frictionless encountered an unexpected error. This is likely an internal error  (error message: 'Row does not have a field cantine_id').",
+        "tags": [],
+        "title": "Error",
+        "type": "error"
+      }
+    ],
+    "stats": {
+      "errors": 1,
+      "fields": -1,
+      "rows": 1,
+      "rows_processed": -1,
+      "seconds": null,
+      "warnings": 0
+    },
+    "valid": false,
+    "warnings": []
+  },
+  "resource_data": [
+    [
+      "some random content without header"
+    ],
+    [
+      "this is not valid"
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_modifier.json",
+  "url": null,
+  "version": "0.12.5"
+}
