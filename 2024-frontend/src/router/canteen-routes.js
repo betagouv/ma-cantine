@@ -5,11 +5,11 @@ import GestionnaireCantineTeledeclarationEnCours from "@/views/GestionnaireCanti
 import GestionnaireCantineTeledeclarations from "@/views/GestionnaireCantineTeledeclarations.vue"
 import GestionnaireCantineGestionnaires from "@/views/GestionnaireCantineGestionnaires.vue"
 import GestionnaireCantinePagePublique from "@/views/GestionnaireCantinePagePublique.vue"
-
 import LayoutSidebarCanteen from "@/layouts/LayoutSidebarCanteen.vue"
+import campaignService from "@/services/campaigns.js"
 
 /* Route */
-const currentYear = new Date().getFullYear()
+const currentYear = window.TELEDECLARATION_YEAR
 const canteenRoutes = {
   path: "",
   component: LayoutSidebarCanteen,
@@ -48,6 +48,11 @@ const canteenRoutes = {
           { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
           { to: { name: "GestionnaireCantine" }, useCanteenName: true },
         ],
+      },
+      beforeEnter: async (to) => {
+        const currentCampaign = await campaignService.getCampaignDates(currentYear)
+        if (currentCampaign.inTeledeclaration || currentCampaign.inCorrection) return true
+        return { name: "GestionnaireCantineTeledeclarations", params: to.params }
       },
     },
     {
