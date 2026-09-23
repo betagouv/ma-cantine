@@ -29,6 +29,18 @@ const updateDiagnostic = (canteenId, diagnosticId, payload) => {
     .catch((e) => e)
 }
 
+const fetchDiagnostic = (canteenId, diagnosticId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 const fetchDiagnostics = (canteenId, limit) => {
   const query = limit ? `?limit=${limit}` : ""
   return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${query}`, {
@@ -82,6 +94,7 @@ export default {
   createDiagnostic,
   updateDiagnostic,
   checkDiagnostic,
+  fetchDiagnostic,
   fetchDiagnostics,
   fetchDiagnosticsRecap,
   teledeclareDiagnostic,

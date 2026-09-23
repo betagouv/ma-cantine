@@ -10,6 +10,7 @@ import documentation from "@/data/documentation.json"
 
 const props = defineProps(["canteen", "nav", "active"])
 const router = useRouter()
+const emit = defineEmits(["save"])
 
 /* Navigation */
 const generateNav = (name) => {
@@ -19,7 +20,6 @@ const generateNav = (name) => {
 
   for (let i = 0; i < list.length; i++) {
     const isCurrent = i === activeIndex
-    console.log(list[i].to.name)
     links.push({
       disabled: activeIndex === -1,
       type: isCurrent ? 'secondary' : 'tertiary',
@@ -57,7 +57,7 @@ const goTo = (to) => router.push(to)
               :key="link.to.name"
               :[link.type]="true"
               class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              @click="goTo(link.to)"
+              @click="emit('save', link.pageName)"
             >
               <TunnelTeledeclarationIconCheck v-if="!link.icon" :fieldsPageName="link.pageName" class="fr-mr-1w" />
               <span v-else :class="`${link.icon} ma-cantine--icon-xs`" ></span>
