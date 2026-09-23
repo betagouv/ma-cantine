@@ -6,6 +6,29 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.50.2](https://github.com/betagouv/ma-cantine/compare/v2026.50.1...v2026.50.2) (2026-09-23)
+
+
+### Améliorations
+
+* **CI:** Backend: la faire tourner seulement si il y a eu des changements dans certains dossiers ([#7169](https://github.com/betagouv/ma-cantine/issues/7169)) ([fabbb23](https://github.com/betagouv/ma-cantine/commit/fabbb234ec3c1e2fcccf9da4095d7d4283044b2b))
+* **CI:** Frontend: la faire tourner seulement si il y a eu des changements dans les dossiers frontend ([#7168](https://github.com/betagouv/ma-cantine/issues/7168)) ([d3952ec](https://github.com/betagouv/ma-cantine/commit/d3952ec78dfa148100ec0009c3497fe6b17984d3))
+* **CI:** nouvelle CI dédiée à dbt ([#7162](https://github.com/betagouv/ma-cantine/issues/7162)) ([b5ca809](https://github.com/betagouv/ma-cantine/commit/b5ca809f2d7aea2937d19dc5fbfdc3cb263e1d08))
+* **CI:** séparer les tests backend et frontend (parallel) ([#7160](https://github.com/betagouv/ma-cantine/issues/7160)) ([567cc15](https://github.com/betagouv/ma-cantine/commit/567cc153b939acd33c6f747b673bf404e750576f))
+* **Télédéclaration:** redirige vers la page des justificatifs une fois la télédéclaration terminée ([#7164](https://github.com/betagouv/ma-cantine/issues/7164)) ([d38d593](https://github.com/betagouv/ma-cantine/commit/d38d593c1bf57245ff72c8632570121aae8ca900))
+* **Télédéclarations:** au moment de télédéclarer, lancer `full_clean` (toutes nos validations) ([#7136](https://github.com/betagouv/ma-cantine/issues/7136)) ([b7cf127](https://github.com/betagouv/ma-cantine/commit/b7cf12731db5147cb924008bff40168a47fd807f))
+
+
+### Corrections (bugs, typos...)
+
+* **Achats:** API: augmente la taille de fichiers autorisés pour l'envoi d'une facture ([#7159](https://github.com/betagouv/ma-cantine/issues/7159)) ([1414cc5](https://github.com/betagouv/ma-cantine/commit/1414cc535bcddc0c9fa304e031e8f89c83426d57))
+
+
+### Technique
+
+* **Diagnostics:** réinitialiser à None si le calcul du pourcentage n'est pas possible ([#7167](https://github.com/betagouv/ma-cantine/issues/7167)) ([430113d](https://github.com/betagouv/ma-cantine/commit/430113d91a9db65513019c6fc71c81fc9b07611e))
+* **Télédéclarations:** ajouter des tests sur label_group_sum & label_group_group_sum ([#7157](https://github.com/betagouv/ma-cantine/issues/7157)) ([9b031da](https://github.com/betagouv/ma-cantine/commit/9b031da6e803a0904769ede704dea77e7efaf5af))
+
 ## [2026.50.1](https://github.com/betagouv/ma-cantine/compare/v2026.50.0...v2026.50.1) (2026-09-22)
 
 
