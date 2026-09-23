@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from "vue"
 import { storeToRefs } from "pinia"
-import { useRoute, useRouter } from "vue-router"
+import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import canteenServices from "@/services/canteens"
@@ -9,6 +9,7 @@ import diagnosticServices from "@/services/diagnostics"
 import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
 import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
 import TunnelTeledeclarationModalErrors from "@/components/TunnelTeledeclarationModalErrors.vue"
+import TunnelTeledeclarationModalQuit from "@/components/TunnelTeledeclarationModalQuit.vue"
 
 const route = useRoute()
 const router = useRouter()
@@ -62,6 +63,24 @@ const displayModal = (errors, page) => {
   modalLink.value = page
 }
 
+/* Quit tunnel with unsaved data */
+const showQuitModal = ref(false)
+const quitRoute = ref(null)
+const quitConfirmed = ref(false)
+
+onBeforeRouteLeave((to) => {
+  if (quitConfirmed.value || !teledeclarationStore.hasDiagnostic || teledeclarationStore.isSaved()) return true
+  quitRoute.value = to.fullPath
+  showQuitModal.value = true
+  return false
+})
+
+const quit = () => {
+  showQuitModal.value = false
+  quitConfirmed.value = true
+  router.push(quitRoute.value)
+}
+
 /* Redirect */
 const goTo = (page) => {
   showModal.value = false
@@ -88,6 +107,11 @@ const goTo = (page) => {
       :errors="modalErrors"
       @close="showModal = false"
       @continue="goTo(modalLink)"
+    />
+    <TunnelTeledeclarationModalQuit
+      :opened="showQuitModal"
+      @close="showQuitModal = false"
+      @continue="quit"
     />
   </div>
 </template>
