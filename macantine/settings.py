@@ -229,6 +229,7 @@ if default_file_storage == "storages.backends.s3.S3Storage":
 
 MEDIA_ROOT = os.getenv("MEDIA_ROOT", os.path.join(BASE_DIR, "media"))
 MEDIA_URL = "/media/"
+DATA_UPLOAD_MAX_MEMORY_SIZE = 15 * 1024 * 1024  # 15 Mo (for invoices files)
 
 CACHES = {
     "default": {
