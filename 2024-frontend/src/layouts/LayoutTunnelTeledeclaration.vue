@@ -3,6 +3,9 @@ import { computed, ref } from "vue"
 import { storeToRefs } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
+import canteenServices from "@/services/canteens"
+import diagnosticServices from "@/services/diagnostics"
 import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
 import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
 import TunnelTeledeclarationModalErrors from "@/components/TunnelTeledeclarationModalErrors.vue"
@@ -21,6 +24,33 @@ const stepIndex = computed(() => routerSteps.value.findIndex((step) => step.to.n
 /* Store */
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
+const teledeclarationStore = useStoreTeledeclaration()
+const { diagnostic } = storeToRefs(teledeclarationStore)
+
+/* Save */
+const save = async (page) => {
+  teledeclarationStore.clearErrors()
+  await teledeclarationStore.saveDiagnostic()
+  const check = await checkIsFilled()
+  if (check.isFilled) goTo(page)
+  else checkErrors(check.errors, page)
+}
+
+/* Errors */
+const checkErrors = async (errors, page) => {
+  await teledeclarationStore.addErrorsFromCheck(errors)
+  const pageErrors = teledeclarationStore.getErrorsPage(route.name, canteenInformations.value.isGroupe)
+  if (pageErrors.length > 0) displayModal(pageErrors, page)
+  else goTo(page)
+}
+
+const checkIsFilled = async () => {
+  const canteenId = diagnostic.value.canteenId
+  const diagnosticId = diagnostic.value.id
+  const checkCanteen = await canteenServices.checkCanteen(canteenId)
+  const checkDiagnostic = await diagnosticServices.checkDiagnostic(canteenId, diagnosticId)
+  return { isFilled: checkCanteen.isFilled && checkDiagnostic.isFilled, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
+}
 
 /* Modal */
 const showModal = ref(false)
@@ -45,7 +75,7 @@ const goTo = (page) => {
         <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" />
       </div>
       <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-4w">
-        <TunnelTeledeclarationTopNav @errors="displayModal" />
+        <TunnelTeledeclarationTopNav @save="save" />
         <div class="fr-mt-2w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
           <h1 v-else>{{ routeTitle }}</h1>
