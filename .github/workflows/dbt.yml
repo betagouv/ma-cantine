@@ -1,0 +1,40 @@
+name: "ma cantine: dbt"
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+    paths:
+      - "dbt/**"
+      - ".github/workflows/dbt.yml"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint:
+    name: "lint"
+    runs-on: ubuntu-latest
+    # Skip if PR is in draft
+    if: ${{ !github.event.pull_request.draft }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "latest"
+          enable-cache: true
+
+      - name: Install dependencies
+        run: |
+          uv sync
+
+      - name: sqlfluff lint
+        run: |
+          uv run sqlfluff lint dbt/models/
