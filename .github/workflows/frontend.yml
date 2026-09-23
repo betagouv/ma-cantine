@@ -7,9 +7,10 @@ on:
       - synchronize
       - reopened
       - ready_for_review
-    paths-ignore:
-      - "**.md"
-      - "web/static/documents/**"
+    paths:
+      - "frontend/**"
+      - "2024-frontend/**"
+      - ".github/workflows/frontend.yml"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
