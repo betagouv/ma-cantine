@@ -10,6 +10,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const year = 2026 // Force for testing, improve ??
   const diagnosticErrors = ref([])
   const hasDiagnostic = computed(() => diagnostic.value !== null)
+  const diagnosticSaved = ref(false)
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
@@ -22,6 +23,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const diagnosticCheck = await diagnosticService.checkDiagnostic(canteenId, diagnosticYear.id)
     const canteenCheck = await canteenService.checkCanteen(canteenId)
     addErrorsFromCheck({...diagnosticCheck.errors, ...canteenCheck.errors})
+    diagnosticSaved.value = true
   }
 
   /* Save diagnostic */
@@ -31,6 +33,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const diagnosticValues = diagnostic.value
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
     if (response.status === "error") addErrorsFromServor(response.list)
+    diagnosticSaved.value = true
     return response
   }
 
@@ -42,11 +45,13 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Set all diagnostic */
   function setDiagnostic(newDiagnostic) {
     diagnostic.value = newDiagnostic
+    diagnosticSaved.value = false
   }
 
   /* Set value for diagnostic */
   function setValue(field, value) {
     diagnostic.value[field] = value
+    diagnosticSaved.value = false
   }
 
   /* Empty store */
@@ -105,6 +110,11 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return year
   }
 
+  /* Is saved */
+  function isSaved() {
+    return diagnosticSaved.value
+  }
+
   return {
     diagnostic,
     diagnosticErrors,
@@ -120,7 +130,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     getErrorsPage,
     getErrorsGroup,
     isFieldError,
-    getErrorMessage
+    getErrorMessage,
+    isSaved,
   }
 })
 
