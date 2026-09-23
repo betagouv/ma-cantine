@@ -1031,6 +1031,15 @@ class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
         self.assertTrue(diagnostic.compute_objectifs_egalim_atteints())
         self.assertTrue(diagnostic.objectifs_egalim_atteints)
 
+        # if valeur_totale is emptied, then set the fields back to None
+        diagnostic.valeur_totale = None
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertIsNone(diagnostic.pourcentage_bio)
+        self.assertIsNone(diagnostic.pourcentage_egalim_hors_bio)
+        self.assertIsNone(diagnostic.compute_objectifs_egalim_atteints())
+        self.assertIsNone(diagnostic.objectifs_egalim_atteints)
+
 
 class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
     @classmethod
