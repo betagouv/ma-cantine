@@ -10,6 +10,9 @@ on:
     paths-ignore:
       - "**.md"
       - "web/static/documents/**"
+      - "frontend/**"
+      - "2024-frontend/**"
+      - "dbt/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
