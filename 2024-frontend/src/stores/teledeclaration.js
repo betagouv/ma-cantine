@@ -10,7 +10,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const year = 2026 // Force for testing, improve ??
   const diagnosticErrors = ref([])
   const hasDiagnostic = computed(() => diagnostic.value !== null)
-  const diagnosticSaved = ref(false)
+  const isSaved = ref(true)
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
@@ -23,7 +23,6 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const diagnosticCheck = await diagnosticService.checkDiagnostic(canteenId, diagnosticYear.id)
     const canteenCheck = await canteenService.checkCanteen(canteenId)
     addErrorsFromCheck({...diagnosticCheck.errors, ...canteenCheck.errors})
-    diagnosticSaved.value = true
   }
 
   /* Save diagnostic */
@@ -32,9 +31,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const canteenId = diagnostic.value.canteenId
     const diagnosticValues = diagnostic.value
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
-    const hasErrors = response.status === "error"
-    if (hasErrors) addErrorsFromServor(response.list)
-    diagnosticSaved.value = !hasErrors
+    if (response.status === "error") addErrorsFromServor(response.list)
+    else isSaved.value = true
     return response
   }
 
@@ -46,19 +44,20 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Set all diagnostic */
   function setDiagnostic(newDiagnostic) {
     diagnostic.value = newDiagnostic
-    diagnosticSaved.value = false
+    isSaved.value = true
   }
 
   /* Set value for diagnostic */
   function setValue(field, value) {
     diagnostic.value[field] = value
-    diagnosticSaved.value = false
+    isSaved.value = false
   }
 
   /* Empty store */
   function deleteStore() {
     diagnostic.value = null
     canteenSavedId.value = null
+    isSaved.value = true
   }
 
   /* Set diagnostic errors */
@@ -111,15 +110,11 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return year
   }
 
-  /* Is saved */
-  function isSaved() {
-    return diagnosticSaved.value
-  }
-
   return {
     diagnostic,
     diagnosticErrors,
     hasDiagnostic,
+    isSaved,
     initStore,
     deleteStore,
     getYear,
@@ -132,7 +127,6 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     getErrorsGroup,
     isFieldError,
     getErrorMessage,
-    isSaved,
   }
 })
 

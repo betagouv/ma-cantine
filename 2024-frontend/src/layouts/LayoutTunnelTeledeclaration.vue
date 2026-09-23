@@ -69,13 +69,13 @@ const quitRoute = ref(null)
 const quitConfirmed = ref(false)
 
 const quitBrowser = (event) => {
-  if (!teledeclarationStore.hasDiagnostic || teledeclarationStore.isSaved()) return
+  if (!teledeclarationStore.hasDiagnostic || teledeclarationStore.isSaved) return
   event.preventDefault()
   event.returnValue = ""
 }
 
 const quitTunnel = (to) => {
-  if (quitConfirmed.value || !teledeclarationStore.hasDiagnostic || teledeclarationStore.isSaved()) return true
+  if (quitConfirmed.value || !teledeclarationStore.hasDiagnostic || teledeclarationStore.isSaved) return true
   quitRoute.value = to.fullPath
   showQuitModal.value = true
   return false
