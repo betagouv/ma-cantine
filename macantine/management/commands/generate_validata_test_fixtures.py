@@ -9,18 +9,39 @@ from django.core.management.base import BaseCommand
 
 VALIDATA_PROD_API_URL = "https://api.validata.etalab.studio/validate"
 
-FILES_DIR = Path(settings.BASE_DIR) / "api/tests/files/canteens"
-RESPONSES_DIR = FILES_DIR / "validata_responses"
+TESTS_DIR = Path(settings.BASE_DIR) / "api/tests"
+FILES_DIR = TESTS_DIR / "files"
+SCHEMAS_BASE_URL = f"{settings.GITHUB_RAW_BASE_URL}/data/schemas/imports"
 
-# Maps each test file to the schema its imports are validated against.
+# Maps each (test file, category) pair to the schema its imports are validated against.
+# `category` is the mock_validata_response(mock, filename, category=...) argument, which is
+# also the api/tests/files/ subdirectory the fixture (and its source CSV/XLSX) lives in.
+# Most test files only ever validate against one schema, so their calls omit `category` and
+# fall back to its default ("canteens"). Test files that exercise more than one schema (e.g.
+# diagnostics-simple import by SIRET vs by id) pass `category` explicitly per call to pick
+# the right one below.
 SCHEMA_URLS = {
-    Path(settings.BASE_DIR)
-    / "api/tests/test_canteens_create_import.py": f"{settings.GITHUB_RAW_BASE_URL}/data/schemas/imports/cantines_creer.json",
-    Path(settings.BASE_DIR)
-    / "api/tests/test_canteens_update_import.py": f"{settings.GITHUB_RAW_BASE_URL}/data/schemas/imports/cantines_modifier.json",
+    ("test_canteens_create_import.py", "canteens"): f"{SCHEMAS_BASE_URL}/cantines_creer.json",
+    ("test_canteens_update_import.py", "canteens"): f"{SCHEMAS_BASE_URL}/cantines_modifier.json",
+    ("test_canteens_managers_import.py", "canteen_managers"): f"{SCHEMAS_BASE_URL}/cantines_gestionnaires.json",
+    ("test_purchases_import.py", "achats"): f"{SCHEMAS_BASE_URL}/achats_siret.json",
+    ("test_purchases_import.py", "achats_id"): f"{SCHEMAS_BASE_URL}/achats_id.json",
+    ("test_purchases_import_old.py", "achats"): f"{SCHEMAS_BASE_URL}/achats_siret_old.json",
+    ("test_purchases_import_old.py", "achats_id"): f"{SCHEMAS_BASE_URL}/achats_id_old.json",
+    ("test_diagnostics_complete_import.py", "diagnostics_complete"): f"{SCHEMAS_BASE_URL}/bilans_detaille.json",
+    ("test_diagnostics_simple_import.py", "diagnostics_simple"): f"{SCHEMAS_BASE_URL}/bilans_simple_siret.json",
+    ("test_diagnostics_simple_import.py", "diagnostics"): f"{SCHEMAS_BASE_URL}/bilans_simple_id.json",
 }
 
-MOCK_CALL_RE = re.compile(r'mock_validata_response\(mock,\s*"([^"]+)"\)')
+# Some categories don't have their own api/tests/files/ subdirectory: their source CSV/XLSX
+# fixtures physically live alongside another category's (only the schema differs), so their
+# captured Validata responses are cached separately under their own category name, but read
+# their source file from this directory instead.
+SOURCE_DIR_OVERRIDES = {
+    "achats_id": "achats",
+}
+
+MOCK_CALL_RE = re.compile(r'mock_validata_response\(\s*mock,\s*"([^"]+)"(?:,\s*category="([^"]+)")?,?\s*\)')
 
 
 class Command(BaseCommand):
@@ -31,9 +52,9 @@ class Command(BaseCommand):
     """
 
     help = (
-        "Regenerate the captured Validata API responses used to mock canteen import tests "
-        "(see api/tests/files/canteens/validata_responses/README.md). Calls the real, live "
-        "Validata API, so it requires internet access."
+        "Regenerate the captured Validata API responses used to mock canteen/purchase/diagnostic "
+        "import tests (see api/tests/files/<category>/validata_responses/README.md). Calls the "
+        "real, live Validata API, so it requires internet access."
     )
 
     def add_arguments(self, parser):
@@ -43,7 +64,7 @@ class Command(BaseCommand):
             help=(
                 "Specific fixture filenames to regenerate (e.g. canteens_good.csv). "
                 "Defaults to every file referenced via mock_validata_response(mock, ...) "
-                "in the canteen create/update import tests."
+                "in the canteen/purchase/diagnostic import tests."
             ),
         )
 
@@ -52,28 +73,33 @@ class Command(BaseCommand):
 
         if options["filenames"]:
             wanted = set(options["filenames"])
-            missing = wanted - targets.keys()
+            found = {filename for _, filename in targets}
+            missing = wanted - found
             if missing:
                 self.stderr.write(
                     f"Not referenced by mock_validata_response(...) in any test, skipping: {', '.join(sorted(missing))}"
                 )
-            targets = {name: url for name, url in targets.items() if name in wanted}
+            targets = {
+                (category, filename): url for (category, filename), url in targets.items() if filename in wanted
+            }
 
-        RESPONSES_DIR.mkdir(exist_ok=True)
-        for filename, schema_url in sorted(targets.items()):
-            self._capture(filename, schema_url)
+        for (category, filename), schema_url in sorted(targets.items()):
+            self._capture(category, filename, schema_url)
 
     def _discover_targets(self) -> dict:
         targets = {}
-        for test_file, schema_url in SCHEMA_URLS.items():
-            for filename in MOCK_CALL_RE.findall(test_file.read_text()):
-                targets[filename] = schema_url
+        for (test_file, category), schema_url in SCHEMA_URLS.items():
+            content = (TESTS_DIR / test_file).read_text()
+            for filename, explicit_category in MOCK_CALL_RE.findall(content):
+                if (explicit_category or "canteens") == category:
+                    targets[(category, filename)] = schema_url
         return targets
 
-    def _capture(self, filename, schema_url):
-        file_path = FILES_DIR / filename
+    def _capture(self, category, filename, schema_url):
+        source_dir = FILES_DIR / SOURCE_DIR_OVERRIDES.get(category, category)
+        file_path = source_dir / filename
         if not file_path.exists():
-            self.stderr.write(f"{filename}: source file not found at {file_path}, skipping")
+            self.stderr.write(f"{category}/{filename}: source file not found at {file_path}, skipping")
             return
 
         content_type = mimetypes.guess_type(filename)[0] or "text/csv"
@@ -90,10 +116,12 @@ class Command(BaseCommand):
         if "report" in data:
             data["report"]["stats"]["seconds"] = None
 
-        out_path = RESPONSES_DIR / f"{filename}.json"
+        responses_dir = FILES_DIR / category / "validata_responses"
+        responses_dir.mkdir(parents=True, exist_ok=True)
+        out_path = responses_dir / f"{filename}.json"
         with open(out_path, "w") as out:
             json.dump(data, out, indent=2, ensure_ascii=False)
             out.write("\n")
 
         error_count = len(data.get("report", {}).get("errors", [])) if "report" in data else "N/A (top-level error)"
-        self.stdout.write(f"{filename}: status={response.status_code} errors={error_count} -> {out_path}")
+        self.stdout.write(f"{category}/{filename}: status={response.status_code} errors={error_count} -> {out_path}")

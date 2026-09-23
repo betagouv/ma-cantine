@@ -1,0 +1,40 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [],
+    "stats": {
+      "errors": 0,
+      "fields": 3,
+      "rows": 2,
+      "rows_processed": 2,
+      "seconds": null,
+      "warnings": 0
+    },
+    "valid": true,
+    "warnings": []
+  },
+  "resource_data": [
+    [
+      "siret",
+      "gestionnaires_additionnels",
+      "source_donnees"
+    ],
+    [
+      "21340172201787",
+      "manager1@example.com,manager2@example.com",
+      "test_import"
+    ],
+    [
+      "40419443300078",
+      "invalid-email,manager3@example.com",
+      "test_import"
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_gestionnaires.json",
+  "url": null,
+  "version": "0.12.5"
+}

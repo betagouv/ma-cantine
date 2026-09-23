@@ -1,14 +1,15 @@
 from decimal import Decimal
 from unittest import skipIf
 
+import requests_mock
+from django.conf import settings
 from django.test.utils import override_settings
 from django.urls import reverse
 from freezegun import freeze_time
-from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.tests.utils import assert_import_failure_created, authenticate
+from api.tests.utils import assert_import_failure_created, authenticate, mock_validata_response
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic, ImportFailure, ImportType
 from data.models.creation_source import CreationSource
@@ -24,14 +25,16 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_header_error(self):
+    def test_validata_header_error(self, mock):
         """
         A file should not be valid if it doesn't contain a valid header
         """
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         # header missing
+        mock_validata_response(mock, "diagnostics_simple_bad_no_header.csv", category="diagnostics_simple")
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_no_header.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -46,14 +49,16 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         for error in errors:
             self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_header_extra_error(self):
+    def test_validata_header_extra_error(self, mock):
         """
         A file should not be valid if it doesn't contain a valid header
         """
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         # wrong header
+        mock_validata_response(mock, "diagnostics_simple_bad_wrong_header.csv", category="diagnostics_simple")
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_wrong_header.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -71,13 +76,15 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             "Supprimer les 3 colonnes en excès et toutes les données présentes dans ces dernières. Il se peut qu'un espace ou un symbole invisible soit présent dans votre fichier, en cas de doute faite un copier-coller des données dans un nouveau document.",
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_empty_rows_error(self):
+    def test_validata_empty_rows_error(self, mock):
         """
         A file should not be valid if it contains empty rows (Validata)
         """
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(mock, "diagnostics_simple_bad_empty_rows.csv", category="diagnostics_simple")
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_empty_rows.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -93,8 +100,9 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             errors[0]["field"].startswith("ligne vide"),
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_format_error(self):
+    def test_validata_format_error(self, mock):
         """
         Errors returned by Validata
         """
@@ -110,6 +118,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 8)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(mock, "diagnostics_simple_bad_format.csv", category="diagnostics_simple")
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_format.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -147,9 +156,10 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(errors[9]["field"], "siret")
         self.assertEqual(errors[9]["message"], "Les valeurs de cette colonne doivent être uniques")
 
+    @requests_mock.Mocker(real_http=True)
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
-    def test_model_validation_error(self):
+    def test_model_validation_error(self, mock):
         """
         Errors returned by model validation
         """
@@ -175,6 +185,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 15)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(mock, "diagnostics_simple_bad.csv", category="diagnostics_simple")
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -297,10 +308,12 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             errors[0]["message"], "Ce fichier est trop grand, merci d'utiliser un fichier de moins de 10Mo"
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_file_bad_format(self):
+    def test_file_bad_format(self, mock):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(mock, "diagnostics_simple_bad_file_format.ods", category="diagnostics_simple")
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_file_format.ods"
         with open(file_path, "rb") as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -311,8 +324,9 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertIn("Une erreur inconnue", errors[0]["message"])
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_update_diagnostic_teledeclared(self):
+    def test_update_diagnostic_teledeclared(self, mock):
         """
         If a diagnostic with a valid TD already exists for the canteen, throw an error
         If the TD is cancelled, allow update
@@ -323,6 +337,9 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         with freeze_time("2026-03-30"):  # during the 2025 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
 
+            mock_validata_response(
+                mock, "diagnostics_simple_good_one_canteen_seperator_semicolon.csv", category="diagnostics_simple"
+            )
             file_path = (
                 "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
             )
@@ -353,10 +370,14 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             diagnostic.refresh_from_db()
             self.assertEqual(diagnostic.valeur_totale, 1000)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_canteen_not_found_with_siret(self):
+    def test_canteen_not_found_with_siret(self, mock):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(
+            mock, "diagnostics_simple_good_one_canteen_seperator_semicolon.csv", category="diagnostics_simple"
+        )
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -370,11 +391,15 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             "Une cantine avec le siret « 21340172201787 » n'existe pas sur la plateforme.",
         )
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_user_not_canteen_manager(self):
+    def test_user_not_canteen_manager(self, mock):
         CanteenFactory(siret="21340172201787", managers=[])
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(
+            mock, "diagnostics_simple_good_one_canteen_seperator_semicolon.csv", category="diagnostics_simple"
+        )
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -385,10 +410,12 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(errors[0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_when_errors_count_is_0(self):
+    def test_when_errors_count_is_0(self, mock):
         CanteenFactory(siret="21340172201787", managers=[authenticate.user])
 
+        mock_validata_response(mock, "diagnostics_simple_bad_one_error.csv", category="diagnostics_simple")
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_one_error.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -401,9 +428,10 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
+    @requests_mock.Mocker(real_http=True)
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
-    def test_diagnostics_created(self):
+    def test_diagnostics_created(self, mock):
         """
         Given valid data, multiple diagnostics are created for multiple canteens,
         the authenticated user is added as the manager
@@ -415,6 +443,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(mock, "diagnostics_simple_good_different_canteens.csv", category="diagnostics_simple")
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -477,13 +506,15 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_2.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
 
+    @requests_mock.Mocker(real_http=True)
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
-    def test_diagnostics_created_excel_file(self):
+    def test_diagnostics_created_excel_file(self, mock):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
         self.assertEqual(Canteen.objects.count(), 1)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(mock, "diagnostics_simple_good.xlsx", category="diagnostics_simple")
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good.xlsx"
         with open(file_path, "rb") as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -520,9 +551,10 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
+    @requests_mock.Mocker(real_http=True)
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
-    def test_update_existing_diagnostic(self):
+    def test_update_existing_diagnostic(self, mock):
         """
         If a diagnostic already exists for the canteen,
         update the diag with data from import file
@@ -530,6 +562,9 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1)
 
+        mock_validata_response(
+            mock, "diagnostics_simple_good_one_canteen_seperator_semicolon.csv", category="diagnostics_simple"
+        )
         file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -545,8 +580,9 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic.valeur_totale, 1000)
         self.assertEqual(diagnostic.valeur_bio, 500)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_update_diagnostic_cancelled_during_correction_campaign(self):
+    def test_update_diagnostic_cancelled_during_correction_campaign(self, mock):
         """
         If a canteen has a cancelled diagnostic,
         it can import a new diagnostic during the correction campaign
@@ -560,6 +596,9 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         with freeze_time("2026-04-17"):  # during the 2025 correction campaign
             diagnostic.cancel()
 
+            mock_validata_response(
+                mock, "diagnostics_simple_good_one_canteen_seperator_semicolon.csv", category="diagnostics_simple"
+            )
             file_path = (
                 "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
             )
@@ -574,10 +613,12 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_canteen_not_found_with_id(self):
+    def test_canteen_not_found_with_id(self, mock):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(mock, "diagnostics_simple_good_id.csv", category="diagnostics")
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
@@ -590,11 +631,13 @@ class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors.pop(0)["message"], "Une cantine avec l'id « 949 » n'existe pas sur la plateforme.")
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_user_not_canteen_manager_with_id(self):
+    def test_user_not_canteen_manager_with_id(self, mock):
         CanteenFactory(id=949, managers=[])
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(mock, "diagnostics_simple_good_id.csv", category="diagnostics")
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
@@ -610,15 +653,17 @@ class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
+    @requests_mock.Mocker(real_http=True)
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
-    def test_import_with_canteen_id(self):
+    def test_import_with_canteen_id(self, mock):
         """
         Tests that can import a file with id instead of siret
         """
         CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=949)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
+        mock_validata_response(mock, "diagnostics_simple_good_id.csv", category="diagnostics")
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
@@ -655,9 +700,10 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic.creation_source, CreationSource.IMPORT)
 
+    @requests_mock.Mocker(real_http=True)
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
-    def test_update_existing_diagnostic_with_id(self):
+    def test_update_existing_diagnostic_with_id(self, mock):
         """
         If a diagnostic already exists for the canteen (found by id),
         update the diag with data from import file
@@ -665,6 +711,7 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=949)
         diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1)
 
+        mock_validata_response(mock, "diagnostics_simple_good_id.csv", category="diagnostics")
         file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})

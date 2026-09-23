@@ -1,0 +1,329 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "cell": "",
+        "fieldName": "siret",
+        "fieldNumber": 1,
+        "message": "La valeur est obligatoire et doit être renseignée",
+        "rowNumber": 2,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Valeur manquante",
+        "type": "constraint-error"
+      },
+      {
+        "cell": "",
+        "fieldName": "description",
+        "fieldNumber": 2,
+        "message": "La valeur est obligatoire et doit être renseignée",
+        "rowNumber": 5,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Valeur manquante",
+        "type": "constraint-error"
+      },
+      {
+        "cell": "",
+        "fieldName": "famille_produits",
+        "fieldNumber": 6,
+        "message": "La valeur est obligatoire et doit être renseignée",
+        "rowNumber": 6,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Valeur manquante",
+        "type": "constraint-error"
+      },
+      {
+        "cell": "",
+        "fieldName": "date",
+        "fieldNumber": 4,
+        "message": "La valeur est obligatoire et doit être renseignée",
+        "rowNumber": 7,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Valeur manquante",
+        "type": "constraint-error"
+      },
+      {
+        "cell": "2022-02-31",
+        "fieldName": "date",
+        "fieldNumber": 4,
+        "message": "La date doit être écrite sous la forme `aaaa-mm-jj`",
+        "rowNumber": 8,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Format de date incorrect",
+        "type": "type-error"
+      },
+      {
+        "cell": "2022/03/01",
+        "fieldName": "date",
+        "fieldNumber": 4,
+        "message": "La date doit être écrite sous la forme `aaaa-mm-jj`",
+        "rowNumber": 9,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Format de date incorrect",
+        "type": "type-error"
+      },
+      {
+        "cell": "",
+        "fieldName": "prix_ht",
+        "fieldNumber": 5,
+        "message": "La valeur est obligatoire et doit être renseignée",
+        "rowNumber": 10,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Valeur manquante",
+        "type": "constraint-error"
+      },
+      {
+        "cell": "A price",
+        "fieldName": "prix_ht",
+        "fieldNumber": 5,
+        "message": "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal",
+        "rowNumber": 11,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Format de nombre incorrect",
+        "type": "type-error"
+      },
+      {
+        "cell": "NOPE",
+        "fieldName": "famille_produits",
+        "fieldNumber": 6,
+        "message": "NOPE ne respecte pas le motif imposé\n\n**Exemple valide** :\nVIANDES_VOLAILLES\n\n**Détails techniques** : la valeur doit respecter l'expression régulière `^ *(VIANDES_VOLAILLES|CHARCUTERIE|PRODUITS_DE_LA_MER|FRUITS_ET_LEGUMES|PRODUITS_LAITIERS|BOULANGERIE|BOISSONS|AUTRES) *$`)",
+        "rowNumber": 12,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Format incorrect",
+        "type": "constraint-error"
+      },
+      {
+        "cell": "BIO,NOPE",
+        "fieldName": "caracteristiques",
+        "fieldNumber": 7,
+        "message": "BIO,NOPE ne respecte pas le motif imposé\n\n**Exemple valide** :\nBIO,IGP\n\n**Détails techniques** : la valeur doit respecter l'expression régulière `^ *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|EUROPE|FRANCE|CIRCUIT_COURT|LOCAL)( *, *(BIO|LABEL_ROUGE|AOCAOP|IGP|STG|HVE|PECHE_DURABLE|RUP|COMMERCE_EQUITABLE|FERMIER|EXTERNALITES|PERFORMANCE|EUROPE|FRANCE|CIRCUIT_COURT|LOCAL))* *$`)",
+        "rowNumber": 13,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Format incorrect",
+        "type": "constraint-error"
+      },
+      {
+        "cell": "",
+        "fieldName": "definition_local",
+        "fieldNumber": 8,
+        "message": "La ligne n'a pas le même nombre de cellules que l'en-tête",
+        "rowNumber": 15,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Cellule manquante",
+        "type": "missing-cell"
+      }
+    ],
+    "stats": {
+      "errors": 11,
+      "fields": 8,
+      "rows": 14,
+      "rows_processed": 14,
+      "seconds": null,
+      "warnings": 0
+    },
+    "valid": false,
+    "warnings": []
+  },
+  "resource_data": [
+    [
+      "siret",
+      "description",
+      "fournisseur",
+      "date",
+      "prix_ht",
+      "famille_produits",
+      "caracteristiques",
+      "definition_local"
+    ],
+    [
+      "",
+      "Empty siret",
+      "Le bon traiteur",
+      "2022-05-02",
+      "90.11",
+      "PRODUITS_LAITIERS",
+      "BIO,LOCAL",
+      "DEPARTEMENT"
+    ],
+    [
+      "86180597100897",
+      "Non-existent canteen",
+      "Le bon traiteur",
+      "2022-05-02",
+      "90.11",
+      "PRODUITS_LAITIERS",
+      "BIO,LOCAL",
+      "DEPARTEMENT"
+    ],
+    [
+      "36462492895701",
+      "Don't manage canteen",
+      "Le bon traiteur",
+      "2022-05-02",
+      "90.11",
+      "PRODUITS_LAITIERS",
+      "BIO,LOCAL",
+      "DEPARTEMENT"
+    ],
+    [
+      "21010034300016",
+      "",
+      "Missing description",
+      "2022-05-02",
+      "90.11",
+      "PRODUITS_LAITIERS",
+      "BIO,LOCAL",
+      "DEPARTEMENT"
+    ],
+    [
+      "21010034300016",
+      "Missing provider and family",
+      "",
+      "2022-05-02",
+      "90.11",
+      "",
+      "",
+      "DEPARTEMENT"
+    ],
+    [
+      "21010034300016",
+      "Missing date",
+      "Le bon traiteur",
+      "",
+      "90.11",
+      "PRODUITS_LAITIERS",
+      "BIO,LOCAL",
+      "DEPARTEMENT"
+    ],
+    [
+      "21010034300016",
+      "Bad date",
+      "Le bon traiteur",
+      "2022-02-31",
+      "90.11",
+      "PRODUITS_LAITIERS",
+      "BIO,LOCAL",
+      "DEPARTEMENT"
+    ],
+    [
+      "21010034300016",
+      "Badly formatted date",
+      "Le bon traiteur",
+      "2022/03/01",
+      "90.11",
+      "PRODUITS_LAITIERS",
+      "BIO,LOCAL",
+      "DEPARTEMENT"
+    ],
+    [
+      "21010034300016",
+      "Missing price",
+      "Le bon traiteur",
+      "2022-05-02",
+      "",
+      "PRODUITS_LAITIERS",
+      "BIO,LOCAL",
+      "DEPARTEMENT"
+    ],
+    [
+      "21010034300016",
+      "Bad price",
+      "Le bon traiteur",
+      "2022-05-02",
+      "A price",
+      "PRODUITS_LAITIERS",
+      "BIO,LOCAL",
+      "DEPARTEMENT"
+    ],
+    [
+      "21010034300016",
+      "Bad family",
+      "Le bon traiteur",
+      "2022-05-02",
+      "90.11",
+      "NOPE",
+      "BIO,LOCAL",
+      "DEPARTEMENT"
+    ],
+    [
+      "21010034300016",
+      "Bad characteristics",
+      "Le bon traiteur",
+      "2022-05-02",
+      "90.11",
+      "PRODUITS_LAITIERS",
+      "BIO,NOPE",
+      ""
+    ],
+    [
+      "21010034300016",
+      "Missing local definition",
+      "Le bon traiteur",
+      "2022-05-02",
+      "90.11",
+      "PRODUITS_LAITIERS",
+      "LOCAL",
+      ""
+    ],
+    [
+      "21010034300016",
+      "Missing column",
+      "Le bon traiteur",
+      "2022-05-02",
+      "90.11",
+      "PRODUITS_LAITIERS",
+      "BIO"
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats_siret_old.json",
+  "url": null,
+  "version": "0.12.5"
+}

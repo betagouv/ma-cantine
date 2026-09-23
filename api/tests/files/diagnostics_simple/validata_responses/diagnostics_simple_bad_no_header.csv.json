@@ -1,0 +1,55 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "message": "Les en-têtes doivent être uniques",
+        "tags": [],
+        "title": "En-têtes dupliquées",
+        "type": "duplicate-label"
+      }
+    ],
+    "stats": {
+      "errors": 1,
+      "fields": 0,
+      "rows": 0,
+      "rows_processed": -1,
+      "seconds": null,
+      "warnings": 0
+    },
+    "valid": false,
+    "warnings": []
+  },
+  "resource_data": [
+    [
+      "21340172201787",
+      "A canteen",
+      "",
+      "17000",
+      "42126486200010",
+      "700",
+      "14000",
+      "Secondaire collège",
+      "site",
+      "conceded",
+      "public",
+      "",
+      "2020",
+      "1000",
+      "500",
+      "100.1",
+      "0",
+      "0",
+      "0",
+      "0",
+      "0"
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/bilans_simple_siret.json",
+  "url": null,
+  "version": "0.12.5"
+}

@@ -1,0 +1,132 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "fieldName": "siret",
+        "fieldNumber": 13,
+        "message": "La colonne obligatoire `siret` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "description",
+        "fieldNumber": 14,
+        "message": "La colonne obligatoire `description` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "date",
+        "fieldNumber": 15,
+        "message": "La colonne obligatoire `date` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "prix_ht",
+        "fieldNumber": 16,
+        "message": "La colonne obligatoire `prix_ht` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "famille_produits",
+        "fieldNumber": 17,
+        "message": "La colonne obligatoire `famille_produits` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      }
+    ],
+    "stats": {
+      "errors": 5,
+      "fields": 12,
+      "rows": 1,
+      "rows_processed": 1,
+      "seconds": null,
+      "warnings": 17
+    },
+    "valid": false,
+    "warnings": [
+      "Colonne manquante : Ajoutez la colonne manquante `fournisseur`.",
+      "Colonne manquante : Ajoutez la colonne manquante `categories_egalim`.",
+      "Colonne manquante : Ajoutez la colonne manquante `est_circuit_court`.",
+      "Colonne manquante : Ajoutez la colonne manquante `est_local`.",
+      "Colonne manquante : Ajoutez la colonne manquante `definition_local`.",
+      "Colonne manquante : Ajoutez la colonne manquante `definition_local_km`.",
+      "Colonne surnuméraire : Retirez la colonne `s_iret` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `description123` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `fournisseur de la cantine` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `date!` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `prix ht` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `famille de produits` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `catégories egalim` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `circuit_court` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `local` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `définition local` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `distance` non définie dans le schéma."
+    ]
+  },
+  "resource_data": [
+    [
+      "s_iret",
+      "description123",
+      "fournisseur de la cantine",
+      "date!",
+      "prix ht",
+      "famille de produits",
+      "catégories egalim",
+      "Origine",
+      "circuit_court",
+      "local",
+      "définition local",
+      "distance"
+    ],
+    [
+      "21010034300016",
+      "Pommes, rouges, local",
+      "Le bon traiteur ",
+      "2022-05-02",
+      "90.11",
+      " PRODUITS_LAITIERS ",
+      "BIO",
+      "",
+      "",
+      "x",
+      " DEPARTEMENT",
+      ""
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats_siret.json",
+  "url": null,
+  "version": "0.12.5"
+}
