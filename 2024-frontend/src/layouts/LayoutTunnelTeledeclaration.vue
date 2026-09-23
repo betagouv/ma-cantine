@@ -72,7 +72,7 @@ const goTo = (page) => {
   <div v-if="canteenInformations" class="ma-cantine--sticky__container ma-cantine--stick-to-footer">
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
-        <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" />
+        <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" @save="save" />
       </div>
       <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-4w">
         <TunnelTeledeclarationTopNav @save="save" />

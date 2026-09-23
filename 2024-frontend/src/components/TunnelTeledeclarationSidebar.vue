@@ -10,6 +10,7 @@ import documentation from "@/data/documentation.json"
 
 const props = defineProps(["canteen", "nav", "active"])
 const router = useRouter()
+const emit = defineEmits(["save"])
 
 /* Navigation */
 const generateNav = (name) => {
@@ -56,7 +57,7 @@ const goTo = (to) => router.push(to)
               :key="link.to.name"
               :[link.type]="true"
               class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
-              @click="goTo(link.to)"
+              @click="emit('save', link.pageName)"
             >
               <TunnelTeledeclarationIconCheck v-if="!link.icon" :fieldsPageName="link.pageName" class="fr-mr-1w" />
               <span v-else :class="`${link.icon} ma-cantine--icon-xs`" ></span>
