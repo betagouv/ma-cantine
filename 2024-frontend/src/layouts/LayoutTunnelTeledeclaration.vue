@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue"
+import { computed, onBeforeUnmount, onMounted, ref } from "vue"
 import { storeToRefs } from "pinia"
 import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
@@ -68,12 +68,18 @@ const showQuitModal = ref(false)
 const quitRoute = ref(null)
 const quitConfirmed = ref(false)
 
-onBeforeRouteLeave((to) => {
+const quitBrowser = (event) => {
+  if (!teledeclarationStore.hasDiagnostic || teledeclarationStore.isSaved()) return
+  event.preventDefault()
+  event.returnValue = ""
+}
+
+const quitTunnel = (to) => {
   if (quitConfirmed.value || !teledeclarationStore.hasDiagnostic || teledeclarationStore.isSaved()) return true
   quitRoute.value = to.fullPath
   showQuitModal.value = true
   return false
-})
+}
 
 const quit = () => {
   showQuitModal.value = false
@@ -81,7 +87,11 @@ const quit = () => {
   router.push(quitRoute.value)
 }
 
-/* Redirect */
+onMounted(() => window.addEventListener("beforeunload", quitBrowser))
+onBeforeUnmount(() => window.removeEventListener("beforeunload", quitBrowser))
+onBeforeRouteLeave(quitTunnel)
+
+/* Navigation */
 const goTo = (page) => {
   showModal.value = false
   router.push({ name: page })
