@@ -12,9 +12,9 @@ from .canteen import CanteenFactory
 
 def _fill_required_fields(obj):
     """
-    Ensure the generated Diagnostic passes full_clean(): fill required appro fields via the model's own
-    logic, plus, since 2026, canteen fields too (nombre_repas_an) -- the model intentionally doesn't
-    default that one on its own (see Diagnostic2026ModelSaveTest), so it's a factory-only concern here.
+    Ensure the generated Diagnostic passes full_clean():
+    - fill required appro fields via the model's own logic
+    - since 2026, more fields: nombre_repas_an
     """
     try:
         obj.populate_required_fields_with_zero()
@@ -75,7 +75,7 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     communication_support_url = factory.Faker("uri")
     communicates_on_food_plan = factory.Faker("boolean")
 
-    # NOTE: here because we want to ensure valid Diagnostic are created (regarding full_clean)
+    # NOTE: here because we want to ensure a valid Diagnostic is created (if teledeclared/full_clean)
     @factory.post_generation
     def fill_required_fields(obj, create, extracted, **kwargs):
         _fill_required_fields(obj)
@@ -125,7 +125,7 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     communication_support_url = factory.Faker("uri")
     communicates_on_food_plan = factory.Faker("boolean")
 
-    # NOTE: here because we want to ensure valid Diagnostic are created (regarding full_clean)
+    # NOTE: here because we want to ensure a valid Diagnostic is created (if teledeclared/full_clean)
     @factory.post_generation
     def fill_required_fields(obj, create, extracted, **kwargs):
         _fill_required_fields(obj)

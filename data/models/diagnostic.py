@@ -1961,8 +1961,8 @@ class Diagnostic(models.Model):
         validation_errors = utils_utils.merge_validation_errors(diagnostic_validators.validate_year(self))
         if not validation_errors:
             # these methods only work if there is a valid year
-            # since 2026, once the diagnostic_type is known, default any still-empty required field to 0
             if self.diagnostic_type and int(self.year) >= 2026:
+                # since 2026, once the diagnostic_type is known, default any still-empty required field to 0
                 self.populate_required_fields_with_zero()
             self.populate_aggregated_values()
             self.populate_egalim_stats()
@@ -1973,7 +1973,7 @@ class Diagnostic(models.Model):
         """
         Default any still-empty required appro field (for this diagnostic's year & diagnostic_type) to 0.
         NOTE: valeur_totale is excluded, it must be > 0 (see validate_valeur_totale)
-        NOTE: nombre_repas_an is excluded as well
+        NOTE: nombre_repas_an is excluded
         """
         if not (self.year and self.diagnostic_type):
             return
