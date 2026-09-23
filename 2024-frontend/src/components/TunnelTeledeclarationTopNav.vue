@@ -1,13 +1,13 @@
 <script setup>
-import { ref, computed } from "vue"
+import { computed } from "vue"
 import { useRouter, useRoute } from "vue-router"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { storeToRefs } from "pinia"
 import canteenServices from "@/services/canteens"
 import diagnosticServices from "@/services/diagnostics"
-import AppErrorList from "@/components/AppErrorList.vue"
 
+const emit = defineEmits(["errors"])
 const router = useRouter()
 const route = useRoute()
 const teledeclarationStore = useStoreTeledeclaration()
@@ -25,7 +25,7 @@ const save = async (page) => {
   if (check.isFilled) goTo(page)
   await teledeclarationStore.addErrorsFromCheck(check.errors)
   const pageErrors = teledeclarationStore.getErrorsPage(route.name, canteenInformations.value.isGroupe)
-  if (pageErrors.length > 0) displayModal(pageErrors, page)
+  if (pageErrors.length > 0) emit("errors", pageErrors, page)
   else goTo(page)
 }
 
@@ -43,21 +43,8 @@ const checkIsFilled = async () => {
   return { isFilled: checkCanteen.isFilled && checkDiagnostic.isFilled, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
 }
 
-/* Modal */
-const showModal = ref(false)
-const modalTitle = ref("")
-const modalLink = ref("")
-const modalErrors = ref([])
-const displayModal = (errors, page) => {
-  showModal.value = true
-  modalErrors.value = errors
-  modalTitle.value = errors.length > 1 ? "Erreurs détectées" : "Erreur détectée"
-  modalLink.value = page
-}
-
 /* Redirect */
 const goTo = (page) => {
-  showModal.value = false
   router.push({ name: page })
 }
 </script>
@@ -87,29 +74,6 @@ const goTo = (page) => {
       :icon-right="true"
     />
   </nav>
-  <DsfrModal
-    :opened="showModal"
-    :title="modalTitle"
-    @close="showModal = false"
-  >
-    <p>Après l'enregistrement de vos données, nous avons détecté une ou plusieurs erreurs : </p>
-    <AppErrorList :errors="modalErrors.map((error) => error.field)" />
-    <p>Vous n'êtes pas obligé de faire la correction maintenant mais vous devrez la faire avant de télédéclarer.</p>
-    <div class="ma-cantine--flex-end">
-      <DsfrButton
-        secondary
-        icon="fr-icon-edit-line"
-        label="Revenir et corriger"
-        @click="showModal = false"
-        :icon-right="true"
-      />
-      <DsfrButton
-        primary
-        label="Continuer et corriger plus tard"
-        @click="goTo(modalLink)"
-      />
-    </div>
-  </DsfrModal>
 </template>
 
 <style lang="scss" scoped>
