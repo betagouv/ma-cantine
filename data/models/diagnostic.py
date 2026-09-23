@@ -2070,21 +2070,25 @@ class Diagnostic(models.Model):
         if self.valeur_totale and self.valeur_bio_agg is not None:
             if self.valeur_totale >= self.valeur_bio_agg:
                 return round(100 * to_decimal(self.valeur_bio_agg) / to_decimal(self.valeur_totale), 2)
+        return None
 
     def compute_pourcentage_egalim(self):
         if self.valeur_totale and self.valeur_egalim_agg is not None:
             if self.valeur_totale >= self.valeur_egalim_agg:
                 return round(100 * to_decimal(self.valeur_egalim_agg) / to_decimal(self.valeur_totale), 2)
+        return None
 
     def compute_pourcentage_egalim_hors_bio(self):
         if self.valeur_totale and self.valeur_egalim_hors_bio_agg is not None:
             if self.valeur_totale >= self.valeur_egalim_hors_bio_agg:
                 return round(100 * to_decimal(self.valeur_egalim_hors_bio_agg) / to_decimal(self.valeur_totale), 2)
+        return None
 
     def compute_objectifs_egalim_atteints(self):
         if self.valeur_totale and self.pourcentage_bio is not None and self.pourcentage_egalim is not None:
             canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
             return objectifs_egalim_atteints(self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
+        return None
 
     def compute_cout_repas(self):
         if self.valeur_totale and self.canteen_yearly_meal_count:
