@@ -25,13 +25,11 @@ const year = teledeclarationStore.getYear()
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
-const firstBlocTitle = computed(() => canteenInformations.value.isGroupe ? 'Bien préparer sa télédéclaration groupée' : 'Bien préparer sa télédéclaration')
 const buttonTop = computed(() => {
   const hasDiag = hasDiagnostic.value
   const label = hasDiag ? 'Reprendre ma télédéclaration' : 'Faire ma télédéclaration'
-  const type = hasDiag ? 'secondary' : 'primary'
-  const icon = hasDiag ? '' : 'ri-send-plane-line'
-  return { label, type, icon }
+  const icon = hasDiag ? 'fr-icon-edit-fill' : 'ri-send-plane-line'
+  return { label, icon }
 })
 
 /* Navigation */
@@ -60,27 +58,35 @@ const showError = (message) => rootStore.notifyServerError(message)
   <CanteenSidebarTitle :title="pageTitle">
     <DsfrButton
       v-if="buttonTop"
+      primary
       @click="openTunnel"
       :label="buttonTop.label"
-      :[buttonTop.type]="true"
       :icon="buttonTop.icon"
     />
   </CanteenSidebarTitle>
 
   <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-md-7">
-      <h3 class="fr-h5 fr-mb-4w">{{ firstBlocTitle }}</h3>
+      <h3 class="fr-h5 fr-mb-4w">Réalisez le bilan de l’année précédente sur les différents volets de la loi EGalim.</h3>
       <p v-if="canteenInformations.isGroupe">
         Vous allez télédéclarer de manière mutualisée au sein d’une même entité de gestion. Les montants d’achats seront répartis automatiquement au prorata du nombre de couverts annuels de chaque cantine du groupe.
         <strong>Les gestionnaires des cantines n’auront pas accès aux montants d’achats, mais uniquement aux résultats (en %).</strong>
       </p>
       <p v-else>
-        Réalisez votre bilan de l’année précédente sur les différents volets de la loi EGalim. La télédéclaration comporte 2 groupes de volets : les approvisionnements (simplifiés ou détaillés) et les volets thématiques.
+        La télédéclaration comporte 2 principales étapes : le volet approvisionnements (simplifiés ou détaillés) et les volets thématiques (facultatifs).
       </p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="Appros en saisie détaillée ou simplifiée ?" content="Je rassemble les informations qui vont m’être demandées">
-        <a :href="documentation.teledeclarationChecklist" target="_blank" class="fr-text-title--blue-france">Je télécharge la tcheck-list</a>
+      <AppHelpCard title="Infos utiles pour consolide vos données">
+        <p class="fr-mb-1w">
+          <a :href="documentation.teledeclarationMatrice" target="_blank" class="fr-text-title--blue-france">La matrice de télédéclaration</a>
+        </p>
+        <p class="fr-mb-1w">
+          <a :href="documentation.teledeclarationChecklist" target="_blank" class="fr-text-title--blue-france">L’antisèche</a>
+        </p>
+        <p class="fr-mb-1w">
+          <a :href="documentation.gestionConcedee" target="_blank" class="fr-text-title--blue-france">Gestion concédée : bien m’organiser</a>
+        </p>
       </AppHelpCard>
     </div>
   </div>
