@@ -30,7 +30,6 @@ const { diagnostic } = storeToRefs(teledeclarationStore)
 
 /* Save */
 const save = async (page) => {
-  teledeclarationStore.clearErrors()
   await teledeclarationStore.saveDiagnostic()
   const check = await checkIsFilled()
   if (check.isFilled) goTo(page)

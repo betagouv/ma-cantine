@@ -32,7 +32,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const canteenId = diagnostic.value.canteenId
     const diagnosticValues = diagnostic.value
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
-    if (response.status === "error") addErrorsFromServor(response.list)
+    if (response.status === "error") replaceErrors(response.list)
     else isSaved.value = true
     return response
   }
@@ -44,7 +44,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const valeurTotalFieldName = teledeclarationFields.groups["valeurTotale"][0]
     const coutRepasFieldName = teledeclarationFields.groups["coutRepas"][0]
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnostic.value.id, { [valeurTotalFieldName]: diagnostic.value[valeurTotalFieldName] })
-    if (response.status === "error") addErrorsFromServor(response.list)
+    clearError(valeurTotalFieldName)
+    if (response.status === "error") replaceErrors(response.list)
     else setValue(coutRepasFieldName, response[coutRepasFieldName])
     return response
   }
@@ -73,26 +74,49 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     isSaved.value = true
   }
 
-  /* Set diagnostic errors */
-  function addErrorsFromCheck(errors) {
+  /* Format errors object into a list of { field, message } */
+  function formatErrorToList(errors) {
     const errorsKeys = Object.keys(errors)
     const errorsValues = Object.values(errors)
     const errorList = []
     for (let i = 0; i < errorsKeys.length; i++) {
       errorList.push({ field: errorsKeys[i], message: errorsValues[i] })
     }
-    // TO FIX : Errors duplicated with "/check" errors
-    diagnosticErrors.value = [...diagnosticErrors.value, ...errorList]
+    return errorList
   }
 
-  /* Add errors to list */
-  function addErrorsFromServor(errors) {
-    diagnosticErrors.value = [...diagnosticErrors.value, ...errors]
+  /* Format and add diagnostic errors */
+  function addErrorsFromCheck(errors) {
+    const errorList = formatErrorToList(errors)
+    clearErrors()
+    setErrors(errorList)
+  }
+
+  /* Replace errors list */
+  function setErrors(newErrors) {
+    diagnosticErrors.value = newErrors
+  }
+
+  /* Replace in errors list */
+  function replaceErrors(newErrors) {
+    const updatedErrors = diagnosticErrors.value
+    for (let i = 0; i < newErrors.length; i++) {
+      const newError = newErrors[i]
+      const oldErrorIndex = updatedErrors.findIndex((error) => error.field === newError.field)
+      if (oldErrorIndex !== -1) updatedErrors.splice(oldErrorIndex, 1)
+      updatedErrors.push(newError)
+    }
+    setErrors(updatedErrors)
   }
 
   /* Clear diagnostic errors for the current campaign */
   const clearErrors = () => {
     diagnosticErrors.value = []
+  }
+
+  /* Clear one error */
+  const clearError = (field) => {
+    diagnosticErrors.value = diagnosticErrors.value.filter((error) => error.field !== field)
   }
 
   /* Keep only the errors related to the fields displayed on the given page */
