@@ -426,7 +426,34 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertEqual(diagnostic.label_sum("label_rouge"), 20)
         self.assertEqual(diagnostic.label_sum("aocaop_igp_stg"), 30)
         self.assertEqual(diagnostic.label_group_sum("siqo"), 50)
-        self.assertEqual(diagnostic.valeur_siqo, 20 + 30)
+        self.assertEqual(diagnostic.valeur_siqo, 20 + 30)  # populated
+
+    def test_diagnostic_complete_populate_aggregated_values(self):
+        VALID_DIAGNOSTIC_COMPLETE_2025 = {
+            **VALID_DIAGNOSTIC_SIMPLE_2025,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
+            "valeur_viandes_volailles_label_rouge": 20,
+            "valeur_viandes_volailles_aocaop_igp_stg": 30,
+        }
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.label_group_sum("siqo"), 50)
+        self.assertEqual(diagnostic.valeur_siqo_agg, 50)  # populated
+
+    def test_diagnostic_complete_populate_egalim_stats(self):
+        VALID_DIAGNOSTIC_COMPLETE_2025 = {
+            **VALID_DIAGNOSTIC_SIMPLE_2025,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
+            "valeur_viandes_volailles_bio": 20,
+            "valeur_viandes_volailles_label_rouge": 20,
+            "valeur_viandes_volailles_aocaop_igp_stg": 30,
+        }
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.pourcentage_bio, 2)
+        self.assertEqual(diagnostic.pourcentage_egalim, 2 + 5)
+        self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, 5)
+        self.assertFalse(diagnostic.objectifs_egalim_atteints)
 
 
 @freeze_time("2024-02-10")  # during the 2023 campaign
