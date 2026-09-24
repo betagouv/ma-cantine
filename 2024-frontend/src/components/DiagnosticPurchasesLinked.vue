@@ -1,9 +1,11 @@
 <script setup>
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { storeToRefs } from "pinia"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import { formatNumber } from "@/utils.js"
 import { useRouter } from "vue-router"
+import documentation from "@/data/documentation.json"
+import AppModalIframe from "@/components/AppModalIframe.vue"
 
 /* Store */
 const router = useRouter()
@@ -11,6 +13,10 @@ const purchaseSummaryStore = useStorePurchaseSummary()
 const { purchaseSummary, hasPurchaseTotal } = storeToRefs(purchaseSummaryStore)
 const purchaseAmount = computed(() => `${formatNumber(purchaseSummary.value?.valeurTotale)} €`)
 const iconLink = "/static/images/picto-dsfr/teledeclaration-saisie-automatique.svg"
+
+/* Modal */
+const modalTitle = "En savoir plus sur l’outil “Mes achats”"
+const opened = ref(false)
 
 /* Actions */
 const goToPurchases = () => {
@@ -23,7 +29,7 @@ const goToPurchases = () => {
     <div class="diagnostic-purchases-linked__top">
       <img :src="iconLink" alt="Logo outil Mes achats" class="diagnostic-purchases-linked__icon fr-mb-2w" />
       <p class="diagnostic-purchases-linked__title fr-text--bold">Souhaitez-vous modifier votre déclaration en pré-remplissant une nouvelle déclaration à partir de votre suivi d’achats (outil “Mes achats”) ?</p>
-      <DsfrButton label="En savoir plus" icon="ri-information-line" secondary class="diagnostic-purchases-linked__button" size="sm" />
+      <DsfrButton label="En savoir plus" icon="ri-information-line" secondary class="diagnostic-purchases-linked__button" size="sm" @click="opened = true" />
     </div>
     <p v-if="hasPurchaseTotal" class="fr-mb-1w">
       Vous avez <span class="fr-text--bold">{{ purchaseAmount }}</span> d’achats détectés dans votre suivi des achats.
@@ -35,6 +41,7 @@ const goToPurchases = () => {
       Si vous utilisez l’Outil de suivi des achats, pour pré-remplir votre télédéclaration, assurez-vous d’avoir complété l’ensemble de vos achats de l’année précédente.
     </p>
     <DsfrButton label="Consulter Mes Achats" @click="goToPurchases" secondary />
+    <AppModalIframe :opened="opened" :title="modalTitle" :src="documentation.mesAchats" @close="opened = false" />
   </div>
 </template>
 <style scoped lang="scss">
