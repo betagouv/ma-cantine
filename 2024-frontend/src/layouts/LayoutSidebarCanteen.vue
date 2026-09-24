@@ -3,11 +3,11 @@ import { computed } from "vue"
 import { useRoute, RouterView } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
-import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
 import AppBadgeSiretSiren from "@/components/AppBadgeSiretSiren.vue"
+import GestionnaireTeledeclarationNav from "@/components/GestionnaireTeledeclarationNav.vue"
 
 /* Route */
 const route = useRoute()
@@ -15,22 +15,14 @@ const currentRoute = computed(() => route.name)
 
 /* Store */
 const canteenStore = useStoreCanteen()
-const campaignDatesStore = useStoreCampaignDates()
 const { canteenInformations } = storeToRefs(canteenStore)
-const { currentCampaignInformations } = storeToRefs(campaignDatesStore)
-
-/* Campaign dates */
-const isInTeledeclaration = computed(() => currentCampaignInformations.value.inTeledeclaration || false)
-const isInCorrection = computed(() => currentCampaignInformations.value.inCorrection || false)
 
 /* Sidebar links */
 const menuItems = computed(() =>  {
-  const currentYear = window.TELEDECLARATION_YEAR
   const isGroupe = canteenInformations.value?.isGroupe
   const cantineActive = currentRoute.value === "GestionnaireCantine"
   const gestionnairesActive = currentRoute.value === "GestionnaireCantineGestionnaires"
   const pagePubliqueActive = currentRoute.value === "GestionnaireCantinePagePublique"
-  const teledeclarationEnCoursActive = currentRoute.value === "GestionnaireCantineTeledeclarationEnCours"
   const teledeclarationsActive = currentRoute.value === "GestionnaireCantineTeledeclarations"
   const cantinesGroupeActive = currentRoute.value === "GestionnaireCantineGroupe"
 
@@ -54,11 +46,6 @@ const menuItems = computed(() =>  {
     to: { name: "GestionnaireCantinePagePublique" },
     active: pagePubliqueActive
   }
-  const teledeclarationEnCoursPage = {
-    text: isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`,
-    to: { name: "GestionnaireCantineTeledeclarationEnCours" },
-    active: teledeclarationEnCoursActive
-  }
   const teledeclarationsPage =  {
     text: "Toutes les télédéclarations",
     to: { name: "GestionnaireCantineTeledeclarations" },
@@ -71,7 +58,6 @@ const menuItems = computed(() =>  {
   pages.push(gestionnairesPage)
   if (isGroupe) pages.push(cantinesGroupePage)
   else pages.push(pagePubliquePage)
-  if (isInTeledeclaration.value || isInCorrection.value) pages.push(teledeclarationEnCoursPage)
   pages.push(teledeclarationsPage)
 
   return pages
@@ -98,6 +84,7 @@ const menuItems = computed(() =>  {
     </div>
     <div class="fr-grid-row ma-cantine--sticky__container">
       <div class="layout-sidebar-canteen__sidebar-container fr-col-12 fr-col-md-3 fr-background-default--grey">
+        <GestionnaireTeledeclarationNav :canteen="canteenInformations" />
         <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu" class="ma-cantine--sticky__top" titleTag="p" />
       </div>
       <section id="sidebar-canteen-content" class="fr-col-12 fr-col-md-9 fr-pb-2w">
