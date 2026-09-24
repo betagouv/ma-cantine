@@ -25,13 +25,11 @@ const year = teledeclarationStore.getYear()
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
-const firstBlocTitle = computed(() => canteenInformations.value.isGroupe ? 'Bien préparer sa télédéclaration groupée' : 'Bien préparer sa télédéclaration')
 const buttonTop = computed(() => {
   const hasDiag = hasDiagnostic.value
   const label = hasDiag ? 'Reprendre ma télédéclaration' : 'Faire ma télédéclaration'
-  const type = hasDiag ? 'secondary' : 'primary'
-  const icon = hasDiag ? '' : 'ri-send-plane-line'
-  return { label, type, icon }
+  const icon = hasDiag ? 'fr-icon-edit-fill' : 'ri-send-plane-line'
+  return { label, icon }
 })
 
 /* Navigation */
@@ -54,57 +52,45 @@ const createDiagnostic = () => {
 const goToTunnel = () => router.push({ name: "GestionnaireTunnelApproInformations" })
 const showError = (message) => rootStore.notifyServerError(message)
 </script>
-
 <template>
   <DsfrAlert class="fr-mb-4w" title="Nouvelle télédéclaration en cours de développement" description="Dans le cadre d'amélioration de la télédéclaration 2027, cette page est en cours de développement et n'est pas encore complète ou stabilisée. Vous pouvez toutefois déjà commencer à l'utiliser mais il est possible que vous rencontriez des bugs ou des fonctionnalités non disponibles." type="warning" />
   <CanteenSidebarTitle :title="pageTitle">
     <DsfrButton
       v-if="buttonTop"
+      primary
       @click="openTunnel"
       :label="buttonTop.label"
-      :[buttonTop.type]="true"
       :icon="buttonTop.icon"
     />
   </CanteenSidebarTitle>
 
   <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-md-7">
-      <h3 class="fr-h5 fr-mb-4w">{{ firstBlocTitle }}</h3>
+      <h3 class="fr-h5 fr-mb-4w">Réalisez le bilan de l’année précédente sur les différents volets de la loi EGalim.</h3>
       <p v-if="canteenInformations.isGroupe">
         Vous allez télédéclarer de manière mutualisée au sein d’une même entité de gestion. Les montants d’achats seront répartis automatiquement au prorata du nombre de couverts annuels de chaque cantine du groupe.
         <strong>Les gestionnaires des cantines n’auront pas accès aux montants d’achats, mais uniquement aux résultats (en %).</strong>
       </p>
       <p v-else>
-        Réalisez votre bilan de l’année précédente sur les différents volets de la loi EGalim. La télédéclaration comporte 2 groupes de volets : les approvisionnements (simplifiés ou détaillés) et les volets thématiques.
+        La télédéclaration comporte 2 principales étapes : le volet approvisionnements (simplifiés ou détaillés) et les volets thématiques (facultatifs).
       </p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="Appros en saisie détaillée ou simplifiée ?" content="Je rassemble les informations qui vont m’être demandées">
-        <a :href="documentation.teledeclarationChecklist" target="_blank" class="fr-text-title--blue-france">Je télécharge la tcheck-list</a>
+      <AppHelpCard title="Infos utiles pour consolider vos données">
+        <p class="fr-mb-1w">
+          <a :href="documentation.teledeclarationMatrice" target="_blank" class="fr-text-title--blue-france">La matrice de télédéclaration</a>
+        </p>
+        <p class="fr-mb-1w">
+          <a :href="documentation.teledeclarationChecklist" target="_blank" class="fr-text-title--blue-france">L’antisèche</a>
+        </p>
+        <p class="fr-mb-1w">
+          <a :href="documentation.gestionConcedee" target="_blank" class="fr-text-title--blue-france">Gestion concédée : bien m’organiser</a>
+        </p>
       </AppHelpCard>
     </div>
   </div>
-
   <div>
     <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
-    <ol v-if="!canteenInformations.isGroupe" class="ma-cantine--ordered-list ma-cantine--unstyled-list">
-      <li class="fr-mb-2w">
-        <p class="fr-mb-0">
-          Consolidez vos données d’achats : consultez la <a :href="documentation.teledeclarationMatrice" target="_blank">matrice de télédéclaration</a> et l’<a :href="documentation.teledeclarationAntiseche" target="_blank">antisèche</a>
-        </p>
-      </li>
-      <li class="fr-mb-2w">
-        <p class="fr-mb-0">
-          Si vous êtes en gestion concédée, coordonnez-vous avec votre prestataire pour l’obtention des données et/ou délégation de la télédéclaration : <a :href="documentation.gestionConcedee" target="_blank">voir Gestion concédée | Documentation</a>
-        </p>
-      </li>
-      <li>
-        <p class="fr-mb-0">
-          Anticipez le mode de déclaration des approvisionnements simplifiés ou détaillés : <a :href="documentation.teledeclarationType" target="_blank">consulter la documentation</a>
-        </p>
-      </li>
-    </ol>
-
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
     <DiagnosticPurchasesLinked class="fr-mt-4w" />
   </div>
