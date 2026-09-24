@@ -3,6 +3,7 @@ import { ref } from "vue"
 import { useRoute } from "vue-router"
 import { tiles } from "@/constants/crisp-tiles.js"
 import documentation from "@/data/documentation.json"
+import AppModalIframe from "@/components/AppModalIframe.vue"
 import AppNeedHelp from "@/components/AppNeedHelp.vue"
 
 const route = useRoute()
@@ -42,16 +43,7 @@ const closeModal = () => {
         />
       </li>
     </ul>
-    <DsfrModal :opened="opened" class="fr-modal--opened" @close="closeModal" size="xl">
-      <template #default>
-        <iframe
-          :title="modal.title"
-          :src="`${modal.to}/reader/`"
-          class="ma-cantine--modal-iframe"
-          frameborder="0"
-        ></iframe>
-      </template>
-    </DsfrModal>
+    <AppModalIframe :opened="opened" :title="modal.title" :src="modal.to" @close="closeModal" />
   </section>
   <AppNeedHelp badge="En savoir plus" align="center" title="Pour les acteurs de la restauration collective">
     <p class="fr-mb-0">
