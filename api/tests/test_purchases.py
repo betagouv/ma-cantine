@@ -1163,7 +1163,7 @@ class DiagnosticsFromPurchasesApiTest(APITestCase):
         canteen_ok = CanteenFactory(managers=[authenticate.user])
         not_my_canteen = CanteenFactory()
 
-        DiagnosticFactory(canteen=canteen_with_diagnostic, year=year)
+        DiagnosticFactory(canteen=canteen_with_diagnostic, year=year, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
         PurchaseFactory(canteen=canteen_ok, date=f"{year}-01-01", prix_ht=100)
         PurchaseFactory(canteen=canteen_with_diagnostic, date=f"{year}-01-01", prix_ht=666)
         PurchaseFactory(canteen=not_my_canteen, date=f"{year}-01-01", prix_ht=666)

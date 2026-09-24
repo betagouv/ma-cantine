@@ -587,6 +587,17 @@ class Diagnostic(models.Model):
         "valeur_egalim_agg",
     ]
 
+    SIMPLIFIED_DIAGNOSTIC_FIELDS = [
+        "valeur_bio",
+        "valeur_bio_dont_commerce_equitable",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
+        "valeur_egalim_autres_dont_commerce_equitable",
+        "valeur_viandes_volailles_egalim",
+        "valeur_produits_de_la_mer_egalim",
+    ]
+
     APPRO_FAMILY_FIELDS = [
         "valeur_viandes_volailles",
         "valeur_produits_de_la_mer",
@@ -1929,9 +1940,6 @@ class Diagnostic(models.Model):
         return f"Diagnostic pour {self.canteen.name} ({self.year})"
 
     def clean(self):
-        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            self.populate_simplified_diagnostic_values()
-
         validation_errors = utils_utils.merge_validation_errors(
             diagnostic_validators.validate_year(self),
             diagnostic_validators.validate_year_and_can_edit(self),
@@ -1961,9 +1969,12 @@ class Diagnostic(models.Model):
         validation_errors = utils_utils.merge_validation_errors(diagnostic_validators.validate_year(self))
         if not validation_errors:
             # these methods only work if there is a valid year
-            if self.diagnostic_type and int(self.year) >= 2026:
-                # since 2026, once the diagnostic_type is known, default any still-empty required field to 0
-                self.populate_required_fields_with_zero()
+            if self.diagnostic_type:
+                if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+                    self.populate_simplified_diagnostic_values()
+                if int(self.year) >= 2026:
+                    # since 2026, once the diagnostic_type is known, default any still-empty required field to 0
+                    self.populate_required_fields_with_zero()
             self.populate_aggregated_values()
             self.populate_egalim_stats()
             self.populate_cout_repas()
@@ -1983,6 +1994,7 @@ class Diagnostic(models.Model):
                 setattr(self, field_name, 0)
 
     def populate_simplified_diagnostic_values(self):
+        # NOTE: SIMPLIFIED_DIAGNOSTIC_FIELDS
         self.valeur_bio = self.label_group_sum("bio")
         self.valeur_bio_dont_commerce_equitable = self.label_sum("bio_dont_commerce_equitable")
         self.valeur_siqo = self.label_group_sum("siqo")
@@ -2009,6 +2021,7 @@ class Diagnostic(models.Model):
         self.valeur_produits_de_la_mer_egalim = total_fish_egalim
 
     def populate_aggregated_values(self):
+        # NOTE: AGGREGATED_DIAGNOSTIC_FIELDS
         self.valeur_bio_agg = self.label_group_sum("bio")
         self.valeur_siqo_agg = self.label_group_sum("siqo")
         self.valeur_externalites_performance_agg = self.label_group_sum("externalites_performance")
@@ -2018,6 +2031,7 @@ class Diagnostic(models.Model):
         self.valeur_egalim_agg = self.label_group_group_sum("egalim")
 
     def populate_egalim_stats(self):
+        # NOTE: EGALIM_STATS_FIELDS
         self.pourcentage_bio = self.compute_pourcentage_bio()
         self.pourcentage_egalim = self.compute_pourcentage_egalim()
         self.pourcentage_egalim_hors_bio = self.compute_pourcentage_egalim_hors_bio()

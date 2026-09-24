@@ -395,6 +395,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=good_canteen,
             year=publication_year,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=100,
             valeur_bio=30,
             valeur_siqo=10,
@@ -404,6 +405,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=central,
             year=publication_year,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=100,
             valeur_bio=30,
             valeur_siqo=10,
@@ -413,6 +415,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=secretly_good_canteen,
             year=publication_year,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=100,
             valeur_bio=30,
             valeur_siqo=30,
@@ -422,6 +425,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=medium_canteen,
             year=publication_year,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=1000,
             valeur_bio=150,
             valeur_siqo=350,
@@ -431,6 +435,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=siqo_canteen,
             year=publication_year,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=100,
             valeur_bio=None,
             valeur_siqo=None,
@@ -440,6 +445,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=bad_canteen,
             year=2019,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=100,
             valeur_bio=30,
             valeur_siqo=30,
@@ -449,6 +455,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=bad_canteen,
             year=publication_year,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=10,
             valeur_bio=0,
             valeur_siqo=0,
@@ -458,6 +465,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=guadeloupe_canteen,
             year=publication_year,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=100,
             valeur_bio=5,
             valeur_siqo=15,
@@ -467,6 +475,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=good_canteen_with_siren,
             year=publication_year,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=100,
             valeur_bio=30,
             valeur_siqo=10,
@@ -476,6 +485,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=good_canteen_empty_siret,
             year=publication_year,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=100,
             valeur_bio=1,
             valeur_siqo=0,
@@ -485,6 +495,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         DiagnosticFactory(
             canteen=good_canteen_siret_none,
             year=publication_year,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             valeur_totale=100,
             valeur_bio=1,
             valeur_siqo=0,

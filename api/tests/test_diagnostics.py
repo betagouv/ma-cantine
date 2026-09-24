@@ -778,7 +778,13 @@ class DiagnosticUpdateApiTest(APITestCase):
         """
         We do these checks in /check & /teledeclaration/create
         """
-        diagnostic = DiagnosticFactory(year=2025, valeur_totale=10, valeur_bio=5, valeur_siqo=2)
+        diagnostic = DiagnosticFactory(
+            year=2025,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=10,
+            valeur_bio=5,
+            valeur_siqo=2,
+        )
         diagnostic.canteen.managers.add(authenticate.user)
 
         payload = {"valeur_siqo": 999}

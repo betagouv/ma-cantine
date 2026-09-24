@@ -326,6 +326,7 @@ class CanteenDetailApiTest(APITestCase):
         DiagnosticFactory(
             canteen=user_canteen,
             year=2023,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             # test appro badge as true
             valeur_totale=100,
             valeur_bio=20,
