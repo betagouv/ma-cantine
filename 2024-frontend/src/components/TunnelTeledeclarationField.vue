@@ -9,6 +9,7 @@ import documentation from "@/data/documentation.json"
 
 /* Stores */
 const props = defineProps(["name", "size"])
+const emit = defineEmits(["change"])
 const storeTeledeclaration = useStoreTeledeclaration()
 const storePurchaseSummary = useStorePurchaseSummary()
 const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
@@ -47,7 +48,10 @@ const displayFull = computed(() => !props.size || props.size === "full")
 const displayInline = computed(() => props.size === "inline")
 
 /* Actions */
-const fieldChange = () =>  storeTeledeclaration.setValue(props.name, field.value)
+const fieldChange = () =>  {
+  storeTeledeclaration.setValue(props.name, field.value)
+  emit("change", field.value)
+}
 const prefillField = () => field.value = storeTeledeclaration.diagnostic[props.name]
 onMounted(prefillField)
 </script>
