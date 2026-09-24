@@ -10,6 +10,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const year = 2026 // Force for testing, improve ??
   const diagnosticErrors = ref([])
   const hasDiagnostic = computed(() => diagnostic.value !== null)
+  const isSaved = ref(true)
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
@@ -31,6 +32,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const diagnosticValues = diagnostic.value
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
     if (response.status === "error") addErrorsFromServor(response.list)
+    else isSaved.value = true
     return response
   }
 
@@ -42,17 +44,20 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Set all diagnostic */
   function setDiagnostic(newDiagnostic) {
     diagnostic.value = newDiagnostic
+    isSaved.value = true
   }
 
   /* Set value for diagnostic */
   function setValue(field, value) {
     diagnostic.value[field] = value
+    isSaved.value = false
   }
 
   /* Empty store */
   function deleteStore() {
     diagnostic.value = null
     canteenSavedId.value = null
+    isSaved.value = true
   }
 
   /* Set diagnostic errors */
@@ -109,6 +114,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnostic,
     diagnosticErrors,
     hasDiagnostic,
+    isSaved,
     initStore,
     deleteStore,
     getYear,
@@ -120,7 +126,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     getErrorsPage,
     getErrorsGroup,
     isFieldError,
-    getErrorMessage
+    getErrorMessage,
   }
 })
 
