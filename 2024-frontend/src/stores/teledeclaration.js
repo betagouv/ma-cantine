@@ -44,7 +44,6 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const valeurTotalFieldName = teledeclarationFields.groups["valeurTotale"][0]
     const coutRepasFieldName = teledeclarationFields.groups["coutRepas"][0]
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnostic.value.id, { [valeurTotalFieldName]: diagnostic.value[valeurTotalFieldName] })
-    clearError(valeurTotalFieldName)
     if (response.status === "error") replaceErrors(response.list)
     else setValue(coutRepasFieldName, response[coutRepasFieldName])
     return response
@@ -102,6 +101,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const updatedErrors = diagnosticErrors.value
     for (let i = 0; i < newErrors.length; i++) {
       const newError = newErrors[i]
+      clearError(newError.field)
       const oldErrorIndex = updatedErrors.findIndex((error) => error.field === newError.field)
       if (oldErrorIndex !== -1) updatedErrors.splice(oldErrorIndex, 1)
       updatedErrors.push(newError)

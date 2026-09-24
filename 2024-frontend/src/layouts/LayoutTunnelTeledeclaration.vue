@@ -30,21 +30,22 @@ const { diagnostic } = storeToRefs(teledeclarationStore)
 
 /* Save */
 const save = async (page) => {
-  await teledeclarationStore.saveDiagnostic()
-  const check = await checkIsFilled()
-  if (check.isFilled) goTo(page)
-  else checkErrors(check.errors, page)
+  const response = await teledeclarationStore.saveDiagnostic()
+  if (response.status === "error") displayErrors(page)
+  else checkDiagnostic(page)
 }
 
 /* Errors */
-const checkErrors = async (errors, page) => {
-  await teledeclarationStore.addErrorsFromCheck(errors)
-  const pageErrors = teledeclarationStore.getErrorsPage(route.name, canteenInformations.value.isGroupe)
-  if (pageErrors.length > 0) displayModal(pageErrors, page)
-  else goTo(page)
+const checkDiagnostic = async (page) => {
+  const check = await getCheck()
+  if (check.isFilled) goTo(page)
+  else {
+    await teledeclarationStore.addErrorsFromCheck(check.errors)
+    displayErrors(page)
+  }
 }
 
-const checkIsFilled = async () => {
+const getCheck = async () => {
   const canteenId = diagnostic.value.canteenId
   const diagnosticId = diagnostic.value.id
   const checkCanteen = await canteenServices.checkCanteen(canteenId)
@@ -54,10 +55,17 @@ const checkIsFilled = async () => {
   return { isFilled: isCanteenFilled && isDiagnosticFilled, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
 }
 
+const displayErrors = (page) => {
+  const pageErrors = teledeclarationStore.getErrorsPage(route.name, canteenInformations.value.isGroupe)
+  if (pageErrors.length > 0) displayModal(pageErrors, page)
+  else goTo(page)
+}
+
 /* Modal */
 const showModal = ref(false)
 const modalLink = ref("")
 const modalErrors = ref([])
+
 const displayModal = (errors, page) => {
   showModal.value = true
   modalErrors.value = errors
