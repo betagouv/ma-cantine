@@ -412,6 +412,8 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+
+class DiagnosticModelSavePopulateTest(TransactionTestCase):
     def test_diagnostic_complete_populate_simplified_diagnostic_values(self):
         VALID_DIAGNOSTIC_COMPLETE_2025 = {
             **VALID_DIAGNOSTIC_SIMPLE_2025,
