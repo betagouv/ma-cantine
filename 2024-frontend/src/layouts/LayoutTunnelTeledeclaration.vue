@@ -50,7 +50,9 @@ const checkIsFilled = async () => {
   const diagnosticId = diagnostic.value.id
   const checkCanteen = await canteenServices.checkCanteen(canteenId)
   const checkDiagnostic = await diagnosticServices.checkDiagnostic(canteenId, diagnosticId)
-  return { isFilled: checkCanteen.isFilled && checkDiagnostic.isFilled, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
+  const isCanteenFilled = checkCanteen.isFilled && checkCanteen.errors.length === 0
+  const isDiagnosticFilled = checkDiagnostic.isFilled && checkDiagnostic.errors.length === 0
+  return { isFilled: isCanteenFilled && isDiagnosticFilled, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
 }
 
 /* Modal */
