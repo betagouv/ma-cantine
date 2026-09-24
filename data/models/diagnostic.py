@@ -1929,9 +1929,6 @@ class Diagnostic(models.Model):
         return f"Diagnostic pour {self.canteen.name} ({self.year})"
 
     def clean(self):
-        if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
-            self.populate_simplified_diagnostic_values()
-
         validation_errors = utils_utils.merge_validation_errors(
             diagnostic_validators.validate_year(self),
             diagnostic_validators.validate_year_and_can_edit(self),
@@ -1961,9 +1958,12 @@ class Diagnostic(models.Model):
         validation_errors = utils_utils.merge_validation_errors(diagnostic_validators.validate_year(self))
         if not validation_errors:
             # these methods only work if there is a valid year
-            if self.diagnostic_type and int(self.year) >= 2026:
-                # since 2026, once the diagnostic_type is known, default any still-empty required field to 0
-                self.populate_required_fields_with_zero()
+            if self.diagnostic_type:
+                if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
+                    self.populate_simplified_diagnostic_values()
+                if int(self.year) >= 2026:
+                    # since 2026, once the diagnostic_type is known, default any still-empty required field to 0
+                    self.populate_required_fields_with_zero()
             self.populate_aggregated_values()
             self.populate_egalim_stats()
             self.populate_cout_repas()

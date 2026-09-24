@@ -412,6 +412,20 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
+    def test_diagnostic_complete_populate_simplified_diagnostic_values(self):
+        VALID_DIAGNOSTIC_COMPLETE_2025 = {
+            **VALID_DIAGNOSTIC_SIMPLE_2025,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
+            "valeur_viandes_volailles_label_rouge": 20,
+            "valeur_viandes_volailles_aocaop_igp_stg": 30,
+        }
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.label_sum("label_rouge"), 20)
+        self.assertEqual(diagnostic.label_sum("aocaop_igp_stg"), 30)
+        self.assertEqual(diagnostic.label_group_sum("siqo"), 50)
+        self.assertEqual(diagnostic.valeur_siqo, 20 + 30)
+
 
 @freeze_time("2024-02-10")  # during the 2023 campaign
 class Diagnostic2024ModelSaveTest(TransactionTestCase):
