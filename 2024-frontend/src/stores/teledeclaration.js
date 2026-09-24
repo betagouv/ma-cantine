@@ -3,6 +3,7 @@ import { computed, ref } from "vue"
 import diagnosticService from "@/services/diagnostics.js"
 import canteenService from "@/services/canteens.js"
 import diagnosticsFields from "@/services/diagnosticsFields.js"
+import teledeclarationFields from "@/data/teledeclaration.json"
 
 const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const diagnostic = ref(null)
@@ -33,6 +34,18 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
     if (response.status === "error") addErrorsFromServor(response.list)
     else isSaved.value = true
+    return response
+  }
+
+  /* Save only the given fields of the diagnostic */
+  async function updateMealCount() {
+    if (!diagnostic.value) return
+    const canteenId = diagnostic.value.canteenId
+    const valeurTotalFieldName = teledeclarationFields.groups["valeurTotale"][0]
+    const coutRepasFieldName = teledeclarationFields.groups["coutRepas"][0]
+    const response = await diagnosticService.updateDiagnostic(canteenId, diagnostic.value.id, { [valeurTotalFieldName]: diagnostic.value[valeurTotalFieldName] })
+    if (response.status === "error") addErrorsFromServor(response.list)
+    else setValue(coutRepasFieldName, response[coutRepasFieldName])
     return response
   }
 
@@ -121,6 +134,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setDiagnostic,
     setValue,
     saveDiagnostic,
+    updateMealCount,
     addErrorsFromCheck,
     clearErrors,
     getErrorsPage,
