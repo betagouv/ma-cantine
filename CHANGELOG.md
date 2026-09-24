@@ -6,6 +6,23 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.50.3](https://github.com/betagouv/ma-cantine/compare/v2026.50.2...v2026.50.3) (2026-09-24)
+
+
+### Améliorations
+
+* **Télédéclaration:** afficher le cout repas dans l'étape "EGalim" ([#7176](https://github.com/betagouv/ma-cantine/issues/7176)) ([e0549cd](https://github.com/betagouv/ma-cantine/commit/e0549cdc53886194248271d0a63b9c14ae279e70))
+* **Télédéclaration:** ajoute une popup d'avertissement avant de quitter le tunnel ([#7174](https://github.com/betagouv/ma-cantine/issues/7174)) ([f6565e5](https://github.com/betagouv/ma-cantine/commit/f6565e564211e52c33f3d9565fce560263016800))
+* **Télédéclaration:** améliore le lien d'accès à la TD depuis la page établissement ([#7178](https://github.com/betagouv/ma-cantine/issues/7178)) ([a852a48](https://github.com/betagouv/ma-cantine/commit/a852a48622ae0dcea90730b5386b20930471ee11))
+* **Télédéclaration:** au changement de page via la barre latérale on affiche également les erreurs de saisies ([#7172](https://github.com/betagouv/ma-cantine/issues/7172)) ([a8d1c9a](https://github.com/betagouv/ma-cantine/commit/a8d1c9a606531c0fc58e5a0e3d0a02f575b4a5da))
+* **Télédéclarations:** bouge la logique populate_simplified_diagnostic_values dans save (au lieu de clean) + ajouter des tests ([#7177](https://github.com/betagouv/ma-cantine/issues/7177)) ([643134d](https://github.com/betagouv/ma-cantine/commit/643134db3a982404fe573175ad780fdc37ebf70b))
+* **Télédéclarations:** pré-remplir les champs obligatoires à 0 (pour les bilans simple & détaillés à partir de 2026) ([#7163](https://github.com/betagouv/ma-cantine/issues/7163)) ([04cd581](https://github.com/betagouv/ma-cantine/commit/04cd581727a36b4b9110fb1abc8a6b0e8e4835ed))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** vérifie les erreurs en plus du check ([#7175](https://github.com/betagouv/ma-cantine/issues/7175)) ([5c45996](https://github.com/betagouv/ma-cantine/commit/5c459966fe296f425c27c027933fa8a998b676b8))
+
 ## [2026.50.2](https://github.com/betagouv/ma-cantine/compare/v2026.50.1...v2026.50.2) (2026-09-23)
 
 
