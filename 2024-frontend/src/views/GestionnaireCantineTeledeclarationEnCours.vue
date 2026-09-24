@@ -77,7 +77,7 @@ const showError = (message) => rootStore.notifyServerError(message)
       </p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="Infos utiles pour consolide vos données">
+      <AppHelpCard title="Infos utiles pour consolider vos données">
         <p class="fr-mb-1w">
           <a :href="documentation.teledeclarationMatrice" target="_blank" class="fr-text-title--blue-france">La matrice de télédéclaration</a>
         </p>
