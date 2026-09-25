@@ -1,0 +1,157 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "fieldName": "siret",
+        "fieldNumber": 9,
+        "message": "La colonne obligatoire `siret` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "nom",
+        "fieldNumber": 10,
+        "message": "La colonne obligatoire `nom` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "nombre_repas_jour",
+        "fieldNumber": 11,
+        "message": "La colonne obligatoire `nombre_repas_jour` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "nombre_repas_an",
+        "fieldNumber": 12,
+        "message": "La colonne obligatoire `nombre_repas_an` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "secteurs",
+        "fieldNumber": 13,
+        "message": "La colonne obligatoire `secteurs` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "type_production",
+        "fieldNumber": 14,
+        "message": "La colonne obligatoire `type_production` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "type_gestion",
+        "fieldNumber": 15,
+        "message": "La colonne obligatoire `type_gestion` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "modèle_économique",
+        "fieldNumber": 16,
+        "message": "La colonne obligatoire `modèle_économique` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "",
+        "fieldNumber": 3,
+        "message": "Label in the header in field at position \"3\" is blank",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Blank Label",
+        "type": "blank-label"
+      }
+    ],
+    "stats": {
+      "errors": 9,
+      "fields": 8,
+      "rows": 0,
+      "rows_processed": -1,
+      "seconds": null,
+      "warnings": 12
+    },
+    "valid": false,
+    "warnings": [
+      "Colonne manquante : Ajoutez la colonne manquante `siret_cuisine_centrale`.",
+      "Colonne manquante : Ajoutez la colonne manquante `groupe_id`.",
+      "Colonne manquante : Ajoutez la colonne manquante `administration_tutelle`.",
+      "Colonne manquante : Ajoutez la colonne manquante `gestionnaires_additionnels`.",
+      "Colonne surnuméraire : Retirez la colonne `21340172201787` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `a canteen` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `700` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `14000` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `secondaire collège` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `restaurant avec cuisine sur place` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `concédée` non définie dans le schéma."
+    ]
+  },
+  "resource_data": [
+    [
+      "21340172201787",
+      "A canteen",
+      "",
+      "700",
+      "14000",
+      "Secondaire collège",
+      "Restaurant avec cuisine sur place",
+      "Concédée"
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_creer.json",
+  "url": null,
+  "version": "0.12.5"
+}

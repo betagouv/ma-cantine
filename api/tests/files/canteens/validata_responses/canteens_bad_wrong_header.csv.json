@@ -1,0 +1,59 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "message": "frictionless encountered an unexpected error. This is likely an internal error  (error message: 'Row does not have a field siret').",
+        "tags": [],
+        "title": "Error",
+        "type": "error"
+      }
+    ],
+    "stats": {
+      "errors": 1,
+      "fields": -1,
+      "rows": 1,
+      "rows_processed": -1,
+      "seconds": null,
+      "warnings": 0
+    },
+    "valid": false,
+    "warnings": []
+  },
+  "resource_data": [
+    [
+      "SI_RET",
+      "Nom de la cantine",
+      "SIRET CRO",
+      "Nb de repas par jour",
+      "Nb de repas par an",
+      "Secteurs",
+      "Mode de production",
+      "Mode de gestion",
+      "Secteur économique",
+      "Groupe identifiant",
+      "Administration de tutelle",
+      "Gestionnaires notifiés"
+    ],
+    [
+      "21340172201787",
+      "A canteen",
+      "",
+      "700",
+      "14000",
+      "Secondaire collège",
+      "Restaurant avec cuisine sur place",
+      "Concédée",
+      "",
+      "",
+      ""
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_creer.json",
+  "url": null,
+  "version": "0.12.5"
+}

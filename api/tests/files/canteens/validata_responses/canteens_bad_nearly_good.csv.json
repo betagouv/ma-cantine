@@ -1,0 +1,124 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "cell": "",
+        "fieldName": "nombre_repas_an",
+        "fieldNumber": 5,
+        "message": "La valeur est obligatoire et doit être renseignée",
+        "rowNumber": 3,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Valeur manquante",
+        "type": "constraint-error"
+      },
+      {
+        "cell": "21340172201787",
+        "fieldName": "siret",
+        "fieldNumber": 1,
+        "message": "Les valeurs de cette colonne doivent être uniques",
+        "rowNumber": 3,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Valeur dupliquée",
+        "type": "unique-error"
+      },
+      {
+        "cell": "Secteur inconnu",
+        "fieldName": "secteurs",
+        "fieldNumber": 6,
+        "message": "Secteur inconnu ne respecte pas le motif imposé\n\n**Exemple valide** :\nCrèche,Secondaire lycée (hors agricole)\n\n**Détails techniques** : la valeur doit respecter l'expression régulière `(^ *$)|(^ *(Crèche|Etablissements de la PJJ|Secondaire lycée \\(hors agricole\\)|Etablissements d[’']enseignement agricole|Restaurants administratifs des collectivités territoriales|Restaurants d[’']entreprises|Restaurants inter-entreprises|Autres structures d[’']enseignement|Ecole primaire \\(maternelle et élémentaire\\)|Secondaire collège|Hôpitaux|Cliniques|Autres établissements de soins|Autres établissements sociaux et médico-sociaux|IME / ITEP|ESAT / Etablissements spécialisés|EHPAD / maisons de retraite / foyers de personnes âgées|Centre de vacances / sportif|Autres établissements de loisirs|Autres établissements non listés|Restaurants des prisons|Restaurants administratifs d[’']Etat \\(RA\\)|Restaurants des armées / police / gendarmerie|Etablissements publics d[’']Etat \\(EPA ou EPIC\\)|Supérieur et Universitaire|Restaurants inter-administratifs d[’']État \\(RIA\\))( *\\, *(Crèche|Etablissements de la PJJ|Secondaire lycée \\(hors agricole\\)|Etablissements d[’']enseignement agricole|Restaurants administratifs des collectivités territoriales|Restaurants d[’']entreprises|Restaurants inter-entreprises|Autres structures d[’']enseignement|Ecole primaire \\(maternelle et élémentaire\\)|Secondaire collège|Hôpitaux|Cliniques|Autres établissements de soins|Autres établissements sociaux et médico-sociaux|IME / ITEP|ESAT / Etablissements spécialisés|EHPAD / maisons de retraite / foyers de personnes âgées|Centre de vacances / sportif|Autres établissements de loisirs|Autres établissements non listés|Restaurants des prisons|Restaurants administratifs d[’']Etat \\(RA\\)|Restaurants des armées / police / gendarmerie|Etablissements publics d[’']Etat \\(EPA ou EPIC\\)|Supérieur et Universitaire|Restaurants inter-administratifs d[’']État \\(RIA\\)))* *)$`)",
+        "rowNumber": 4,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Format incorrect",
+        "type": "constraint-error"
+      }
+    ],
+    "stats": {
+      "errors": 3,
+      "fields": 12,
+      "rows": 3,
+      "rows_processed": 3,
+      "seconds": null,
+      "warnings": 0
+    },
+    "valid": false,
+    "warnings": []
+  },
+  "resource_data": [
+    [
+      "siret",
+      "nom",
+      "siret_cuisine_centrale",
+      "nombre_repas_jour",
+      "nombre_repas_an",
+      "secteurs",
+      "type_production",
+      "type_gestion",
+      "modèle_économique",
+      "groupe_id",
+      "administration_tutelle",
+      "gestionnaires_additionnels"
+    ],
+    [
+      "21340172201787",
+      "A canteen",
+      "",
+      "700",
+      "14000",
+      "Cliniques,Hôpitaux",
+      "Restaurant avec cuisine sur place",
+      "Concédée",
+      "Public",
+      "",
+      "",
+      ""
+    ],
+    [
+      "21340172201787",
+      "A canteen",
+      "",
+      "700",
+      "",
+      "Cliniques,Hôpitaux",
+      "Restaurant avec cuisine sur place",
+      "Concédée",
+      "Public",
+      "",
+      "",
+      ""
+    ],
+    [
+      "21010034300016",
+      "Another canteen",
+      "",
+      "700",
+      "14000",
+      "Secteur inconnu",
+      "Restaurant avec cuisine sur place",
+      "Concédée",
+      "Public",
+      "",
+      "",
+      ""
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_creer.json",
+  "url": null,
+  "version": "0.12.5"
+}

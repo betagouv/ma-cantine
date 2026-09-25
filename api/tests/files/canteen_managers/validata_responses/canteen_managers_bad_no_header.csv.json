@@ -1,0 +1,69 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "fieldName": "siret",
+        "fieldNumber": 3,
+        "message": "La colonne obligatoire `siret` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "gestionnaires_additionnels",
+        "fieldNumber": 4,
+        "message": "La colonne obligatoire `gestionnaires_additionnels` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "source_donnees",
+        "fieldNumber": 5,
+        "message": "La colonne obligatoire `source_donnees` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      }
+    ],
+    "stats": {
+      "errors": 3,
+      "fields": 2,
+      "rows": 0,
+      "rows_processed": -1,
+      "seconds": null,
+      "warnings": 2
+    },
+    "valid": false,
+    "warnings": [
+      "Colonne surnuméraire : Retirez la colonne `21340172201787` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `manager1@example.com,manager2@example.com` non définie dans le schéma."
+    ]
+  },
+  "resource_data": [
+    [
+      "21340172201787",
+      "manager1@example.com,manager2@example.com"
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_gestionnaires.json",
+  "url": null,
+  "version": "0.12.5"
+}

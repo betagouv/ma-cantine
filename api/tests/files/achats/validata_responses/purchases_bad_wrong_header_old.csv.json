@@ -1,0 +1,126 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "fieldName": "siret",
+        "fieldNumber": 9,
+        "message": "La colonne obligatoire `siret` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "prix_ht",
+        "fieldNumber": 10,
+        "message": "La colonne obligatoire `prix_ht` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "fieldName": "famille_produits",
+        "fieldNumber": 11,
+        "message": "La colonne obligatoire `famille_produits` est manquante",
+        "tags": [
+          "#table",
+          "#header",
+          "#label"
+        ],
+        "title": "Colonne manquante",
+        "type": "missing-label"
+      },
+      {
+        "cell": "",
+        "fieldName": "definition de local",
+        "fieldNumber": 8,
+        "message": "La ligne n'a pas le même nombre de cellules que l'en-tête",
+        "rowNumber": 2,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Cellule manquante",
+        "type": "missing-cell"
+      },
+      {
+        "cell": "",
+        "fieldName": "definition de local",
+        "fieldNumber": 8,
+        "message": "La ligne n'a pas le même nombre de cellules que l'en-tête",
+        "rowNumber": 3,
+        "tags": [
+          "#table",
+          "#row",
+          "#cell"
+        ],
+        "title": "Cellule manquante",
+        "type": "missing-cell"
+      }
+    ],
+    "stats": {
+      "errors": 5,
+      "fields": 8,
+      "rows": 2,
+      "rows_processed": 2,
+      "seconds": null,
+      "warnings": 7
+    },
+    "valid": false,
+    "warnings": [
+      "Colonne manquante : Ajoutez la colonne manquante `caracteristiques`.",
+      "Colonne manquante : Ajoutez la colonne manquante `definition_local`.",
+      "Colonne surnuméraire : Retirez la colonne `canteen siret` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `prix ht` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `famille` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `caractéristiques` non définie dans le schéma.",
+      "Colonne surnuméraire : Retirez la colonne `definition de local` non définie dans le schéma."
+    ]
+  },
+  "resource_data": [
+    [
+      "canteen siret",
+      "description",
+      "fournisseur",
+      "date",
+      "prix HT",
+      "famille",
+      "caractéristiques",
+      "definition de local"
+    ],
+    [
+      "21010034300016",
+      "Pommes, rouges",
+      "Le bon traiteur ",
+      "2022-05-02",
+      "90.11",
+      " PRODUITS_LAITIERS ",
+      "BIO, LOCAL"
+    ],
+    [
+      "21010034300016",
+      "Pommes, vertes",
+      "Le bon traiteur ",
+      "2022-05-03",
+      "910.11",
+      " PRODUITS_LAITIERS ",
+      "BIO, LOCAL"
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/achats_siret_old.json",
+  "url": null,
+  "version": "0.12.5"
+}

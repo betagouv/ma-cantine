@@ -1,0 +1,14 @@
+{
+  "date": null,
+  "error": {
+    "message": "Please install \"frictionless[ods]\"",
+    "type": "source-error"
+  },
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/bilans_simple_siret.json",
+  "url": null,
+  "version": "0.12.5"
+}

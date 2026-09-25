@@ -1,0 +1,51 @@
+{
+  "date": null,
+  "options": {
+    "ignore_header_case": "True",
+    "include_resource_data": "True"
+  },
+  "report": {
+    "errors": [
+      {
+        "message": "La ligne vide doit être retirée de la table",
+        "rowNumber": 3,
+        "tags": [
+          "#table",
+          "#row"
+        ],
+        "title": "Ligne vide",
+        "type": "blank-row"
+      }
+    ],
+    "stats": {
+      "errors": 1,
+      "fields": 3,
+      "rows": 2,
+      "rows_processed": 2,
+      "seconds": null,
+      "warnings": 0
+    },
+    "valid": false,
+    "warnings": []
+  },
+  "resource_data": [
+    [
+      "siret",
+      "gestionnaires_additionnels",
+      "source_donnees"
+    ],
+    [
+      "21340172201787",
+      "manager1@example.com,manager2@example.com",
+      "test_import"
+    ],
+    [
+      "",
+      "",
+      ""
+    ]
+  ],
+  "schema": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/cantines_gestionnaires.json",
+  "url": null,
+  "version": "0.12.5"
+}

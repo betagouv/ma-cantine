@@ -1,11 +1,16 @@
 import filecmp
 import functools
+import json
+import os
 from datetime import timedelta
 
 from django.utils import timezone
 
+from common.api.validata import VALIDATA_PROD_API_URL
 from data.factories import UserFactory
 from data.models import ImportFailure
+
+FILES_DIR = os.path.join(os.path.dirname(__file__), "files")
 
 
 def authenticate(func):
@@ -39,6 +44,23 @@ def assert_import_failure_created(self, user, type, file_path):
     self.assertEqual(ImportFailure.objects.first().user, user)
     self.assertEqual(ImportFailure.objects.first().import_type, type)
     self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))
+
+
+def mock_validata_response(mock, filename, category="canteens"):
+    """
+    Mock the Validata API call for a given import fixture file, using a real response
+    captured from the live API (see api/tests/files/<category>/validata_responses/,
+    regenerated with `python manage.py generate_validata_test_fixtures`).
+    Avoids CI flakiness caused by depending on the live, third-party Validata service.
+
+    `category` matches the subdirectory of api/tests/files/ the fixture file lives in
+    (e.g. "canteens", "achats", "canteen_managers", "diagnostics_simple", "diagnostics",
+    "diagnostics_complete").
+    """
+    path = os.path.join(FILES_DIR, category, "validata_responses", f"{filename}.json")
+    with open(path) as f:
+        response_json = json.load(f)
+    mock.post(VALIDATA_PROD_API_URL, json=response_json, status_code=200)
 
 
 def assert_almost_equal(self, value, expected_value):

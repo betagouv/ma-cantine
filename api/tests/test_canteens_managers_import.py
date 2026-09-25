@@ -1,12 +1,13 @@
 from unittest import skipIf
 
+import requests_mock
 from django.conf import settings
 from django.test.utils import override_settings
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.tests.utils import assert_import_failure_created, authenticate
+from api.tests.utils import assert_import_failure_created, authenticate, mock_validata_response
 from data.factories import CanteenFactory, UserFactory
 from data.models import ImportFailure, ImportType, ManagerInvitation
 
@@ -25,13 +26,15 @@ class CanteensManagersImportApiNonAdminErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_non_staff_user_forbidden(self):
+    def test_non_staff_user_forbidden(self, mock):
         """
         Non-staff authenticated users should receive a PermissionDenied error
         """
         CanteenFactory(siret="21340172201787")
 
+        mock_validata_response(mock, "canteen_managers_good.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -53,8 +56,9 @@ class CanteensManagersImportApiErrorTest(APITestCase):
     def setUpTestData(cls):
         cls.url = reverse("canteens_managers_import")
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_missing_header_error(self):
+    def test_validata_missing_header_error(self, mock):
         """
         A file should not be valid if it doesn't contain a valid header
         """
@@ -64,6 +68,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
         # Hack : this test works because file has no header and has less columns than the expected header
         # TODO: remove this hack add fix it in other imports
+        mock_validata_response(mock, "canteen_managers_bad_no_header.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_no_header.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -76,8 +81,9 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors[0]["field"], "Première ligne du fichier incorrecte")
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_wrong_header_error(self):
+    def test_validata_wrong_header_error(self, mock):
         """
         A file should not be valid if it doesn't contain a valid header
         """
@@ -85,6 +91,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.is_staff = True
         user.save()
 
+        mock_validata_response(mock, "canteen_managers_bad_wrong_header.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_wrong_header.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -98,8 +105,9 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         for error in errors:
             self.assertTrue(error["title"].startswith("Valeur incorrecte vous avez écrit"))
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_extra_header_error(self):
+    def test_validata_extra_header_error(self, mock):
         """
         A file should not be valid if it has extra columns
         """
@@ -107,6 +115,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.is_staff = True
         user.save()
 
+        mock_validata_response(mock, "canteen_managers_bad_extra_header.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_extra_header.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -119,8 +128,9 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("colonnes supplémentaires", errors[0]["field"])
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_validata_empty_rows_error(self):
+    def test_validata_empty_rows_error(self, mock):
         """
         A file should not be valid if it contains empty rows
         """
@@ -128,6 +138,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.is_staff = True
         user.save()
 
+        mock_validata_response(mock, "canteen_managers_bad_empty_rows.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_empty_rows.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -139,8 +150,9 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertTrue(errors[0]["field"].startswith("ligne vide"))
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_canteen_not_found(self):
+    def test_canteen_not_found(self, mock):
         """
         Import should fail if the SIRET doesn't match any existing canteen
         """
@@ -148,6 +160,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.is_staff = True
         user.save()
 
+        mock_validata_response(mock, "canteen_managers_bad_siret_not_found.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_siret_not_found.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -160,8 +173,9 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("Aucune cantine avec le SIRET", errors[0]["message"])
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_invalid_manager_email(self):
+    def test_invalid_manager_email(self, mock):
         """
         Import should fail if an email in gestionnaires_additionnels is invalid
         """
@@ -170,6 +184,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.save()
         CanteenFactory(siret="21340172201787")
 
+        mock_validata_response(mock, "canteen_managers_bad_invalid_email.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_invalid_email.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -182,14 +197,16 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 1)
         self.assertIn("n'est pas valide", errors[0]["message"])
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_when_errors_count_is_0(self):
+    def test_when_errors_count_is_0(self, mock):
         user = authenticate.user
         user.is_staff = True
         user.save()
         CanteenFactory(siret="21340172201787")
         CanteenFactory(siret="40419443300078")
 
+        mock_validata_response(mock, "canteen_managers_bad_one_error.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_one_error.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -227,8 +244,9 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
     def setUpTestData(cls):
         cls.url = reverse("canteens_managers_import")
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_can_import_managers(self):
+    def test_can_import_managers(self, mock):
         """
         Staff user should successfully add managers to existing canteens without sending invitation emails
         """
@@ -241,6 +259,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         self.assertEqual(canteen.managers.count(), 0)
         self.assertEqual(ManagerInvitation.objects.count(), 0)
 
+        mock_validata_response(mock, "canteen_managers_good.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -263,8 +282,9 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         # Verify import source was updated
         self.assertEqual(canteen.import_source, "test_import")
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_can_import_managers_existing_manager(self):
+    def test_can_import_managers_existing_manager(self, mock):
         """
         If manager is already on the canteen, should not fail (IntegrityError caught)
         """
@@ -275,6 +295,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787")
         canteen.managers.add(existing_manager)
 
+        mock_validata_response(mock, "canteen_managers_good.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -290,8 +311,9 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         canteen.refresh_from_db()
         self.assertIn(existing_manager, canteen.managers.all())
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_can_import_multiple_canteens(self):
+    def test_can_import_multiple_canteens(self, mock):
         """
         Staff user can import managers for multiple canteens at once
         """
@@ -303,6 +325,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         canteen2 = CanteenFactory(siret="21380185500015")
         canteen2.managers.clear()
 
+        mock_validata_response(mock, "canteen_managers_good_multiple.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good_multiple.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -319,14 +342,16 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         self.assertEqual(ManagerInvitation.objects.filter(canteen=canteen1).count(), 2)
         self.assertEqual(ManagerInvitation.objects.filter(canteen=canteen2).count(), 1)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_can_import_excel_file(self):
+    def test_can_import_excel_file(self, mock):
         user = authenticate.user
         user.is_staff = True
         user.save()
         canteen = CanteenFactory(siret="21340172201787")
         canteen.managers.clear()
 
+        mock_validata_response(mock, "canteen_managers_good.xlsx", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.xlsx"
         with open(file_path, "rb") as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
@@ -342,8 +367,9 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         # Check managers were added
         self.assertEqual(ManagerInvitation.objects.filter(canteen=canteen).count(), 2)
 
+    @requests_mock.Mocker(real_http=True)
     @authenticate
-    def test_can_import_even_if_canteen_not_valid(self):
+    def test_can_import_even_if_canteen_not_valid(self, mock):
         user = authenticate.user
         user.is_staff = True
         user.save()
@@ -356,6 +382,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
 
         self.assertFalse(canteen.is_filled)
 
+        mock_validata_response(mock, "canteen_managers_good.csv", category="canteen_managers")
         file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
