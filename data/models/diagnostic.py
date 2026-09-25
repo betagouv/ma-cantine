@@ -1993,7 +1993,7 @@ class Diagnostic(models.Model):
                 if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
                     self.populate_simplified_diagnostic_values()
                 if int(self.year) >= 2026:
-                    # since 2026, once the diagnostic_type is known, default any still-empty required field to 0
+                    self.clear_appro_fields_not_matching_diagnostic_type()
                     self.populate_required_fields_with_zero()
             self.populate_aggregated_values()
             self.populate_egalim_stats()
