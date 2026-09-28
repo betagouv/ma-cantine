@@ -41,7 +41,7 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
   <DiagnosticEgalimComplete v-else-if="isComplete" />
   <DsfrAlert v-else type="warning">
     <p>
-      Pour renseigner le détail de vos achats EGalim, vous devez sélectionner
+      Pour renseigner le détail de vos achats EGalim vous devez sélectionner
       <AppLinkRouter :to="{name: 'GestionnaireTunnelApproSaisie'}" title="un mode de saisie" />.
     </p>
   </DsfrAlert>
