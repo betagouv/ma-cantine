@@ -4,23 +4,25 @@ import { storeToRefs } from "pinia"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
+/* Diagnostic */
 const teledeclarationStore = useStoreTeledeclaration()
-const { diagnostic, isTeledeclared } = storeToRefs(teledeclarationStore)
+const { diagnostic, isTeledeclared, hasErrors, hasDiagnostic } = storeToRefs(teledeclarationStore)
 
 /* Get data */
 const getIsStarted = (key) => {
-  console.log(key)
-  return false
+  if (key === "appro") return hasDiagnostic.value
+  else return false
 }
 
 const getImage = (key) => {
-  const suffix = getIsStarted(key) ? "" : "-disabled"
-  return `/static/images/badges/badge-${key}${suffix}.svg`
+  return `/static/images/badges/badge-${key}-disabled.svg`
 }
 
 const getSentence = (key) => {
   const isStarted = getIsStarted(key)
-  return isStarted ? "Volet non télédéclaré." : "Volet non renseigné."
+  if (!isStarted) return "Volet non renseigné."
+  if (key === "appro") return hasErrors.value ? "Volet en attente de correction." : "Volet non télédéclaré."
+  return isTeledeclared.value ? "Volet non télédéclaré." : "Volet non renseigné."
 }
 
 /* Accordions */

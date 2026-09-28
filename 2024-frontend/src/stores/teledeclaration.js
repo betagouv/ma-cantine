@@ -11,6 +11,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const year = 2026 // Force for testing, improve ??
   const diagnosticErrors = ref([])
   const hasDiagnostic = computed(() => diagnostic.value !== null)
+  const hasErrors = computed(() => diagnosticErrors.value.length > 0)
   const isSimple = computed(() => diagnostic.value?.diagnosticType === "SIMPLE")
   const isComplete = computed(() => diagnostic.value?.diagnosticType === "COMPLETE")
   const isSaved = ref(true)
@@ -153,6 +154,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnostic,
     diagnosticErrors,
     hasDiagnostic,
+    hasErrors,
     isSimple,
     isComplete,
     isSaved,
