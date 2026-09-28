@@ -45,5 +45,4 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
       <AppLinkRouter :to="{name: 'GestionnaireTunnelApproSaisie'}" title="un mode de saisie" />.
     </p>
   </DsfrAlert>
-
 </template>
