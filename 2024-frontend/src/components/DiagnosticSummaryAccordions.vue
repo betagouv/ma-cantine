@@ -9,7 +9,7 @@ const { diagnostic } = storeToRefs(teledeclarationStore)
 /* Data */
 const getIsStarted = (key) => {
   console.log(key)
-  return true
+  return false
 }
 
 const getImage = (key) => {
