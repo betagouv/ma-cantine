@@ -44,7 +44,7 @@ const goTo = (to) => router.push(to)
         <div class="fr-mb-4w">
           <h2 class="fr-h4 fr-mb-1w">{{ canteen?.name }}</h2>
           <div>
-            <AppBadgeCanteen :canteen="canteen" class="fr-mr-1w" />
+            <AppBadgeCanteen :canteen="canteen" class="fr-mr-1v fr-mb-1v" />
             <AppBadgeSiretSiren :canteen="canteen" />
           </div>
         </div>
