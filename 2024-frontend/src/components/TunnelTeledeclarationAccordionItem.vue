@@ -39,7 +39,7 @@ const header = [
 const getPrettyDiagnosticValue = (field) => {
   const hasOptions = teledeclaration.fields[field]?.options?.length > 0
   const diagValue = diagnostic.value[field]
-  const prettyValue = hasOptions ? teledeclaration.fields[field].options.find(option => option.value === diagValue).labelShort : diagValue
+  const prettyValue = hasOptions ? teledeclaration.fields[field].options.find(option => option.value === diagValue)?.labelShort : diagValue
   return prettyValue !== null ? prettyValue : "Non renseigné"
 }
 
