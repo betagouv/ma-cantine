@@ -29,7 +29,7 @@ const goToPurchases = () => {
     <div class="diagnostic-purchases-linked__top">
       <img :src="iconLink" alt="Logo outil Mes achats" class="diagnostic-purchases-linked__icon fr-mb-2w" />
       <p class="diagnostic-purchases-linked__title fr-text--bold">Souhaitez-vous modifier votre déclaration en pré-remplissant une nouvelle déclaration à partir de votre suivi d’achats (outil “Mes achats”) ?</p>
-      <DsfrButton label="En savoir plus" icon="ri-information-line" secondary class="diagnostic-purchases-linked__button" size="sm" @click="opened = true" />
+      <DsfrButton label="En savoir +" icon="ri-information-line" secondary class="diagnostic-purchases-linked__button" size="sm" @click="opened = true" />
     </div>
     <p v-if="hasPurchaseTotal" class="fr-mb-1w">
       Vous avez <span class="fr-text--bold">{{ purchaseAmount }}</span> d’achats détectés dans votre suivi des achats.
@@ -40,7 +40,7 @@ const goToPurchases = () => {
     <p>
       Si vous utilisez l’Outil de suivi des achats, pour pré-remplir votre télédéclaration, assurez-vous d’avoir complété l’ensemble de vos achats de l’année précédente.
     </p>
-    <DsfrButton label="Consulter Mes Achats" @click="goToPurchases" secondary />
+    <DsfrButton label="Consulter mes achats" @click="goToPurchases" secondary />
     <AppModalIframe :opened="opened" :title="modalTitle" :src="documentation.mesAchats" @close="opened = false" />
   </div>
 </template>
