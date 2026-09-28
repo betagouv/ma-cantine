@@ -33,7 +33,8 @@ const accordions = computed(() => {
       title: "Approvisionnements",
       image: getImage("appro"),
       sentence: getSentence("appro"),
-      page: { name: "GestionnaireTunnelApproRecapitulatif" }
+      page: { name: "GestionnaireTunnelApproRecapitulatif" },
+      displayErrors: hasErrors.value
     },
     {
       title: "Informations convives",
@@ -74,6 +75,7 @@ const accordions = computed(() => {
         <span class="ma-cantine--flex-start ma-cantine--flex-gap-1">
           <img :src="accordion.image" alt="" class="diagnostic-summary-accordions__image" />
           {{ accordion.title }}
+          <DsfrBadge v-if="accordion.displayErrors" label="Erreurs" type="error"/>
         </span>
       </template>
       <p v-if="!isTeledeclared" class="fr-mb-0">
