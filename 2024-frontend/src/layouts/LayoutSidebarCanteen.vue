@@ -84,8 +84,10 @@ const menuItems = computed(() =>  {
     </div>
     <div class="fr-grid-row ma-cantine--sticky__container">
       <div class="layout-sidebar-canteen__sidebar-container fr-col-12 fr-col-md-3 fr-background-default--grey">
-        <GestionnaireTeledeclarationNav :canteen="canteenInformations" />
-        <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu" class="ma-cantine--sticky__top" titleTag="p" />
+        <div class="ma-cantine--sticky__top">
+          <GestionnaireTeledeclarationNav :canteen="canteenInformations" />
+          <DsfrSideMenu :menu-items="menuItems" buttonLabel="Voir le menu" titleTag="p" />
+        </div>
       </div>
       <section id="sidebar-canteen-content" class="fr-col-12 fr-col-md-9 fr-pb-2w">
         <RouterView />

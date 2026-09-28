@@ -11,6 +11,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const year = 2026 // Force for testing, improve ??
   const diagnosticErrors = ref([])
   const hasDiagnostic = computed(() => diagnostic.value !== null)
+  const isSimple = computed(() => diagnostic.value?.diagnosticType === "SIMPLE")
+  const isComplete = computed(() => diagnostic.value?.diagnosticType === "COMPLETE")
   const isSaved = ref(true)
 
   /* Init store with diagnostic of the current campaign */
@@ -121,8 +123,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Keep only the errors related to the fields displayed on the given page */
   function getErrorsPage(pageName, canteenIsGroupe) {
-    const diagnosticIsSimple = diagnostic.value.diagnosticType === "SIMPLE"
-    const fieldsList = diagnosticsFields.getFieldsListFromPage(pageName, canteenIsGroupe, diagnosticIsSimple)
+    const fieldsList = diagnosticsFields.getFieldsListFromPage(pageName, canteenIsGroupe, isSimple.value)
     return diagnosticErrors.value.filter((error) => fieldsList.includes(error.field))
   }
 
@@ -151,6 +152,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnostic,
     diagnosticErrors,
     hasDiagnostic,
+    isSimple,
+    isComplete,
     isSaved,
     initStore,
     deleteStore,

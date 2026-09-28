@@ -112,9 +112,9 @@ const goTo = (page) => {
       <div class="fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
         <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" @save="save" />
       </div>
-      <div class="fr-col-12 fr-col-md-9 fr-pl-0 fr-pl-md-4w">
+      <div class="fr-col-12 fr-col-md-9">
         <TunnelTeledeclarationTopNav @save="save" />
-        <div class="fr-mt-2w">
+        <div class="fr-mt-2w fr-pl-0 fr-pl-md-4w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
           <h1 v-else>{{ routeTitle }}</h1>
           <RouterView />
