@@ -16,9 +16,7 @@ const coutRepasFieldName = teledeclarationFields.groups["coutRepas"][0]
 
 /* Teledeclaration */
 const storeTeledeclaration = useStoreTeledeclaration()
-const { diagnostic } = storeToRefs(storeTeledeclaration)
-const diagIsSimple = computed(() => diagnostic.value.diagnosticType === "SIMPLE")
-const diagIsComplete = computed(() => diagnostic.value.diagnosticType === "COMPLETE")
+const { diagnostic, isSimple, isComplete } = storeToRefs(storeTeledeclaration)
 
 /* Meal count */
 const coutRepas = computed(() => diagnostic.value[coutRepasFieldName] || '-')
@@ -39,9 +37,13 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
       </AppHelpCard>
     </div>
   </div>
-  <DiagnosticEgalimSimple v-if="diagIsSimple" />
-  <DiagnosticEgalimComplete v-else-if="diagIsComplete" />
-  <p v-else>
-    Pour renseigner le détail de vos achats EGalim, veuillez d'abord sélectionner un mode de saisie à <AppLinkRouter :to="{name: 'GestionnaireTunnelApproSaisie'}" title="l'étape précédente" />
-  </p>
+  <DiagnosticEgalimSimple v-if="isSimple" />
+  <DiagnosticEgalimComplete v-else-if="isComplete" />
+  <DsfrAlert v-else type="warning">
+    <p>
+      Pour renseigner le détail de vos achats EGalim, vous devez sélectionner
+      <AppLinkRouter :to="{name: 'GestionnaireTunnelApproSaisie'}" title="un mode de saisie" />.
+    </p>
+  </DsfrAlert>
+
 </template>
