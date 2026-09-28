@@ -470,6 +470,7 @@ class DiagnosticCreateApiTest(APITestCase):
 
         payload = {
             "year": 2026,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
             "nombre_repas_an": 1000,
             "valeur_totale": 10000,
             # valeur_famille
@@ -509,6 +510,14 @@ class DiagnosticCreateApiTest(APITestCase):
             "valeur_boulangerie_stg": 10,
             "valeur_boissons_stg": 10,
             "valeur_autres_stg": 10,
+            # valeur_famille_peche_durable
+            "valeur_produits_de_la_mer_peche_durable": 10,
+            # valeur_famille_fermier
+            "valeur_produits_de_la_mer_fermier": 10,
+            "valeur_fruits_et_legumes_fermier": 10,
+            "valeur_boulangerie_fermier": 10,
+            "valeur_boissons_fermier": 10,
+            "valeur_autres_fermier": 10,
             # valeur_famille_europe
             "valeur_viandes_volailles_europe": 10,
             "valeur_produits_de_la_mer_europe": 10,
