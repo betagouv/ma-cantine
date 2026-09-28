@@ -7,6 +7,7 @@ import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 import DiagnosticEgalimSimple from "@/components/DiagnosticEgalimSimple.vue"
 import DiagnosticEgalimComplete from "@/components/DiagnosticEgalimComplete.vue"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import teledeclarationFields from "@/data/teledeclaration.json"
 
 /* Fields names */
@@ -17,6 +18,7 @@ const coutRepasFieldName = teledeclarationFields.groups["coutRepas"][0]
 const storeTeledeclaration = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(storeTeledeclaration)
 const diagIsSimple = computed(() => diagnostic.value.diagnosticType === "SIMPLE")
+const diagIsComplete = computed(() => diagnostic.value.diagnosticType === "COMPLETE")
 
 /* Meal count */
 const coutRepas = computed(() => diagnostic.value[coutRepasFieldName] || '-')
@@ -38,5 +40,8 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
     </div>
   </div>
   <DiagnosticEgalimSimple v-if="diagIsSimple" />
-  <DiagnosticEgalimComplete v-else />
+  <DiagnosticEgalimComplete v-else-if="diagIsComplete" />
+  <p v-else>
+    Pour renseigner le détail de vos achats EGalim, veuillez d'abord sélectionner un mode de saisie à <AppLinkRouter :to="{name: 'GestionnaireTunnelApproSaisie'}" title="l'étape précédente" />
+  </p>
 </template>
