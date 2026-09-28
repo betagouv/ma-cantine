@@ -802,6 +802,16 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boissons_local",
                 "valeur_autres_local",
             ],
+            "fields_added": [
+                "valeur_viandes_volailles_bio_dont_commerce_equitable",
+                "valeur_produits_de_la_mer_bio_dont_commerce_equitable",
+                "valeur_fruits_et_legumes_bio_dont_commerce_equitable",
+                "valeur_charcuterie_bio_dont_commerce_equitable",
+                "valeur_produits_laitiers_bio_dont_commerce_equitable",
+                "valeur_boulangerie_bio_dont_commerce_equitable",
+                "valeur_boissons_bio_dont_commerce_equitable",
+                "valeur_autres_bio_dont_commerce_equitable",
+            ],
         },
     },
     2026: {
@@ -937,6 +947,7 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie_hve",
                 "valeur_boissons_hve",
                 "valeur_autres_hve",
+                "valeur_produits_de_la_mer_peche_durable",
                 "valeur_viandes_volailles_rup",
                 "valeur_produits_de_la_mer_rup",
                 "valeur_fruits_et_legumes_rup",
@@ -1115,6 +1126,14 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie_stg",
                 "valeur_boissons_stg",
                 "valeur_autres_stg",
+                # peche_durable re-added
+                "valeur_produits_de_la_mer_peche_durable",
+                # some fermier re-added
+                "valeur_produits_de_la_mer_fermier",
+                "valeur_fruits_et_legumes_fermier",
+                "valeur_boulangerie_fermier",
+                "valeur_boissons_fermier",
+                "valeur_autres_fermier",
             ],
             "fields_removed": [
                 "valeur_viandes_volailles_aocaop_igp_stg",

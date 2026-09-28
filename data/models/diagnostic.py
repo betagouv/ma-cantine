@@ -818,11 +818,6 @@ class Diagnostic(models.Model):
         "valeur_boulangerie_peche_durable",
         "valeur_boissons_peche_durable",
         "valeur_autres_peche_durable",
-        "valeur_produits_de_la_mer_fermier",
-        "valeur_fruits_et_legumes_fermier",
-        "valeur_boulangerie_fermier",
-        "valeur_boissons_fermier",
-        "valeur_autres_fermier",
     ]
 
     COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS
@@ -1489,7 +1484,7 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Pêche durable (non applicable)",
     )
     valeur_produits_de_la_mer_peche_durable = make_optional_positive_decimal_field(
-        verbose_name="Poissons, produits de la mer et de l'aquaculture, Pêche durable (non applicable)",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Pêche durable",
     )
     valeur_fruits_et_legumes_peche_durable = make_optional_positive_decimal_field(
         verbose_name="Fruits et légumes frais et surgelés, Pêche durable (non applicable)",
@@ -1561,10 +1556,10 @@ class Diagnostic(models.Model):
         verbose_name="Viandes et volailles fraîches et surgelées, Fermier",
     )
     valeur_produits_de_la_mer_fermier = make_optional_positive_decimal_field(
-        verbose_name="Poissons, produits de la mer et de l'aquaculture, Fermier (non applicable)",
+        verbose_name="Poissons, produits de la mer et de l'aquaculture, Fermier",
     )
     valeur_fruits_et_legumes_fermier = make_optional_positive_decimal_field(
-        verbose_name="Fruits et légumes frais et surgelés, Fermier (non applicable)",
+        verbose_name="Fruits et légumes frais et surgelés, Fermier",
     )
     valeur_charcuterie_fermier = make_optional_positive_decimal_field(
         verbose_name="Charcuterie, Fermier",
@@ -1573,13 +1568,13 @@ class Diagnostic(models.Model):
         verbose_name="BOF (Produits laitiers, beurre et œufs), Fermier",
     )
     valeur_boulangerie_fermier = make_optional_positive_decimal_field(
-        verbose_name="Boulangerie / Pâtisserie fraîches, Fermier (non applicable)",
+        verbose_name="Boulangerie / Pâtisserie fraîches, Fermier",
     )
     valeur_boissons_fermier = make_optional_positive_decimal_field(
-        verbose_name="Boissons, Fermier (non applicable)",
+        verbose_name="Boissons, Fermier",
     )
     valeur_autres_fermier = make_optional_positive_decimal_field(
-        verbose_name="Autres produits frais, surgelés et d'épicerie, Fermier (non applicable)",
+        verbose_name="Autres produits frais, surgelés et d'épicerie, Fermier",
     )
     valeur_viandes_volailles_externalites = make_optional_positive_decimal_field(
         verbose_name="Viandes et volailles fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
