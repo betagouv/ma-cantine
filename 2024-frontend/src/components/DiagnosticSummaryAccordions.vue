@@ -74,11 +74,14 @@ const accordions = computed(() => {
           {{ accordion.title }}
         </span>
       </template>
-      <p v-if="!isTeledeclared">
+      <p v-if="!isTeledeclared" class="fr-mb-0">
         <span class="fr-text--bold">{{ accordion.sentence }}</span>
         <br>
         Consulter le volet <AppLinkRouter :to="accordion.page" :title="accordion.title.toLowerCase()"/>
       </p>
+      <div v-else class="ma-cantine--flex-end">
+        <DsfrButton @click="goToPage(accordion.page)" secondary :label="`Modifier le volet ${accordion.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
+      </div>
     </DsfrAccordion>
   </DsfrAccordionsGroup>
   <pre>{{ diagnostic }}</pre>
