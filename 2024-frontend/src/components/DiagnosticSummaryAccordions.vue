@@ -2,11 +2,12 @@
 import { ref, computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
+import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 const teledeclarationStore = useStoreTeledeclaration()
-const { diagnostic } = storeToRefs(teledeclarationStore)
+const { diagnostic, isTeledeclared } = storeToRefs(teledeclarationStore)
 
-/* Data */
+/* Get data */
 const getIsStarted = (key) => {
   console.log(key)
   return false
@@ -17,6 +18,11 @@ const getImage = (key) => {
   return `/static/images/badges/badge-${key}${suffix}.svg`
 }
 
+const getSentence = (key) => {
+  const isStarted = getIsStarted(key)
+  return isStarted ? "Volet non télédéclaré." : "Volet non renseigné."
+}
+
 /* Accordions */
 const activeAccordion = ref()
 const accordions = computed(() => {
@@ -24,27 +30,32 @@ const accordions = computed(() => {
     {
       title: "Approvisionnements",
       image: getImage("appro"),
-      isStarted: getIsStarted("appro")
+      sentence: getSentence("appro"),
+      page: { name: "GestionnaireTunnelApproRecapitulatif" }
     },
     {
       title: "Informations convives",
       image: getImage("info"),
-      isStarted: getIsStarted("info")
+      sentence: getSentence("info"),
+      page: { name: "GestionnaireTunnelConvives" }
     },
     {
       title: "Lutte contre le gaspillage alimentaire",
       image: getImage("waste"),
-      isStarted: getIsStarted("waste")
+      sentence: getSentence("waste"),
+      page: { name: "GestionnaireTunnelGaspillage" }
     },
     {
       title: "Diversification des sources de protéines et menus végétariens",
       image: getImage("diversification"),
-      isStarted: getIsStarted("diversification")
+      sentence: getSentence("diversification"),
+      page: { name: "GestionnaireTunnelVegetarien" }
     },
     {
       title: "Substitutions plastiques",
       image: getImage("plastic"),
-      isStarted: getIsStarted("plastic")
+      sentence: getSentence("plastic"),
+      page: { name: "GestionnaireTunnelPlastique" }
     }
   ]
 })
@@ -63,8 +74,11 @@ const accordions = computed(() => {
           {{ accordion.title }}
         </span>
       </template>
-      <p v-if="accordion.isStarted" class="fr-mb-0">Données saisies</p>
-      <p v-else class="fr-mb-0">Ce volet n’a pas encore été renseigné.</p>
+      <p v-if="!isTeledeclared">
+        <span class="fr-text--bold">{{ accordion.sentence }}</span>
+        <br>
+        Consulter le volet <AppLinkRouter :to="accordion.page" :title="accordion.title.toLowerCase()"/>
+      </p>
     </DsfrAccordion>
   </DsfrAccordionsGroup>
   <pre>{{ diagnostic }}</pre>

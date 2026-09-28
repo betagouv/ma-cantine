@@ -14,6 +14,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const isSimple = computed(() => diagnostic.value?.diagnosticType === "SIMPLE")
   const isComplete = computed(() => diagnostic.value?.diagnosticType === "COMPLETE")
   const isSaved = ref(true)
+  const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
@@ -155,6 +156,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     isSimple,
     isComplete,
     isSaved,
+    isTeledeclared,
     initStore,
     deleteStore,
     getYear,
