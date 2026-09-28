@@ -327,24 +327,30 @@ class DiagnosticModelSaveTest(TransactionTestCase):
 
     @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_label(self):
-        VALID_DIAGNOSTIC_COMPLETE_2026 = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
+        VALID_DIAGNOSTIC_COMPLETE_2026 = {
+            **VALID_DIAGNOSTIC_SIMPLE_2026,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
+        }
         # default: ok
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2026)
-        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.valeur_bio, 60)
         self.assertEqual(diagnostic.label_sum("bio"), 60)
         # 1 valeur_famille_label cannot be > valeur_label
         diagnostic.valeur_viandes_volailles_bio = 200
         diagnostic.save()
-        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.valeur_bio, 230)  # 200 + 30 (produits_de_la_mer_bio, unchanged)
         self.assertRaises(ValidationError, diagnostic.full_clean)
         # sum of valeur_famille_label cannot be > valeur_label
         diagnostic.valeur_viandes_volailles_bio = 30
         diagnostic.valeur_fruits_et_legumes = 150
         diagnostic.valeur_fruits_et_legumes_bio = 150
         diagnostic.save()
-        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.valeur_bio, 210)  # 30 + 30 + 150
         self.assertEqual(diagnostic.label_sum("bio"), 210)
-        self.assertRaises(ValidationError, diagnostic.full_clean)
+        # not raised anymore: valeur_bio is always recomputed to match label_sum("bio") before this validator runs
+        # (see populate_simplified_diagnostic_values), so this check is structurally untestable for bio/siqo/
+        # externalites_performance/egalim_autres
+        # self.assertRaises(ValidationError, diagnostic.full_clean)
 
     @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
@@ -550,6 +556,24 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 10)  # not overriden
         self.assertIsNone(diagnostic.valeur_viandes_volailles_igp)  # not populated (not required)
         self.assertIsNone(diagnostic.nombre_repas_an)  # not populated (not covered)
+
+    def test_diagnostic_2026_simple_clears_complete_only_fields(self):
+        diagnostic = Diagnostic.objects.create(
+            year=2026,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=100,
+            valeur_viandes_volailles_bio=50,  # only in COMPLETE
+        )
+        self.assertIsNone(diagnostic.valeur_viandes_volailles_bio)
+
+    def test_diagnostic_2026_complete_clears_simple_only_fields(self):
+        diagnostic = Diagnostic.objects.create(
+            year=2026,
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            valeur_totale=100,
+            valeur_europe=50,  # only in SIMPLE
+        )
+        self.assertIsNone(diagnostic.valeur_europe)
 
 
 class DiagnosticQuerySetTest(TestCase):

@@ -432,12 +432,24 @@ class DiagnosticCreateApiTest(APITestCase):
         """
         self.canteen.managers.add(authenticate.user)
 
-        payload = {**self.DIAGNOSTIC_PAYLOAD, "generated_from_groupe_diagnostic": False, "valeur_bio": 10}
+        # diagnostic_type must be set: without it, valeur_bio would be cleared (see
+        # clear_appro_fields_not_matching_diagnostic_type)
+        payload = {
+            **self.DIAGNOSTIC_PAYLOAD,
+            "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
+            "generated_from_groupe_diagnostic": False,
+            "valeur_bio": 10,
+        }
         self.client.post(self.url, payload)
 
         try:
             with transaction.atomic():
-                payload = {**self.DIAGNOSTIC_PAYLOAD, "generated_from_groupe_diagnostic": False, "valeur_bio": 1000}
+                payload = {
+                    **self.DIAGNOSTIC_PAYLOAD,
+                    "diagnostic_type": Diagnostic.DiagnosticType.SIMPLE,
+                    "generated_from_groupe_diagnostic": False,
+                    "valeur_bio": 1000,
+                }
                 response = self.client.post(self.url, payload)
         except BadRequest:
             pass
@@ -470,6 +482,7 @@ class DiagnosticCreateApiTest(APITestCase):
 
         payload = {
             "year": 2026,
+            "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,
             "nombre_repas_an": 1000,
             "valeur_totale": 10000,
             # valeur_famille
@@ -479,11 +492,6 @@ class DiagnosticCreateApiTest(APITestCase):
             "valeur_boulangerie": 100,
             "valeur_boissons": 100,
             "valeur_autres": 100,
-            # valeur_label (non egalim)
-            "valeur_europe": 100,
-            "valeur_france": 100,
-            "valeur_circuit_court": 100,
-            "valeur_local": 100,
             # aocaop_igp_stg was split
             "valeur_viandes_volailles_aocaop": 10,
             "valeur_produits_de_la_mer_aocaop": 10,

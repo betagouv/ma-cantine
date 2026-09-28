@@ -31,7 +31,10 @@ from data.models.diagnostic_teledeclaration_dates import (
     is_in_correction,
     is_in_teledeclaration_or_correction,
 )
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
+    get_teledeclaration_fields_required,
+)
 from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
     get_teledeclaration_field_groups,
@@ -1965,6 +1968,23 @@ class Diagnostic(models.Model):
         return super().clean()
 
     def save(self, **kwargs):
+        """
+        Save the diagnostic instance.
+
+        NOTE: full_clean() is not called here:
+        - we need to manage incomplete diagnostics (tunnel)
+        - it is only called in teledeclare() and check/
+
+        Since 2026, if the diagnostic_type is known:
+        - clear fields that don't belong to it
+        - default any still-empty required field to 0
+
+        Populated fields:
+        - simplified values (if diagnostic_type complete)
+        - aggregated values
+        - egalim stats
+        - cout_repas
+        """
         # NOTE: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
         validation_errors = utils_utils.merge_validation_errors(diagnostic_validators.validate_year(self))
         if not validation_errors:
@@ -1973,12 +1993,29 @@ class Diagnostic(models.Model):
                 if self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE:
                     self.populate_simplified_diagnostic_values()
                 if int(self.year) >= 2026:
-                    # since 2026, once the diagnostic_type is known, default any still-empty required field to 0
+                    self.clear_appro_fields_not_matching_diagnostic_type()
                     self.populate_required_fields_with_zero()
             self.populate_aggregated_values()
             self.populate_egalim_stats()
             self.populate_cout_repas()
         return super().save(**kwargs)
+
+    def clear_appro_fields_not_matching_diagnostic_type(self):
+        """
+        Since 2026, appro fields that don't belong to this diagnostic's year & type must stay empty:
+        - if diagnostic_type is empty, every appro field must stay empty
+        - if filled, only the fields for that type (SIMPLE or COMPLETE) may be filled; the rest are cleared
+        NOTE: SIMPLIFIED_DIAGNOSTIC_FIELDS are excluded from clearing (see their own docstring).
+        """
+        if self.diagnostic_type:
+            matching_fields = set(get_teledeclaration_fields_all(self.year, self.diagnostic_type)) | set(
+                Diagnostic.SIMPLIFIED_DIAGNOSTIC_FIELDS
+            )
+        else:
+            matching_fields = set()
+        for field_name in Diagnostic.APPRO_FIELDS:
+            if field_name not in matching_fields:
+                setattr(self, field_name, None)
 
     def populate_required_fields_with_zero(self):
         """
@@ -2021,7 +2058,7 @@ class Diagnostic(models.Model):
         self.valeur_produits_de_la_mer_egalim = total_fish_egalim
 
     def populate_aggregated_values(self):
-        # NOTE: AGGREGATED_DIAGNOSTIC_FIELDS
+        # NOTE: AGGREGATED_APPRO_FIELDS
         self.valeur_bio_agg = self.label_group_sum("bio")
         self.valeur_siqo_agg = self.label_group_sum("siqo")
         self.valeur_externalites_performance_agg = self.label_group_sum("externalites_performance")
