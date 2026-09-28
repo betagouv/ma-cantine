@@ -1087,15 +1087,6 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie",
                 "valeur_boissons",
                 "valeur_autres",
-                # valeur_famille_europe
-                "valeur_viandes_volailles_europe",
-                "valeur_produits_de_la_mer_europe",
-                "valeur_fruits_et_legumes_europe",
-                "valeur_charcuterie_europe",
-                "valeur_produits_laitiers_europe",
-                "valeur_boulangerie_europe",
-                "valeur_boissons_europe",
-                "valeur_autres_europe",
                 # valeur_label
                 "valeur_europe",
                 "valeur_france",
@@ -1126,14 +1117,23 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie_stg",
                 "valeur_boissons_stg",
                 "valeur_autres_stg",
-                # peche_durable re-added
+                # some valeur_famille_peche_durable re-added
                 "valeur_produits_de_la_mer_peche_durable",
-                # some fermier re-added
+                # some valeur_famille_fermier re-added
                 "valeur_produits_de_la_mer_fermier",
                 "valeur_fruits_et_legumes_fermier",
                 "valeur_boulangerie_fermier",
                 "valeur_boissons_fermier",
                 "valeur_autres_fermier",
+                # valeur_famille_europe
+                "valeur_viandes_volailles_europe",
+                "valeur_produits_de_la_mer_europe",
+                "valeur_fruits_et_legumes_europe",
+                "valeur_charcuterie_europe",
+                "valeur_produits_laitiers_europe",
+                "valeur_boulangerie_europe",
+                "valeur_boissons_europe",
+                "valeur_autres_europe",
             ],
             "fields_removed": [
                 "valeur_viandes_volailles_aocaop_igp_stg",
