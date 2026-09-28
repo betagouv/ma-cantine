@@ -199,7 +199,7 @@ django-filter==24.3
     #   wagtail
 django-js-asset==4.1.0
     # via django-ckeditor
-django-magicauth @ git+https://github.com/betagouv/django-magicauth.git@51f4709d8593016ac67428a87bbd2810070ae288
+django-magicauth==0.8
     # via ma-cantine
 django-modelcluster==6.5
     # via wagtail

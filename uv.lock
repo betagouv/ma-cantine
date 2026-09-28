@@ -1123,8 +1123,12 @@ wheels = [
 
 [[package]]
 name = "django-magicauth"
-version = "0.7"
-source = { git = "https://github.com/betagouv/django-magicauth.git?rev=51f4709d8593016ac67428a87bbd2810070ae288#51f4709d8593016ac67428a87bbd2810070ae288" }
+version = "0.8"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/91/76/3b4c4f5d15a13eaa494d684a0fb466f7c222e7fde44a289c36212f0d10fb/django-magicauth-0.8.tar.gz", hash = "sha256:63e290c91df8c84029128dfec1337b43feb76e4549276ce66ccd7ad847e12380", size = 19116, upload-time = "2022-03-23T16:26:08.758Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1d/19/bb2634715b3bd90b595087a8f4271b65a130f094ca672f215857531f32bb/django_magicauth-0.8-py3-none-any.whl", hash = "sha256:91dca79ad102430a3b08b23aa21d1ee04ee85f456fb550f983a8bde842bb2591", size = 26261, upload-time = "2022-03-23T16:26:07.124Z" },
+]
 
 [[package]]
 name = "django-modelcluster"
@@ -2032,7 +2036,7 @@ requires-dist = [
     { name = "django-dirtyfields", specifier = "==1.9.8" },
     { name = "django-extensions", specifier = "==4.1" },
     { name = "django-filter", specifier = "==24.3" },
-    { name = "django-magicauth", git = "https://github.com/betagouv/django-magicauth.git?rev=51f4709d8593016ac67428a87bbd2810070ae288" },
+    { name = "django-magicauth", specifier = "==0.8" },
     { name = "django-oauth-toolkit", specifier = "==3.0.1" },
     { name = "django-otp", specifier = "==1.5.2" },
     { name = "django-simple-history", specifier = "==3.7.0" },
