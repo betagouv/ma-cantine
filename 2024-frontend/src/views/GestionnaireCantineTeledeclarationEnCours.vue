@@ -12,6 +12,7 @@ import AppHelpCard from "@/components/AppHelpCard.vue"
 import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.vue"
 import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
 import DiagnosticSummaryAccordions from "@/components/DiagnosticSummaryAccordions.vue"
+import DiagnosticSummaryTile from "@/components/DiagnosticSummaryTile.vue"
 
 const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
@@ -96,6 +97,7 @@ const showError = (message) => rootStore.notifyServerError(message)
       </AppHelpCard>
     </div>
   </div>
+  <DiagnosticSummaryTile v-if="hasDiagnostic" />
   <DiagnosticSummaryAccordions v-if="hasDiagnostic" />
   <div v-if="!canTeledeclare">
     <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
