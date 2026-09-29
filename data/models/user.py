@@ -79,6 +79,7 @@ class UserQuerySet(models.QuerySet):
         )
 
     def with_canteen_diagnostic_stats(self):
+        # TODO teledeclaration_campaign: add new year
         return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
             # bilans
             nb_cantines_bilan_2025=Count(

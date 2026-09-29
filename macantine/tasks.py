@@ -236,6 +236,7 @@ def delete_old_historical_records():
 def canteen_fill_declaration_donnees_year_field():
     logger.info("Starting canteen_fill_declaration_donnees_year_field task")
 
+    # TODO teledeclaration_campaign: update every year
     result = call_command("canteen_fill_declaration_donnees_year_field", year=2025)
 
     return result
