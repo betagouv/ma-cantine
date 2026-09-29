@@ -889,6 +889,36 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
                 self.assertFalse(diagnostic.is_filled)
 
 
+class DiagnosticIsCleanMethodTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.diagnostic_2024_simple_not_valid = DiagnosticFactory(
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=0
+        )
+        cls.diagnostic_2024_simple_valid = DiagnosticFactory(
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
+        )
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_is_clean_without_raise_errors(self):
+        is_clean, errors = self.diagnostic_2024_simple_not_valid.is_clean(raise_errors=False)
+        self.assertFalse(is_clean)
+        self.assertIsInstance(errors, dict)
+
+        is_clean, errors = self.diagnostic_2024_simple_valid.is_clean(raise_errors=False)
+        self.assertTrue(is_clean)
+        self.assertEqual(errors, {})
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_is_clean_with_raise_errors(self):
+        with self.assertRaises(ValidationError):
+            self.diagnostic_2024_simple_not_valid.is_clean(raise_errors=True)
+
+        is_clean, errors = self.diagnostic_2024_simple_valid.is_clean(raise_errors=True)
+        self.assertTrue(is_clean)
+        self.assertIsInstance(errors, dict)
+
+
 class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
