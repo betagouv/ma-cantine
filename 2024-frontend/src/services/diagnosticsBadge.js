@@ -57,7 +57,7 @@ const getTeledeclareButton = (action) => {
 
   return {
     label: "Télédéclarer",
-    name: "GestionnaireCantineTeledeclarationEnCours",
+    name: "GestionnaireTunnelApproRecapitulatif",
     type: "primary",
     icon: "fr-icon-send-plane-line",
     measure: "etablissement",
