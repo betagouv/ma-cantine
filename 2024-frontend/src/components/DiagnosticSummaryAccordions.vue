@@ -64,7 +64,7 @@ const accordions = computed(() => {
 })
 </script>
 <template>
-  <DsfrAccordionsGroup v-model="activeAccordion" class="diagnostic-summary-accordions fr-mb-5w">
+  <DsfrAccordionsGroup v-model="activeAccordion" class="diagnostic-summary-accordions">
     <DsfrAccordion
       v-for="(accordion, index) in accordions"
       :key="accordion.title"
