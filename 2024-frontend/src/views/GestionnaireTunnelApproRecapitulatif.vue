@@ -10,6 +10,7 @@ import canteenServices from '@/services/canteens'
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import TunnelTeledeclarationAccordionsGroup from '@/components/TunnelTeledeclarationAccordionsGroup.vue'
 import TunnelTeledeclarationModal from '@/components/TunnelTeledeclarationModal.vue'
+import AppLinkRouter from '@/components/AppLinkRouter.vue'
 
 /* Router */
 const router = useRouter()
@@ -59,11 +60,14 @@ const buttons = computed(() => {
   <div v-if="isTeledeclared">
     <DsfrAlert
       title="Votre télédéclaration a été prise en compte"
-      description="Vous pouvez retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits dans votre espace cantine."
       icon="ri-checkbox-circle-fill"
       type="success"
       class="fr-mb-4w"
-    />
+    >
+      <p>
+        Vous pouvez retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits dans votre <AppLinkRouter title="Espace cantine" :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" />.
+      </p>
+    </DsfrAlert>
     <h2 class="fr-h5">Compléter les volets thématiques et votre page publique</h2>
     <p class="ma-cantine--bold">Envie de faire rayonner vos engagements pour une restauration collective durable et de qualité ?</p>
     <p>
