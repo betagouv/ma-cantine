@@ -6,7 +6,7 @@ import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
 /* Diagnostic */
 const teledeclarationStore = useStoreTeledeclaration()
-const { diagnostic, isTeledeclared, hasErrors, hasDiagnostic, diagnosticErrors } = storeToRefs(teledeclarationStore)
+const { isTeledeclared, hasErrors, hasDiagnostic } = storeToRefs(teledeclarationStore)
 
 /* Get data */
 const getIsStarted = (key) => {
@@ -88,9 +88,6 @@ const accordions = computed(() => {
       </div>
     </DsfrAccordion>
   </DsfrAccordionsGroup>
-  <pre>{{ hasErrors }}</pre>
-  <pre>{{ diagnosticErrors }}</pre>
-  <pre>{{ diagnostic }}</pre>
 </template>
 
 <style lang="scss" scoped>
