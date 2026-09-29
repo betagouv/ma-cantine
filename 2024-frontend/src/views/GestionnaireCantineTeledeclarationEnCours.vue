@@ -30,7 +30,7 @@ const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédé
 const buttonTop = computed(() => {
   switch (true) {
     case canTeledeclare.value:
-      return { label: 'Télédéclarer', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproRecapitulatif" }
+      return { label: 'Valider ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproRecapitulatif" }
     case hasDiagnostic.value:
       return { label: 'Reprendre ma télédéclaration', icon: 'fr-icon-edit-fill', pageName: "GestionnaireTunnelApproInformations" }
     default:
@@ -70,7 +70,7 @@ const showError = (message) => rootStore.notifyServerError(message)
     />
   </CanteenSidebarTitle>
 
-  <DsfrAlert v-if="canTeledeclare" class="fr-mb-5w" title="Il reste une étape pour finaliser votre télédéclaration" description="Vos données sont complètes, il ne reste qu'à les télédéclarer pour qu'elles soient prises en compte." type="info" />
+  <DsfrAlert v-if="canTeledeclare" class="fr-mb-5w" title="Il reste une étape pour finaliser votre télédéclaration." description="Vos données sont complètes il ne reste qu’à télédéclarer pour qu’elles soient prise en compte." type="info" />
   <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-md-7">
       <h3 class="fr-h5 fr-mb-4w">Réalisez le bilan de l’année précédente sur les différents volets de la loi EGalim.</h3>
