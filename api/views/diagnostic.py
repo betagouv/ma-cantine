@@ -200,11 +200,18 @@ class DiagnosticCheckView(APIView):
         canteen = self._get_canteen()
         diagnostic = get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
 
+        is_empty = diagnostic.is_empty  # property
         is_filled = diagnostic.is_filled  # property
         is_clean, errors = diagnostic.is_clean(raise_errors=False)
         is_teledeclared = diagnostic.is_teledeclared  # property
 
-        response = {"is_filled": is_filled, "is_clean": is_clean, "errors": errors, "is_teledeclared": is_teledeclared}
+        response = {
+            "is_empty": is_empty,
+            "is_filled": is_filled,
+            "is_clean": is_clean,
+            "errors": errors,
+            "is_teledeclared": is_teledeclared,
+        }
         return Response(DiagnosticCheckSerializer(response).data)
 
 

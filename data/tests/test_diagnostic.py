@@ -859,6 +859,19 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             # rest will be filled by DiagnosticFactory defaults
         )
 
+    def test_is_empty_property(self):
+        diagnostic_without_year = Diagnostic.objects.create()
+        diagnostic_without_type = Diagnostic.objects.create(year=2026)
+        diagnostic_without_valeur_totale = Diagnostic.objects.create(
+            year=2026, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+
+        self.assertTrue(diagnostic_without_year.is_empty)
+        self.assertTrue(diagnostic_without_type.is_empty)
+        self.assertTrue(diagnostic_without_valeur_totale.is_empty)
+        self.assertFalse(self.diagnostic_2024_simple_filled.is_empty)
+        self.assertFalse(self.diagnostic_2024_simple_not_filled.is_empty)
+
     def test_filled_queryset(self):
         self.assertEqual(Diagnostic.objects.all().count(), 8)
         self.assertEqual(Diagnostic.objects.filled().count(), 4)
