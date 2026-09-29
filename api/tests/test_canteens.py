@@ -460,6 +460,7 @@ class CanteenDetailCheckApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
 
     def test_can_get_canteen_check_via_oauth2(self):
@@ -472,6 +473,7 @@ class CanteenDetailCheckApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
 
     @authenticate
@@ -486,6 +488,7 @@ class CanteenDetailCheckApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["isFilled"], False)
+        self.assertEqual(body["isClean"], False)
         self.assertNotEqual(body["errors"], {})
         self.assertEqual(body["errors"]["siret"], ["14 caractères numériques sont attendus"])
         self.assertEqual(body["errors"]["sectorList"], ["Le champ doit contenir entre 1 et 3 secteurs."])

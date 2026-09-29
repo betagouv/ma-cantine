@@ -1199,7 +1199,7 @@ class CanteenLineMinistryAndSectorAndSPEQuerySetAndPropertyTest(TestCase):
         self.assertFalse(self.canteen_private.is_spe)
 
 
-class CanteenCompleteQuerySetAndPropertyTest(TestCase):
+class CanteenIsFilledQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_groupe_with_satellite = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
@@ -1292,6 +1292,39 @@ class CanteenCompleteQuerySetAndPropertyTest(TestCase):
         for index, canteen in enumerate(self.canteen_missing_data_list):
             with self.subTest(index=index, canteen=canteen):
                 self.assertFalse(canteen._is_filled())
+
+
+class CanteenIsCleanMethodTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_on_site_not_valid = CanteenFactory(
+            siret="21380185500015",
+            production_type=Canteen.ProductionType.ON_SITE,
+        )
+        cls.canteen_on_site_not_valid.siret = None
+        cls.canteen_on_site_not_valid.save(skip_validations=True)
+        cls.canteen_on_site_valid = CanteenFactory(
+            siret=None,
+            siren_unite_legale="967669103",
+            production_type=Canteen.ProductionType.ON_SITE,
+        )
+
+    def test_is_clean_without_raise_errors(self):
+        is_clean, errors = self.canteen_on_site_not_valid.is_clean(raise_errors=False)
+        self.assertFalse(is_clean)
+        self.assertNotEqual(errors, {})
+
+        is_clean, errors = self.canteen_on_site_valid.is_clean(raise_errors=False)
+        self.assertTrue(is_clean)
+        self.assertEqual(errors, {})
+
+    def test_is_clean_with_raise_errors(self):
+        with self.assertRaises(ValidationError):
+            self.canteen_on_site_not_valid.is_clean(raise_errors=True)
+
+        is_clean, errors = self.canteen_on_site_valid.is_clean(raise_errors=True)
+        self.assertTrue(is_clean)
+        self.assertEqual(errors, {})
 
 
 class CanteenAggregateQuerySetTest(TestCase):
