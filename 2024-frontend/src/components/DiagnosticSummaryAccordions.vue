@@ -1,8 +1,12 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
 import { storeToRefs } from "pinia"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+
+const props = defineProps(['open', 'anchorName'])
+const activeAccordion = ref(props.open)
+watch(() => props.open, (value) => activeAccordion.value = value)
 
 /* Diagnostic */
 const teledeclarationStore = useStoreTeledeclaration()
@@ -26,7 +30,6 @@ const getSentence = (key) => {
 }
 
 /* Accordions */
-const activeAccordion = ref()
 const accordions = computed(() => {
   return [
     {
@@ -64,7 +67,7 @@ const accordions = computed(() => {
 })
 </script>
 <template>
-  <DsfrAccordionsGroup v-model="activeAccordion" class="diagnostic-summary-accordions">
+  <DsfrAccordionsGroup v-model="activeAccordion" :id="anchorName" class="diagnostic-summary-accordions">
     <DsfrAccordion
       v-for="(accordion, index) in accordions"
       :key="accordion.title"
