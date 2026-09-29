@@ -35,11 +35,11 @@ const getBadge = (name, campaignDates) => {
       break
     case isInCampaign && toTeledeclare: // If diagnostic needs to be teledeclared
       label = "À télédéclarer"
-      type = "error"
+      type = "warning"
       break
     case isInCampaign && needsFill: // If diagnostic or canteen is missing data to teledeclare
       label = "À compléter"
-      type = "error"
+      type = "warning"
       break
     case isInCampaign && waitingCentral: // If central did not teledeclare its diagnostic
       label = "En attente"
@@ -57,7 +57,7 @@ const getTeledeclareButton = (action) => {
 
   return {
     label: "Télédéclarer",
-    name: "GestionnaireCantineTeledeclarationEnCours",
+    name: "GestionnaireTunnelApproRecapitulatif",
     type: "primary",
     icon: "fr-icon-send-plane-line",
     measure: "etablissement",

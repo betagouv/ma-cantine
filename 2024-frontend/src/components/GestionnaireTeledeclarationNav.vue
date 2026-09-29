@@ -49,7 +49,7 @@ const plasticIconAlt = computed(() => 'Volet réductions du plastique non compl�
     class="gestionnaire-teledeclaration-nav fr-sidemenu__item"
   >
     <router-link :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" class="gestionnaire-teledeclaration-nav__bloc fr-sidemenu__link">
-      <DsfrBadge :label="diagnosticBadge.label" :type="diagnosticBadge.type" />
+      <DsfrBadge :label="diagnosticBadge.label" :type="diagnosticBadge.type" no-icon />
       <span>{{ isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}` }}</span>
       <span class="gestionnaire-teledeclaration-nav__macarons-container">
         <img :src="approIconLink" :alt="approIconAlt">

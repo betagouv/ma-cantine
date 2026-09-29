@@ -8,12 +8,15 @@ import teledeclarationFields from "@/data/teledeclaration.json"
 const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const diagnostic = ref(null)
   const canteenSavedId = ref(null)
-  const year = 2026 // Force for testing, improve ??
+  const canteenAction = ref(null)
+  const year = Number(window.TELEDECLARATION_YEAR)
   const diagnosticErrors = ref([])
   const hasDiagnostic = computed(() => diagnostic.value !== null)
+  const hasErrors = computed(() => diagnosticErrors.value.length > 0)
   const isSimple = computed(() => diagnostic.value?.diagnosticType === "SIMPLE")
   const isComplete = computed(() => diagnostic.value?.diagnosticType === "COMPLETE")
   const isSaved = ref(true)
+  const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
@@ -23,6 +26,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     if (!diagnosticYear) return
     setDiagnostic(diagnosticYear)
     setCanteenId(canteenId)
+    await setCanteenAction()
     const diagnosticCheck = await diagnosticService.checkDiagnostic(canteenId, diagnosticYear.id)
     const canteenCheck = await canteenService.checkCanteen(canteenId)
     addErrorsFromCheck({...diagnosticCheck.errors, ...canteenCheck.errors})
@@ -36,6 +40,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
     if (response.status === "error") replaceErrors(response.list)
     else isSaved.value = true
+    await setCanteenAction()
     return response
   }
 
@@ -53,7 +58,15 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Set canteen id */
   function setCanteenId(canteenId) {
-    canteenSavedId.value = canteenId
+    canteenSavedId.value = Number(canteenId)
+  }
+
+  /* TO IMPROVE : Set the action to do by the canteen for the current campaign */
+  async function setCanteenAction() {
+    if (!canteenSavedId.value || !year) return
+    const canteens = await canteenService.fetchCanteensActions(year)
+    const canteen = canteens.find((canteen) => canteen.id === canteenSavedId.value)
+    canteenAction.value = canteen?.action || null
   }
 
   /* Set all diagnostic */
@@ -72,6 +85,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   function deleteStore() {
     diagnostic.value = null
     canteenSavedId.value = null
+    canteenAction.value = null
     isSaved.value = true
   }
 
@@ -150,11 +164,14 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   return {
     diagnostic,
+    canteenAction,
     diagnosticErrors,
     hasDiagnostic,
+    hasErrors,
     isSimple,
     isComplete,
     isSaved,
+    isTeledeclared,
     initStore,
     deleteStore,
     getYear,

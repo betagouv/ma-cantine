@@ -11,6 +11,7 @@ import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.vue"
 import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
+import DiagnosticSummaryAccordions from "@/components/DiagnosticSummaryAccordions.vue"
 
 const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
@@ -20,22 +21,27 @@ const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Teledeclaration */
 const teledeclarationStore = useStoreTeledeclaration()
-const { hasDiagnostic } = storeToRefs(teledeclarationStore)
+const { hasDiagnostic, canteenAction } = storeToRefs(teledeclarationStore)
 const year = teledeclarationStore.getYear()
+const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
 const buttonTop = computed(() => {
-  const hasDiag = hasDiagnostic.value
-  const label = hasDiag ? 'Reprendre ma télédéclaration' : 'Faire ma télédéclaration'
-  const icon = hasDiag ? 'fr-icon-edit-fill' : 'ri-send-plane-line'
-  return { label, icon }
+  switch (true) {
+    case canTeledeclare.value:
+      return { label: 'Valider ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproRecapitulatif" }
+    case hasDiagnostic.value:
+      return { label: 'Reprendre ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproInformations" }
+    default:
+      return { label: 'Faire ma télédéclaration', icon: 'ri-send-plane-line' }
+  }
 })
 
 /* Navigation */
-const openTunnel = () => {
-  if (!hasDiagnostic.value) createDiagnostic()
-  else goToTunnel()
+const openTunnel = (pageName) => {
+  if (!pageName) createDiagnostic()
+  else goToTunnel(pageName)
 }
 
 const createDiagnostic = () => {
@@ -44,12 +50,12 @@ const createDiagnostic = () => {
       if(response.status === "error") showError(response.message)
       else {
         teledeclarationStore.setDiagnostic(response)
-        goToTunnel()
+        goToTunnel("GestionnaireTunnelApproInformations")
       }
     })
     .catch((error) => showError(error.message))
 }
-const goToTunnel = () => router.push({ name: "GestionnaireTunnelApproInformations" })
+const goToTunnel = (pageName) => router.push({ name: pageName })
 const showError = (message) => rootStore.notifyServerError(message)
 </script>
 <template>
@@ -58,12 +64,13 @@ const showError = (message) => rootStore.notifyServerError(message)
     <DsfrButton
       v-if="buttonTop"
       primary
-      @click="openTunnel"
+      @click="openTunnel(buttonTop.pageName)"
       :label="buttonTop.label"
       :icon="buttonTop.icon"
     />
   </CanteenSidebarTitle>
 
+  <DsfrAlert v-if="canTeledeclare" class="fr-mb-5w" title="Il reste une étape pour finaliser votre télédéclaration." description="Vos données sont complètes il ne reste qu’à télédéclarer pour qu’elles soient prise en compte." type="info" />
   <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters">
     <div class="fr-col-12 fr-col-md-7">
       <h3 class="fr-h5 fr-mb-4w">Réalisez le bilan de l’année précédente sur les différents volets de la loi EGalim.</h3>
@@ -89,7 +96,8 @@ const showError = (message) => rootStore.notifyServerError(message)
       </AppHelpCard>
     </div>
   </div>
-  <div>
+  <DiagnosticSummaryAccordions v-if="hasDiagnostic" />
+  <div v-if="!canTeledeclare">
     <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
     <DiagnosticPurchasesLinked class="fr-mt-4w" />
