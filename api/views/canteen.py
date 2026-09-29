@@ -354,13 +354,10 @@ class UserCanteenCheckView(APIView):
     def get(self, request, canteen_pk):
         canteen = self._get_canteen()
 
-        errors = {}
-        try:
-            canteen.full_clean()
-        except ValidationError as e:
-            errors = e.message_dict
+        is_filled = canteen.is_filled
+        is_clean, errors = canteen.is_clean(raise_errors=False)
 
-        response = {"is_filled": canteen.is_filled, "errors": errors}
+        response = {"is_filled": is_filled, "is_clean": is_clean, "errors": errors}
         return Response(CanteenCheckSerializer(response).data)
 
 

@@ -768,7 +768,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         self.optimize_logo()
         self.reset_geo_fields_if_siret_or_city_insee_code_changed()
         if not skip_validations:
-            self.full_clean()
+            self.is_clean(raise_errors=True)
         self.set_is_filled()
         super().save(**kwargs)
         # see also: post_save signal
@@ -939,6 +939,15 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         ):
             is_filled = bool(self.line_ministry)
         return is_filled
+
+    def is_clean(self, raise_errors=False) -> tuple[bool, dict]:
+        try:
+            self.full_clean()
+            return True, {}
+        except ValidationError as e:
+            if raise_errors:
+                raise
+            return False, e.message_dict
 
     def has_diagnostic_for_year(self, year):
         has_diagnostic = self.diagnostics.filter(year=year).exists()

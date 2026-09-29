@@ -28,6 +28,7 @@ CREATE_ONLY_FIELDS = ("creation_source", *Canteen.MATOMO_FIELDS)
 
 class CanteenCheckSerializer(serializers.Serializer):
     is_filled = serializers.BooleanField(read_only=True)
+    is_clean = serializers.BooleanField(read_only=True)
     # infos = serializers.DictField(read_only=True)
     # warnings = serializers.DictField(read_only=True)
     errors = serializers.DictField(read_only=True)
