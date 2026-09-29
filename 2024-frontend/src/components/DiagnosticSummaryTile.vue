@@ -42,6 +42,7 @@ const clickLink = (index) => emit("openAccordion", index)
     align-items: flex-start;
     justify-content: flex-start;
     gap: 0.5rem;
+    text-align: left;
   }
 
   &__image {
