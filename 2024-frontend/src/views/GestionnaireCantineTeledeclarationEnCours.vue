@@ -32,7 +32,7 @@ const buttonTop = computed(() => {
     case canTeledeclare.value:
       return { label: 'Valider ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproRecapitulatif" }
     case hasDiagnostic.value:
-      return { label: 'Reprendre ma télédéclaration', icon: 'fr-icon-edit-fill', pageName: "GestionnaireTunnelApproInformations" }
+      return { label: 'Reprendre ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproInformations" }
     default:
       return { label: 'Faire ma télédéclaration', icon: 'ri-send-plane-line' }
   }
