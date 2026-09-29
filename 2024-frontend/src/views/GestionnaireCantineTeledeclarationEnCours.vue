@@ -97,7 +97,7 @@ const showError = (message) => rootStore.notifyServerError(message)
     </div>
   </div>
   <DiagnosticSummaryAccordions v-if="hasDiagnostic" />
-  <div>
+  <div v-if="!canTeledeclare">
     <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
     <DiagnosticPurchasesLinked class="fr-mt-4w" />
