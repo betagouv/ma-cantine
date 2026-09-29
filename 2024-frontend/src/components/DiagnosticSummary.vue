@@ -72,6 +72,7 @@ const volets = computed(() => {
 
 /* Volets thematiques : tous les volets sauf les approvisionnements */
 const thematiques = computed(() => volets.value.slice(1))
+const appro = computed(() => volets.value[0])
 </script>
 
 <template>
@@ -79,6 +80,7 @@ const thematiques = computed(() => volets.value.slice(1))
     <DiagnosticSummaryTile
       class="fr-mb-5w"
       :thematiques="thematiques"
+      :appro="appro"
       :anchor-name="anchorName"
       :is-teledeclared="isTeledeclared"
       @openAccordion="openedAccordion = $event"

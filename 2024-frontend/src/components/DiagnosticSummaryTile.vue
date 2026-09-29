@@ -1,5 +1,5 @@
 <script setup>
-defineProps(["thematiques", "anchorName", "isTeledeclared"])
+defineProps(["thematiques", "anchorName", "isTeledeclared", "appro"])
 const emit = defineEmits(["openAccordion"])
 
 /* Action */
@@ -10,11 +10,16 @@ const clickLink = (index) => emit("openAccordion", index)
   <div class="diagnostic-summary-tile">
     <div class="fr-tile" :class="{ 'fr-tile--blue': isTeledeclared }">
       <div class="fr-tile__title fr-grid-row">
-        <div class="fr-col-8">
-          <pre>appro</pre>
+        <div class="diagnostic-summary-tile__appro ma-cantine--flex-gap-1 fr-col-8">
+          <img :src="appro.image" alt="" class="diagnostic-summary-tile__image" />
+          <div>
+            <a :href="`#${anchorName}`" @click="clickLink(0)" class="fr-text--regular fr-text-title--grey fr-text--md">
+              {{ appro.title }}
+            </a>
+          </div>
         </div>
-        <ul class="diagnostic-summary-tile__list ma-cantine--unstyled-list fr-col-4">
-          <li v-for="(volet, index) in thematiques" :key="volet.title" class="diagnostic-summary-tile__link ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-1w">
+        <ul class="ma-cantine--unstyled-list fr-col-4">
+          <li v-for="(volet, index) in thematiques" :key="volet.title" class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-1w">
             <img :src="volet.image" alt="" class="diagnostic-summary-tile__image" />
             <a :href="`#${anchorName}`" @click="clickLink(index + 1)" class="fr-text--regular fr-text-title--grey fr-text--md">
               {{ volet.shortTitle }}
@@ -32,15 +37,11 @@ const clickLink = (index) => emit("openAccordion", index)
     background-image: linear-gradient(0deg,var(--border-active-blue-france),var(--border-active-blue-france)) !important;
   }
 
-  &__list {
+  &__appro {
     display: flex;
-    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
     gap: 0.5rem;
-    align-items: stretch;
-  }
-
-  &__link {
-    width: 100%;
   }
 
   &__image {
