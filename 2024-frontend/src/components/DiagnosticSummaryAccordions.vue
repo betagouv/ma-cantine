@@ -1,93 +1,38 @@
 <script setup>
-import { ref, computed, watch } from "vue"
-import { storeToRefs } from "pinia"
-import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
+import { ref, watch } from "vue"
+import { useRouter } from "vue-router"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
-const props = defineProps(['open', 'anchorName'])
+const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared'])
 const activeAccordion = ref(props.open)
 watch(() => props.open, (value) => activeAccordion.value = value)
 
-/* Diagnostic */
-const teledeclarationStore = useStoreTeledeclaration()
-const { isTeledeclared, hasErrors, hasDiagnostic } = storeToRefs(teledeclarationStore)
-
-/* Get data */
-const getIsStarted = (key) => {
-  if (key === "appro") return hasDiagnostic.value
-  else return false
-}
-
-const getImage = (key) => {
-  return `/static/images/badges/badge-${key}-disabled.svg`
-}
-
-const getSentence = (key) => {
-  const isStarted = getIsStarted(key)
-  if (!isStarted) return "Volet non renseigné."
-  if (key === "appro") return hasErrors.value ? "Volet en attente de correction." : "Volet non télédéclaré."
-  return isTeledeclared.value ? "Volet non télédéclaré." : "Volet non renseigné."
-}
-
-/* Accordions */
-const accordions = computed(() => {
-  return [
-    {
-      title: "Approvisionnements",
-      image: getImage("appro"),
-      sentence: getSentence("appro"),
-      page: { name: "GestionnaireTunnelApproRecapitulatif" },
-      displayErrors: hasErrors.value
-    },
-    {
-      title: "Informations convives",
-      image: getImage("info"),
-      sentence: getSentence("info"),
-      page: { name: "GestionnaireTunnelConvives" }
-    },
-    {
-      title: "Lutte contre le gaspillage alimentaire",
-      image: getImage("waste"),
-      sentence: getSentence("waste"),
-      page: { name: "GestionnaireTunnelGaspillage" }
-    },
-    {
-      title: "Diversification des sources de protéines et menus végétariens",
-      image: getImage("diversification"),
-      sentence: getSentence("diversification"),
-      page: { name: "GestionnaireTunnelVegetarien" }
-    },
-    {
-      title: "Substitutions plastiques",
-      image: getImage("plastic"),
-      sentence: getSentence("plastic"),
-      page: { name: "GestionnaireTunnelPlastique" }
-    }
-  ]
-})
+/* Navigation */
+const router = useRouter()
+const goToPage = (page) => router.push(page)
 </script>
 <template>
   <DsfrAccordionsGroup v-model="activeAccordion" :id="anchorName" class="diagnostic-summary-accordions">
     <DsfrAccordion
-      v-for="(accordion, index) in accordions"
-      :key="accordion.title"
+      v-for="(volet, index) in volets"
+      :key="volet.title"
       :id="`diagnostic-summary-accordion-${index}`"
-      :title="accordion.title"
+      :title="volet.title"
     >
       <template #title>
         <span class="ma-cantine--flex-start ma-cantine--flex-gap-1">
-          <img :src="accordion.image" alt="" class="diagnostic-summary-accordions__image" />
-          {{ accordion.title }}
-          <DsfrBadge v-if="accordion.displayErrors" label="Erreurs" type="error"/>
+          <img :src="volet.image" alt="" class="diagnostic-summary-accordions__image" />
+          {{ volet.title }}
+          <DsfrBadge v-if="volet.displayErrors" label="Erreurs" type="error"/>
         </span>
       </template>
       <p v-if="!isTeledeclared" class="fr-mb-0">
-        <span class="fr-text--bold">{{ accordion.sentence }}</span>
+        <span class="fr-text--bold">{{ volet.sentence }}</span>
         <br>
-        Consulter le volet <AppLinkRouter :to="accordion.page" :title="accordion.title.toLowerCase()"/>
+        Consulter le volet <AppLinkRouter :to="volet.page" :title="volet.title.toLowerCase()"/>
       </p>
       <div v-else class="ma-cantine--flex-end">
-        <DsfrButton @click="goToPage(accordion.page)" secondary :label="`Modifier le volet ${accordion.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
+        <DsfrButton @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
       </div>
     </DsfrAccordion>
   </DsfrAccordionsGroup>

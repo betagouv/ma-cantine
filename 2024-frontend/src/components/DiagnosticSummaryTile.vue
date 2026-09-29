@@ -1,44 +1,9 @@
 <script setup>
-import { computed } from "vue"
-import { storeToRefs } from "pinia"
-import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
-
-defineProps(["anchorName"])
+defineProps(["thematiques", "anchorName", "isTeledeclared"])
 const emit = defineEmits(["openAccordion"])
-
-const teledeclarationStore = useStoreTeledeclaration()
-const { diagnostic } = storeToRefs(teledeclarationStore)
-const isTeledeclared = computed(() => diagnostic.value.isTeledeclared)
 
 /* Action */
 const clickLink = (index) => emit("openAccordion", index)
-
-/* Get data */
-const getImage = (key) => {
-  return `/static/images/badges/badge-${key}-disabled.svg`
-}
-
-/* Volets thematiques */
-const thematiques = computed(() => {
-  return [
-    {
-      title: "Infos convives",
-      image: getImage("info")
-    },
-    {
-      title: "Gaspillage",
-      image: getImage("waste")
-    },
-    {
-      title: "Menus végétariens",
-      image: getImage("diversification")
-    },
-    {
-      title: "Substitutions plastiques",
-      image: getImage("plastic")
-    }
-  ]
-})
 </script>
 
 <template>
@@ -52,7 +17,7 @@ const thematiques = computed(() => {
           <li v-for="(volet, index) in thematiques" :key="volet.title" class="diagnostic-summary-tile__link ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-1w">
             <img :src="volet.image" alt="" class="diagnostic-summary-tile__image" />
             <a :href="`#${anchorName}`" @click="clickLink(index + 1)" class="fr-text--regular fr-text-title--grey fr-text--md">
-              {{ volet.title }}
+              {{ volet.shortTitle }}
             </a>
           </li>
         </ul>

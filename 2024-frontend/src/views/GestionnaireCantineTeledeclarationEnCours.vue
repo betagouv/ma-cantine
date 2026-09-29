@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue"
+import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
@@ -11,8 +11,7 @@ import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.vue"
 import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
-import DiagnosticSummaryAccordions from "@/components/DiagnosticSummaryAccordions.vue"
-import DiagnosticSummaryTile from "@/components/DiagnosticSummaryTile.vue"
+import DiagnosticSummary from "@/components/DiagnosticSummary.vue"
 
 const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
@@ -27,8 +26,6 @@ const year = teledeclarationStore.getYear()
 const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
 
 /* Content */
-const anchorName = 'accordeons'
-const openedAccordion = ref(-1)
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
 const buttonTop = computed(() => {
   switch (true) {
@@ -99,8 +96,7 @@ const showError = (message) => rootStore.notifyServerError(message)
       </AppHelpCard>
     </div>
   </div>
-  <DiagnosticSummaryTile v-if="hasDiagnostic" class="fr-mb-5w" @openAccordion="openedAccordion = $event" :anchor-name="anchorName" />
-  <DiagnosticSummaryAccordions v-if="hasDiagnostic" :open="openedAccordion" :anchor-name="anchorName" class="fr-mb-5w" />
+  <DiagnosticSummary class="fr-mb-5w" />
   <div v-if="!canTeledeclare">
     <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
