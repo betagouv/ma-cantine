@@ -71,6 +71,7 @@ class DiagnosticSerializer(serializers.ModelSerializer):
 
 class DiagnosticCheckSerializer(serializers.Serializer):
     is_filled = serializers.BooleanField(read_only=True)
+    is_clean = serializers.BooleanField(read_only=True)
     # infos = serializers.DictField(read_only=True)
     # warnings = serializers.DictField(read_only=True)
     errors = serializers.DictField(read_only=True)
