@@ -8,7 +8,7 @@ import teledeclarationFields from "@/data/teledeclaration.json"
 const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const diagnostic = ref(null)
   const canteenSavedId = ref(null)
-  const year = 2026 // Force for testing, improve ??
+  const year = Number(window.TELEDECLARATION_YEAR)
   const diagnosticErrors = ref([])
   const hasDiagnostic = computed(() => diagnostic.value !== null)
   const hasErrors = computed(() => diagnosticErrors.value.length > 0)
@@ -55,6 +55,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Set canteen id */
   function setCanteenId(canteenId) {
+    canteenSavedId.value = Number(canteenId)
     canteenSavedId.value = canteenId
   }
 
