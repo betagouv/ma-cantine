@@ -4,6 +4,21 @@
 
     <ActionsBlock class="ma-0 ma-md-n4 pa-6 cta-group" />
 
+    <DsfrCallout no-icon class="mt-16 py-8">
+      <div class="text-left">
+        <h2 class="text-h6 font-weight-bold mb-2">
+          5 questions pour récolter votre avis sur la page d’accueil <em>ma cantine</em>
+        </h2>
+        <p class="text-body-2 mb-4">
+          Vos retours son précieux, prenez quelques minutes pour nous les partager.
+        </p>
+        <v-btn color="primary" href="https://tally.so/r/VLKgBE" target="_blank" rel="noopener">
+          Répondre à l’enquête
+          <v-icon small class="ml-2">mdi-open-in-new</v-icon>
+        </v-btn>
+      </div>
+    </DsfrCallout>
+
     <v-divider aria-hidden="true" role="presentation" class="mt-16"></v-divider>
 
     <MissionBlock class="mt-14" />
@@ -45,6 +60,7 @@ import Resources from "@/views/LandingPage/Resources"
 import TheNewsletter from "@/components/TheNewsletter"
 import BlogBlock from "@/views/LandingPage/BlogBlock"
 import MissionBlock from "@/views/LandingPage/MissionBlock"
+import DsfrCallout from "@/components/DsfrCallout"
 
 export default {
   components: {
@@ -58,6 +74,7 @@ export default {
     BlogBlock,
     MissionBlock,
     ToolsBlock,
-  },
+    DsfrCallout,
+  }
 }
 </script>
