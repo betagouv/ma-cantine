@@ -903,7 +903,7 @@ class DiagnosticIsCleanMethodTest(TestCase):
     def test_is_clean_without_raise_errors(self):
         is_clean, errors = self.diagnostic_2024_simple_not_valid.is_clean(raise_errors=False)
         self.assertFalse(is_clean)
-        self.assertIsInstance(errors, dict)
+        self.assertNotEqual(errors, {})
 
         is_clean, errors = self.diagnostic_2024_simple_valid.is_clean(raise_errors=False)
         self.assertTrue(is_clean)
@@ -916,7 +916,7 @@ class DiagnosticIsCleanMethodTest(TestCase):
 
         is_clean, errors = self.diagnostic_2024_simple_valid.is_clean(raise_errors=True)
         self.assertTrue(is_clean)
-        self.assertIsInstance(errors, dict)
+        self.assertNotEqual(errors, {})
 
 
 class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):

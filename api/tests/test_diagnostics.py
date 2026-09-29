@@ -1308,7 +1308,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["errors"]["valeurBio"], ["Ce champ est obligatoire pour l'année 2025."])
 
     @authenticate
-    def test_can_get_diagnostic_check_with_check_errors(self):
+    def test_can_get_diagnostic_check_with_clean_errors(self):
         self.canteen.managers.add(authenticate.user)
         self.diagnostic.valeur_totale = 10
         self.diagnostic.valeur_bio = 100
