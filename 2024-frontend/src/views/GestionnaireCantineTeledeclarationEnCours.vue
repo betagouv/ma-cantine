@@ -21,22 +21,26 @@ const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Teledeclaration */
 const teledeclarationStore = useStoreTeledeclaration()
-const { hasDiagnostic } = storeToRefs(teledeclarationStore)
+const { hasDiagnostic, canteenAction } = storeToRefs(teledeclarationStore)
 const year = teledeclarationStore.getYear()
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
 const buttonTop = computed(() => {
-  const hasDiag = hasDiagnostic.value
-  const label = hasDiag ? 'Reprendre ma télédéclaration' : 'Faire ma télédéclaration'
-  const icon = hasDiag ? 'fr-icon-edit-fill' : 'ri-send-plane-line'
-  return { label, icon }
+  switch (true) {
+    case canteenAction.value === "40_teledeclare":
+      return { label: 'Télédéclarer', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproRecapitulatif" }
+    case hasDiagnostic.value:
+      return { label: 'Reprendre ma télédéclaration', icon: 'fr-icon-edit-fill', pageName: "GestionnaireTunnelApproInformations" }
+    default:
+      return { label: 'Faire ma télédéclaration', icon: 'ri-send-plane-line' }
+  }
 })
 
 /* Navigation */
-const openTunnel = () => {
-  if (!hasDiagnostic.value) createDiagnostic()
-  else goToTunnel()
+const openTunnel = (pageName) => {
+  if (!pageName) createDiagnostic()
+  else goToTunnel(pageName)
 }
 
 const createDiagnostic = () => {
@@ -45,12 +49,12 @@ const createDiagnostic = () => {
       if(response.status === "error") showError(response.message)
       else {
         teledeclarationStore.setDiagnostic(response)
-        goToTunnel()
+        goToTunnel("GestionnaireTunnelApproInformations")
       }
     })
     .catch((error) => showError(error.message))
 }
-const goToTunnel = () => router.push({ name: "GestionnaireTunnelApproInformations" })
+const goToTunnel = (pageName) => router.push({ name: pageName })
 const showError = (message) => rootStore.notifyServerError(message)
 </script>
 <template>
@@ -59,7 +63,7 @@ const showError = (message) => rootStore.notifyServerError(message)
     <DsfrButton
       v-if="buttonTop"
       primary
-      @click="openTunnel"
+      @click="openTunnel(buttonTop.pageName)"
       :label="buttonTop.label"
       :icon="buttonTop.icon"
     />
