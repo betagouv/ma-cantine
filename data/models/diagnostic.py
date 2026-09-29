@@ -2184,7 +2184,7 @@ class Diagnostic(models.Model):
         return self.diagnostic_type == Diagnostic.DiagnosticType.COMPLETE
 
     @property
-    def is_filled_simple(self):
+    def is_filled_simple(self) -> bool:
         return (
             self.is_diagnostic_type_simple
             and self.valeur_totale_is_filled
@@ -2195,7 +2195,7 @@ class Diagnostic(models.Model):
         )
 
     @property
-    def is_filled_complete(self):
+    def is_filled_complete(self) -> bool:
         return (
             self.is_diagnostic_type_complete
             and self.valeur_totale_is_filled
@@ -2206,19 +2206,28 @@ class Diagnostic(models.Model):
         )
 
     @property
-    def is_filled(self):
+    def is_filled(self) -> bool:
         return self.is_filled_simple or self.is_filled_complete
 
+    def is_clean(self, raise_errors=False) -> tuple[bool, dict]:
+        try:
+            self.full_clean()
+            return True, {}
+        except ValidationError as e:
+            if raise_errors:
+                raise
+            return False, e.message_dict
+
     @property
-    def has_invalid_reason(self):
+    def has_invalid_reason(self) -> bool:
         return self.invalid_reason_list and len(self.invalid_reason_list) > 0
 
     @property
-    def is_teledeclared(self):
+    def is_teledeclared(self) -> bool:
         return self.status == Diagnostic.DiagnosticStatus.SUBMITTED
 
     @property
-    def is_teledeclared_by_cc(self):
+    def is_teledeclared_by_cc(self) -> bool:
         return self.teledeclaration_mode and self.teledeclaration_mode in [
             Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO,
             Diagnostic.TeledeclarationMode.CENTRAL_APPRO,
@@ -2393,7 +2402,7 @@ class Diagnostic(models.Model):
             if applicant not in self.canteen.managers.all():
                 raise ValidationError("Le déclarant n'est pas un gestionnaire de la cantine associée à ce diagnostic")
             # field validations
-            self.full_clean()
+            self.is_clean(raise_errors=True)
 
         from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 

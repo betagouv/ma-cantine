@@ -1274,6 +1274,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
 
     def test_can_get_diagnostic_check_via_oauth2(self):
@@ -1286,10 +1287,11 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
 
     @authenticate
-    def test_can_get_diagnostic_check_with_errors(self):
+    def test_can_get_diagnostic_check_with_fill_errors(self):
         self.canteen.managers.add(authenticate.user)
         self.diagnostic.valeur_totale = None
         self.diagnostic.valeur_bio = None
@@ -1300,6 +1302,22 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["isFilled"], False)
+        self.assertEqual(body["isClean"], False)
         self.assertNotEqual(body["errors"], {})
         self.assertEqual(body["errors"]["valeurTotale"], ["Ce champ est obligatoire pour l'année 2025."])
         self.assertEqual(body["errors"]["valeurBio"], ["Ce champ est obligatoire pour l'année 2025."])
+
+    @authenticate
+    def test_can_get_diagnostic_check_with_clean_errors(self):
+        self.canteen.managers.add(authenticate.user)
+        self.diagnostic.valeur_totale = 10
+        self.diagnostic.valeur_bio = 100
+        self.diagnostic.save()
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["isClean"], False)
+        self.assertNotEqual(body["errors"], {})

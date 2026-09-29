@@ -200,13 +200,10 @@ class DiagnosticCheckView(APIView):
         canteen = self._get_canteen()
         diagnostic = get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
 
-        errors = {}
-        try:
-            diagnostic.full_clean()
-        except ValidationError as e:
-            errors = e.message_dict
+        is_filled = diagnostic.is_filled  # property
+        is_clean, errors = diagnostic.is_clean(raise_errors=False)
 
-        response = {"is_filled": diagnostic.is_filled, "errors": errors}
+        response = {"is_filled": is_filled, "is_clean": is_clean, "errors": errors}
         return Response(DiagnosticCheckSerializer(response).data)
 
 
