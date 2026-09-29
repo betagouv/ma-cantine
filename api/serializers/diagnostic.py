@@ -75,6 +75,7 @@ class DiagnosticCheckSerializer(serializers.Serializer):
     # infos = serializers.DictField(read_only=True)
     # warnings = serializers.DictField(read_only=True)
     errors = serializers.DictField(read_only=True)
+    is_teledeclared = serializers.BooleanField(read_only=True)
 
 
 class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):

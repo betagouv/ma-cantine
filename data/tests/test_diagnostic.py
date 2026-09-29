@@ -916,7 +916,7 @@ class DiagnosticIsCleanMethodTest(TestCase):
 
         is_clean, errors = self.diagnostic_2024_simple_valid.is_clean(raise_errors=True)
         self.assertTrue(is_clean)
-        self.assertNotEqual(errors, {})
+        self.assertEqual(errors, {})
 
 
 class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):

@@ -202,8 +202,9 @@ class DiagnosticCheckView(APIView):
 
         is_filled = diagnostic.is_filled  # property
         is_clean, errors = diagnostic.is_clean(raise_errors=False)
+        is_teledeclared = diagnostic.is_teledeclared  # property
 
-        response = {"is_filled": is_filled, "is_clean": is_clean, "errors": errors}
+        response = {"is_filled": is_filled, "is_clean": is_clean, "errors": errors, "is_teledeclared": is_teledeclared}
         return Response(DiagnosticCheckSerializer(response).data)
 
 
