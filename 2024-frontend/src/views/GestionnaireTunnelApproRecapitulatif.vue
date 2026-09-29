@@ -18,7 +18,7 @@ const router = useRouter()
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const teledeclarationStore = useStoreTeledeclaration()
-const { diagnostic } = storeToRefs(teledeclarationStore)
+const { diagnostic, isTeledeclared } = storeToRefs(teledeclarationStore)
 
 /* TD CTA */
 const canTeledeclare = computedAsync(async () => {
@@ -56,7 +56,7 @@ const buttons = computed(() => {
 
 </script>
 <template>
-  <div v-if="diagnostic.isTeledeclared">
+  <div v-if="isTeledeclared">
     <DsfrAlert
       title="Votre télédéclaration a été prise en compte"
       description="Vous pouvez retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits dans votre espace cantine."
