@@ -1273,6 +1273,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(body["isEmpty"], False)
         self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
@@ -1287,6 +1288,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(body["isEmpty"], False)
         self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
@@ -1303,6 +1305,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(body["isEmpty"], True)
         self.assertEqual(body["isFilled"], False)
         self.assertEqual(body["isClean"], False)
         self.assertNotEqual(body["errors"], {})
@@ -1321,6 +1324,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(body["isEmpty"], False)
         self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["isClean"], False)
         self.assertNotEqual(body["errors"], {})
@@ -1335,6 +1339,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(body["isEmpty"], False)
         self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
