@@ -1,11 +1,17 @@
 <script setup>
-defineProps(["thematiques", "anchorName", "isTeledeclared", "appro"])
+import { computed } from "vue"
 import AppIconLink from "@/components/AppIconLink.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import IconAward from "@/components/IconAward.vue"
 
+const props = defineProps(["thematiques", "anchorName", "isTeledeclared", "appro"])
 const emit = defineEmits(["openAccordion"])
 const clickLink = (index) => emit("openAccordion", index)
+
+const egalimColor = computed(() => props.isTeledeclared ? "#1F7046" : "var(--border-default-grey)")
+const siqoColor = computed(() => props.isTeledeclared ? "#29A86D" : "var(--border-default-grey)")
+const bioColor = computed(() => props.isTeledeclared ? "#8AE4B3" : "var(--border-default-grey)")
+const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "var(--border-default-grey)")
 </script>
 
 <template>
@@ -23,16 +29,22 @@ const clickLink = (index) => emit("openAccordion", index)
               <div class="fr-col-11">
                 <ul class="ma-cantine--unstyled-list fr-pl-1w">
                   <li class="ma-cantine--flex-start ma-cantine--flex-gap-1">
-                    <div class="diagnostic-summary-tile__square"></div>
-                    <p class="fr-mb-0 fr-text--sm">Objectif EGalim</p>
+                    <div class="diagnostic-summary-tile__square diagnostic-summary-tile__square--egalim"></div>
+                    <p class="fr-mb-0 fr-text--sm">
+                      {{ isTeledeclared ? "Résultat EGalim" : "Objectif EGalim" }}
+                    </p>
                   </li>
                   <li class="ma-cantine--flex-start ma-cantine--flex-gap-1">
-                    <div class="diagnostic-summary-tile__square"></div>
-                    <p class="fr-mb-0 fr-text--sm">Objectif SIQO</p>
+                    <div class="diagnostic-summary-tile__square diagnostic-summary-tile__square--siqo"></div>
+                    <p class="fr-mb-0 fr-text--sm">
+                      {{ isTeledeclared ? "Résultat SIQO" : "Objectif SIQO" }}
+                    </p>
                   </li>
                   <li class="ma-cantine--flex-start ma-cantine--flex-gap-1">
-                    <div class="diagnostic-summary-tile__square"></div>
-                    <p class="fr-mb-0 fr-text--sm">Objectif Bio</p>
+                    <div class="diagnostic-summary-tile__square diagnostic-summary-tile__square--bio"></div>
+                    <p class="fr-mb-0 fr-text--sm">
+                      {{ isTeledeclared ? "Résultat Bio" : "Objectif Bio" }}
+                    </p>
                   </li>
                 </ul>
                 <AppSeparator class="fr-my-3w" />
@@ -40,10 +52,12 @@ const clickLink = (index) => emit("openAccordion", index)
             </div>
             <div class="fr-grid-row">
               <div class="fr-col-1">
-                <IconAward class="diagnostic-summary-tile__award"/>
+                <IconAward class="diagnostic-summary-tile__award" />
               </div>
               <div class="fr-col-11">
-                <p class="fr-mb-0 fr-text--sm">Objectif viande et poisson</p>
+                <p class="fr-mb-0 fr-text--sm">
+                  {{ isTeledeclared ? "Résultat viande et poisson" : "Objectif viande et poisson" }}
+                </p>
               </div>
             </div>
           </div>
@@ -87,11 +101,20 @@ const clickLink = (index) => emit("openAccordion", index)
   &__square {
     width: 0.5rem;
     height: 0.5rem;
-    background-color: var(--border-default-grey);
+
+    &--egalim {
+      background-color: v-bind(egalimColor);
+    }
+    &--siqo {
+      background-color: v-bind(siqoColor);
+    }
+    &--bio {
+      background-color: v-bind(bioColor);
+    }
   }
 
   &__award {
-    color: var(--border-default-grey);
+    color: v-bind(viandePoissonColor);
   }
 }
 </style>
