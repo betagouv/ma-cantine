@@ -858,6 +858,12 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             valeur_viandes_volailles_egalim=0,
             # rest will be filled by DiagnosticFactory defaults
         )
+        cls.diagnostic_2026_simple_not_filled = DiagnosticFactory(
+            year=2026,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+        )
+        Diagnostic.objects.filter(id=cls.diagnostic_2026_simple_not_filled.id).update(nombre_repas_an=None)
 
     def test_is_empty_property(self):
         diagnostic_without_year = Diagnostic.objects.create()
@@ -877,7 +883,7 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
         self.assertFalse(self.diagnostic_2024_simple_not_filled.is_empty)
 
     def test_filled_queryset(self):
-        self.assertEqual(Diagnostic.objects.all().count(), 8)
+        self.assertEqual(Diagnostic.objects.all().count(), 9)
         self.assertEqual(Diagnostic.objects.filled().count(), 4)
 
     def test_is_filled_property(self):
@@ -899,6 +905,7 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
                 self.diagnostic_2024_complete_not_filled,
                 self.diagnostic_2025_simple_not_filled,
                 self.diagnostic_2025_complete_not_filled,
+                self.diagnostic_2026_simple_not_filled,
             ]
         ):
             diagnostic.refresh_from_db()
