@@ -19,6 +19,7 @@ from data.models.creation_source import CreationSource
 from data.models.definitionlocal import DefinitionLocal
 from data.utils import (
     CustomJSONEncoder,
+    compute_percentage,
     has_arrayfield_missing_query,
     make_optional_positive_integer_field,
     make_optional_positive_decimal_field,
@@ -2036,9 +2037,9 @@ class Diagnostic(models.Model):
 
     def populate_egalim_stats(self):
         # NOTE: EGALIM_STATS_FIELDS
-        self.pourcentage_bio = self.compute_pourcentage_bio()
-        self.pourcentage_egalim = self.compute_pourcentage_egalim()
-        self.pourcentage_egalim_hors_bio = self.compute_pourcentage_egalim_hors_bio()
+        self.pourcentage_bio = compute_percentage(self.valeur_bio_agg, self.valeur_totale)
+        self.pourcentage_egalim = compute_percentage(self.valeur_egalim_agg, self.valeur_totale)
+        self.pourcentage_egalim_hors_bio = compute_percentage(self.valeur_egalim_hors_bio_agg, self.valeur_totale)
         self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
 
     def populate_cout_repas(self):
@@ -2098,24 +2099,6 @@ class Diagnostic(models.Model):
                 ]
             ]
         )
-
-    def compute_pourcentage_bio(self):
-        if self.valeur_totale and self.valeur_bio_agg is not None:
-            if self.valeur_totale >= self.valeur_bio_agg:
-                return round(100 * to_decimal(self.valeur_bio_agg) / to_decimal(self.valeur_totale), 2)
-        return None
-
-    def compute_pourcentage_egalim(self):
-        if self.valeur_totale and self.valeur_egalim_agg is not None:
-            if self.valeur_totale >= self.valeur_egalim_agg:
-                return round(100 * to_decimal(self.valeur_egalim_agg) / to_decimal(self.valeur_totale), 2)
-        return None
-
-    def compute_pourcentage_egalim_hors_bio(self):
-        if self.valeur_totale and self.valeur_egalim_hors_bio_agg is not None:
-            if self.valeur_totale >= self.valeur_egalim_hors_bio_agg:
-                return round(100 * to_decimal(self.valeur_egalim_hors_bio_agg) / to_decimal(self.valeur_totale), 2)
-        return None
 
     def compute_objectifs_egalim_atteints(self):
         if self.valeur_totale and self.pourcentage_bio is not None and self.pourcentage_egalim is not None:
