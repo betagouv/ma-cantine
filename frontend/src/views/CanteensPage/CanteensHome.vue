@@ -282,38 +282,6 @@
         </v-col>
       </v-row>
     </div>
-
-    <v-divider aria-hidden="true" role="presentation" class="mb-8 mt-12"></v-divider>
-
-    <v-row class="mb-6" style="position: relative">
-      <v-col cols="3" v-if="$vuetify.breakpoint.smAndUp">
-        <div class="fill-height d-flex flex-column align-center">
-          <v-spacer></v-spacer>
-          <v-img src="/static/images/doodles-dsfr/primary/SittingDoodle.png" contain></v-img>
-          <v-spacer></v-spacer>
-        </div>
-      </v-col>
-      <v-col>
-        <h2 class="text-h6 font-weight-black mb-4">
-          Vous n'avez pas trouvé un ou plusieurs établissements qui vous intéressent ?
-        </h2>
-        <p class="body-2 mb-6">
-          Dites-nous tout, nous ferons en sorte de leur communiquer votre intérêt pour leurs initiatives en place.
-        </p>
-        <v-form v-model="formIsValid" ref="form" @submit.prevent>
-          <DsfrEmail v-model="fromEmail" />
-          <DsfrFullName v-model="name" />
-          <DsfrTextarea v-model="message" label="Message" :rules="[validators.required]" />
-        </v-form>
-        <v-row class="pa-2">
-          <v-spacer></v-spacer>
-          <v-btn x-large color="primary" @click="sendEmail">
-            <v-icon class="mr-2">mdi-send</v-icon>
-            Envoyer
-          </v-btn>
-        </v-row>
-      </v-col>
-    </v-row>
   </div>
 </template>
 
@@ -331,13 +299,10 @@ import DsfrTextField from "@/components/DsfrTextField"
 import DsfrRadio from "@/components/DsfrRadio"
 import DsfrSelect from "@/components/DsfrSelect"
 import DsfrNativeSelect from "@/components/DsfrNativeSelect"
-import DsfrTextarea from "@/components/DsfrTextarea"
 import DsfrPagination from "@/components/DsfrPagination"
 import DsfrSearchField from "@/components/DsfrSearchField"
 import CityField from "@/views/CanteensPage/CityField"
 import DsfrTagGroup from "@/components/DsfrTagGroup"
-import DsfrEmail from "@/components/DsfrEmail"
-import DsfrFullName from "@/components/DsfrFullName"
 import LocationSelect from "@/components/LocationSelect"
 import ResultCount from "@/components/ResultCount"
 
@@ -352,19 +317,15 @@ export default {
     DsfrRadio,
     DsfrSelect,
     DsfrNativeSelect,
-    DsfrTextarea,
     DsfrPagination,
     DsfrSearchField,
     CityField,
     DsfrTagGroup,
-    DsfrEmail,
-    DsfrFullName,
     LocationSelect,
     ResultCount,
   },
   data() {
     const sectors = this.$store.state.sectors
-    const user = this.$store.state.loggedUser
     return {
       limit: 15,
       departments: [],
@@ -500,10 +461,6 @@ export default {
         },
       ],
       orderDescending: true,
-      fromEmail: user ? user.email : "",
-      name: user ? `${user.firstName} ${user.lastName}` : "",
-      message: "",
-      formIsValid: true,
       managementTypes: Constants.ManagementTypes,
       productionTypes: Constants.ProductionTypes,
       showFilters: false,
@@ -703,36 +660,6 @@ export default {
       } else {
         this.$router.replace({ query }).catch(() => {})
       }
-    },
-    sendEmail() {
-      this.$refs.form.validate()
-      if (!this.formIsValid) {
-        this.$store.dispatch("notifyRequiredFieldsError")
-        return
-      }
-
-      const payload = {
-        from: this.fromEmail,
-        name: this.name,
-        message: this.message,
-      }
-
-      this.$store
-        .dispatch("sendCanteenNotFoundEmail", payload)
-        .then(() => {
-          this.message = ""
-          this.$refs.form.resetValidation()
-          this.$store.dispatch("notify", {
-            status: "success",
-            message: `Votre message a bien été envoyé.`,
-          })
-
-          if (this.$matomo) {
-            this.$matomo.trackEvent("message", "send", "canteen-not-found-email")
-          }
-          window.scrollTo(0, 0)
-        })
-        .catch((e) => this.$store.dispatch("notifyServerError", e))
     },
     setSectors() {
       this.sectors = sectorsSelectList(this.$store.state.sectors).map((x) => {

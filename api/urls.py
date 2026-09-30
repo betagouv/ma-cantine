@@ -64,7 +64,6 @@ from api.views import (
     RetrieveUpdateUserCanteenView,
     ReviewView,
     SectorListView,
-    SendCanteenNotFoundEmail,
     SubscribeNewsletter,
     TeamJoinRequestView,
     TeledeclarationCampaignDatesListView,
@@ -255,11 +254,6 @@ urlpatterns = {
         "addManager/",
         AddManagerView.as_view(),
         name="add_manager",
-    ),
-    path(
-        "canteenNotFoundMessage/",
-        SendCanteenNotFoundEmail.as_view(),
-        name="canteen_not_found",
     ),
     path(
         "removeManager/",
