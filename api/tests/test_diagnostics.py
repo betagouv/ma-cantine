@@ -1325,3 +1325,17 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["isClean"], False)
         self.assertNotEqual(body["errors"], {})
         self.assertEqual(body["isTeledeclared"], False)
+
+    @authenticate
+    def test_can_get_diagnostic_check_when_teledeclared(self):
+        self.canteen.managers.add(authenticate.user)
+        self.diagnostic.teledeclare(applicant=self.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["isClean"], True)
+        self.assertEqual(body["errors"], {})
+        self.assertEqual(body["isTeledeclared"], True)
