@@ -827,8 +827,15 @@ class Diagnostic(models.Model):
 
     EGALIM_STATS_FIELDS = [
         "pourcentage_bio",
-        "pourcentage_egalim",
+        "pourcentage_siqo",
+        "pourcentage_externalites_performance",
+        "pourcentage_egalim_autres",
         "pourcentage_egalim_hors_bio",
+        "pourcentage_egalim",
+        "pourcentage_viandes_volailles_egalim",
+        "pourcentage_viandes_volailles_france",
+        "pourcentage_produits_de_la_mer_egalim",
+        "pourcentage_produits_de_la_mer_france",
         "objectifs_egalim_atteints",
     ]
 
@@ -1864,11 +1871,36 @@ class Diagnostic(models.Model):
     pourcentage_bio = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage bio (champ calculé)",
     )
-    pourcentage_egalim = make_optional_positive_percentage_decimal_field(
-        verbose_name="pourcentage EGalim (champ calculé)",
+    pourcentage_siqo = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage SIQO (champ calculé)",
+    )
+    pourcentage_externalites_performance = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage externalités/performance (champ calculé)",
+    )
+    pourcentage_egalim_autres = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres EGalim (champ calculé)",
     )
     pourcentage_egalim_hors_bio = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage EGalim hors bio (champ calculé)",
+    )
+    pourcentage_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage EGalim (champ calculé)",
+    )
+    pourcentage_viandes_volailles_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles EGalim (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_viandes_volailles_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles origine France (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer EGalim (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_produits_de_la_mer_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer origine France (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
     )
     objectifs_egalim_atteints = models.BooleanField(
         blank=True,
@@ -2038,8 +2070,25 @@ class Diagnostic(models.Model):
     def populate_egalim_stats(self):
         # NOTE: EGALIM_STATS_FIELDS
         self.pourcentage_bio = compute_percentage(self.valeur_bio_agg, self.valeur_totale)
-        self.pourcentage_egalim = compute_percentage(self.valeur_egalim_agg, self.valeur_totale)
+        self.pourcentage_siqo = compute_percentage(self.valeur_siqo_agg, self.valeur_totale)
+        self.pourcentage_externalites_performance = compute_percentage(
+            self.valeur_externalites_performance_agg, self.valeur_totale
+        )
+        self.pourcentage_egalim_autres = compute_percentage(self.valeur_egalim_autres_agg, self.valeur_totale)
         self.pourcentage_egalim_hors_bio = compute_percentage(self.valeur_egalim_hors_bio_agg, self.valeur_totale)
+        self.pourcentage_egalim = compute_percentage(self.valeur_egalim_agg, self.valeur_totale)
+        self.pourcentage_viandes_volailles_egalim = compute_percentage(
+            self.valeur_viandes_volailles_egalim, self.valeur_viandes_volailles
+        )
+        self.pourcentage_viandes_volailles_france = compute_percentage(
+            self.valeur_viandes_volailles_france, self.valeur_viandes_volailles
+        )
+        self.pourcentage_produits_de_la_mer_egalim = compute_percentage(
+            self.valeur_produits_de_la_mer_egalim, self.valeur_produits_de_la_mer
+        )
+        self.pourcentage_produits_de_la_mer_france = compute_percentage(
+            self.valeur_produits_de_la_mer_france, self.valeur_produits_de_la_mer
+        )
         self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
 
     def populate_cout_repas(self):
