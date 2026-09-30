@@ -10,7 +10,7 @@ const clickLink = (index) => emit("openAccordion", index)
 
 <template>
   <div class="diagnostic-summary-tile">
-    <div class="fr-tile" :class="{ 'fr-tile--blue': isTeledeclared }">
+    <div class="fr-tile">
       <div class="fr-tile__title fr-grid-row fr-text--regular fr-text-title--grey fr-text--md">
         <div class="diagnostic-summary-tile__appro-container ma-cantine--flex-gap-1 fr-col-8 fr-pr-8w">
           <img :src="appro.image" alt="" class="diagnostic-summary-tile__image" />
@@ -48,8 +48,8 @@ const clickLink = (index) => emit("openAccordion", index)
             </div>
           </div>
         </div>
-        <ul class="ma-cantine--unstyled-list fr-col-4">
-          <li v-for="(volet, index) in thematiques" :key="volet.title" class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-1w">
+        <ul class="diagnostic-summary-tile__thematiques-container ma-cantine--unstyled-list fr-my-0 fr-col-4">
+          <li v-for="(volet, index) in thematiques" :key="volet.title" class="ma-cantine--flex-start ma-cantine--flex-gap-1">
             <img :src="volet.image" alt="" class="diagnostic-summary-tile__image" />
             <a :href="`#${anchorName}`" @click="clickLink(index + 1)" class="fr-text-default--grey">
               {{ volet.shortTitle }}
@@ -63,9 +63,6 @@ const clickLink = (index) => emit("openAccordion", index)
 
 <style lang="scss">
 .diagnostic-summary-tile {
-  .fr-tile--blue .fr-tile__title::before {
-    background-image: linear-gradient(0deg,var(--border-active-blue-france),var(--border-active-blue-france)) !important;
-  }
 
   &__appro-container {
     display: flex;
@@ -73,6 +70,13 @@ const clickLink = (index) => emit("openAccordion", index)
     justify-content: flex-start;
     gap: 0.5rem;
     text-align: left;
+  }
+
+  &__thematiques-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.5rem;
   }
 
   &__image {
