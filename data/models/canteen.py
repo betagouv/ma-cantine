@@ -468,6 +468,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         "declaration_donnees_2023",
         "declaration_donnees_2024",
         "declaration_donnees_2025",
+        "declaration_donnees_2026",
     ]
 
     MATOMO_FIELDS = [
@@ -586,12 +587,13 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
 
     is_filled = models.BooleanField(default=False, verbose_name="cantine complète (champ calculé)")
 
-    # TDs (rempli grâce à canteen_fill_declaration_donnees_year_field)
+    # TDs (rempli grâce à teledeclare & canteen_fill_declaration_donnees_year_field)
     declaration_donnees_2021 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2021")
     declaration_donnees_2022 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2022")
     declaration_donnees_2023 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2023")
     declaration_donnees_2024 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2024")
     declaration_donnees_2025 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2025")
+    declaration_donnees_2026 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2026")
 
     logo = models.ImageField(null=True, blank=True, verbose_name="Logo")
 
