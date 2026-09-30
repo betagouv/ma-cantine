@@ -1276,6 +1276,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
+        self.assertEqual(body["isTeledeclared"], False)
 
     def test_can_get_diagnostic_check_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
@@ -1289,6 +1290,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
+        self.assertEqual(body["isTeledeclared"], False)
 
     @authenticate
     def test_can_get_diagnostic_check_with_fill_errors(self):
@@ -1306,6 +1308,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertNotEqual(body["errors"], {})
         self.assertEqual(body["errors"]["valeurTotale"], ["Ce champ est obligatoire pour l'année 2025."])
         self.assertEqual(body["errors"]["valeurBio"], ["Ce champ est obligatoire pour l'année 2025."])
+        self.assertEqual(body["isTeledeclared"], False)
 
     @authenticate
     def test_can_get_diagnostic_check_with_clean_errors(self):
@@ -1321,3 +1324,18 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["isClean"], False)
         self.assertNotEqual(body["errors"], {})
+        self.assertEqual(body["isTeledeclared"], False)
+
+    @authenticate
+    def test_can_get_diagnostic_check_when_teledeclared(self):
+        self.canteen.managers.add(authenticate.user)
+        self.diagnostic.teledeclare(applicant=self.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["isClean"], True)
+        self.assertEqual(body["errors"], {})
+        self.assertEqual(body["isTeledeclared"], True)
