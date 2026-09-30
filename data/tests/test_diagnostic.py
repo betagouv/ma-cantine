@@ -539,7 +539,7 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.valeur_bio, 0)  # populated
         self.assertEqual(diagnostic.valeur_siqo, 10)  # not overriden
         self.assertIsNone(diagnostic.valeur_viandes_volailles_igp)  # not populated (not required)
-        self.assertEqual(diagnostic.nombre_repas_an, 0)  # populated
+        self.assertIsNone(diagnostic.nombre_repas_an)  # not populated (not covered)
 
     def test_diagnostic_2026_complete_required_fields_are_populated_with_zero(self):
         diagnostic = Diagnostic.objects.create(
@@ -549,7 +549,7 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.valeur_viandes_volailles, 0)  # populated
         self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 10)  # not overriden
         self.assertIsNone(diagnostic.valeur_viandes_volailles_igp)  # not populated (not required)
-        self.assertEqual(diagnostic.nombre_repas_an, 0)  # populated
+        self.assertIsNone(diagnostic.nombre_repas_an)  # not populated (not covered)
 
 
 class DiagnosticQuerySetTest(TestCase):
@@ -802,14 +802,20 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.diagnostic_2024_simple_not_filled = DiagnosticFactory(
-            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            year=2024,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            # valeur_totale will be set to None below
         )
         Diagnostic.objects.filter(id=cls.diagnostic_2024_simple_not_filled.id).update(valeur_totale=None)
         cls.diagnostic_2024_simple_filled = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
         )
         cls.diagnostic_2024_complete_not_filled = DiagnosticFactory(
-            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.COMPLETE
+            year=2024,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+            # valeur_totale will be set to None below
         )
         Diagnostic.objects.filter(id=cls.diagnostic_2024_complete_not_filled.id).update(valeur_totale=None)
         cls.diagnostic_2024_complete_filled = DiagnosticFactory(
@@ -819,6 +825,7 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             year=2025,
             canteen=CanteenFactory(),
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            # valeur_totale & valeur_bio will be set to None below
         )
         Diagnostic.objects.filter(id=cls.diagnostic_2025_simple_not_filled.id).update(
             valeur_totale=None, valeur_bio=None
@@ -844,6 +851,7 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             valeur_egalim_autres=100,
             valeur_viandes_volailles=100,
             valeur_viandes_volailles_egalim=0,
+            # valeur_produits_de_la_mer will be set to None below
         )
         Diagnostic.objects.filter(id=cls.diagnostic_2025_complete_not_filled.id).update(valeur_produits_de_la_mer=None)
         cls.diagnostic_2025_complete_filled = DiagnosticFactory(
@@ -862,25 +870,27 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             year=2026,
             canteen=CanteenFactory(),
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            # nombre_repas_an will be set to None below
         )
         Diagnostic.objects.filter(id=cls.diagnostic_2026_simple_not_filled.id).update(nombre_repas_an=None)
 
     def test_is_empty_property(self):
-        diagnostic_without_year = Diagnostic.objects.create()
-        diagnostic_2025_without_nombre_repas_an = Diagnostic.objects.create(
-            year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
-        )
-        diagnostic_2026_without_type = Diagnostic.objects.create(year=2026, nombre_repas_an=10, valeur_totale=1000)
-        diagnostic_2026_without_valeur_totale = Diagnostic.objects.create(
-            year=2026, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, nombre_repas_an=10
-        )
+        Diagnostic.objects.filter(id=self.diagnostic_2024_simple_filled.id).update(year=None)
+        self.diagnostic_2024_simple_filled.refresh_from_db()
+        self.assertTrue(self.diagnostic_2024_simple_filled.is_empty)  # year is missing
 
-        self.assertTrue(diagnostic_without_year.is_empty)
-        self.assertFalse(diagnostic_2025_without_nombre_repas_an.is_empty)
-        self.assertTrue(diagnostic_2026_without_type.is_empty)
-        self.assertTrue(diagnostic_2026_without_valeur_totale.is_empty)
-        self.assertFalse(self.diagnostic_2024_simple_filled.is_empty)
-        self.assertFalse(self.diagnostic_2024_simple_not_filled.is_empty)
+        self.diagnostic_2025_simple_not_filled.refresh_from_db()
+        self.assertTrue(self.diagnostic_2025_simple_not_filled.is_empty)  # valeur_totale is missing
+
+        self.diagnostic_2025_simple_not_filled.valeur_totale = 1000
+        self.diagnostic_2025_simple_not_filled.nombre_repas_an = None
+        self.diagnostic_2025_simple_not_filled.save()
+        self.assertFalse(
+            self.diagnostic_2025_simple_not_filled.is_empty
+        )  # valeur_totale filled, nombre_repas_an is only for 2026 and later
+
+        self.diagnostic_2026_simple_not_filled.refresh_from_db()
+        self.assertTrue(self.diagnostic_2026_simple_not_filled.is_empty)  # nombre_repas_an is missing
 
     def test_filled_queryset(self):
         self.assertEqual(Diagnostic.objects.all().count(), 9)
