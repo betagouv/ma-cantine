@@ -4,7 +4,7 @@ import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary"
 import { storeToRefs } from "pinia"
 import { formatNumber } from "@/utils.js"
-import AppIconLink from "@/components/AppIconLink.vue"
+import IconLink from "@/components/IconLink.vue"
 import diagnosticsFieldsService from "@/services/diagnosticsFields"
 import documentation from "@/data/documentation.json"
 
@@ -60,7 +60,7 @@ onMounted(prefillField)
 <template>
   <div class="fr-grid-row fr-mb-2w" :class="{ 'fr-col-6' : displayInline }">
     <div class="fr-grid-row" :class="{ 'fr-col-12': displayFull || displayInline, 'fr-col-7': displayHalf }">
-      <AppIconLink v-if="isRelated" class="fr-col-1" bottom="1.25rem" />
+      <IconLink v-if="isRelated" class="fr-col-1" bottom="1.25rem" />
       <div class="tunnel-teledeclaration-field__input" :class="{ 'fr-col-11': isRelated, 'fr-col-12': !isRelated }">
         <DsfrInputGroup v-if="isNumber" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" :placeholder="placeholder" min="0" />
         <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="errorMessage" :hint="hint"/>

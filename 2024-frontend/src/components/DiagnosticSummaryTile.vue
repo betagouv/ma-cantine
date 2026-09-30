@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue"
-import AppIconLink from "@/components/AppIconLink.vue"
+import IconLink from "@/components/IconLink.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import IconAward from "@/components/IconAward.vue"
 
@@ -25,7 +25,7 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
               {{ appro.title }}
             </a>
             <div class="fr-grid-row fr-pt-1w">
-              <AppIconLink class="fr-col-1" top="1.25rem" />
+              <IconLink class="fr-col-1" top="1.25rem" />
               <div class="fr-col-11">
                 <ul class="ma-cantine--unstyled-list fr-pl-1w">
                   <li class="ma-cantine--flex-start ma-cantine--flex-gap-1">

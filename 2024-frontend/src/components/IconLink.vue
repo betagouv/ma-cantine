@@ -10,11 +10,11 @@ const topPositionHorizontal = computed(() => isFromTop.value ? props.top : "auto
 </script>
 
 <template>
-  <div :aria-hidden="true" class="app-icon-link"></div>
+  <div :aria-hidden="true" class="icon-link"></div>
 </template>
 
 <style lang="scss">
-.app-icon-link {
+.icon-link {
   position: relative;
   overflow: hidden;
 
