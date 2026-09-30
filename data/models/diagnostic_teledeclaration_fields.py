@@ -565,6 +565,10 @@ TELEDECLARATION_FIELDS = {
                 "valeur_viandes_volailles",
                 "valeur_viandes_volailles_egalim",
             ],
+            "fields_added": [
+                "valeur_bio_dont_commerce_equitable",
+                "valeur_egalim_autres_dont_commerce_equitable",
+            ],
         },
         "COMPLETE": {
             "fields": [
@@ -817,6 +821,7 @@ TELEDECLARATION_FIELDS = {
     2026: {
         "SIMPLE": {
             "fields": [
+                "nombre_repas_an",
                 "valeur_totale",
                 "valeur_bio",
                 "valeur_bio_dont_commerce_equitable",
@@ -872,6 +877,7 @@ TELEDECLARATION_FIELDS = {
                 "valeur_autres_local",
             ],
             "fields_required": [
+                "nombre_repas_an",
                 "valeur_totale",
                 "valeur_bio",
                 "valeur_siqo",
@@ -879,9 +885,52 @@ TELEDECLARATION_FIELDS = {
                 "valeur_viandes_volailles",
                 "valeur_viandes_volailles_egalim",
             ],
+            "fields_added": [
+                "nombre_repas_an",
+                "valeur_europe",
+                "valeur_france",
+                "valeur_circuit_court",
+                "valeur_local",
+                "valeur_charcuterie",
+                "valeur_produits_laitiers",
+                "valeur_boulangerie",
+                "valeur_boissons",
+                "valeur_autres",
+                "valeur_viandes_volailles_europe",
+                "valeur_produits_de_la_mer_europe",
+                "valeur_fruits_et_legumes_europe",
+                "valeur_charcuterie_europe",
+                "valeur_produits_laitiers_europe",
+                "valeur_boulangerie_europe",
+                "valeur_boissons_europe",
+                "valeur_autres_europe",
+                "valeur_fruits_et_legumes_france",
+                "valeur_charcuterie_france",
+                "valeur_produits_laitiers_france",
+                "valeur_boulangerie_france",
+                "valeur_boissons_france",
+                "valeur_autres_france",
+                "valeur_viandes_volailles_circuit_court",
+                "valeur_produits_de_la_mer_circuit_court",
+                "valeur_fruits_et_legumes_circuit_court",
+                "valeur_charcuterie_circuit_court",
+                "valeur_produits_laitiers_circuit_court",
+                "valeur_boulangerie_circuit_court",
+                "valeur_boissons_circuit_court",
+                "valeur_autres_circuit_court",
+                "valeur_viandes_volailles_local",
+                "valeur_produits_de_la_mer_local",
+                "valeur_fruits_et_legumes_local",
+                "valeur_charcuterie_local",
+                "valeur_produits_laitiers_local",
+                "valeur_boulangerie_local",
+                "valeur_boissons_local",
+                "valeur_autres_local",
+            ],
         },
         "COMPLETE": {
             "fields": [
+                "nombre_repas_an",
                 "valeur_totale",
                 "valeur_viandes_volailles",
                 "valeur_produits_de_la_mer",
@@ -1022,6 +1071,7 @@ TELEDECLARATION_FIELDS = {
                 "valeur_autres_local",
             ],
             "fields_required": [
+                "nombre_repas_an",
                 "valeur_totale",
                 "valeur_viandes_volailles",
                 "valeur_produits_de_la_mer",
@@ -1080,6 +1130,7 @@ TELEDECLARATION_FIELDS = {
                 "valeur_autres_fermier",
             ],
             "fields_added": [
+                "nombre_repas_an",
                 # valeur_famille
                 "valeur_fruits_et_legumes",
                 "valeur_charcuterie",
