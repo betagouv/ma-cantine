@@ -1,11 +1,8 @@
-import logging
 from collections import OrderedDict
 from datetime import date
 
 import redis as r
 from django.conf import settings
-from django.core.exceptions import ValidationError
-from django.core.validators import validate_email
 from django.db import transaction
 from django.db.models import FloatField, Q, Sum
 from django.db.models.functions import Cast
@@ -46,12 +43,10 @@ from api.serializers import (
 )
 from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.api.recherche_entreprises import fetch_geo_data_from_siren, fetch_geo_data_from_siret
-from common.utils import send_mail
 from data.models import Canteen, Diagnostic, Sector, SectorM2M
 from data.models.creation_source import CreationSource
 from data.utils import has_charfield_missing_query
 
-logger = logging.getLogger(__name__)
 redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
@@ -516,43 +511,6 @@ def get_cantine_list_from_siren_unite_legale(siren, request):
             .order_by("name")
         )
         return CanteenStatusSerializer(canteens, many=True, context={"request": request}).data
-
-
-class SendCanteenNotFoundEmail(APIView):
-    def post(self, request):
-        try:
-            email = request.data.get("from", "").strip()
-            validate_email(email)
-            name = request.data.get("name") or "Un·e utilisateur·rice"
-            message = request.data.get("message")
-
-            context = {
-                "from": email,
-                "name": name,
-                "message": message,
-            }
-
-            send_mail(
-                subject=f"{name} n'a pas trouvé une cantine publiée",
-                to=[
-                    settings.CONTACT_EMAIL,
-                ],
-                reply_to=[
-                    email,
-                ],
-                template="canteen_not_found",
-                context=context,
-            )
-
-            return JsonResponse({}, status=status.HTTP_200_OK)
-        except ValidationError:
-            return JsonResponse({"error": "Invalid email"}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            logger.exception(f"Exception occurred while sending email:\n{e}")
-            return JsonResponse(
-                {"error": "An error has occurred"},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            )
 
 
 class ActionableCanteensListView(ListAPIView):
