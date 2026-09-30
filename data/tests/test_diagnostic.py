@@ -539,7 +539,7 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.valeur_bio, 0)  # populated
         self.assertEqual(diagnostic.valeur_siqo, 10)  # not overriden
         self.assertIsNone(diagnostic.valeur_viandes_volailles_igp)  # not populated (not required)
-        self.assertIsNone(diagnostic.nombre_repas_an)  # not populated (not covered)
+        self.assertEqual(diagnostic.nombre_repas_an, 0)  # populated
 
     def test_diagnostic_2026_complete_required_fields_are_populated_with_zero(self):
         diagnostic = Diagnostic.objects.create(
@@ -549,7 +549,7 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.valeur_viandes_volailles, 0)  # populated
         self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 10)  # not overriden
         self.assertIsNone(diagnostic.valeur_viandes_volailles_igp)  # not populated (not required)
-        self.assertIsNone(diagnostic.nombre_repas_an)  # not populated (not covered)
+        self.assertEqual(diagnostic.nombre_repas_an, 0)  # populated
 
 
 class DiagnosticQuerySetTest(TestCase):

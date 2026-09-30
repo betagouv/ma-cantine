@@ -817,6 +817,7 @@ TELEDECLARATION_FIELDS = {
     2026: {
         "SIMPLE": {
             "fields": [
+                "nombre_repas_an",
                 "valeur_totale",
                 "valeur_bio",
                 "valeur_bio_dont_commerce_equitable",
@@ -872,6 +873,7 @@ TELEDECLARATION_FIELDS = {
                 "valeur_autres_local",
             ],
             "fields_required": [
+                "nombre_repas_an",
                 "valeur_totale",
                 "valeur_bio",
                 "valeur_siqo",
@@ -879,9 +881,13 @@ TELEDECLARATION_FIELDS = {
                 "valeur_viandes_volailles",
                 "valeur_viandes_volailles_egalim",
             ],
+            "fields_added": [
+                "nombre_repas_an",
+            ],
         },
         "COMPLETE": {
             "fields": [
+                "nombre_repas_an",
                 "valeur_totale",
                 "valeur_viandes_volailles",
                 "valeur_produits_de_la_mer",
@@ -1022,6 +1028,7 @@ TELEDECLARATION_FIELDS = {
                 "valeur_autres_local",
             ],
             "fields_required": [
+                "nombre_repas_an",
                 "valeur_totale",
                 "valeur_viandes_volailles",
                 "valeur_produits_de_la_mer",
@@ -1080,6 +1087,7 @@ TELEDECLARATION_FIELDS = {
                 "valeur_autres_fermier",
             ],
             "fields_added": [
+                "nombre_repas_an",
                 # valeur_famille
                 "valeur_fruits_et_legumes",
                 "valeur_charcuterie",

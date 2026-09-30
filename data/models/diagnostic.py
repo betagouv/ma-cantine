@@ -1979,7 +1979,6 @@ class Diagnostic(models.Model):
         """
         Default any still-empty required appro field (for this diagnostic's year & diagnostic_type) to 0.
         NOTE: valeur_totale is excluded, it must be > 0 (see validate_valeur_totale)
-        NOTE: nombre_repas_an is excluded
         """
         if not (self.year and self.diagnostic_type):
             return
