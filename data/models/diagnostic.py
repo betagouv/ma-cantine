@@ -2185,7 +2185,7 @@ class Diagnostic(models.Model):
 
     @property
     def is_empty(self) -> bool:
-        return not self.diagnostic_type or not self.valeur_totale
+        return not self.diagnostic_type or (self.year >= 2026 and not self.nombre_repas_an) or not self.valeur_totale
 
     @property
     def is_filled_simple(self) -> bool:

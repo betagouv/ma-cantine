@@ -1339,6 +1339,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        self.assertEqual(body["isEmpty"], False)
         self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
