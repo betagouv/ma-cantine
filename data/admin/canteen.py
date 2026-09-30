@@ -190,7 +190,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
 
     groupe_with_link.short_description = Canteen._meta.get_field("groupe").verbose_name
 
-    # TODO: update every year
+    # TODO teledeclaration_campaign: update every year
     @admin.display(description="Télédéclarée (2025)")
     def télédéclarée(self, obj):
         return obj.declaration_donnees_2025

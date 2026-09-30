@@ -690,6 +690,7 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
             "declaration_donnees_2023",
             "declaration_donnees_2024",
             "declaration_donnees_2025",
+            # TODO teledeclaration_campaign: add new year
             "adresses_gestionnaires",
         )
         read_only_fields = fields
@@ -777,6 +778,7 @@ class CanteenOpenDataSerializer(serializers.ModelSerializer):
             "declaration_donnees_2023",
             "declaration_donnees_2024",
             "declaration_donnees_2025",
+            # TODO teledeclaration_campaign: add new year
             "active_on_ma_cantine",
         )
 

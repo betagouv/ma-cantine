@@ -2,9 +2,11 @@
 
 ## Avant la campagne
 
-### Définir les dates
-
-voir [macantine/utils.py](../macantine/utils.py) et la constante `CAMPAIGN_DATES`
+* ajouter les dates dans [models/diagnostic_teledeclaration_dates.py](../data/models/diagnostic_teledeclaration_dates.py)
+* ajouter les champs dans [models/diagnostic_teledeclaration_fields.py](../data/models/diagnostic_teledeclaration_fields.py)
+* ajouter les groupes de champs dans [models/diagnostic_teledeclaration_field_groups.py](../data/models/diagnostic_teledeclaration_field_groups.py)
+* ajouter le nouveau champ `Canteen.declaration_donnees_YEAR`
+* modifier les endroits avec `# TODO teledeclaration_campaign`
 
 ## Pendant la campagne
 

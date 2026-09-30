@@ -47,6 +47,7 @@ class DiagnosticTeledeclaredAnalysisSerializer(serializers.ModelSerializer):
     declaration_donnees_2023 = serializers.SerializerMethodField()
     declaration_donnees_2024 = serializers.SerializerMethodField()
     declaration_donnees_2025 = serializers.SerializerMethodField()
+    # TODO teledeclaration_campaign: add new year
 
     valeur_bio = serializers.FloatField(source="valeur_bio_agg", read_only=True)
     valeur_siqo = serializers.FloatField(source="valeur_siqo_agg", read_only=True)
