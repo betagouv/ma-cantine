@@ -26,7 +26,7 @@ const topPositionHorizontal = computed(() => isFromTop.value ? props.top : "auto
     bottom: v-bind(bottomPosition);
     width: 1px;
     height: v-bind(height);
-    background-color: var(--border-plain-grey);
+    background-color: var(--border-default-grey);
   }
 
   &::after {
@@ -37,7 +37,7 @@ const topPositionHorizontal = computed(() => isFromTop.value ? props.top : "auto
     bottom: v-bind(bottomPosition);
     height: 1px;
     width: 80%;
-    background-color: var(--border-plain-grey);
+    background-color: var(--border-default-grey);
   }
 }
 </style>

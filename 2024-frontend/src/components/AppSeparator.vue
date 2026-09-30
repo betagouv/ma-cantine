@@ -8,6 +8,6 @@
   height: 1px;
   display: block;
   padding-bottom: 0;
-  background-color: var(--border-disabled-grey);
+  background-color: var(--border-default-grey);
 }
 </style>
