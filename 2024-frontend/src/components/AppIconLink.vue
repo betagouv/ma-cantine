@@ -1,7 +1,12 @@
 <script setup>
 import { computed } from "vue"
-const props = defineProps(["bottom"])
-const bottomPosition = computed(() => props.bottom || "50%")
+const props = defineProps(["top", "bottom"])
+
+const isFromTop = computed(() => props.top !== undefined && props.top !== null)
+const topPositionVertical = computed(() => isFromTop.value ? 0 : "auto")
+const bottomPosition = computed(() => isFromTop.value ? "auto" : props.bottom)
+const height = computed(() => isFromTop.value ? props.top : "100%")
+const topPositionHorizontal = computed(() => isFromTop.value ? props.top : "auto")
 </script>
 
 <template>
@@ -17,9 +22,10 @@ const bottomPosition = computed(() => props.bottom || "50%")
     content: "";
     position: absolute;
     left: 10%;
+    top: v-bind(topPositionVertical);
     bottom: v-bind(bottomPosition);
     width: 1px;
-    height: 100%;
+    height: v-bind(height);
     background-color: var(--border-plain-grey);
   }
 
@@ -27,6 +33,7 @@ const bottomPosition = computed(() => props.bottom || "50%")
     content: "";
     position: absolute;
     left: 10%;
+    top: v-bind(topPositionHorizontal);
     bottom: v-bind(bottomPosition);
     height: 1px;
     width: 80%;
