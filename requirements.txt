@@ -356,7 +356,7 @@ numpy==2.4.1
     #   datacompy
     #   ma-cantine
     #   pandas
-oauthlib==3.3.1
+oauthlib==4.0.0
     # via django-oauth-toolkit
 openpyxl==3.1.5
     # via
