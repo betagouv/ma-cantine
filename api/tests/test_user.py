@@ -67,6 +67,7 @@ class LoggedUserApiTest(APITestCase):
         body = json.loads(response.content.decode())
         self.assertEqual(body.get("firstName"), authenticate.user.first_name)
         self.assertEqual(body.get("lastName"), authenticate.user.last_name)
+        self.assertIsNone(body.get("username"))
 
     @authenticate
     def test_user_job_update(self):
