@@ -93,8 +93,8 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "status",
         *Diagnostic.MATOMO_FIELDS,
         *Diagnostic.TUNNEL_PROGRESS_FIELDS,
-        *Diagnostic.AGGREGATED_APPRO_FIELDS,
-        *Diagnostic.EGALIM_STATS_FIELDS,
+        *Diagnostic.APPRO_AGGREGATED_FIELDS,
+        *Diagnostic.APPRO_STATS_FIELDS,
         *Diagnostic.TELEDECLARATION_FIELDS,
         *Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,
         "applicant",
@@ -193,8 +193,8 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "Champs calculés",
                 {
                     "fields": (
-                        *Diagnostic.AGGREGATED_APPRO_FIELDS,
-                        *Diagnostic.EGALIM_STATS_FIELDS,
+                        *Diagnostic.APPRO_AGGREGATED_FIELDS,
+                        *Diagnostic.APPRO_STATS_FIELDS,
                         *Diagnostic.OTHER_COMPUTED_FIELDS,
                     )
                 },

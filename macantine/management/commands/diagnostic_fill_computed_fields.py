@@ -6,7 +6,7 @@ from common.utils.commands import MaCantineBaseCommand
 logger = logging.getLogger(__name__)
 
 
-FIELD_LIST = Diagnostic.AGGREGATED_APPRO_FIELDS + Diagnostic.EGALIM_STATS_FIELDS + Diagnostic.OTHER_COMPUTED_FIELDS
+FIELD_LIST = Diagnostic.APPRO_AGGREGATED_FIELDS + Diagnostic.APPRO_STATS_FIELDS + Diagnostic.OTHER_COMPUTED_FIELDS
 
 
 class Command(MaCantineBaseCommand):
@@ -45,7 +45,7 @@ class Command(MaCantineBaseCommand):
         for index, diagnostic in enumerate(qs):
             # called in save()
             # diagnostic.populate_aggregated_values()
-            # diagnostic.populate_egalim_stats()
+            # diagnostic.populate_stats_values()
             # diagnostic.populate_cout_repas()
             diagnostic.save(update_fields=FIELD_LIST)
             if index % 5000 == 0:
