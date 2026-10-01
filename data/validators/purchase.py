@@ -1,6 +1,7 @@
 from datetime import date
 
 from common.utils import utils as utils_utils
+from data.models.definitionlocal import DefinitionLocal
 
 
 def validate_purchase_date(instance):
@@ -51,7 +52,7 @@ def validate_purchase_definition_local(instance):
     definition_local_km = getattr(instance, "definition_local_km")
     caracteristiques = getattr(instance, "caracteristiques") or []
     if instance.Characteristic.LOCAL in caracteristiques:
-        if value != instance.Local.KM:
+        if value != DefinitionLocal.KM:
             if definition_local_km not in [None, ""]:
                 utils_utils.add_validation_error(
                     errors,

@@ -4,6 +4,7 @@ import factory
 from factory.fuzzy import FuzzyChoice
 
 from data.models import Purchase
+from data.models.definitionlocal import DefinitionLocal
 
 from .canteen import CanteenFactory
 
@@ -30,5 +31,7 @@ class PurchaseFactory(factory.django.DjangoModelFactory):
     caracteristiques = factory.LazyFunction(_random_caracteristiques)
     prix_ht = factory.Faker("random_int", min=0, max=2000)
     definition_local = factory.LazyAttribute(
-        lambda x: random.choice(Purchase.Local.values) if Purchase.Characteristic.LOCAL in x.caracteristiques else None
+        lambda x: random.choice(DefinitionLocal.values)
+        if Purchase.Characteristic.LOCAL in x.caracteristiques
+        else None
     )

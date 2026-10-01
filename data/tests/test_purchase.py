@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 
 from data.factories import PurchaseFactory, CanteenFactory, UserFactory
 from data.models import Purchase
+from data.models.definitionlocal import DefinitionLocal
 
 
 class PurchaseModelSaveTest(TransactionTestCase):
@@ -62,7 +63,7 @@ class PurchaseModelSaveTest(TransactionTestCase):
         ):
             with self.subTest(caracteristiques=TUPLE_OK[0]):
                 definition_local = (
-                    Purchase.Local.KM if TUPLE_OK[0] and Purchase.Characteristic.LOCAL in TUPLE_OK[0] else None
+                    DefinitionLocal.KM if TUPLE_OK[0] and Purchase.Characteristic.LOCAL in TUPLE_OK[0] else None
                 )
                 purchase = PurchaseFactory(caracteristiques=TUPLE_OK[0], definition_local=definition_local)
                 self.assertEqual(purchase.caracteristiques, TUPLE_OK[1])
@@ -86,7 +87,7 @@ class PurchaseModelSaveTest(TransactionTestCase):
         - if caracteristiques does not include "LOCAL", definition_local must be empty
         """
         # caracteristiques includes "LOCAL"
-        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in Purchase.Local.values)]:
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in DefinitionLocal.values)]:
             with self.subTest(caracteristiques=[Purchase.Characteristic.LOCAL], definition_local=TUPLE_OK[0]):
                 purchase = PurchaseFactory(
                     caracteristiques=[Purchase.Characteristic.LOCAL], definition_local=TUPLE_OK[0]
@@ -110,7 +111,7 @@ class PurchaseModelSaveTest(TransactionTestCase):
                     caracteristiques=[Purchase.Characteristic.BIO], definition_local=TUPLE_OK[0]
                 )
                 self.assertEqual(purchase.definition_local, TUPLE_OK[1])
-        for VALUE_NOT_OK in [key for key in Purchase.Local.values]:
+        for VALUE_NOT_OK in [key for key in DefinitionLocal.values]:
             with self.subTest(caracteristiques=[], definition_local=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, PurchaseFactory, caracteristiques=[], definition_local=VALUE_NOT_OK)
             with self.subTest(caracteristiques=[Purchase.Characteristic.BIO], definition_local=VALUE_NOT_OK):
@@ -126,40 +127,40 @@ class PurchaseModelSaveTest(TransactionTestCase):
         for TUPLE_OK in [(None, None), (0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
             with self.subTest(
                 caracteristiques=[Purchase.Characteristic.LOCAL],
-                definition_local=Purchase.Local.KM,
+                definition_local=DefinitionLocal.KM,
                 definition_local_km=TUPLE_OK[0],
             ):
                 purchase = PurchaseFactory(
                     caracteristiques=[Purchase.Characteristic.LOCAL],
-                    definition_local=Purchase.Local.KM,
+                    definition_local=DefinitionLocal.KM,
                     definition_local_km=TUPLE_OK[0],
                 )
                 self.assertEqual(purchase.definition_local_km, TUPLE_OK[1])
         for VALUE_NOT_OK in ["", "  ", -1, -100, "invalid", "123.45"]:
             with self.subTest(
                 caracteristiques=[Purchase.Characteristic.LOCAL],
-                definition_local=Purchase.Local.KM,
+                definition_local=DefinitionLocal.KM,
                 definition_local_km=VALUE_NOT_OK,
             ):
                 self.assertRaises(
                     (ValueError, ValidationError),
                     PurchaseFactory,
                     caracteristiques=[Purchase.Characteristic.LOCAL],
-                    definition_local=Purchase.Local.KM,
+                    definition_local=DefinitionLocal.KM,
                     definition_local_km=VALUE_NOT_OK,
                 )
         # caracteristiques includes "LOCAL" and definition_local is not "KM"
         for VALUE_NOT_OK in [0, 1, 100, "200", Decimal("123.45")]:
             with self.subTest(
                 caracteristiques=[Purchase.Characteristic.LOCAL],
-                definition_local=Purchase.Local.PAT,
+                definition_local=DefinitionLocal.PAT,
                 definition_local_km=VALUE_NOT_OK,
             ):
                 self.assertRaises(
                     ValidationError,
                     PurchaseFactory,
                     caracteristiques=[Purchase.Characteristic.LOCAL],
-                    definition_local=Purchase.Local.PAT,
+                    definition_local=DefinitionLocal.PAT,
                     definition_local_km=VALUE_NOT_OK,
                 )
         # caracteristiques does not include "LOCAL"

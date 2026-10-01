@@ -4,6 +4,7 @@ from rest_framework import serializers
 
 from api.serializers.utils import PurchaseField, choice_list_to_choices, set_help_text_from_verbose_name
 from data.models import Purchase
+from data.models.definitionlocal import DefinitionLocal
 
 
 class PurchaseOldSerializer(serializers.ModelSerializer):
@@ -18,7 +19,7 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
     price_ht = serializers.DecimalField(source="prix_ht", max_digits=20, decimal_places=2, required=False)
     invoice_file = Base64FileField(source="facture", required=False, allow_null=True)
     local_definition = serializers.ChoiceField(
-        source="definition_local", choices=Purchase.Local.choices, required=False, allow_blank=True
+        source="definition_local", choices=DefinitionLocal.choices, required=False, allow_blank=True
     )
     date_unformatted = serializers.DateField(source="date", required=False)
 

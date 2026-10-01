@@ -54,7 +54,7 @@ def _build_canteen_textchoices_rows(field_name, choices):
                 "canteen_changelist_url": canteen_changelist_url,
             }
         )
-    return sorted(rows, key=lambda row: row["label"])
+    return rows
 
 
 def canteen_textchoices_admin_view(request, page_key):
