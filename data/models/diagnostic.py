@@ -4,7 +4,7 @@ from functools import reduce
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.core.validators import MaxValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models, transaction
 from django.db.models import Case, DecimalField, F, Func, IntegerField, Q, Sum, Value, When
 from django.db.models.expressions import RawSQL
@@ -16,6 +16,7 @@ from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models import Canteen, AuthenticationMethodHistoricalRecords
 from data.models.creation_source import CreationSource
+from data.models.definitionlocal import DefinitionLocal
 from data.utils import (
     CustomJSONEncoder,
     has_arrayfield_missing_query,
@@ -551,6 +552,8 @@ class Diagnostic(models.Model):
         CIRCUIT_COURT_SUP_FRANCE = "CIRCUIT_COURT_SUP_FRANCE", "Origine France (dont circuit-court) > Origine France"
         LOCAL_SUP_FRANCE = "LOCAL_SUP_FRANCE", "Origine France (dont local) > Origine France"
         COMMERCE_EQUITABLE_SUP_BIO = "COMMERCE_EQUITABLE_SUP_BIO", "Bio dont commerce équitable > Bio"
+
+    Local = Local  # re-export, shared with Purchase.Local
 
     SIMPLE_APPRO_FIELDS = [
         "valeur_totale",
@@ -1283,6 +1286,12 @@ class Diagnostic(models.Model):
     )
     valeur_local = make_optional_positive_decimal_field(
         verbose_name="Local - Valeur annuelle HT",
+    )
+    definition_local = models.CharField(
+        max_length=255, choices=DefinitionLocal.choices, null=True, blank=True, verbose_name="définition de local"
+    )
+    definition_local_km = models.PositiveIntegerField(
+        null=True, blank=True, verbose_name="définition de local (distance en km)", validators=[MinValueValidator(0)]
     )
 
     # per label group

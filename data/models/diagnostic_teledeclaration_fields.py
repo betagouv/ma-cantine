@@ -875,6 +875,8 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie_local",
                 "valeur_boissons_local",
                 "valeur_autres_local",
+                "definition_local",
+                "definition_local_km",
             ],
             "fields_required": [
                 "nombre_repas_an",
@@ -926,6 +928,8 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie_local",
                 "valeur_boissons_local",
                 "valeur_autres_local",
+                "definition_local",
+                "definition_local_km",
             ],
         },
         "COMPLETE": {
@@ -1069,6 +1073,8 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie_local",
                 "valeur_boissons_local",
                 "valeur_autres_local",
+                "definition_local",
+                "definition_local_km",
             ],
             "fields_required": [
                 "nombre_repas_an",
@@ -1138,11 +1144,7 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie",
                 "valeur_boissons",
                 "valeur_autres",
-                # valeur_label
-                "valeur_europe",
-                "valeur_france",
-                "valeur_circuit_court",
-                "valeur_local",
+                # valeur_famille_label
                 # aopac_igp_stg replaced by aop, igp, stg
                 "valeur_viandes_volailles_aocaop",
                 "valeur_produits_de_la_mer_aocaop",
@@ -1185,6 +1187,8 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie_europe",
                 "valeur_boissons_europe",
                 "valeur_autres_europe",
+                "definition_local",
+                "definition_local_km",
             ],
             "fields_removed": [
                 "valeur_viandes_volailles_aocaop_igp_stg",
