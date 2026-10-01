@@ -22,12 +22,10 @@ const meta = {
 /* Pre-fill fields with user infos */
 let defaultEmail = ""
 let defaultName = ""
-let defaultUsername = ""
 if (store.loggedUser) {
-  const { email, firstName, lastName, username } = store.loggedUser
+  const { email, firstName, lastName } = store.loggedUser
   defaultEmail = email
   defaultName = `${firstName} ${lastName}`
-  defaultUsername = username
 }
 
 /* Form fields */
@@ -35,7 +33,6 @@ const form = reactive({})
 const initFields = () => {
   form.fromEmail = defaultEmail
   form.name = defaultName
-  form.username = defaultUsername
   form.inquiryType = ""
   form.message = ""
   form.siretOrSiren = ""
@@ -64,12 +61,11 @@ const getInquiryTypeDisplay = (type) => {
 
 /* Send Form */
 const sendInquiry = () => {
-  const { fromEmail, name, username, message, inquiryType, siretOrSiren } = form
+  const { fromEmail, name, message, inquiryType, siretOrSiren } = form
   const inquiryTypeDisplay = getInquiryTypeDisplay(inquiryType)
   const payload = {
     from: fromEmail,
     name: name,
-    username: username,
     message: message,
     siretOrSiren: siretOrSiren,
     inquiryType: inquiryTypeDisplay,
@@ -116,14 +112,6 @@ const sendInquiry = () => {
             </div>
             <div class="fr-col-12 fr-col-lg-6">
               <DsfrInputGroup v-model="form.name" label="Prénom et Nom" :label-visible="true" />
-            </div>
-            <div class="fr-col-12 fr-col-lg-6">
-              <DsfrInputGroup
-                v-model="form.username"
-                label="Nom d'utilisateur"
-                hint="Laissez le champ vide si vous n'êtes pas inscrit sur la plateforme"
-                :label-visible="true"
-              />
             </div>
             <div class="fr-col-12 fr-col-lg-6">
               <DsfrInputGroup
