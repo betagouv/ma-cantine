@@ -200,19 +200,27 @@ class ETL_ANALYSIS_RAW(ANALYSIS):
     * Load: Postgres COPY of the file into the Data Warehouse table (see DataWareHouse.copy_file)
 
     Column types are the ones of the source table, except arrays which are converted to jsonb.
+    Columns listed in exclude_columns are not exported (e.g. sensitive data).
     """
 
-    def __init__(self, dataset_name, queryset):
+    def __init__(self, dataset_name, queryset, exclude_columns=None):
         super().__init__()
         self.dataset_name = dataset_name
         self.queryset = queryset
+        self.exclude_columns = exclude_columns or []
         self.column_types = {}
         self.file = None
 
     def extract_dataset(self):
         start = time.time()
         model = self.queryset.model
-        fields = model._meta.concrete_fields
+        unknown_columns = set(self.exclude_columns) - {field.column for field in model._meta.concrete_fields}
+        if unknown_columns:
+            # fail instead of silently exporting a column because of a typo
+            raise ValueError(
+                f"Unknown columns to exclude from {self.dataset_name}: {', '.join(sorted(unknown_columns))}"
+            )
+        fields = [field for field in model._meta.concrete_fields if field.column not in self.exclude_columns]
 
         sql, params = self.queryset.order_by().values(*[field.attname for field in fields]).query.sql_with_params()
         select = ", ".join(
