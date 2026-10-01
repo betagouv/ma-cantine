@@ -1,16 +1,19 @@
 import json
 import logging
+import tempfile
 import time
 from datetime import datetime
 
 import pandas as pd
+from django.contrib.postgres.fields import ArrayField
+from django.db import connection
 
 from api.views.canteen import CanteenAnalysisListView
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclaredAnalysisListView
-from data.models import Canteen, Diagnostic, Purchase, User, WasteMeasurement
+from data.models import Canteen
 from data.models.sector import get_category_lib_list_from_canteen_snapshot, get_sector_lib_list_from_canteen_snapshot
 from macantine.etl import etl, utils
-from macantine.etl.data_ware_house import DataWareHouse
+from macantine.etl.data_ware_house import DataWareHouse, get_column_types
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
 from data.models.geo import Department, Region
 
@@ -165,39 +168,6 @@ class ETL_ANALYSIS_TELEDECLARATIONS(etl.EXTRACTOR, ANALYSIS):
         return row
 
 
-class ETL_ANALYSIS_DIAGNOSTIC_RAW(ANALYSIS):
-    """
-    Export raw diagnostic/teledeclaration table to analysis warehouse without transformations.
-    Uses pandas to_sql for loading.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.warehouse = DataWareHouse()
-        self.dataset_name = "diagnostics_raw"
-
-    def extract_dataset(self):
-        """
-        Load raw table into a dataframe.
-        """
-        start = time.time()
-        queryset = Diagnostic.all_objects.all().values()
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
-        end = time.time()
-        logger.info(f"Time spent on raw teledeclaration extraction: {end - start:.2f} seconds")
-
-    def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
-
-    def load_dataset(self):
-        super().load_dataset()
-
-
 class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
     """
     Create a dataset for analysis in a Data Warehouse
@@ -223,166 +193,54 @@ class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
         logger.info("No more transformation needed here !")
 
 
-class ETL_ANALYSIS_CANTEEN_RAW(ANALYSIS):
+class ETL_ANALYSIS_RAW(ANALYSIS):
     """
-    Export raw canteen table to analysis warehouse without transformations.
-    Uses pandas to_sql for loading.
+    Copy a table as-is to the analysis Data Warehouse (used as a dbt source).
+    * Extract: Postgres COPY of the queryset rows into a temporary file on disk (no pandas)
+    * Load: Postgres COPY of the file into the Data Warehouse table (see DataWareHouse.copy_file)
+
+    Column types are the ones of the source table, except arrays which are converted to jsonb.
     """
 
-    def __init__(self):
+    def __init__(self, dataset_name, queryset):
         super().__init__()
-        self.dataset_name = "canteens_raw"
-        self.warehouse = DataWareHouse()
+        self.dataset_name = dataset_name
+        self.queryset = queryset
+        self.column_types = {}
+        self.file = None
 
     def extract_dataset(self):
-        """
-        Load raw table into a dataframe.
-        """
         start = time.time()
-        queryset = Canteen.all_objects.all().values()
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
+        model = self.queryset.model
+        fields = model._meta.concrete_fields
+
+        sql, params = self.queryset.order_by().values(*[field.attname for field in fields]).query.sql_with_params()
+        select = ", ".join(
+            f'to_jsonb("{field.column}") AS "{field.column}"' if isinstance(field, ArrayField) else f'"{field.column}"'
+            for field in fields
+        )
+
+        self.file = tempfile.TemporaryFile()
+        with connection.cursor() as cursor:
+            source_column_types = get_column_types(cursor, model._meta.db_table)
+            copy_sql = cursor.mogrify(f"COPY (SELECT {select} FROM ({sql}) AS source) TO STDOUT", params).decode()
+            cursor.copy_expert(copy_sql, self.file)
+        self.column_types = {
+            field.column: "jsonb" if isinstance(field, ArrayField) else source_column_types[field.column]
+            for field in fields
+        }
+
         end = time.time()
-        logger.info(f"Time spent on extraction: {end - start:.2f} seconds")
+        logger.info(
+            f"Time spent on {self.dataset_name} extraction: {end - start:.2f} seconds ({self.file.tell() / 1024 / 1024:.1f} MB)"
+        )
 
     def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
+        pass
 
     def load_dataset(self):
-        super().load_dataset()
-
-
-class ETL_ANALYSIS_PURCHASE_RAW(ANALYSIS):
-    """
-    Export raw purchase table to analysis warehouse without transformations.
-    Uses pandas to_sql for loading.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.warehouse = DataWareHouse()
-        self.dataset_name = "purchases_raw"
-
-    def extract_dataset(self):
-        """
-        Load raw table into a dataframe.
-        """
-        start = time.time()
-        queryset = Purchase.all_objects.all().values()
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
-        end = time.time()
-        logger.info(f"Time spent on raw purchase extraction: {end - start:.2f} seconds")
-
-    def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
-
-    def load_dataset(self):
-        super().load_dataset()
-
-
-class ETL_ANALYSIS_USER_RAW(ANALYSIS):
-    """
-    Export raw user table to analysis warehouse without transformations.
-    Uses pandas to_sql for loading.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.warehouse = DataWareHouse()
-        self.dataset_name = "users_raw"
-
-    def extract_dataset(self):
-        """
-        Load raw table into a dataframe.
-        """
-        start = time.time()
-        queryset = User.objects.all().values()
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
-        end = time.time()
-        logger.info(f"Time spent on raw user extraction: {end - start:.2f} seconds")
-
-    def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
-
-    def load_dataset(self):
-        super().load_dataset()
-
-
-class ETL_ANALYSIS_CANTEEN_MANAGER_RAW(ANALYSIS):
-    """
-    Export raw canteen manager table to analysis warehouse without transformations.
-    Uses pandas to_sql for loading.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.warehouse = DataWareHouse()
-        self.dataset_name = "canteen_managers_raw"
-
-    def extract_dataset(self):
-        """
-        Load raw table into a dataframe.
-        """
-        start = time.time()
-        queryset = Canteen.managers.through.objects.values("canteen_id", "user_id")
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
-        end = time.time()
-        logger.info(f"Time spent on raw canteen manager extraction: {end - start:.2f} seconds")
-
-    def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
-
-    def load_dataset(self):
-        super().load_dataset()
-
-
-class ETL_ANALYSIS_WASTE_MEASUREMENT_RAW(ANALYSIS):
-    """
-    Export raw wastemeasurement table to analysis warehouse without transformations.
-    Uses pandas to_sql for loading.
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.warehouse = DataWareHouse()
-        self.dataset_name = "waste_measurements_raw"
-
-    def extract_dataset(self):
-        """
-        Load raw table into a dataframe.
-        """
-        start = time.time()
-        queryset = WasteMeasurement.objects.all().values()
-        self.df = pd.DataFrame(list(queryset))
-        if self.df.empty:
-            logger.warning("Dataset is empty. Creating an empty dataframe")
-        end = time.time()
-        logger.info(f"Time spent on raw wastemeasurement extraction: {end - start:.2f} seconds")
-
-    def transform_dataset(self):
-        """Convert array fields to JSON strings to avoid pandas to_sql type errors."""
-        logger.info("Converting array fields to JSON strings for safe export")
-        if not self.df.empty:
-            self.df = utils.arrays_to_json(self.df)
-
-    def load_dataset(self):
-        super().load_dataset()
+        try:
+            self.file.seek(0)
+            self.warehouse.copy_file(self.file, self.dataset_name, self.column_types)
+        finally:
+            self.file.close()

@@ -19,18 +19,14 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models import User
+from data.models import Canteen, Diagnostic, User, WasteMeasurement
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
 from .etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
-    ETL_ANALYSIS_CANTEEN_RAW,
-    ETL_ANALYSIS_CANTEEN_MANAGER_RAW,
+    ETL_ANALYSIS_RAW,
     ETL_ANALYSIS_TELEDECLARATIONS,
-    ETL_ANALYSIS_DIAGNOSTIC_RAW,
-    ETL_ANALYSIS_USER_RAW,
-    ETL_ANALYSIS_WASTE_MEASUREMENT_RAW,
 )
 from .etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
@@ -260,17 +256,19 @@ def export_datasets(datasets: dict):
 @app.task()
 def export_dataset_raw_analysis():
     """
-    Export the raw datasets for analysis (Metabase)
+    Export the raw datasets for analysis (Metabase, dbt sources)
     """
     logger.info("Starting export_dataset_raw_analysis task")
 
     datasets = {
-        "diagnostics_raw_analysis": ETL_ANALYSIS_DIAGNOSTIC_RAW(),
-        "canteens_raw_analysis": ETL_ANALYSIS_CANTEEN_RAW(),
-        # "purchases_raw_analysis": ETL_ANALYSIS_PURCHASE_RAW(),
-        "users_raw_analysis": ETL_ANALYSIS_USER_RAW(),
-        "canteen_managers_raw_analysis": ETL_ANALYSIS_CANTEEN_MANAGER_RAW(),
-        "waste_measurements_raw_analysis": ETL_ANALYSIS_WASTE_MEASUREMENT_RAW(),
+        "diagnostics_raw_analysis": ETL_ANALYSIS_RAW("diagnostics_raw", Diagnostic.all_objects.all()),
+        "canteens_raw_analysis": ETL_ANALYSIS_RAW("canteens_raw", Canteen.all_objects.all()),
+        # "purchases_raw_analysis": ETL_ANALYSIS_RAW("purchases_raw", Purchase.all_objects.all()),
+        "users_raw_analysis": ETL_ANALYSIS_RAW("users_raw", User.objects.all()),
+        "canteen_managers_raw_analysis": ETL_ANALYSIS_RAW(
+            "canteen_managers_raw", Canteen.managers.through.objects.all()
+        ),
+        "waste_measurements_raw_analysis": ETL_ANALYSIS_RAW("waste_measurements_raw", WasteMeasurement.objects.all()),
     }
     result = export_datasets(datasets)
 
