@@ -1,4 +1,5 @@
 import json
+from datetime import timedelta
 
 import numpy as np
 import pandas as pd
@@ -7,12 +8,14 @@ from django.db import connection
 from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
+from oauth2_provider.models import get_access_token_model, get_application_model, get_refresh_token_model
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, User
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_RAW, ETL_ANALYSIS_TELEDECLARATIONS
 from macantine.etl.data_ware_house import copy_into_table, get_column_types
+from macantine.tasks import get_raw_analysis_datasets
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 from macantine.utils import TELEDECLARATION_CURRENT_VERSION
@@ -712,3 +715,56 @@ class RawETLAnalysisTest(TestCase):
         with connection.cursor() as cursor:
             self.assertEqual(get_column_types(cursor, "test_canteens_raw")["sector_list"], "jsonb")
             self.assertEqual(get_column_types(cursor, "test_stg_canteens"), {})  # dependent view dropped
+
+
+class OAuth2RawETLAnalysisTest(TestCase):
+    def test_secrets_are_not_exported(self):
+        user = UserFactory()
+        application = get_application_model().objects.create(
+            name="Logiciel",
+            user=user,
+            client_type="confidential",
+            authorization_grant_type="authorization-code",
+            client_secret="client-secret-value",
+        )
+        access_token = get_access_token_model().objects.create(
+            user=user,
+            application=application,
+            token="access-token-value",
+            expires=timezone.now() + timedelta(hours=1),
+            scope="user:read",
+        )
+        get_refresh_token_model().objects.create(
+            user=user, application=application, token="refresh-token-value", access_token=access_token
+        )
+        application.refresh_from_db()
+        access_token.refresh_from_db()
+        secrets = [
+            "client-secret-value",
+            application.client_secret,  # hashed
+            "access-token-value",
+            access_token.token_checksum,
+            "refresh-token-value",
+        ]
+
+        datasets = get_raw_analysis_datasets()
+        for key in [
+            "oauth2_applications_raw_analysis",
+            "oauth2_access_tokens_raw_analysis",
+            "oauth2_refresh_tokens_raw_analysis",
+        ]:
+            with self.subTest(key):
+                etl = datasets[key]
+                etl.warehouse.copy_file = copy_into_test_db
+                etl.extract_dataset()
+                etl.file.seek(0)
+                content = etl.file.read().decode()
+                etl.load_dataset()
+
+                self.assertEqual(len(content.splitlines()), 1)
+                for secret in secrets:
+                    self.assertNotIn(secret, content)
+                with connection.cursor() as cursor:
+                    exported_columns = get_column_types(cursor, etl.dataset_name)
+                for column in ["client_secret", "token", "token_checksum"]:
+                    self.assertNotIn(column, exported_columns)

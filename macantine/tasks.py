@@ -5,6 +5,7 @@ import redis as r
 from django.conf import settings
 from django.core.management import call_command
 from django.utils import timezone
+from oauth2_provider.models import get_access_token_model, get_application_model, get_refresh_token_model
 
 import macantine.brevo as brevo
 from api.views.utils import update_change_reason
@@ -253,14 +254,8 @@ def export_datasets(datasets: dict):
     return result
 
 
-@app.task()
-def export_dataset_raw_analysis():
-    """
-    Export the raw datasets for analysis (Metabase, dbt sources)
-    """
-    logger.info("Starting export_dataset_raw_analysis task")
-
-    datasets = {
+def get_raw_analysis_datasets():
+    return {
         "diagnostics_raw_analysis": ETL_ANALYSIS_RAW("diagnostics_raw", Diagnostic.all_objects.all()),
         "canteens_raw_analysis": ETL_ANALYSIS_RAW("canteens_raw", Canteen.all_objects.all()),
         "purchases_raw_analysis": ETL_ANALYSIS_RAW("purchases_raw", Purchase.all_objects.all()),
@@ -269,8 +264,29 @@ def export_dataset_raw_analysis():
             "canteen_managers_raw", Canteen.managers.through.objects.all()
         ),
         "waste_measurements_raw_analysis": ETL_ANALYSIS_RAW("waste_measurements_raw", WasteMeasurement.objects.all()),
+        # OAuth2 (API): never export secrets & tokens
+        "oauth2_applications_raw_analysis": ETL_ANALYSIS_RAW(
+            "oauth2_applications_raw", get_application_model().objects.all(), exclude_columns=["client_secret"]
+        ),
+        "oauth2_access_tokens_raw_analysis": ETL_ANALYSIS_RAW(
+            "oauth2_access_tokens_raw",
+            get_access_token_model().objects.all(),
+            exclude_columns=["token", "token_checksum"],
+        ),
+        "oauth2_refresh_tokens_raw_analysis": ETL_ANALYSIS_RAW(
+            "oauth2_refresh_tokens_raw", get_refresh_token_model().objects.all(), exclude_columns=["token"]
+        ),
     }
-    result = export_datasets(datasets)
+
+
+@app.task()
+def export_dataset_raw_analysis():
+    """
+    Export the raw datasets for analysis (Metabase, dbt sources)
+    """
+    logger.info("Starting export_dataset_raw_analysis task")
+
+    result = export_datasets(get_raw_analysis_datasets())
 
     return result
 
