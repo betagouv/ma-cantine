@@ -53,7 +53,7 @@ class MaCantineAdminSiteLoginTest(TestCase):
         response = self.client.post(
             reverse("admin:login"),
             {
-                "username": self.staff_not_superuser_no_otp.username,
+                "username": self.staff_not_superuser_no_otp.email,
                 "password": "testPw1234#!",
                 "next": reverse("admin:index"),
             },
@@ -80,7 +80,7 @@ class MaCantineAdminSiteLoginTest(TestCase):
         response = self.client.post(
             reverse("admin:login"),
             {
-                "username": self.staff_not_superuser_no_otp.username,
+                "username": self.staff_not_superuser_no_otp.email,
                 "password": "testPw1234#!",
                 "otp_token": totp_code,
                 "next": reverse("admin:index"),
@@ -111,7 +111,7 @@ class MaCantineAdminSiteLoginTest(TestCase):
         response = self.client.post(
             reverse("admin:login"),
             {
-                "username": self.staff_not_superuser_no_otp.username,
+                "username": self.staff_not_superuser_no_otp.email,
                 "password": "testPw1234#!",
                 "otp_token": totp_code,
                 "next": reverse("admin:index"),
@@ -137,7 +137,7 @@ class MaCantineAdminSiteLoginTest(TestCase):
         response = self.client.post(
             reverse("admin:login"),
             {
-                "username": self.staff_not_superuser_no_otp.username,
+                "username": self.staff_not_superuser_no_otp.email,
                 "password": "testPw1234#!",
                 "otp_token": static_token.token,
                 "next": reverse("admin:index"),
@@ -164,7 +164,7 @@ class MaCantineAdminSiteLoginTest(TestCase):
         response = self.client.post(
             reverse("admin:login"),
             {
-                "username": self.staff_not_superuser_no_otp.username,
+                "username": self.staff_not_superuser_no_otp.email,
                 "password": "testPw1234#!",
                 "otp_token": static_token.token,
                 "next": reverse("admin:index"),

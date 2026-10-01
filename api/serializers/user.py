@@ -7,6 +7,8 @@ from .review import MiniReviewSerializer
 
 class UserInfoSerializer(serializers.ModelSerializer):
     avatar = Base64ImageField(required=False, allow_null=True)
+    # NOTE: the `username` field was removed from the model, but is kept as an always-null stub
+    username = serializers.SerializerMethodField()
 
     class Meta:
         model = get_user_model()
@@ -17,6 +19,9 @@ class UserInfoSerializer(serializers.ModelSerializer):
             "avatar",
         )
         read_only_fields = fields
+
+    def get_username(self, obj):
+        return None
 
 
 class LoggedUserSerializer(serializers.ModelSerializer):
@@ -29,7 +34,6 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "id",
             "email",
             "phone_number",
-            "username",
             "first_name",
             "last_name",
             "avatar",
@@ -47,7 +51,6 @@ class LoggedUserSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             "id",
-            "username",
             "is_staff",
             "has_mtm_data",
         )

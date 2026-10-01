@@ -93,7 +93,6 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "canteen__name",
         "canteen__siret",
         "canteen__siren_unite_legale",
-        "applicant__username",
         "applicant__email",
     )
 

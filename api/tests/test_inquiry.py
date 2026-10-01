@@ -16,7 +16,6 @@ class CanteenTeamRequestInquiryTest(APITestCase):
             "inquiryType": "fonctionnalité",
             "message": "I need help with the functionality of the app.",
             "name": "Tester",
-            "username": None,
             "siret_or_siren": "12345",
             "meta": {
                 "userId": "123456789",
@@ -37,7 +36,6 @@ class CanteenTeamRequestInquiryTest(APITestCase):
         self.assertIn(payload["message"], email.body)
         self.assertIn(payload["meta"]["userId"], email.body)
         self.assertIn(payload["meta"]["userAgent"], email.body)
-        self.assertIn("Non renseigné", email.body)
 
     @override_settings(ENVIRONMENT="demo")
     @override_settings(CONTACT_EMAIL="contact@example.com")

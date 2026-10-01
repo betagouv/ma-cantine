@@ -10,25 +10,6 @@ from web.forms import RegisterUserForm
 
 
 class RegistrationTest(APITestCase):
-    def test_cannot_register_with_email_as_username(self):
-        payload = {
-            "first_name": "Tester",
-            "last_name": "Tester",
-            "password1": "testPw1234#!",
-            "password2": "testPw1234#!",
-            "cgu_approved": True,
-            "email": "tester@example.com",
-            "username": "tester@example.com",
-            "is_dev": False,
-        }
-        form = RegisterUserForm(data=payload)
-        self.assertFormError(
-            form,
-            "username",
-            "Vous ne pouvez pas utiliser une adresse email comme nom d'utilisateur.",
-            msg_prefix="tester@example.com",
-        )
-
     def test_cannot_register_with_email_yopmail(self):
         payload = {
             "first_name": "Tester",
@@ -37,7 +18,6 @@ class RegistrationTest(APITestCase):
             "password2": "testPw1234#!",
             "cgu_approved": True,
             "email": "test@yopmail.com",
-            "username": "test-user",
             "is_dev": False,
         }
         form = RegisterUserForm(data=payload)
@@ -55,7 +35,6 @@ class RegistrationTest(APITestCase):
             "password1": "testPw1234#!",
             "password2": "testPw1234#!",
             "cgu_approved": True,
-            "username": "test-user",
             "phone_number": "123",  # should be 10 digits
             "email": "test-phone@example.com",
             "is_dev": False,
@@ -77,7 +56,6 @@ class RegistrationTest(APITestCase):
             "password2": "testPw1234#!",
             "cgu_approved": False,
             "email": "test-cgu@example.com",
-            "username": "test-user",
             "is_dev": False,
         }
         form = RegisterUserForm(data=payload)
@@ -100,7 +78,6 @@ class RegistrationTest(APITestCase):
             "password2": "testPw1234#!",
             "phone_number": "00-11-22 33 44",
             "cgu_approved": True,
-            "username": "test-user",
             "email": "test-user@example.com",
             "is_dev": False,
         }

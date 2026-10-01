@@ -5,7 +5,6 @@ with source as (
 renamed as (
     select
         id                          as user_id,
-        username,
         email,
         first_name,
         last_name,
