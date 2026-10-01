@@ -38,7 +38,7 @@ attrs==26.1.0
     #   aiohttp
     #   jsonschema
     #   referencing
-authlib==1.6.10
+authlib==1.8.0
     # via ma-cantine
 babel==2.18.0
     # via agate
