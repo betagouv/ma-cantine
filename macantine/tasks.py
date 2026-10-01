@@ -19,7 +19,7 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models import Canteen, Diagnostic, User, WasteMeasurement
+from data.models import Canteen, Diagnostic, User, WasteMeasurement, Purchase
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
@@ -263,7 +263,7 @@ def export_dataset_raw_analysis():
     datasets = {
         "diagnostics_raw_analysis": ETL_ANALYSIS_RAW("diagnostics_raw", Diagnostic.all_objects.all()),
         "canteens_raw_analysis": ETL_ANALYSIS_RAW("canteens_raw", Canteen.all_objects.all()),
-        # "purchases_raw_analysis": ETL_ANALYSIS_RAW("purchases_raw", Purchase.all_objects.all()),
+        "purchases_raw_analysis": ETL_ANALYSIS_RAW("purchases_raw", Purchase.all_objects.all()),
         "users_raw_analysis": ETL_ANALYSIS_RAW("users_raw", User.objects.all(), exclude_columns=["password"]),
         "canteen_managers_raw_analysis": ETL_ANALYSIS_RAW(
             "canteen_managers_raw", Canteen.managers.through.objects.all()
