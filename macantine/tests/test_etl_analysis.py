@@ -3,13 +3,16 @@ import json
 import numpy as np
 import pandas as pd
 import pytest
+from django.db import connection
 from django.test import TestCase
+from django.utils import timezone
 from freezegun import freeze_time
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector
-from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_TELEDECLARATIONS
+from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_RAW, ETL_ANALYSIS_TELEDECLARATIONS
+from macantine.etl.data_ware_house import copy_into_table, get_column_types
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 from macantine.utils import TELEDECLARATION_CURRENT_VERSION
@@ -628,3 +631,67 @@ class TeledeclarationETLAnalysisTest(TestCase):
 )
 def test_get_objectif_zone_geo(department, expected):
     assert get_objectif_zone_geo(department) == expected
+
+
+def copy_into_test_db(file, table, column_types):
+    """Use the test database as the Data Warehouse"""
+    with connection.cursor() as cursor:
+        copy_into_table(cursor, table, column_types, file)
+
+
+def fetch_all(sql):
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        return cursor.fetchall()
+
+
+class RawETLAnalysisTest(TestCase):
+    def run_etl(self, etl):
+        etl.warehouse.copy_file = copy_into_test_db
+        etl.extract_dataset()
+        etl.transform_dataset()
+        etl.load_dataset()
+
+    def test_copy_canteens(self):
+        canteen = CanteenFactory(sector_list=[Sector.SANTE_HOPITAL])
+        CanteenFactory(deletion_date=timezone.now())
+
+        self.run_etl(ETL_ANALYSIS_RAW("test_canteens_raw", Canteen.all_objects.all()))
+
+        self.assertEqual(fetch_all('SELECT count(*) FROM "test_canteens_raw"'), [(2,)])
+        self.assertEqual(
+            fetch_all(f'SELECT name, sector_list FROM "test_canteens_raw" WHERE id = {canteen.id}'),
+            [(canteen.name, f'["{Sector.SANTE_HOPITAL}"]')],  # jsonb (not parsed by Django)
+        )
+        with connection.cursor() as cursor:
+            column_types = get_column_types(cursor, "test_canteens_raw")
+        self.assertEqual(column_types["sector_list"], "jsonb")  # array converted
+        self.assertEqual(column_types["creation_date"], "timestamp with time zone")
+
+    def test_reload_keeps_table_and_adds_new_columns(self):
+        user = UserFactory()
+        CanteenFactory(managers=[user])
+        with connection.cursor() as cursor:
+            cursor.execute('CREATE TABLE "test_canteen_managers_raw" (canteen_id bigint, user_id bigint)')
+            cursor.execute('INSERT INTO "test_canteen_managers_raw" VALUES (0, 0), (0, 1)')
+            cursor.execute('CREATE VIEW "test_stg_canteen_managers" AS SELECT * FROM "test_canteen_managers_raw"')
+
+        self.run_etl(ETL_ANALYSIS_RAW("test_canteen_managers_raw", Canteen.managers.through.objects.all()))
+
+        self.assertEqual(fetch_all('SELECT user_id FROM "test_canteen_managers_raw"'), [(user.id,)])
+        self.assertEqual(fetch_all('SELECT user_id FROM "test_stg_canteen_managers"'), [(user.id,)])  # view kept
+        with connection.cursor() as cursor:
+            self.assertIn("id", get_column_types(cursor, "test_canteen_managers_raw"))  # column added
+
+    def test_reload_recreates_table_if_column_type_changed(self):
+        CanteenFactory()
+        with connection.cursor() as cursor:
+            cursor.execute('CREATE TABLE "test_canteens_raw" (id integer, sector_list text)')
+            cursor.execute('CREATE VIEW "test_stg_canteens" AS SELECT * FROM "test_canteens_raw"')
+
+        self.run_etl(ETL_ANALYSIS_RAW("test_canteens_raw", Canteen.all_objects.all()))
+
+        self.assertEqual(fetch_all('SELECT count(*) FROM "test_canteens_raw"'), [(1,)])
+        with connection.cursor() as cursor:
+            self.assertEqual(get_column_types(cursor, "test_canteens_raw")["sector_list"], "jsonb")
+            self.assertEqual(get_column_types(cursor, "test_stg_canteens"), {})  # dependent view dropped
