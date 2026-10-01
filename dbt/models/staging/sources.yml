@@ -10,11 +10,13 @@ sources:
       - name: teledeclarations
         description: Télédéclarations loaded by the Python ETL. Will be obsolete once 1td1site is live.
       - name: canteens_raw
-        description: Raw canteen data dumped from the production database.
+        description: Raw canteen data dumped from the production database (including deleted ones, see deletion_date).
       - name: canteen_managers_raw
         description: Raw canteen-manager relationships dumped from the production database.
       - name: diagnostics_raw
-        description: Raw diagnostics dumped from the production database.
+        description: Raw diagnostics dumped from the production database (including deleted ones, see deletion_date).
+      - name: purchases_raw
+        description: Raw purchases dumped from the production database (including deleted ones, see deletion_date).
       - name: users_raw
         description: Raw user data dumped from the production database.
       - name: waste_measurements_raw
