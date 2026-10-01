@@ -229,10 +229,25 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
         return FullCanteenSerializer(obj.canteen).data
 
 
+class DiagnosticApproStatsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Diagnostic
+        fields = Diagnostic.APPRO_STATS_FIELDS
+        read_only_fields = fields
+
+
 class DiagnosticRecapSerializer(serializers.Serializer):
     year = serializers.IntegerField(read_only=True)
     is_teledeclared = serializers.BooleanField(read_only=True)
     declaration_donnees = serializers.JSONField(read_only=True)
-    canteen_diagnostic_id = serializers.IntegerField(read_only=True)
-    generated_from_groupe_diagnostic_id = serializers.IntegerField(read_only=True)
-    generated_from_groupe_diagnostic_mode = serializers.CharField(read_only=True)
+    canteen_diagnostic_id = serializers.IntegerField(source="canteen_diagnostic.id", read_only=True, allow_null=True)
+    canteen_diagnostic_appro_stats = DiagnosticApproStatsSerializer(source="canteen_diagnostic", read_only=True)
+    generated_from_groupe_diagnostic_id = serializers.IntegerField(
+        source="generated_from_groupe_diagnostic.id", read_only=True, allow_null=True
+    )
+    generated_from_groupe_diagnostic_mode = serializers.CharField(
+        source="generated_from_groupe_diagnostic.central_kitchen_diagnostic_mode", read_only=True, allow_null=True
+    )
+    generated_from_groupe_diagnostic_appro_stats = DiagnosticApproStatsSerializer(
+        source="generated_from_groupe_diagnostic", read_only=True
+    )
