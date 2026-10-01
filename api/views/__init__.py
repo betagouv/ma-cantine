@@ -91,7 +91,6 @@ from .user import (  # noqa: F401
     LoggedUserView,
     UpdateUserView,
     UserInfoView,
-    UsernameSuggestionView,
 )
 from .vegetarianexpe import VegetarianExpeView  # noqa: F401
 from .videotutorial import VideoTutorialListView  # noqa: F401

@@ -102,12 +102,12 @@ urlpatterns = [
         name="registration_email",
     ),
     path(
-        "email-de-confirmation-envoye/<username>",
+        "email-de-confirmation-envoye/<email>",
         RegisterDoneView.as_view(),
         name="registration_email_sent",
     ),
     path(
-        "email-de-confirmation-non-envoye/<username>",
+        "email-de-confirmation-non-envoye/<email>",
         RegisterSendMailFailedView.as_view(),
         name="registration_email_sent_error",
     ),

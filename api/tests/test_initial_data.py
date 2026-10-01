@@ -86,7 +86,6 @@ class InitialDataApiTest(APITestCase):
         self.assertIsNotNone(body["loggedUser"])
         self.assertEqual(body["loggedUser"]["id"], authenticate.user.id)
         self.assertEqual(body["loggedUser"]["email"], authenticate.user.email)
-        self.assertEqual(body["loggedUser"]["username"], authenticate.user.username)
         self.assertEqual(body["loggedUser"]["firstName"], authenticate.user.first_name)
 
         # authenticated but not manager: canteenPreviews should be empty

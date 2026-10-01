@@ -11,7 +11,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = (
-            "username",
             "first_name",
             "last_name",
             "avatar",
@@ -29,7 +28,6 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "id",
             "email",
             "phone_number",
-            "username",
             "first_name",
             "last_name",
             "avatar",
@@ -47,7 +45,6 @@ class LoggedUserSerializer(serializers.ModelSerializer):
         )
         read_only_fields = (
             "id",
-            "username",
             "is_staff",
             "has_mtm_data",
         )

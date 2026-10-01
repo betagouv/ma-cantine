@@ -31,7 +31,7 @@
   {% endif %}
 
   <div class="control-group">
-    <label class="control-label" for="{{form.username.id_for_label}}">Votre nom d'utilisateur ou adresse électronique</label>
+    <label class="control-label" for="{{form.username.id_for_label}}">Votre adresse électronique</label>
     {{form.username}}
     {% if form.username.errors %}
     {% for error in form.username.errors %}

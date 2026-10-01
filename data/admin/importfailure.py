@@ -20,7 +20,6 @@ class ImportFailureAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "user__first_name",
         "user__last_name",
         "user__email",
-        "user__username",
     )
     search_help_text = "La recherche est faite sur les champs : utilisateur (ID, nom, prénom, email)"
 
