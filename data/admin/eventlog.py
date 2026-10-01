@@ -50,7 +50,6 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "user__first_name",
         "user__last_name",
         "user__email",
-        "user__username",
         "canteen__id",
         "canteen__siret",
         "canteen__name",
