@@ -21,3 +21,9 @@ sources:
         description: Raw user data dumped from the production database.
       - name: waste_measurements_raw
         description: Raw waste measurements dumped from the production database.
+      - name: oauth2_applications_raw
+        description: Raw OAuth2 applications (API clients) dumped from the production database (without client_secret).
+      - name: oauth2_access_tokens_raw
+        description: Raw OAuth2 access tokens dumped from the production database (without token & token_checksum).
+      - name: oauth2_refresh_tokens_raw
+        description: Raw OAuth2 refresh tokens dumped from the production database (without token).
