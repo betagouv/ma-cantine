@@ -18,6 +18,7 @@ from django.views.generic import FormView, TemplateView, View
 
 from common.cache.utils import CACHE_TIMEOUT_1_day, get_or_set_cache
 from common.utils import send_mail
+from common.utils.utils import clean_username_special_chars
 from web.forms import LoginUserForm, RegisterUserForm
 from web.sitemaps import BlogPostSitemap, CanteenSitemap, PartnerSitemap, WebSitemap
 
@@ -283,13 +284,14 @@ class OIDCAuthorizeView(View):
 
         # Create user
         logger.info(f"Creating new user from MonComptePro user {mcp_id} with email {mcp_email}.")
+        family_name = clean_username_special_chars(mcp_data.get("family_name") or "")
         user = get_user_model().objects.create(
             first_name=mcp_data.get("given_name"),
             last_name=mcp_data.get("family_name"),
             email=mcp_email,
             mcp_id=mcp_id,
             phone_number=mcp_data.get("phone_number"),
-            username=f"{mcp_data.get('family_name')}-mcp-{mcp_id}",
+            username=f"{family_name}-mcp-{mcp_id}",
             mcp_organizations=mcp_data.get("organizations"),
             created_with_mcp=True,
         )

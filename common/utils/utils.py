@@ -1,3 +1,4 @@
+import string
 import unicodedata
 import re
 
@@ -6,6 +7,17 @@ def normalize_string(text) -> str:
     if text:
         return str(text).replace(" ", "").replace("\xa0", "")
     return text
+
+
+def clean_username_special_chars(username) -> str:
+    """
+    Strip accents and punctuation (except '_' and '-') so the result matches Django's
+    username validator (letters, numbers, '@', '.', '+', '-', '_').
+    """
+    chars = re.escape(string.punctuation).replace("_", "").replace("-", "")
+    normalized_username = unicodedata.normalize("NFKD", username)
+    unaccented_username = normalized_username.encode("ASCII", "ignore").decode("utf-8")
+    return re.sub(r"[" + chars + "]", "", unaccented_username.strip().lower().replace(" ", "-"))
 
 
 def clean_unicode_string(value):
