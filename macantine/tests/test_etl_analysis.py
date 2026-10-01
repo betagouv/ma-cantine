@@ -10,7 +10,7 @@ from freezegun import freeze_time
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Diagnostic, Sector
+from data.models import Canteen, Diagnostic, Sector, User
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_RAW, ETL_ANALYSIS_TELEDECLARATIONS
 from macantine.etl.data_ware_house import copy_into_table, get_column_types
 from macantine.etl.utils import format_td_sector_column, get_objectif_zone_geo
@@ -667,6 +667,23 @@ class RawETLAnalysisTest(TestCase):
             column_types = get_column_types(cursor, "test_canteens_raw")
         self.assertEqual(column_types["sector_list"], "jsonb")  # array converted
         self.assertEqual(column_types["creation_date"], "timestamp with time zone")
+
+    def test_exclude_columns(self):
+        UserFactory()
+
+        etl = ETL_ANALYSIS_RAW("test_users_raw", User.objects.all(), exclude_columns=["password"])
+        self.run_etl(etl)
+
+        self.assertNotIn("password", etl.column_types)
+        with connection.cursor() as cursor:
+            self.assertNotIn("password", get_column_types(cursor, "test_users_raw"))
+        self.assertEqual(fetch_all('SELECT count(*) FROM "test_users_raw"'), [(1,)])
+
+    def test_exclude_unknown_column(self):
+        etl = ETL_ANALYSIS_RAW("test_users_raw", User.objects.all(), exclude_columns=["passwrd"])
+
+        with self.assertRaises(ValueError):
+            etl.extract_dataset()
 
     def test_reload_keeps_table_and_adds_new_columns(self):
         user = UserFactory()

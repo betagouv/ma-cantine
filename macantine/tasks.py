@@ -264,7 +264,7 @@ def export_dataset_raw_analysis():
         "diagnostics_raw_analysis": ETL_ANALYSIS_RAW("diagnostics_raw", Diagnostic.all_objects.all()),
         "canteens_raw_analysis": ETL_ANALYSIS_RAW("canteens_raw", Canteen.all_objects.all()),
         # "purchases_raw_analysis": ETL_ANALYSIS_RAW("purchases_raw", Purchase.all_objects.all()),
-        "users_raw_analysis": ETL_ANALYSIS_RAW("users_raw", User.objects.all()),
+        "users_raw_analysis": ETL_ANALYSIS_RAW("users_raw", User.objects.all(), exclude_columns=["password"]),
         "canteen_managers_raw_analysis": ETL_ANALYSIS_RAW(
             "canteen_managers_raw", Canteen.managers.through.objects.all()
         ),
