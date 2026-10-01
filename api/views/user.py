@@ -1,8 +1,5 @@
 import logging
 import random
-import re
-import string
-import unicodedata
 
 from django.conf import settings
 from django.contrib.auth import get_user_model, tokens, update_session_auth_hash
@@ -20,6 +17,7 @@ from rest_framework.views import APIView
 from api.permissions import IsAuthenticated, IsProfileOwner
 from api.serializers import LoggedUserSerializer, PasswordSerializer, UserInfoSerializer
 from common.utils import send_mail
+from common.utils.utils import clean_username_special_chars
 
 logger = logging.getLogger(__name__)
 
@@ -131,10 +129,10 @@ class UsernameSuggestionView(APIView):
             first_name = request.data.get("first_name")
             last_name = request.data.get("last_name")
             if first_name and last_name:
-                full_name = UsernameSuggestionView._clean_special_chars(f"{first_name.strip()}_{last_name.strip()}")
+                full_name = clean_username_special_chars(f"{first_name.strip()}_{last_name.strip()}")
                 suggested = UsernameSuggestionView._generate_username_with_base(full_name)
             elif email:
-                email_username = UsernameSuggestionView._clean_special_chars(email.split("@")[0])
+                email_username = clean_username_special_chars(email.split("@")[0])
                 suggested = UsernameSuggestionView._generate_username_with_base(email_username)
             else:
                 return JsonResponse({"detail": "Missing info"}, status=status.HTTP_400_BAD_REQUEST)
@@ -164,10 +162,3 @@ class UsernameSuggestionView(APIView):
             return False
         except get_user_model().DoesNotExist:
             return True
-
-    @staticmethod
-    def _clean_special_chars(username):
-        chars = re.escape(string.punctuation).replace("_", "").replace("-", "")
-        normalized_username = unicodedata.normalize("NFKD", username)
-        unaccented_username = normalized_username.encode("ASCII", "ignore").decode("utf-8")
-        return re.sub(r"[" + chars + "]", "", unaccented_username.strip().lower().replace(" ", "-"))
