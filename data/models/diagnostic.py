@@ -553,8 +553,6 @@ class Diagnostic(models.Model):
         LOCAL_SUP_FRANCE = "LOCAL_SUP_FRANCE", "Origine France (dont local) > Origine France"
         COMMERCE_EQUITABLE_SUP_BIO = "COMMERCE_EQUITABLE_SUP_BIO", "Bio dont commerce équitable > Bio"
 
-    Local = Local  # re-export, shared with Purchase.Local
-
     SIMPLE_APPRO_FIELDS = [
         "valeur_totale",
         "valeur_bio",
