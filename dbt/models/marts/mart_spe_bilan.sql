@@ -410,6 +410,9 @@ select
     w.nb_canteens_avec_mesure                                                       as nb_canteens_mesure_gaspi,
     round((100.0 * w.nb_canteens_avec_mesure / nullif(case when r.est_total_groupe then cg.cible_etablissements else coalesce(c.cible_etablissements, i.nb_inscrites) end, 0))::numeric, 1) as taux_representativite_gaspi_pct,
     w.gaspi_g_par_couvert,
+    -- numérateur et dénominateur du ratio, pour pouvoir le recalculer / le réagréger
+    w.total_mass_kg                                                                 as gaspi_total_mass_kg,
+    w.total_meal_count                                                              as gaspi_meal_count,
     w.nb_niveau_3                                                                   as nb_cantines_niveau_3_ademe,
     w.nb_niveau_2                                                                   as nb_cantines_niveau_2_ademe,
     w.nb_niveau_1                                                                   as nb_cantines_niveau_1_ademe,

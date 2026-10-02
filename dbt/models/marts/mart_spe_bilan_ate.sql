@@ -329,6 +329,9 @@ select
     ))::numeric, 1)                                                                 as taux_representativite_gaspi_pct,
     round((coalesce(wrs.total_mass_kg, wr.total_mass_kg) * 1000
            / nullif(coalesce(wrs.total_meal_count, wr.total_meal_count), 0))::numeric, 1) as gaspi_g_par_couvert,
+    -- numérateur et dénominateur du ratio, pour pouvoir le recalculer / le réagréger
+    coalesce(wrs.total_mass_kg,     wr.total_mass_kg)                               as gaspi_total_mass_kg,
+    coalesce(wrs.total_meal_count,  wr.total_meal_count)                            as gaspi_meal_count,
     coalesce(wrs.nb_niveau_3,    wr.nb_niveau_3)                                    as nb_cantines_niveau_3_ademe,
     coalesce(wrs.nb_niveau_2,    wr.nb_niveau_2)                                    as nb_cantines_niveau_2_ademe,
     coalesce(wrs.nb_niveau_1,    wr.nb_niveau_1)                                    as nb_cantines_niveau_1_ademe,
