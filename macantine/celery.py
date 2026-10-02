@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 import dotenv
 from celery import Celery
@@ -24,6 +25,8 @@ app.config_from_object(
     dict(
         worker_hijack_root_logger=False,
         result_extended=True,
+        # keep task results (displayed in the Django admin) for 30 days (default: 1 day)
+        result_expires=timedelta(days=30),
         # ack after execution so broker can redeliver if worker crashes
         task_acks_late=True,
         task_reject_on_worker_lost=True,
@@ -46,7 +49,7 @@ nightly_0_20 = crontab(hour=0, minute=20, day_of_week="*")  # Every day at 12:20
 nightly_0_30 = crontab(hour=0, minute=30, day_of_week="*")  # Every day at 12:30AM
 nightly_1 = crontab(hour=1, minute=0, day_of_week="*")  # Every day at 1AM
 nightly_1_30 = crontab(hour=1, minute=30, day_of_week="*")  # Every day at 1:30AM
-nightly_2 = crontab(hour=1, minute=0, day_of_week="*")  # Every day at 2AM
+nightly_2 = crontab(hour=2, minute=0, day_of_week="*")  # Every day at 2AM
 nightly_3 = crontab(hour=3, minute=0, day_of_week="*")  # Every day at 3AM
 nightly_4 = crontab(hour=4, minute=0, day_of_week="*")  # Every day at 4AM
 nightly_4_30 = crontab(hour=4, minute=30, day_of_week="*")  # Every day at 4:30AM
