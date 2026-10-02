@@ -18,6 +18,7 @@
                     <th scope="col">Label</th>
                     <th scope="col">Value</th>
                     <th scope="col">Purchase count</th>
+                    <th scope="col">Diagnostic count</th>
                 </tr>
             </thead>
             <tbody>
@@ -26,10 +27,11 @@
                     <td>{{ row.label }}</td>
                     <td><code>{{ row.value }}</code></td>
                     <td><a href="{{ row.purchase_changelist_url }}">{{ row.purchase_count }}</a></td>
+                    <td><a href="{{ row.diagnostic_changelist_url }}">{{ row.diagnostic_count }}</a></td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="3">Aucune valeur trouvee.</td>
+                    <td colspan="4">Aucune valeur trouvée.</td>
                 </tr>
                 {% endfor %}
             </tbody>
