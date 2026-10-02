@@ -30,7 +30,10 @@ canteens as (
       and teledeclaration_mode != 'SATELLITE_WITHOUT_APPRO'
       and (invalid_reason_list is null or invalid_reason_list::text = '[]')
       and (secteur != 'administration_etablissement_public' or line_ministry != 'administration_territoriale')
-      and siret not in ('21400312100172', '26760171400087')
+      -- coalesce indispensable : `null not in (...)` vaut null, donc un `not in` nu
+      -- écarterait silencieusement toutes les cantines sans SIRET (38 dans le
+      -- périmètre SPE en 2025, dont 8 avec une mesure de gaspillage)
+      and coalesce(siret, '') not in ('21400312100172', '26760171400087')
       and line_ministry != 'transformation'
 )
 
