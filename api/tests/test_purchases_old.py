@@ -8,6 +8,7 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, PurchaseFactory, UserFactory
 from data.models import Purchase
 from data.models.creation_source import CreationSource
+from data.models.definitionlocal import DefinitionLocal
 
 
 class PurchaseOldListApiTest(APITestCase):
@@ -364,7 +365,7 @@ class PurchaseOldCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         purchase = Purchase.objects.first()
         self.assertEqual(len(purchase.caracteristiques), 2)
-        self.assertEqual(purchase.definition_local, Purchase.Local.COMMUNE)
+        self.assertEqual(purchase.definition_local, DefinitionLocal.COMMUNE)
         self.assertEqual(purchase.definition_local_km, None)
 
     @authenticate

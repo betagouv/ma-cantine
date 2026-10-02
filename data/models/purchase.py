@@ -12,6 +12,7 @@ from common.utils import utils as utils_utils
 from data.fields import ChoiceArrayField
 from data.models import Canteen
 from data.models.creation_source import CreationSource
+from data.models.definitionlocal import DefinitionLocal
 from data.validators import purchase as purchase_validators
 from macantine.etl import utils
 from data.models.diagnostic_teledeclaration_field_groups import get_teledeclaration_field_groups
@@ -150,13 +151,6 @@ class Purchase(SoftDeletionModel):
         CIRCUIT_COURT = "CIRCUIT_COURT", "Circuit-court"
         LOCAL = "LOCAL", "Produit local"
 
-    class Local(models.TextChoices):
-        PAT = "PAT", "Issu du Projet Alimentaire Territorial (PAT)"
-        COMMUNE = "COMMUNE", "Commune et/ou intercommunalité"
-        DEPARTEMENT = "DEPARTEMENT", "Département"
-        REGION = "REGION", "Région"
-        KM = "KM", "Distance en km"
-
     CHARACTERISTIC_LABELS_BIO = [
         Characteristic.BIO,
         Characteristic.CONVERSION_BIO,  # not used anymore
@@ -229,7 +223,7 @@ class Purchase(SoftDeletionModel):
         validators=[MinValueValidator(Decimal("0"))],
     )
     definition_local = models.CharField(
-        max_length=255, choices=Local.choices, null=True, blank=True, verbose_name="définition de local"
+        max_length=255, choices=DefinitionLocal.choices, null=True, blank=True, verbose_name="définition de local"
     )
     definition_local_km = models.PositiveIntegerField(
         null=True, blank=True, verbose_name="définition de local (distance en km)", validators=[MinValueValidator(0)]

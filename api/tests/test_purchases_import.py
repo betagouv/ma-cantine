@@ -15,6 +15,7 @@ from api.tests.utils import assert_import_failure_created, authenticate
 from data.factories import CanteenFactory
 from data.models import ImportFailure, ImportType
 from data.models.creation_source import CreationSource
+from data.models.definitionlocal import DefinitionLocal
 from data.models.purchase import Purchase
 
 
@@ -424,7 +425,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(purchase.date, date(2022, 5, 2))
         self.assertEqual(purchase.famille_produits, Purchase.Family.PRODUITS_LAITIERS)
         self.assertEqual(purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.LOCAL])
-        self.assertEqual(purchase.definition_local, Purchase.Local.DEPARTEMENT)
+        self.assertEqual(purchase.definition_local, DefinitionLocal.DEPARTEMENT)
         self.assertIsNotNone(purchase.import_source)
         self.assertEqual(purchase.creation_user, authenticate.user)
         self.assertEqual(purchase.creation_source, CreationSource.IMPORT)
@@ -443,14 +444,14 @@ class PurchasesImportApiSuccessTest(APITestCase):
         self.assertEqual(purchase.definition_local, "")
         # purchase with definition_local COMMUNE
         purchase = Purchase.objects.filter(description="Pommes, vertes 5").first()
-        self.assertEqual(purchase.definition_local, Purchase.Local.COMMUNE)
+        self.assertEqual(purchase.definition_local, DefinitionLocal.COMMUNE)
         # purchase with definition_local KM
         purchase = Purchase.objects.filter(description="Pommes, vertes 6").first()
-        self.assertEqual(purchase.definition_local, Purchase.Local.KM)
+        self.assertEqual(purchase.definition_local, DefinitionLocal.KM)
         self.assertEqual(purchase.definition_local_km, None)
         # purchase with definition_local KM & 200
         purchase = Purchase.objects.filter(description="Pommes, vertes 7").first()
-        self.assertEqual(purchase.definition_local, Purchase.Local.KM)
+        self.assertEqual(purchase.definition_local, DefinitionLocal.KM)
         self.assertEqual(purchase.definition_local_km, 200)
         # Test that the purchase import source contains the complete file digest
         filebytes = Path("./api/tests/files/achats/purchases_good.csv").read_bytes()

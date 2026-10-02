@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, reverse
 from django_otp.admin import OTPAdminAuthenticationForm, OTPAdminSite
 
+from data.admin.definitionlocal import definitionlocal_textchoices_admin_view
 from data.admin.sector import sector_textchoices_admin_view
 from data.admin.textchoices import CANTEEN_TEXTCHOICES_PAGES, canteen_textchoices_admin_view
 
@@ -47,6 +48,11 @@ class MaCantineAdminSite(OTPAdminSite):
                 self.admin_view(canteen_textchoices_admin_view),
                 name="canteen-textchoices",
             ),
+            path(
+                "data/definitionlocal-textchoices/",
+                self.admin_view(definitionlocal_textchoices_admin_view),
+                name="definitionlocal-textchoices",
+            ),
         ]
         return custom_urls + super().get_urls()
 
@@ -59,7 +65,15 @@ class MaCantineAdminSite(OTPAdminSite):
                 "admin_url": reverse("admin:sector-textchoices"),
                 "add_url": None,
                 "view_only": True,
-            }
+            },
+            {
+                "name": "Définition du local (TextChoices)",
+                "object_name": "DefinitionLocalTextChoices",
+                "perms": {"add": False, "change": False, "delete": False, "view": True},
+                "admin_url": reverse("admin:definitionlocal-textchoices"),
+                "add_url": None,
+                "view_only": True,
+            },
         ]
 
         for page in CANTEEN_TEXTCHOICES_PAGES:

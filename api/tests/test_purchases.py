@@ -10,6 +10,7 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
 from data.models import Canteen, Diagnostic, Purchase
 from data.models.creation_source import CreationSource
+from data.models.definitionlocal import DefinitionLocal
 
 
 class PurchaseCreateApiTest(APITestCase):
@@ -212,7 +213,7 @@ class PurchaseCreateApiTest(APITestCase):
         Purchase.objects.all().delete()
 
         # definition_local cannot be filled if est_local is False
-        payload = {**self.PURCHASE_PAYLOAD, "est_local": False, "definition_local": Purchase.Local.KM}
+        payload = {**self.PURCHASE_PAYLOAD, "est_local": False, "definition_local": DefinitionLocal.KM}
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -220,14 +221,14 @@ class PurchaseCreateApiTest(APITestCase):
         payload = {
             **self.PURCHASE_PAYLOAD,
             "est_local": True,
-            "definition_local": Purchase.Local.KM,
+            "definition_local": DefinitionLocal.KM,
             "definition_local_km": "",
         }
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         purchase = Purchase.objects.first()
         self.assertEqual(purchase.est_local, True)
-        self.assertEqual(purchase.definition_local, Purchase.Local.KM)
+        self.assertEqual(purchase.definition_local, DefinitionLocal.KM)
         self.assertEqual(purchase.definition_local_km, None)
 
         # cleanup
@@ -237,14 +238,14 @@ class PurchaseCreateApiTest(APITestCase):
         payload = {
             **self.PURCHASE_PAYLOAD,
             "est_local": True,
-            "definition_local": Purchase.Local.KM,
+            "definition_local": DefinitionLocal.KM,
             "definition_local_km": 10,
         }
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         purchase = Purchase.objects.first()
         self.assertEqual(purchase.est_local, True)
-        self.assertEqual(purchase.definition_local, Purchase.Local.KM)
+        self.assertEqual(purchase.definition_local, DefinitionLocal.KM)
         self.assertEqual(purchase.definition_local_km, 10)
 
         # cleanup
@@ -254,7 +255,7 @@ class PurchaseCreateApiTest(APITestCase):
         payload = {
             **self.PURCHASE_PAYLOAD,
             "est_local": True,
-            "definition_local": Purchase.Local.COMMUNE,
+            "definition_local": DefinitionLocal.COMMUNE,
             "definition_local_km": 10,
         }
         response = self.client.post(self.url, payload)
@@ -476,7 +477,7 @@ class PurchaseUpdateApiTest(APITestCase):
             "origine": Purchase.Characteristic.FRANCE,
             "est_circuit_court": False,
             "est_local": True,
-            "definition_local": Purchase.Local.PAT,
+            "definition_local": DefinitionLocal.PAT,
         }
         response = self.client.patch(self.url, payload, format="json")
 
@@ -884,7 +885,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
                 Purchase.Characteristic.CIRCUIT_COURT,
                 Purchase.Characteristic.LOCAL,
             ],
-            definition_local=Purchase.Local.PAT,
+            definition_local=DefinitionLocal.PAT,
             prix_ht=10,
         )
 
@@ -910,7 +911,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
             date=d,
             famille_produits=Purchase.Family.AUTRES,
             caracteristiques=[Purchase.Characteristic.LOCAL],
-            definition_local=Purchase.Local.PAT,
+            definition_local=DefinitionLocal.PAT,
             prix_ht=50,
         )
         PurchaseFactory(
@@ -918,7 +919,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
             date=d,
             famille_produits=Purchase.Family.AUTRES,
             caracteristiques=[Purchase.Characteristic.LOCAL],
-            definition_local=Purchase.Local.PAT,
+            definition_local=DefinitionLocal.PAT,
             prix_ht=50,
         )
 
