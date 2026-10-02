@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data', '0278_canteen_declaration_donnees_2026_and_more'),
+        ('data', '0279_diagnostic_definition_local'),
     ]
 
     operations = [
