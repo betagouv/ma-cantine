@@ -2,6 +2,7 @@ from decimal import Decimal
 
 from django.utils import timezone
 
+from data.models.definitionlocal import DefinitionLocal
 from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
     get_year_campaign_end_date_or_today_date,
@@ -355,5 +356,26 @@ def validate_viandes_volailles_produits_de_la_mer_egalim(instance):
                 errors,
                 "valeur_siqo",
                 f"La somme des valeurs viandes et poissons, EGalim, {viandes_volailles_produits_de_la_mer_egalim_sum}, est plus que la somme des valeurs bio, SIQO, environnementales et autres EGalim, {egalim_sum}",
+            )
+    return errors
+
+
+def validate_definition_local(instance):
+    """
+    - clean_fields() (called by full_clean()) already checks that the value is empty or in the choices
+    - extra validation:
+        - if definition_local is "KM", then definition_local_km can be filled
+        - if definition_local is not "KM", then definition_local_km must be empty
+    """
+    errors = {}
+    field_name = "definition_local"
+    value = getattr(instance, field_name)
+    definition_local_km = getattr(instance, "definition_local_km")
+    if value != DefinitionLocal.KM:
+        if definition_local_km not in [None, ""]:
+            utils_utils.add_validation_error(
+                errors,
+                "definition_local_km",
+                "La distance en km doit être vide lorsque la définition locale n'est pas 'KM'.",
             )
     return errors

@@ -2,11 +2,13 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.models.definitionlocal import DefinitionLocal
 from data.models import Canteen, Sector
 from data.models.diagnostic import (
     Diagnostic,
@@ -409,6 +411,63 @@ class DiagnosticModelSaveTest(TransactionTestCase):
             with self.subTest(valeur_produits_de_la_mer=VALUE_NOT_OK):
                 diagnostic = DiagnosticFactory(
                     valeur_produits_de_la_mer=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER
+                )
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2026-01-30")  # during the 2025 campaign
+    def test_definition_local_validation(self):
+        """
+        - field is optional
+        """
+        for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in DefinitionLocal.values)]:
+            with self.subTest(definition_local=TUPLE_OK[0]):
+                diagnostic = DiagnosticFactory(definition_local=TUPLE_OK[0])
+                self.assertEqual(diagnostic.definition_local, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["  ", 123, "invalid", "123"]:
+            with self.subTest(definition_local=VALUE_NOT_OK):
+                diagnostic = DiagnosticFactory(definition_local=VALUE_NOT_OK)
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2026-01-30")  # during the 2025 campaign
+    def test_definition_local_km_validation(self):
+        """
+        - field is optional
+        - field is only relevant when definition_local is "KM"
+        """
+        # definition_local is "KM"
+        for TUPLE_OK in [(None, None), (0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
+            with self.subTest(definition_local=DefinitionLocal.KM, definition_local_km=TUPLE_OK[0]):
+                diagnostic = DiagnosticFactory(
+                    definition_local=DefinitionLocal.KM,
+                    definition_local_km=TUPLE_OK[0],
+                )
+                diagnostic.full_clean()
+                self.assertEqual(diagnostic.definition_local_km, TUPLE_OK[1])
+        for VALUE_NOT_OK in ["", "  ", "invalid", "123.45"]:
+            with self.subTest(definition_local=DefinitionLocal.KM, definition_local_km=VALUE_NOT_OK):
+                self.assertRaises(
+                    (ValueError, ValidationError),
+                    DiagnosticFactory,
+                    definition_local=DefinitionLocal.KM,
+                    definition_local_km=VALUE_NOT_OK,
+                )
+        for VALUE_NOT_OK in [-1, -100]:
+            with self.subTest(definition_local=DefinitionLocal.KM, definition_local_km=VALUE_NOT_OK):
+                self.assertRaises(
+                    IntegrityError,
+                    DiagnosticFactory,
+                    definition_local=DefinitionLocal.KM,
+                    definition_local_km=VALUE_NOT_OK,
+                )
+        # definition_local is not "KM"
+        for VALUE_NOT_OK in [0, 1, 100, "200", Decimal("123.45")]:
+            with self.subTest(
+                definition_local=DefinitionLocal.PAT,
+                definition_local_km=VALUE_NOT_OK,
+            ):
+                diagnostic = DiagnosticFactory(
+                    definition_local=DefinitionLocal.PAT,
+                    definition_local_km=VALUE_NOT_OK,
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 

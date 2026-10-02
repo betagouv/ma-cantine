@@ -1960,6 +1960,7 @@ class Diagnostic(models.Model):
                 diagnostic_validators.validate_viandes_volailles_total(self),
                 diagnostic_validators.validate_produits_de_la_mer_total(self),
                 diagnostic_validators.validate_viandes_volailles_produits_de_la_mer_egalim(self),
+                diagnostic_validators.validate_definition_local(self),
             )
         if validation_errors:
             raise ValidationError(validation_errors)
