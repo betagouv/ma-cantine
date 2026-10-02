@@ -170,6 +170,7 @@ celerybeat-schedule.db
 # IDE
 .vscode/*.code-snippets
 .idea/
+.warp/
 
 # Shell nix config
 shell.nix
