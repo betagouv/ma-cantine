@@ -6,6 +6,21 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.51.1](https://github.com/betagouv/ma-cantine/compare/v2026.51.0...v2026.51.1) (2026-10-02)
+
+
+### Améliorations
+
+* **Achats:** renommer Local en DefinitionLocal. Le bouger dans un fichier dédié. l'afficher dans l'admin ([#7229](https://github.com/betagouv/ma-cantine/issues/7229)) ([b1094ae](https://github.com/betagouv/ma-cantine/commit/b1094ae50d6349bef64258a8d6f9e5da13bb0183))
+* **Diagnostics:** ajouter les nouveaux champs definition_local & definition_local_km (TD 2026) ([#7230](https://github.com/betagouv/ma-cantine/issues/7230)) ([659482a](https://github.com/betagouv/ma-cantine/commit/659482a12dedc438e834b13489610cc2931eeb40))
+
+
+### Technique
+
+* **Diagnostics:** ajouter les validations sur les nouveaux champs definition_local ([#7234](https://github.com/betagouv/ma-cantine/issues/7234)) ([a049ef9](https://github.com/betagouv/ma-cantine/commit/a049ef98577bd048c7593dd5689ea2262c497a3f))
+* ignore un dossier de configuration d'env dev ([#7236](https://github.com/betagouv/ma-cantine/issues/7236)) ([8ddc647](https://github.com/betagouv/ma-cantine/commit/8ddc6474f456b08cbbc448ebf7823335e2769f46))
+* **Tâches asynchrones:** paramétrer Celery pour garder un historique de 30 jours (au lieu d'1 jour) ([#7233](https://github.com/betagouv/ma-cantine/issues/7233)) ([1163850](https://github.com/betagouv/ma-cantine/commit/116385048c10ddaf71bc1cd9c0894131ccbbb3d4))
+
 ## [2026.51.0](https://github.com/betagouv/ma-cantine/compare/v2026.50.3...v2026.51.0) (2026-10-01)
 
 
