@@ -1048,7 +1048,18 @@ class DiagnosticListRecapApiTest(APITestCase):
     def test_list_recap_diagnostics_site(self):
         self.canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory(
-            canteen=self.canteen, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+            canteen=self.canteen,
+            year=2025,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_siqo=100,
+            valeur_externalites_performance=100,
+            valeur_egalim_autres=100,
+            valeur_viandes_volailles=100,
+            valeur_viandes_volailles_egalim=50,
+            valeur_produits_de_la_mer=80,
+            valeur_produits_de_la_mer_egalim=40,
         )
         diagnostic.teledeclare(applicant=authenticate.user)
 
@@ -1056,12 +1067,27 @@ class DiagnosticListRecapApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
+        # 2024: no diagnostic
+        self.assertEqual(body[0]["year"], 2024)
+        self.assertIsNone(body[0]["canteenDiagnosticApproStats"])
+        self.assertIsNone(body[0]["generatedFromGroupeDiagnosticApproStats"])
+        # 2025
         self.assertEqual(body[1]["year"], 2025)
         self.assertEqual(body[1]["isTeledeclared"], True)
         self.assertEqual(body[1]["declarationDonnees"], True)
         self.assertEqual(body[1]["canteenDiagnosticId"], diagnostic.id)
         self.assertEqual(body[1]["generatedFromGroupeDiagnosticId"], None)
         self.assertEqual(body[1]["generatedFromGroupeDiagnosticMode"], None)
+        self.assertIsNone(body[1]["generatedFromGroupeDiagnosticApproStats"])
+        stats = body[1]["canteenDiagnosticApproStats"]
+        self.assertEqual(len(stats), len(Diagnostic.APPRO_STATS_FIELDS))
+        self.assertEqual(stats["pourcentageBio"], 20)
+        self.assertEqual(stats["pourcentageSiqo"], 10)
+        self.assertEqual(stats["pourcentageEgalim"], 50)
+        self.assertEqual(stats["pourcentageViandesVolaillesEgalim"], 50)
+        self.assertEqual(stats["pourcentageProduitsDeLaMerEgalim"], 50)
+        self.assertIsNone(stats["pourcentageProduitsDeLaMerFrance"])
+        self.assertIn("objectifsEgalimAtteints", stats)
 
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
@@ -1119,8 +1145,10 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertEqual(body[0]["isTeledeclared"], True)
         self.assertEqual(body[0]["declarationDonnees"], True)
         self.assertEqual(body[0]["canteenDiagnosticId"], diagnostic_satellite_1_before.id)
+        self.assertIsNotNone(body[0]["canteenDiagnosticApproStats"])
         self.assertIsNotNone(body[0]["generatedFromGroupeDiagnosticId"])
         self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], Diagnostic.CentralKitchenDiagnosticMode.APPRO)
+        self.assertIsNotNone(body[0]["generatedFromGroupeDiagnosticApproStats"])
 
         # satellite_2_after (teledeclared after the groupe)
         self.assertEqual(
