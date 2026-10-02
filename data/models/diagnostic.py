@@ -580,7 +580,7 @@ class Diagnostic(models.Model):
         "valeur_autres_france",
     ]
 
-    AGGREGATED_APPRO_FIELDS = [
+    APPRO_AGGREGATED_FIELDS = [
         "valeur_bio_agg",
         "valeur_siqo_agg",
         "valeur_externalites_performance_agg",
@@ -825,7 +825,7 @@ class Diagnostic(models.Model):
     COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS
     # COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS  # TODO when updating the imports
 
-    EGALIM_STATS_FIELDS = [
+    APPRO_STATS_FIELDS = [
         "pourcentage_bio",
         "pourcentage_siqo",
         "pourcentage_externalites_performance",
@@ -883,7 +883,7 @@ class Diagnostic(models.Model):
         "communication_frequency",
     ]
 
-    APPRO_1TD1SITE_FIELDS = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + AGGREGATED_APPRO_FIELDS
+    APPRO_1TD1SITE_FIELDS = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + APPRO_AGGREGATED_FIELDS
 
     NON_APPRO_FIELDS = WASTE_FIELDS + DIVERSIFICATION_FIELDS + PLASTIC_FIELDS + INFO_FIELDS
 
@@ -2012,7 +2012,7 @@ class Diagnostic(models.Model):
                     # since 2026, once the diagnostic_type is known, default any still-empty required field to 0
                     self.populate_required_fields_with_zero()
             self.populate_aggregated_values()
-            self.populate_egalim_stats()
+            self.populate_stats_values()
             self.populate_cout_repas()
         return super().save(**kwargs)
 
@@ -2067,8 +2067,8 @@ class Diagnostic(models.Model):
         self.valeur_egalim_hors_bio_agg = self.label_group_group_sum("egalim_hors_bio")
         self.valeur_egalim_agg = self.label_group_group_sum("egalim")
 
-    def populate_egalim_stats(self):
-        # NOTE: EGALIM_STATS_FIELDS
+    def populate_stats_values(self):
+        # NOTE: APPRO_STATS_FIELDS
         self.pourcentage_bio = compute_percentage(self.valeur_bio_agg, self.valeur_totale)
         self.pourcentage_siqo = compute_percentage(self.valeur_siqo_agg, self.valeur_totale)
         self.pourcentage_externalites_performance = compute_percentage(

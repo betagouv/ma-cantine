@@ -10,7 +10,7 @@ class DiagnosticFillComputedFieldsCommandTest(TestCase):
     def setUpTestData(cls):
         ETLCommonSetUpTestData(cls, with_diagnostics=True)
         cls.FIELD_LIST = (
-            Diagnostic.AGGREGATED_APPRO_FIELDS + Diagnostic.EGALIM_STATS_FIELDS + Diagnostic.OTHER_COMPUTED_FIELDS
+            Diagnostic.APPRO_AGGREGATED_FIELDS + Diagnostic.APPRO_STATS_FIELDS + Diagnostic.OTHER_COMPUTED_FIELDS
         )
 
     def test_run_on_diagnostic_teledeclared(self):
