@@ -4,44 +4,29 @@
 -- Structure miroir de mart_spe_bilan : région = groupe, secteur = périmètre
 -- Dénominateur nb_inscrites : disponible au niveau région uniquement
 
-with waste_base as (
-    select
-        w.annee,
-        c.region,
-        w.canteen_id,
-        w.total_mass,
-        w.meal_count,
-        case
-            when jsonb_array_length(c.sector_list::jsonb) > 1
-                then 'Secteurs multiples'
-            else (array(select jsonb_array_elements_text(c.sector_list::jsonb)))[1]
-        end                                 as secteur
-    from {{ ref('stg_waste_measurements') }} as w
-    inner join {{ ref('stg_canteens') }} as c
-        on w.canteen_id = c.canteen_id
-        and c.line_ministry = 'administration_territoriale'
-        and c.region is not null
-        and not (c.sector_list::jsonb @> '["administration_etablissement_public"]'::jsonb)
+-- Cantines à inclure dans le périmètre ATE avec secteur forcé (hors line_ministry standard)
+with overrides_secteur_ate as (
+    select * from (values
+        ('94807198000015', 'administration_inter_administratif')
+    ) as t(siret, secteur_force)
 ),
 
--- Agrégation par cantine : une cantine peut avoir plusieurs mesures sur l'année
+-- Gaspillage : lecture du socle commun aux marts SPE (filtres qualité, TD valide,
+-- niveau ADEME par cantine). Région et secteur viennent du snapshot de TD, comme
+-- les statistiques TD de la même ligne, et l'override de secteur s'applique pareil.
 waste_by_canteen as (
     select
-        annee,
-        region,
-        canteen_id,
-        secteur,
-        sum(total_mass)                                                 as total_mass_kg,
-        sum(meal_count)                                                 as total_meal_count,
-        case
-            when sum(meal_count) is null or sum(meal_count) = 0        then null
-            when sum(total_mass) * 1000 / sum(meal_count) <= 47        then 'Niveau 3'
-            when sum(total_mass) * 1000 / sum(meal_count) <= 74        then 'Niveau 2'
-            when sum(total_mass) * 1000 / sum(meal_count) <= 95        then 'Niveau 1'
-            else                                                             'Non atteint'
-        end                                                             as niveau_ademe
-    from waste_base
-    group by annee, region, canteen_id, secteur
+        w.annee,
+        w.region,
+        w.canteen_id,
+        coalesce(o.secteur_force, w.secteur)                            as secteur,
+        w.total_mass_kg,
+        w.total_meal_count,
+        w.niveau_ademe
+    from {{ ref('int_spe_waste_by_canteen') }} as w
+    left join overrides_secteur_ate as o on w.siret = o.siret
+    where (w.line_ministry = 'administration_territoriale' and w.region is not null)
+       or o.siret is not null
 ),
 
 waste_by_region as (
@@ -75,51 +60,42 @@ waste_by_region_sector as (
     group by annee, region, secteur
 ),
 
+-- Cantines ATE inscrites (population figée au 29/04 n+1 par int_spe_canteens_inscrites)
 canteens_ate as (
     select
         region,
         region_lib,
-        creation_date,
+        annee,
         case
             when jsonb_array_length(sector_list::jsonb) > 1 then 'Secteurs multiples'
             else (array(select jsonb_array_elements_text(sector_list::jsonb)))[1]
         end                         as secteur
-    from {{ ref('stg_canteens') }}
+    from {{ ref('int_spe_canteens_inscrites') }}
     where line_ministry = 'administration_territoriale'
       and region is not null
       and region != ''
       and not (sector_list::jsonb @> '["administration_etablissement_public"]'::jsonb)
 ),
 
-years as (
-    select distinct year as annee
-    from {{ ref('stg_teledeclarations') }}
-    where line_ministry = 'administration_territoriale'
-),
-
 nb_inscrites_region as (
     select
-        c.region,
-        c.region_lib,
-        y.annee,
+        region,
+        region_lib,
+        annee,
         count(*)                    as nb_inscrites
-    from canteens_ate as c
-    cross join years as y
-    where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
-    group by c.region, c.region_lib, y.annee
+    from canteens_ate
+    group by region, region_lib, annee
 ),
 
 nb_inscrites_region_sector as (
     select
-        c.region,
-        c.region_lib,
-        c.secteur,
-        y.annee,
+        region,
+        region_lib,
+        secteur,
+        annee,
         count(*)                    as nb_inscrites
-    from canteens_ate as c
-    cross join years as y
-    where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
-    group by c.region, c.region_lib, c.secteur, y.annee
+    from canteens_ate
+    group by region, region_lib, secteur, annee
 ),
 
 -- Cibles ventilées par secteur (RIA / RA) pour toutes les régions ATE
@@ -184,13 +160,6 @@ ref_cibles_region as (
 td_ate as (
     select * from {{ ref('mart_teledeclarations') }}
     where cantine_secteur != 'administration_etablissement_public'
-),
-
--- Cantines à inclure dans le périmètre ATE avec secteur forcé (hors line_ministry standard)
-overrides_secteur_ate as (
-    select * from (values
-        ('94807198000015', 'administration_inter_administratif')
-    ) as t(siret, secteur_force)
 ),
 
 -- Totaux par région
@@ -360,6 +329,9 @@ select
     ))::numeric, 1)                                                                 as taux_representativite_gaspi_pct,
     round((coalesce(wrs.total_mass_kg, wr.total_mass_kg) * 1000
            / nullif(coalesce(wrs.total_meal_count, wr.total_meal_count), 0))::numeric, 1) as gaspi_g_par_couvert,
+    -- numérateur et dénominateur du ratio, pour pouvoir le recalculer / le réagréger
+    coalesce(wrs.total_mass_kg,     wr.total_mass_kg)                               as gaspi_total_mass_kg,
+    coalesce(wrs.total_meal_count,  wr.total_meal_count)                            as gaspi_meal_count,
     coalesce(wrs.nb_niveau_3,    wr.nb_niveau_3)                                    as nb_cantines_niveau_3_ademe,
     coalesce(wrs.nb_niveau_2,    wr.nb_niveau_2)                                    as nb_cantines_niveau_2_ademe,
     coalesce(wrs.nb_niveau_1,    wr.nb_niveau_1)                                    as nb_cantines_niveau_1_ademe,

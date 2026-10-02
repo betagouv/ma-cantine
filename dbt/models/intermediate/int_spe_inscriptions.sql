@@ -3,33 +3,17 @@
 -- Dénominateurs SPE : nb cantines inscrites au 29 avril de l'année n+1
 -- Une ligne par (perimetre, type_perimetre, annee)
 -- type_perimetre = 'line_ministry' | 'groupe'
+-- La population (cantine × année) vient de int_spe_canteens_inscrites : les cantines
+-- supprimées après la date de référence restent comptées.
 
-with canteens_spe as (
+with by_line_ministry as (
     select
-        line_ministry,
-        creation_date
-    from {{ ref('stg_canteens') }}
-    where line_ministry is not null
-      and line_ministry != ''
-),
-
-years as (
-    select distinct year as annee
-    from {{ ref('stg_teledeclarations') }}
-    where line_ministry is not null
-      and line_ministry != ''
-),
-
-by_line_ministry as (
-    select
-        c.line_ministry             as perimetre,
+        line_ministry               as perimetre,
         'line_ministry'             as type_perimetre,
-        y.annee,
+        annee,
         count(*)                    as nb_inscrites
-    from canteens_spe as c
-    cross join years as y
-    where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
-    group by c.line_ministry, y.annee
+    from {{ ref('int_spe_canteens_inscrites') }}
+    group by line_ministry, annee
 ),
 
 by_groupe as (
