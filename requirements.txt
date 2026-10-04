@@ -472,7 +472,7 @@ pyhanko-certvalidator==0.32.0
     #   xhtml2pdf
 pyparsing==3.3.2
     # via pip-requirements-parser
-pypdf==6.17.0
+pypdf==6.19.0
     # via xhtml2pdf
 python-bidi==0.6.11
     # via xhtml2pdf
