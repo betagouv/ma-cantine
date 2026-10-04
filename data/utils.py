@@ -87,6 +87,16 @@ def make_optional_positive_percentage_decimal_field(**kwargs):
     )
 
 
+def compute_percentage(numerator, denominator) -> Decimal | None:
+    """
+    Percentage (0 to 100, 2 decimals) of numerator / denominator.
+    Returns None if the denominator is empty/0, the numerator is None, or the numerator exceeds the denominator.
+    """
+    if denominator and numerator is not None and denominator >= numerator:
+        return round(100 * to_decimal(numerator) / to_decimal(denominator), 2)
+    return None
+
+
 def sum_int_with_potential_null(values_to_sum):
     if all(value is None for value in values_to_sum):
         return 0

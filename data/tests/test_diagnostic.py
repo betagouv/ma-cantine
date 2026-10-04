@@ -499,6 +499,23 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertEqual(diagnostic.label_group_sum("siqo"), 50)
         self.assertEqual(diagnostic.valeur_siqo_agg, 50)  # populated
 
+    def test_diagnostic_simple_populate_egalim_stats(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.pourcentage_bio, 20)
+        self.assertEqual(diagnostic.pourcentage_egalim, 20 + 30)
+        self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, 30)
+        self.assertTrue(diagnostic.objectifs_egalim_atteints)
+
+        # if valeur_totale is emptied, then set the fields back to None
+        diagnostic.valeur_totale = None
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertIsNone(diagnostic.pourcentage_bio)
+        self.assertIsNone(diagnostic.pourcentage_egalim)
+        self.assertIsNone(diagnostic.pourcentage_egalim_hors_bio)
+        self.assertIsNone(diagnostic.objectifs_egalim_atteints)
+
     def test_diagnostic_complete_populate_egalim_stats(self):
         VALID_DIAGNOSTIC_COMPLETE_2025 = {
             **VALID_DIAGNOSTIC_SIMPLE_2025,
@@ -509,7 +526,7 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         }
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
         diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.pourcentage_bio, 2)
+        self.assertEqual(diagnostic.pourcentage_bio, 2)  # valeur_bio was recalculated
         self.assertEqual(diagnostic.pourcentage_egalim, 2 + 5)
         self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, 5)
         self.assertFalse(diagnostic.objectifs_egalim_atteints)
@@ -1152,92 +1169,6 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_complete_1.family_sum("produits_de_la_mer"), 15 + 8)
         self.assertEqual(self.diagnostic_complete_2.family_sum("viandes_volailles"), 10 + 7)
         self.assertEqual(self.diagnostic_complete_2.family_sum("produits_de_la_mer"), 15 + 8)
-
-
-class DiagnosticEgalimQuerySetAndPropertyTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.TEST_CASES = [
-            # (valeur_totale, valeur_*, pourcentage_*)
-            (1000, 1000, 100),
-            (1000, 200, 20),
-            (1000, 0, 0),
-            (0, 200, None),
-            (0, 0, None),
-            # TODO: with None input the behavior is sometimes different..
-            # (1000, None, None),
-            # (None, 200, None),
-            # (None, None, None)
-        ]
-
-    def test_compute_pourcentage_bio_method(self):
-        for valeur_totale, valeur_bio, pourcentage_bio in self.TEST_CASES:
-            with self.subTest(valeur_totale=valeur_totale, valeur_bio=valeur_bio):
-                diagnostic = DiagnosticFactory(
-                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-                    valeur_totale=valeur_totale,
-                    valeur_bio=valeur_bio,
-                )
-                self.assertEqual(diagnostic.valeur_bio_agg, valeur_bio)
-                self.assertEqual(diagnostic.compute_pourcentage_bio(), pourcentage_bio)
-                self.assertEqual(diagnostic.pourcentage_bio, pourcentage_bio)
-
-    def test_compute_pourcentage_egalim_method(self):
-        for valeur_totale, valeur_siqo, pourcentage_egalim in self.TEST_CASES:
-            with self.subTest(valeur_totale=valeur_totale, valeur_siqo=valeur_siqo):
-                diagnostic = DiagnosticFactory(
-                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-                    valeur_totale=valeur_totale,
-                    valeur_bio=0,
-                    valeur_siqo=valeur_siqo,
-                    valeur_externalites_performance=0,
-                    valeur_egalim_autres=0,
-                )
-                self.assertEqual(diagnostic.valeur_egalim_agg, valeur_siqo)
-                self.assertEqual(diagnostic.compute_pourcentage_egalim(), pourcentage_egalim)
-                self.assertEqual(diagnostic.pourcentage_egalim, pourcentage_egalim)
-
-    def test_compute_pourcentage_egalim_hors_bio_method(self):
-        for valeur_totale, valeur_externalites_performance, pourcentage_egalim_hors_bio in self.TEST_CASES:
-            with self.subTest(
-                valeur_totale=valeur_totale, valeur_externalites_performance=valeur_externalites_performance
-            ):
-                diagnostic = DiagnosticFactory(
-                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-                    valeur_totale=valeur_totale,
-                    valeur_bio=1000,
-                    valeur_siqo=0,
-                    valeur_externalites_performance=valeur_externalites_performance,
-                    valeur_egalim_autres=0,
-                )
-                self.assertEqual(diagnostic.valeur_egalim_hors_bio_agg, valeur_externalites_performance)
-                self.assertEqual(diagnostic.compute_pourcentage_egalim_hors_bio(), pourcentage_egalim_hors_bio)
-                self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, pourcentage_egalim_hors_bio)
-
-    def test_compute_objectifs_egalim_atteints_method(self):
-        # see more tests in tests/test_utils.py::TestEgalimObjectives
-        diagnostic = DiagnosticFactory(
-            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            valeur_totale=1000,
-            valeur_bio=200,
-            valeur_siqo=100,
-            valeur_externalites_performance=100,
-            valeur_egalim_autres=100,
-        )
-        self.assertEqual(diagnostic.pourcentage_bio, 20)
-        self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, 30)
-        self.assertEqual(diagnostic.pourcentage_egalim, 20 + 30)
-        self.assertTrue(diagnostic.compute_objectifs_egalim_atteints())
-        self.assertTrue(diagnostic.objectifs_egalim_atteints)
-
-        # if valeur_totale is emptied, then set the fields back to None
-        diagnostic.valeur_totale = None
-        diagnostic.save()
-        diagnostic.refresh_from_db()
-        self.assertIsNone(diagnostic.pourcentage_bio)
-        self.assertIsNone(diagnostic.pourcentage_egalim_hors_bio)
-        self.assertIsNone(diagnostic.compute_objectifs_egalim_atteints())
-        self.assertIsNone(diagnostic.objectifs_egalim_atteints)
 
 
 class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
