@@ -98,7 +98,6 @@ colorama==0.4.6
     #   click
     #   dbt-common
     #   ipython
-    #   pytest
     #   qrcode
     #   sqlfluff
     #   tqdm
@@ -277,8 +276,6 @@ importlib-metadata==9.0.1
     # via metricflow
 inflection==0.5.1
     # via drf-spectacular
-iniconfig==2.3.0
-    # via pytest
 ipython==9.17.1
 ipython-pygments-lexers==1.1.1
     # via ipython
@@ -380,7 +377,6 @@ packaging==26.3
     #   kombu
     #   pip-audit
     #   pip-requirements-parser
-    #   pytest
 pandas==3.0.0
     # via
     #   datacompy
@@ -420,9 +416,7 @@ platformdirs==4.11.7
     #   sqlfluff
     #   virtualenv
 pluggy==1.6.0
-    # via
-    #   diff-cover
-    #   pytest
+    # via diff-cover
 polars==1.37.1
     # via datacompy
 polars-runtime-32==1.37.1
@@ -480,9 +474,6 @@ pyparsing==3.3.2
     # via pip-requirements-parser
 pypdf==6.17.0
     # via xhtml2pdf
-pytest==8.0.0
-    # via pytest-django
-pytest-django==4.8.0
 python-bidi==0.6.11
     # via xhtml2pdf
 python-dateutil==2.9.0.post0

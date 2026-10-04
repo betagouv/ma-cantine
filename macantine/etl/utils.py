@@ -41,7 +41,7 @@ def get_nbre_cantines_region(region: int):
 
 
 def get_objectif_zone_geo(department: int):
-    if department and department != "nan" and not pd.isna(department):
+    if not pd.isna(department) and department and department != "nan":
         # Dealing with two string codes
         if department == "2A" or department == "2B":
             return "France métropolitaine"
