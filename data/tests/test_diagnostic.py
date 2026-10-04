@@ -499,7 +499,7 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertEqual(diagnostic.label_group_sum("siqo"), 50)
         self.assertEqual(diagnostic.valeur_siqo_agg, 50)  # populated
 
-    def test_diagnostic_simple_populate_egalim_stats(self):
+    def test_diagnostic_simple_populate_stats_values(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
         diagnostic.refresh_from_db()
         # relative to valeur_totale (1000)
@@ -533,7 +533,7 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertIsNone(diagnostic.pourcentage_produits_de_la_mer_france)
         self.assertIsNone(diagnostic.objectifs_egalim_atteints)
 
-    def test_diagnostic_complete_populate_egalim_stats(self):
+    def test_diagnostic_complete_populate_stats_values(self):
         VALID_DIAGNOSTIC_COMPLETE_2025 = {
             **VALID_DIAGNOSTIC_SIMPLE_2025,
             "diagnostic_type": Diagnostic.DiagnosticType.COMPLETE,

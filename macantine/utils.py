@@ -143,7 +143,7 @@ def set_satellite_diagnostic_appro_values_from_groupe_diagnostic(diagnostic, sat
 
     Note:
     - we divide only the APPRO values
-    - the EGALIM_STATS_FIELDS (pourcentage_* & objectifs_egalim_atteints) stay the same
+    - the APPRO_STATS_FIELDS (pourcentage_* & objectifs_egalim_atteints) stay the same
     - the other fields (WASTE_FIELDS, DIVERSIFICATION_FIELDS, PLASTIC_FIELDS, INFO_FIELDS) stay the same
 
     Rules:
