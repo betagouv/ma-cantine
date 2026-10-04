@@ -502,18 +502,35 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
     def test_diagnostic_simple_populate_egalim_stats(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
         diagnostic.refresh_from_db()
+        # relative to valeur_totale (1000)
         self.assertEqual(diagnostic.pourcentage_bio, 20)
+        self.assertEqual(diagnostic.pourcentage_siqo, 10)
+        self.assertEqual(diagnostic.pourcentage_externalites_performance, 10)
+        self.assertEqual(diagnostic.pourcentage_egalim_autres, 10)
         self.assertEqual(diagnostic.pourcentage_egalim, 20 + 30)
         self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, 30)
+        # relative to the family total
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_egalim, 50)  # 50 / 100
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_france, 20)  # 20 / 100
+        self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_egalim, 50)  # 40 / 80
+        self.assertIsNone(diagnostic.pourcentage_produits_de_la_mer_france, 25)  # 20 / 80
+        # objectifs egalim
         self.assertTrue(diagnostic.objectifs_egalim_atteints)
 
-        # if valeur_totale is emptied, then set the fields back to None
+        # if valeur_totale is emptied, then set some fields back to None
         diagnostic.valeur_totale = None
         diagnostic.save()
         diagnostic.refresh_from_db()
         self.assertIsNone(diagnostic.pourcentage_bio)
+        self.assertIsNone(diagnostic.pourcentage_siqo)
+        self.assertIsNone(diagnostic.pourcentage_externalites_performance)
+        self.assertIsNone(diagnostic.pourcentage_egalim_autres)
         self.assertIsNone(diagnostic.pourcentage_egalim)
         self.assertIsNone(diagnostic.pourcentage_egalim_hors_bio)
+        self.assertIsNotNone(diagnostic.pourcentage_viandes_volailles_egalim)
+        self.assertIsNotNone(diagnostic.pourcentage_viandes_volailles_france)
+        self.assertIsNotNone(diagnostic.pourcentage_produits_de_la_mer_egalim)
+        self.assertIsNone(diagnostic.pourcentage_produits_de_la_mer_france)
         self.assertIsNone(diagnostic.objectifs_egalim_atteints)
 
     def test_diagnostic_complete_populate_egalim_stats(self):
@@ -523,12 +540,20 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
             "valeur_viandes_volailles_bio": 20,
             "valeur_viandes_volailles_label_rouge": 20,
             "valeur_viandes_volailles_aocaop_igp_stg": 30,
+            "valeur_produits_de_la_mer_france": 20,
         }
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.pourcentage_bio, 2)  # valeur_bio was recalculated
+        self.assertEqual(diagnostic.pourcentage_siqo, 2 + 3)
+        self.assertEqual(diagnostic.pourcentage_externalites_performance, 0)
+        self.assertEqual(diagnostic.pourcentage_egalim_autres, 0)
         self.assertEqual(diagnostic.pourcentage_egalim, 2 + 5)
         self.assertEqual(diagnostic.pourcentage_egalim_hors_bio, 5)
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_egalim, 70)  # (20 + 20 + 30) / 100
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_france, 20)
+        self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_egalim, 0)
+        self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_france, 25)  # 20 / 80
         self.assertFalse(diagnostic.objectifs_egalim_atteints)
 
 
