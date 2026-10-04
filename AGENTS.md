@@ -103,8 +103,8 @@ cd 2024-frontend && npm run dev  # Port 5173
 ## Testing & Validation
 
 ```bash
-# Python tests (with pytest)
-uv run pytest data/tests/
+# Python tests (Django test runner)
+uv run python manage.py test
 
 # Pre-commit check without committing
 pre-commit run --all-files

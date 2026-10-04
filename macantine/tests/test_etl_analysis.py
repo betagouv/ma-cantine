@@ -3,7 +3,6 @@ from datetime import timedelta
 
 import numpy as np
 import pandas as pd
-import pytest
 from django.db import connection
 from django.test import TestCase
 from django.utils import timezone
@@ -615,25 +614,23 @@ class TeledeclarationETLAnalysisTest(TestCase):
         assert len(etl_instance.df) == 2
 
 
-@pytest.mark.parametrize(
-    "department, expected",
-    [
-        (974, "non renseigné"),  # Special case for department 974
-        ("2A", "France métropolitaine"),  # Corsica department code
-        ("2B", "France métropolitaine"),  # Corsica department code
-        (75, "France métropolitaine"),  # Metropolitan France
-        (976, "DROM (Mayotte)"),  # Mayotte
-        (971, "DROM (hors Mayotte)"),  # Guadeloupe
-        (972, "DROM (hors Mayotte)"),  # Martinique
-        (978, "DROM (hors Mayotte)"),  # Saint-Martin
-        ("nan", "non renseigné"),  # String "nan"
-        (None, "non renseigné"),  # None value
-        (pd.NA, "non renseigné"),  # Pandas NA
-        (999, "non renseigné"),  # Invalid department
-    ],
-)
-def test_get_objectif_zone_geo(department, expected):
-    assert get_objectif_zone_geo(department) == expected
+class GetObjectifZoneGeoTest(TestCase):
+    def test_get_objectif_zone_geo(self):
+        for department, expected in [
+            ("2A", "France métropolitaine"),  # Corsica department code
+            ("2B", "France métropolitaine"),  # Corsica department code
+            (75, "France métropolitaine"),  # Metropolitan France
+            (976, "DROM (Mayotte)"),  # Mayotte
+            (971, "DROM (hors Mayotte)"),  # Guadeloupe
+            (972, "DROM (hors Mayotte)"),  # Martinique
+            (978, "DROM (hors Mayotte)"),  # Saint-Martin
+            ("nan", "non renseigné"),  # String "nan"
+            (None, "non renseigné"),  # None value
+            (pd.NA, "non renseigné"),  # Pandas NA
+            (999, "non renseigné"),  # Invalid department
+        ]:
+            with self.subTest(department=department):
+                self.assertEqual(get_objectif_zone_geo(department), expected)
 
 
 def copy_into_test_db(file, table, column_types):

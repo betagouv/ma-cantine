@@ -1651,15 +1651,6 @@ wheels = [
 ]
 
 [[package]]
-name = "iniconfig"
-version = "2.3.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/72/34/14ca021ce8e5dfedc35312d08ba8bf51fdd999c576889fc2c24cb97f4f10/iniconfig-2.3.0.tar.gz", hash = "sha256:c76315c77db068650d49c5b56314774a7804df16fee4402c1f19d6d15d8c4730", size = 20503, upload-time = "2025-10-18T21:55:43.219Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/cb/b1/3846dd7f199d53cb17f49cba7e651e9ce294d8497c8c150530ed11865bb8/iniconfig-2.3.0-py3-none-any.whl", hash = "sha256:f631c04d2c48c52b84d0d0549c99ff3859c98df65b3101406327ecc7d53fbf12", size = 7484, upload-time = "2025-10-18T21:55:41.639Z" },
-]
-
-[[package]]
 name = "ipython"
 version = "9.17.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2012,8 +2003,6 @@ dev = [
     { name = "ipython" },
     { name = "pip-audit" },
     { name = "pre-commit" },
-    { name = "pytest" },
-    { name = "pytest-django" },
     { name = "requests-mock" },
     { name = "ruff" },
     { name = "sqlfluff" },
@@ -2073,8 +2062,6 @@ dev = [
     { name = "ipython", specifier = ">=9.5.0" },
     { name = "pip-audit", specifier = ">=2.10.1" },
     { name = "pre-commit", specifier = "==4.0.1" },
-    { name = "pytest", specifier = "==8.0.0" },
-    { name = "pytest-django", specifier = "==4.8.0" },
     { name = "requests-mock", specifier = "==1.12.1" },
     { name = "ruff", specifier = ">=0.14.2" },
     { name = "sqlfluff", specifier = ">=3.4.2" },
@@ -2708,7 +2695,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess" },
+    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
@@ -3431,33 +3418,6 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/5d/dc/34857a5e31cf708c163929f61a9ba4bd357a8850e49fc4e846ced527b51f/pypdf-6.17.0.tar.gz", hash = "sha256:097ad0d829778ec5b615aeaa5c6da4b6cac4992f8fd80b56f98a1a8c006573bb", size = 7018352, upload-time = "2026-09-04T11:30:44.256Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c1/08/1e9731038124a9127e1d27848952b86fb32b2f45f8f1b94adc7f0817a6ac/pypdf-6.17.0-py3-none-any.whl", hash = "sha256:5bd827266a21553b74d910e350131a6227b72f2ab4209bf372814b8195fa11c5", size = 388051, upload-time = "2026-09-04T11:30:42.681Z" },
-]
-
-[[package]]
-name = "pytest"
-version = "8.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
-    { name = "iniconfig" },
-    { name = "packaging" },
-    { name = "pluggy" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/50/fd/af2d835eed57448960c4e7e9ab76ee42f24bcdd521e967191bc26fa2dece/pytest-8.0.0.tar.gz", hash = "sha256:249b1b0864530ba251b7438274c4d251c58d868edaaec8762893ad4a0d71c36c", size = 1395242, upload-time = "2024-01-27T21:47:58.099Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/c7/10/727155d44c5e04bb08e880668e53079547282e4f950535234e5a80690564/pytest-8.0.0-py3-none-any.whl", hash = "sha256:50fb9cbe836c3f20f0dfa99c565201fb75dc54c8d76373cd1bde06b06657bdb6", size = 334024, upload-time = "2024-01-27T21:47:54.913Z" },
-]
-
-[[package]]
-name = "pytest-django"
-version = "4.8.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pytest" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/bd/cf/44510ac5479f281d6663a08dff0d93f56b21f4ee091980ea4d4b64491ad6/pytest-django-4.8.0.tar.gz", hash = "sha256:5d054fe011c56f3b10f978f41a8efb2e5adfc7e680ef36fb571ada1f24779d90", size = 83291, upload-time = "2024-01-30T13:14:19.511Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/93/5b/29555191e903881d05e1f7184205ec534c7021e0ee077d1e6a1ee8f1b1eb/pytest_django-4.8.0-py3-none-any.whl", hash = "sha256:ca1ddd1e0e4c227cf9e3e40a6afc6d106b3e70868fd2ac5798a22501271cd0c7", size = 23432, upload-time = "2024-01-30T13:14:17.953Z" },
 ]
 
 [[package]]
