@@ -218,7 +218,7 @@ stats as (
         sum(td_volet_diversification_complet::int)                                          as nb_td_diversification_complet
     from {{ ref('mart_teledeclarations') }}
     left join overrides_spe as o on o.siret = cantine_siret
-    where cantine_line_ministry is not null
+    where nullif(cantine_line_ministry, '') is not null
       and (cantine_secteur != 'administration_etablissement_public' or cantine_line_ministry != 'administration_territoriale')
       and coalesce(o.exclure, false) = false
     group by annee, coalesce(o.line_ministry_force, cantine_line_ministry)
@@ -305,7 +305,9 @@ medians_base as (
         100.0 * valeur_viandes_volailles_egalim / nullif(valeur_viandes_volailles, 0) as pct_vv_egalim
     from {{ ref('mart_teledeclarations') }}
     left join overrides_spe as o on o.siret = cantine_siret
-    where cantine_line_ministry is not null
+    -- `nullif` : un ministère vide ('') n'est pas un ministère. Un simple `is not null` le
+    -- laissait passer, et les cantines non SPE entraient dans la médiane du TOTAL.
+    where nullif(cantine_line_ministry, '') is not null
       and (cantine_secteur != 'administration_etablissement_public' or cantine_line_ministry != 'administration_territoriale')
       and coalesce(o.exclure, false) = false
 ),

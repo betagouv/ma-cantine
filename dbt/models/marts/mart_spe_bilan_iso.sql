@@ -113,7 +113,9 @@ iso_sample as (
         and t.annee = b_n.annee
     left join overrides_spe as o on b_n.cantine_siret = o.siret
     where t.prev_1 = t.annee - 1
-      and b_n.cantine_line_ministry is not null
+      -- `nullif` : un ministère vide ('') n'est pas un ministère. Un simple `is not null` le
+      -- laissait passer, et les cantines non SPE gonflaient la ligne TOTAL.
+      and nullif(b_n.cantine_line_ministry, '') is not null
       and coalesce(o.exclure, false) = false
 
     union all
@@ -130,7 +132,7 @@ iso_sample as (
     left join overrides_spe as o on b_n.cantine_siret = o.siret
     where t.prev_1 = t.annee - 1
       and t.prev_2 = t.annee - 2
-      and b_n.cantine_line_ministry is not null
+      and nullif(b_n.cantine_line_ministry, '') is not null
       and coalesce(o.exclure, false) = false
 ),
 
