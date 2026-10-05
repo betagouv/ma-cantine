@@ -23,7 +23,7 @@ sources:
         description: Raw waste measurements dumped from the production database.
       - name: oauth2_applications_raw
         description: Raw OAuth2 applications (API clients) dumped from the production database (without client_secret).
-      - name: oauth2_application_extras_raw
+      - name: oauth2_applications_extra_raw
         description: Raw OAuth2 applications extra fields (company_name...) dumped from the production database (join on application_id).
       - name: oauth2_access_tokens_raw
         description: Raw OAuth2 access tokens dumped from the production database (without token & token_checksum).

@@ -268,8 +268,8 @@ def get_raw_analysis_datasets():
         "oauth2_applications_raw_analysis": ETL_ANALYSIS_RAW(
             "oauth2_applications_raw", get_application_model().objects.all(), exclude_columns=["client_secret"]
         ),
-        "oauth2_application_extras_raw_analysis": ETL_ANALYSIS_RAW(
-            "oauth2_application_extras_raw", Oauth2ProviderApplicationExtra.objects.all()
+        "oauth2_applications_extra_raw_analysis": ETL_ANALYSIS_RAW(
+            "oauth2_applications_extra_raw", Oauth2ProviderApplicationExtra.objects.all()
         ),
         "oauth2_access_tokens_raw_analysis": ETL_ANALYSIS_RAW(
             "oauth2_access_tokens_raw",
