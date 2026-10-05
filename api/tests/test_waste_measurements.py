@@ -74,7 +74,7 @@ class WasteMeasurementsListApiTest(APITestCase):
         )
         WasteMeasurementFactory()  # will not be returned
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -236,7 +236,7 @@ class WasteMeasurementsCreateApiTest(APITestCase):
             "leftovers_total_mass": 30.3,
         }
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.post(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -511,7 +511,7 @@ class WasteMeasurementsDetailApiTest(APITestCase):
         user, token = get_oauth2_token("waste_measurements:read")
         self.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -620,7 +620,7 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.canteen.managers.add(user)
         payload = {"mealCount": 200}
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -64,7 +64,7 @@ class DiagnosticListApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -122,7 +122,7 @@ class DiagnosticCreateApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -601,7 +601,7 @@ class DiagnosticDetailApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:read")
         self.diagnostic.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -729,7 +729,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.diagnostic.canteen.managers.add(user)
 
         payload = {"year": 2021}
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -1016,7 +1016,7 @@ class DiagnosticListRecapApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -1311,7 +1311,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

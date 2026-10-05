@@ -50,13 +50,13 @@ class LoggedUserApiTest(APITestCase):
 
     def test_wrong_scope_user_info_call(self):
         _, token = get_oauth2_token("canteen:read")
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(reverse("user_info"))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_correct_scope_logged_user_call(self):
         _, token = get_oauth2_token("user:read")
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(reverse("user_info"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -162,7 +162,7 @@ class LoggedUserApiTest(APITestCase):
 
     def test_cannot_update_user_with_wrong_oauth2_token(self):
         user, token = get_oauth2_token("user:read")
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         payload = {
             "source": "OTHER",
             "otherSourceDescription": "Narnia",

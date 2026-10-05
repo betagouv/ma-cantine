@@ -57,7 +57,7 @@ class CanteenLogoUploadApiTest(APITestCase):
     def test_can_upload_logo_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
         image_base_64 = None
         with open(image_path, "rb") as image:
@@ -171,7 +171,7 @@ class CanteenLogoRetrieveApiTest(APITestCase):
     def test_can_retrieve_logo_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
 
         # First upload a logo
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
@@ -260,7 +260,7 @@ class CanteenLogoDeleteApiTest(APITestCase):
     def test_can_delete_logo_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
 
         # First upload a logo
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
@@ -355,7 +355,7 @@ class CanteenImagesListApiTest(APITestCase):
     def test_can_get_canteen_images_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
 
         response = self.client.get(self.url)
 
@@ -418,7 +418,7 @@ class CanteenImagesDetailApiTest(APITestCase):
     def test_can_get_canteen_image_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
 
         response = self.client.get(self.url)
 
@@ -476,7 +476,7 @@ class CanteenImagesCreateApiTest(APITestCase):
     def test_can_create_canteen_image_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
         image_base_64 = None
         with open(image_path, "rb") as image:
@@ -575,7 +575,7 @@ class CanteenImagesUpdateApiTest(APITestCase):
     def test_can_update_canteen_image_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         self.assertEqual(self.canteen.images.first().alt_text, None)
 
         payload = {
@@ -666,7 +666,7 @@ class CanteenImagesDeleteApiTest(APITestCase):
     def test_can_delete_canteen_image_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.delete(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

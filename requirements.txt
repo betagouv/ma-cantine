@@ -203,7 +203,7 @@ django-magicauth==0.8
     # via ma-cantine
 django-modelcluster==6.5
     # via wagtail
-django-oauth-toolkit==3.0.1
+django-oauth-toolkit==3.4.1
     # via ma-cantine
 django-otp==1.7.3
     # via ma-cantine
@@ -643,6 +643,7 @@ urllib3==2.8.0
     # via
     #   botocore
     #   django-anymail
+    #   django-oauth-toolkit
     #   requests
     #   sentry-sdk
     #   sib-api-v3-sdk

@@ -50,7 +50,7 @@ class CanteenManagersListApiTest(APITestCase):
     def test_canteen_managers_list_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
 
         response = self.client.get(self.url)
 
@@ -112,7 +112,7 @@ class CanteenManagersInvitationsListApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
         ManagerInvitationFactory(canteen=self.canteen, email="new.USER@example.com")
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
 
         response = self.client.get(self.url)
 

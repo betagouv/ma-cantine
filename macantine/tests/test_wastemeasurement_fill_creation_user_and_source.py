@@ -18,7 +18,7 @@ class WastemeasurementFillCreationUserAndSourceTest(APITestCase):
     def test_fill_for_waste_measurement_created_from_api(self):
         user, token = get_oauth2_token("waste_measurements:create")
         self.canteen.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.post(self.url, self.WM_PAYLOAD)
         wm_id = response.json()["id"]
 

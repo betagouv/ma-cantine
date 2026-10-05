@@ -262,7 +262,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         self.canteen_site.managers.add(user)
 
-        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token.token}")
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_create",
@@ -578,7 +578,7 @@ class DiagnosticTeledeclarationCancelView(APITestCase):
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         diagnostic.teledeclare(user)
 
-        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token.token}")
         response = self.client.post(
             reverse(
                 "diagnostic_teledeclaration_cancel",

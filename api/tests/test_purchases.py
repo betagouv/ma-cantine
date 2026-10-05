@@ -78,7 +78,7 @@ class PurchaseCreateApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -365,7 +365,7 @@ class PurchaseDetailApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -498,7 +498,7 @@ class PurchaseUpdateApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.patch(self.url, {"description": "Updated"}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -553,7 +553,7 @@ class PurchaseDeleteApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.delete(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
