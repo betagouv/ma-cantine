@@ -69,22 +69,25 @@ PERIODIC_TASKS = {
     "update_brevo_contacts": {"schedule": nightly_0_30},
     #########################################################
     # Dataset exports
-    "export_dataset_raw_analysis": {"schedule": nightly_1},
+    "export_dataset_raw_analysis": {"schedule": nightly_1, "prod_only": True},
     "export_dataset_canteen_analysis": {"schedule": nightly_2},  # every_6_hours_20 during campaigns
     # Campaign-related (commented out outside of campaigns)
     # "export_dataset_td_analysis": {"schedule": every_6_hours_0},
     "export_dataset_canteen_opendata": {"schedule": nightly_2},  # every_6_hours_20 during campaigns
     #########################################################
     # DBT (Metabase) — depends on export_dataset_raw_analysis (nightly_1)
-    "dbt_run": {"schedule": nightly_1_30},
+    "dbt_run": {"schedule": nightly_1_30, "prod_only": True},
     #########################################################
     # History cleanup
     "delete_old_historical_records": {"schedule": nightly_3},
 }
 
+IS_PROD = os.getenv("ENVIRONMENT") == "prod"
+
 app.conf.beat_schedule = {
     name: {"task": f"macantine.tasks.{name}", "schedule": config["schedule"]}
     for name, config in PERIODIC_TASKS.items()
+    if IS_PROD or not config.get("prod_only")
 }
 
 app.conf.timezone = "Europe/Paris"
