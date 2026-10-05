@@ -68,7 +68,6 @@ const goToStep = (page) => router.push(page)
       {{ accordion.title }}
       <DsfrBadge v-if="hasErrors" :label="errorBadge" type="error" class="fr-ml-2w" />
     </template>
-    <DsfrButton label="Modifier ces données" @click="goToStep(accordion.to)" icon="ri-pencil-line" secondary size="sm" class="fr-mb-2w" />
     <CanteenDisplayInformations
       v-if="accordion.isCanteenFields"
       :canteenInformation="canteenInformations"
@@ -89,5 +88,8 @@ const goToStep = (page) => router.push(page)
         <p v-else>{{ cell }}</p>
       </template>
     </DsfrDataTable>
+    <div class="ma-cantine--flex-end fr-mt-2w">
+      <DsfrButton @click="goToStep(accordion.to)" secondary label="Modifier ces données" icon="ri-pencil-line" size="sm" />
+    </div>
   </DsfrAccordion>
 </template>
