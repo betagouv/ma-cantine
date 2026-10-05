@@ -38,7 +38,7 @@ attrs==26.1.0
     #   aiohttp
     #   jsonschema
     #   referencing
-authlib==1.6.10
+authlib==1.6.12
     # via ma-cantine
 babel==2.18.0
     # via agate
@@ -472,7 +472,7 @@ pyhanko-certvalidator==0.32.0
     #   xhtml2pdf
 pyparsing==3.3.2
     # via pip-requirements-parser
-pypdf==6.17.0
+pypdf==6.19.0
     # via xhtml2pdf
 python-bidi==0.6.11
     # via xhtml2pdf
@@ -526,7 +526,7 @@ reportlab==4.5.1
     # via
     #   svglib
     #   xhtml2pdf
-requests==2.32.4
+requests==2.33.0
     # via
     #   cachecontrol
     #   dbt-common
@@ -637,7 +637,7 @@ uritemplate==4.2.0
     # via drf-spectacular
 uritools==6.1.3
     # via pyhanko-certvalidator
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   botocore
     #   django-anymail
@@ -662,7 +662,7 @@ webencodings==0.6.1
     #   tinycss2
 willow==1.11.0
     # via wagtail
-xhtml2pdf==0.2.17
+xhtml2pdf==0.2.21
     # via ma-cantine
 yarl==1.24.5
     # via aiohttp
