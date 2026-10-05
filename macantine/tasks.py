@@ -274,7 +274,9 @@ def get_raw_analysis_datasets():
             exclude_columns=["token", "token_checksum"],
         ),
         "oauth2_refresh_tokens_raw_analysis": ETL_ANALYSIS_RAW(
-            "oauth2_refresh_tokens_raw", get_refresh_token_model().objects.all(), exclude_columns=["token"]
+            "oauth2_refresh_tokens_raw",
+            get_refresh_token_model().objects.all(),
+            exclude_columns=["token", "token_checksum"],
         ),
     }
 

@@ -28,10 +28,10 @@ def get_oauth2_token(scope):
         client_type="confidential",
         authorization_grant_type="password",
     )
-    token = user.oauth2_provider_accesstoken.create(
+    access_token = user.oauth2_provider_accesstoken.create(
         expires=expiration, token="token", scope=scope, application=application
     )
-    return (user, token)
+    return (user, access_token)
 
 
 def assert_import_failure_created(self, user, type, file_path):

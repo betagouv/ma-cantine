@@ -105,7 +105,7 @@ class CanteenGroupeSatellitesListApiTest(APITestCase):
     def test_canteen_groupe_satellites_list_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen_groupe_1.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
 
         url = reverse(
             "canteen_groupe_satellites_list",
@@ -335,7 +335,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:write")
         self.canteen_groupe_1.managers.add(user)
         self.canteen_groupe_2.managers.add(user)
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
 
         # Link self.canteen_satellite_0 to groupe_1
         url = reverse(

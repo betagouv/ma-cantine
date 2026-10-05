@@ -42,7 +42,7 @@ class CanteenListApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:read")
         canteen = CanteenFactory(managers=[user])
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(reverse("user_canteens"))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -149,7 +149,7 @@ class CanteenListPreviewApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:read")
         canteen = CanteenFactory(managers=[user])
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(reverse("user_canteen_previews"))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -467,7 +467,7 @@ class CanteenDetailCheckApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -551,7 +551,7 @@ class CanteenCreateApiTest(APITestCase):
 
         user, token = get_oauth2_token("canteen:write")
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.post(self.url, CANTEEN_SITE_DEFAULT_PAYLOAD)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

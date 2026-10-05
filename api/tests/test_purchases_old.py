@@ -57,7 +57,7 @@ class PurchaseOldListApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -315,7 +315,7 @@ class PurchaseOldDetailApiTest(APITestCase):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
-        self.client.credentials(Authorization=f"Bearer {token}")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
