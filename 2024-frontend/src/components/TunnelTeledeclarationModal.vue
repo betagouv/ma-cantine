@@ -46,7 +46,10 @@ const teledeclare = () => {
     .teledeclareDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
     .then((response) => {
       if (response?.status === 'error' || response instanceof Error) displayError(response)
-      else router.push({ name: 'GestionnaireTunnelApproTeledeclares' })
+      else {
+        storeTeledeclaration.setDiagnostic({ ...diagnostic.value, isTeledeclared: true })
+        router.push({ name: 'GestionnaireTunnelApproTeledeclares' })
+      }
     })
     .catch((e) =>  displayError(e))
     .finally(() => {

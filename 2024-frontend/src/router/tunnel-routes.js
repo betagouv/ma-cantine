@@ -14,6 +14,21 @@ import GestionnaireTunnelPlastique from "@/views/GestionnaireTunnelPlastique.vue
 
 import LayoutTunnelTeledeclaration from "@/layouts/LayoutTunnelTeledeclaration.vue"
 
+/* Redirections */
+import { useStoreTeledeclaration } from "@/stores/teledeclaration"
+
+const redirectIfTeledeclared = (to) => {
+  const teledeclarationStore = useStoreTeledeclaration()
+  if (!teledeclarationStore.isTeledeclared) return true
+  return { name: "GestionnaireTunnelApproTeledeclares", params: to.params }
+}
+
+const redirectIfNotTeledeclared = (to) => {
+  const teledeclarationStore = useStoreTeledeclaration()
+  if (teledeclarationStore.isTeledeclared) return true
+  return { name: "GestionnaireTunnelApproRecapitulatif", params: to.params }
+}
+
 /* Route */
 const tunnelRoutes = {
   path: "teledeclaration",
@@ -47,6 +62,7 @@ const tunnelRoutes = {
           path: "informations",
           name: "GestionnaireTunnelApproInformations",
           component: GestionnaireTunnelApproInformations,
+          beforeEnter: redirectIfTeledeclared,
           meta: {
             title: "Informations",
             next: "GestionnaireTunnelApproCouverts",
@@ -57,6 +73,7 @@ const tunnelRoutes = {
           path: "couverts-annuels",
           name: "GestionnaireTunnelApproCouverts",
           component: GestionnaireTunnelApproCouverts,
+          beforeEnter: redirectIfTeledeclared,
           meta: {
             title: "Couverts annuels",
             previous: "GestionnaireTunnelApproInformations",
@@ -68,6 +85,7 @@ const tunnelRoutes = {
           path: "mode-saisie",
           name: "GestionnaireTunnelApproSaisie",
           component: GestionnaireTunnelApproSaisie,
+          beforeEnter: redirectIfTeledeclared,
           meta: {
             title: "Mes approvisionnements : mode de saisie",
             previous: "GestionnaireTunnelApproCouverts",
@@ -79,6 +97,7 @@ const tunnelRoutes = {
           path: "egalim",
           name: "GestionnaireTunnelApproEgalim",
           component: GestionnaireTunnelApproEgalim,
+          beforeEnter: redirectIfTeledeclared,
           meta: {
             title: "EGalim",
             previous: "GestionnaireTunnelApproSaisie",
@@ -90,6 +109,7 @@ const tunnelRoutes = {
           path: "origine-france-union-europeenne",
           name: "GestionnaireTunnelApproOrigine",
           component: GestionnaireTunnelApproOrigine,
+          beforeEnter: redirectIfTeledeclared,
           meta: {
             title: "Origine France et UE",
             previous: "GestionnaireTunnelApproEgalim",
@@ -101,6 +121,7 @@ const tunnelRoutes = {
           path: "local-circuit-court",
           name: "GestionnaireTunnelApproLocalCircuitCourt",
           component: GestionnaireTunnelApproLocalCircuitCourt,
+          beforeEnter: redirectIfTeledeclared,
           meta: {
             title: "« Local » et circuit court",
             previous: "GestionnaireTunnelApproOrigine",
@@ -112,6 +133,7 @@ const tunnelRoutes = {
           path: "recapitulatif",
           name: "GestionnaireTunnelApproRecapitulatif",
           component: GestionnaireTunnelApproRecapitulatif,
+          beforeEnter: redirectIfTeledeclared,
           meta: {
             title: "Recapitulatif des approvisionnements",
             previous: "GestionnaireTunnelApproLocalCircuitCourt",
@@ -122,6 +144,7 @@ const tunnelRoutes = {
           path: "teledeclares",
           name: "GestionnaireTunnelApproTeledeclares",
           component: GestionnaireTunnelApproTeledeclares,
+          beforeEnter: redirectIfNotTeledeclared,
           meta: {
             title: "Approvisionnements téléclarés",
             hideTopNav: true,
