@@ -747,6 +747,7 @@ class OAuth2RawETLAnalysisTest(TestCase):
         datasets = get_raw_analysis_datasets()
         for key in [
             "oauth2_applications_raw_analysis",
+            "oauth2_applications_extra_raw_analysis",
             "oauth2_access_tokens_raw_analysis",
             "oauth2_refresh_tokens_raw_analysis",
         ]:
