@@ -124,7 +124,7 @@ const tunnelRoutes = {
           component: GestionnaireTunnelApproTeledeclared,
           meta: {
             title: "Approvisionnements téléclarés",
-            hideNav: true,
+            hideTopNav: true,
           },
         },
       ]

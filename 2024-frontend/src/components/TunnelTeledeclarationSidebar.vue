@@ -8,7 +8,7 @@ import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationIconCheck from "@/components/TunnelTeledeclarationIconCheck.vue"
 import documentation from "@/data/documentation.json"
 
-const props = defineProps(["canteen", "nav", "active"])
+const props = defineProps(["canteen", "nav", "active", "displayTeledeclaredBadge"])
 const router = useRouter()
 const emit = defineEmits(["save"])
 
@@ -51,7 +51,8 @@ const goTo = (to) => router.push(to)
         <AppSeparator class="fr-mb-2w" />
         <div>
           <h3 class="fr-text--sm ma-cantine--text-uppercase fr-mb-1w">Approvisionnements</h3>
-          <nav class="tunnel-teledeclaration-sidebar__nav">
+          <DsfrBadge v-if="displayTeledeclaredBadge" label="Télédéclaré" type="success" />
+          <nav v-else class="tunnel-teledeclaration-sidebar__nav">
             <DsfrButton
               v-for="link in approvisementsNav"
               :key="link.to.name"
