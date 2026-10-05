@@ -28,8 +28,14 @@ export default defineConfig({
     manifest: "manifest.json",
     outDir: path.resolve(rootDir, "../build"),
     emptyOutDir: true,
-    rollupOptions: {
+    rolldownOptions: {
       input: path.resolve(rootDir, "src/main.js"),
+    },
+  },
+  css: {
+    lightningcss: {
+      // DSFR CSS contains legacy IE "media zero" hacks (`min-width: 0\0`) rejected by LightningCSS
+      errorRecovery: true,
     },
   },
   resolve: {
