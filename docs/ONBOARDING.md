@@ -15,6 +15,7 @@
 - [Visual Studio Code](#visual-studio-code)
 - [Git & Github](#git--github)
 - [Déploiement](#d%C3%A9ploiement)
+- [Autres commandes utiles](#autres-commandes-utiles)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -410,9 +411,38 @@ Vous pourrez modifier les notes dans un éditeur pour être plus rapide.
 - supprimer la partie "by @username in https://..."
 - faire n'importe quel autre changement pour rendre la liste facilement comprensible par tout le monde
 
-### Autres commandes utiles
+## Autres commandes utiles
 
-#### Installer un package
+### Installer un package backend
 
-- Backend : `uv add <package>`
-- Frontend : `npm install <package>`
+```bash
+uv add <nom-du-package>
+```
+
+### Installer un package frontend
+
+```bash
+npm install <nom-du-package>
+```
+
+### Mettre à jour les dépendances backend
+
+```bash
+uv pip list --outdated
+# et aussi
+uv run pip-audit --strict --no-deps -r <(uv export --no-hashes)
+```
+
+1. Vérifier si le package est une dépendance directe (listée dans `pyproject.toml`) ou transitive :
+   `uv tree --invert --package <nom-du-package>` affiche la chaîne de dépendances qui l'installe
+2. Dépendance directe : mettre à jour le pin dans `pyproject.toml` (en préférant la version de correctif la plus proche plutôt qu'un saut de version majeure), puis :
+   ```bash
+   uv lock
+   uv sync
+   ```
+3. Dépendance transitive : si le package qui l'installe n'impose pas de borne supérieure (vérifiable avec `python -c "from importlib.metadata import metadata; print(metadata('<parent>').get_all('Requires-Dist'))"`), pas besoin de toucher à `pyproject.toml` :
+   ```bash
+   uv lock --upgrade-package <nom-du-package>
+   uv sync
+   ```
+4. Relancer les tests concernés avant de commit (voir [Lancer les tests](#lancer-les-tests)), en particulier si la mise à jour change une version majeure
