@@ -6,7 +6,7 @@ import GestionnaireTunnelApproEgalim from "@/views/GestionnaireTunnelApproEgalim
 import GestionnaireTunnelApproOrigine from "@/views/GestionnaireTunnelApproOrigine.vue"
 import GestionnaireTunnelApproLocalCircuitCourt from "@/views/GestionnaireTunnelApproLocalCircuitCourt.vue"
 import GestionnaireTunnelApproRecapitulatif from "@/views/GestionnaireTunnelApproRecapitulatif.vue"
-import GestionnaireTunnelApproTeledeclared from "@/views/GestionnaireTunnelApproTeledeclared.vue"
+import GestionnaireTunnelApproTeledeclares from "@/views/GestionnaireTunnelApproTeledeclares.vue"
 import GestionnaireTunnelConvives from "@/views/GestionnaireTunnelConvives.vue"
 import GestionnaireTunnelGaspillage from "@/views/GestionnaireTunnelGaspillage.vue"
 import GestionnaireTunnelVegetarien from "@/views/GestionnaireTunnelVegetarien.vue"
@@ -119,9 +119,9 @@ const tunnelRoutes = {
           },
         },
         {
-          path: "teledeclare",
-          name: "GestionnaireTunnelApproTeledeclared",
-          component: GestionnaireTunnelApproTeledeclared,
+          path: "teledeclares",
+          name: "GestionnaireTunnelApproTeledeclares",
+          component: GestionnaireTunnelApproTeledeclares,
           meta: {
             title: "Approvisionnements téléclarés",
             hideTopNav: true,
