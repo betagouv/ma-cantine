@@ -117,7 +117,6 @@ const goTo = (page) => {
         <TunnelTeledeclarationTopNav v-if="!hideTopNav" @save="save" />
         <div class="fr-mt-2w fr-pl-0 fr-pl-md-4w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
-          <h1 v-else>{{ routeTitle }}</h1>
           <RouterView />
         </div>
       </div>

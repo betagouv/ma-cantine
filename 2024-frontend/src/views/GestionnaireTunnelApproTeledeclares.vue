@@ -13,31 +13,30 @@ const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Redirects */
-const buttons = computed(() => {
-  const buttonsGroup = []
-  if (!canteenInformations.value.isGroupe) {
-    buttonsGroup.push({
-      label: 'Voir ma page publique',
-      secondary: true,
-      icon: 'ri-global-line',
+const topButtons = computed(() => {
+  return [
+    {
+      label: 'Quitter la télédéclaration',
+      icon: 'ri-close-line',
+      tertiary: true,
       onclick: () => {
-        router.push({ name: 'GestionnaireCantinePagePublique' })
+        router.push({ name: 'GestionnaireCantineTeledeclarationEnCours' })
       },
-    })
-  }
-  buttonsGroup.push({
-    label: 'Compléter les volets thématiques',
-    icon: 'ri-arrow-right-line',
-    iconRight: true,
-    onclick: () => {
-      router.push({ name: 'GestionnaireTunnelVoletsThematiques' })
     },
-  })
-  return buttonsGroup
+    {
+      label: 'Compléter les volets thématiques',
+      icon: 'ri-arrow-right-line',
+      iconRight: true,
+      onclick: () => {
+        router.push({ name: 'GestionnaireTunnelConvives' })
+      },
+    }
+  ]
 })
 
 </script>
 <template>
+  <DsfrButtonGroup :buttons="topButtons" inlineLayoutWhen="always" align="right" class="fr-mb-2w" />
   <DsfrAlert
     title="Votre télédéclaration a été prise en compte"
     icon="ri-checkbox-circle-fill"
@@ -61,5 +60,5 @@ const buttons = computed(() => {
       <span class="ma-cantine--bold">Contribuer de manière anonyme à l’Observatoire EGalim</span> en restauration collective et au bilan statistique annuel, transmis chaque année au Parlement.
     </li>
   </ul>
-  <DsfrButtonGroup :buttons="buttons" inlineLayoutWhen="always" align="right" />
+  <DsfrButton v-if="!canteenInformations.isGroupe" secondary label="Voir ma page publique" icon="ri-global-line" @click="router.push({ name: 'CanteenPage' })" />
 </template>
