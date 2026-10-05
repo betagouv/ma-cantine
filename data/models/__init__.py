@@ -21,6 +21,7 @@ from .importtype import ImportType  # noqa: F401
 from .importfailure import ImportFailure  # noqa: F401
 from .wasteaction import WasteAction  # noqa: F401
 from .resourceaction import ResourceAction  # noqa: F401
+from .oauth2 import Oauth2ProviderApplicationExtra  # noqa: F401
 # NOTE: slowly stop using this file for imports
 # from .geo import Department, Region  # noqa: F401
 # from .creation_source import CreationSource  # noqa: F401
