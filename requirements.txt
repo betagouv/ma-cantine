@@ -114,7 +114,7 @@ cyclonedx-python-lib==11.12.0
     # via pip-audit
 daff==1.4.2
     # via dbt-core
-datacompy==1.0.0a5
+datacompy==1.1.0
     # via ma-cantine
 dbt-adapters==1.24.5
     # via
@@ -349,7 +349,7 @@ networkx==3.6.1
     # via dbt-core
 nodeenv==1.10.0
     # via pre-commit
-numpy==2.4.1
+numpy==2.4.2
     # via
     #   datacompy
     #   ma-cantine
@@ -378,7 +378,7 @@ packaging==26.3
     #   kombu
     #   pip-audit
     #   pip-requirements-parser
-pandas==3.0.0
+pandas==3.0.6
     # via
     #   datacompy
     #   ma-cantine

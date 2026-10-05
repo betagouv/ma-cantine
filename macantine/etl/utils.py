@@ -185,5 +185,5 @@ def compare_datasets(table_version_A, table_version_B):
     print(f"Version B: {table_version_B} \n")
     dfA = warehouse.read_dataframe(table_version_A)
     dfB = warehouse.read_dataframe(table_version_B)
-    compare = datacompy.Compare(dfA, dfB, on_index=True)
+    compare = datacompy.PandasCompare(dfA, dfB, on_index=True)
     print(compare.report())
