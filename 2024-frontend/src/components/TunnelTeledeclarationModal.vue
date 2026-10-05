@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
+import { useRouter } from 'vue-router'
 import { useRootStore } from '@/stores/root'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import diagnosticServices from '@/services/diagnostics'
@@ -8,11 +9,15 @@ import diagnosticServices from '@/services/diagnostics'
 const opened = defineModel(['opened'])
 const emit = defineEmits(['close'])
 const rootStore = useRootStore()
+const router = useRouter()
+
+/* Teledeclaration */
 const storeTeledeclaration = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(storeTeledeclaration)
+
+/* Modale */
 const checkBoxeConfirmed = ref(false)
 const loading = ref(false)
-
 const modalActions = computed(() => [
   {
     label: loading.value ? 'Télédéclaration en cours...' : 'Télédéclarer ces données',
@@ -27,13 +32,13 @@ const modalActions = computed(() => [
   },
 ])
 
-/* Actions */
 const closeModal = () => {
   checkBoxeConfirmed.value = false
   loading.value = false
   emit('close')
 }
 
+/* Teledeclare */
 const teledeclare = () => {
   if (!diagnostic.value) return
   loading.value = true
@@ -41,7 +46,7 @@ const teledeclare = () => {
     .teledeclareDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
     .then((response) => {
       if (response?.status === 'error' || response instanceof Error) displayError(response)
-      else displaySuccess()
+      else router.push({ name: 'GestionnaireTunnelApproTeledeclared' })
     })
     .catch((e) =>  displayError(e))
     .finally(() => {
@@ -52,14 +57,6 @@ const teledeclare = () => {
 const displayError = (error) => {
   rootStore.notifyServerError(error)
   loading.value = false
-}
-
-const displaySuccess = () => {
-  rootStore.notify({
-    title: 'Télédéclaration prise en compte',
-    status: 'success',
-  })
-  closeModal()
 }
 </script>
 

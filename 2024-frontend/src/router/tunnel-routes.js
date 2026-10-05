@@ -6,6 +6,7 @@ import GestionnaireTunnelApproEgalim from "@/views/GestionnaireTunnelApproEgalim
 import GestionnaireTunnelApproOrigine from "@/views/GestionnaireTunnelApproOrigine.vue"
 import GestionnaireTunnelApproLocalCircuitCourt from "@/views/GestionnaireTunnelApproLocalCircuitCourt.vue"
 import GestionnaireTunnelApproRecapitulatif from "@/views/GestionnaireTunnelApproRecapitulatif.vue"
+import GestionnaireTunnelApproTeledeclared from "@/views/GestionnaireTunnelApproTeledeclared.vue"
 import GestionnaireTunnelConvives from "@/views/GestionnaireTunnelConvives.vue"
 import GestionnaireTunnelGaspillage from "@/views/GestionnaireTunnelGaspillage.vue"
 import GestionnaireTunnelVegetarien from "@/views/GestionnaireTunnelVegetarien.vue"
@@ -115,6 +116,15 @@ const tunnelRoutes = {
             title: "Recapitulatif des approvisionnements",
             previous: "GestionnaireTunnelApproLocalCircuitCourt",
             stepper: "approvisionnements",
+          },
+        },
+        {
+          path: "teledeclare",
+          name: "GestionnaireTunnelApproTeledeclared",
+          component: GestionnaireTunnelApproTeledeclared,
+          meta: {
+            title: "Approvisionnements téléclarés",
+            hideNav: true,
           },
         },
       ]
