@@ -446,3 +446,15 @@ uv run pip-audit --strict --no-deps -r <(uv export --no-hashes)
    uv sync
    ```
 4. Relancer les tests concernés avant de commit (voir [Lancer les tests](#lancer-les-tests)), en particulier si la mise à jour change une version majeure
+
+### Mettre à jour le sommaire (table of contents) d'un fichier Markdown (.md)
+
+Ce fichier utilise [doctoc](https://github.com/thlorenz/doctoc) pour générer automatiquement le sommaire en haut du fichier (entre les balises `<!-- START/END doctoc -->`). Après avoir ajouté ou renommé un titre, relancez :
+
+```bash
+doctoc docs/ONBOARDING.md
+# minimaliste
+doctoc docs/ONBOARDING.md --maxlevel 2
+```
+
+> `--maxlevel 2` limite le sommaire aux titres de niveau 2 (`##`), pour matcher le format existant : sans cette option, doctoc inclut aussi tous les sous-titres et génère un diff bien plus gros que nécessaire.
