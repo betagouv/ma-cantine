@@ -38,7 +38,7 @@ attrs==26.1.0
     #   aiohttp
     #   jsonschema
     #   referencing
-authlib==1.6.10
+authlib==1.8.0
     # via ma-cantine
 babel==2.18.0
     # via agate
@@ -56,7 +56,7 @@ botocore==1.43.88
     #   s3transfer
 cachecontrol==0.14.4
     # via pip-audit
-celery==5.4.0
+celery==5.6.3
     # via
     #   django-celery-results
     #   ma-cantine
@@ -104,6 +104,7 @@ colorama==0.4.6
 cryptography==50.0.1
     # via
     #   authlib
+    #   joserfc
     #   jwcrypto
     #   pyhanko
     #   pyhanko-certvalidator
@@ -180,15 +181,15 @@ django==5.2.17
     #   wagtail
 django-anymail==12.0
     # via ma-cantine
-django-celery-results==2.5.1
+django-celery-results==2.6.0
     # via ma-cantine
-django-ckeditor==6.7.1
+django-ckeditor==6.7.3
     # via ma-cantine
 django-csp==3.8
     # via ma-cantine
 django-debug-toolbar==4.4.6
     # via ma-cantine
-django-dirtyfields==1.9.8
+django-dirtyfields==1.9.9
     # via ma-cantine
 django-extensions==4.1
     # via ma-cantine
@@ -204,13 +205,13 @@ django-modelcluster==6.5
     # via wagtail
 django-oauth-toolkit==3.0.1
     # via ma-cantine
-django-otp==1.5.2
+django-otp==1.7.3
     # via ma-cantine
 django-permissionedforms==0.1
     # via wagtail
-django-simple-history==3.7.0
+django-simple-history==3.13.0
     # via ma-cantine
-django-storages==1.14.4
+django-storages==1.14.6
     # via ma-cantine
 django-stubs-ext==6.1.0
     # via django-tasks
@@ -220,7 +221,7 @@ django-tasks==0.7.0
     # via wagtail
 django-treebeard==4.8.0
     # via wagtail
-django-vite==3.1.0
+django-vite==3.2.0
     # via ma-cantine
 djangorestframework==3.18.1
     # via
@@ -235,11 +236,11 @@ draftjs-exporter==5.2.0
     # via wagtail
 drf-base64==2.0
     # via ma-cantine
-drf-excel==2.4.1
+drf-excel==2.6.0
     # via ma-cantine
-drf-spectacular==0.29.0
+drf-spectacular==0.30.0
     # via ma-cantine
-drf-spectacular-sidecar==2026.1.1
+drf-spectacular-sidecar==2026.10.1
     # via ma-cantine
 et-xmlfile==2.0.0
     # via openpyxl
@@ -260,9 +261,7 @@ frozenlist==1.8.0
     # via
     #   aiohttp
     #   aiosignal
-greenlet==3.5.5 ; (python_full_version < '3.13' and platform_machine == 'AMD64') or (python_full_version < '3.13' and platform_machine == 'WIN32') or (python_full_version < '3.13' and platform_machine == 'aarch64') or (python_full_version < '3.13' and platform_machine == 'amd64') or (python_full_version < '3.13' and platform_machine == 'ppc64le') or (python_full_version < '3.13' and platform_machine == 'win32') or (python_full_version < '3.13' and platform_machine == 'x86_64')
-    # via sqlalchemy
-html2text==2024.2.26
+html2text==2025.4.15
     # via ma-cantine
 html5lib==1.1
     # via xhtml2pdf
@@ -297,6 +296,8 @@ jmespath==1.1.0
     # via
     #   boto3
     #   botocore
+joserfc==1.7.5
+    # via authlib
 jsonschema==4.26.0
     # via
     #   dbt-common
@@ -472,7 +473,7 @@ pyhanko-certvalidator==0.32.0
     #   xhtml2pdf
 pyparsing==3.3.2
     # via pip-requirements-parser
-pypdf==6.17.0
+pypdf==6.19.0
     # via xhtml2pdf
 python-bidi==0.6.11
     # via xhtml2pdf
@@ -490,7 +491,7 @@ python-discovery==1.6.0
     # via virtualenv
 python-disposable==0.0.106
     # via ma-cantine
-python-dotenv==1.2.2
+python-dotenv==1.2.4
     # via
     #   dbt-core
     #   ma-cantine
@@ -526,7 +527,7 @@ reportlab==4.5.1
     # via
     #   svglib
     #   xhtml2pdf
-requests==2.32.4
+requests==2.34.2
     # via
     #   cachecontrol
     #   dbt-common
@@ -548,7 +549,7 @@ rpds-py==2026.6.3
 ruff==0.16.6
 s3transfer==0.19.2
     # via boto3
-sentry-sdk==2.10.0
+sentry-sdk==2.71.0
     # via ma-cantine
 sib-api-v3-sdk==7.6.0
     # via ma-cantine
@@ -563,7 +564,7 @@ sortedcontainers==2.4.0
     # via cyclonedx-python-lib
 soupsieve==2.9.2
     # via beautifulsoup4
-sqlalchemy==2.0.36
+sqlalchemy==2.1.3
     # via ma-cantine
 sqlfluff==4.3.0
 sqlglot==30.18.0
@@ -626,18 +627,19 @@ typing-inspection==0.4.4
 tzdata==2026.3
     # via
     #   agate
-    #   celery
     #   django
     #   kombu
     #   pandas
     #   tzlocal
 tzlocal==5.4.4
-    # via pyhanko
+    # via
+    #   celery
+    #   pyhanko
 uritemplate==4.2.0
     # via drf-spectacular
 uritools==6.1.3
     # via pyhanko-certvalidator
-urllib3==2.7.0
+urllib3==2.8.0
     # via
     #   botocore
     #   django-anymail
@@ -662,7 +664,7 @@ webencodings==0.6.1
     #   tinycss2
 willow==1.11.0
     # via wagtail
-xhtml2pdf==0.2.17
+xhtml2pdf==0.2.21
     # via ma-cantine
 yarl==1.24.5
     # via aiohttp
