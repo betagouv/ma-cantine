@@ -66,14 +66,14 @@ PERIODIC_TASKS = {
     "update_user_data": {"schedule": nightly_0_20},
     #########################################################
     # Brevo
-    "update_brevo_contacts": {"schedule": nightly_0_30},
+    "update_brevo_contacts": {"schedule": nightly_0_30, "prod_only": True},
     #########################################################
     # Dataset exports
     "export_dataset_raw_analysis": {"schedule": nightly_1, "prod_only": True},
-    "export_dataset_canteen_analysis": {"schedule": nightly_2},  # every_6_hours_20 during campaigns
+    "export_dataset_canteen_analysis": {"schedule": nightly_2, "prod_only": True},  # every_6_hours_20 during campaigns
     # Campaign-related (commented out outside of campaigns)
     # "export_dataset_td_analysis": {"schedule": every_6_hours_0},
-    "export_dataset_canteen_opendata": {"schedule": nightly_2},  # every_6_hours_20 during campaigns
+    "export_dataset_canteen_opendata": {"schedule": nightly_2, "prod_only": True},  # every_6_hours_20 during campaigns
     #########################################################
     # DBT (Metabase) — depends on export_dataset_raw_analysis (nightly_1)
     "dbt_run": {"schedule": nightly_1_30, "prod_only": True},
