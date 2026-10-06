@@ -42,29 +42,31 @@ const diversificationIconAlt = computed(() => 'Volet diversification des protéi
 const plasticIconAlt = computed(() => 'Volet réductions du plastique non complété')
 </script>
 <template>
-  <div
-    v-if="isInTeledeclaration || isInCorrection"
-    :class="{ 'fr-sidemenu__item--active': teledeclarationEnCoursActive }"
-    class="gestionnaire-teledeclaration-nav fr-sidemenu__item"
-  >
-    <router-link :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" class="gestionnaire-teledeclaration-nav__bloc fr-sidemenu__link">
-      <AppBadgeDiagnostic :action="currentCanteenAction" />
-      <span>{{ isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}` }}</span>
-      <span class="gestionnaire-teledeclaration-nav__macarons-container">
-        <img :src="approIconLink" :alt="approIconAlt">
-        <img :src="infoIconLink" :alt="infoIconAlt">
-        <img :src="wasteIconLink" :alt="wasteIconAlt">
-        <img :src="diversificationIconLink" :alt="diversificationIconAlt">
-        <img :src="plasticIconLink" :alt="plasticIconAlt">
-      </span>
-    </router-link>
+  <div v-if="isInTeledeclaration || isInCorrection" class="gestionnaire-teledeclaration-nav fr-sidemenu">
+    <div class="fr-sidemenu__inner">
+      <ul class="fr-sidemenu__list">
+        <li :class="{ 'fr-sidemenu__item--active': teledeclarationEnCoursActive }" class="fr-sidemenu__item">
+          <router-link :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" class="gestionnaire-teledeclaration-nav__bloc fr-sidemenu__link">
+            <AppBadgeDiagnostic :action="currentCanteenAction" />
+            <span>{{ isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}` }}</span>
+            <span class="gestionnaire-teledeclaration-nav__macarons-container">
+              <img :src="approIconLink" :alt="approIconAlt">
+              <img :src="infoIconLink" :alt="infoIconAlt">
+              <img :src="wasteIconLink" :alt="wasteIconAlt">
+              <img :src="diversificationIconLink" :alt="diversificationIconAlt">
+              <img :src="plasticIconLink" :alt="plasticIconAlt">
+            </span>
+          </router-link>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <style lang="scss">
 .gestionnaire-teledeclaration-nav {
   [href] {
-    background: none !important;
+    background-image: none !important;
   }
 
   &__bloc {
