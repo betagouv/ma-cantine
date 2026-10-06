@@ -13,5 +13,5 @@ const badge = computed(() => diagnosticsBadgeService.getBadge(props.action, curr
 </script>
 
 <template>
-  <DsfrBadge v-if="badge.label" :label="badge.label" :type="badge.type" :no-icon="!badge.icon" small />
+  <DsfrBadge v-if="badge.label" :label="badge.label" :type="badge.type" :no-icon="!badge.icon" />
 </template>
