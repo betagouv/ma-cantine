@@ -414,7 +414,16 @@ select
         and vegetarian_weekly_recurrence = 'DAILY')                        as atteint_vege_quotidien,
 
     -- SPE — volet diversification protéines / menu végé rempli
-    (tunnel_diversification = 'complet')                                   as td_volet_diversification_complet
+    (tunnel_diversification = 'complet')                                   as td_volet_diversification_complet,
+
+    -- Secteurs, catégories et ministère en libellés, au même format que mart_cantines et le RNC.
+    -- Ajoutés en fin de liste : les colonnes existantes gardent leur nom, leur valeur et leur
+    -- position (le rapport 2026 lit ce mart). Figés au moment de la TD (canteen_snapshot).
+    -- À ne pas confondre avec `cantine_secteur` (« Secteurs multiples ») et
+    -- `cantine_categorie` (catégorie du premier secteur seulement), conservés tels quels.
+    teledeclarations.secteurs                                              as cantine_secteurs,
+    teledeclarations.categories                                            as cantine_categories,
+    {{ libelle_ministere('line_ministry') }}                               as cantine_ministere_tutelle_lib
 
 from teledeclarations
 left join ref_departements on teledeclarations.department = ref_departements.code_departement

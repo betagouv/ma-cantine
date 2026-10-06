@@ -1,69 +1,142 @@
 version: 2
 
 models:
-  - name: mart_canteens
+  - name: mart_cantines
     description: >
-      Fiche complète par cantine active (hors supprimées).
-      Inclut les informations géographiques, les caractéristiques de la cantine,
-      les emails des gestionnaires agrégés, et l'historique des déclarations.
+      Une ligne par cantine active (hors supprimées). Aligné sur trois références :
+      le Registre national des cantines (RNC, open data data.gouv, `CanteenOpenDataSerializer`
+      dans api/serializers/canteen.py), l'observatoire (api/views/statistics.py) et le rapport
+      au parlement (mart_teledeclarations). Les noms de colonnes reprennent ceux du modèle
+      Metabase 964. Les chaînes vides sont remplacées par null sur toutes les colonnes texte
+      où les données en contenaient (relevé du 05/10/2026).
+      Les tests de ce mart ne tournent qu'en dev : la tâche de nuit lance `dbt run`, pas `dbt test`.
     columns:
       - name: id
-        description: Identifiant unique de la cantine.
+        description: Identifiant unique de la cantine. = `id` dans le RNC.
         tests:
           - unique
           - not_null
-      - name: cantine_nom
-        description: Nom de la cantine.
       - name: siret
-        description: Numéro SIRET de la cantine.
+        description: Numéro SIRET de la cantine. = `siret` dans le RNC.
       - name: siren_unite_legale
-        description: SIREN de l'unité légale.
+        description: SIREN de l'unité légale. = `siren_unite_legale` dans le RNC.
+      - name: groupe_id
+        description: Identifiant du groupe auquel la cantine est rattachée. = `groupe_id` dans le RNC.
+      - name: siret_cuisine_centrale
+        description: SIRET de la cuisine centrale qui livre la cantine. = `central_producer_siret` dans le RNC.
+      - name: claimed_by_id
+        description: Identifiant de l'utilisateur qui a revendiqué la cantine.
+      - name: nom
+        description: Nom de la cantine. = `name` dans le RNC.
       - name: nbre_repas_jour
-        description: Nombre de repas servis par jour.
+        description: Nombre de repas servis par jour. = `daily_meal_count` dans le RNC.
       - name: nbre_repas_an
-        description: Nombre de repas servis par an.
-      - name: type_gestion
-        description: Mode de gestion (direct, conceded).
+        description: Nombre de repas servis par an. = `yearly_meal_count` dans le RNC.
       - name: type_production
-        description: Type de production (site, central, central_serving, on_site_central).
+        description: >
+          Type de production, en code (groupe, central, central_serving, site, site_cooked_elsewhere).
+          = `production_type` dans le RNC.
+        tests:
+          - accepted_values:
+              values: ['groupe', 'central', 'central_serving', 'site', 'site_cooked_elsewhere']
+      - name: type_gestion
+        description: Mode de gestion, en code (direct, conceded). = `management_type` dans le RNC.
+        tests:
+          - accepted_values:
+              values: ['direct', 'conceded']
       - name: modele_economique
-        description: Modèle économique de la cantine.
-      - name: secteur
-        description: Secteurs d'activité de la cantine (liste séparée par des virgules).
-      - name: categorie
-        description: Catégorie principale dérivée du premier secteur.
+        description: Modèle économique, en code (public, private). = `economic_model` dans le RNC.
+        tests:
+          - accepted_values:
+              values: ['public', 'private']
       - name: ministere_tutelle
-        description: Ministère de tutelle pour les cantines SPE.
-      - name: spe
-        description: Vrai si la cantine est sous périmètre ministériel (SPE).
+        description: >
+          Ministère de tutelle, en code. Le code applicatif `justice` est éclaté par dbt en
+          `justice_pjj` (cantines du secteur `social_pjj`) et `justice_hors_pjj`.
+      - name: ministere_tutelle_lib
+        description: >
+          Libellé du ministère de tutelle (macro `libelle_ministere`). = `line_ministry` dans le RNC.
+          `justice_pjj` et `justice_hors_pjj` donnent tous deux « Justice », comme le RNC.
+      - name: groupe_spe
+        description: >
+          Regroupement SPE du ministère (macro `groupe_spe`) : MTE, MEJSESR, Justice,
+          Ministères sociaux, AAI, ATE ; les autres ministères gardent leur code. Même règle
+          que `cantine_groupe_spe` de mart_teledeclarations.
+        tests:
+          - accepted_values:
+              values: ['MTE', 'MEJSESR', 'Justice', 'Ministères sociaux', 'AAI', 'ATE',
+                       'affaires_etrangeres', 'agriculture', 'armee', 'territoires', 'culture',
+                       'economie', 'transformation', 'interieur', 'premier_ministre']
+      - name: is_spe
+        description: >
+          Vrai si la cantine a un ministère de tutelle (périmètre SPE). Même règle que
+          `Canteen.is_spe` dans l'application : la chaîne vide ne compte pas.
+      - name: secteurs
+        description: >
+          Libellés des secteurs d'activité, séparés par `,` sans espace, dans l'ordre où ils sont
+          stockés (macro `libelles_secteurs`). = `sector_list` dans le RNC. Libellés et non codes :
+          le code `administration_administratif` est contenu dans
+          `administration_administratif_des_collectivites`, donc un filtre « contient » se
+          tromperait sur les codes. Aucun des 26 libellés n'est contenu dans un autre.
+          Remplace l'ancienne colonne `secteur` (liste de codes).
+      - name: categories
+        description: >
+          Libellés des catégories de tous les secteurs, séparés par `,`, sans doublon, dans
+          l'ordre de première apparition (macro `libelles_categories`). Même résultat que
+          `get_category_lib_list_from_sector_list` dans l'application. Remplace l'ancienne
+          colonne `categorie` (catégorie du premier secteur seulement).
+      - name: code_insee_commune
+        description: Code INSEE de la commune. = `city_insee_code` dans le RNC.
+      - name: libelle_commune
+        description: Libellé de la commune. = `city` dans le RNC.
+      - name: code_postal
+        description: Code postal. = `postal_code` dans le RNC.
       - name: departement
-        description: Code département de la cantine.
-      - name: department_lib
-        description: Libellé du département.
+        description: Code département. = `department` dans le RNC.
+      - name: departement_lib
+        description: Libellé du département. = `department_lib` dans le RNC.
       - name: region
-        description: Code région de la cantine.
+        description: Code région. = `region` dans le RNC.
       - name: region_lib
-        description: Libellé de la région.
+        description: Libellé de la région. = `region_lib` dans le RNC.
       - name: epci
-        description: Code EPCI.
+        description: Code EPCI. = `epci` dans le RNC.
       - name: epci_lib
-        description: Libellé de l'EPCI.
+        description: Libellé de l'EPCI. = `epci_lib` dans le RNC.
       - name: pat_liste
-        description: Liste des PAT auxquels la cantine appartient.
+        description: Codes des PAT de la cantine, séparés par `,`. = `pat_list` dans le RNC.
       - name: pat_lib_liste
-        description: Libellés des PAT.
-      - name: manager_emails
-        description: Emails des gestionnaires agrégés (séparés par des virgules).
+        description: Libellés des PAT de la cantine, séparés par `,`. = `pat_lib_list` dans le RNC.
       - name: declaration_donnees_2021
-        description: La cantine a déclaré ses données pour 2021.
+        description: La cantine a déclaré ses données pour 2021. = `declaration_donnees_2021` dans le RNC.
       - name: declaration_donnees_2022
-        description: La cantine a déclaré ses données pour 2022.
+        description: La cantine a déclaré ses données pour 2022. = `declaration_donnees_2022` dans le RNC.
       - name: declaration_donnees_2023
-        description: La cantine a déclaré ses données pour 2023.
+        description: La cantine a déclaré ses données pour 2023. = `declaration_donnees_2023` dans le RNC.
       - name: declaration_donnees_2024
-        description: La cantine a déclaré ses données pour 2024.
+        description: La cantine a déclaré ses données pour 2024. = `declaration_donnees_2024` dans le RNC.
       - name: declaration_donnees_2025
-        description: La cantine a déclaré ses données pour 2025.
+        description: La cantine a déclaré ses données pour 2025. = `declaration_donnees_2025` dans le RNC.
+      - name: est_perimetre_rnc
+        description: >
+          Vrai si la cantine figure dans le RNC : `Canteen.objects.publicly_visible()`
+          (data/models/canteen.py:90) exclut les groupes et les cantines des armées.
+          Les cantines sans type de production ou sans ministère restent dans le périmètre,
+          comme avec le `exclude` de Django. Le nombre de cantines où ce booléen est vrai doit
+          égaler le total du RNC publié sur data.gouv.
+      - name: active_sur_ma_cantine
+        description: >
+          Vrai si la cantine a au moins un gestionnaire. = `active_on_ma_cantine` dans le RNC
+          (api/serializers/canteen.py:802) : le code ne vérifie que la présence d'un gestionnaire,
+          malgré la description du schéma data.gouv.
+      - name: adresses_gestionnaires
+        description: Emails des gestionnaires, séparés par `, `. Absent du RNC (donnée personnelle).
+      - name: date_creation
+        description: Date et heure de création de la cantine. = `creation_date` dans le RNC.
+      - name: date_modification
+        description: Date de dernière modification de la cantine. = `modification_date` dans le RNC.
+      - name: creation_source
+        description: Canal de création de la cantine (application, API, import…).
 
   - name: mart_teledeclarations
     description: >
@@ -110,15 +183,46 @@ models:
       - name: cantine_nbre_repas_an
         description: Nombre de repas par an au moment de la télédéclaration.
       - name: cantine_type_gestion
-        description: Mode de gestion de la cantine.
+        description: >
+          Mode de gestion de la cantine, en code. Les `''` hérités des snapshots sont conservés :
+          les colonnes existantes de ce mart ne doivent pas changer de valeur.
+        tests:
+          - accepted_values:
+              values: ['direct', 'conceded', '']
       - name: cantine_type_production
-        description: Type de production de la cantine.
+        description: >
+          Type de production de la cantine, en code. Les groupes et cuisines centrales sont exclus
+          du mart. Les `''` hérités des snapshots sont conservés.
+        tests:
+          - accepted_values:
+              values: ['site', 'site_cooked_elsewhere', '']
       - name: cantine_modele_economique
-        description: Modèle économique de la cantine.
+        description: >
+          Modèle économique de la cantine, en code. Les `''` hérités des snapshots sont conservés.
+        tests:
+          - accepted_values:
+              values: ['public', 'private', '']
       - name: cantine_secteur
-        description: Secteurs d'activité (liste séparée par des virgules).
+        description: >
+          Secteur d'activité au moment de la TD, en code, ou « Secteurs multiples » dès que la
+          cantine en a plusieurs. Règle propre à dbt : pour la liste complète, voir `cantine_secteurs`.
       - name: cantine_categorie
-        description: Catégorie principale dérivée du premier secteur.
+        description: >
+          Catégorie du premier secteur seulement, au moment de la TD. Règle créée dans dbt :
+          l'application, l'ancien ETL et le RNC utilisent la liste complète des catégories
+          (voir `cantine_categories`). Conservée car le rapport 2026 l'utilise (question 3639) ;
+          la règle du rapport 2027 reste à choisir avec ses rédacteurs.
+      - name: cantine_groupe_spe
+        description: >
+          Regroupement SPE du ministère au moment de la TD : MTE, MEJSESR, Justice,
+          Ministères sociaux, AAI, ATE ; les autres ministères gardent leur code, y compris le
+          code retiré `autre` et la chaîne vide, hérités d'anciennes TD. Même règle que la macro
+          `groupe_spe` utilisée par `groupe_spe` de mart_cantines.
+        tests:
+          - accepted_values:
+              values: ['MTE', 'MEJSESR', 'Justice', 'Ministères sociaux', 'AAI', 'ATE',
+                       'affaires_etrangeres', 'agriculture', 'armee', 'territoires', 'culture',
+                       'economie', 'transformation', 'interieur', 'premier_ministre', 'autre', '']
       - name: cantine_ministere_tutelle
         description: Ministère de tutelle pour les cantines SPE.
       - name: cantine_spe
@@ -203,6 +307,21 @@ models:
         description: Action gaspillage — adaptation des portions.
       - name: action_gaspi_reutilisation
         description: Action gaspillage — réutilisation des restes.
+      - name: cantine_secteurs
+        description: >
+          Libellés des secteurs au moment de la TD (`canteen_snapshot`), séparés par `,`, dans
+          l'ordre où ils sont stockés (macro `libelles_secteurs`). Même format que `secteurs`
+          de mart_cantines et que `sector_list` dans le RNC. Figé au moment de la TD.
+      - name: cantine_categories
+        description: >
+          Libellés des catégories de tous les secteurs au moment de la TD, séparés par `,`,
+          sans doublon (macro `libelles_categories`). Même format que `categories` de
+          mart_cantines. Figé au moment de la TD.
+      - name: cantine_ministere_tutelle_lib
+        description: >
+          Libellé du ministère de tutelle au moment de la TD (macro `libelle_ministere`),
+          à partir de `cantine_line_ministry`. Même format que `ministere_tutelle_lib` de
+          mart_cantines et que `line_ministry` dans le RNC.
 
   - name: mart_waste
     description: >
