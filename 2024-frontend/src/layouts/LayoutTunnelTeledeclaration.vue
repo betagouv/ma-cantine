@@ -39,7 +39,7 @@ const save = async (page) => {
 /* Errors */
 const checkDiagnostic = async (page) => {
   const check = await getCheck()
-  if (check.isFilled) goTo(page)
+  if (check.isClean) goTo(page)
   else {
     await teledeclarationStore.addErrorsFromCheck(check.errors)
     displayErrors(page)
@@ -51,9 +51,7 @@ const getCheck = async () => {
   const diagnosticId = diagnostic.value.id
   const checkCanteen = await canteenServices.checkCanteen(canteenId)
   const checkDiagnostic = await diagnosticServices.checkDiagnostic(canteenId, diagnosticId)
-  const isCanteenFilled = checkCanteen.isFilled && checkCanteen.errors.length === 0
-  const isDiagnosticFilled = checkDiagnostic.isFilled && checkDiagnostic.errors.length === 0
-  return { isFilled: isCanteenFilled && isDiagnosticFilled, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
+  return { isClean: checkCanteen.isClean && checkDiagnostic.isClean, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
 }
 
 const displayErrors = (page) => {

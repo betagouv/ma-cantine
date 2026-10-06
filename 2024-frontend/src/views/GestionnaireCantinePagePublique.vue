@@ -3,7 +3,7 @@ import { useRouter, useRoute } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import urlService from "@/services/urls.js"
-import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
+import GestionnaireSidebarTitle from "@/components/GestionnaireSidebarTitle.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import CanteenFormLogo from "@/components/CanteenFormLogo.vue"
 import CanteenFormImages from "@/components/CanteenFormImages.vue"
@@ -26,7 +26,7 @@ const goToPrintPage = () => {
 </script>
 
 <template>
-  <CanteenSidebarTitle :title="route.meta.title" />
+  <GestionnaireSidebarTitle :title="route.meta.title" />
 
   <div class="fr-mb-5w">
     <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mb-4w">

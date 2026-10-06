@@ -21,9 +21,12 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
         <div class="diagnostic-summary-tile__appro-container ma-cantine--flex-gap-1 fr-col-8 fr-pr-8w">
           <img :src="appro.image" alt="" class="diagnostic-summary-tile__image" />
           <div class="ma-cantine--width-100">
-            <a :href="`#${anchorName}`" @click="clickLink(0)" class="fr-text-default--grey">
-              {{ appro.title }}
-            </a>
+            <div class="diagnostic-summary-tile__anchor">
+              <a :href="`#${anchorName}`" @click="clickLink(0)" class="fr-text-default--grey">
+                {{ appro.title }}
+              </a>
+              <VIcon name="ri-arrow-right-down-line" />
+            </div>
             <div class="fr-grid-row fr-pt-1w">
               <IconLink class="fr-col-1" top="1.25rem" />
               <div class="fr-col-11">
@@ -65,9 +68,12 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
         <ul class="diagnostic-summary-tile__thematiques-container ma-cantine--unstyled-list fr-my-0 fr-col-4">
           <li v-for="(volet, index) in thematiques" :key="volet.title" class="ma-cantine--flex-start ma-cantine--flex-gap-1">
             <img :src="volet.image" alt="" class="diagnostic-summary-tile__image" />
-            <a :href="`#${anchorName}`" @click="clickLink(index + 1)" class="fr-text-default--grey">
-              {{ volet.shortTitle }}
-            </a>
+            <div class="diagnostic-summary-tile__anchor">
+              <a :href="`#${anchorName}`" @click="clickLink(index + 1)" class="fr-text-default--grey">
+                {{ volet.shortTitle }}
+              </a>
+              <VIcon name="ri-arrow-right-down-line" />
+            </div>
           </li>
         </ul>
       </div>
@@ -91,6 +97,11 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
     flex-direction: column;
     justify-content: space-between;
     gap: 0.5rem;
+  }
+
+  &__anchor {
+    display: flex;
+    align-items: flex-end;
   }
 
   &__image {

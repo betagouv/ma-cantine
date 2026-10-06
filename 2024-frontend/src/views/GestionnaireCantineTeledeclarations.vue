@@ -4,7 +4,7 @@ import { storeToRefs } from "pinia"
 import { computedAsync } from "@vueuse/core"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import diagnosticService from "@/services/diagnostics.js"
-import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
+import GestionnaireSidebarTitle from "@/components/GestionnaireSidebarTitle.vue"
 import CanteenDiagnosticsList from "@/components/CanteenDiagnosticsList.vue"
 
 const route = useRoute()
@@ -14,7 +14,7 @@ const diagnostics = computedAsync(async () => await diagnosticService.fetchDiagn
 </script>
 
 <template>
-  <CanteenSidebarTitle :title="route.meta.title" />
+  <GestionnaireSidebarTitle :title="route.meta.title" />
   <ul class="gestionnaire-cantine-teledeclarations ma-cantine--unstyled-list fr-mt-md-n4w">
     <CanteenDiagnosticsList
       v-for="diagnostic in diagnostics"
