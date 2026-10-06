@@ -40,12 +40,12 @@ const generatedFromGroupeLink = computed(() => {
 </script>
 
 <template>
-  <li class="canteen-teledeclaration-pdf fr-py-2w fr-my-1w">
+  <li class="canteens-diagnostic-list fr-py-2w fr-my-1w">
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
       <div class="fr-col-12 fr-col-md-3">
         <p class="fr-mb-0 fr-text--bold">Ma télédéclaration {{ diagnostic.year }}</p>
       </div>
-      <div class="canteen-teledeclaration-pdf__right fr-col-12 fr-col-md-9">
+      <div class="canteens-diagnostic-list__right fr-col-12 fr-col-md-9">
         <DsfrBadge :label="badge.label" :type="badge.type" />
         <div class="ma-cantine--flex-start ma-cantine--flex-gap-1">
           <a v-if="canteenLink" :href="canteenLink" target="_self" download class="fr-text-title--blue-france">
@@ -63,7 +63,7 @@ const generatedFromGroupeLink = computed(() => {
 </template>
 
 <style lang="scss">
-.canteen-teledeclaration-pdf {
+.canteens-diagnostic-list {
   &__right {
     display: flex;
     flex-direction: column;
