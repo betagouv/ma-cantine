@@ -4,7 +4,7 @@ import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
+import GestionnaireSidebarTitle from "@/components/GestionnaireSidebarTitle.vue"
 import CanteenDisplayInformations from "@/components/CanteenDisplayInformations.vue"
 
 const route = useRoute()
@@ -21,13 +21,13 @@ const goToEdit = () => {
 </script>
 
 <template>
-  <CanteenSidebarTitle :title="title">
+  <GestionnaireSidebarTitle :title="title">
     <DsfrButton
       @click="goToEdit"
       :label="editButtonLabel"
       icon="ri-pencil-line"
     />
-  </CanteenSidebarTitle>
+  </GestionnaireSidebarTitle>
   <CanteenDisplayInformations
     :canteen-is-groupe="canteenInformations.isGroupe"
     :canteen-information="canteenInformations"

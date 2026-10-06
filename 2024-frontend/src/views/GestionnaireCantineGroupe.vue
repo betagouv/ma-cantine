@@ -5,7 +5,7 @@ import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import canteenService from "@/services/canteens.js"
 import canteensTableService from "@/services/canteensTable.js"
-import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
+import GestionnaireSidebarTitle from "@/components/GestionnaireSidebarTitle.vue"
 import CanteensTableSatellites from "@/components/CanteensTableSatellites.vue"
 import CanteenModalSatelliteAdd from "@/components/CanteenModalSatelliteAdd.vue"
 import CanteenModalSatelliteRemove from "@/components/CanteenModalSatelliteRemove.vue"
@@ -67,9 +67,9 @@ const clickSearch = () => {
 </script>
 <template>
   <div class="gestionnaire-cantine-groupe">
-    <CanteenSidebarTitle :title="route.meta.title">
+    <GestionnaireSidebarTitle :title="route.meta.title">
       <DsfrButton primary label="Ajouter une cantine au groupe" icon="fr-icon-add-circle-fill" @click="modalAddSatelliteOpened = true" />
-    </CanteenSidebarTitle>
+    </GestionnaireSidebarTitle>
     <div>
       <p>
         En tant que gestionnaire du groupe, vous pouvez visualiser, ajouter et retirer des cantines déjà inscrites sur ma cantine.

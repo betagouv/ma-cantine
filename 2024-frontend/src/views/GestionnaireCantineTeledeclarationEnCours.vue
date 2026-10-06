@@ -8,7 +8,7 @@ import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { useRootStore } from "@/stores/root.js"
 import diagnosticService from "@/services/diagnostics.js"
 import documentation from "@/data/documentation.json"
-import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
+import GestionnaireSidebarTitle from "@/components/GestionnaireSidebarTitle.vue"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.vue"
 import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
@@ -69,7 +69,7 @@ const showError = (message) => rootStore.notifyServerError(message)
 </script>
 <template>
   <DsfrAlert class="fr-mb-4w" title="Nouvelle télédéclaration en cours de développement" description="Dans le cadre d'amélioration de la télédéclaration 2027, cette page est en cours de développement et n'est pas encore complète ou stabilisée. Vous pouvez toutefois déjà commencer à l'utiliser mais il est possible que vous rencontriez des bugs ou des fonctionnalités non disponibles." type="warning" />
-  <CanteenSidebarTitle :title="pageTitle">
+  <GestionnaireSidebarTitle :title="pageTitle">
     <DsfrButton
       v-if="buttonTop"
       primary
@@ -77,7 +77,7 @@ const showError = (message) => rootStore.notifyServerError(message)
       :label="buttonTop.label"
       :icon="buttonTop.icon"
     />
-  </CanteenSidebarTitle>
+  </GestionnaireSidebarTitle>
 
   <DsfrAlert v-if="canTeledeclare" class="fr-mb-5w" title="Il reste une étape pour finaliser votre télédéclaration." description="Vos données sont complètes il ne reste qu’à télédéclarer pour qu’elles soient prise en compte." type="info" />
   <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters fr-grid-row--top">
