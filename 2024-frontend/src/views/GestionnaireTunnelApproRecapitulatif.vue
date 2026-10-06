@@ -20,7 +20,7 @@ const { diagnostic } = storeToRefs(teledeclarationStore)
 const canTeledeclare = computedAsync(async () => {
   const checkCanteen = await canteenServices.checkCanteen(canteenInformations.value.id)
   const checkDiagnostic = await diagnosticServices.checkDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
-  return checkDiagnostic.isFilled && checkCanteen.isFilled
+  return checkDiagnostic.isClean && checkCanteen.isClean
 })
 const sentence = computed(() => canTeledeclare.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration pour la télédéclarer")
 const icon = computed(() => canTeledeclare.value ? "fr-icon-checkbox-circle-fill fr-text-default--success" : "fr-icon-checkbox-line fr-text-mention--grey")
