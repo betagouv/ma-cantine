@@ -1,6 +1,6 @@
 # Redis
 
-Redis est utilisé comme broker de messages pour [Celery](celery.md) et comme stockage clé/valeur rapide pour certains usages applicatifs.
+Redis est utilisé comme broker de messages pour [Celery](celery.md).
 
 ## En local
 
@@ -13,7 +13,6 @@ L'application web et Celery doivent pointer vers la même instance Redis via `RE
 ### Variables d'environnement
 
 1. `REDIS_URL=...` URL de connexion Redis
-1. `REDIS_PREPEND_KEY=...` préfixe optionnel pour isoler les clés par environnement
 
 ## Commandes utiles
 
