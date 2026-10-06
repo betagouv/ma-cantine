@@ -19,14 +19,18 @@ const generatedFromGroupeLink = computed(() => {
 </script>
 
 <template>
-  <div class="ma-cantine--flex-start ma-cantine--flex-gap-1">
-    <a v-if="canteenLink" :href="canteenLink" target="_self" download class="fr-text-title--blue-france">
-      <span class="fr-icon-file-download-fill ma-cantine--icon-xs" aria-hidden="true"></span>
-      Télécharger mon justificatif
-    </a>
-    <a v-if="generatedFromGroupeLink" :href="generatedFromGroupeLink" target="_self" download class="fr-text-title--blue-france">
-      <span class="fr-icon-file-download-fill ma-cantine--icon-xs" aria-hidden="true"></span>
-      Télécharger le justificatif de mon groupe
-    </a>
+  <div>
+    <p v-if="canteenLink" class="fr-mb-1w">
+      <a :href="canteenLink" target="_self" download class="fr-text-title--blue-france">
+        <span class="fr-icon-file-download-fill ma-cantine--icon-xs" aria-hidden="true"></span>
+        Télécharger mon justificatif
+      </a>
+    </p>
+    <p v-if="generatedFromGroupeLink" class="fr-mb-1w">
+      <a :href="generatedFromGroupeLink" target="_self" download class="fr-text-title--blue-france">
+        <span class="fr-icon-file-download-fill ma-cantine--icon-xs" aria-hidden="true"></span>
+        Télécharger le justificatif de mon groupe
+      </a>
+    </p>
   </div>
 </template>
