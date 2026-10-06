@@ -39,6 +39,7 @@ logger = logging.getLogger(__name__)
 )
 class UserCanteenManagersView(ListAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
     model = get_user_model()
     serializer_class = CanteenManagerSerializer  # ManagingTeamSerializer
 
@@ -53,6 +54,7 @@ class UserCanteenManagersView(ListAPIView):
 
 class UserCanteenManagersInvitationsView(ListAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
     model = ManagerInvitation
     serializer_class = CanteenManagerInvitationSerializer
 

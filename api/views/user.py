@@ -66,7 +66,6 @@ class LoggedUserView(RetrieveAPIView):
 
 class UpdateUserView(UpdateAPIView):
     permission_classes = [IsAuthenticated, IsProfileOwner]
-    required_scopes = ["user"]
     http_method_names = ["patch"]  # disable "put"
     queryset = get_user_model().objects.all()
     serializer_class = LoggedUserSerializer

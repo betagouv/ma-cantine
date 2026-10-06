@@ -82,7 +82,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
     """
 
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
-    required_scopes = ["teledeclaration"]
+    required_scopes = ["canteen"]
 
     def _get_canteen(self):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist

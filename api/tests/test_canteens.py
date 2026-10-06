@@ -568,6 +568,16 @@ class CanteenCreateApiTest(APITestCase):
         self.assertEqual(canteen_history.history_source, CreationSource.API)
         self.assertEqual(canteen_history.history_source_api_oauth2_application, token.application)
 
+    def test_cannot_create_canteen_via_oauth2_without_canteen_write_scope(self):
+        canteen_count = Canteen.objects.count()
+        user, token = get_oauth2_token("canteen:read")
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.post(self.url, CANTEEN_SITE_DEFAULT_PAYLOAD)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Canteen.objects.count(), canteen_count)
+
     @requests_mock.Mocker()
     @authenticate
     def test_can_create_canteen_creation_user_and_source(self, mock):
@@ -781,6 +791,18 @@ class CanteenUpdateApiTest(APITestCase):
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_update_canteen_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        payload = {"management_type": Canteen.ManagementType.CONCEDED}
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.canteen.refresh_from_db()
+        self.assertEqual(self.canteen.management_type, Canteen.ManagementType.DIRECT)
 
     @requests_mock.Mocker()
     @authenticate

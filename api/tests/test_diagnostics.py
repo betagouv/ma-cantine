@@ -136,6 +136,16 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic_history.history_source, CreationSource.API)
         self.assertEqual(diagnostic_history.history_source_api_oauth2_application, token.application)
 
+    def test_cannot_create_diagnostic_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+
     @authenticate
     def test_can_create_diagnostic_creation_user_and_source(self):
         self.canteen.managers.add(authenticate.user)
@@ -733,6 +743,19 @@ class DiagnosticUpdateApiTest(APITestCase):
         response = self.client.patch(self.url, payload)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_cannot_update_diagnostic_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.diagnostic.canteen.managers.add(user)
+        year = self.diagnostic.year
+
+        payload = {"year": year + 1}
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.diagnostic.refresh_from_db()
+        self.assertEqual(self.diagnostic.year, year)
 
     @authenticate
     def test_can_update_diagnostic_does_not_update_creation_user_and_source(self):
