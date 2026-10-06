@@ -15,12 +15,12 @@ Les schémas des modèles de données sont disponibles en bas de page. Vous y re
 * Les endpoints avec un cadenas <b>fermé</b> ne nécessitent pas d'autorisation (ex: canteenStatistics). Ils sont accessibles par tous.
 
 <p>
-L'API est protégé par le protocole d'autorisation OAuth2 (voir <a href="https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow">documentation du procotole</a> et <a href="https://django-oauth-toolkit.readthedocs.io/en/latest/">documentation du package Django OAuth Toolkit Documentation</a>). Afin d'obtenir une autorisation, il faut :
+L'API est protégée par le protocole d'autorisation OAuth2 (voir <a href="https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow">documentation du protocole</a> et <a href="https://django-oauth-toolkit.readthedocs.io/en/latest/">documentation du package Django OAuth Toolkit Documentation</a>). Afin d'obtenir une autorisation, il faut :
 <ol>
-<li>Avoir un compte de dév sur la plateforme <i>ma cantine</i>. Quand vous <a href="https://ma-cantine-demo.cleverapps.io/creer-mon-compte" target="_blank">créez votre compte</a>, cocher le cas "Je suis une développeuse ou un développeur logiciel et j'ai besoin d'accéder aux APIs". Si vous avez déjà un compte et vous voyez pas la page de documentation API, il vous faudra cocher ce cas sur la page <a href="https://ma-cantine-demo.cleverapps.io/mon-compte/profil" target="_blank">Mon compte</a></li>
-<li>Avoir <a href="https://ma-cantine-demo.cleverapps.io/o/applications/" target="_blank">enregistré votre application</a> sur la plateforme ma-cantine. A ce stade, il vous faut sauvegarder le CLIENT_SECRET qui ne sera plus visible ensuite (seulement la version hashée le sera).</li>
-<li>Récupérer le code d'autorisation dans l'url (voir exemple plus bas). Ce code à une durée de vie d'une minute.</li>
-<li>Utiliser ce code d'autorisation pour négocier et récuperer un token d'autorisation.</li>
+<li>Avoir un compte de dév sur la plateforme <i>ma cantine</i>. Quand vous <a href="https://ma-cantine-demo.cleverapps.io/creer-mon-compte" target="_blank">créez votre compte</a>, cocher la case "Je suis une développeuse ou un développeur logiciel et j'ai besoin d'accéder aux APIs". Si vous avez déjà un compte et vous ne voyez pas la page de documentation API, il vous faudra cocher cette case sur la page <a href="https://ma-cantine-demo.cleverapps.io/mon-compte/profil" target="_blank">Mon compte</a></li>
+<li>Avoir <a href="https://ma-cantine-demo.cleverapps.io/o/applications/" target="_blank">enregistré votre application</a> sur la plateforme ma-cantine. À ce stade, il vous faut sauvegarder le CLIENT_SECRET qui ne sera plus visible ensuite (seulement la version hashée le sera).</li>
+<li>Récupérer le code d'autorisation dans l'url (voir exemple plus bas). Ce code a une durée de vie d'une minute.</li>
+<li>Utiliser ce code d'autorisation pour négocier et récupérer un token d'autorisation.</li>
 </ol>
 
 Vous serez ensuite autorisé à utiliser l'API avec vos mêmes droits utilisateur que sur la plateforme.
@@ -37,9 +37,9 @@ Vous pouvez utiliser ce swagger pour tester l'API ici ou consulter un <a href="h
 
 <p>
 <ol>
-<li>Créer une application (comme décrit au dessus) avec le URI de redirection de swagger : <i>https://ma-cantine-demo.cleverapps.io/swagger-ui/oauth2-redirect.html</i> (pensez à changer l'URL pour la production)</li>
+<li>Créer une application (comme décrit au-dessus) avec l'URI de redirection de swagger : <i>https://ma-cantine-demo.cleverapps.io/swagger-ui/oauth2-redirect.html</i> (pensez à changer l'URL pour la production)</li>
 <li>Sauvegarder le secret</li>
-<li>Ici, cliquez sur le bouton vert Authorize 🔓, et suivez le protocole d'autorisation dans la partie <b>oauth2 (OAuth2, authorizationCode)</b> avec le client_id et client_secret de l'application que vous avez créée. Cette étape va vous renvoyer vers une page 404 de l'application ma-cantine. C'est bon signe ! Vous pouvez alors récupérer le code dans l'URL. </br>
+<li>Ici, cliquez sur le bouton vert Authorize 🔓, et suivez le protocole d'autorisation dans la partie <b>oauth2 (OAuth2, authorizationCode)</b> avec le client_id et client_secret de l'application que vous avez créée. Cette étape va vous renvoyer vers une page 404 de l'application ma-cantine. C'est bon signe ! Vous pouvez alors récupérer le code dans l'URL.</li>
 <li>Renseigner le code récupéré depuis l'URL dans la fenêtre Authorize 🔓, partie <b>cookieAuth (apiKey)</b></li>
 </ol>
 </p>
