@@ -34,9 +34,6 @@ const currentCanteenAction = computed(() => {
   const canteen = allCanteens.value.find((canteen) => canteen.id === props.canteen.id)
   return canteen?.action || null
 })
-
-/* Check */
-// TODO : make it dynamic with the check
 </script>
 <template>
   <div v-if="isInTeledeclaration || isInCorrection" class="gestionnaire-teledeclaration-nav fr-sidemenu">
