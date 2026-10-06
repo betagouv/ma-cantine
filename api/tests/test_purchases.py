@@ -87,6 +87,16 @@ class PurchaseCreateApiTest(APITestCase):
         self.assertEqual(purchase.creation_source, CreationSource.API)
         self.assertEqual(purchase.creation_source_api_oauth2_application, token.application)
 
+    def test_cannot_create_purchase_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.post(self.url, self.PURCHASE_PAYLOAD)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Purchase.objects.count(), 0)
+
     @authenticate
     def test_can_create_purchase_creation_user_and_source(self):
         self.canteen.managers.add(authenticate.user)
@@ -362,7 +372,7 @@ class PurchaseDetailApiTest(APITestCase):
         self.assertIn("modificationDate", body)
 
     def test_can_get_purchase_via_oauth2_only_if_same_creation_source(self):
-        user, token = get_oauth2_token("canteen:write")
+        user, token = get_oauth2_token("canteen:read")
         self.purchase.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token.token}")
@@ -514,6 +524,23 @@ class PurchaseUpdateApiTest(APITestCase):
         response = self.client.patch(self.url, {"description": "Updated"}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_cannot_update_purchase_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.purchase.canteen.managers.add(user)
+        Purchase.objects.filter(id=self.purchase.id).update(
+            creation_user=user,
+            creation_source=CreationSource.API,
+            creation_source_api_oauth2_application=token.application,
+        )
+        description = self.purchase.description
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.patch(self.url, {"description": "Updated"}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.description, description)
 
 
 class PurchaseDeleteApiTest(APITestCase):

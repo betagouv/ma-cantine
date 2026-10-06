@@ -41,7 +41,7 @@ class CanteenGroupeSatellitesListView(ListAPIView):
 )
 class CanteenGroupeSatelliteLinkView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
-    # required_scopes = ["canteen"]
+    required_scopes = ["canteen"]
     serializer_class = FullCanteenSerializer
 
     def _get_canteen(self):
@@ -84,7 +84,7 @@ class CanteenGroupeSatelliteLinkView(APIView):
 )
 class CanteenGroupeSatelliteUnlinkView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
-    # required_scopes = ["canteen"]
+    required_scopes = ["canteen"]
     serializer_class = FullCanteenSerializer
 
     def _get_canteen(self):

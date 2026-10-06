@@ -60,7 +60,7 @@ class WasteMeasurementsListApiTest(APITestCase):
         self.assertEqual(body[1]["id"], measurement_july.id)
 
     def test_can_get_waste_measurements_via_oauth2(self):
-        user, token = get_oauth2_token("waste_measurements:read")
+        user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
         measurement_july = WasteMeasurementFactory(
             canteen=self.canteen,
@@ -217,7 +217,7 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         self.assertEqual(waste_measurement.leftovers_inedible_mass, None)
 
     def test_can_create_waste_measurement_via_oauth2(self):
-        user, token = get_oauth2_token("waste_measurements:create")
+        user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
         payload = {
@@ -247,6 +247,17 @@ class WasteMeasurementsCreateApiTest(APITestCase):
         waste_measurement_history = waste_measurement.history.first()
         self.assertEqual(waste_measurement_history.history_source, CreationSource.API)
         self.assertEqual(waste_measurement_history.history_source_api_oauth2_application, token.application)
+
+    def test_cannot_create_waste_measurement_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+        waste_measurement_count = WasteMeasurement.objects.count()
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.post(self.url, {**self.WM_PAYLOAD, "meal_count": 500, "total_mass": 100})
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(WasteMeasurement.objects.count(), waste_measurement_count)
 
     @authenticate
     def test_create_waste_measurement_creation_user_and_source(self):
@@ -508,7 +519,7 @@ class WasteMeasurementsDetailApiTest(APITestCase):
         self.assertNotIn("creationSource", body)
 
     def test_get_waste_measurement_via_oauth2(self):
-        user, token = get_oauth2_token("waste_measurements:read")
+        user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token.token}")
@@ -616,7 +627,7 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.assertEqual(body["mealCount"], 200)
 
     def test_can_update_waste_measurement_via_oauth2(self):
-        user, token = get_oauth2_token("waste_measurements:write")
+        user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
         payload = {"mealCount": 200}
 
@@ -626,6 +637,19 @@ class WasteMeasurementsUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertEqual(body["mealCount"], 200)
+
+    def test_cannot_update_waste_measurement_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+        meal_count = self.measurement.meal_count
+        payload = {"mealCount": meal_count + 1}
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.measurement.refresh_from_db()
+        self.assertEqual(self.measurement.meal_count, meal_count)
 
     @authenticate
     def test_update_waste_measurement_does_not_update_creation_user_and_source(self):

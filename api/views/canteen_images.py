@@ -32,6 +32,7 @@ from data.models import Canteen, CanteenImage
 )
 class UserCanteenLogoView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
     http_method_names = ["get", "post", "delete"]
 
     def _get_canteen(self):

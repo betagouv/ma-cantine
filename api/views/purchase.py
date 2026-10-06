@@ -44,6 +44,7 @@ logger = logging.getLogger(__name__)
 )
 class PurchaseCreateView(CreateModelMixin, GenericAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
     http_method_names = ["post"]
     model = Purchase
     serializer_class = PurchaseSerializer
@@ -88,6 +89,7 @@ class PurchaseCreateView(CreateModelMixin, GenericAPIView):
 )
 class PurchaseRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
     http_method_names = ["get", "patch", "delete"]  # disable "put"
     model = Purchase
     serializer_class = PurchaseSerializer

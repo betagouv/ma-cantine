@@ -42,6 +42,7 @@ class WasteMeasurementFilterSet(django_filters.FilterSet):
 )
 class CanteenWasteMeasurementsView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
     queryset = WasteMeasurement.objects.none()
     serializer_class = WasteMeasurementSerializer
     filter_backends = [django_filters.DjangoFilterBackend]
@@ -84,6 +85,7 @@ class CanteenWasteMeasurementsView(ListCreateAPIView):
 )
 class CanteenWasteMeasurementView(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    required_scopes = ["canteen"]
     http_method_names = ["get", "patch"]  # disable "put"
     model = WasteMeasurement
     serializer_class = WasteMeasurementSerializer

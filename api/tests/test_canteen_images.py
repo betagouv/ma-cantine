@@ -169,7 +169,7 @@ class CanteenLogoRetrieveApiTest(APITestCase):
         self.assertIn("logo", body)
 
     def test_can_retrieve_logo_via_oauth2(self):
-        user, token = get_oauth2_token("canteen:read")
+        user, token = get_oauth2_token("canteen:read canteen:write")
         self.canteen.managers.add(user)
         self.client.credentials(Authorization=f"Bearer {token.token}")
 
@@ -495,6 +495,23 @@ class CanteenImagesCreateApiTest(APITestCase):
         self.assertIn("altText", body)
         self.assertEqual(body["altText"], "Test image 1")
 
+    def test_cannot_create_canteen_image_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+        image_count = self.canteen.images.count()
+        image_path = os.path.join(CURRENT_DIR, "files/test-image-1.jpg")
+        with open(image_path, "rb") as image:
+            image_base_64 = base64.b64encode(image.read()).decode("utf-8")
+
+        payload = {
+            "image": "data:image/jpeg;base64," + image_base_64,
+        }
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.post(self.url, data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(self.canteen.images.count(), image_count)
+
     @authenticate
     def test_can_create_canteen_image_even_if_canteen_not_valid(self):
         self.canteen.managers.add(authenticate.user)
@@ -589,6 +606,19 @@ class CanteenImagesUpdateApiTest(APITestCase):
         self.assertIn("image", body)
         self.assertIn("altText", body)
         self.assertEqual(body["altText"], "Updated alt text via OAuth2")
+
+    def test_cannot_update_canteen_image_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        payload = {
+            "altText": "Updated alt text via OAuth2",
+        }
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.patch(self.url, data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(self.canteen.images.first().alt_text, None)
 
     @authenticate
     def test_can_update_canteen_image_even_if_canteen_not_valid(self):

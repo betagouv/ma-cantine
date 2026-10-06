@@ -16,7 +16,7 @@ class WastemeasurementFillCreationUserAndSourceTest(APITestCase):
         cls.WM_PAYLOAD = {"period_start_date": "2024-08-01", "period_end_date": "2024-08-10"}
 
     def test_fill_for_waste_measurement_created_from_api(self):
-        user, token = get_oauth2_token("waste_measurements:create")
+        user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
         self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.post(self.url, self.WM_PAYLOAD)
