@@ -35,11 +35,6 @@ const currentCanteenAction = computed(() => {
 
 /* Check */
 // TODO : make it dynamic with the check
-const approIconAlt = computed(() => 'Volet approvisionnement non complété')
-const infoIconAlt = computed(() => 'Volet information convive non complété')
-const wasteIconAlt = computed(() => 'Volet gestion du gaspillage alimentaire non complété')
-const diversificationIconAlt = computed(() => 'Volet diversification des protéines non complété')
-const plasticIconAlt = computed(() => 'Volet réductions du plastique non complété')
 </script>
 <template>
   <div v-if="isInTeledeclaration || isInCorrection" class="gestionnaire-teledeclaration-nav fr-sidemenu">
@@ -50,11 +45,11 @@ const plasticIconAlt = computed(() => 'Volet réductions du plastique non compl�
             <AppBadgeDiagnostic :action="currentCanteenAction" />
             <span>{{ isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}` }}</span>
             <span class="gestionnaire-teledeclaration-nav__macarons-container">
-              <IconMacaronAppro :label="approIconAlt" status="empty" />
-              <IconMacaronInfo :label="infoIconAlt" status="empty" />
-              <IconMacaronWaste :label="wasteIconAlt" status="empty" />
-              <IconMacaronDiversification :label="diversificationIconAlt" status="empty" />
-              <IconMacaronPlastic :label="plasticIconAlt" status="empty" />
+              <IconMacaronAppro status="empty" />
+              <IconMacaronInfo status="empty" />
+              <IconMacaronWaste status="empty" />
+              <IconMacaronDiversification status="empty" />
+              <IconMacaronPlastic status="empty" />
             </span>
           </router-link>
         </li>
