@@ -1,8 +1,6 @@
 from collections import OrderedDict
 from datetime import date
 
-import redis as r
-from django.conf import settings
 from django.db import transaction
 from django.db.models import FloatField, Q, Sum
 from django.db.models.functions import Cast
@@ -46,8 +44,6 @@ from common.api.recherche_entreprises import fetch_geo_data_from_siren, fetch_ge
 from data.models import Canteen, Diagnostic, Sector, SectorM2M
 from data.models.creation_source import CreationSource
 from data.utils import has_charfield_missing_query
-
-redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
 class PublishedCanteenSingleView(RetrieveAPIView):

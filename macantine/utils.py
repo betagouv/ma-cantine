@@ -1,13 +1,9 @@
 import logging
 
-import redis as r
-from django.conf import settings
-
 from data.models.geo import REGION_HEXAGONE_LIST, Region
 from data.utils import to_decimal
 
 logger = logging.getLogger(__name__)
-redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
 # increment this when the teledeclaration format changes

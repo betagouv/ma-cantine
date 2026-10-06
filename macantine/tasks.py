@@ -1,7 +1,6 @@
 import logging
 import time
 
-import redis as r
 from django.conf import settings
 from django.core.management import call_command
 from django.utils import timezone
@@ -35,7 +34,6 @@ from .etl.open_data import (
 )
 
 logger = logging.getLogger(__name__)
-redis = r.from_url(settings.REDIS_URL, decode_responses=True)
 
 
 #########################################################

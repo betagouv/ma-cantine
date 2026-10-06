@@ -424,7 +424,6 @@ USES_MONCOMPTEPRO = (
 # ------------------------------------------------------------------------------
 
 REDIS_URL = os.getenv("REDIS_URL")
-REDIS_PREPEND_KEY = os.getenv("REDIS_PREPEND_KEY", "")
 
 
 # Celery
