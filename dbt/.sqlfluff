@@ -21,6 +21,9 @@ exclude_rules = LT01, LT02, ST06, RF02, RF04, LT05, LT09, AL03, AL09, ST01, AM06
 
 [sqlfluff:templater:jinja]
 apply_dbt_builtins = true
+# project macros (sector & ministry labels…): without them sqlfluff can't render the models that call them
+# (path relative to this file)
+load_macros_from_path = macros
 
 [sqlfluff:indentation]
 tab_space_size = 4

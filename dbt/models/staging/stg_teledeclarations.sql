@@ -59,6 +59,10 @@ renamed as (
             when (array(select jsonb_array_elements_text(canteen_snapshot::jsonb -> 'sector_list')))[1] like 'loisir%'         then 'Loisirs'
             when (array(select jsonb_array_elements_text(canteen_snapshot::jsonb -> 'sector_list')))[1] is not null            then 'Autres'
         end                                                             as categorie,
+        -- liste complète des secteurs et des catégories, en libellés, figée au moment de la TD
+        -- (même format que `secteurs` / `categories` de mart_cantines et que le RNC)
+        {{ libelles_secteurs("canteen_snapshot::jsonb -> 'sector_list'") }}   as secteurs,
+        {{ libelles_categories("canteen_snapshot::jsonb -> 'sector_list'") }} as categories,
 
         -- satellites (depuis satellites_snapshot si disponible)
         case
