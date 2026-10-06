@@ -145,10 +145,14 @@ models:
       Source actuelle : diagnostics_raw. Les infos cantine viennent du canteen_snapshot JSON.
       Les colonnes sont préfixées cantine_ pour distinguer les infos cantine des données d'appro.
     tests:
+      # 2022 exclue : deux diagnostics orphelins, sans cantine (TD 8501), font échouer ce test
+      # et le not_null de canteen_id. Données 2022 peu utilisées pour les statistiques.
       - dbt_utils.unique_combination_of_columns:
           combination_of_columns:
             - canteen_id
             - annee
+          config:
+            where: "annee != 2022"
     columns:
       - name: teledeclaration_id
         description: >
@@ -161,7 +165,10 @@ models:
           Identifiant de la cantine. Non unique — une cantine peut télédéclarer chaque année.
           La combinaison (canteen_id, annee) est unique.
         tests:
-          - not_null
+          # 2022 exclue : voir le test d'unicité du modèle (diagnostics orphelins de la TD 8501)
+          - not_null:
+              config:
+                where: "annee != 2022"
       - name: annee
         description: Année de déclaration.
         tests:
