@@ -18,3 +18,15 @@ def ma_cantine_preprocessing_hook(endpoints):
         if accessible_through_oauth2 or include_in_documentation:
             filtered_endpoints.append((path, path_regex, method, callback))
     return filtered_endpoints
+
+
+def ma_cantine_postprocessing_hook(result, generator, request, public):
+    """
+    Removes the security of public endpoints (views with authentication_classes = [])
+    drf-spectacular still sets it to [{}] (optional auth), which is displayed with a padlock in the swagger
+    """
+    for path in result.get("paths", {}).values():
+        for operation in path.values():
+            if operation.get("security") == [{}]:
+                del operation["security"]
+    return result

@@ -569,7 +569,7 @@ class TerritoryCanteensListView(ListAPIView):
 )
 class CanteenMinistriesView(APIView):
     include_in_documentation = True
-    required_scopes = ["canteen"]
+    authentication_classes = []  # public endpoint (also called last by InitialDataView)
 
     @extend_schema(responses=CanteenMinistriesSerializer(many=True))
     def get(self, request, format=None):

@@ -19,6 +19,7 @@ from data.models.diagnostic_teledeclaration_dates import (
 )
 class TeledeclarationCampaignDatesListView(ListAPIView):
     include_in_documentation = True
+    authentication_classes = []  # public endpoint
     serializer_class = CampaignDatesSerializer
 
     def get(self, request, format=None):
@@ -36,6 +37,7 @@ class TeledeclarationCampaignDatesListView(ListAPIView):
 )
 class TeledeclarationCampaignDatesRetrieveView(RetrieveAPIView):
     include_in_documentation = True
+    authentication_classes = []  # public endpoint
     serializer_class = CampaignDatesFullSerializer
 
     def get(self, request, year, format=None):

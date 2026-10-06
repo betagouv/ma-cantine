@@ -21,11 +21,12 @@ class InitialDataView(APIView):
         is_authenticated = request.user.is_authenticated
         json_content = {
             "logged_user": LoggedUserView.as_view()(request._request).data,
-            "sectors": SectorListView.as_view()(request._request).data,
             "partner_types": PartnerTypeListView.as_view()(request._request).data,
             "community_events": CommunityEventsView.as_view()(request._request).data,
             "video_tutorials": VideoTutorialListView.as_view()(request._request).data,
             "canteen_previews": UserCanteenPreviews.as_view()(request._request).data if is_authenticated else None,
+            # keep last: views with authentication_classes = [] (they reset request.user to AnonymousUser)
+            "sectors": SectorListView.as_view()(request._request).data,
             "line_ministries": CanteenMinistriesView.as_view()(request._request).data,
         }
         payload = json.loads(CamelCaseJSONRenderer().render(json_content))

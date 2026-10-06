@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 )
 class SectorListView(APIView):
     include_in_documentation = True
+    authentication_classes = []  # public endpoint (also called last by InitialDataView)
 
     @extend_schema(responses=SectorSerializer(many=True))
     def get(self, request, format=None):

@@ -306,6 +306,10 @@ REST_FRAMEWORK = {
     "JSON_UNDERSCOREIZE": {
         "no_underscore_before_number": True,
     },
+    # applied to all views, even public ones (shown with a padlock in the swagger)
+    # for public endpoints, set authentication_classes = [] on the view (padlock then removed by api.hooks.ma_cantine_postprocessing_hook)
+    # NOTE: for the views with authentication_classes = [] the request.user will always be an instance of AnonymousUser
+    # (and so will the request.user of views called afterwards with the same request, e.g. in InitialDataView: call them last)
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
         "oauth2_provider.contrib.rest_framework.OAuth2Authentication",
@@ -336,6 +340,7 @@ SPECTACULAR_SETTINGS = {
     ],
     "POSTPROCESSING_HOOKS": [
         "drf_spectacular.contrib.djangorestframework_camel_case.camelize_serializer_fields",
+        "api.hooks.ma_cantine_postprocessing_hook",
     ],
     "TAGS": [
         {"name": "Cantines"},
