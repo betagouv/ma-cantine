@@ -19,7 +19,7 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
     <div class="fr-tile">
       <div class="fr-tile__title fr-grid-row fr-text--regular fr-text-title--grey fr-text--md">
         <div class="diagnostic-summary-tile__appro-container ma-cantine--flex-gap-1 fr-col-8 fr-pr-8w">
-          <img :src="appro.image" alt="" class="diagnostic-summary-tile__image" />
+          <component :is="appro.macaron" status="empty" class="diagnostic-summary-tile__macaron" />
           <div class="ma-cantine--width-100">
             <div class="diagnostic-summary-tile__anchor">
               <a :href="`#${anchorName}`" @click="clickLink(0)" class="fr-text-default--grey">
@@ -67,7 +67,7 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
         </div>
         <ul class="diagnostic-summary-tile__thematiques-container ma-cantine--unstyled-list fr-my-0 fr-col-4">
           <li v-for="(volet, index) in thematiques" :key="volet.title" class="ma-cantine--flex-start ma-cantine--flex-gap-1">
-            <img :src="volet.image" alt="" class="diagnostic-summary-tile__image" />
+            <component :is="volet.macaron" status="empty" class="diagnostic-summary-tile__macaron" />
             <div class="diagnostic-summary-tile__anchor">
               <a :href="`#${anchorName}`" @click="clickLink(index + 1)" class="fr-text-default--grey">
                 {{ volet.shortTitle }}
@@ -104,7 +104,7 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
     align-items: flex-end;
   }
 
-  &__image {
+  &__macaron {
     width: 2rem;
     height: 2rem;
   }

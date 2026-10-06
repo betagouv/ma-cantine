@@ -6,6 +6,13 @@ import { storeToRefs } from "pinia"
 import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import canteensService from "@/services/canteens.js"
 import AppBadgeDiagnostic from "@/components/AppBadgeDiagnostic.vue"
+import AppSeparator from "@/components/AppSeparator.vue"
+import IconLink from "@/components/IconLink.vue"
+import IconMacaronAppro from "@/components/IconMacaronAppro.vue"
+import IconMacaronInfo from "@/components/IconMacaronInfo.vue"
+import IconMacaronWaste from "@/components/IconMacaronWaste.vue"
+import IconMacaronDiversification from "@/components/IconMacaronDiversification.vue"
+import IconMacaronPlastic from "@/components/IconMacaronPlastic.vue"
 
 const props = defineProps(["canteen"])
 const route = useRoute()
@@ -27,44 +34,37 @@ const currentCanteenAction = computed(() => {
   const canteen = allCanteens.value.find((canteen) => canteen.id === props.canteen.id)
   return canteen?.action || null
 })
-
-/* Check */
-// TODO : make it dynamic with the check
-const approIconLink = computed(() => '/static/images/badges/badge-appro-disabled.svg')
-const infoIconLink = computed(() => '/static/images/badges/badge-info-disabled.svg')
-const wasteIconLink = computed(() => '/static/images/badges/badge-waste-disabled.svg')
-const diversificationIconLink = computed(() => '/static/images/badges/badge-diversification-disabled.svg')
-const plasticIconLink = computed(() => '/static/images/badges/badge-plastic-disabled.svg')
-const approIconAlt = computed(() => 'Volet approvisionnement non complété')
-const infoIconAlt = computed(() => 'Volet information convive non complété')
-const wasteIconAlt = computed(() => 'Volet gestion du gaspillage alimentaire non complété')
-const diversificationIconAlt = computed(() => 'Volet diversification des protéines non complété')
-const plasticIconAlt = computed(() => 'Volet réductions du plastique non complété')
 </script>
 <template>
-  <div
-    v-if="isInTeledeclaration || isInCorrection"
-    :class="{ 'fr-sidemenu__item--active': teledeclarationEnCoursActive }"
-    class="gestionnaire-teledeclaration-nav fr-sidemenu__item"
-  >
-    <router-link :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" class="gestionnaire-teledeclaration-nav__bloc fr-sidemenu__link">
-      <AppBadgeDiagnostic :action="currentCanteenAction" />
-      <span>{{ isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}` }}</span>
-      <span class="gestionnaire-teledeclaration-nav__macarons-container">
-        <img :src="approIconLink" :alt="approIconAlt">
-        <img :src="infoIconLink" :alt="infoIconAlt">
-        <img :src="wasteIconLink" :alt="wasteIconAlt">
-        <img :src="diversificationIconLink" :alt="diversificationIconAlt">
-        <img :src="plasticIconLink" :alt="plasticIconAlt">
-      </span>
-    </router-link>
+  <div v-if="isInTeledeclaration || isInCorrection" class="gestionnaire-teledeclaration-nav fr-sidemenu">
+    <div class="fr-sidemenu__inner">
+      <ul class="fr-sidemenu__list">
+        <li :class="{ 'fr-sidemenu__item--active': teledeclarationEnCoursActive }" class="fr-sidemenu__item">
+          <router-link :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" class="gestionnaire-teledeclaration-nav__bloc fr-sidemenu__link">
+            <AppBadgeDiagnostic :action="currentCanteenAction" />
+            <span>{{ isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}` }}</span>
+            <div class="gestionnaire-teledeclaration-nav__indicator ma-cantine--width-100">
+              <IconLink bottom="50%" class="gestionnaire-teledeclaration-nav__link" />
+              <div class="gestionnaire-teledeclaration-nav__macarons fr-py-1v fr-px-1w">
+                <IconMacaronAppro status="empty" />
+                <AppSeparator orientation="vertical" class="fr-my-0-5v" />
+                <IconMacaronInfo status="empty" />
+                <IconMacaronWaste status="empty" />
+                <IconMacaronDiversification status="empty" />
+                <IconMacaronPlastic status="empty" />
+              </div>
+            </div>
+          </router-link>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
 <style lang="scss">
 .gestionnaire-teledeclaration-nav {
   [href] {
-    background: none !important;
+    background-image: none !important;
   }
 
   &__bloc {
@@ -74,19 +74,26 @@ const plasticIconAlt = computed(() => 'Volet réductions du plastique non compl�
     gap: 0.5rem;
   }
 
-  &__macarons-container {
+  &__indicator {
     display: flex;
-    gap: 0.5rem;
-    border: 1px solid var(--border-disabled-grey);
-    border-radius: 0.5rem;
-    padding: 0.5rem;
-    width: 70%;
+  }
 
-    img {
-      flex: 1 1 0;
-      min-width: 0;
-      width: 100%;
-      height: auto;
+  &__link {
+    flex: 0 0 0.5rem;
+  }
+
+  &__macarons {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: stretch;
+    gap: 0.75rem;
+    border: 1px solid var(--border-default-grey);
+    border-radius: 0.5rem;
+
+    svg {
+      flex: 0 0 1.375rem;
+      width: 1.375rem;
+      height: 1.375rem;
     }
   }
 }
