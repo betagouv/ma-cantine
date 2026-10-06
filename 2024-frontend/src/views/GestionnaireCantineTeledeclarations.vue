@@ -5,7 +5,7 @@ import { computedAsync } from "@vueuse/core"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import diagnosticService from "@/services/diagnostics.js"
 import CanteenSidebarTitle from "@/components/CanteenSidebarTitle.vue"
-import CanteensDiagnosticList from "@/components/CanteensDiagnosticList.vue"
+import CanteenDiagnosticsList from "@/components/CanteenDiagnosticsList.vue"
 
 const route = useRoute()
 const canteenStore = useStoreCanteen()
@@ -16,7 +16,7 @@ const diagnostics = computedAsync(async () => await diagnosticService.fetchDiagn
 <template>
   <CanteenSidebarTitle :title="route.meta.title" />
   <ul class="gestionnaire-cantine-teledeclarations ma-cantine--unstyled-list fr-mt-md-n4w">
-    <CanteensDiagnosticList
+    <CanteenDiagnosticsList
       v-for="diagnostic in diagnostics"
       :key="diagnostic"
       :diagnostic="diagnostic"
