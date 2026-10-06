@@ -36,10 +36,10 @@ FILTER_QUERY_FIELDS = FILTER_QUERY_FIELDS_IN + FILTER_QUERY_FIELDS_OVERLAP
 @extend_schema(
     summary="Récapitulatif statistique des données de ma-cantine",
     tags=["Statistiques"],
-    auth=[],
 )
 class CanteenStatisticsView(APIView):
     include_in_documentation = True
+    authentication_classes = []  # public endpoint
     serializer_class = CanteenStatisticsSerializer
 
     @extend_schema(

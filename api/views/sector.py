@@ -15,11 +15,11 @@ logger = logging.getLogger(__name__)
         summary="Lister les secteurs des cantines.",
         description="Une cantine peut s'assigner un ou plusieurs secteurs d'activité.",
         tags=["Cantines"],
-        auth=[],
     ),
 )
 class SectorListView(APIView):
     include_in_documentation = True
+    authentication_classes = []  # public endpoint
 
     @extend_schema(responses=SectorSerializer(many=True))
     def get(self, request, format=None):

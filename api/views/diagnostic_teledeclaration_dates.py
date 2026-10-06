@@ -15,11 +15,11 @@ from data.models.diagnostic_teledeclaration_dates import (
     get=extend_schema(
         summary="Lister les dates des campagnes.",
         tags=["Télédéclaration"],
-        auth=[],
     ),
 )
 class TeledeclarationCampaignDatesListView(ListAPIView):
     include_in_documentation = True
+    authentication_classes = []  # public endpoint
     serializer_class = CampaignDatesSerializer
 
     def get(self, request, format=None):
@@ -33,11 +33,11 @@ class TeledeclarationCampaignDatesListView(ListAPIView):
     get=extend_schema(
         summary="Détails des dates de campagne pour une année donnée.",
         tags=["Télédéclaration"],
-        auth=[],
     ),
 )
 class TeledeclarationCampaignDatesRetrieveView(RetrieveAPIView):
     include_in_documentation = True
+    authentication_classes = []  # public endpoint
     serializer_class = CampaignDatesFullSerializer
 
     def get(self, request, year, format=None):
