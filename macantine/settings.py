@@ -438,6 +438,7 @@ CELERY_RESULT_EXTENDED = True
 
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL")
+CRISP_EMAIL = os.getenv("CRISP_EMAIL")
 EMAIL_BACKEND = os.getenv("EMAIL_BACKEND")
 
 if DEBUG and EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":

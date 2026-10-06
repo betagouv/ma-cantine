@@ -40,4 +40,4 @@ def _add_additional_context(context, **kwargs):
         replies_to_team = False
     context["repliesToTeam"] = replies_to_team
     if "us" not in context:
-        context["us"] = settings.DEFAULT_FROM_EMAIL
+        context["us"] = settings.CONTACT_EMAIL
