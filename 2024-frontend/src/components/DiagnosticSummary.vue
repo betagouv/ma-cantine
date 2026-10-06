@@ -4,6 +4,11 @@ import { storeToRefs } from "pinia"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import DiagnosticSummaryTile from "@/components/DiagnosticSummaryTile.vue"
 import DiagnosticSummaryAccordions from "@/components/DiagnosticSummaryAccordions.vue"
+import IconMacaronAppro from "@/components/IconMacaronAppro.vue"
+import IconMacaronInfo from "@/components/IconMacaronInfo.vue"
+import IconMacaronWaste from "@/components/IconMacaronWaste.vue"
+import IconMacaronDiversification from "@/components/IconMacaronDiversification.vue"
+import IconMacaronPlastic from "@/components/IconMacaronPlastic.vue"
 
 const anchorName = "accordeons"
 const openedAccordion = ref(-1)
@@ -18,10 +23,6 @@ const getIsStarted = (key) => {
   else return false
 }
 
-const getImage = (key) => {
-  return `/static/images/badges/badge-${key}-disabled.svg`
-}
-
 const getSentence = (key) => {
   const isStarted = getIsStarted(key)
   if (!isStarted) return "Volet non renseigné."
@@ -34,7 +35,7 @@ const volets = computed(() => {
   return [
     {
       title: "Approvisionnements",
-      image: getImage("appro"),
+      macaron: IconMacaronAppro,
       sentence: getSentence("appro"),
       page: { name: "GestionnaireTunnelApproRecapitulatif" },
       displayErrors: hasErrors.value
@@ -42,28 +43,28 @@ const volets = computed(() => {
     {
       title: "Informations convives",
       shortTitle: "Infos convives",
-      image: getImage("info"),
+      macaron: IconMacaronInfo,
       sentence: getSentence("info"),
       page: { name: "GestionnaireTunnelConvives" }
     },
     {
       title: "Lutte contre le gaspillage alimentaire",
       shortTitle: "Gaspillage",
-      image: getImage("waste"),
+      macaron: IconMacaronWaste,
       sentence: getSentence("waste"),
       page: { name: "GestionnaireTunnelGaspillage" }
     },
     {
       title: "Diversification des sources de protéines et menus végétariens",
       shortTitle: "Menus végétariens",
-      image: getImage("diversification"),
+      macaron: IconMacaronDiversification,
       sentence: getSentence("diversification"),
       page: { name: "GestionnaireTunnelVegetarien" }
     },
     {
       title: "Substitutions plastiques",
       shortTitle: "Substitutions plastiques",
-      image: getImage("plastic"),
+      macaron: IconMacaronPlastic,
       sentence: getSentence("plastic"),
       page: { name: "GestionnaireTunnelPlastique" }
     }

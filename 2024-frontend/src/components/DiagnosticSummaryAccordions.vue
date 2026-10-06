@@ -21,7 +21,7 @@ const goToPage = (page) => router.push(page)
     >
       <template #title>
         <span class="ma-cantine--flex-start ma-cantine--flex-gap-1">
-          <img :src="volet.image" alt="" class="diagnostic-summary-accordions__image" />
+          <component :is="volet.macaron" status="empty" class="diagnostic-summary-accordions__image" />
           {{ volet.title }}
           <DsfrBadge v-if="volet.displayErrors" label="Erreurs" type="error"/>
         </span>
