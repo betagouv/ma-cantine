@@ -49,8 +49,14 @@ const displayFull = computed(() => !props.size || props.size === "full")
 const displayInline = computed(() => props.size === "inline")
 
 /* Actions */
+const cleanValue = (value) => {
+  if (value === "") return null
+  if (value < 0) return 0
+  return value
+}
+
 const fieldChange = () =>  {
-  field.value = field.value < 0 ? 0 : field.value
+  field.value = cleanValue(field.value)
   storeTeledeclaration.setValue(props.name, field.value)
   emit("change", field.value)
 }
