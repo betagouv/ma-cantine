@@ -6,7 +6,7 @@ from rest_framework.test import APITestCase
 
 
 class CanteenTeamRequestInquiryTest(APITestCase):
-    @override_settings(CONTACT_EMAIL="contact@example.com")
+    @override_settings(CRISP_EMAIL="crisp@example.com")
     def test_inquiry(self):
         """
         Test that an inquiry about functionality sends an email to admins
@@ -29,7 +29,7 @@ class CanteenTeamRequestInquiryTest(APITestCase):
 
         # email is sent to admins
         email = mail.outbox[0]
-        self.assertEqual(email.to[0], "contact@example.com")
+        self.assertEqual(email.to[0], "crisp@example.com")
         self.assertEqual(email.subject, title)
         self.assertIn("test@example.com", email.reply_to)
         self.assertIn(payload["name"], email.body)
@@ -40,7 +40,7 @@ class CanteenTeamRequestInquiryTest(APITestCase):
         self.assertIn("Non renseigné", email.body)
 
     @override_settings(ENVIRONMENT="demo")
-    @override_settings(CONTACT_EMAIL="contact@example.com")
+    @override_settings(CRISP_EMAIL="crisp@example.com")
     def test_inquiry_environment_prepend(self):
         """
         Test that the environment is prepended when we are in "demo" or "staging" mode
@@ -60,7 +60,7 @@ class CanteenTeamRequestInquiryTest(APITestCase):
 
         # email is sent to admins
         email = mail.outbox[0]
-        self.assertEqual(email.to[0], "contact@example.com")
+        self.assertEqual(email.to[0], "crisp@example.com")
         self.assertEqual(email.subject, title)
 
     def test_inquiry_missing_fields(self):
