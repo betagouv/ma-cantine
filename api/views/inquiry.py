@@ -34,7 +34,7 @@ class InquiryView(APIView):
             }
 
             utils.send_mail(
-                template="email_contact", context=context, subject=title, to=[settings.CONTACT_EMAIL], reply_to=[email]
+                template="email_contact", context=context, subject=title, to=[settings.CRISP_EMAIL], reply_to=[email]
             )
 
             return JsonResponse({}, status=status.HTTP_200_OK)
