@@ -2,6 +2,7 @@
 import { onMounted } from "vue"
 import { showContent } from "@/services/matomo.js"
 import AppRawHTML from "@/components/AppRawHTML.vue"
+import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
 
 const linkCleverCloud =
@@ -150,7 +151,7 @@ onMounted(() => {
       <ul>
         <li>
           par voie électronique à :
-          <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+          <AppLinkMailto />
         </li>
         <li>
           par voie postale à :
