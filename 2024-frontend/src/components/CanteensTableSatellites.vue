@@ -1,15 +1,13 @@
 <script setup>
 import { computed } from "vue"
-import { storeToRefs } from "pinia"
 import { useRootStore } from "@/stores/root"
-import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import { formatSiretOrSiren } from "@/utils"
-import diagnosticService from "@/services/diagnosticsBadge.js"
 import managersService from "@/services/managers.js"
 import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppRawHTML from "@/components/AppRawHTML.vue"
+import AppBadgeDiagnostic from "@/components/AppBadgeDiagnostic.vue"
 
 /* Settings */
 const minPagination = 50
@@ -18,10 +16,6 @@ const emit = defineEmits(["showModalRemoveSatellite", "updateSatellites"])
 const lastYear = window.TELEDECLARATION_YEAR
 const store = useRootStore()
 const showPagination = computed(() => props.satellites.length > minPagination)
-
-/* Campaign */
-const campaignDatesStore = useStoreCampaignDates()
-const { currentCampaignInformations } = storeToRefs(campaignDatesStore)
 
 /* Table */
 const tableHeaders = [
@@ -60,7 +54,7 @@ const tableRows = computed(() => {
         const siretSiren = formatSiretOrSiren(canteenSiretOrSiren)
         const city = canteensTableService.getCityInfos(sat)
         const yearlyMealCount = canteensTableService.getYearlyMealCountInfos(sat)
-        const diagnostic = diagnosticService.getBadge(sat.action, currentCampaignInformations.value)
+        const diagnostic = sat.action
         const actions =  {
           links: getDropdownLinks(sat),
           canteen: sat,
@@ -178,7 +172,7 @@ const claimCanteen = (canteen) => {
         </p>
       </template>
       <template v-else-if="colKey === 'diagnostic'">
-        <DsfrBadge small :label="cell.label" :type="cell.type" no-icon />
+        <AppBadgeDiagnostic :action="cell" />
       </template>
       <template v-else-if="colKey === 'actions'">
         <div class="fr-grid-row fr-grid-row--right">

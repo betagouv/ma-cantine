@@ -4,8 +4,8 @@ import { computedAsync } from "@vueuse/core"
 import { useRoute } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useStoreCampaignDates } from "@/stores/campaignDates.js"
-import diagnosticsBadgeService from "@/services/diagnosticsBadge.js"
 import canteensService from "@/services/canteens.js"
+import AppBadgeDiagnostic from "@/components/AppBadgeDiagnostic.vue"
 
 const props = defineProps(["canteen"])
 const route = useRoute()
@@ -27,7 +27,6 @@ const currentCanteenAction = computed(() => {
   const canteen = allCanteens.value.find((canteen) => canteen.id === props.canteen.id)
   return canteen?.action || null
 })
-const diagnosticBadge = computed(() => diagnosticsBadgeService.getBadge(currentCanteenAction.value, currentCampaignInformations.value))
 
 /* Check */
 // TODO : make it dynamic with the check
@@ -49,7 +48,7 @@ const plasticIconAlt = computed(() => 'Volet réductions du plastique non compl�
     class="gestionnaire-teledeclaration-nav fr-sidemenu__item"
   >
     <router-link :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" class="gestionnaire-teledeclaration-nav__bloc fr-sidemenu__link">
-      <DsfrBadge :label="diagnosticBadge.label" :type="diagnosticBadge.type" no-icon />
+      <AppBadgeDiagnostic :action="currentCanteenAction" />
       <span>{{ isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}` }}</span>
       <span class="gestionnaire-teledeclaration-nav__macarons-container">
         <img :src="approIconLink" :alt="approIconAlt">

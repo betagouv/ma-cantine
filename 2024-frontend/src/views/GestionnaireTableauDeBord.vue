@@ -1,9 +1,7 @@
 <script setup>
 import { ref, computed } from "vue"
 import { computedAsync } from "@vueuse/core"
-import { storeToRefs } from "pinia"
 import { useRootStore } from "@/stores/root"
-import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import documentation from "@/data/documentation.json"
 import canteenService from "@/services/canteens.js"
 import canteensTableService from "@/services/canteensTable.js"
@@ -18,8 +16,6 @@ import FilterByBase from "@/components/FilterByBase.vue"
 
 /* DATA */
 const store = useRootStore()
-const campaignDatesStore = useStoreCampaignDates()
-const { currentCampaignInformations } = storeToRefs(campaignDatesStore)
 const lastYear = window.TELEDECLARATION_YEAR
 const isLoading = ref(true)
 
@@ -152,7 +148,7 @@ const tableIsEmpty = computed(() => {
         <span v-if="search && filterTeledeclaration"> et </span>
         <span v-if="filterTeledeclaration">un « bilan {{ filterTeledeclaration === '1' ? 'télédéclaré' : 'non télédéclaré' }} »</span>
       </p>
-      <CanteensTable v-else :canteens="canteensTable" :campaign="currentCampaignInformations" />
+      <CanteensTable v-else :canteens="canteensTable" />
     </div>
   </section>
   <section class="ma-cantine--bg-blue fr-py-4w">
