@@ -1,4 +1,5 @@
 <script setup>
+import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
 </script>
 
@@ -53,7 +54,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <ul>
         <li>
           nous signaler par email :
-          <a rel="noopener" href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+          <AppLinkMailto />
         </li>
         <li>
           créer une “issue” sur
@@ -77,7 +78,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <h2>Signaler un dysfonctionnement ou une question</h2>
       <p>
         Envoyez-nous un courriel à
-        <a rel="noopener" href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+        <AppLinkMailto />
         .
       </p>
     </section>

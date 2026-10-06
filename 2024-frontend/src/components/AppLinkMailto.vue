@@ -1,3 +1,7 @@
+<script setup>
+const contactEmail = window.CONTACT_EMAIL
+</script>
+
 <template>
-  <a href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+  <a :href="`mailto:${contactEmail}`">{{ contactEmail }}</a>
 </template>
