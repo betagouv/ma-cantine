@@ -6,6 +6,8 @@ import { storeToRefs } from "pinia"
 import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import canteensService from "@/services/canteens.js"
 import AppBadgeDiagnostic from "@/components/AppBadgeDiagnostic.vue"
+import AppSeparator from "@/components/AppSeparator.vue"
+import IconLink from "@/components/IconLink.vue"
 import IconMacaronAppro from "@/components/IconMacaronAppro.vue"
 import IconMacaronInfo from "@/components/IconMacaronInfo.vue"
 import IconMacaronWaste from "@/components/IconMacaronWaste.vue"
@@ -44,13 +46,17 @@ const currentCanteenAction = computed(() => {
           <router-link :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" class="gestionnaire-teledeclaration-nav__bloc fr-sidemenu__link">
             <AppBadgeDiagnostic :action="currentCanteenAction" />
             <span>{{ isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}` }}</span>
-            <span class="gestionnaire-teledeclaration-nav__macarons-container">
-              <IconMacaronAppro status="empty" />
-              <IconMacaronInfo status="empty" />
-              <IconMacaronWaste status="empty" />
-              <IconMacaronDiversification status="empty" />
-              <IconMacaronPlastic status="empty" />
-            </span>
+            <div class="gestionnaire-teledeclaration-nav__indicator ma-cantine--width-100">
+              <IconLink bottom="50%" class="gestionnaire-teledeclaration-nav__link" />
+              <div class="gestionnaire-teledeclaration-nav__macarons fr-py-1v fr-px-1w">
+                <IconMacaronAppro status="empty" />
+                <AppSeparator orientation="vertical" class="fr-my-0-5v" />
+                <IconMacaronInfo status="empty" />
+                <IconMacaronWaste status="empty" />
+                <IconMacaronDiversification status="empty" />
+                <IconMacaronPlastic status="empty" />
+              </div>
+            </div>
           </router-link>
         </li>
       </ul>
@@ -71,19 +77,26 @@ const currentCanteenAction = computed(() => {
     gap: 0.5rem;
   }
 
-  &__macarons-container {
+  &__indicator {
     display: flex;
-    gap: 0.5rem;
-    border: 1px solid var(--border-disabled-grey);
+  }
+
+  &__link {
+    flex: 0 0 0.5rem;
+  }
+
+  &__macarons {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: stretch;
+    gap: 0.75rem;
+    border: 1px solid var(--border-default-grey);
     border-radius: 0.5rem;
-    padding: 0.5rem;
-    width: 70%;
 
     svg {
-      flex: 1 1 0;
-      min-width: 0;
-      width: 100%;
-      height: auto;
+      flex: 0 0 1.375rem;
+      width: 1.375rem;
+      height: 1.375rem;
     }
   }
 }
