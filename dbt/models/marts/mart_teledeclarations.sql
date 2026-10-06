@@ -24,31 +24,6 @@ ref_pats as (
     select * from {{ ref('ref_pats') }}
 ),
 
-canteens_spe as (
-    select
-        line_ministry                   as line_ministry_spe,
-        creation_date
-    from {{ ref('stg_canteens') }}
-    where line_ministry is not null
-      and line_ministry != ''
-),
-
-years as (
-    select distinct year from teledeclarations
-    where line_ministry is not null and line_ministry != ''
-),
-
-nb_cantines_inscrites as (
-    select
-        c.line_ministry_spe,
-        y.year,
-        count(*) as nb_cantines_inscrites
-    from canteens_spe as c
-    cross join years as y
-    where c.creation_date <= make_date(y.year::int + 1, 4, 29)
-    group by c.line_ministry_spe, y.year
-),
-
 td_years_by_canteen as (
     select
         t.canteen_id                    as cid,
@@ -385,9 +360,6 @@ select
     -- stats annuelles
     count(*) filter (where teledeclarations.year = 2025) over ()    as nb_teledeclarations_2025,
 
-    -- SPE — dénominateur figé au 29 avril (utiliser MAX lors des agrégations Metabase)
-    coalesce(nb_cantines_inscrites.nb_cantines_inscrites, 0)                as nb_cantines_inscrites_spe,
-
     -- SPE — objectifs EGalim (booléens : SUM = nb cantines atteignant l'objectif)
     -- Seuils adaptés par zone : métropole 20%/50%, DROMs 5%/20%, Mayotte 2%/5%
     case
@@ -449,9 +421,6 @@ left join ref_departements on teledeclarations.department = ref_departements.cod
 left join ref_regions on teledeclarations.region = ref_regions.code_region
 left join ref_epci on teledeclarations.epci = ref_epci.code_epci
 left join ref_communes on teledeclarations.city_insee_code = ref_communes.code_insee_commune
-left join nb_cantines_inscrites
-    on teledeclarations.line_ministry = nb_cantines_inscrites.line_ministry_spe
-    and teledeclarations.year = nb_cantines_inscrites.year
 left join td_years_by_canteen as tdy
     on teledeclarations.canteen_id = tdy.cid
 left join waste

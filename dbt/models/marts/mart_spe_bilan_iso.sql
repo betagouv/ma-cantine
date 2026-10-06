@@ -15,33 +15,24 @@ with overrides_spe as (
 ),
 
 -- Inscriptions SPE : nombre de cantines enregistrées par (perimetre_key, annee)
+-- Population figée au 29/04 n+1 par int_spe_canteens_inscrites
 -- Utilisé comme dénominateur pour les métriques de représentativité (V&P renseignés)
 canteens_spe as (
     select
         coalesce(o.line_ministry_force, c.line_ministry) as line_ministry,
-        c.creation_date
-    from {{ ref('stg_canteens') }} as c
+        c.annee
+    from {{ ref('int_spe_canteens_inscrites') }} as c
     left join overrides_spe as o on c.siret = o.siret
-    where c.line_ministry is not null
-      and c.line_ministry != ''
-      and coalesce(o.exclure, false) = false
-),
-
-spe_years as (
-    select distinct year as annee
-    from {{ ref('stg_teledeclarations') }}
-    where line_ministry is not null and line_ministry != ''
+    where coalesce(o.exclure, false) = false
 ),
 
 inscriptions_by_ministry as (
     select
-        c.line_ministry as perimetre_key,
-        y.annee,
+        line_ministry   as perimetre_key,
+        annee,
         count(*)        as nb_inscrites
-    from canteens_spe as c
-    cross join spe_years as y
-    where c.creation_date <= make_date(y.annee::int + 1, 4, 29)
-    group by c.line_ministry, y.annee
+    from canteens_spe
+    group by line_ministry, annee
 ),
 
 inscriptions as (
@@ -122,7 +113,9 @@ iso_sample as (
         and t.annee = b_n.annee
     left join overrides_spe as o on b_n.cantine_siret = o.siret
     where t.prev_1 = t.annee - 1
-      and b_n.cantine_line_ministry is not null
+      -- `nullif` : un ministère vide ('') n'est pas un ministère. Un simple `is not null` le
+      -- laissait passer, et les cantines non SPE gonflaient la ligne TOTAL.
+      and nullif(b_n.cantine_line_ministry, '') is not null
       and coalesce(o.exclure, false) = false
 
     union all
@@ -139,7 +132,7 @@ iso_sample as (
     left join overrides_spe as o on b_n.cantine_siret = o.siret
     where t.prev_1 = t.annee - 1
       and t.prev_2 = t.annee - 2
-      and b_n.cantine_line_ministry is not null
+      and nullif(b_n.cantine_line_ministry, '') is not null
       and coalesce(o.exclure, false) = false
 ),
 

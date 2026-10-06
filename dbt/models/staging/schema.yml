@@ -6,10 +6,25 @@ models:
       Télédéclarations from the data warehouse (loaded by the Python ETL).
       One row per canteen per campaign year.
 
+  - name: stg_canteens_all
+    description: >
+      One row per canteen, including soft-deleted ones (deletion_date is not null).
+      Thin layer on top of canteens_raw: column renames and selection only, no joins.
+      Consumers that need the deleted canteens read this model — typically the SPE
+      denominators, which are frozen at a reference date (29 April of year n+1) and
+      must keep counting canteens deleted after that date.
+      Most consumers should use stg_canteens instead.
+    columns:
+      - name: canteen_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+
   - name: stg_canteens
     description: >
       One row per active canteen (soft-deleted records excluded).
-      Thin layer on top of canteens_raw: column renames and selection only, no joins.
+      Filter-only layer on top of stg_canteens_all.
     columns:
       - name: canteen_id
         description: Primary key.
