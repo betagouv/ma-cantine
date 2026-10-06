@@ -44,11 +44,10 @@ const getProductionTypeInfos = (canteen) => {
   return cantines.productionType[index].label
 }
 
-const getDiagnosticInfos = (canteen, campaign) => {
+const getDiagnosticInfos = (canteen) => {
   const action = canteen.action
-  const badge = diagnosticService.getBadge(action, campaign)
   const button = getDiagnosticButton(canteen)
-  return { badge, button }
+  return { action, button }
 }
 
 const getDiagnosticButton = (canteen) => {

@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue"
+import { computedAsync } from "@vueuse/core"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
@@ -12,6 +13,7 @@ import AppHelpCard from "@/components/AppHelpCard.vue"
 import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.vue"
 import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
 import DiagnosticSummary from "@/components/DiagnosticSummary.vue"
+import DiagnosticPdf from "@/components/DiagnosticPdf.vue"
 
 const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
@@ -21,14 +23,21 @@ const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Teledeclaration */
 const teledeclarationStore = useStoreTeledeclaration()
-const { hasDiagnostic, canteenAction } = storeToRefs(teledeclarationStore)
+const { hasDiagnostic, canteenAction, isTeledeclared } = storeToRefs(teledeclarationStore)
 const year = teledeclarationStore.getYear()
 const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
+const diagnosticRecap = computedAsync(async () => {
+  if (!isTeledeclared.value) return null
+  const diagnostics = await diagnosticService.fetchDiagnosticsRecap(canteenInformations.value.id)
+  return diagnostics.find((diagnostic) => diagnostic.year === year) || null
+}, null)
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
 const buttonTop = computed(() => {
   switch (true) {
+    case isTeledeclared.value:
+      return { label: 'Modifier ma télédéclaration', icon: 'ri-pencil-line', pageName: "" }
     case canTeledeclare.value:
       return { label: 'Valider ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproRecapitulatif" }
     case hasDiagnostic.value:
@@ -71,8 +80,14 @@ const showError = (message) => rootStore.notifyServerError(message)
   </CanteenSidebarTitle>
 
   <DsfrAlert v-if="canTeledeclare" class="fr-mb-5w" title="Il reste une étape pour finaliser votre télédéclaration." description="Vos données sont complètes il ne reste qu’à télédéclarer pour qu’elles soient prise en compte." type="info" />
-  <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-col-md-7">
+  <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters fr-grid-row--top">
+    <div v-if="isTeledeclared" class="fr-col-12 fr-col-md-7">
+      <h3 class="fr-h5 fr-mb-4w">Valorisez et partagez vos résultats.</h3>
+      <p>
+        Retrouvez et partagez vos résultats sur votre page publique pour valoriser vos initiatives auprès de votre collectivité, de vos convives et de l'ensemble des acteurs de votre territoire.
+      </p>
+    </div>
+    <div v-else class="fr-col-12 fr-col-md-7">
       <h3 class="fr-h5 fr-mb-4w">Réalisez le bilan de l’année précédente sur les différents volets de la loi EGalim.</h3>
       <p v-if="canteenInformations.isGroupe">
         Vous allez télédéclarer de manière mutualisée au sein d’une même entité de gestion. Les montants d’achats seront répartis automatiquement au prorata du nombre de couverts annuels de chaque cantine du groupe.
@@ -83,7 +98,10 @@ const showError = (message) => rootStore.notifyServerError(message)
       </p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="Infos utiles pour consolider vos données">
+      <AppHelpCard v-if="isTeledeclared" title="Les documents essentiels :" :no-icon="true">
+        <DiagnosticPdf v-if="diagnosticRecap" :diagnostic="diagnosticRecap" :canteen-id="canteenInformations.id" />
+      </AppHelpCard>
+      <AppHelpCard v-else title="Infos utiles pour consolider vos données">
         <p class="fr-mb-1w">
           <a :href="documentation.teledeclarationMatrice" target="_blank" class="fr-text-title--blue-france">La matrice de télédéclaration</a>
         </p>
@@ -97,7 +115,7 @@ const showError = (message) => rootStore.notifyServerError(message)
     </div>
   </div>
   <DiagnosticSummary class="fr-mb-5w" />
-  <div v-if="!canTeledeclare">
+  <div v-if="!canTeledeclare && !isTeledeclared">
     <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
     <DiagnosticPurchasesLinked class="fr-mt-4w" />

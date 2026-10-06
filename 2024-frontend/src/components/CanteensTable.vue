@@ -4,9 +4,10 @@ import urlService from "@/services/urls.js"
 import canteensTableService from "@/services/canteensTable.js"
 import AppRawHTML from "@/components/AppRawHTML.vue"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
+import AppBadgeDiagnostic from "@/components/AppBadgeDiagnostic.vue"
 
 /* Settings */
-const props = defineProps(["canteens", "campaign"])
+const props = defineProps(["canteens"])
 const lastYear = window.TELEDECLARATION_YEAR
 const minPagination = 50
 
@@ -43,7 +44,7 @@ const rows = computed(() => {
     const siret = canteensTableService.getSiretOrSirenInfos(canteen)
     const city = canteen.productionType !== "groupe" ? canteensTableService.getCityInfos(canteen) : ""
     const productionType = canteensTableService.getProductionTypeInfos(canteen) || "Non renseigné"
-    const diagnostic = canteensTableService.getDiagnosticInfos(canteen, props.campaign)
+    const diagnostic = canteensTableService.getDiagnosticInfos(canteen)
     const actions = getDropdownLinks(canteen)
 
     rows.push({
@@ -139,7 +140,7 @@ const getDropdownLinks = (canteen) => {
             :[cell.button.type]="true"
           />
         </router-link>
-        <DsfrBadge v-else small :label="cell.badge.label" :type="cell.badge.type" no-icon />
+        <AppBadgeDiagnostic v-else :action="cell.action" />
       </template>
       <template v-else-if="colKey === 'actions'">
         <div class="fr-grid-row fr-grid-row--right">
