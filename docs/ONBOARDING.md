@@ -130,6 +130,7 @@ SECURE= 'False' si on développe en local, 'True' autrement
 EMAIL_BACKEND= par ex. 'django.core.mail.backends.console.EmailBackend'. Pour utiliser SendInBlue : 'anymail.backends.sendinblue.EmailBackend'
 DEFAULT_FROM_EMAIL= par ex. 'ma-cantine@example.com'
 CONTACT_EMAIL= par ex. 'contact@example.com'
+CRISP_EMAIL= L'adresse qui reçoit les demandes du formulaire de contact, par ex. 'crisp@example.com'
 NEWSLETTER_SENDINBLUE_LIST_ID= L'ID de la newsletter de SendInBlue
 MATOMO_ID= 162 pour la prod (peut-être laissé vide)
 CELLAR_HOST= Optionnel - le host du service S3
