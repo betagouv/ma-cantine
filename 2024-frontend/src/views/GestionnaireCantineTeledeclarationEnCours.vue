@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue"
+import { computedAsync } from "@vueuse/core"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
@@ -12,6 +13,7 @@ import AppHelpCard from "@/components/AppHelpCard.vue"
 import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.vue"
 import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
 import DiagnosticSummary from "@/components/DiagnosticSummary.vue"
+import DiagnosticPdf from "@/components/DiagnosticPdf.vue"
 
 const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
@@ -24,6 +26,11 @@ const teledeclarationStore = useStoreTeledeclaration()
 const { hasDiagnostic, canteenAction, isTeledeclared } = storeToRefs(teledeclarationStore)
 const year = teledeclarationStore.getYear()
 const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
+const diagnosticRecap = computedAsync(async () => {
+  if (!isTeledeclared.value) return null
+  const diagnostics = await diagnosticService.fetchDiagnosticsRecap(canteenInformations.value.id)
+  return diagnostics.find((diagnostic) => diagnostic.year === year) || null
+}, null)
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
@@ -91,10 +98,8 @@ const showError = (message) => rootStore.notifyServerError(message)
       </p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard v-if="isTeledeclared" title="Les documents essentiels :" icon="fr-icon-file-download-fill">
-        <p class="fr-mb-1w">
-          <a href="" target="_blank" class="fr-text-title--blue-france">Télécharger mon justificatif</a>
-        </p>
+      <AppHelpCard v-if="isTeledeclared" title="Les documents essentiels :" :no-icon="true">
+        <DiagnosticPdf v-if="diagnosticRecap" :diagnostic="diagnosticRecap" :canteen-id="canteenInformations.id" />
       </AppHelpCard>
       <AppHelpCard v-else title="Infos utiles pour consolider vos données">
         <p class="fr-mb-1w">
