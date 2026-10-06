@@ -29,7 +29,7 @@ const bioFields = [
   "valeurAutresBio",
   "valeurAutresBioDontCommerceEquitable",
   "valeurBoissonsBio",
-  "valeurBioBoissonsDontCommerceEquitable",
+  "valeurBoissonsBioDontCommerceEquitable",
 ]
 const labelRougeFields = [
   "valeurViandesVolaillesLabelRouge",
@@ -119,7 +119,7 @@ const externalitesFields = [
   "valeurProduitsLaitiersExternalites",
   "valeurBoulangerieExternalites",
   "valeurAutresExternalites",
-  "valeurCoutsExternalitesBoissons",
+  "valeurBoissonsExternalites",
 ]
 const performanceFields = [
   "valeurViandesVolaillesPerformance",
