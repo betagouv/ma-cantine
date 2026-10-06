@@ -15,6 +15,7 @@ from data.models.diagnostic_teledeclaration_dates import (
     get=extend_schema(
         summary="Lister les dates des campagnes.",
         tags=["Télédéclaration"],
+        auth=[],
     ),
 )
 class TeledeclarationCampaignDatesListView(ListAPIView):
@@ -32,6 +33,7 @@ class TeledeclarationCampaignDatesListView(ListAPIView):
     get=extend_schema(
         summary="Détails des dates de campagne pour une année donnée.",
         tags=["Télédéclaration"],
+        auth=[],
     ),
 )
 class TeledeclarationCampaignDatesRetrieveView(RetrieveAPIView):

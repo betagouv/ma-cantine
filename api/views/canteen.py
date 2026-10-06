@@ -565,11 +565,11 @@ class TerritoryCanteensListView(ListAPIView):
         summary="Lister les options pour le ministère de tutelle.",
         description="Certains secteurs nécessite la spécification d'un ministère du tutelle.",
         tags=["Cantines"],
+        auth=[],
     ),
 )
 class CanteenMinistriesView(APIView):
     include_in_documentation = True
-    required_scopes = ["canteen"]
 
     @extend_schema(responses=CanteenMinistriesSerializer(many=True))
     def get(self, request, format=None):

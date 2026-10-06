@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
         summary="Lister les secteurs des cantines.",
         description="Une cantine peut s'assigner un ou plusieurs secteurs d'activité.",
         tags=["Cantines"],
+        auth=[],
     ),
 )
 class SectorListView(APIView):
