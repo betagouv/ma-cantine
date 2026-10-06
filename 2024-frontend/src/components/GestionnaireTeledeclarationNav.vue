@@ -6,6 +6,11 @@ import { storeToRefs } from "pinia"
 import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import canteensService from "@/services/canteens.js"
 import AppBadgeDiagnostic from "@/components/AppBadgeDiagnostic.vue"
+import IconMacaronAppro from "@/components/IconMacaronAppro.vue"
+import IconMacaronInfo from "@/components/IconMacaronInfo.vue"
+import IconMacaronWaste from "@/components/IconMacaronWaste.vue"
+import IconMacaronDiversification from "@/components/IconMacaronDiversification.vue"
+import IconMacaronPlastic from "@/components/IconMacaronPlastic.vue"
 
 const props = defineProps(["canteen"])
 const route = useRoute()
@@ -30,11 +35,6 @@ const currentCanteenAction = computed(() => {
 
 /* Check */
 // TODO : make it dynamic with the check
-const approIconLink = computed(() => '/static/images/badges/badge-appro-disabled.svg')
-const infoIconLink = computed(() => '/static/images/badges/badge-info-disabled.svg')
-const wasteIconLink = computed(() => '/static/images/badges/badge-waste-disabled.svg')
-const diversificationIconLink = computed(() => '/static/images/badges/badge-diversification-disabled.svg')
-const plasticIconLink = computed(() => '/static/images/badges/badge-plastic-disabled.svg')
 const approIconAlt = computed(() => 'Volet approvisionnement non complété')
 const infoIconAlt = computed(() => 'Volet information convive non complété')
 const wasteIconAlt = computed(() => 'Volet gestion du gaspillage alimentaire non complété')
@@ -50,11 +50,11 @@ const plasticIconAlt = computed(() => 'Volet réductions du plastique non compl�
             <AppBadgeDiagnostic :action="currentCanteenAction" />
             <span>{{ isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}` }}</span>
             <span class="gestionnaire-teledeclaration-nav__macarons-container">
-              <img :src="approIconLink" :alt="approIconAlt">
-              <img :src="infoIconLink" :alt="infoIconAlt">
-              <img :src="wasteIconLink" :alt="wasteIconAlt">
-              <img :src="diversificationIconLink" :alt="diversificationIconAlt">
-              <img :src="plasticIconLink" :alt="plasticIconAlt">
+              <IconMacaronAppro :label="approIconAlt" status="empty" />
+              <IconMacaronInfo :label="infoIconAlt" status="empty" />
+              <IconMacaronWaste :label="wasteIconAlt" status="empty" />
+              <IconMacaronDiversification :label="diversificationIconAlt" status="empty" />
+              <IconMacaronPlastic :label="plasticIconAlt" status="empty" />
             </span>
           </router-link>
         </li>
@@ -84,7 +84,7 @@ const plasticIconAlt = computed(() => 'Volet réductions du plastique non compl�
     padding: 0.5rem;
     width: 70%;
 
-    img {
+    svg {
       flex: 1 1 0;
       min-width: 0;
       width: 100%;
