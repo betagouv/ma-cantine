@@ -21,7 +21,7 @@ def send_sib_template(template_id, parameters, to_email, to_name):
     send_smtp_email = sib_api_v3_sdk.SendSmtpEmail(
         to=[{"email": to_email, "name": to_name}],
         params=parameters,
-        sender={"email": settings.CONTACT_EMAIL, "name": "ma cantine"},
+        sender={"email": settings.DEFAULT_FROM_EMAIL, "name": "ma cantine"},
         reply_to={"email": settings.CONTACT_EMAIL, "name": "ma cantine"},
         template_id=template_id,
     )
