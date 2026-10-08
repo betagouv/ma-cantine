@@ -215,15 +215,13 @@ def get_application_from_token_periods(token_periods, date):
         if start <= date and (end is None or date <= end)
     }
     if len(applications_at_date) == 1:
-        return applications_at_date.pop(), "token valid at creation date"
+        return applications_at_date.pop()
     if len(applications_at_date) > 1:
-        return None, "ambiguous: several tokens valid at creation date"
+        return None
     applications = {application_id for application_id, _, _ in token_periods}
     if len(applications) == 1:
-        return applications.pop(), "only application used by the creation_user"
-    if len(applications) > 1:
-        return None, "ambiguous: several applications used by the creation_user"
-    return None, "unknown: no token for the creation_user"
+        return applications.pop()
+    return None
 
 
 def fill_creation_source_api_oauth2_application(apply):
@@ -246,22 +244,16 @@ def fill_creation_source_api_oauth2_application(apply):
     token_periods_by_user_id = get_user_token_periods({user_id for _, user_id, _ in canteens if user_id})
 
     application_by_canteen_id = {}
-    reasons = Counter()
     for canteen_id, creation_user_id, creation_date in canteens:
         first_version = first_versions.get(canteen_id)
         if first_version and first_version["history_source_api_oauth2_application_id"]:
             application_by_canteen_id[canteen_id] = first_version["history_source_api_oauth2_application_id"]
-            reasons["history_source_api_oauth2_application"] += 1
-        elif not creation_user_id:
-            reasons["unknown: no creation_user"] += 1
-        else:
-            application_id, reason = get_application_from_token_periods(
+        elif creation_user_id:
+            application_id = get_application_from_token_periods(
                 token_periods_by_user_id.get(creation_user_id, []), creation_date
             )
             if application_id:
                 application_by_canteen_id[canteen_id] = application_id
-            reasons[reason] += 1
-    logger.info(reasons)
 
     update_canteens("creation_source_api_oauth2_application_id", application_by_canteen_id, apply=apply)
 
