@@ -38,7 +38,7 @@ const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédé
 const buttonTop = computed(() => {
   switch (true) {
     case isTeledeclared.value:
-      return { label: 'Modifier ma télédéclaration', icon: 'ri-pencil-line', openModal: true }
+      return { label: 'Modifier ma télédéclaration', icon: 'fr-icon-edit-line', openModal: true }
     case canTeledeclare.value:
       return { label: 'Valider ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproRecapitulatif" }
     case hasDiagnostic.value:
