@@ -188,9 +188,14 @@ const performanceFields = [
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard title="Comment comptabiliser les produits de pêche durable ?">
-          <a :href="documentation.pecheDurable" target="_blank">Consultez la documentation</a>
-          <br />
-          <a :href="documentation.mscPeche" target="_blank">Les produits MSC entrent-ils dans les 50% ?</a>
+          <ul class="ma-cantine--unstyled-list fr-mb-0">
+            <li class="fr-mb-1w">
+              <a :href="documentation.pecheDurable" target="_blank">Consultez la documentation</a>
+            </li>
+            <li class="fr-mb-1w">
+              <a :href="documentation.mscPeche" target="_blank">Les produits MSC entrent-ils dans les 50% ?</a>
+            </li>
+          </ul>
         </AppHelpCard>
       </div>
     </div>

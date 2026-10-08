@@ -45,15 +45,17 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur les 12 catégories EGalim">
-        <p class="fr-mb-1w">
-          <a :href="`${documentation.qualiteDurabiliteProduits}/#1-les-12-categories-egalim`" target="_blank" class="fr-text-title--blue-france">Les 12 catégories</a>
-        </p>
-        <p class="fr-mb-1w">
-          <a :href="documentation.teledeclarationAntiseche" target="_blank" class="fr-text-title--blue-france">Antisèche</a>
-        </p>
-        <p class="fr-mb-1w">
-          <a :href="documentation.teledeclarationKit" target="_blank" class="fr-text-title--blue-france">Kit du télédéclarant</a>
-        </p>
+        <ul class="ma-cantine--unstyled-list fr-mb-0">
+          <li class="fr-mb-1w">
+            <a :href="`${documentation.qualiteDurabiliteProduits}/#1-les-12-categories-egalim`" target="_blank">Les 12 catégories</a>
+          </li>
+          <li class="fr-mb-1w">
+            <a :href="documentation.teledeclarationAntiseche" target="_blank">Antisèche</a>
+          </li>
+          <li class="fr-mb-1w">
+            <a :href="documentation.teledeclarationKit" target="_blank">Kit du télédéclarant</a>
+          </li>
+        </ul>
       </AppHelpCard>
     </div>
   </div>
