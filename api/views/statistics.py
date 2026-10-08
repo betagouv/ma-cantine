@@ -12,7 +12,7 @@ from common.cache.utils import CACHE_TIMEOUT_1_day, get_or_set_cache
 from data.models import Canteen, Diagnostic
 from data.models.sector import Sector
 from data.models.geo import Department, Region
-from macantine.utils import get_egalim_group
+from data.models.diagnostic_teledeclaration_objectifs_egalim import get_egalim_group
 from data.utils import array_overlap_query
 
 logger = logging.getLogger(__name__)

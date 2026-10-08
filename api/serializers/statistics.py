@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from data.models import Canteen, SectorCategory
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES, get_year_campaign_end_date_or_today_date
-from macantine.utils import EGALIM_OBJECTIVES
+from data.models.diagnostic_teledeclaration_objectifs_egalim import EGALIM_OBJECTIVES
 
 logger = logging.getLogger(__name__)
 
