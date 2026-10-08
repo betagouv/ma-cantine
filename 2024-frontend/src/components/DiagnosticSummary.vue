@@ -62,8 +62,8 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelVegetarien" }
     },
     {
-      title: "Substitutions plastiques",
-      shortTitle: "Substitutions plastiques",
+      title: "Substitution du plastique",
+      shortTitle: "Substitution plastique",
       macaron: IconMacaronPlastic,
       sentence: getSentence("plastic"),
       page: { name: "GestionnaireTunnelPlastique" }

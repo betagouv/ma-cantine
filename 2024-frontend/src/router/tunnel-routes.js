@@ -50,7 +50,7 @@ const tunnelRoutes = {
         { to: { name: "GestionnaireTunnelConvives" }, title: "Infos convives" },
         { to: { name: "GestionnaireTunnelGaspillage" }, title: "Gaspillage" },
         { to: { name: "GestionnaireTunnelVegetarien" }, title: "Menus végétariens" },
-        { to: { name: "GestionnaireTunnelPlastique" }, title: "Substitutions plastiques" },
+        { to: { name: "GestionnaireTunnelPlastique" }, title: "Substitution plastique" },
       ]
     }
   },
@@ -189,7 +189,7 @@ const tunnelRoutes = {
           name: "GestionnaireTunnelPlastique",
           component: GestionnaireTunnelPlastique,
           meta: {
-            title: "Substitutions plastiques",
+            title: "Substitution du plastique",
             previous: "GestionnaireTunnelVegetarien"
           },
         },
