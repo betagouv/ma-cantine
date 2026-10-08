@@ -216,7 +216,7 @@ def filter_by_diagnostic_params(queryset, query_params):
             if param_combined_rate:
                 qs_diag = qs_diag.filter(egalim_percent__gte=100 * float(param_combined_rate))
         if appro_badge_requested:
-            qs_diag = qs_diag.egalim_objectives_reached().distinct()
+            qs_diag = qs_diag.egalim_objectives_reached(publication_year).distinct()
         canteen_ids = qs_diag.values_list("canteen", flat=True)
         canteen_sirets = qs_diag.exclude(has_charfield_missing_query("canteen__siret")).values_list(
             "canteen__siret", flat=True
