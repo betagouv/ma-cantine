@@ -1,14 +1,17 @@
 import logging
-from collections import Counter
+from collections import Counter, defaultdict
 
-from django.db.models import Q, Case, When, F, Value
-from django.db.models.functions import Length
+from oauth2_provider.models import get_access_token_model, get_refresh_token_model
 
 from common.utils.commands import MaCantineBaseCommand
-from data.utils import has_charfield_missing_query
 from data.models import Canteen
+from data.models.creation_source import CreationSource
+from data.utils import has_charfield_missing_query
 
 logger = logging.getLogger(__name__)
+
+FIELD_CHOICES = ["creation_user", "creation_source", "creation_source_api_oauth2_application"]
+CHUNK_SIZE = 5000
 
 
 class Command(MaCantineBaseCommand):
@@ -16,6 +19,9 @@ class Command(MaCantineBaseCommand):
     Usage:
     - python manage.py canteen_fill_creation_user_and_source --field creation_user
     - python manage.py canteen_fill_creation_user_and_source --field creation_source --apply
+    - python manage.py canteen_fill_creation_user_and_source --field creation_source_api_oauth2_application --apply
+
+    Note: run creation_user & creation_source first (creation_source_api_oauth2_application depends on them)
     """
 
     def add_arguments(self, parser):
@@ -23,8 +29,8 @@ class Command(MaCantineBaseCommand):
             "--field",
             type=str,
             required=True,
-            choices=["creation_user", "creation_source"],
-            help="Field to fill: creation_user or creation_source",
+            choices=FIELD_CHOICES,
+            help=f"Field to fill: {', '.join(FIELD_CHOICES)}",
         )
         parser.add_argument(
             "--apply",
@@ -45,30 +51,88 @@ class Command(MaCantineBaseCommand):
             fill_creation_user(apply=apply)
         elif field == "creation_source":
             fill_creation_source(apply=apply)
+        elif field == "creation_source_api_oauth2_application":
+            fill_creation_source_api_oauth2_application(apply=apply)
+
+
+def get_first_versions(canteen_ids):
+    """
+    Returns {canteen_id: first history version (dict)}, only if this first version is a creation ("+")
+    (one query per chunk, instead of one query per canteen)
+    """
+    first_versions = {}
+    canteen_ids = list(canteen_ids)
+    for start in range(0, len(canteen_ids), CHUNK_SIZE):
+        versions = (
+            Canteen.history.filter(id__in=canteen_ids[start : start + CHUNK_SIZE])
+            .order_by("id", "history_date", "history_id")
+            .distinct("id")
+            .values(
+                "id",
+                "history_type",
+                "history_change_reason",
+                "history_user_id",
+                "history_user__is_staff",
+                "history_source_api_oauth2_application_id",
+            )
+        )
+        first_versions.update({version["id"]: version for version in versions if version["history_type"] == "+"})
+    return first_versions
+
+
+def update_canteens(field, values_by_canteen_id, apply, log_values=True):
+    """
+    values_by_canteen_id: {canteen_id: value}
+    Grouped by value to limit the number of queries
+    """
+    logger.info(f"{'Filling' if apply else 'Would fill'} {len(values_by_canteen_id)} canteens")
+    if log_values:
+        logger.info(Counter(values_by_canteen_id.values()))
+    if apply:
+        canteen_ids_by_value = defaultdict(list)
+        for canteen_id, value in values_by_canteen_id.items():
+            canteen_ids_by_value[value].append(canteen_id)
+        for value, canteen_ids in canteen_ids_by_value.items():
+            for start in range(0, len(canteen_ids), CHUNK_SIZE):
+                Canteen.all_objects.filter(id__in=canteen_ids[start : start + CHUNK_SIZE]).update(**{field: value})
 
 
 def fill_creation_user(apply):
     """
     Rules:
-    - if creation_user is null, empty or None, then look at the first version of the canteen in the history:
+    - if creation_user is null, then look at the first version of the canteen in the history:
         - set creation_user to history_user
     - else creation_user stays empty
     """
-    canteen_qs = Canteen.all_objects.filter(creation_user__isnull=True)
-    logger.info(f"Found {canteen_qs.count()} canteens with missing creation_user")
+    canteen_ids = list(Canteen.all_objects.filter(creation_user__isnull=True).values_list("id", flat=True))
+    logger.info(f"Found {len(canteen_ids)} canteens with missing creation_user")
 
-    if apply:
-        for index, canteen in enumerate(canteen_qs.all(), start=1):
-            canteen_first_version = Canteen.history.filter(id=canteen.id).last()
-            if not canteen.creation_user and canteen_first_version and canteen_first_version.history_type == "+":
-                if canteen_first_version.history_user_id:
-                    canteen.creation_user = canteen_first_version.history_user
-                    Canteen.all_objects.filter(id=canteen.id).update(creation_user=canteen.creation_user)
-            if index % 5000 == 0:
-                logger.info(f"Processed {index} canteens")
+    creation_user_by_canteen_id = {
+        canteen_id: first_version["history_user_id"]
+        for canteen_id, first_version in get_first_versions(canteen_ids).items()
+        if first_version["history_user_id"]
+    }
+    update_canteens("creation_user_id", creation_user_by_canteen_id, apply=apply, log_values=False)
 
-    canteen_qs_after = Canteen.all_objects.exclude(creation_user__isnull=True)
-    logger.info(f"Done! {canteen_qs_after.count()} canteens with filled creation_user")
+    logger.info(
+        f"Done! {Canteen.all_objects.exclude(creation_user__isnull=True).count()} canteens with filled creation_user"
+    )
+
+
+def get_creation_source_from_first_version(first_version):
+    if not first_version:
+        return None
+    change_reason = first_version["history_change_reason"]
+    if change_reason is None:
+        if first_version["history_user_id"] and first_version["history_user__is_staff"]:
+            return CreationSource.ADMIN
+    elif change_reason.startswith("Mass CSV import"):
+        return CreationSource.IMPORT
+    elif change_reason == "SessionAuthentication":
+        return CreationSource.APP
+    elif change_reason == "OAuth2Authentication":
+        return CreationSource.API
+    return None
 
 
 def fill_creation_source(apply):
@@ -85,39 +149,115 @@ def fill_creation_source(apply):
 
     Note: moved from data/migrations/0183_canteen_creation_source_populate.py
     """
-    canteen_qs = Canteen.all_objects.filter(has_charfield_missing_query("creation_source"))
-    logger.info(f"Found {canteen_qs.count()} canteens with missing creation_source")
+    canteens = list(
+        Canteen.all_objects.filter(has_charfield_missing_query("creation_source")).values_list("id", "import_source")
+    )
+    logger.info(f"Found {len(canteens)} canteens with missing creation_source")
     logger.info(Counter(Canteen.all_objects.values_list("creation_source", flat=True)))
 
-    if apply:
-        # first set of rules:
-        canteen_qs.annotate(import_source_length=Length("import_source")).annotate(
-            creation_source_annotated=Case(
-                When(Q(import_source__startswith="Cuisine centrale : "), then=Value("APP")),
-                When(Q(import_source_length__gt=0), then=Value("IMPORT")),
-                default=Value(None),
-            )
-        ).update(creation_source=F("creation_source_annotated"))
-        # second set of rules: HistoricalCanteen
-        for index, canteen in enumerate(canteen_qs.all(), start=1):
-            canteen_first_version = Canteen.history.filter(id=canteen.id).last()
-            if not canteen.creation_source and canteen_first_version and canteen_first_version.history_type == "+":
-                if canteen_first_version.history_change_reason is None:
-                    if canteen_first_version.history_user_id and canteen_first_version.history_user.is_staff:
-                        canteen.creation_source = "ADMIN"
-                        Canteen.all_objects.filter(id=canteen.id).update(creation_source=canteen.creation_source)
-                elif canteen_first_version.history_change_reason.startswith("Mass CSV import"):
-                    canteen.creation_source = "IMPORT"
-                    Canteen.all_objects.filter(id=canteen.id).update(creation_source=canteen.creation_source)
-                elif canteen_first_version.history_change_reason == "SessionAuthentication":
-                    canteen.creation_source = "APP"
-                    Canteen.all_objects.filter(id=canteen.id).update(creation_source=canteen.creation_source)
-                elif canteen_first_version.history_change_reason == "OAuth2Authentication":
-                    canteen.creation_source = "API"
-                    Canteen.all_objects.filter(id=canteen.id).update(creation_source=canteen.creation_source)
-            if index % 5000 == 0:
-                logger.info(f"Processed {index} canteens")
+    creation_source_by_canteen_id = {}
+    canteen_ids_without_import_source = []
+    # first set of rules: import_source
+    for canteen_id, import_source in canteens:
+        if import_source and import_source.startswith("Cuisine centrale : "):
+            creation_source_by_canteen_id[canteen_id] = CreationSource.APP
+        elif import_source:
+            creation_source_by_canteen_id[canteen_id] = CreationSource.IMPORT
+        else:
+            canteen_ids_without_import_source.append(canteen_id)
+    # second set of rules: HistoricalCanteen
+    first_versions = get_first_versions(canteen_ids_without_import_source)
+    for canteen_id in canteen_ids_without_import_source:
+        creation_source = get_creation_source_from_first_version(first_versions.get(canteen_id))
+        if creation_source:
+            creation_source_by_canteen_id[canteen_id] = creation_source
+
+    update_canteens("creation_source", creation_source_by_canteen_id, apply=apply)
 
     canteen_qs_after = Canteen.all_objects.exclude(has_charfield_missing_query("creation_source"))
     logger.info(f"Done! {canteen_qs_after.count()} canteens with filled creation_source")
     logger.info(Counter(Canteen.all_objects.values_list("creation_source", flat=True)))
+
+
+def get_user_token_periods(user_ids):
+    """
+    Returns {user_id: [(application_id, start, end)]} from the OAuth2 access & refresh tokens
+    - access token: valid from created to expires
+    - refresh token: valid from created to revoked (None if not revoked)
+    Note: access tokens are deleted when refreshed, but refresh tokens are kept (revoked)
+    """
+    token_periods = defaultdict(list)
+    for user_id, application_id, created, expires in (
+        get_access_token_model()
+        .objects.filter(user_id__in=user_ids, application__isnull=False)
+        .values_list("user_id", "application_id", "created", "expires")
+    ):
+        token_periods[user_id].append((application_id, created, expires))
+    for user_id, application_id, created, revoked in (
+        get_refresh_token_model()
+        .objects.filter(user_id__in=user_ids, application__isnull=False)
+        .values_list("user_id", "application_id", "created", "revoked")
+    ):
+        token_periods[user_id].append((application_id, created, revoked))
+    return token_periods
+
+
+def get_application_from_token_periods(token_periods, date):
+    """
+    Rules:
+    - if only one application had a valid token at the given date, then return it
+    - else if the user only ever used one application, then return it
+    - else return None (ambiguous or unknown)
+    """
+    applications_at_date = {
+        application_id
+        for application_id, start, end in token_periods
+        if start <= date and (end is None or date <= end)
+    }
+    if len(applications_at_date) == 1:
+        return applications_at_date.pop()
+    if len(applications_at_date) > 1:
+        return None
+    applications = {application_id for application_id, _, _ in token_periods}
+    if len(applications) == 1:
+        return applications.pop()
+    return None
+
+
+def fill_creation_source_api_oauth2_application(apply):
+    """
+    Only for canteens with creation_source = "API" (and creation_source_api_oauth2_application empty)
+
+    Rules:
+    - if the first version of the canteen in the history has a history_source_api_oauth2_application, then use it
+    - else look at the OAuth2 tokens of the creation_user (see get_application_from_token_periods)
+    - else creation_source_api_oauth2_application stays empty
+    """
+    canteens = list(
+        Canteen.all_objects.filter(
+            creation_source=CreationSource.API, creation_source_api_oauth2_application__isnull=True
+        ).values_list("id", "creation_user_id", "creation_date")
+    )
+    logger.info(f"Found {len(canteens)} API canteens with missing creation_source_api_oauth2_application")
+
+    first_versions = get_first_versions([canteen_id for canteen_id, _, _ in canteens])
+    token_periods_by_user_id = get_user_token_periods({user_id for _, user_id, _ in canteens if user_id})
+
+    application_by_canteen_id = {}
+    for canteen_id, creation_user_id, creation_date in canteens:
+        first_version = first_versions.get(canteen_id)
+        if first_version and first_version["history_source_api_oauth2_application_id"]:
+            application_by_canteen_id[canteen_id] = first_version["history_source_api_oauth2_application_id"]
+        elif creation_user_id:
+            application_id = get_application_from_token_periods(
+                token_periods_by_user_id.get(creation_user_id, []), creation_date
+            )
+            if application_id:
+                application_by_canteen_id[canteen_id] = application_id
+
+    update_canteens("creation_source_api_oauth2_application_id", application_by_canteen_id, apply=apply)
+
+    canteen_qs_after = Canteen.all_objects.filter(
+        creation_source=CreationSource.API, creation_source_api_oauth2_application__isnull=False
+    )
+    logger.info(f"Done! {canteen_qs_after.count()} API canteens with filled creation_source_api_oauth2_application")
