@@ -49,7 +49,7 @@ const volets = computed(() => {
     },
     {
       title: "Lutte contre le gaspillage alimentaire",
-      shortTitle: "Gaspillage",
+      shortTitle: "Gaspillage alimentaire",
       macaron: IconMacaronWaste,
       sentence: getSentence("waste"),
       page: { name: "GestionnaireTunnelGaspillage" }

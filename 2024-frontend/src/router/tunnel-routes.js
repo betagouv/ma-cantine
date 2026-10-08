@@ -48,7 +48,7 @@ const tunnelRoutes = {
       ],
       thematiques: [
         { to: { name: "GestionnaireTunnelConvives" }, title: "Infos convives" },
-        { to: { name: "GestionnaireTunnelGaspillage" }, title: "Gaspillage" },
+        { to: { name: "GestionnaireTunnelGaspillage" }, title: "Gaspillage alimentaire" },
         { to: { name: "GestionnaireTunnelVegetarien" }, title: "Menus végétariens" },
         { to: { name: "GestionnaireTunnelPlastique" }, title: "Substitution plastique" },
       ]
@@ -169,7 +169,7 @@ const tunnelRoutes = {
           name: "GestionnaireTunnelGaspillage",
           component: GestionnaireTunnelGaspillage,
           meta: {
-            title: "Gaspillage",
+            title: "Lutte contre le gaspillage alimentaire",
             previous: "GestionnaireTunnelConvives",
             next: "GestionnaireTunnelVegetarien",
           },
