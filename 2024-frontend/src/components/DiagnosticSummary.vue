@@ -41,15 +41,15 @@ const volets = computed(() => {
       displayErrors: hasErrors.value
     },
     {
-      title: "Informations convives",
-      shortTitle: "Infos convives",
+      title: "Information des convives",
+      shortTitle: "Information convives",
       macaron: IconMacaronInfo,
       sentence: getSentence("info"),
       page: { name: "GestionnaireTunnelConvives" }
     },
     {
       title: "Lutte contre le gaspillage alimentaire",
-      shortTitle: "Gaspillage",
+      shortTitle: "Gaspillage alimentaire",
       macaron: IconMacaronWaste,
       sentence: getSentence("waste"),
       page: { name: "GestionnaireTunnelGaspillage" }
@@ -62,8 +62,8 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelVegetarien" }
     },
     {
-      title: "Substitutions plastiques",
-      shortTitle: "Substitutions plastiques",
+      title: "Substitution du plastique",
+      shortTitle: "Substitution plastique",
       macaron: IconMacaronPlastic,
       sentence: getSentence("plastic"),
       page: { name: "GestionnaireTunnelPlastique" }
