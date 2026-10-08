@@ -90,6 +90,18 @@ const teledeclareDiagnostic = (canteenId, diagnosticId) => {
     .catch((e) => e)
 }
 
+const cancelTeledeclaration = (canteenId, diagnosticId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/teledeclaration/cancel`, {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 export default {
   createDiagnostic,
   updateDiagnostic,
@@ -98,4 +110,5 @@ export default {
   fetchDiagnostics,
   fetchDiagnosticsRecap,
   teledeclareDiagnostic,
+  cancelTeledeclaration,
 }

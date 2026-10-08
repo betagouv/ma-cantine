@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue"
+import { computed, ref } from "vue"
 import { computedAsync } from "@vueuse/core"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
@@ -14,6 +14,7 @@ import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.
 import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
 import DiagnosticSummary from "@/components/DiagnosticSummary.vue"
 import DiagnosticPdf from "@/components/DiagnosticPdf.vue"
+import DiagnosticModalCancel from "@/components/DiagnosticModalCancel.vue"
 
 const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
@@ -37,7 +38,7 @@ const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédé
 const buttonTop = computed(() => {
   switch (true) {
     case isTeledeclared.value:
-      return { label: 'Modifier ma télédéclaration', icon: 'ri-pencil-line', pageName: "" }
+      return { label: 'Modifier ma télédéclaration', icon: 'fr-icon-edit-line', openModal: true }
     case canTeledeclare.value:
       return { label: 'Valider ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproRecapitulatif" }
     case hasDiagnostic.value:
@@ -48,6 +49,12 @@ const buttonTop = computed(() => {
 })
 
 /* Navigation */
+const showCancelModal = ref(false)
+const onClickButtonTop = () => {
+  if (buttonTop.value.openModal) showCancelModal.value = true
+  else openTunnel(buttonTop.value.pageName)
+}
+
 const openTunnel = (pageName) => {
   if (!pageName) createDiagnostic()
   else goToTunnel(pageName)
@@ -73,11 +80,12 @@ const showError = (message) => rootStore.notifyServerError(message)
     <DsfrButton
       v-if="buttonTop"
       primary
-      @click="openTunnel(buttonTop.pageName)"
+      @click="onClickButtonTop"
       :label="buttonTop.label"
       :icon="buttonTop.icon"
     />
   </GestionnaireSidebarTitle>
+  <DiagnosticModalCancel :opened="showCancelModal" @close="showCancelModal = false" />
 
   <DsfrAlert v-if="canTeledeclare" class="fr-mb-5w" title="Il reste une étape pour finaliser votre télédéclaration." description="Vos données sont complètes il ne reste qu’à télédéclarer pour qu’elles soient prise en compte." type="info" />
   <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters fr-grid-row--top">
