@@ -12,7 +12,7 @@ This file provides guidance to AI coding agents (Claude Code, GitHub Copilot, et
 
 **Backend:**
 - Python 3.11+, Django 5.1, Django REST Framework, Wagtail CMS
-- PostgreSQL database, Redis/Celery for async tasks
+- PostgreSQL database, Clever Cloud crons (`clevercloud/cron.json`) for periodic tasks
 - Sentry for error tracking, Brevo for email, S3-compatible storage
 
 **Frontend:**
@@ -36,7 +36,7 @@ ma-cantine/
 ├── 2024-frontend/      # New Vue 3 app (with Vite) - prefer this for new work
 ├── macantine/          # Django settings, URLs, utils, ETL
 ├── opendata/           # CSV exports for data.gouv.fr
-├── docs/               # Full ONBOARDING.md, celery.md, docker.md
+├── docs/               # Full ONBOARDING.md, cron.md, docker.md
 ├── Dockerfile          # Multi-stage Docker build
 ├── compose.yaml        # 4 services: server, db, frontend, 2024-frontend, worker
 └── pyproject.toml      # Single source of truth for Python deps via uv
@@ -117,7 +117,7 @@ npm run lint  # (in frontend/ or 2024-frontend/)
 
 - **Full Setup Guide**: [docs/ONBOARDING.md](../docs/ONBOARDING.md) - 400+ lines, highly detailed
 - **Docker Guide**: [docs/docker.md](../docs/docker.md)
-- **Celery Tasks**: [docs/celery.md](../docs/celery.md) - for async task env vars
+- **Periodic Tasks (crons)**: [docs/cron.md](../docs/cron.md) - schedule, env vars, running a task manually
 - **API Schema**: Auto-generated OpenAPI at `/api/docs/` (drf-spectacular)
 - **Configuration**: `pyproject.toml` + `.env` file (see ONBOARDING for template)
 - **Deployment**: Clever Cloud via `clevercloud/` folder

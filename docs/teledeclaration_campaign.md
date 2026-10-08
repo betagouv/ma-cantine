@@ -12,7 +12,7 @@
 
 ### Exports
 
-Modifier la fréquence des exports Metabase & Open Data, voir [macantine/celery.py](../macantine/celery.py)
+Modifier la fréquence des exports Metabase & Open Data, voir [clevercloud/cron.json](../clevercloud/cron.json) et [docs/cron.md](./cron.md)
 
 ### 1TD1Site
 
