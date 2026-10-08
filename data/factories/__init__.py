@@ -23,3 +23,4 @@ from .videotutorial import VideoTutorialFactory  # noqa
 from .importfailure import ImportFailureFactory  # noqa
 from .wasteaction import WasteActionFactory  # noqa
 from .resourceaction import ResourceActionFactory  # noqa
+from .oauth2 import ApplicationFactory, AccessTokenFactory, RefreshTokenFactory  # noqa

@@ -1,21 +1,12 @@
 from django.test import TestCase
-from oauth2_provider.models import get_application_model
 
-from data.factories import UserFactory
+from data.factories import ApplicationFactory
 from data.models import Oauth2ProviderApplicationExtra
-
-Application = get_application_model()
 
 
 class Oauth2ProviderApplicationExtraTest(TestCase):
     def create_application(self):
-        return Application.objects.create(
-            name="Test Application",
-            user=UserFactory(),
-            client_type=Application.CLIENT_CONFIDENTIAL,
-            authorization_grant_type=Application.GRANT_AUTHORIZATION_CODE,
-            redirect_uris="http://localhost",
-        )
+        return ApplicationFactory(name="Test Application")
 
     def test_extra_created_on_application_creation(self):
         application = self.create_application()

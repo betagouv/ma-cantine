@@ -1,10 +1,6 @@
 import filecmp
 import functools
-from datetime import timedelta
-
-from django.utils import timezone
-
-from data.factories import UserFactory
+from data.factories import AccessTokenFactory, UserFactory
 from data.models import ImportFailure
 
 
@@ -19,18 +15,8 @@ def authenticate(func):
 
 
 def get_oauth2_token(scope):
-    today = timezone.now()
-    expiration = today + timedelta(hours=1)
     user = UserFactory()
-    application = user.oauth2_provider_application.create(
-        name="Test Application",
-        redirect_uris="http://localhost",
-        client_type="confidential",
-        authorization_grant_type="password",
-    )
-    access_token = user.oauth2_provider_accesstoken.create(
-        expires=expiration, token="token", scope=scope, application=application
-    )
+    access_token = AccessTokenFactory(user=user, application__user=user, scope=scope)
     return (user, access_token)
 
 
