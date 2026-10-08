@@ -41,8 +41,8 @@ const volets = computed(() => {
       displayErrors: hasErrors.value
     },
     {
-      title: "Informations convives",
-      shortTitle: "Infos convives",
+      title: "Information des convives",
+      shortTitle: "Information convives",
       macaron: IconMacaronInfo,
       sentence: getSentence("info"),
       page: { name: "GestionnaireTunnelConvives" }

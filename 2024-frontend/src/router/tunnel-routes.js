@@ -47,7 +47,7 @@ const tunnelRoutes = {
         { to: { name: "GestionnaireTunnelApproRecapitulatif" }, title: "Récapitulatif", icon: "fr-icon-flag-fill" },
       ],
       thematiques: [
-        { to: { name: "GestionnaireTunnelConvives" }, title: "Infos convives" },
+        { to: { name: "GestionnaireTunnelConvives" }, title: "Information convives" },
         { to: { name: "GestionnaireTunnelGaspillage" }, title: "Gaspillage alimentaire" },
         { to: { name: "GestionnaireTunnelVegetarien" }, title: "Menus végétariens" },
         { to: { name: "GestionnaireTunnelPlastique" }, title: "Substitution plastique" },
@@ -160,7 +160,7 @@ const tunnelRoutes = {
           name: "GestionnaireTunnelConvives",
           component: GestionnaireTunnelConvives,
           meta: {
-            title: "Infos convives",
+            title: "Information des convives",
             next: "GestionnaireTunnelGaspillage",
           },
         },
