@@ -3,6 +3,7 @@ from collections import Counter
 
 from common.utils.commands import MaCantineBaseCommand
 from common.utils.fill_creation import (
+    fill_creation_source_api_oauth2_application,
     fill_creation_user,
     get_creation_source_from_first_version,
     get_first_versions,
@@ -14,12 +15,17 @@ from data.utils import has_charfield_missing_query
 
 logger = logging.getLogger(__name__)
 
+FIELD_CHOICES = ["creation_user", "creation_source", "creation_source_api_oauth2_application"]
+
 
 class Command(MaCantineBaseCommand):
     """
     Usage:
     - python manage.py diagnostic_fill_creation_user_and_source --field creation_user
     - python manage.py diagnostic_fill_creation_user_and_source --field creation_source --apply
+    - python manage.py diagnostic_fill_creation_user_and_source --field creation_source_api_oauth2_application --apply
+
+    Note: run creation_user & creation_source first (creation_source_api_oauth2_application depends on them)
     """
 
     def add_arguments(self, parser):
@@ -27,8 +33,8 @@ class Command(MaCantineBaseCommand):
             "--field",
             type=str,
             required=True,
-            choices=["creation_user", "creation_source"],
-            help="Field to fill: creation_user or creation_source",
+            choices=FIELD_CHOICES,
+            help=f"Field to fill: {', '.join(FIELD_CHOICES)}",
         )
         parser.add_argument(
             "--apply",
@@ -49,6 +55,8 @@ class Command(MaCantineBaseCommand):
             fill_creation_user(Diagnostic.objects, Diagnostic.history, apply=apply)  # excludes 1td1site
         elif field == "creation_source":
             fill_creation_source(apply=apply)
+        elif field == "creation_source_api_oauth2_application":
+            fill_creation_source_api_oauth2_application(Diagnostic.objects, Diagnostic.history, apply=apply)
 
 
 def fill_creation_source(apply):
