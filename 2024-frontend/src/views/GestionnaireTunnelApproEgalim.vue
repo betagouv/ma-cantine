@@ -23,6 +23,32 @@ const coutRepas = computed(() => diagnostic.value[coutRepasFieldName] || '-')
 const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
 </script>
 <template>
+  <DsfrAlert
+    type="info"
+    title="Nouveauté EGalim : la loi UPSA élargit les catégories de produits éligibles depuis le 18 août 2026."
+    class="fr-mb-4w"
+  >
+    <p>
+      En phase transitoire, comptabilisez ces produits dans les catégories existantes. De nouvelles catégories seront
+      créées pour la télédéclaration 2028. En savoir plus :
+      <AppLinkRouter :to="{ name: 'ComprendreMesObligations' }" title="Comprendre mes obligations" />
+    </p>
+  </DsfrAlert>
+  <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
+    <div class="fr-col-12 fr-col-md-7">
+      <h2>Approvisionnements EGalim</h2>
+      <p class="fr-mb-0">
+        Étape principale et obligatoire de la télédéclaration. Permet de renseigner vos achats au regard des 12
+        catégories EGalim. En télédéclaration simplifiée, ces 12 catégories sont regroupées en quatre groupes (bio,
+        SIQO, autres EGalim, critères d'achats).
+      </p>
+    </div>
+    <div class="fr-col-12 fr-col-md-5">
+      <AppHelpCard title="Comment comptabiliser les produits ayant plusieurs labels ?">
+        <a :href="documentation.qualiteDurabiliteProduits" target="_blank">Consultez la documentation</a>
+      </AppHelpCard>
+    </div>
+  </div>
   <h2 class="fr-h5">1. Total des approvisionnements toutes familles de produits confondus :</h2>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
@@ -30,11 +56,6 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
       <DsfrCallout>
         Estimation du coût moyen par repas servi : <span class="fr-text--bold">{{ coutRepas }} €</span>
       </DsfrCallout>
-    </div>
-    <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="Comment comptabiliser les produits ayant plusieurs labels ?">
-        <a :href="documentation.qualiteDurabiliteProduits" target="_blank">Consultez la documentation</a>
-      </AppHelpCard>
     </div>
   </div>
   <DiagnosticEgalimSimple v-if="isSimple" />
