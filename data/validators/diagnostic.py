@@ -363,19 +363,28 @@ def validate_viandes_volailles_produits_de_la_mer_egalim(instance):
 def validate_definition_local(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the value is empty or in the choices
-    - extra validation:
+    - extra validation (since 2026, when definition_local was added):
         - if definition_local is "KM", then definition_local_km can be filled
         - if definition_local is not "KM", then definition_local_km must be empty
+        - if any of the appro "_local" fields is filled, definition_local becomes mandatory
     """
     errors = {}
-    field_name = "definition_local"
-    value = getattr(instance, field_name)
-    definition_local_km = getattr(instance, "definition_local_km")
-    if value != DefinitionLocal.KM:
-        if definition_local_km not in [None, ""]:
-            utils_utils.add_validation_error(
-                errors,
-                "definition_local_km",
-                "La distance en km doit être vide lorsque la définition locale n'est pas 'KM'.",
-            )
+    if instance.year and int(instance.year) >= 2026:
+        field_name = "definition_local"
+        value = getattr(instance, field_name)
+        definition_local_km = getattr(instance, "definition_local_km")
+        if value != DefinitionLocal.KM:
+            if definition_local_km not in [None, ""]:
+                utils_utils.add_validation_error(
+                    errors,
+                    "definition_local_km",
+                    "La distance en km doit être vide lorsque la définition locale n'est pas 'KM'.",
+                )
+        if value in [None, ""]:
+            if any(getattr(instance, local_field) for local_field in instance.APPRO_LOCAL_FIELDS):
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    "Ce champ est obligatoire dès qu'une valeur locale (HT) est renseignée.",
+                )
     return errors

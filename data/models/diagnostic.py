@@ -620,6 +620,9 @@ class Diagnostic(models.Model):
         "valeur_local",
     ]
 
+    # valeur_local (simple) + valeur_<famille>_local (complete), see validate_definition_local
+    APPRO_LOCAL_FIELDS = ["valeur_local"] + [f"{family_field}_local" for family_field in APPRO_FAMILY_FIELDS]
+
     APPRO_LABEL_GROUPE_FIELDS = [
         "valeur_bio",
         "valeur_siqo",

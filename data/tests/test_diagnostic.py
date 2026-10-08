@@ -414,21 +414,21 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time("2027-01-30")  # during the 2026 campaign: definition_local only matters since 2026
     def test_definition_local_validation(self):
         """
         - field is optional
         """
         for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in DefinitionLocal.values)]:
             with self.subTest(definition_local=TUPLE_OK[0]):
-                diagnostic = DiagnosticFactory(definition_local=TUPLE_OK[0])
+                diagnostic = DiagnosticFactory(year=2026, definition_local=TUPLE_OK[0])
                 self.assertEqual(diagnostic.definition_local, TUPLE_OK[1])
         for VALUE_NOT_OK in ["  ", 123, "invalid", "123"]:
             with self.subTest(definition_local=VALUE_NOT_OK):
-                diagnostic = DiagnosticFactory(definition_local=VALUE_NOT_OK)
+                diagnostic = DiagnosticFactory(year=2026, definition_local=VALUE_NOT_OK)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time("2027-01-30")  # during the 2026 campaign: definition_local only matters since 2026
     def test_definition_local_km_validation(self):
         """
         - field is optional
@@ -438,6 +438,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         for TUPLE_OK in [(None, None), (0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
             with self.subTest(definition_local=DefinitionLocal.KM, definition_local_km=TUPLE_OK[0]):
                 diagnostic = DiagnosticFactory(
+                    year=2026,
                     definition_local=DefinitionLocal.KM,
                     definition_local_km=TUPLE_OK[0],
                 )
@@ -448,6 +449,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 self.assertRaises(
                     (ValueError, ValidationError),
                     DiagnosticFactory,
+                    year=2026,
                     definition_local=DefinitionLocal.KM,
                     definition_local_km=VALUE_NOT_OK,
                 )
@@ -456,6 +458,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 self.assertRaises(
                     IntegrityError,
                     DiagnosticFactory,
+                    year=2026,
                     definition_local=DefinitionLocal.KM,
                     definition_local_km=VALUE_NOT_OK,
                 )
@@ -466,10 +469,34 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 definition_local_km=VALUE_NOT_OK,
             ):
                 diagnostic = DiagnosticFactory(
+                    year=2026,
                     definition_local=DefinitionLocal.PAT,
                     definition_local_km=VALUE_NOT_OK,
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2026-01-30")  # during the 2025 campaign
+    def test_definition_local_required_before_2026_validation(self):
+        # before 2026, definition_local is not required even if a "_local" appro field is filled
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025, valeur_local=100, definition_local=None)
+        diagnostic.full_clean()  # should not raise
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_definition_local_required_after_2026_validation(self):
+        # since 2026, definition_local is required as soon as a "_local" appro field is filled
+        # NOTE: the "_local" value must stay <= the corresponding family value (see validate_valeur_famille),
+        # so only families with an explicit value in VALID_DIAGNOSTIC_SIMPLE_2026 are used here
+        for LOCAL_FIELD in ["valeur_local", "valeur_viandes_volailles_local", "valeur_produits_de_la_mer_local"]:
+            with self.subTest(local_field=LOCAL_FIELD):
+                diagnostic = DiagnosticFactory(
+                    **VALID_DIAGNOSTIC_SIMPLE_2026, **{LOCAL_FIELD: 50}, definition_local=None
+                )
+                self.assertRaises(ValidationError, diagnostic.full_clean)
+                diagnostic.definition_local = DefinitionLocal.PAT
+                diagnostic.full_clean()  # should not raise anymore
+        # no "_local" appro field filled: definition_local stays optional
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026, definition_local=None)
+        diagnostic.full_clean()  # should not raise
 
 
 class DiagnosticModelSavePopulateTest(TransactionTestCase):
