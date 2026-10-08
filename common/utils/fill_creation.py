@@ -150,6 +150,7 @@ def get_application_from_token_periods(token_periods, date):
 def fill_creation_source_api_oauth2_application(manager, history_manager, apply):
     """
     Only for objects with creation_source = "API" (and creation_source_api_oauth2_application empty)
+    history_manager: None if the model has no history (e.g. Purchase)
 
     Rules:
     - if the first version of the object in the history has a history_source_api_oauth2_application, then use it
@@ -165,7 +166,9 @@ def fill_creation_source_api_oauth2_application(manager, history_manager, apply)
         f"Found {len(objects)} API {manager.model.__name__} with missing creation_source_api_oauth2_application"
     )
 
-    first_versions = get_first_versions(history_manager, [object_id for object_id, _, _ in objects])
+    first_versions = (
+        get_first_versions(history_manager, [object_id for object_id, _, _ in objects]) if history_manager else {}
+    )
     token_periods_by_user_id = get_user_token_periods({user_id for _, user_id, _ in objects if user_id})
 
     application_by_object_id = {}
