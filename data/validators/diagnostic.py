@@ -366,6 +366,8 @@ def validate_definition_local(instance):
     - extra validation:
         - if definition_local is "KM", then definition_local_km can be filled
         - if definition_local is not "KM", then definition_local_km must be empty
+        - since 2026 (when definition_local was added): if any of the appro "_local" fields is filled,
+          definition_local becomes mandatory
     """
     errors = {}
     field_name = "definition_local"
@@ -377,5 +379,12 @@ def validate_definition_local(instance):
                 errors,
                 "definition_local_km",
                 "La distance en km doit être vide lorsque la définition locale n'est pas 'KM'.",
+            )
+    if value in [None, ""] and instance.year and int(instance.year) >= 2026:
+        if any(getattr(instance, local_field) for local_field in instance.APPRO_LOCAL_FIELDS):
+            utils_utils.add_validation_error(
+                errors,
+                field_name,
+                "Ce champ est obligatoire dès qu'une valeur locale (HT) est renseignée.",
             )
     return errors
