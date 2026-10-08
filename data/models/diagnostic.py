@@ -38,11 +38,10 @@ from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
     get_teledeclaration_field_groups,
 )
+from data.models.diagnostic_teledeclaration_egalim_objectives import EGALIM_OBJECTIVES, objectifs_egalim_atteints
 from macantine.utils import (
-    EGALIM_OBJECTIVES,
     TELEDECLARATION_CURRENT_VERSION,
     YEARS_WITH_1TD1SITE,
-    objectifs_egalim_atteints,
 )
 
 

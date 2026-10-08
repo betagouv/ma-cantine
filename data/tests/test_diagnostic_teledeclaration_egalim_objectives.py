@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from data.models.geo import Region
-from macantine.utils import (
+from data.models.diagnostic_teledeclaration_egalim_objectives import (
     get_egalim_group,
     objectifs_egalim_atteints,
 )
