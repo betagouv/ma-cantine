@@ -1,5 +1,4 @@
 import json
-from datetime import timedelta
 
 import numpy as np
 import pandas as pd
@@ -7,10 +6,16 @@ from django.db import connection
 from django.test import TestCase
 from django.utils import timezone
 from freezegun import freeze_time
-from oauth2_provider.models import get_access_token_model, get_application_model, get_refresh_token_model
 
 from api.serializers import DiagnosticTeledeclaredAnalysisSerializer
-from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from data.factories import (
+    AccessTokenFactory,
+    ApplicationFactory,
+    CanteenFactory,
+    DiagnosticFactory,
+    RefreshTokenFactory,
+    UserFactory,
+)
 from data.models import Canteen, Diagnostic, Sector, User
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_RAW, ETL_ANALYSIS_TELEDECLARATIONS
 from macantine.etl.data_ware_house import copy_into_table, get_column_types
@@ -717,23 +722,11 @@ class RawETLAnalysisTest(TestCase):
 class OAuth2RawETLAnalysisTest(TestCase):
     def test_secrets_are_not_exported(self):
         user = UserFactory()
-        application = get_application_model().objects.create(
-            name="Logiciel",
-            user=user,
-            client_type="confidential",
-            authorization_grant_type="authorization-code",
-            client_secret="client-secret-value",
+        application = ApplicationFactory(user=user, client_secret="client-secret-value")
+        access_token = AccessTokenFactory(
+            user=user, application=application, token="access-token-value", scope="user:read"
         )
-        access_token = get_access_token_model().objects.create(
-            user=user,
-            application=application,
-            token="access-token-value",
-            expires=timezone.now() + timedelta(hours=1),
-            scope="user:read",
-        )
-        get_refresh_token_model().objects.create(
-            user=user, application=application, token="refresh-token-value", access_token=access_token
-        )
+        RefreshTokenFactory(user=user, application=application, token="refresh-token-value", access_token=access_token)
         application.refresh_from_db()
         access_token.refresh_from_db()
         secrets = [
