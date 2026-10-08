@@ -31,7 +31,9 @@ class Oauth2ProviderApplicationAdmin(ApplicationAdmin):
         "updated",
     )
     list_select_related = ("user", "extra")
+    list_filter = ApplicationAdmin.list_filter + ("extra__company_name",)
     search_fields = ApplicationAdmin.search_fields + ("extra__company_name",)
+    search_help_text = "La recherche est faite sur les champs : nom, email de l'utilisateur, nom de l'entreprise."
     inlines = (Oauth2ProviderApplicationExtraInline,)
 
     def has_add_permission(self, request):
