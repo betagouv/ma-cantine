@@ -23,7 +23,7 @@ const tiles = [
     to: documentation.diversificationSourcesProteines,
   },
   {
-    title: "Interdiction du plastique",
+    title: "Substitution du plastique",
     imgSrc: "/static/images/badges/badge-plastic.svg",
     details:
       "Dans le cadre de la loi EGalim, la réduction du plastique en restauration collective nécessite une adaptation dans les comportements existants.",
