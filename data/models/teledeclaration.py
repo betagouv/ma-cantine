@@ -12,7 +12,7 @@ from simple_history.models import HistoricalRecords
 from data.models import AuthenticationMethodHistoricalRecords, Canteen, Diagnostic
 from data.utils import CustomJSONEncoder
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES, is_in_teledeclaration_or_correction
-from data.models.diagnostic_teledeclaration_egalim_objectives import EGALIM_OBJECTIVES
+from data.models.diagnostic_teledeclaration_egalim_objectives import EGALIM_REGION_GROUPS, get_egalim_objectives
 
 logger = logging.getLogger(__name__)
 
@@ -123,26 +123,27 @@ class TeledeclarationQuerySet(models.QuerySet):
             egalim_percent=100 * F("value_egalim_ht_agg") / Sum("value_total_ht"),
         )
 
-    def egalim_objectives_reached(self):
+    def egalim_objectives_reached(self, year):
+        egalim_objectives_appro = get_egalim_objectives(year, "APPRO")
         return self.filter(
             Q(
-                bio_percent__gte=EGALIM_OBJECTIVES["hexagone"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["hexagone"]["egalim_percent"],
+                bio_percent__gte=egalim_objectives_appro["hexagone"]["bio_percent"],
+                egalim_percent__gte=egalim_objectives_appro["hexagone"]["egalim_percent"],
             )
             | Q(
-                canteen__region__in=EGALIM_OBJECTIVES["groupe_1"]["region_list"],
-                bio_percent__gte=EGALIM_OBJECTIVES["groupe_1"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_1"]["egalim_percent"],
+                canteen__region__in=EGALIM_REGION_GROUPS["groupe_1"],
+                bio_percent__gte=egalim_objectives_appro["groupe_1"]["bio_percent"],
+                egalim_percent__gte=egalim_objectives_appro["groupe_1"]["egalim_percent"],
             )
             | Q(
-                canteen__region__in=EGALIM_OBJECTIVES["groupe_2"]["region_list"],
-                bio_percent__gte=EGALIM_OBJECTIVES["groupe_2"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_2"]["egalim_percent"],
+                canteen__region__in=EGALIM_REGION_GROUPS["groupe_2"],
+                bio_percent__gte=egalim_objectives_appro["groupe_2"]["bio_percent"],
+                egalim_percent__gte=egalim_objectives_appro["groupe_2"]["egalim_percent"],
             )
             | Q(
-                canteen__region__in=EGALIM_OBJECTIVES["groupe_3"]["region_list"],
-                bio_percent__gte=EGALIM_OBJECTIVES["groupe_3"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_3"]["egalim_percent"],
+                canteen__region__in=EGALIM_REGION_GROUPS["groupe_3"],
+                bio_percent__gte=egalim_objectives_appro["groupe_3"]["bio_percent"],
+                egalim_percent__gte=egalim_objectives_appro["groupe_3"]["egalim_percent"],
             )
         )
 

@@ -38,7 +38,11 @@ from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
     get_teledeclaration_field_groups,
 )
-from data.models.diagnostic_teledeclaration_egalim_objectives import EGALIM_OBJECTIVES, objectifs_egalim_atteints
+from data.models.diagnostic_teledeclaration_egalim_objectives import (
+    EGALIM_REGION_GROUPS,
+    get_egalim_objectives,
+    objectifs_egalim_atteints,
+)
 from macantine.utils import (
     TELEDECLARATION_CURRENT_VERSION,
     YEARS_WITH_1TD1SITE,
@@ -384,27 +388,28 @@ class DiagnosticQuerySet(models.QuerySet):
         """
         return self.filter(objectifs_egalim_atteints=True)
 
-    def egalim_objectives_reached(self):
+    def egalim_objectives_reached(self, year):
         # TODO: filter on canteen_snapshot__region instead
+        egalim_objectives_appro = get_egalim_objectives(year, "APPRO")
         return self.select_related("canteen").filter(
             Q(
-                bio_percent__gte=EGALIM_OBJECTIVES["hexagone"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["hexagone"]["egalim_percent"],
+                bio_percent__gte=egalim_objectives_appro["hexagone"]["bio_percent"],
+                egalim_percent__gte=egalim_objectives_appro["hexagone"]["egalim_percent"],
             )
             | Q(
-                canteen__region__in=EGALIM_OBJECTIVES["groupe_1"]["region_list"],
-                bio_percent__gte=EGALIM_OBJECTIVES["groupe_1"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_1"]["egalim_percent"],
+                canteen__region__in=EGALIM_REGION_GROUPS["groupe_1"],
+                bio_percent__gte=egalim_objectives_appro["groupe_1"]["bio_percent"],
+                egalim_percent__gte=egalim_objectives_appro["groupe_1"]["egalim_percent"],
             )
             | Q(
-                canteen__region__in=EGALIM_OBJECTIVES["groupe_2"]["region_list"],
-                bio_percent__gte=EGALIM_OBJECTIVES["groupe_2"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_2"]["egalim_percent"],
+                canteen__region__in=EGALIM_REGION_GROUPS["groupe_2"],
+                bio_percent__gte=egalim_objectives_appro["groupe_2"]["bio_percent"],
+                egalim_percent__gte=egalim_objectives_appro["groupe_2"]["egalim_percent"],
             )
             | Q(
-                canteen__region__in=EGALIM_OBJECTIVES["groupe_3"]["region_list"],
-                bio_percent__gte=EGALIM_OBJECTIVES["groupe_3"]["bio_percent"],
-                egalim_percent__gte=EGALIM_OBJECTIVES["groupe_3"]["egalim_percent"],
+                canteen__region__in=EGALIM_REGION_GROUPS["groupe_3"],
+                bio_percent__gte=egalim_objectives_appro["groupe_3"]["bio_percent"],
+                egalim_percent__gte=egalim_objectives_appro["groupe_3"]["egalim_percent"],
             )
         )
 
@@ -2151,7 +2156,7 @@ class Diagnostic(models.Model):
     def compute_objectifs_egalim_atteints(self):
         if self.valeur_totale and self.pourcentage_bio is not None and self.pourcentage_egalim is not None:
             canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
-            return objectifs_egalim_atteints(self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
+            return objectifs_egalim_atteints(self.year, self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
         return None
 
     def compute_cout_repas(self):
@@ -2331,20 +2336,8 @@ class Diagnostic(models.Model):
             bio_percent = (self.valeur_bio or 0) / total
             egalim_percent = self.egalim_sum() / total
 
-            bio_threshold = EGALIM_OBJECTIVES["hexagone"]["bio_percent"]
-            combined_threshold = EGALIM_OBJECTIVES["hexagone"]["egalim_percent"]
-            if self.canteen.region in EGALIM_OBJECTIVES["groupe_1"]["region_list"]:
-                bio_threshold = EGALIM_OBJECTIVES["groupe_1"]["bio_percent"]
-                combined_threshold = EGALIM_OBJECTIVES["groupe_1"]["egalim_percent"]
-            elif self.canteen.region in EGALIM_OBJECTIVES["groupe_2"]["region_list"]:
-                bio_threshold = EGALIM_OBJECTIVES["groupe_2"]["bio_percent"]
-                combined_threshold = EGALIM_OBJECTIVES["groupe_2"]["egalim_percent"]
-            elif self.canteen.region in EGALIM_OBJECTIVES["groupe_3"]["region_list"]:
-                bio_threshold = EGALIM_OBJECTIVES["groupe_3"]["bio_percent"]
-                combined_threshold = EGALIM_OBJECTIVES["groupe_3"]["egalim_percent"]
-
             # * 100 to get around floating point errors when we are on the cusp
-            if bio_percent * 100 >= bio_threshold and egalim_percent * 100 >= combined_threshold:
+            if objectifs_egalim_atteints(self.year, bio_percent * 100, egalim_percent * 100, self.canteen.region):
                 return True
         if self.tunnel_appro:
             return False
