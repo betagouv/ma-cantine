@@ -17,7 +17,6 @@ from pathlib import Path
 
 import dotenv  # noqa
 import sentry_sdk
-from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from botocore.config import Config as BotoConfig
 
@@ -91,7 +90,7 @@ THIRD_PARTY_APPS = [
     "magicauth",
     "django_extensions",
     "django_filters",
-    "django_celery_results",
+    "django_q",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "simple_history",
@@ -273,7 +272,7 @@ SENTRY_DSN = "https://db78f7d440094c498a02135e8abefa27@sentry.incubateur.net/2"
 if not DEBUG:
     sentry_sdk.init(
         dsn=SENTRY_DSN,
-        integrations=[DjangoIntegration(), CeleryIntegration()],
+        integrations=[DjangoIntegration()],
         # Tracing: set traces_sample_rate to 1.0 to capture 100% of transactions
         traces_sample_rate=0.2,  # 20%
         # Profiling: set profiles_sample_rate to 1.0 to profile 100% of sampled transactions.
@@ -425,16 +424,34 @@ USES_MONCOMPTEPRO = (
 )
 
 
-# Redis
+# Async tasks: django-q2
+# https://django-q2.readthedocs.io/en/master/configure.html
+# Periodic tasks are defined in macantine/schedules.py
 # ------------------------------------------------------------------------------
 
-REDIS_URL = os.getenv("REDIS_URL")
-
-
-# Celery
-# ------------------------------------------------------------------------------
-
-CELERY_RESULT_EXTENDED = True
+Q_CLUSTER = {
+    "name": "macantine",
+    # use the Django database as the message broker
+    "orm": "default",
+    "workers": int(os.getenv("Q_CLUSTER_WORKERS", 2)),
+    # seconds between 2 checks of the queue (default: 0.2)
+    "poll": 5,
+    # a task running longer than this is killed (longest tasks: dataset exports & dbt)
+    "timeout": 4 * 60 * 60,
+    # an unacknowledged task (e.g. worker killed) is handed out again after this delay (must be > timeout)
+    "retry": 4 * 60 * 60 + 15 * 60,
+    # never run a task twice: a failed or interrupted task is recorded as failed, not retried
+    "max_attempts": 1,
+    "ack_failures": True,
+    # recycle workers periodically to limit long-term memory growth
+    "recycle": 50,
+    # keep the last 120 successful results per task (= 30 days for tasks running every 6 hours)
+    # (failed tasks are always kept)
+    "save_limit": 120,
+    "save_limit_per": "func",
+    # don't run all the missed occurrences of a schedule after a downtime
+    "catch_up": False,
+}
 
 
 # Emails
