@@ -9,6 +9,21 @@ from .user import UserFactory
 Application = get_application_model()
 
 
+class CreatedOverrideMixin:
+    """
+    The created field is auto_now_add: allow to override it (e.g. AccessTokenFactory(created=...))
+    """
+
+    @classmethod
+    def _create(cls, model_class, *args, **kwargs):
+        created = kwargs.pop("created", None)
+        obj = super()._create(model_class, *args, **kwargs)
+        if created:
+            model_class.objects.filter(pk=obj.pk).update(created=created)
+            obj.created = created
+        return obj
+
+
 class ApplicationFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Application
@@ -20,7 +35,7 @@ class ApplicationFactory(factory.django.DjangoModelFactory):
     redirect_uris = "https://example.com"
 
 
-class AccessTokenFactory(factory.django.DjangoModelFactory):
+class AccessTokenFactory(CreatedOverrideMixin, factory.django.DjangoModelFactory):
     class Meta:
         model = get_access_token_model()
 
@@ -30,7 +45,7 @@ class AccessTokenFactory(factory.django.DjangoModelFactory):
     expires = factory.LazyFunction(lambda: timezone.now() + timedelta(hours=1))
 
 
-class RefreshTokenFactory(factory.django.DjangoModelFactory):
+class RefreshTokenFactory(CreatedOverrideMixin, factory.django.DjangoModelFactory):
     class Meta:
         model = get_refresh_token_model()
 
