@@ -102,15 +102,15 @@ def get_egalim_objectives_appro(year, canteen_region):
     return get_egalim_objectives(year, "APPRO")[get_egalim_group([canteen_region])]
 
 
-def objectifs_egalim_atteints(year, pourcentage_bio, pourcentage_egalim, canteen_region):
+def objectifs_egalim_atteints(year, canteen_region, pourcentage_bio, pourcentage_egalim):
     """
     Determine if the EGALIM objectives are met.
 
     Args:
         year (int): The diagnostic year.
+        canteen_region (str): The region of the canteen.
         pourcentage_bio (float | None): The percentage of organic products.
         pourcentage_egalim (float | None): The percentage of EGALIM-compliant products.
-        canteen_region (str): The region of the canteen.
 
     Returns:
         bool | None: True if the objectives are met, False otherwise.

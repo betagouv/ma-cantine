@@ -59,6 +59,6 @@ class EgalimObjectivesTest(TestCase):
         ]:
             with self.subTest(pourcentage_bio=pourcentage_bio, pourcentage_egalim=pourcentage_egalim):
                 self.assertEqual(
-                    objectifs_egalim_atteints(2025, pourcentage_bio, pourcentage_egalim, canteen_region),
+                    objectifs_egalim_atteints(2025, canteen_region, pourcentage_bio, pourcentage_egalim),
                     resultat,
                 )

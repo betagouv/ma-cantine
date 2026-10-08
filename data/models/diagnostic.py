@@ -2155,7 +2155,7 @@ class Diagnostic(models.Model):
 
     def compute_objectifs_egalim_atteints(self):
         canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
-        return objectifs_egalim_atteints(self.year, self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
+        return objectifs_egalim_atteints(self.year, canteen_region, self.pourcentage_bio, self.pourcentage_egalim)
 
     def compute_cout_repas(self):
         if self.valeur_totale and self.canteen_yearly_meal_count:
@@ -2335,7 +2335,7 @@ class Diagnostic(models.Model):
             egalim_percent = self.egalim_sum() / total
 
             # * 100 to get around floating point errors when we are on the cusp
-            if objectifs_egalim_atteints(self.year, bio_percent * 100, egalim_percent * 100, self.canteen.region):
+            if objectifs_egalim_atteints(self.year, self.canteen.region, bio_percent * 100, egalim_percent * 100):
                 return True
         if self.tunnel_appro:
             return False
