@@ -6,6 +6,38 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.53.0](https://github.com/betagouv/ma-cantine/compare/v2026.52.0...v2026.53.0) (2026-10-08)
+
+
+### Nouveautés
+
+* **Télédéclaration:** permet de modifier sa télédéclaration ([#7275](https://github.com/betagouv/ma-cantine/issues/7275)) ([beb3030](https://github.com/betagouv/ma-cantine/commit/beb303033bc3e58e4e104ce269e60bbf61b320e7))
+
+
+### Améliorations
+
+* **Applications Oauth2:** Achats: Remplir au mieux l'historique de `creation_source_api_oauth2_application` ([#7272](https://github.com/betagouv/ma-cantine/issues/7272)) ([55efd09](https://github.com/betagouv/ma-cantine/commit/55efd09ca8a34634fbf8a108548ea1875f8ecd04))
+* **Applications Oauth2:** Admin: afficher le nombre de cantine, bilan, achat et évaluation gaspillage crées ([#7274](https://github.com/betagouv/ma-cantine/issues/7274)) ([fe03554](https://github.com/betagouv/ma-cantine/commit/fe0355412364c24bb32c7b856f885c25e3f488bf))
+* **Applications Oauth2:** Admin: ajouter un filtre par company_name. Clarifier les champs du search ([#7277](https://github.com/betagouv/ma-cantine/issues/7277)) ([1e7a47a](https://github.com/betagouv/ma-cantine/commit/1e7a47a240d04cae947712eade22de5a527cf7b1))
+* **Applications Oauth2:** Cantines: Remplir au mieux l'historique de `creation_source_api_oauth2_application` ([#7267](https://github.com/betagouv/ma-cantine/issues/7267)) ([2c9faac](https://github.com/betagouv/ma-cantine/commit/2c9faacb0688ae1bee4e3f8df8a5d23d7a7ab02d))
+* **Applications Oauth2:** Diagnostics: Remplir au mieux l'historique de `creation_source_api_oauth2_application` ([#7270](https://github.com/betagouv/ma-cantine/issues/7270)) ([eff0949](https://github.com/betagouv/ma-cantine/commit/eff0949f4c9b14b5bc05cf06774d9bcabd9df938))
+* **Applications Oauth2:** Evaluation Gaspillage: Remplir au mieux l'historique de `creation_source_api_oauth2_application` ([#7271](https://github.com/betagouv/ma-cantine/issues/7271)) ([f2d79d6](https://github.com/betagouv/ma-cantine/commit/f2d79d65c66d68d2161e71a4122a513432dc4563))
+* **Diagnostics:** ajoute un validateur supplémentaire sur le champ definition_local (devient obligatoire si un champ valeur _local est rempli) (TD 2026) ([#7280](https://github.com/betagouv/ma-cantine/issues/7280)) ([7331ed8](https://github.com/betagouv/ma-cantine/commit/7331ed8a337029a184bf908b8707def84392a07b))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** homogénéise le nom des volets ([#7276](https://github.com/betagouv/ma-cantine/issues/7276)) ([f63c77a](https://github.com/betagouv/ma-cantine/commit/f63c77a956d3f30f2198da3cb93c03f9c5bb1a9f))
+
+
+### Technique
+
+* **Admin:** en local, ne pas demander le 2FA aux superuser ([#7278](https://github.com/betagouv/ma-cantine/issues/7278)) ([1bc91dd](https://github.com/betagouv/ma-cantine/commit/1bc91ddbeaaa8a5ef52e130c7c182c1e8cc80f95))
+* **Applications Oauth2:** Tests: factories dédiées (Application, AccessToken, RefreshToken) ([#7266](https://github.com/betagouv/ma-cantine/issues/7266)) ([48226cd](https://github.com/betagouv/ma-cantine/commit/48226cd2fec430bfb80f05d49aedaf85d0aba4ca))
+* Bouger la logique commune de fill_ dans un utils dédié ([#7269](https://github.com/betagouv/ma-cantine/issues/7269)) ([c8a7ba9](https://github.com/betagouv/ma-cantine/commit/c8a7ba9450256829d05d7bab1fcf0a3bf01d7524))
+* **Télédéclaration:** Objectifs EGalim: bouger la logique dans un nouveau fichier dédié ([#7281](https://github.com/betagouv/ma-cantine/issues/7281)) ([46bd402](https://github.com/betagouv/ma-cantine/commit/46bd402b840e286790dfd86295b32c66d2ae860f))
+* **Télédéclaration:** Objectifs EGalim: séparer la logique par année + simplifier appro_badges + mieux gérer None ([#7282](https://github.com/betagouv/ma-cantine/issues/7282)) ([b3ba448](https://github.com/betagouv/ma-cantine/commit/b3ba4487bfdb10161055a564ae297be89fd57d3c))
+
 ## [2026.52.0](https://github.com/betagouv/ma-cantine/compare/v2026.51.0...v2026.52.0) (2026-10-06)
 
 
