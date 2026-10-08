@@ -504,6 +504,48 @@ class PurchaseUpdateApiTest(APITestCase):
             ],
         )
 
+    @authenticate
+    def test_partial_update_without_caracteristiques_fields_keeps_caracteristiques(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+
+        response = self.client.patch(self.url, {"description": "Saumon"}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.description, "Saumon")
+        self.assertEqual(self.purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE])
+
+    @authenticate
+    def test_partial_update_with_some_caracteristiques_fields_keeps_the_others(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+
+        # origine only: categories_egalim is kept
+        response = self.client.patch(self.url, {"origine": Purchase.Characteristic.FRANCE}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.FRANCE])
+
+        # est_local only: categories_egalim & origine are kept
+        response = self.client.patch(self.url, {"est_local": True}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(
+            self.purchase.caracteristiques,
+            [Purchase.Characteristic.BIO, Purchase.Characteristic.FRANCE, Purchase.Characteristic.LOCAL],
+        )
+
+        # categories_egalim only: replaces the egalim categories, keeps the others
+        response = self.client.patch(self.url, {"categories_egalim": [Purchase.Characteristic.HVE]}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(
+            self.purchase.caracteristiques,
+            [Purchase.Characteristic.HVE, Purchase.Characteristic.FRANCE, Purchase.Characteristic.LOCAL],
+        )
+
     def test_can_update_purchase_via_oauth2_only_if_same_creation_source(self):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
