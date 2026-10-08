@@ -179,6 +179,52 @@ class MaCantineAdminSiteLoginTest(TestCase):
         final_response = self.client.get(response.url)
         self.assertEqual(final_response.status_code, 200)
 
+    def test_superuser_without_otp_cannot_login(self):
+        # set user as superuser & password
+        self.staff_not_superuser_no_otp.is_superuser = True
+        self.staff_not_superuser_no_otp.set_password("testPw1234#!")
+        self.staff_not_superuser_no_otp.save(update_fields=["is_superuser", "password"], skip_validations=True)
+
+        response = self.client.post(
+            reverse("admin:login"),
+            {
+                "username": self.staff_not_superuser_no_otp.username,
+                "password": "testPw1234#!",
+                "next": reverse("admin:index"),
+            },
+        )
+
+        # Should stay on the login page
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.get(reverse("admin:index"))
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/admin/login/", response.url)
+
+    @override_settings(DEBUG=True)
+    def test_superuser_without_otp_can_login_if_debug(self):
+        # set user as superuser & password
+        self.staff_not_superuser_no_otp.is_superuser = True
+        self.staff_not_superuser_no_otp.set_password("testPw1234#!")
+        self.staff_not_superuser_no_otp.save(update_fields=["is_superuser", "password"], skip_validations=True)
+
+        response = self.client.post(
+            reverse("admin:login"),
+            {
+                "username": self.staff_not_superuser_no_otp.username,
+                "password": "testPw1234#!",
+                "next": reverse("admin:index"),
+            },
+        )
+
+        # Should redirect to admin index
+        self.assertEqual(response.status_code, 302)
+        self.assertIn("/admin/", response.url)
+
+        # Follow redirect and check admin loads
+        final_response = self.client.get(response.url)
+        self.assertEqual(final_response.status_code, 200)
+
     @override_settings(LOGIN_URL="/s-identifier")
     def test_login_url_not_affected_by_global_setting(self):
         response = self.client.get(reverse("admin:index"))

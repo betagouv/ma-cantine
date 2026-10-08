@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, reverse
 from django_otp.admin import OTPAdminAuthenticationForm, OTPAdminSite
@@ -12,7 +13,7 @@ class MaCantineOTPAdminAuthenticationForm(OTPAdminAuthenticationForm):
         # Skip OTPAdminAuthenticationForm.clean (which always calls clean_otp)
         self.cleaned_data = super(OTPAdminAuthenticationForm, self).clean()
         user = self.get_user()
-        if user is not None and user.is_superuser:
+        if user is not None and user.is_superuser and not settings.DEBUG:
             self.clean_otp(user)
         return self.cleaned_data
 
@@ -20,7 +21,7 @@ class MaCantineOTPAdminAuthenticationForm(OTPAdminAuthenticationForm):
 class MaCantineAdminSite(OTPAdminSite):
     """
     Custom AdminSite
-    - to use OTPAdminSite (require 2FA for admin login, superusers only)
+    - to use OTPAdminSite (require 2FA for admin login, superusers only, skipped if DEBUG)
     - to inject synthetic, read-only entries in the app list
     """
 
@@ -31,7 +32,7 @@ class MaCantineAdminSite(OTPAdminSite):
         if not admin.AdminSite.has_permission(self, request):
             return False
 
-        if not request.user.is_superuser:
+        if not request.user.is_superuser or settings.DEBUG:
             return True
 
         return request.user.is_verified()
