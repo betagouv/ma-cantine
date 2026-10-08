@@ -679,6 +679,34 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
         self.assertIsNone(diagnostic.valeur_viandes_volailles_igp)  # not populated (not required)
         self.assertIsNone(diagnostic.nombre_repas_an)  # not populated (not covered)
 
+    def test_diagnostic_2026_populate_objectifs_egalim_atteints(self):
+        # bio & egalim objectives are reached (20% & 50%), but not viandes_volailles & produits_de_la_mer (50%)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.pourcentage_bio, 20)
+        self.assertEqual(diagnostic.pourcentage_egalim, 50)
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_egalim, 50)
+        self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_egalim, 50)
+        self.assertFalse(diagnostic.objectifs_egalim_atteints)
+        # same values in 2025: objectives reached (no viandes_volailles & produits_de_la_mer objectives)
+        diagnostic_2025 = DiagnosticFactory(**{**VALID_DIAGNOSTIC_SIMPLE_2026, "year": 2025})
+        diagnostic_2025.refresh_from_db()
+        self.assertTrue(diagnostic_2025.objectifs_egalim_atteints)
+        # viandes_volailles & produits_de_la_mer objectives reached (60%)
+        diagnostic.valeur_viandes_volailles_egalim = 60
+        diagnostic.valeur_produits_de_la_mer_egalim = 48
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertTrue(diagnostic.objectifs_egalim_atteints)
+        # no produits_de_la_mer: unknown
+        diagnostic.valeur_produits_de_la_mer = 0
+        diagnostic.valeur_produits_de_la_mer_bio = 0
+        diagnostic.valeur_produits_de_la_mer_egalim = 0
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertIsNone(diagnostic.pourcentage_produits_de_la_mer_egalim)
+        self.assertIsNone(diagnostic.objectifs_egalim_atteints)
+
 
 class DiagnosticQuerySetTest(TestCase):
     @classmethod

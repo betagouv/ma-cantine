@@ -41,6 +41,7 @@ from data.models.diagnostic_teledeclaration_field_groups import (
 from data.models.diagnostic_teledeclaration_egalim_objectives import (
     EGALIM_REGION_GROUPS,
     get_egalim_objectives,
+    has_egalim_objectives,
     objectifs_egalim_atteints,
 )
 from macantine.utils import (
@@ -391,7 +392,20 @@ class DiagnosticQuerySet(models.QuerySet):
     def egalim_objectives_reached(self, year):
         # TODO: filter on canteen_snapshot__region instead
         egalim_objectives_appro = get_egalim_objectives(year, "APPRO")
-        return self.select_related("canteen").filter(
+        qs = self
+        if has_egalim_objectives(year, "APPRO_VIANDES_PRODUITS_DE_LA_MER"):
+            egalim_objectives_viandes_produits_de_la_mer = get_egalim_objectives(
+                year, "APPRO_VIANDES_PRODUITS_DE_LA_MER"
+            )
+            qs = qs.filter(
+                pourcentage_viandes_volailles_egalim__gte=egalim_objectives_viandes_produits_de_la_mer[
+                    "viandes_volailles_egalim_percent"
+                ],
+                pourcentage_produits_de_la_mer_egalim__gte=egalim_objectives_viandes_produits_de_la_mer[
+                    "produits_de_la_mer_egalim_percent"
+                ],
+            )
+        return qs.select_related("canteen").filter(
             Q(
                 bio_percent__gte=egalim_objectives_appro["hexagone"]["bio_percent"],
                 egalim_percent__gte=egalim_objectives_appro["hexagone"]["egalim_percent"],
@@ -2158,7 +2172,14 @@ class Diagnostic(models.Model):
 
     def compute_objectifs_egalim_atteints(self):
         canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
-        return objectifs_egalim_atteints(self.year, canteen_region, self.pourcentage_bio, self.pourcentage_egalim)
+        return objectifs_egalim_atteints(
+            self.year,
+            canteen_region,
+            self.pourcentage_bio,
+            self.pourcentage_egalim,
+            pourcentage_viandes_volailles_egalim=self.pourcentage_viandes_volailles_egalim,
+            pourcentage_produits_de_la_mer_egalim=self.pourcentage_produits_de_la_mer_egalim,
+        )
 
     def compute_cout_repas(self):
         if self.valeur_totale and self.canteen_yearly_meal_count:
@@ -2336,9 +2357,22 @@ class Diagnostic(models.Model):
         if total:
             bio_percent = (self.valeur_bio or 0) / total
             egalim_percent = self.egalim_sum() / total
+            viandes_volailles_egalim_percent = self.percentage_valeur_viandes_volailles_egalim
+            produits_de_la_mer_egalim_percent = self.percentage_valeur_produits_de_la_mer_egalim
 
             # * 100 to get around floating point errors when we are on the cusp
-            if objectifs_egalim_atteints(self.year, self.canteen.region, bio_percent * 100, egalim_percent * 100):
+            if objectifs_egalim_atteints(
+                self.year,
+                self.canteen.region,
+                bio_percent * 100,
+                egalim_percent * 100,
+                pourcentage_viandes_volailles_egalim=(
+                    viandes_volailles_egalim_percent * 100 if viandes_volailles_egalim_percent is not None else None
+                ),
+                pourcentage_produits_de_la_mer_egalim=(
+                    produits_de_la_mer_egalim_percent * 100 if produits_de_la_mer_egalim_percent is not None else None
+                ),
+            ):
                 return True
         if self.tunnel_appro:
             return False

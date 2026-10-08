@@ -5,6 +5,7 @@ from data.models.diagnostic_teledeclaration_egalim_objectives import (
     EGALIM_OBJECTIVES,
     get_egalim_group,
     get_egalim_objectives,
+    has_egalim_objectives,
     objectifs_egalim_atteints,
 )
 
@@ -19,6 +20,13 @@ class EgalimObjectivesTest(TestCase):
         # unknown label
         with self.assertRaises(ValueError):
             get_egalim_objectives(2025, "UNKNOWN")
+
+    def test_has_egalim_objectives(self):
+        self.assertTrue(has_egalim_objectives(2025, "APPRO"))
+        self.assertFalse(has_egalim_objectives(2025, "APPRO_VIANDES_PRODUITS_DE_LA_MER"))
+        self.assertTrue(has_egalim_objectives(2026, "APPRO_VIANDES_PRODUITS_DE_LA_MER"))
+        self.assertTrue(has_egalim_objectives(2100, "APPRO_VIANDES_PRODUITS_DE_LA_MER"))  # fallback to last year
+        self.assertFalse(has_egalim_objectives(2026, "UNKNOWN"))
 
     def test_get_egalim_group(self):
         self.assertEqual(get_egalim_group([Region.bretagne]), "hexagone")
@@ -62,3 +70,52 @@ class EgalimObjectivesTest(TestCase):
                     objectifs_egalim_atteints(2025, canteen_region, pourcentage_bio, pourcentage_egalim),
                     resultat,
                 )
+
+    def test_objectifs_egalim_atteints_2026(self):
+        # since 2026: viandes_volailles & produits_de_la_mer objectives (60%, all regions)
+        for (
+            pourcentage_bio,
+            pourcentage_egalim,
+            canteen_region,
+            pourcentage_viandes_volailles_egalim,
+            pourcentage_produits_de_la_mer_egalim,
+            resultat,
+        ) in [
+            # all objectives reached
+            (20, 50, Region.bretagne, 60, 60, True),
+            (5, 20, Region.guadeloupe, 60, 60, True),
+            # viandes_volailles or produits_de_la_mer objective not reached
+            (20, 50, Region.bretagne, 59, 60, False),
+            (20, 50, Region.bretagne, 60, 59, False),
+            (5, 20, Region.guadeloupe, 59, 60, False),
+            # bio or egalim objective not reached
+            (19, 50, Region.bretagne, 60, 60, False),
+            (20, 49, Region.bretagne, 60, 60, False),
+            # viandes_volailles or produits_de_la_mer unknown
+            (20, 50, Region.bretagne, None, 60, None),
+            (20, 50, Region.bretagne, 60, None, None),
+            (20, 50, Region.bretagne, None, None, None),
+            # ... but another objective is not reached
+            (19, 50, Region.bretagne, None, 60, False),
+            (20, 50, Region.bretagne, None, 59, False),
+        ]:
+            with self.subTest(
+                pourcentage_bio=pourcentage_bio,
+                pourcentage_egalim=pourcentage_egalim,
+                canteen_region=canteen_region,
+                pourcentage_viandes_volailles_egalim=pourcentage_viandes_volailles_egalim,
+                pourcentage_produits_de_la_mer_egalim=pourcentage_produits_de_la_mer_egalim,
+            ):
+                self.assertEqual(
+                    objectifs_egalim_atteints(
+                        2026,
+                        canteen_region,
+                        pourcentage_bio,
+                        pourcentage_egalim,
+                        pourcentage_viandes_volailles_egalim=pourcentage_viandes_volailles_egalim,
+                        pourcentage_produits_de_la_mer_egalim=pourcentage_produits_de_la_mer_egalim,
+                    ),
+                    resultat,
+                )
+        # before 2026: viandes_volailles & produits_de_la_mer are ignored
+        self.assertTrue(objectifs_egalim_atteints(2025, Region.bretagne, 20, 50, 0, None))
