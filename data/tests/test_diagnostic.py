@@ -414,21 +414,21 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time("2027-01-30")  # during the 2026 campaign: definition_local only matters since 2026
     def test_definition_local_validation(self):
         """
         - field is optional
         """
         for TUPLE_OK in [(None, None), ("", ""), *((key, key) for key in DefinitionLocal.values)]:
             with self.subTest(definition_local=TUPLE_OK[0]):
-                diagnostic = DiagnosticFactory(definition_local=TUPLE_OK[0])
+                diagnostic = DiagnosticFactory(year=2026, definition_local=TUPLE_OK[0])
                 self.assertEqual(diagnostic.definition_local, TUPLE_OK[1])
         for VALUE_NOT_OK in ["  ", 123, "invalid", "123"]:
             with self.subTest(definition_local=VALUE_NOT_OK):
-                diagnostic = DiagnosticFactory(definition_local=VALUE_NOT_OK)
+                diagnostic = DiagnosticFactory(year=2026, definition_local=VALUE_NOT_OK)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time("2027-01-30")  # during the 2026 campaign: definition_local only matters since 2026
     def test_definition_local_km_validation(self):
         """
         - field is optional
@@ -438,6 +438,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         for TUPLE_OK in [(None, None), (0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
             with self.subTest(definition_local=DefinitionLocal.KM, definition_local_km=TUPLE_OK[0]):
                 diagnostic = DiagnosticFactory(
+                    year=2026,
                     definition_local=DefinitionLocal.KM,
                     definition_local_km=TUPLE_OK[0],
                 )
@@ -448,6 +449,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 self.assertRaises(
                     (ValueError, ValidationError),
                     DiagnosticFactory,
+                    year=2026,
                     definition_local=DefinitionLocal.KM,
                     definition_local_km=VALUE_NOT_OK,
                 )
@@ -456,6 +458,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 self.assertRaises(
                     IntegrityError,
                     DiagnosticFactory,
+                    year=2026,
                     definition_local=DefinitionLocal.KM,
                     definition_local_km=VALUE_NOT_OK,
                 )
@@ -466,6 +469,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 definition_local_km=VALUE_NOT_OK,
             ):
                 diagnostic = DiagnosticFactory(
+                    year=2026,
                     definition_local=DefinitionLocal.PAT,
                     definition_local_km=VALUE_NOT_OK,
                 )
