@@ -108,12 +108,15 @@ def objectifs_egalim_atteints(year, pourcentage_bio, pourcentage_egalim, canteen
 
     Args:
         year (int): The diagnostic year.
-        pourcentage_bio (float): The percentage of organic products.
-        pourcentage_egalim (float): The percentage of EGALIM-compliant products.
+        pourcentage_bio (float | None): The percentage of organic products.
+        pourcentage_egalim (float | None): The percentage of EGALIM-compliant products.
         canteen_region (str): The region of the canteen.
 
     Returns:
-        bool: True if the objectives are met, False otherwise.
+        bool | None: True if the objectives are met, False otherwise.
+            None if a percentage is missing (e.g. no valeur_totale).
     """
+    if pourcentage_bio is None or pourcentage_egalim is None:
+        return None
     objectives = get_egalim_objectives_appro(year, canteen_region)
     return pourcentage_bio >= objectives["bio_percent"] and pourcentage_egalim >= objectives["egalim_percent"]

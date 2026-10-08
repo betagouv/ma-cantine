@@ -2154,10 +2154,8 @@ class Diagnostic(models.Model):
         )
 
     def compute_objectifs_egalim_atteints(self):
-        if self.valeur_totale and self.pourcentage_bio is not None and self.pourcentage_egalim is not None:
-            canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
-            return objectifs_egalim_atteints(self.year, self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
-        return None
+        canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
+        return objectifs_egalim_atteints(self.year, self.pourcentage_bio, self.pourcentage_egalim, canteen_region)
 
     def compute_cout_repas(self):
         if self.valeur_totale and self.canteen_yearly_meal_count:

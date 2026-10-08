@@ -52,6 +52,10 @@ class EgalimObjectivesTest(TestCase):
             (10, 30, Region.saint_pierre_et_miquelon, True),
             (9, 30, Region.saint_pierre_et_miquelon, False),
             (10, 29, Region.saint_pierre_et_miquelon, False),
+            # missing percentage (e.g. no valeur_totale)
+            (None, 50, Region.bretagne, None),
+            (20, None, Region.bretagne, None),
+            (None, None, Region.bretagne, None),
         ]:
             with self.subTest(pourcentage_bio=pourcentage_bio, pourcentage_egalim=pourcentage_egalim):
                 self.assertEqual(
