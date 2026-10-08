@@ -67,16 +67,29 @@ EGALIM_OBJECTIVES = {
             "groupe_2": {"bio_percent": 2, "egalim_percent": 5},
             "groupe_3": {"bio_percent": 10, "egalim_percent": 30},
         },
+        # APPRO_VIANDES_PRODUITS_DE_LA_MER: new in 2026 (same thresholds for all regions)
+        "APPRO_VIANDES_PRODUITS_DE_LA_MER": {
+            "viandes_volailles_egalim_percent": 60,
+            "produits_de_la_mer_egalim_percent": 60,
+        },
     },
 }
 
 
-def get_egalim_objectives(year, label):
+def _get_egalim_objectives_year(year):
     """
     Years before the first defined year use the first year's objectives,
     years after the last defined year use the last year's objectives.
     """
-    year = min(max(int(year), min(EGALIM_OBJECTIVES)), max(EGALIM_OBJECTIVES))
+    return min(max(int(year), min(EGALIM_OBJECTIVES)), max(EGALIM_OBJECTIVES))
+
+
+def has_egalim_objectives(year, label):
+    return label in EGALIM_OBJECTIVES[_get_egalim_objectives_year(year)]
+
+
+def get_egalim_objectives(year, label):
+    year = _get_egalim_objectives_year(year)
     if label not in EGALIM_OBJECTIVES[year]:
         raise ValueError(f"Field 'label' expected one of {list(EGALIM_OBJECTIVES[year].keys())} but got '{label}'.")
     return EGALIM_OBJECTIVES[year][label]
@@ -102,7 +115,14 @@ def get_egalim_objectives_appro(year, canteen_region):
     return get_egalim_objectives(year, "APPRO")[get_egalim_group([canteen_region])]
 
 
-def objectifs_egalim_atteints(year, canteen_region, pourcentage_bio, pourcentage_egalim):
+def objectifs_egalim_atteints(
+    year,
+    canteen_region,
+    pourcentage_bio,
+    pourcentage_egalim,
+    pourcentage_viandes_volailles_egalim=None,
+    pourcentage_produits_de_la_mer_egalim=None,
+):
     """
     Determine if the EGALIM objectives are met.
 
@@ -111,12 +131,29 @@ def objectifs_egalim_atteints(year, canteen_region, pourcentage_bio, pourcentage
         canteen_region (str): The region of the canteen.
         pourcentage_bio (float | None): The percentage of organic products.
         pourcentage_egalim (float | None): The percentage of EGALIM-compliant products.
+        pourcentage_viandes_volailles_egalim (float | None): The percentage of EGALIM meat (since 2026).
+        pourcentage_produits_de_la_mer_egalim (float | None): The percentage of EGALIM fish (since 2026).
 
     Returns:
         bool | None: True if the objectives are met, False otherwise.
-            None if a percentage is missing (e.g. no valeur_totale).
+            None if pourcentage_bio or pourcentage_egalim is missing (e.g. no valeur_totale).
+            None if the result depends on a percentage that can't be computed (since 2026: no meat or no fish).
     """
     if pourcentage_bio is None or pourcentage_egalim is None:
         return None
     objectives = get_egalim_objectives_appro(year, canteen_region)
-    return pourcentage_bio >= objectives["bio_percent"] and pourcentage_egalim >= objectives["egalim_percent"]
+    if not (pourcentage_bio >= objectives["bio_percent"] and pourcentage_egalim >= objectives["egalim_percent"]):
+        return False
+
+    if has_egalim_objectives(year, "APPRO_VIANDES_PRODUITS_DE_LA_MER"):
+        objectives = get_egalim_objectives(year, "APPRO_VIANDES_PRODUITS_DE_LA_MER")
+        for pourcentage, threshold in [
+            (pourcentage_viandes_volailles_egalim, objectives["viandes_volailles_egalim_percent"]),
+            (pourcentage_produits_de_la_mer_egalim, objectives["produits_de_la_mer_egalim_percent"]),
+        ]:
+            if pourcentage is not None and pourcentage < threshold:
+                return False
+        if pourcentage_viandes_volailles_egalim is None or pourcentage_produits_de_la_mer_egalim is None:
+            return None
+
+    return True
