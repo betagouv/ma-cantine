@@ -45,7 +45,6 @@ Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md)
 - [uv](https://docs.astral.sh/uv/)
 - [Node et npm](https://nodejs.org/en/download/)
 - [Postgres](https://www.postgresql.org/download/)
-- [Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/install-redis-on-linux/)
 - [pre-commit](https://pypi.org/project/pre-commit/)
 - [virtualenv](https://virtualenv.pypa.io/en/stable/installation.html) (optionnel)
 
@@ -108,7 +107,7 @@ psql -c "ALTER USER macantine_egalim_team CREATEROLE CREATEDB"
 
 L'application utilise [python-dotenv](https://pypi.org/project/python-dotenv/), vous pouvez donc créer un fichier `.env` à la racine du projet avec les variables définies ci-dessous.
 
-*Attention* : Certaines variables d'environnement sont utilisées uniquement dans les **tasks celery** (ex: mise à jours des contacts Brevo). Elles sont alors renseignées dans `celery.md`.
+*Attention* : Certaines variables d'environnement sont utilisées uniquement dans les **tâches régulières (crons)** (ex: mise à jours des contacts Brevo). Elles sont alors renseignées dans [cron.md](./cron.md).
 Pour tester ces tâches en local, vous pouvez renseigner ces variables d'environnement dans votre `.env`.
 
 ```
@@ -139,12 +138,11 @@ CELLAR_BUCKET_NAME= Optionnel - le nom du bucket S3 à utiliser
 DEBUG_PERFORMANCE= Optionnel - à utiliser avec "DEBUG" pour montrer la [Django Debug Toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/)
 ENVIRONMENT= Optionnel - si cette variable est remplie un badge sera visible dans l'application et l'admin changera. Les options sont : `dev` | `staging` | `demo` | `prod`
 GIT_BRANCH= Optionnel - cette variable permet de préciser la branche à utiliser pour les urls des schemas d'imports
-REDIS_URL= L'instance redis à utiliser pour les tâches asynchrones. Par exemple : 'redis://localhost:6379/0'
 OVERRIDE_TEST_SEED= Optionnel - `seed` utilisé par les tests pour les éléments aléatoires. Utile lors qu'un test échoue et qu'on veut reproduire exactement ce qu'il s'est passé.
 MONCOMPTEPRO_CLIENT_ID= Optionnel - Client ID utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro).
 MONCOMPTEPRO_SECRET= Optionnel - Secret utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro).
 MONCOMPTEPRO_CONFIG= Optionnel - Url de configuration utilisé pour l'authentification via [MonComptePro](https://github.com/betagouv/moncomptepro). Par exemple : `https://app-test.moncomptepro.beta.gouv.fr/.well-known/openid-configuration`
-MAX_DAYS_HISTORICAL_RECORDS= Optionnel - Flag pour indiquer le nombre de jours pendant lequels on garde l'historique des modèles. Utilisé lors d'une tâche Celery.
+MAX_DAYS_HISTORICAL_RECORDS= Optionnel - Flag pour indiquer le nombre de jours pendant lequels on garde l'historique des modèles. Utilisé lors d'une tâche régulière (cron).
 CSV_PURCHASE_CHUNK_LINES= Optionnel - Définit le nombre de lignes dans chaque chunk pour l'import des achats. Le choix par défaut est de 81920 ce qui représente en moyenne des chunks de 3Mb.
 ```
 

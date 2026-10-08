@@ -17,7 +17,6 @@ from pathlib import Path
 
 import dotenv  # noqa
 import sentry_sdk
-from sentry_sdk.integrations.celery import CeleryIntegration
 from sentry_sdk.integrations.django import DjangoIntegration
 from botocore.config import Config as BotoConfig
 
@@ -91,7 +90,6 @@ THIRD_PARTY_APPS = [
     "magicauth",
     "django_extensions",
     "django_filters",
-    "django_celery_results",
     "drf_spectacular",
     "drf_spectacular_sidecar",
     "simple_history",
@@ -273,7 +271,7 @@ SENTRY_DSN = "https://db78f7d440094c498a02135e8abefa27@sentry.incubateur.net/2"
 if not DEBUG:
     sentry_sdk.init(
         dsn=SENTRY_DSN,
-        integrations=[DjangoIntegration(), CeleryIntegration()],
+        integrations=[DjangoIntegration()],
         # Tracing: set traces_sample_rate to 1.0 to capture 100% of transactions
         traces_sample_rate=0.2,  # 20%
         # Profiling: set profiles_sample_rate to 1.0 to profile 100% of sampled transactions.
@@ -423,18 +421,6 @@ MONCOMPTEPRO_CONFIG = os.getenv("MONCOMPTEPRO_CONFIG")
 USES_MONCOMPTEPRO = (
     os.getenv("MONCOMPTEPRO_CLIENT_ID") and os.getenv("MONCOMPTEPRO_SECRET") and os.getenv("MONCOMPTEPRO_CONFIG")
 )
-
-
-# Redis
-# ------------------------------------------------------------------------------
-
-REDIS_URL = os.getenv("REDIS_URL")
-
-
-# Celery
-# ------------------------------------------------------------------------------
-
-CELERY_RESULT_EXTENDED = True
 
 
 # Emails
