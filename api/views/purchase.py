@@ -377,6 +377,8 @@ class DiagnosticsFromPurchasesView(APIView):
             if request.user not in canteen.managers.all():
                 errors.append(f"Vous ne gérez pas la cantine : {canteen_id}")
                 continue
+            # NOTE: for 2026, canteen_summary_for_year() covers every Diagnostic field...
+            # except definition_local, definition_local_km & nombre_repas_an
             values_dict = Purchase.canteen_summary_for_year(canteen, year)
             valeur_totale = values_dict["valeur_totale"]
             if valeur_totale == 0 or valeur_totale is None:
