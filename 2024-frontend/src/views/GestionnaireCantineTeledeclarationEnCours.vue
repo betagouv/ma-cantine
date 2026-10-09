@@ -110,15 +110,17 @@ const showError = (message) => rootStore.notifyServerError(message)
         <DiagnosticPdf v-if="diagnosticRecap" :diagnostic="diagnosticRecap" :canteen-id="canteenInformations.id" />
       </AppHelpCard>
       <AppHelpCard v-else title="Infos utiles pour consolider vos données">
-        <p class="fr-mb-1w">
-          <a :href="documentation.teledeclarationMatrice" target="_blank" class="fr-text-title--blue-france">La matrice de télédéclaration</a>
-        </p>
-        <p class="fr-mb-1w">
-          <a :href="documentation.teledeclarationChecklist" target="_blank" class="fr-text-title--blue-france">L’antisèche</a>
-        </p>
-        <p class="fr-mb-1w">
-          <a :href="documentation.gestionConcedee" target="_blank" class="fr-text-title--blue-france">Gestion concédée : bien m’organiser</a>
-        </p>
+        <ul class="ma-cantine--unstyled-list fr-mb-0">
+          <li class="fr-mb-1w">
+            <a :href="documentation.teledeclarationMatrice" target="_blank">La matrice de télédéclaration</a>
+          </li>
+          <li class="fr-mb-1w">
+            <a :href="documentation.teledeclarationChecklist" target="_blank">L’antisèche</a>
+          </li>
+          <li class="fr-mb-1w">
+            <a :href="documentation.gestionConcedee" target="_blank">Gestion concédée : bien m’organiser</a>
+          </li>
+        </ul>
       </AppHelpCard>
     </div>
   </div>

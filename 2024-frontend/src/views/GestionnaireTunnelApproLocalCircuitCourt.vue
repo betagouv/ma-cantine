@@ -21,10 +21,10 @@ const fieldsCircuitCourt = fieldsGroup.filter((field) => field.includes("Circuit
   </div>
   <h3 class="fr-h5">1. Valeurs totales des achats « Locaux »</h3>
   <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-    <TunnelTeledeclarationField v-for="field in fieldsLocal" :key="field" :name="field" size="inline" />
+    <TunnelTeledeclarationField v-for="field in fieldsLocal" :key="field" :name="field" />
   </div>
   <h3 class="fr-h5">2. Valeurs totales des achats circuits courts ou approvisionnements directs</h3>
   <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-    <TunnelTeledeclarationField v-for="field in fieldsCircuitCourt" :key="field" :name="field" size="inline" />
+    <TunnelTeledeclarationField v-for="field in fieldsCircuitCourt" :key="field" :name="field" />
   </div>
 </template>

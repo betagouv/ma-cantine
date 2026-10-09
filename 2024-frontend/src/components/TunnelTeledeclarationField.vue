@@ -1,19 +1,14 @@
 <script setup>
 import { ref, computed, onMounted } from "vue"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
-import { useStorePurchaseSummary } from "@/stores/purchaseSummary"
-import { storeToRefs } from "pinia"
-import { formatNumber } from "@/utils.js"
 import IconLink from "@/components/IconLink.vue"
+import AppSeparator from "@/components/AppSeparator.vue"
 import diagnosticsFieldsService from "@/services/diagnosticsFields"
-import documentation from "@/data/documentation.json"
 
 /* Stores */
-const props = defineProps(["name", "size"])
+const props = defineProps(["name"])
 const emit = defineEmits(["change"])
 const storeTeledeclaration = useStoreTeledeclaration()
-const storePurchaseSummary = useStorePurchaseSummary()
-const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
 
 /* Informations */
 const field = ref()
@@ -23,30 +18,12 @@ const isSelect = computed(() => data.value?.type === "select")
 const isRequired = computed(() => data.value.required)
 const label = computed(() => data.value.label)
 const tooltip = computed(() => data.value.tooltip)
-const isRelated = computed(() => data.value?.isRelatedField)
+const isRelatedVertical = computed(() => data.value?.isRelatedField === "vertical")
+const isRelatedHorizontal = computed(() => data.value?.isRelatedField === "horizontal")
 const placeholder = computed(() => data.value?.placeholder)
 const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeTeledeclaration.diagnosticErrors))
-const hint = computed(() => {
-  const enablePurchaseSummary = data.value.enablePurchaseSummary
-  return enablePurchaseSummary && hasPurchaseTotal.value ? getPurchaseSummaryHint(props.name) : data.value.hint
-})
-const img = computed(() => data.value.img)
-const imgAlt = computed(() => data.value.imgAlt)
-const modale = computed(() => data.value.modaleDocLink )
-const opened = ref(false)
+const hint = computed(() => data.value.hint)
 const options = computed(() => data.value.options)
-
-const getPurchaseSummaryHint = (fieldName) => {
-  const fieldValue = purchaseSummary.value?.[fieldName]
-  if (!fieldValue) return "0€ dans l'Outil de Suivi des Achats"
-  else if (fieldValue === 1) return "1€ renseigné dans l'Outil de Suivi des Achats"
-  else return `${formatNumber(fieldValue)}€ sont renseignés dans l'Outil de Suivi des Achats`
-}
-
-/* Style */
-const displayHalf = computed(() => props.size === "half")
-const displayFull = computed(() => !props.size || props.size === "full")
-const displayInline = computed(() => props.size === "inline")
 
 /* Actions */
 const cleanValue = (value) => {
@@ -64,47 +41,26 @@ const prefillField = () => field.value = storeTeledeclaration.diagnostic[props.n
 onMounted(prefillField)
 </script>
 <template>
-  <div class="fr-grid-row fr-mb-2w" :class="{ 'fr-col-6' : displayInline }">
-    <div class="fr-grid-row" :class="{ 'fr-col-12': displayFull || displayInline, 'fr-col-7': displayHalf }">
-      <IconLink v-if="isRelated" class="fr-col-1" bottom="1.25rem" />
-      <div class="tunnel-teledeclaration-field__input" :class="{ 'fr-col-11': isRelated, 'fr-col-12': !isRelated }">
-        <DsfrInputGroup v-if="isNumber" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" :placeholder="placeholder" min="0" />
-        <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="errorMessage" :hint="hint"/>
-      </div>
+  <div class="fr-grid-row fr-col-12 fr-mb-2w">
+    <IconLink v-if="isRelatedVertical" class="fr-col-1" bottom="1.25rem" />
+    <div v-if="isRelatedHorizontal" class="fr-col-2 fr-pr-3w ma-cantine--flex-start">
+      <AppSeparator class="fr-m-0" />
     </div>
-    <div v-if="displayHalf" class="fr-col-5 fr-pl-1v fr-grid-row fr-grid-row--bottom">
-      <div class="fr-col-1 fr-pb-1v">
-        <DsfrTooltip v-if="tooltip" :content="tooltip" title="Infobulle" />
-        <button v-else-if="modale" class="fr-btn--tooltip" @click="opened = true" title="En savoir plus">
-          <VIcon name="ri-question-line" />
-        </button>
-      </div>
-      <div class="fr-col-1"></div>
-      <div class="fr-col-10">
-        <img v-if="img" :src="img" :alt="imgAlt" class="tunnel-teledeclaration-field__img" />
-      </div>
+    <div class="fr-col">
+      <DsfrInputGroup v-if="isNumber" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" :placeholder="placeholder" min="0" />
+      <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="errorMessage" :hint="hint"/>
+    </div>
+    <div v-if="tooltip" class="tunnel-teledeclaration-field__tooltip fr-pl-1w fr-pb-1v">
+      <DsfrTooltip :content="tooltip" title="Infobulle" />
     </div>
   </div>
-  <DsfrModal :opened="opened" class="fr-modal--opened" @close="opened = false" size="xl">
-    <template #default>
-      <iframe
-        title="En savoir plus"
-        :src="`${documentation[data.modaleDocLink]}/reader/compact/`"
-        class="ma-cantine--modal-iframe"
-        frameborder="0"
-      ></iframe>
-    </template>
-  </DsfrModal>
 </template>
 
 <style scoped lang="scss">
 .tunnel-teledeclaration-field {
 
-  &__img {
-    width: auto;
-    height: 3rem;
-    object-fit: contain;
-    object-position: center left;
+  &__tooltip {
+    align-self: flex-end;
   }
 }
 </style>

@@ -136,42 +136,42 @@ const performanceFields = [
   <div class="fr-mb-4w">
     <h2 class="fr-h5">2. Total des achats par famille de produit</h2>
     <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in totalAchatsFields" :key="field" :name="field" size="inline" />
+      <TunnelTeledeclarationField v-for="field in totalAchatsFields" :key="field" :name="field" />
     </div>
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">3. Bio ou en conversion Bio</h2>
-    <TunnelTeledeclarationField v-for="field in bioFields" :key="field" :name="field" size="half" />
+    <TunnelTeledeclarationField v-for="field in bioFields" :key="field" :name="field" />
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">4. Label rouge</h2>
     <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in labelRougeFields" :key="field" :name="field" size="inline" />
+      <TunnelTeledeclarationField v-for="field in labelRougeFields" :key="field" :name="field" />
     </div>
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">5. AOC / AOP</h2>
     <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in aocaopFields" :key="field" :name="field" size="inline" />
+      <TunnelTeledeclarationField v-for="field in aocaopFields" :key="field" :name="field" />
     </div>
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">6. IGP</h2>
     <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in igpFields" :key="field" :name="field" size="inline" />
+      <TunnelTeledeclarationField v-for="field in igpFields" :key="field" :name="field" />
     </div>
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">7. STG</h2>
     <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in stgFields" :key="field" :name="field" size="inline" />
+      <TunnelTeledeclarationField v-for="field in stgFields" :key="field" :name="field" />
     </div>
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">8. Certification environnementale - niveau 2 ou 3 (HVE)</h2>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
       <div class="fr-col-12 fr-col-md-7">
-        <TunnelTeledeclarationField v-for="field in hveFields" :key="field" :name="field" size="full" />
+        <TunnelTeledeclarationField v-for="field in hveFields" :key="field" :name="field" />
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard title="Comment comptabiliser les produits avec la certification environnementale (HVE) ?">
@@ -184,13 +184,18 @@ const performanceFields = [
     <h2 class="fr-h5">9. Ecolabel pêche durable</h2>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
       <div class="fr-col-12 fr-col-md-7">
-        <TunnelTeledeclarationField v-for="field in pecheDurableFields" :key="field" :name="field" size="full" />
+        <TunnelTeledeclarationField v-for="field in pecheDurableFields" :key="field" :name="field" />
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard title="Comment comptabiliser les produits de pêche durable ?">
-          <a :href="documentation.pecheDurable" target="_blank">Consultez la documentation</a>
-          <br />
-          <a :href="documentation.mscPeche" target="_blank">Les produits MSC entrent-ils dans les 50% ?</a>
+          <ul class="ma-cantine--unstyled-list fr-mb-0">
+            <li class="fr-mb-1w">
+              <a :href="documentation.pecheDurable" target="_blank">Consultez la documentation</a>
+            </li>
+            <li class="fr-mb-1w">
+              <a :href="documentation.mscPeche" target="_blank">Les produits MSC entrent-ils dans les 50% ?</a>
+            </li>
+          </ul>
         </AppHelpCard>
       </div>
     </div>
@@ -198,14 +203,14 @@ const performanceFields = [
   <div class="fr-mb-4w">
     <h2 class="fr-h5">10. RUP</h2>
     <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-      <TunnelTeledeclarationField v-for="field in rupFields" :key="field" :name="field" size="inline" />
+      <TunnelTeledeclarationField v-for="field in rupFields" :key="field" :name="field" />
     </div>
   </div>
   <div class="fr-mb-4w">
     <h2 class="fr-h5">11. Commerce équitable non Bio</h2>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
       <div class="fr-col-12 fr-col-md-7">
-        <TunnelTeledeclarationField v-for="field in commerceEquitableFields" :key="field" :name="field" size="full" />
+        <TunnelTeledeclarationField v-for="field in commerceEquitableFields" :key="field" :name="field" />
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard title="Comment comptabiliser les produits issus du commerce équitable ?">
@@ -218,7 +223,7 @@ const performanceFields = [
     <h2 class="fr-h5">12. Produits fermiers ou de montagne</h2>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
       <div class="fr-col-12 fr-col-md-7">
-        <TunnelTeledeclarationField v-for="field in fermierFields" :key="field" :name="field" size="full" />
+        <TunnelTeledeclarationField v-for="field in fermierFields" :key="field" :name="field" />
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard title="Comment comptabiliser les produits fermiers ou de montagne ?">
@@ -231,7 +236,7 @@ const performanceFields = [
     <h2 class="fr-h5">13. Critères d’externalités environnementales</h2>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
       <div class="fr-col-12 fr-col-md-7">
-        <TunnelTeledeclarationField v-for="field in externalitesFields" :key="field" :name="field" size="full" />
+        <TunnelTeledeclarationField v-for="field in externalitesFields" :key="field" :name="field" />
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard title="Comment comptabiliser les produits selon les critères d’externalités environnementales ?">
@@ -244,7 +249,7 @@ const performanceFields = [
     <h2 class="fr-h5">14. Critères de performance environnementale et d’approvisionnements directs</h2>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
       <div class="fr-col-12 fr-col-md-7">
-        <TunnelTeledeclarationField v-for="field in performanceFields" :key="field" :name="field" size="full" />
+        <TunnelTeledeclarationField v-for="field in performanceFields" :key="field" :name="field" />
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard title="Comment comptabiliser les produits selon des critères de performance environnementale ?">
