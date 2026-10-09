@@ -28,7 +28,11 @@ const openModal = (title, src) => {
     <p>
       Les achats en produits bio et issus du commerce équitable sont à renseigner dans le champ principal (achat bio ou en conversion) et, si vous en avez la possibilité, dans le champ facultatif « [...] dont bio équitable ». Ce sont les seuls achats qui peuvent être comptabilisés dans deux champs distincts de cette étape (double comptabilisation).
     </p>
-    <TunnelTeledeclarationField v-for="field in bioFields" :key="field" :name="field" />
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div v-for="field in bioFields" :key="field" class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField :name="field" />
+      </div>
+    </div>
   </div>
   <div class="fr-mb-6w">
     <div class="ma-cantine--flex-between ma-cantine--flex-top ma-cantine--flex-gap-1 fr-mb-2w">
@@ -43,7 +47,11 @@ const openModal = (title, src) => {
       <br />
       Renseigner ici le montant total des achats SIQO hors bio : Label Rouge, AOC/AOP, IGP, STG
     </p>
-    <TunnelTeledeclarationField name="valeurSiqo" />
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField name="valeurSiqo" />
+      </div>
+    </div>
   </div>
   <div class="fr-mb-6w">
     <div class="ma-cantine--flex-between ma-cantine--flex-top ma-cantine--flex-gap-1 fr-mb-2w">
@@ -53,22 +61,38 @@ const openModal = (title, src) => {
       </div>
       <DsfrButton class="ma-cantine--flex-shrink-0" label="En savoir plus" icon="fr-icon-add-line" icon-right tertiary size="sm" @click="openModal('Autres achats EGalim', autresEgalimDocumentation)" />
     </div>
-    <TunnelTeledeclarationField v-for="field in autresEgalimFields" :key="field" :name="field" />
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div v-for="field in autresEgalimFields" :key="field" class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField :name="field" />
+      </div>
+    </div>
   </div>
   <div class="fr-mb-6w">
     <div class="ma-cantine--flex-between ma-cantine--flex-top ma-cantine--flex-gap-1 fr-mb-2w">
       <h3 class="fr-h5 fr-mb-0">Approvisionnements sélectionnés via des critères d'achat</h3>
       <DsfrButton class="ma-cantine--flex-shrink-0" label="En savoir plus" icon="fr-icon-add-line" icon-right tertiary size="sm" @click="openModal('Approvisionnements sélectionnés via des critères d’achat', documentation.criteresSelection)" />
     </div>
-    <TunnelTeledeclarationField name="valeurExternalitesPerformance" />
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField name="valeurExternalitesPerformance" />
+      </div>
+    </div>
   </div>
   <div class="fr-mb-6w">
     <h3 class="fr-h5">Famille de produits « Viandes et volailles fraîches ou surgelées »</h3>
-    <TunnelTeledeclarationField v-for="field in viandeFamilleFields" :key="field" :name="field" />
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div v-for="field in viandeFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField :name="field" />
+      </div>
+    </div>
   </div>
   <div class="fr-mb-6w">
     <h3 class="fr-h5">Famille de produits « Poissons, produits de la mer et de l'aquaculture frais et surgelés »</h3>
-    <TunnelTeledeclarationField v-for="field in poissonFamilleFields" :key="field" :name="field" />
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div v-for="field in poissonFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField :name="field" />
+      </div>
+    </div>
   </div>
   <AppModalIframe :opened="opened" :title="modal.title" :src="modal.src" @close="opened = false" />
 </template>
