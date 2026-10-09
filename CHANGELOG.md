@@ -6,6 +6,27 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.53.1](https://github.com/betagouv/ma-cantine/compare/v2026.53.0...v2026.53.1) (2026-10-09)
+
+
+### Améliorations
+
+* **Diagnostics:** ajouter les 'notes' à l'endpoint /recap ([#7291](https://github.com/betagouv/ma-cantine/issues/7291)) ([5f7747f](https://github.com/betagouv/ma-cantine/commit/5f7747ffabd71f0cd187904281567c8f9d69f952))
+* **Télédéclaration:** met à jour le formulaire de la TD simplifié ([#7288](https://github.com/betagouv/ma-cantine/issues/7288)) ([ed262d5](https://github.com/betagouv/ma-cantine/commit/ed262d59dc5f6153e2966e51e75773c2fe9996f7))
+* **Télédéclaration:** met à jour le formulaire TD détaillée ([#7294](https://github.com/betagouv/ma-cantine/issues/7294)) ([bfea357](https://github.com/betagouv/ma-cantine/commit/bfea357db94a4592948d5bc67df54ff876d3c58c))
+
+
+### Corrections (bugs, typos...)
+
+* **Achats:** API: répare un cas où un PATCH partiel pouvait écraser des caracteristiques ([#7287](https://github.com/betagouv/ma-cantine/issues/7287)) ([a3d1deb](https://github.com/betagouv/ma-cantine/commit/a3d1debe4e7aedc32c4a38017d9c73abadb142b5))
+* **Sentry:** before_send: répare certaines erreurs non loggées.. ([#7286](https://github.com/betagouv/ma-cantine/issues/7286)) ([1a6e6b4](https://github.com/betagouv/ma-cantine/commit/1a6e6b4a43559ea04f47c2c7aede54a76bc4fbf4))
+
+
+### Technique
+
+* **API:** ajouter un mixin 'ReadOnlySerializerMixin' et l'utiliser pour tous les serializers en lecture seule ([#7293](https://github.com/betagouv/ma-cantine/issues/7293)) ([cce96dc](https://github.com/betagouv/ma-cantine/commit/cce96dc261151b87e6f27f9223c8107497d29e2a))
+* **Observatoire:** déplacer la construction des notes 'objectifs EGalim' dans le fichier dédié créé récemment ([#7290](https://github.com/betagouv/ma-cantine/issues/7290)) ([7745fd6](https://github.com/betagouv/ma-cantine/commit/7745fd604fb35655f8ec8942e9d81bfd42023c96))
+
 ## [2026.53.0](https://github.com/betagouv/ma-cantine/compare/v2026.52.0...v2026.53.0) (2026-10-08)
 
 
