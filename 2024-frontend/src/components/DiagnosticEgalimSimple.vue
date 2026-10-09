@@ -33,7 +33,10 @@ const openModal = (title, src) => {
   </div>
   <div class="fr-mb-6w">
     <div class="ma-cantine--flex-between ma-cantine--flex-top ma-cantine--flex-gap-1 fr-mb-2w">
-      <h3 class="fr-h5 fr-mb-0">Achats SIQO (hors bio)</h3>
+      <div>
+        <h3 class="fr-h5 fr-mb-1w">Achats SIQO (hors bio)</h3>
+        <DsfrBadge label="Nouveauté loi UPSA" type="new" small />
+      </div>
       <DsfrButton class="ma-cantine--flex-shrink-0" label="En savoir plus" icon="fr-icon-add-line" icon-right tertiary size="sm" @click="openModal('Achats SIQO (hors bio)', siqoDocumentation)" />
     </div>
     <p>
@@ -45,7 +48,10 @@ const openModal = (title, src) => {
   </div>
   <div class="fr-mb-6w">
     <div class="ma-cantine--flex-between ma-cantine--flex-top ma-cantine--flex-gap-1 fr-mb-2w">
-      <h3 class="fr-h5 fr-mb-0">Autres achats EGalim</h3>
+      <div>
+        <h3 class="fr-h5 fr-mb-1w">Autres achats EGalim</h3>
+        <DsfrBadge label="Nouveauté loi UPSA" type="new" small />
+      </div>
       <DsfrButton class="ma-cantine--flex-shrink-0" label="En savoir plus" icon="fr-icon-add-line" icon-right tertiary size="sm" @click="openModal('Autres achats EGalim', autresEgalimDocumentation)" />
     </div>
     <TunnelTeledeclarationField v-for="field in autresEgalimFields" :key="field" :name="field" />
