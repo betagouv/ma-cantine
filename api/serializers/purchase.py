@@ -91,6 +91,8 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
 REQUIRED_FIELDS = ["description", "date", "prix_ht", "famille_produits"]
 CREATE_ONLY_FIELDS = ["creation_source", "import_source"]
 READ_ONLY_FIELDS = ["id", "canteen", "creation_date", "modification_date"]
+# caracteristiques is split into these 4 fields (see the Purchase model properties)
+CARACTERISTIQUES_FIELDS = ["categories_egalim", "origine", "est_circuit_court", "est_local"]
 
 
 @set_help_text_from_verbose_name
@@ -181,6 +183,15 @@ class PurchaseSerializer(serializers.ModelSerializer):
         Useful for write operations (creating/updating data)
         """
         internal_value = super().to_internal_value(data)
+
+        # partial update: only rebuild caracteristiques if at least one of the 4 fields is passed,
+        # and fallback on the instance values for the missing ones
+        if self.partial and self.instance is not None:
+            if not any(field in internal_value for field in CARACTERISTIQUES_FIELDS):
+                return internal_value
+            for field in CARACTERISTIQUES_FIELDS:
+                if field not in internal_value:
+                    internal_value[field] = getattr(self.instance, field)
 
         caracteristiques = []
 
