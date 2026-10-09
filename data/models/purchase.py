@@ -47,7 +47,7 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
             self.only("id", "famille_produits", "caracteristiques", "prix_ht").filter(canteen=canteen).for_year(year)
         )
 
-    def aggregated_stats(self):
+    def simple_stats(self):
         return self.aggregate(
             valeur_totale=Sum("prix_ht"),
             valeur_bio=Sum("prix_ht", filter=bio_query()),
@@ -74,8 +74,19 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
                 "prix_ht",
                 filter=~bio_query() & ~siqo_query() & ~egalim_autres_query() & valeur_externalites_performance_query(),
             ),
-            # misc totals
-            valeur_viandes_volailles=Sum("prix_ht", filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)),
+        )
+
+    def family_totals_stats(self):
+        return self.aggregate(
+            **{
+                "valeur_" + family.lower(): Sum("prix_ht", filter=Q(famille_produits=family))
+                for family in Purchase.Family.values
+            }
+        )
+
+    def misc_stats(self):
+        return self.aggregate(
+            # extra sub-fields, only for these 2 families
             valeur_viandes_volailles_egalim=Sum(
                 "prix_ht",
                 filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)
@@ -86,7 +97,6 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
                 filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)
                 & Q(caracteristiques__contains=[Purchase.Characteristic.FRANCE]),
             ),
-            valeur_produits_de_la_mer=Sum("prix_ht", filter=Q(famille_produits=Purchase.Family.PRODUITS_DE_LA_MER)),
             valeur_produits_de_la_mer_egalim=Sum(
                 "prix_ht",
                 filter=Q(famille_produits=Purchase.Family.PRODUITS_DE_LA_MER)
@@ -342,6 +352,7 @@ class Purchase(SoftDeletionModel):
         data = {"year": year}
         cls._simple_diag_data(purchases, data)
         cls._complete_diag_data(purchases, data, year)
+        cls._family_totals(purchases, data, year)
         cls._misc_totals(purchases, data)
 
         return data
@@ -393,7 +404,7 @@ class Purchase(SoftDeletionModel):
 
     @classmethod
     def _simple_diag_data(cls, purchases, data):
-        stats = purchases.aggregated_stats()
+        stats = purchases.simple_stats()
         data["valeur_totale"] = stats["valeur_totale"] or 0
         data["valeur_bio"] = stats["valeur_bio"] or 0
         data["valeur_bio_dont_commerce_equitable"] = stats["valeur_bio_dont_commerce_equitable"] or 0
@@ -526,10 +537,14 @@ class Purchase(SoftDeletionModel):
             data[key] = non_egalim_purchases.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
+    def _family_totals(cls, purchases, data, year):
+        stats = purchases.family_totals_stats()
+        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
+            data["valeur_" + family] = stats["valeur_" + family] or 0
+
+    @classmethod
     def _misc_totals(cls, purchases, data):
-        stats = purchases.aggregated_stats()
-        data["valeur_viandes_volailles"] = stats["valeur_viandes_volailles"] or 0
+        stats = purchases.misc_stats()
         data["valeur_viandes_volailles_egalim"] = stats["valeur_viandes_volailles_egalim"] or 0
         data["valeur_viandes_volailles_france"] = stats["valeur_viandes_volailles_france"] or 0
-        data["valeur_produits_de_la_mer"] = stats["valeur_produits_de_la_mer"] or 0
         data["valeur_produits_de_la_mer_egalim"] = stats["valeur_produits_de_la_mer_egalim"] or 0

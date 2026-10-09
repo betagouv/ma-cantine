@@ -426,3 +426,46 @@ class PurchaseSummaryFranceTest(TestCase):
         self.assertEqual(result["valeur_boulangerie_france"], 10 + 15)
         self.assertEqual(result["valeur_boulangerie_circuit_court"], 50 + 15)
         self.assertEqual(result["valeur_boulangerie_local"], 15 + 15)
+
+
+class PurchaseSummaryFamilyTotalsTest(TestCase):
+    """
+    Since 2026, valeur_<famille> (the plain family total, see Purchase._family_totals) is required
+    for every family, not just viandes_volailles & produits_de_la_mer.
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        PurchaseFactory(
+            canteen=cls.canteen, date="2026-01-01", famille_produits=Purchase.Family.VIANDES_VOLAILLES, prix_ht=10
+        )
+        PurchaseFactory(
+            canteen=cls.canteen, date="2026-01-01", famille_produits=Purchase.Family.PRODUITS_DE_LA_MER, prix_ht=20
+        )
+        PurchaseFactory(
+            canteen=cls.canteen, date="2026-01-01", famille_produits=Purchase.Family.FRUITS_ET_LEGUMES, prix_ht=30
+        )
+        PurchaseFactory(
+            canteen=cls.canteen, date="2026-01-01", famille_produits=Purchase.Family.CHARCUTERIE, prix_ht=40
+        )
+        PurchaseFactory(
+            canteen=cls.canteen, date="2026-01-01", famille_produits=Purchase.Family.PRODUITS_LAITIERS, prix_ht=50
+        )
+        PurchaseFactory(
+            canteen=cls.canteen, date="2026-01-01", famille_produits=Purchase.Family.BOULANGERIE, prix_ht=60
+        )
+        PurchaseFactory(canteen=cls.canteen, date="2026-01-01", famille_produits=Purchase.Family.BOISSONS, prix_ht=70)
+        PurchaseFactory(canteen=cls.canteen, date="2026-01-01", famille_produits=Purchase.Family.AUTRES, prix_ht=80)
+
+    def test_canteen_summary_for_year_family_totals_2026(self):
+        result = Purchase.canteen_summary_for_year(self.canteen, 2026)
+
+        self.assertEqual(result["valeur_viandes_volailles"], 10)
+        self.assertEqual(result["valeur_produits_de_la_mer"], 20)
+        self.assertEqual(result["valeur_fruits_et_legumes"], 30)
+        self.assertEqual(result["valeur_charcuterie"], 40)
+        self.assertEqual(result["valeur_produits_laitiers"], 50)
+        self.assertEqual(result["valeur_boulangerie"], 60)
+        self.assertEqual(result["valeur_boissons"], 70)
+        self.assertEqual(result["valeur_autres"], 80)
