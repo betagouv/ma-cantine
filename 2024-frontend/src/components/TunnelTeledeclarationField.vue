@@ -24,6 +24,8 @@ const placeholder = computed(() => data.value?.placeholder)
 const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeTeledeclaration.diagnosticErrors))
 const hint = computed(() => data.value.hint)
 const options = computed(() => data.value.options)
+/* Related vertical fields only display the hint */
+const displayedLabel = computed(() => isRelatedVertical.value ? "" : label.value)
 
 /* Actions */
 const cleanValue = (value) => {
@@ -47,7 +49,7 @@ onMounted(prefillField)
       <AppSeparator class="fr-m-0" />
     </div>
     <div class="fr-col">
-      <DsfrInputGroup v-if="isNumber" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" :placeholder="placeholder" min="0" />
+      <DsfrInputGroup v-if="isNumber" v-model="field" :label="displayedLabel" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" :placeholder="placeholder" min="0" />
       <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="errorMessage" :hint="hint"/>
     </div>
     <div v-if="tooltip" class="tunnel-teledeclaration-field__tooltip fr-pl-1w fr-pb-1v">

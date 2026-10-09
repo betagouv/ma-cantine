@@ -14,22 +14,14 @@ const totalAchatsFields = [
   "valeurBoissons",
 ]
 const bioFields = [
-  "valeurViandesVolaillesBio",
-  "valeurViandesVolaillesBioDontCommerceEquitable",
-  "valeurProduitsDeLaMerBio",
-  "valeurProduitsDeLaMerBioDontCommerceEquitable",
-  "valeurCharcuterieBio",
-  "valeurCharcuterieBioDontCommerceEquitable",
-  "valeurFruitsEtLegumesBio",
-  "valeurFruitsEtLegumesBioDontCommerceEquitable",
-  "valeurProduitsLaitiersBio",
-  "valeurProduitsLaitiersBioDontCommerceEquitable",
-  "valeurBoulangerieBio",
-  "valeurBoulangerieBioDontCommerceEquitable",
-  "valeurAutresBio",
-  "valeurAutresBioDontCommerceEquitable",
-  "valeurBoissonsBio",
-  "valeurBoissonsBioDontCommerceEquitable",
+  ["valeurViandesVolaillesBio", "valeurViandesVolaillesBioDontCommerceEquitable"],
+  ["valeurProduitsDeLaMerBio", "valeurProduitsDeLaMerBioDontCommerceEquitable"],
+  ["valeurCharcuterieBio", "valeurCharcuterieBioDontCommerceEquitable"],
+  ["valeurFruitsEtLegumesBio", "valeurFruitsEtLegumesBioDontCommerceEquitable"],
+  ["valeurProduitsLaitiersBio", "valeurProduitsLaitiersBioDontCommerceEquitable"],
+  ["valeurBoulangerieBio", "valeurBoulangerieBioDontCommerceEquitable"],
+  ["valeurAutresBio", "valeurAutresBioDontCommerceEquitable"],
+  ["valeurBoissonsBio", "valeurBoissonsBioDontCommerceEquitable"],
 ]
 const labelRougeFields = [
   "valeurViandesVolaillesLabelRouge",
@@ -162,8 +154,8 @@ const rupImage = `${logosFolder}/rup.png`
       Les achats en produits bio et issus du commerce équitable sont à renseigner dans le champ principal (achat bio ou en conversion), par famille. Si vous en avez la possibilité, vous pouvez également les comptabiliser dans le champ facultatif « [...] dont bio équitable ». Les achats bio issus du commerce équitable sont ainsi les seuls achats qui peuvent être comptabilisés dans deux champs distincts de cette étape (double comptabilisation).
     </p>
     <div class="fr-grid-row fr-grid-row--gutters">
-      <div v-for="field in bioFields" :key="field" class="fr-col-12 fr-col-md-6">
-        <TunnelTeledeclarationField :name="field" />
+      <div v-for="group in bioFields" :key="group[0]" class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField v-for="field in group" :key="field" :name="field" />
       </div>
     </div>
   </div>
