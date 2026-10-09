@@ -13,6 +13,7 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Diagnostic, Canteen
 from data.models.creation_source import CreationSource
+from data.models.geo import Region
 
 
 class DiagnosticListApiTest(APITestCase):
@@ -1111,6 +1112,31 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertEqual(stats["pourcentageProduitsDeLaMerEgalim"], 50)
         self.assertIsNone(stats["pourcentageProduitsDeLaMerFrance"])
         self.assertIn("objectifsEgalimAtteints", stats)
+
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
+    def test_list_recap_diagnostics_notes(self):
+        for canteen_region, egalim_group, bio_percent_objective, egalim_percent_objective in [
+            (None, "hexagone", 20, 50),
+            (Region.bretagne, "hexagone", 20, 50),
+            (Region.guadeloupe, "groupe_1", 5, 20),
+        ]:
+            with self.subTest(canteen_region=canteen_region):
+                with freeze_time("2025-01-01"):  # before the 2024 campaign
+                    canteen = CanteenFactory(region=canteen_region, managers=[authenticate.user])
+
+                response = self.client.get(reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen.id}))
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                for recap in response.json():  # every year has notes, even without diagnostic
+                    self.assertEqual(
+                        recap["notes"],
+                        {
+                            "egalimGroup": egalim_group,
+                            "bioPercentObjective": bio_percent_objective,
+                            "egalimPercentObjective": egalim_percent_objective,
+                        },
+                    )
 
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
