@@ -22,6 +22,7 @@ from api.permissions import (
     IsLinkedCanteenManager,
 )
 from api.serializers import (
+    CanteenPurchasesSummarySerializer,
     PurchaseFactureSerializer,
     PurchaseOldSerializer,
     PurchasePercentageSummarySerializer,
@@ -306,7 +307,7 @@ class CanteenPurchasesSummaryView(APIView):
     def get(self, request, *args, **kwargs):
         canteen = self._get_canteen()
         data = Purchase.canteen_summary(canteen)
-        return Response(data)
+        return Response(CanteenPurchasesSummarySerializer(data).data)
 
 
 class CanteenPurchasesSummaryForYearView(APIView):

@@ -6,6 +6,7 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.serializers.purchase import PurchaseSimpleSummarySerializer, PurchaseSummarySerializer
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
 from data.models import Canteen, Diagnostic, Purchase
@@ -783,6 +784,20 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
         self.assertEqual(body["results"][1]["year"], 2022)
         self.assertEqual(body["results"][1]["valeurTotale"], 450)
 
+    def test_canteen_summary_keys_are_all_covered_by_the_serializer(self):
+        """
+        Regression test: every key that each year entry of Purchase.canteen_summary() can produce
+        must have a matching declared field on PurchaseSimpleSummarySerializer, otherwise it gets
+        silently dropped from the API response.
+        """
+        PurchaseFactory(canteen=self.canteen, prix_ht=100, date="2021-01-01")
+
+        data = Purchase.canteen_summary(self.canteen)
+        serializer_fields = set(PurchaseSimpleSummarySerializer().get_fields().keys())
+        self.assertTrue(len(data["results"]) > 0)
+        for year_data in data["results"]:
+            self.assertEqual(set(year_data.keys()) - serializer_fields, set())
+
 
 class CanteenPurchasesSummaryForYearApiTest(APITestCase):
     @classmethod
@@ -914,6 +929,16 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         self.assertEqual(body["valeurEgalimAutres"], 260.0)
         self.assertEqual(body["valeurEgalimAutresDontCommerceEquitable"], 10.0)
         self.assertEqual(body["valeurExternalitesPerformance"], 45.0)
+
+    def test_canteen_summary_for_year_keys_are_all_covered_by_the_serializer(self):
+        """
+        Regression test: every key that Purchase.canteen_summary_for_year() can produce must have a
+        matching declared field on PurchaseSummarySerializer, otherwise it gets silently dropped from
+        the API response.
+        """
+        data = Purchase.canteen_summary_for_year(self.canteen, self.year)
+        serializer_fields = set(PurchaseSummarySerializer().get_fields().keys())
+        self.assertEqual(set(data.keys()) - serializer_fields, set())
 
     @authenticate
     def test_complex_purchase_total_summary(self):
