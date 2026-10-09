@@ -59,7 +59,7 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
       </AppHelpCard>
     </div>
   </div>
-  <div class="fr-mb-4w">
+  <div class="fr-mb-6w">
     <h3 class="fr-h5">Total des achats</h3>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
       <div class="fr-col-12 fr-col-md-6">
