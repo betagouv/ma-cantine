@@ -54,6 +54,14 @@ const openModal = (title, src) => {
     </div>
   </div>
   <div class="fr-mb-6w">
+    <h3 class="fr-h5">Famille de produits « Viandes et volailles fraîches ou surgelées »</h3>
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div v-for="field in viandeFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField :name="field" />
+      </div>
+    </div>
+  </div>
+  <div class="fr-mb-6w">
     <div class="ma-cantine--flex-between ma-cantine--flex-top ma-cantine--flex-gap-1 fr-mb-2w">
       <div>
         <h3 class="fr-h5 fr-mb-1w">Autres achats EGalim</h3>
@@ -72,17 +80,12 @@ const openModal = (title, src) => {
       <h3 class="fr-h5 fr-mb-0">Approvisionnements sélectionnés via des critères d'achat</h3>
       <DsfrButton class="ma-cantine--flex-shrink-0" label="En savoir plus" icon="fr-icon-add-line" icon-right tertiary size="sm" @click="openModal('Approvisionnements sélectionnés via des critères d’achat', documentation.criteresSelection)" />
     </div>
+    <p>
+      Critères d'achat : total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs
+    </p>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField name="valeurExternalitesPerformance" />
-      </div>
-    </div>
-  </div>
-  <div class="fr-mb-6w">
-    <h3 class="fr-h5">Famille de produits « Viandes et volailles fraîches ou surgelées »</h3>
-    <div class="fr-grid-row fr-grid-row--gutters">
-      <div v-for="field in viandeFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
-        <TunnelTeledeclarationField :name="field" />
       </div>
     </div>
   </div>

@@ -75,7 +75,7 @@
       "required": false
     },
     "valeurExternalitesPerformance": {
-      "label": "Critères d'achat : total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs",
+      "label": "Achats prenant en compte les externalités environnementales",
       "hint": "5.0 : Renseigner 0 si non suivi",
       "type": "number",
       "placeholder": "Je ne sais pas",
