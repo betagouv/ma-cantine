@@ -5,6 +5,7 @@ from data.models.diagnostic_teledeclaration_egalim_objectives import (
     EGALIM_OBJECTIVES,
     get_egalim_group,
     get_egalim_objectives,
+    get_egalim_objectives_notes,
     objectifs_egalim_atteints,
 )
 
@@ -19,6 +20,16 @@ class EgalimObjectivesTest(TestCase):
         # unknown label
         with self.assertRaises(ValueError):
             get_egalim_objectives(2025, "UNKNOWN")
+
+    def test_get_egalim_objectives_notes(self):
+        self.assertEqual(
+            get_egalim_objectives_notes(2025, "hexagone"),
+            {"egalim_group": "hexagone", "bio_percent_objective": 20, "egalim_percent_objective": 50},
+        )
+        self.assertEqual(
+            get_egalim_objectives_notes(2025, "groupe_1"),
+            {"egalim_group": "groupe_1", "bio_percent_objective": 5, "egalim_percent_objective": 20},
+        )
 
     def test_get_egalim_group(self):
         self.assertEqual(get_egalim_group([Region.bretagne]), "hexagone")
