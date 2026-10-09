@@ -239,3 +239,4 @@ class DiagnosticRecapSerializer(ReadOnlySerializerMixin, serializers.Serializer)
     generated_from_groupe_diagnostic_appro_stats = DiagnosticApproStatsSerializer(
         source="generated_from_groupe_diagnostic"
     )
+    notes = serializers.DictField(read_only=True)

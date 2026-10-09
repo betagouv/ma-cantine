@@ -30,6 +30,7 @@ from data.models import Canteen, Teledeclaration
 from data.models.creation_source import CreationSource
 from data.models.diagnostic import Diagnostic
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES, is_in_correction
+from data.models.diagnostic_teledeclaration_egalim_objectives import get_egalim_group, get_egalim_objectives_notes
 
 logger = logging.getLogger(__name__)
 
@@ -165,6 +166,7 @@ class DiagnosticListRecapView(APIView):
                     "declaration_donnees": declaration_donnees,
                     "canteen_diagnostic": canteen_diagnostic,
                     "generated_from_groupe_diagnostic": generated_from_groupe_diagnostic,
+                    "notes": get_egalim_objectives_notes(year, get_egalim_group([canteen.region])),
                 }
             )
         return Response(DiagnosticRecapSerializer(result, many=True).data)
