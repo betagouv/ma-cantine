@@ -934,7 +934,7 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         """
         Regression test: every key that Purchase.canteen_summary_for_year() can produce must have a
         matching declared field on PurchaseSummarySerializer, otherwise it gets silently dropped from
-        the API response.
+        the API response (see the valeur_<famille> plain totals, once missing from this serializer).
         """
         data = Purchase.canteen_summary_for_year(self.canteen, self.year)
         serializer_fields = set(PurchaseSummarySerializer().get_fields().keys())

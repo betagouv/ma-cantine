@@ -250,10 +250,17 @@ class PurchaseSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer)
     valeur_egalim_autres = PurchaseField()
     valeur_egalim_autres_dont_commerce_equitable = PurchaseField()
     valeur_externalites_performance = PurchaseField()
-    # meat and fish aggregates
+    # family totals
     valeur_viandes_volailles = PurchaseField()
-    valeur_viandes_volailles_egalim = PurchaseField()
     valeur_produits_de_la_mer = PurchaseField()
+    valeur_fruits_et_legumes = PurchaseField()
+    valeur_charcuterie = PurchaseField()
+    valeur_produits_laitiers = PurchaseField()
+    valeur_boulangerie = PurchaseField()
+    valeur_boissons = PurchaseField()
+    valeur_autres = PurchaseField()
+    # misc totals: meat and fish aggregates
+    valeur_viandes_volailles_egalim = PurchaseField()
     valeur_produits_de_la_mer_egalim = PurchaseField()
     # complex: by family and label
     valeur_viandes_volailles_bio = PurchaseField()
