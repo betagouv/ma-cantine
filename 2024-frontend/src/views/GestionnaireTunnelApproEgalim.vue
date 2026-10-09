@@ -66,7 +66,7 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
         <TunnelTeledeclarationField :name="valeurTotalFieldName" @change="updateCoutRepas" />
       </div>
       <div class="fr-col-12 fr-col-md-6">
-        <DsfrCallout>
+        <DsfrCallout class="fr-mb-0">
           Estimation du coût moyen par repas servi : <span class="fr-text--bold">{{ coutRepas }} €</span>
         </DsfrCallout>
       </div>
