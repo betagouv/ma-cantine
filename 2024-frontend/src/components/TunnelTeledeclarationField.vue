@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import IconLink from "@/components/IconLink.vue"
+import AppSeparator from "@/components/AppSeparator.vue"
 import diagnosticsFieldsService from "@/services/diagnosticsFields"
 
 /* Stores */
@@ -17,7 +18,8 @@ const isSelect = computed(() => data.value?.type === "select")
 const isRequired = computed(() => data.value.required)
 const label = computed(() => data.value.label)
 const tooltip = computed(() => data.value.tooltip)
-const isRelated = computed(() => data.value?.isRelatedField)
+const isRelatedVertical = computed(() => data.value?.isRelatedField === "vertical")
+const isRelatedHorizontal = computed(() => data.value?.isRelatedField === "horizontal")
 const placeholder = computed(() => data.value?.placeholder)
 const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeTeledeclaration.diagnosticErrors))
 const hint = computed(() => data.value.hint)
@@ -40,7 +42,10 @@ onMounted(prefillField)
 </script>
 <template>
   <div class="fr-grid-row fr-col-12 fr-mb-2w">
-    <IconLink v-if="isRelated" class="fr-col-1" bottom="1.25rem" />
+    <IconLink v-if="isRelatedVertical" class="fr-col-1" bottom="1.25rem" />
+    <div v-if="isRelatedHorizontal" class="fr-col-2 fr-pr-3w ma-cantine--flex-start">
+      <AppSeparator class="fr-m-0" />
+    </div>
     <div class="fr-col">
       <DsfrInputGroup v-if="isNumber" v-model="field" :label="label" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" :placeholder="placeholder" min="0" />
       <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="errorMessage" :hint="hint"/>
