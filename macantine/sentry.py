@@ -9,8 +9,16 @@ def before_send(event, hint):
     that occur on the imports can be safely ignored.
     """
 
-    exception_type, _, _ = hint.get("exc_info")
-    module = hint.get("log_record").module
+    # only logged exceptions can be filtered out. The other events (e.g. unhandled exceptions captured by
+    # the Django & Celery integrations, errors logged without exception) have no "exc_info" and/or "log_record":
+    # unpacking them would raise, and Sentry drops the event when before_send raises
+    exc_info = hint.get("exc_info")
+    log_record = hint.get("log_record")
+    if not exc_info or not log_record:
+        return event
+
+    exception_type, _, _ = exc_info
+    module = log_record.module
 
     modules = [
         "canteen_create_import",
