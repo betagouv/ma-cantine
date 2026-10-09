@@ -9,6 +9,10 @@ const autresEgalimFields = ["valeurEgalimAutres", "valeurEgalimAutresDontCommerc
 const viandeFamilleFields = ["valeurViandesVolailles", "valeurViandesVolaillesEgalim"]
 const poissonFamilleFields = ["valeurProduitsDeLaMer", "valeurProduitsDeLaMerEgalim"]
 
+/* Images */
+const bioImage = "/static/images/quality-labels/egalim-bio.jpg"
+const siqoImage = "/static/images/quality-labels/egalim-siqo.jpg"
+
 /* Modal */
 const siqoDocumentation = `${documentation.qualiteDurabiliteProduits}#3-2-a-5-les-produits-sous-signes-didentification-de-la-qualite-et-de-lorigine-siqo-hors-bio`
 const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-6-a-10-les-autres-labels-compatibles-egalim`
@@ -23,7 +27,10 @@ const openModal = (title, src) => {
   <div class="fr-mb-6w">
     <div class="ma-cantine--flex-between ma-cantine--flex-top ma-cantine--flex-gap-1 fr-mb-2w">
       <h3 class="fr-h5 fr-mb-0">Achats bio ou avec mention « en conversion vers l’agriculture biologique »</h3>
-      <DsfrButton class="ma-cantine--flex-shrink-0" label="En savoir plus" icon="fr-icon-add-line" icon-right tertiary size="sm" @click="openModal('Achats bio ou avec mention « en conversion vers l’agriculture biologique »', documentation.commerceEquitable)" />
+      <div class="ma-cantine--flex-start ma-cantine--flex-shrink-0 diagnostic-egalim-simple__header-actions">
+        <img :src="bioImage" alt="Label bio" class="diagnostic-egalim-simple__label" />
+        <DsfrButton label="En savoir plus" icon="fr-icon-add-line" icon-right tertiary size="sm" @click="openModal('Achats bio ou avec mention « en conversion vers l’agriculture biologique »', documentation.commerceEquitable)" />
+      </div>
     </div>
     <p>
       Les achats en produits bio et issus du commerce équitable sont à renseigner dans le champ principal (achat bio ou en conversion) et, si vous en avez la possibilité, dans le champ facultatif « [...] dont bio équitable ». Ce sont les seuls achats qui peuvent être comptabilisés dans deux champs distincts de cette étape (double comptabilisation).
@@ -40,7 +47,10 @@ const openModal = (title, src) => {
         <h3 class="fr-h5 fr-mb-1w">Achats SIQO (hors bio)</h3>
         <DsfrBadge label="Nouveauté loi UPSA" type="new" small />
       </div>
-      <DsfrButton class="ma-cantine--flex-shrink-0" label="En savoir plus" icon="fr-icon-add-line" icon-right tertiary size="sm" @click="openModal('Achats SIQO (hors bio)', siqoDocumentation)" />
+      <div class="ma-cantine--flex-start ma-cantine--flex-shrink-0 diagnostic-egalim-simple__header-actions">
+        <img :src="siqoImage" alt="Labels SIQO : Label Rouge, AOC, AOP, IGP, STG" class="diagnostic-egalim-simple__label" />
+        <DsfrButton label="En savoir plus" icon="fr-icon-add-line" icon-right tertiary size="sm" @click="openModal('Achats SIQO (hors bio)', siqoDocumentation)" />
+      </div>
     </div>
     <p>
       SIQO = Signes officiels d'identification de la qualité et de l'origine.
@@ -99,3 +109,17 @@ const openModal = (title, src) => {
   </div>
   <AppModalIframe :opened="opened" :title="modal.title" :src="modal.src" @close="opened = false" />
 </template>
+
+<style scoped lang="scss">
+.diagnostic-egalim-simple {
+
+  &__header-actions {
+    gap: 1rem;
+  }
+
+  &__label {
+    width: auto;
+    height: 2rem;
+  }
+}
+</style>
