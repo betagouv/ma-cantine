@@ -34,73 +34,75 @@
     },
     "valeurTotale": {
       "label": "Total des achats alimentaires toutes familles de produits confondues",
-      "placeholder": "Valeur totale € HT",
+      "hint": "1.0 : Total des achats HT",
       "type": "number",
       "required": true
     },
     "valeurBio": {
-      "label": "Total des achats Bio ou en conversion Bio",
+      "label": "Total des achats bio ou avec mention « En conversion vers l’agriculture biologique »",
+      "hint": "2.0.1 : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Valeur totale € HT",
       "required": true
     },
     "valeurBioDontCommerceEquitable": {
-      "label": "Dont total des achats bio issus du commerce équitable",
+      "label": "Dont achats bio issus du commerce équitable",
+      "hint": "2.0.2 : Champs facultatif pour le suivi de la part des achats bio issus du commerce équitable",
       "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Total des achats Bio ou en conversion Bio",
+      "tooltip": "Achats à comptabiliser également dans le champ « bio ou en conversion »",
       "placeholder": "Je ne sais pas",
       "type": "number",
       "required": false
     },
     "valeurSiqo": {
-      "label": "Total des achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
+      "label": "Total des achats SIQO (hors bio) : Label Rouge, AOC / AOP, IGP, STG",
+      "hint": "3.0 : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Valeur totale € HT",
       "required": true
     },
     "valeurEgalimAutres": {
       "label": "Total des autres achats EGalim",
+      "hint": "4.0.1 : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Valeur totale € HT",
       "required": true
     },
     "valeurEgalimAutresDontCommerceEquitable": {
-      "label": "Dont total des achats issus du commerce équitable non bio",
+      "label": "Dont total des achats non bio issus du commerce équitable",
+      "hint": "4.0.2 : Champs facultatif pour le suivi de la part des achats issus du commerce équitable non bio",
       "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Total des autres achats EGalim",
+      "tooltip": "Achats à comptabiliser également dans le champ « Total des autres achats EGalim »",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurExternalitesPerformance": {
-      "label": "Total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs",
+      "label": "Critères d'achat : total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs",
+      "hint": "5.0 : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Je ne sais pas",
-      "required": false
+      "required": true
     },
     "valeurViandesVolailles": {
       "label": "Total des achats en viandes et volailles fraiches ou surgelées",
+      "hint": "1.1 : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Valeur totale € HT",
       "required": true
     },
     "valeurViandesVolaillesEgalim": {
-      "label": "Total des achats EGalim en viandes et volailles fraiches ou surgelées",
+      "label": "Achats EGalim en viandes et volailles fraiches ou surgelées",
+      "hint": "1.1bis : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Valeur totale € HT",
       "required": true
     },
     "valeurProduitsDeLaMer": {
       "label": "Total des achats en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "hint": "1.2 : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Je ne sais pas",
-      "required": false
+      "required": true
     },
     "valeurProduitsDeLaMerEgalim": {
-      "label": "Total des achats EGalim en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "label": "Achats EGalim en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "hint": "1.2bis : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Je ne sais pas",
-      "required": false
+      "required": true
     },
     "valeurCharcuterie": {
       "label": "Total des achats pour la famille Charcuteries",
