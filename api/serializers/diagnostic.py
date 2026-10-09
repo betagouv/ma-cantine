@@ -4,7 +4,7 @@ from decimal import Decimal, InvalidOperation
 from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
-from api.serializers.utils import set_help_text_from_verbose_name
+from api.serializers.utils import ReadOnlySerializerMixin, set_help_text_from_verbose_name
 from data.models import Diagnostic
 
 from .teledeclaration import ShortTeledeclarationSerializer
@@ -79,7 +79,7 @@ class DiagnosticCheckSerializer(serializers.Serializer):
     is_teledeclared = serializers.BooleanField(read_only=True)
 
 
-class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
+class CentralKitchenDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     """
     This serializer masks financial data and gives the basic information on appro as percentages
     """
@@ -87,7 +87,6 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
-        read_only_fields = fields
 
     def to_representation(self, instance):
         """
@@ -103,25 +102,22 @@ class CentralKitchenDiagnosticSerializer(DiagnosticSerializer):
         return representation
 
 
-class PublicDiagnosticSerializer(DiagnosticSerializer):
+class PublicDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
-        read_only_fields = fields
 
 
-class PublicApproDiagnosticSerializer(DiagnosticSerializer):
+class PublicApproDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.META_FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
-        read_only_fields = fields
 
 
-class PublicServiceDiagnosticSerializer(DiagnosticSerializer):
+class PublicServiceDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
-        read_only_fields = fields
 
 
 @set_help_text_from_verbose_name
@@ -159,7 +155,7 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
         return fields
 
 
-class FullDiagnosticSerializer(DiagnosticSerializer):
+class FullDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     teledeclaration = ShortTeledeclarationSerializer(source="latest_submitted_teledeclaration")
 
     class Meta:
@@ -171,49 +167,42 @@ class FullDiagnosticSerializer(DiagnosticSerializer):
             + Diagnostic.CREATION_META_FIELDS
             + Diagnostic.TUNNEL_PROGRESS_FIELDS
         )
-        read_only_fields = fields
 
 
-class SimpleTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
+class SimpleTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.NON_APPRO_FIELDS
-        read_only_fields = fields
 
 
-class CompleteTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
+class CompleteTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.META_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS + Diagnostic.NON_APPRO_FIELDS
-        read_only_fields = fields
 
 
-class ApproDiagnosticSerializer(DiagnosticSerializer):
+class ApproDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.META_FIELDS + Diagnostic.APPRO_PERCENTAGE_PROPERTY_FIELDS
-        read_only_fields = fields
 
 
-class ApproDeferredTeledeclarationDiagnosticSerializer(DiagnosticSerializer):
+class ApproDeferredTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
-        read_only_fields = fields
 
 
-class SimpleApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
+class SimpleApproOnlyTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS
-        read_only_fields = fields
 
 
-class CompleteApproOnlyTeledeclarationDiagnosticSerializer(serializers.ModelSerializer):
+class CompleteApproOnlyTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.META_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS
-        read_only_fields = fields
 
 
 class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
@@ -229,25 +218,24 @@ class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
         return FullCanteenSerializer(obj.canteen).data
 
 
-class DiagnosticApproStatsSerializer(serializers.ModelSerializer):
+class DiagnosticApproStatsSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
         fields = Diagnostic.APPRO_STATS_FIELDS
-        read_only_fields = fields
 
 
-class DiagnosticRecapSerializer(serializers.Serializer):
-    year = serializers.IntegerField(read_only=True)
-    is_teledeclared = serializers.BooleanField(read_only=True)
-    declaration_donnees = serializers.JSONField(read_only=True)
-    canteen_diagnostic_id = serializers.IntegerField(source="canteen_diagnostic.id", read_only=True, allow_null=True)
-    canteen_diagnostic_appro_stats = DiagnosticApproStatsSerializer(source="canteen_diagnostic", read_only=True)
+class DiagnosticRecapSerializer(ReadOnlySerializerMixin, serializers.Serializer):
+    year = serializers.IntegerField()
+    is_teledeclared = serializers.BooleanField()
+    declaration_donnees = serializers.JSONField()
+    canteen_diagnostic_id = serializers.IntegerField(source="canteen_diagnostic.id", allow_null=True)
+    canteen_diagnostic_appro_stats = DiagnosticApproStatsSerializer(source="canteen_diagnostic")
     generated_from_groupe_diagnostic_id = serializers.IntegerField(
-        source="generated_from_groupe_diagnostic.id", read_only=True, allow_null=True
+        source="generated_from_groupe_diagnostic.id", allow_null=True
     )
     generated_from_groupe_diagnostic_mode = serializers.CharField(
-        source="generated_from_groupe_diagnostic.central_kitchen_diagnostic_mode", read_only=True, allow_null=True
+        source="generated_from_groupe_diagnostic.central_kitchen_diagnostic_mode", allow_null=True
     )
     generated_from_groupe_diagnostic_appro_stats = DiagnosticApproStatsSerializer(
-        source="generated_from_groupe_diagnostic", read_only=True
+        source="generated_from_groupe_diagnostic"
     )
