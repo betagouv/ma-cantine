@@ -63,7 +63,7 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
     <h3 class="fr-h5">Total des achats</h3>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
       <div class="fr-col-12 fr-col-md-6">
-        <TunnelTeledeclarationField :name="valeurTotalFieldName" size="full" @change="updateCoutRepas" />
+        <TunnelTeledeclarationField :name="valeurTotalFieldName" @change="updateCoutRepas" />
       </div>
       <div class="fr-col-12 fr-col-md-6">
         <DsfrCallout>

@@ -19,10 +19,10 @@ const fieldsEU = ["valeurEurope", "valeurViandesVolaillesEurope", "valeurProduit
   </div>
   <h3 class="fr-h5">1. Valeurs totales des achats origine France</h3>
   <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-    <TunnelTeledeclarationField v-for="field in fieldsFR" :key="field" :name="field" size="inline" />
+    <TunnelTeledeclarationField v-for="field in fieldsFR" :key="field" :name="field" />
   </div>
   <h3 class="fr-h5">2. Valeurs totales des achats origine UE (hors France)</h3>
   <div class="fr-mb-4w fr-grid-row fr-grid-row--gutters">
-    <TunnelTeledeclarationField v-for="field in fieldsEU" :key="field" :name="field" size="inline" />
+    <TunnelTeledeclarationField v-for="field in fieldsEU" :key="field" :name="field" />
   </div>
 </template>
