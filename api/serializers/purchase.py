@@ -220,6 +220,26 @@ class PurchaseFactureSerializer(serializers.ModelSerializer):
         fields = ("id", "facture")
 
 
+class PurchaseSimpleSummarySerializer(serializers.Serializer):
+    """
+    One year's worth of the "simple" totals (see Purchase._simple_diag_data), as returned
+    by Purchase.canteen_summary() for each year it covers.
+    """
+
+    year = serializers.IntegerField()
+    valeur_totale = PurchaseField()
+    valeur_bio = PurchaseField()
+    valeur_bio_dont_commerce_equitable = PurchaseField()
+    valeur_siqo = PurchaseField()
+    valeur_egalim_autres = PurchaseField()
+    valeur_egalim_autres_dont_commerce_equitable = PurchaseField()
+    valeur_externalites_performance = PurchaseField()
+
+
+class CanteenPurchasesSummarySerializer(serializers.Serializer):
+    results = PurchaseSimpleSummarySerializer(many=True)
+
+
 # NB: these names reflect the names in the diagnostic model
 class PurchaseSummarySerializer(serializers.Serializer):
     year = serializers.IntegerField()
