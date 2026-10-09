@@ -8,7 +8,6 @@ const bioFields = ["valeurBio", "valeurBioDontCommerceEquitable"]
 const autresEgalimFields = ["valeurEgalimAutres", "valeurEgalimAutresDontCommerceEquitable"]
 const viandeFamilleFields = ["valeurViandesVolailles", "valeurViandesVolaillesEgalim"]
 const poissonFamilleFields = ["valeurProduitsDeLaMer", "valeurProduitsDeLaMerEgalim"]
-const autresFamillesFields = ["valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons"]
 
 /* Modal */
 const siqoDocumentation = `${documentation.qualiteDurabiliteProduits}#3-2-a-5-les-produits-sous-signes-didentification-de-la-qualite-et-de-lorigine-siqo-hors-bio`
@@ -70,10 +69,6 @@ const openModal = (title, src) => {
   <div class="fr-mb-6w">
     <h3 class="fr-h5">Famille de produits « Poissons, produits de la mer et de l'aquaculture frais et surgelés »</h3>
     <TunnelTeledeclarationField v-for="field in poissonFamilleFields" :key="field" :name="field" />
-  </div>
-  <div class="fr-mb-6w">
-    <h2 class="fr-h5">6. Zoom sur les autres familles</h2>
-    <TunnelTeledeclarationField v-for="field in autresFamillesFields" :key="field" :name="field" />
   </div>
   <AppModalIframe :opened="opened" :title="modal.title" :src="modal.src" @close="opened = false" />
 </template>
