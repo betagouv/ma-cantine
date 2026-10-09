@@ -2,7 +2,12 @@ from drf_base64.fields import Base64FileField
 from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
-from api.serializers.utils import PurchaseField, choice_list_to_choices, set_help_text_from_verbose_name
+from api.serializers.utils import (
+    PurchaseField,
+    ReadOnlySerializerMixin,
+    choice_list_to_choices,
+    set_help_text_from_verbose_name,
+)
 from data.models import Purchase
 from data.models.definitionlocal import DefinitionLocal
 
@@ -357,7 +362,7 @@ class PurchasePercentageSummarySerializer(serializers.Serializer):
     last_purchase_date = serializers.DateField(required=False)
 
 
-class PurchaseExportSerializer(serializers.ModelSerializer):
+class PurchaseExportSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     canteen = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
     class Meta:
@@ -371,4 +376,3 @@ class PurchaseExportSerializer(serializers.ModelSerializer):
             "caracteristiques_display",
             "prix_ht",
         )
-        read_only_fields = fields

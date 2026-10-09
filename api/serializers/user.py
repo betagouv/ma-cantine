@@ -2,10 +2,12 @@ from django.contrib.auth import get_user_model
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
+from api.serializers.utils import ReadOnlySerializerMixin
+
 from .review import MiniReviewSerializer
 
 
-class UserInfoSerializer(serializers.ModelSerializer):
+class UserInfoSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     avatar = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
@@ -16,7 +18,6 @@ class UserInfoSerializer(serializers.ModelSerializer):
             "last_name",
             "avatar",
         )
-        read_only_fields = fields
 
 
 class LoggedUserSerializer(serializers.ModelSerializer):

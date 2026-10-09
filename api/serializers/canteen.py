@@ -4,7 +4,7 @@ from drf_base64.fields import Base64ImageField
 from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
-from api.serializers.utils import set_help_text_from_verbose_name
+from api.serializers.utils import ReadOnlySerializerMixin, set_help_text_from_verbose_name
 from data.models import Canteen
 
 from .canteen_managers import CanteenManagerInvitationSerializer, CanteenManagerSerializer
@@ -63,8 +63,8 @@ class MediaListSerializer(serializers.ListSerializer):
         return media
 
 
-class MinimalCanteenSerializer(serializers.ModelSerializer):
-    publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
+class MinimalCanteenSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
+    publication_status = serializers.CharField(source="publication_status_display_to_public")
 
     class Meta:
         model = Canteen
@@ -75,7 +75,6 @@ class MinimalCanteenSerializer(serializers.ModelSerializer):
             "siren_unite_legale",
             "publication_status",  # property
         )
-        read_only_fields = fields
 
 
 class BadgesSerializer(serializers.ModelSerializer):
@@ -398,12 +397,12 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         return canteen
 
 
-class CanteenSummarySerializer(serializers.ModelSerializer):
+class CanteenSummarySerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     lead_image = CanteenImageSerializer()
-    diagnostics = FullDiagnosticSerializer(many=True, read_only=True)
-    central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
-    publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
+    diagnostics = FullDiagnosticSerializer(many=True)
+    central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True)
+    publication_status = serializers.CharField(source="publication_status_display_to_public")
 
     class Meta:
         model = Canteen
@@ -437,25 +436,23 @@ class CanteenSummarySerializer(serializers.ModelSerializer):
             "diagnostics",
             "central_kitchen_diagnostics",  # can return a TD status instead of diagnostics
         )
-        read_only_fields = fields
 
 
-class CanteenPreviewSerializer(serializers.ModelSerializer):
+class CanteenPreviewSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Canteen
         fields = (
             "id",
             "name",
         )
-        read_only_fields = fields
 
 
-class CanteenActionsSerializer(serializers.ModelSerializer):
+class CanteenActionsSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     # TODO: is it worth moving the job of fetching the specific diag required to the front?
     sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
-    publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
+    publication_status = serializers.CharField(source="publication_status_display_to_public")
     lead_image = CanteenImageSerializer()
-    diagnostics = FullDiagnosticSerializer(many=True, read_only=True)
+    diagnostics = FullDiagnosticSerializer(many=True)
     action = serializers.CharField(allow_null=True)
 
     class Meta:
@@ -489,10 +486,9 @@ class CanteenActionsSerializer(serializers.ModelSerializer):
             "diagnostics",  # M2O
             "action",  # annotate
         )
-        read_only_fields = fields
 
 
-class CanteenActionsLightSerializer(serializers.ModelSerializer):
+class CanteenActionsLightSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     action = serializers.CharField(allow_null=True)
 
     class Meta:
@@ -510,11 +506,10 @@ class CanteenActionsLightSerializer(serializers.ModelSerializer):
             "satellites_missing_data_count",  # property
             "action",  # annotate
         )
-        read_only_fields = fields
 
 
-class CanteenStatusSerializer(serializers.ModelSerializer):
-    is_managed_by_user = serializers.BooleanField(read_only=True)
+class CanteenStatusSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
+    is_managed_by_user = serializers.BooleanField()
 
     class Meta:
         model = Canteen
@@ -530,7 +525,6 @@ class CanteenStatusSerializer(serializers.ModelSerializer):
             "can_be_claimed",  # property
             "is_managed_by_user",  # annotate
         )
-        read_only_fields = fields
 
 
 CANTEEN_TELEDECLARATION_SNAPSHOT_FIELDS = (
@@ -633,7 +627,7 @@ class CanteenExportSerializer(serializers.ModelSerializer):
         return ""
 
 
-class CanteenAnalysisSerializer(serializers.ModelSerializer):
+class CanteenAnalysisSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     nom = serializers.CharField(source="name")
     code_insee_commune = serializers.CharField(source="city_insee_code")
     libelle_commune = serializers.CharField(source="city")
@@ -693,7 +687,6 @@ class CanteenAnalysisSerializer(serializers.ModelSerializer):
             # TODO teledeclaration_campaign: add new year
             "adresses_gestionnaires",
         )
-        read_only_fields = fields
 
     def get_pat_liste(self, obj):
         return ",".join(obj.pat_list)
