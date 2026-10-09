@@ -83,7 +83,7 @@
     },
     "valeurViandesVolailles": {
       "label": "Total des achats en viandes et volailles fraiches ou surgelées",
-      "hint": "1.1 : Renseigner 0 si non suivi",
+      "hint": "1.1 : Total des achats",
       "type": "number",
       "required": true
     },
@@ -95,7 +95,7 @@
     },
     "valeurProduitsDeLaMer": {
       "label": "Total des achats en poissons, produits de la mer et de l’aquaculture frais et surgelés",
-      "hint": "1.2 : Renseigner 0 si non suivi",
+      "hint": "1.2 : Total des achats",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
