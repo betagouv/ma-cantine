@@ -140,7 +140,7 @@ dbt-protos==1.0.565
     #   dbt-adapters
     #   dbt-common
     #   dbt-core
-deepdiff==8.6.2
+deepdiff==9.1.0
     # via dbt-common
 defusedxml==0.7.1
     # via
