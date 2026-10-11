@@ -12,7 +12,7 @@
 
 ### Exports
 
-Modifier la fréquence des exports Metabase & Open Data, voir [macantine/celery.py](../macantine/celery.py)
+Modifier la fréquence des exports Metabase & Open Data, voir [macantine/schedules.py](../macantine/schedules.py)
 
 ### 1TD1Site
 
