@@ -101,10 +101,35 @@ class UserQuerySet(models.QuerySet):
 
 
 class UserManager(BaseUserManager):
-    pass
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError("L'email est obligatoire")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Un superuser doit avoir is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Un superuser doit avoir is_superuser=True.")
+        return self._create_user(email, password, **extra_fields)
 
 
 class User(DirtyFieldsMixin, AbstractUser):
+    username = None
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
     class LawAwareness(models.TextChoices):
         NONE = (
             "NONE",
@@ -262,19 +287,16 @@ class User(DirtyFieldsMixin, AbstractUser):
     objects = UserManager.from_queryset(UserQuerySet)()
 
     def __str__(self):
-        return f"{self.get_full_name()} ({self.username})"
+        return f"{self.get_full_name()} ({self.email})"
 
     def normalize_fields(self):
-        for field_name in ["email", "username"]:
-            if field_name in self.get_dirty_fields():
-                setattr(self, field_name, utils_utils.normalize_string(getattr(self, field_name)))
+        if "email" in self.get_dirty_fields():
+            self.email = utils_utils.normalize_string(self.email)
 
     def lowercase_fields(self):
-        for field_name in ["email", "username"]:
-            if field_name in self.get_dirty_fields():
-                value = getattr(self, field_name)
-                if value:
-                    setattr(self, field_name, value.lower())
+        if "email" in self.get_dirty_fields():
+            if self.email:
+                self.email = self.email.lower()
 
     def optimize_avatar(self):
         max_avatar_size = 640

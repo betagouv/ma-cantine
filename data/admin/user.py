@@ -41,11 +41,11 @@ class HasTOTPDeviceFilter(admin.SimpleListFilter):
 
 @admin.register(User)
 class MaCanteenUserAdmin(UserAdmin):
+    ordering = ("email",)
     list_display = (
-        "username",
+        "email",
         "first_name",
         "last_name",
-        "email",
         "date_joined",
         "email_confirmed",
         "is_staff",
@@ -65,21 +65,19 @@ class MaCanteenUserAdmin(UserAdmin):
         "first_name",
         "last_name",
         "email",
-        "username",
     )
-    search_help_text = "La recherche est faite sur les champs : ID, prénom, nom, email, nom d'utilisateur."
+    search_help_text = "La recherche est faite sur les champs : ID, prénom, nom, email."
 
     form = UserForm
     inlines = (CanteenInline, UserDiagnosticInline)
     fieldsets = (
-        (None, {"fields": ("username", "password")}),
+        (None, {"fields": ("email", "password")}),
         (
             _("Personal info"),
             {
                 "fields": (
                     "first_name",
                     "last_name",
-                    "email",
                     "avatar",
                     "phone_number",
                     "is_dev",
@@ -148,7 +146,7 @@ class MaCanteenUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("username", "email", "first_name", "last_name", "password1", "password2"),
+                "fields": ("email", "first_name", "last_name", "password1", "password2"),
             },
         ),
     )

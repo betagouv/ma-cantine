@@ -188,11 +188,6 @@ class UserModelSaveTest(TransactionTestCase):
         with self.assertRaises(Exception):
             UserFactory(email="user@example.com")
 
-    def test_username_unique(self):
-        UserFactory(username="user1")
-        with self.assertRaises(Exception):
-            UserFactory(username="user1")
-
     def test_email_normalized_on_save(self):
         user = UserFactory(email="user@example.com ")
         self.assertEqual(user.email, "user@example.com")

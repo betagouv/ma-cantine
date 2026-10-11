@@ -18,7 +18,6 @@ from django.views.generic import FormView, TemplateView, View
 
 from common.cache.utils import CACHE_TIMEOUT_1_day, get_or_set_cache
 from common.utils import send_mail
-from common.utils.utils import clean_username_special_chars
 from web.forms import LoginUserForm, RegisterUserForm
 from web.sitemaps import BlogPostSitemap, CanteenSitemap, PartnerSitemap, WebSitemap
 
@@ -116,11 +115,11 @@ class RegisterUserView(FormView):
 
     def form_valid(self, form):
         form.save()
-        username = form.cleaned_data["username"]
+        email = form.cleaned_data["email"]
         try:
-            _login_and_send_activation_email(username, self.request)
+            _login_and_send_activation_email(email, self.request)
         except Exception:
-            self.success_url = reverse_lazy("registration_email_sent_error", kwargs={"username": username})
+            self.success_url = reverse_lazy("registration_email_sent_error", kwargs={"email": email})
             return super().form_valid(form)
         else:
             next_url = self.request.GET.get("next")
@@ -143,11 +142,11 @@ class ActivationTokenView(View):
         return render(request, "auth/register_resend_email.html")
 
     def post(self, request, *args, **kwargs):
-        username = request.POST.get("username")
+        email = request.POST.get("email")
         try:
-            return _login_and_send_activation_email(username, self.request)
+            return _login_and_send_activation_email(email, self.request)
         except Exception:
-            return redirect(reverse_lazy("registration_email_sent_error", kwargs={"username": username}))
+            return redirect(reverse_lazy("registration_email_sent_error", kwargs={"email": email}))
 
 
 class RegisterDoneView(TemplateView):
@@ -212,11 +211,11 @@ class AccountActivationView(View):
             return redirect(reverse_lazy("invalid_token"))
 
 
-def _login_and_send_activation_email(username, request):
-    if not username:
+def _login_and_send_activation_email(email, request):
+    if not email:
         return redirect(reverse_lazy("app"))
     try:
-        user = get_user_model().objects.get(username=username, email_confirmed=False)
+        user = get_user_model().objects.get(email=email, email_confirmed=False)
         login(request, user)
 
         token = tokens.default_token_generator.make_token(user)
@@ -284,14 +283,12 @@ class OIDCAuthorizeView(View):
 
         # Create user
         logger.info(f"Creating new user from MonComptePro user {mcp_id} with email {mcp_email}.")
-        family_name = clean_username_special_chars(mcp_data.get("family_name") or "")
         user = get_user_model().objects.create(
             first_name=mcp_data.get("given_name"),
             last_name=mcp_data.get("family_name"),
             email=mcp_email,
             mcp_id=mcp_id,
             phone_number=mcp_data.get("phone_number"),
-            username=f"{family_name}-mcp-{mcp_id}",
             mcp_organizations=mcp_data.get("organizations"),
             created_with_mcp=True,
         )
