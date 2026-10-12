@@ -935,6 +935,10 @@ class Diagnostic(models.Model):
         "tunnel_info",
     ]
 
+    STATUS_FIELDS = [
+        "status",
+        "generated_from_purchases",
+    ]
     TELEDECLARATION_FIELDS = [
         "teledeclaration_date",
         "teledeclaration_mode",
@@ -1872,6 +1876,11 @@ class Diagnostic(models.Model):
         blank=True,
         null=True,
         encoder=CustomJSONEncoder,
+    )
+
+    generated_from_purchases = models.BooleanField(
+        verbose_name="A été automatiquement généré depuis les achats",
+        default=False,
     )
 
     # EGalim

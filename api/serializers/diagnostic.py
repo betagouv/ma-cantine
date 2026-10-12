@@ -21,7 +21,7 @@ REQUIRED_FIELDS = ("year",)
 CREATE_ONLY_FIELDS = ("creation_source", *Diagnostic.MATOMO_FIELDS)
 READ_ONLY_FIELDS = (
     "id",
-    "status",
+    *Diagnostic.STATUS_FIELDS,
     *Diagnostic.TELEDECLARATION_FIELDS,
     "generated_from_groupe_diagnostic",
     *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
@@ -133,7 +133,13 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
             + Diagnostic.TELEDECLARATION_FIELDS
             + Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS
             + Diagnostic.OTHER_COMPUTED_FIELDS
-            + ["status", "generated_from_groupe_diagnostic", "creation_source", "creation_date", "modification_date"]
+            + Diagnostic.STATUS_FIELDS
+            + [
+                "generated_from_groupe_diagnostic",
+                "creation_source",
+                "creation_date",
+                "modification_date",
+            ]
         )
 
     def get_fields(self):

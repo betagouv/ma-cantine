@@ -386,7 +386,12 @@ class DiagnosticsFromPurchasesView(APIView):
                 continue
             if canteen.is_groupe:
                 values_dict["central_kitchen_diagnostic_mode"] = Diagnostic.CentralKitchenDiagnosticMode.APPRO
-            diagnostic = Diagnostic(canteen=canteen, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, **values_dict)
+            diagnostic = Diagnostic(
+                canteen=canteen,
+                diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
+                generated_from_purchases=True,
+                **values_dict,
+            )
             try:
                 diagnostic.full_clean()
                 diagnostic.save()
