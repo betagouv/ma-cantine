@@ -935,10 +935,6 @@ class Diagnostic(models.Model):
         "tunnel_info",
     ]
 
-    STATUS_FIELDS = [
-        "status",
-        "generated_from_purchases",
-    ]
     TELEDECLARATION_FIELDS = [
         "teledeclaration_date",
         "teledeclaration_mode",
