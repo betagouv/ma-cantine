@@ -22,6 +22,8 @@ jobs:
 
   add-reviews:
     name: "PR: add reviewers (team)"
+    # October 2026: disabled, PRs no longer require a review to be merged
+    if: false
     runs-on: ubuntu-slim
     steps:
       - uses: kentaro-m/auto-assign-action@v2.0.0
