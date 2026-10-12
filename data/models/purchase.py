@@ -47,9 +47,11 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
             self.only("id", "famille_produits", "caracteristiques", "prix_ht").filter(canteen=canteen).for_year(year)
         )
 
-    def simple_stats(self):
+    def total_stats(self):
+        return self.aggregate(valeur_totale=Sum("prix_ht"))
+
+    def label_totals_stats(self):
         return self.aggregate(
-            valeur_totale=Sum("prix_ht"),
             valeur_bio=Sum("prix_ht", filter=bio_query()),
             valeur_bio_dont_commerce_equitable=Sum(
                 "prix_ht",
@@ -404,8 +406,9 @@ class Purchase(SoftDeletionModel):
 
     @classmethod
     def _simple_diag_data(cls, purchases, data):
-        stats = purchases.simple_stats()
-        data["valeur_totale"] = stats["valeur_totale"] or 0
+        total_stats = purchases.total_stats()
+        data["valeur_totale"] = total_stats["valeur_totale"] or 0
+        stats = purchases.label_totals_stats()
         data["valeur_bio"] = stats["valeur_bio"] or 0
         data["valeur_bio_dont_commerce_equitable"] = stats["valeur_bio_dont_commerce_equitable"] or 0
         data["valeur_siqo"] = stats["valeur_siqo"] or 0
