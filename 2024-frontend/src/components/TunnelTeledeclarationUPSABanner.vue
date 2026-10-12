@@ -1,5 +1,5 @@
 <script setup>
-import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import documentation from "@/data/documentation.json"
 </script>
 <template>
   <DsfrAlert
@@ -9,8 +9,8 @@ import AppLinkRouter from "@/components/AppLinkRouter.vue"
   >
     <p>
       En phase transitoire, comptabilisez ces produits dans les catégories existantes. De nouvelles catégories seront
-      créées pour la télédéclaration 2028. En savoir plus :
-      <AppLinkRouter :to="{ name: 'ComprendreMesObligations' }" title="Comprendre mes obligations" />
+      créées pour la télédéclaration 2028.
+      <a :href="documentation.loiUPSA" target="_blank">En savoir plus</a>
     </p>
   </DsfrAlert>
 </template>
