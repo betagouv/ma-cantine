@@ -76,6 +76,13 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
                 "prix_ht",
                 filter=~bio_query() & ~siqo_query() & ~egalim_autres_query() & valeur_externalites_performance_query(),
             ),
+            # origin labels
+            valeur_europe=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.EUROPE])),
+            valeur_france=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.FRANCE])),
+            valeur_circuit_court=Sum(
+                "prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.CIRCUIT_COURT])
+            ),
+            valeur_local=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.LOCAL])),
         )
 
     def family_totals_stats(self):
@@ -417,6 +424,10 @@ class Purchase(SoftDeletionModel):
             stats["valeur_egalim_autres_dont_commerce_equitable"] or 0
         )
         data["valeur_externalites_performance"] = stats["valeur_externalites_performance"] or 0
+        data["valeur_europe"] = stats["valeur_europe"] or 0
+        data["valeur_france"] = stats["valeur_france"] or 0
+        data["valeur_circuit_court"] = stats["valeur_circuit_court"] or 0
+        data["valeur_local"] = stats["valeur_local"] or 0
 
     @classmethod
     def _complete_diag_data(cls, purchases, data, year):

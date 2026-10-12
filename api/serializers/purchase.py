@@ -234,6 +234,10 @@ class PurchaseSimpleSummarySerializer(ReadOnlySerializerMixin, serializers.Seria
     valeur_egalim_autres = PurchaseField()
     valeur_egalim_autres_dont_commerce_equitable = PurchaseField()
     valeur_externalites_performance = PurchaseField()
+    valeur_europe = PurchaseField()
+    valeur_france = PurchaseField()
+    valeur_circuit_court = PurchaseField()
+    valeur_local = PurchaseField()
 
 
 class CanteenPurchasesSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer):
@@ -250,6 +254,10 @@ class PurchaseSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer)
     valeur_egalim_autres = PurchaseField()
     valeur_egalim_autres_dont_commerce_equitable = PurchaseField()
     valeur_externalites_performance = PurchaseField()
+    valeur_europe = PurchaseField()
+    valeur_france = PurchaseField()
+    valeur_circuit_court = PurchaseField()
+    valeur_local = PurchaseField()
     # family totals
     valeur_viandes_volailles = PurchaseField()
     valeur_produits_de_la_mer = PurchaseField()
