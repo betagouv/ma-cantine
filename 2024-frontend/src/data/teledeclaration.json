@@ -98,7 +98,7 @@
       "hint": "1.2 : Total des achats",
       "type": "number",
       "placeholder": "Je ne sais pas",
-      "required": false
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurProduitsDeLaMerEgalim": {
       "label": "Achats EGalim en poissons, produits de la mer et de l’aquaculture frais et surgelés",
@@ -111,142 +111,166 @@
       "label": "Charcuteries",
       "hint": "1.3 : Total des achats",
       "type": "number",
-      "required": true
+      "placeholder": "Je ne sais pas",
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurFruitsEtLegumes": {
       "label": "Fruits et légumes frais et surgelés",
       "hint": "1.4 : Total des achats",
       "type": "number",
-      "required": true
+      "placeholder": "Je ne sais pas",
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurProduitsLaitiers": {
       "label": "BOF (Produits laitiers, beurre et œufs)",
       "hint": "1.5 : Total des achats",
       "type": "number",
-      "required": true
+      "placeholder": "Je ne sais pas",
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurBoulangerie": {
       "label": "Boulangerie/Pâtisseries fraîches",
       "hint": "1.6 : Total des achats",
       "type": "number",
-      "required": true
+      "placeholder": "Je ne sais pas",
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurAutres": {
       "label": "Autres produits frais, surgelés et d'épicerie",
       "hint": "1.7 : Total des achats",
       "type": "number",
-      "required": true
+      "placeholder": "Je ne sais pas",
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurBoissons": {
       "label": "Boissons",
       "hint": "1.8 : Total des achats",
       "type": "number",
-      "required": true
+      "placeholder": "Je ne sais pas",
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurFrance": {
       "label": "Total des achats origine France toutes familles de produits confondues",
+      "hint": "14.0 : Origine France",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesFrance": {
-      "label": "Total des achats origine France pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraiches ou surgelées",
+      "hint": "14.1 : Origine France",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsDeLaMerFrance": {
-      "label": "Total des achats origine France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "14.2 : Origine France",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurCharcuterieFrance": {
-      "label": "Total des achats origine France pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "hint": "14.3 : Origine France",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurFruitsEtLegumesFrance": {
-      "label": "Total des achats origine France pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "hint": "14.4 : Origine France",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsLaitiersFrance": {
-      "label": "Total des achats origine France pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "hint": "14.5 : Origine France",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoulangerieFrance": {
-      "label": "Total des achats origine France pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "hint": "14.6 : Origine France",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurAutresFrance": {
-      "label": "Total des achats origine France pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "hint": "14.7 : Origine France",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoissonsFrance": {
-      "label": "Total des achats origine France pour la famille Boissons",
+      "label": "Boissons",
+      "hint": "14.8 : Origine France",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurEurope": {
       "label": "Total des achats Origine UE (hors France) toutes familles de produits confondues",
+      "hint": "15.0 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraiches ou surgelées",
+      "hint": "15.1 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsDeLaMerEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "15.2 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurCharcuterieEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "hint": "15.3 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurFruitsEtLegumesEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "hint": "15.4 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsLaitiersEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "hint": "15.5 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoulangerieEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "hint": "15.6 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurAutresEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "hint": "15.7 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoissonsEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Boissons",
+      "label": "Boissons",
+      "hint": "15.8 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
@@ -1023,7 +1047,7 @@
     "coutRepas": ["coutRepas"],
     "egalimSimple": ["valeurTotale", "valeurBio", "valeurBioDontCommerceEquitable", "valeurSiqo", "valeurViandesVolailles", "valeurViandesVolaillesEgalim", "valeurEgalimAutres", "valeurEgalimAutresDontCommerceEquitable", "valeurExternalitesPerformance", "valeurProduitsDeLaMer", "valeurProduitsDeLaMerEgalim"],
     "egalimComplete": ["valeurTotale", "valeurViandesVolailles", "valeurProduitsDeLaMer", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons", "valeurViandesVolaillesBio", "valeurViandesVolaillesBioDontCommerceEquitable", "valeurProduitsDeLaMerBio", "valeurProduitsDeLaMerBioDontCommerceEquitable", "valeurCharcuterieBio", "valeurCharcuterieBioDontCommerceEquitable", "valeurFruitsEtLegumesBio", "valeurFruitsEtLegumesBioDontCommerceEquitable", "valeurProduitsLaitiersBio", "valeurProduitsLaitiersBioDontCommerceEquitable", "valeurBoulangerieBio", "valeurBoulangerieBioDontCommerceEquitable", "valeurAutresBio", "valeurAutresBioDontCommerceEquitable", "valeurBoissonsBio", "valeurBoissonsBioDontCommerceEquitable", "valeurViandesVolaillesLabelRouge", "valeurProduitsDeLaMerLabelRouge", "valeurCharcuterieLabelRouge", "valeurFruitsEtLegumesLabelRouge", "valeurProduitsLaitiersLabelRouge", "valeurBoulangerieLabelRouge", "valeurAutresLabelRouge", "valeurViandesVolaillesAocaop", "valeurProduitsDeLaMerAocaop", "valeurCharcuterieAocaop", "valeurFruitsEtLegumesAocaop", "valeurProduitsLaitiersAocaop", "valeurBoulangerieAocaop", "valeurAutresAocaop", "valeurBoissonsAocaop", "valeurViandesVolaillesIgp", "valeurProduitsDeLaMerIgp", "valeurCharcuterieIgp", "valeurFruitsEtLegumesIgp", "valeurProduitsLaitiersIgp", "valeurBoulangerieIgp", "valeurAutresIgp", "valeurBoissonsIgp", "valeurViandesVolaillesStg", "valeurProduitsDeLaMerStg", "valeurCharcuterieStg", "valeurFruitsEtLegumesStg", "valeurProduitsLaitiersStg", "valeurBoulangerieStg", "valeurAutresStg", "valeurBoissonsStg", "valeurViandesVolaillesHve", "valeurProduitsDeLaMerHve", "valeurCharcuterieHve", "valeurFruitsEtLegumesHve", "valeurProduitsLaitiersHve", "valeurBoulangerieHve", "valeurAutresHve", "valeurBoissonsHve", "valeurProduitsDeLaMerPecheDurable", "valeurViandesVolaillesRup", "valeurProduitsDeLaMerRup", "valeurCharcuterieRup", "valeurFruitsEtLegumesRup", "valeurProduitsLaitiersRup", "valeurBoulangerieRup", "valeurAutresRup", "valeurBoissonsRup", "valeurViandesVolaillesCommerceEquitable", "valeurProduitsDeLaMerCommerceEquitable", "valeurCharcuterieCommerceEquitable", "valeurFruitsEtLegumesCommerceEquitable", "valeurProduitsLaitiersCommerceEquitable", "valeurBoulangerieCommerceEquitable", "valeurAutresCommerceEquitable", "valeurBoissonsCommerceEquitable", "valeurViandesVolaillesFermier", "valeurProduitsDeLaMerFermier", "valeurCharcuterieFermier", "valeurFruitsEtLegumesFermier", "valeurProduitsLaitiersFermier", "valeurBoulangerieFermier", "valeurAutresFermier", "valeurBoissonsFermier", "valeurViandesVolaillesExternalites", "valeurProduitsDeLaMerExternalites", "valeurCharcuterieExternalites", "valeurFruitsEtLegumesExternalites", "valeurProduitsLaitiersExternalites", "valeurBoulangerieExternalites", "valeurAutresExternalites", "valeurBoissonsExternalites", "valeurViandesVolaillesPerformance", "valeurProduitsDeLaMerPerformance", "valeurCharcuteriePerformance", "valeurFruitsEtLegumesPerformance", "valeurProduitsLaitiersPerformance", "valeurBoulangeriePerformance", "valeurAutresPerformance", "valeurBoissonsPerformance"],
-    "origine": ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurCharcuterieFrance", "valeurFruitsEtLegumesFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance", "valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurCharcuterieEurope", "valeurFruitsEtLegumesEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurAutresEurope", "valeurBoissonsEurope"],
+    "origine": ["valeurViandesVolailles", "valeurProduitsDeLaMer", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons", "valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurCharcuterieFrance", "valeurFruitsEtLegumesFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance", "valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurCharcuterieEurope", "valeurFruitsEtLegumesEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurAutresEurope", "valeurBoissonsEurope"],
     "localCircuitCourt": ["definitionLocal", "definitionLocalKm", "valeurCircuitCourt", "valeurViandesVolaillesCircuitCourt", "valeurProduitsDeLaMerCircuitCourt", "valeurCharcuterieCircuitCourt", "valeurFruitsEtLegumesCircuitCourt", "valeurProduitsLaitiersCircuitCourt", "valeurBoulangerieCircuitCourt", "valeurAutresCircuitCourt", "valeurBoissonsCircuitCourt", "valeurLocal", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurCharcuterieLocal", "valeurFruitsEtLegumesLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurAutresLocal", "valeurBoissonsLocal"]
   }
 }
