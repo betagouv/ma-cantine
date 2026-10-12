@@ -254,8 +254,10 @@ class PurchaseSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer)
     valeur_egalim_autres = PurchaseField()
     valeur_egalim_autres_dont_commerce_equitable = PurchaseField()
     valeur_externalites_performance = PurchaseField()
+    # labels: origin totals
     valeur_europe = PurchaseField()
     valeur_france = PurchaseField()
+    # labels: other totals
     valeur_circuit_court = PurchaseField()
     valeur_local = PurchaseField()
     # family totals

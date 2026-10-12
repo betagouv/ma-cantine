@@ -76,9 +76,10 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
                 "prix_ht",
                 filter=~bio_query() & ~siqo_query() & ~egalim_autres_query() & valeur_externalites_performance_query(),
             ),
-            # origin labels
+            # origin
             valeur_europe=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.EUROPE])),
             valeur_france=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.FRANCE])),
+            # other
             valeur_circuit_court=Sum(
                 "prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.CIRCUIT_COURT])
             ),
