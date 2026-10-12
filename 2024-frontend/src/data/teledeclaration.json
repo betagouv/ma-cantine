@@ -644,13 +644,13 @@
     },
     "valeurCharcuterieIgp": {
       "label": "Charcuteries",
-      "hint": "5.4 : IGP",
+      "hint": "5.3 : IGP",
       "type": "number",
       "required": true
     },
     "valeurFruitsEtLegumesIgp": {
       "label": "Fruits et légumes frais et surgelés",
-      "hint": "5.3 : IGP",
+      "hint": "5.4 : IGP",
       "type": "number",
       "required": true
     },
