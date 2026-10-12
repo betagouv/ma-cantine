@@ -19,6 +19,7 @@ FIELDS = (
 )
 REQUIRED_FIELDS = ("year",)
 CREATE_ONLY_FIELDS = ("creation_source", *Diagnostic.MATOMO_FIELDS)
+HIDDEN_FIELDS = CREATE_ONLY_FIELDS + ("generated_from_purchases", *Diagnostic.TUNNEL_PROGRESS_FIELDS)
 READ_ONLY_FIELDS = (
     "id",
     "status",
@@ -27,8 +28,6 @@ READ_ONLY_FIELDS = (
     *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
     *Diagnostic.OTHER_COMPUTED_FIELDS,
 )
-# not create-only, but still hidden from the docs (see extend_schema_serializer)
-HIDDEN_FIELDS = ("generated_from_purchases", *Diagnostic.TUNNEL_PROGRESS_FIELDS)
 
 
 class DiagnosticSerializer(serializers.ModelSerializer):
@@ -123,7 +122,7 @@ class PublicServiceDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSeria
 
 
 @set_help_text_from_verbose_name
-@extend_schema_serializer(exclude_fields=CREATE_ONLY_FIELDS + HIDDEN_FIELDS)
+@extend_schema_serializer(exclude_fields=HIDDEN_FIELDS)
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
     class Meta:
         model = Diagnostic
