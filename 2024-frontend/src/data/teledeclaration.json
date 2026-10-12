@@ -150,7 +150,7 @@
       "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurFrance": {
-      "label": "Total des achats origine France toutes familles de produits confondues",
+      "label": "Total des achats toutes familles de produits confondues",
       "hint": "14.0 : Origine France",
       "type": "number",
       "required": false,
@@ -213,7 +213,7 @@
       "placeholder": "Je ne sais pas"
     },
     "valeurEurope": {
-      "label": "Total des achats Origine UE (hors France) toutes familles de produits confondues",
+      "label": "Total des achats toutes familles de produits confondues",
       "hint": "15.0 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
