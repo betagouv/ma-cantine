@@ -97,15 +97,13 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
     def misc_stats(self):
         return self.aggregate(
             # extra sub-fields, only for these 2 families
+            # NOTE: valeur_<famille>_france/europe/circuit_court/local are NOT computed here:
+            # they're already computed for every family by
+            # _complete_diag_appro_labels_origine_circuit_court_local
             valeur_viandes_volailles_egalim=Sum(
                 "prix_ht",
                 filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)
                 & Q(caracteristiques__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
-            ),
-            valeur_viandes_volailles_france=Sum(
-                "prix_ht",
-                filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)
-                & Q(caracteristiques__contains=[Purchase.Characteristic.FRANCE]),
             ),
             valeur_produits_de_la_mer_egalim=Sum(
                 "prix_ht",
@@ -561,5 +559,4 @@ class Purchase(SoftDeletionModel):
     def _misc_totals(cls, purchases, data):
         stats = purchases.misc_stats()
         data["valeur_viandes_volailles_egalim"] = stats["valeur_viandes_volailles_egalim"] or 0
-        data["valeur_viandes_volailles_france"] = stats["valeur_viandes_volailles_france"] or 0
         data["valeur_produits_de_la_mer_egalim"] = stats["valeur_produits_de_la_mer_egalim"] or 0
