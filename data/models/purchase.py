@@ -95,24 +95,8 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
         )
 
     def family_label_totals_stats(self):
-        """
-        Covers every "family x label" total EXCEPT the APPRO_LABELS_EGALIM ones (bio, label_rouge,
-        aocaop/igp/stg, hve, peche_durable, rup, commerce_equitable, fermier, externalites,
-        performance): those use a priority exclude-chain (a purchase counts only once, towards the
-        first matching label — see _complete_diag_data_appro_labels), so each label's count depends
-        on every other label's, which can't be expressed as independent Sum(filter=...) aggregates
-        the way these simpler, non-exclusive labels can (a purchase can count towards several at once).
-        """
+        """Totals per family x label, except APPRO_LABELS_EGALIM (see _complete_diag_data_appro_labels)."""
         return self.aggregate(
-            **{
-                "valeur_" + family.lower() + "_" + label: Sum(
-                    "prix_ht",
-                    filter=Q(famille_produits=family)
-                    & Q(caracteristiques__contains=[Purchase.Characteristic[label.upper()]]),
-                )
-                for family in Purchase.Family.values
-                for label in ["europe", "france", "circuit_court", "local"]
-            },
             **{
                 "valeur_" + family.lower() + "_bio_dont_commerce_equitable": Sum(
                     "prix_ht",
@@ -121,6 +105,15 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
                     & Q(caracteristiques__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]),
                 )
                 for family in Purchase.Family.values
+            },
+            **{
+                "valeur_" + family.lower() + "_" + label: Sum(
+                    "prix_ht",
+                    filter=Q(famille_produits=family)
+                    & Q(caracteristiques__contains=[Purchase.Characteristic[label.upper()]]),
+                )
+                for family in Purchase.Family.values
+                for label in ["europe", "france", "circuit_court", "local"]
             },
             **{
                 "valeur_" + family.lower() + "_non_egalim": Sum(
@@ -133,10 +126,8 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
         )
 
     def misc_stats(self):
+        """Totals '_egalim', only for 2 families (other origin labels are in family_label_totals_stats)."""
         return self.aggregate(
-            # extra sub-fields, only for these 2 families
-            # NOTE: valeur_<famille>_france/europe/circuit_court/local are NOT computed here:
-            # they're already computed for every family by _family_label_totals
             valeur_viandes_volailles_egalim=Sum(
                 "prix_ht",
                 filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)
