@@ -2,7 +2,6 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
-import AppHelpCard from '@/components/AppHelpCard.vue'
 import documentation from '@/data/documentation.json'
 import TunnelTeledeclarationField from '@/components/TunnelTeledeclarationField.vue'
 import TunnelTeledeclarationGroupTitle from '@/components/TunnelTeledeclarationGroupTitle.vue'
@@ -38,18 +37,12 @@ const updateDefinitionLocal = (value) => {
 </script>
 <template>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
-    <div class="fr-col-12 fr-col-md-6">
+    <div class="fr-col-12">
       <h2>« Local » et circuit court</h2>
       <p class="fr-mb-0">
-        Ces données ne sont pas obligatoires pour valider votre déclaration. Ici, vous pouvez affecter le produit dans
-        plusieurs caractéristiques. Par exemple, un produit à la fois biologique et local pourra être comptabilisé dans
-        les deux champs “bio” et “local”.
+        Étape facultative permettant de renseigner les achats en circuit court et/ou en « local ». Ces achats seront
+        valorisés sur la page publique de votre (ou vos) cantine(s).
       </p>
-    </div>
-    <div class="fr-col-12 fr-col-md-6">
-      <AppHelpCard title="À propos des achats «&nbsp;locaux&nbsp;» et circuits courts">
-        <a :href="documentation.accueil" target="_blank">Consultez la documentation</a>
-      </AppHelpCard>
     </div>
   </div>
   <div class="fr-mb-6w">
