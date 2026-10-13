@@ -18,8 +18,8 @@
           "hint": "11 champs dont 6 obligatoires"
         },
         {
-          "label": "Saisie détaillée : vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Roug, IGP, Commerce équitable, etc.)",
-          "labelShort": "Saisie simplifiée",
+          "label": "Saisie détaillée : vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Rouge, IGP, Commerce équitable, etc.)",
+          "labelShort": "Saisie détaillée",
           "value": "COMPLETE",
           "img": "/static/images/picto-dsfr/teledeclaration-saisie-detaillee.svg",
           "hint": "100 champs, dont 75 obligatoires"
@@ -46,7 +46,7 @@
     },
     "valeurBioDontCommerceEquitable": {
       "label": "Dont achats bio issus du commerce équitable",
-      "hint": "2.0.2 : Champs facultatif pour le suivi de la part des achats bio issus du commerce équitable",
+      "hint": "2.0.2 : Champ facultatif pour le suivi de la part des achats bio issus du commerce équitable",
       "isRelatedField": "horizontal",
       "tooltip": "Achats à comptabiliser également dans le champ « bio ou en conversion »",
       "placeholder": "Je ne sais pas",
@@ -67,7 +67,7 @@
     },
     "valeurEgalimAutresDontCommerceEquitable": {
       "label": "Dont total des achats non bio issus du commerce équitable",
-      "hint": "4.0.2 : Champs facultatif pour le suivi de la part des achats issus du commerce équitable non bio",
+      "hint": "4.0.2 : Champ facultatif pour le suivi de la part des achats issus du commerce équitable non bio",
       "isRelatedField": "horizontal",
       "tooltip": "Achats à comptabiliser également dans le champ « Total des autres achats EGalim »",
       "type": "number",
@@ -82,13 +82,13 @@
       "required": false
     },
     "valeurViandesVolailles": {
-      "label": "Total des achats en viandes et volailles fraiches ou surgelées",
+      "label": "Total des achats en viandes et volailles fraîches ou surgelées",
       "hint": "1.1 : Total des achats",
       "type": "number",
       "required": true
     },
     "valeurViandesVolaillesEgalim": {
-      "label": "Achats EGalim en viandes et volailles fraiches ou surgelées",
+      "label": "Achats EGalim en viandes et volailles fraîches ou surgelées",
       "hint": "1.1bis : Renseigner 0 si non suivi",
       "type": "number",
       "required": true
@@ -157,7 +157,7 @@
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesFrance": {
-      "label": "Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "14.1 : Origine France",
       "type": "number",
       "required": false,
@@ -220,7 +220,7 @@
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesEurope": {
-      "label": "Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "15.1 : Origine Europe (hors France)",
       "type": "number",
       "required": false,
@@ -283,7 +283,7 @@
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesCircuitCourt": {
-      "label": "Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "16.1 : Circuit court",
       "type": "number",
       "required": false,
@@ -346,7 +346,7 @@
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesLocal": {
-      "label": "Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "17.1 : Local",
       "type": "number",
       "required": false,
@@ -437,8 +437,7 @@
       "label": "Définition du « local » : distance (en km)",
       "hint": "17ter : Veuillez renseigner la distance qui représente le mieux vos achats « locaux » : soit la distance majoritaire, soit la distance maximale",
       "type": "number",
-      "required": false,
-      "placeholder": "Je ne sais pas"
+      "required": false
     },
     "valeurFruitsEtLegumesAocaop": {
       "label": "Fruits et légumes frais et surgelés",
@@ -477,13 +476,13 @@
       "required": true
     },
     "valeurViandesVolaillesBio": {
-      "label": "Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "2.1.1 : Bio ou en conversion",
       "type": "number",
       "required": true
     },
     "valeurViandesVolaillesBioDontCommerceEquitable": {
-      "label": "Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "2.1.2 : dont bio issu du commerce équitable",
       "isRelatedField": "vertical",
       "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
@@ -597,7 +596,7 @@
       "required": false
     },
     "valeurViandesVolaillesLabelRouge": {
-      "label": "Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "3.1 : Label rouge",
       "type": "number",
       "required": true
@@ -639,7 +638,7 @@
       "required": true
     },
     "valeurViandesVolaillesAocaop": {
-      "label": "Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "4.1 : AOC / AOP",
       "type": "number",
       "required": true
@@ -651,7 +650,7 @@
       "required": true
     },
     "valeurViandesVolaillesIgp": {
-      "label": "Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "5.1 : IGP",
       "type": "number",
       "required": true
@@ -699,7 +698,7 @@
       "required": true
     },
     "valeurViandesVolaillesStg": {
-      "label": "Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "6.1 : STG",
       "type": "number",
       "required": true
