@@ -32,28 +32,29 @@ const errorBadge = computed(() => {
 /* Data */
 const header = [
   { key: "name", label: "Champ" },
-  { key: "value", label: "Valeur" },
-  { key: "error", label: "Erreur" },
+  { key: "value", label: "Valeur", headerAttrs: { class: "fr-col-2" } },
 ]
 
 const getPrettyDiagnosticValue = (field) => {
   const hasOptions = teledeclaration.fields[field]?.options?.length > 0
   const diagValue = diagnostic.value[field]
-  const prettyValue = hasOptions ? teledeclaration.fields[field].options.find(option => option.value === diagValue)?.labelShort : diagValue
-  return prettyValue !== null ? prettyValue : "Non renseigné"
+  const prettyValue = hasOptions ? teledeclaration.fields[field].options.find(option => option.value === diagValue)?.valueDisplay : diagValue
+  return prettyValue ?? "Non renseigné"
 }
 
 const rows = computed(() => {
   const fields = teledeclaration.groups[props.accordion.fieldsGroupName]
   return fields.map(field => {
     const isCanteen = props.accordion.isCanteenFields
-    const name = isCanteen ? field : teledeclaration.fields[field].label
+    const name = isCanteen ? field : teledeclaration.fields[field].labelRecap
     const value = isCanteen ? canteenInformations.value[field] : getPrettyDiagnosticValue(field)
     const hasError = teledeclarationStore.isFieldError(field)
     return {
-      name,
-      value: value || "Non renseigné",
-      error: hasError ? teledeclarationStore.getErrorMessage(field) : "",
+      name: {
+        label: name,
+        error: hasError ? teledeclarationStore.getErrorMessage(field) : "",
+      },
+      value: value ?? "Non renseigné",
     }
   })
 })
@@ -84,7 +85,10 @@ const goToStep = (page) => router.push(page)
       size="sm"
     >
       <template #cell="{ colKey, cell }">
-        <p v-if="colKey === 'error' && cell" class="fr-message fr-message--error">{{ cell }}</p>
+        <template v-if="colKey === 'name'">
+          <p>{{ cell.label }}</p>
+          <p v-if="cell.error" class="fr-message fr-message--error">{{ cell.error }}</p>
+        </template>
         <p v-else>{{ cell }}</p>
       </template>
     </DsfrDataTable>
