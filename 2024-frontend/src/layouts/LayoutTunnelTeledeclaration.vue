@@ -4,8 +4,6 @@ import { storeToRefs } from "pinia"
 import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
-import canteenServices from "@/services/canteens"
-import diagnosticServices from "@/services/diagnostics"
 import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
 import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
 import TunnelTeledeclarationModalErrors from "@/components/TunnelTeledeclarationModalErrors.vue"
@@ -27,7 +25,7 @@ const stepIndex = computed(() => routerSteps.value.findIndex((step) => step.to.n
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const teledeclarationStore = useStoreTeledeclaration()
-const { diagnostic, isTeledeclared } = storeToRefs(teledeclarationStore)
+const { isTeledeclared } = storeToRefs(teledeclarationStore)
 
 /* Save */
 const save = async (page) => {
@@ -38,20 +36,9 @@ const save = async (page) => {
 
 /* Errors */
 const checkDiagnostic = async (page) => {
-  const check = await getCheck()
+  const check = await teledeclarationStore.checkDiagnosticSteps()
   if (check.isClean) goTo(page)
-  else {
-    await teledeclarationStore.addErrorsFromCheck(check.errors)
-    displayErrors(page)
-  }
-}
-
-const getCheck = async () => {
-  const canteenId = diagnostic.value.canteenId
-  const diagnosticId = diagnostic.value.id
-  const checkCanteen = await canteenServices.checkCanteen(canteenId)
-  const checkDiagnostic = await diagnosticServices.checkDiagnostic(canteenId, diagnosticId)
-  return { isClean: checkCanteen.isClean && checkDiagnostic.isClean, errors: {...checkCanteen.errors, ...checkDiagnostic.errors} }
+  else displayErrors(page)
 }
 
 const displayErrors = (page) => {
