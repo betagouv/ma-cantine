@@ -11,7 +11,7 @@ const props = defineProps(["content", "label"])
   </span>
 </template>
 
-<style lang="scss">
+<style scoped lang="scss">
 .app-tooltip-hover {
   display: inline-flex;
 
