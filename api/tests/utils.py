@@ -30,8 +30,9 @@ def assert_import_failure_created(self, user, type, file_path):
     self.assertIsNotNone(event_log)
     self.assertEqual(event_log.user, user)
     self.assertEqual(event_log.name, type)
+    self.assertEqual(set(event_log.data.keys()), {"message", "count", "seconds"})
     self.assertTrue(event_log.data["message"])
-    self.assertIn("seconds", event_log.data)
+    self.assertIsNone(event_log.data["count"])
 
 
 def assert_import_success_created(self, user, type, count=None):
@@ -42,9 +43,10 @@ def assert_import_success_created(self, user, type, count=None):
     self.assertEqual(event_log.status, EventLog.Status.SUCCESS)
     self.assertEqual(event_log.user, user)
     self.assertEqual(event_log.name, type)
+    self.assertEqual(set(event_log.data.keys()), {"message", "count", "seconds"})
+    self.assertIsNone(event_log.data["message"])
     if count is not None:
         self.assertEqual(event_log.data["count"], count)
-    self.assertIn("seconds", event_log.data)
 
 
 def assert_almost_equal(self, value, expected_value):
