@@ -276,115 +276,134 @@
       "placeholder": "Je ne sais pas"
     },
     "valeurCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs toutes familles de produits confondues",
+      "label": "Total des achats toutes familles de produits confondues",
+      "hint": "16.0 : Circuit court",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraiches ou surgelées",
+      "hint": "16.1 : Circuit court",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsDeLaMerCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "16.2 : Circuit court",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurCharcuterieCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "hint": "16.3 : Circuit court",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurFruitsEtLegumesCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "hint": "16.4 : Circuit court",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsLaitiersCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "hint": "16.5 : Circuit court",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoulangerieCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "hint": "16.6 : Circuit court",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurAutresCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "hint": "16.7 : Circuit court",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoissonsCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Boissons",
+      "label": "Boissons",
+      "hint": "16.8 : Circuit court",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurLocal": {
-      "label": "Total des achats « locaux » toutes familles de produits confondues",
+      "label": "Total des achats toutes familles de produits confondues",
+      "hint": "17.0 : Local",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesLocal": {
-      "label": "Total des achats « locaux » pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraiches ou surgelées",
+      "hint": "17.1 : Local",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsDeLaMerLocal": {
-      "label": "Total des achats « locaux » pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "17.2 : Local",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurCharcuterieLocal": {
-      "label": "Total des achats « locaux » pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "hint": "17.3 : Local",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurFruitsEtLegumesLocal": {
-      "label": "Total des achats « locaux » pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "hint": "17.4 : Local",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsLaitiersLocal": {
-      "label": "Total des achats « locaux » pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "hint": "17.5 : Local",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoulangerieLocal": {
-      "label": "Total des achats « locaux » pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "hint": "17.6 : Local",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurAutresLocal": {
-      "label": "Total des achats « locaux » pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "hint": "17.7 : Local",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoissonsLocal": {
-      "label": "Total des achats « locaux » pour la famille Boissons",
+      "label": "Boissons",
+      "hint": "17.8 : Local",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
     },
     "definitionLocal": {
       "label": "Définition du « local » : périmètre administratif",
+      "hint": "17bis : Veuillez renseigner le périmètre qui représente le mieux vos achats « locaux » : soit le périmètre majoritaire, soit la distance maximale",
       "type": "select",
       "required": false,
       "options": [
@@ -416,6 +435,7 @@
     },
     "definitionLocalKm": {
       "label": "Définition du « local » : distance (en km)",
+      "hint": "17ter : Veuillez renseigner la distance qui représente le mieux vos achats « locaux » : soit la distance majoritaire, soit la distance maximale",
       "type": "number",
       "required": false,
       "placeholder": "Je ne sais pas"
@@ -1048,6 +1068,6 @@
     "egalimSimple": ["valeurTotale", "valeurBio", "valeurBioDontCommerceEquitable", "valeurSiqo", "valeurViandesVolailles", "valeurViandesVolaillesEgalim", "valeurEgalimAutres", "valeurEgalimAutresDontCommerceEquitable", "valeurExternalitesPerformance", "valeurProduitsDeLaMer", "valeurProduitsDeLaMerEgalim"],
     "egalimComplete": ["valeurTotale", "valeurViandesVolailles", "valeurProduitsDeLaMer", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons", "valeurViandesVolaillesBio", "valeurViandesVolaillesBioDontCommerceEquitable", "valeurProduitsDeLaMerBio", "valeurProduitsDeLaMerBioDontCommerceEquitable", "valeurCharcuterieBio", "valeurCharcuterieBioDontCommerceEquitable", "valeurFruitsEtLegumesBio", "valeurFruitsEtLegumesBioDontCommerceEquitable", "valeurProduitsLaitiersBio", "valeurProduitsLaitiersBioDontCommerceEquitable", "valeurBoulangerieBio", "valeurBoulangerieBioDontCommerceEquitable", "valeurAutresBio", "valeurAutresBioDontCommerceEquitable", "valeurBoissonsBio", "valeurBoissonsBioDontCommerceEquitable", "valeurViandesVolaillesLabelRouge", "valeurProduitsDeLaMerLabelRouge", "valeurCharcuterieLabelRouge", "valeurFruitsEtLegumesLabelRouge", "valeurProduitsLaitiersLabelRouge", "valeurBoulangerieLabelRouge", "valeurAutresLabelRouge", "valeurViandesVolaillesAocaop", "valeurProduitsDeLaMerAocaop", "valeurCharcuterieAocaop", "valeurFruitsEtLegumesAocaop", "valeurProduitsLaitiersAocaop", "valeurBoulangerieAocaop", "valeurAutresAocaop", "valeurBoissonsAocaop", "valeurViandesVolaillesIgp", "valeurProduitsDeLaMerIgp", "valeurCharcuterieIgp", "valeurFruitsEtLegumesIgp", "valeurProduitsLaitiersIgp", "valeurBoulangerieIgp", "valeurAutresIgp", "valeurBoissonsIgp", "valeurViandesVolaillesStg", "valeurProduitsDeLaMerStg", "valeurCharcuterieStg", "valeurFruitsEtLegumesStg", "valeurProduitsLaitiersStg", "valeurBoulangerieStg", "valeurAutresStg", "valeurBoissonsStg", "valeurViandesVolaillesHve", "valeurProduitsDeLaMerHve", "valeurCharcuterieHve", "valeurFruitsEtLegumesHve", "valeurProduitsLaitiersHve", "valeurBoulangerieHve", "valeurAutresHve", "valeurBoissonsHve", "valeurProduitsDeLaMerPecheDurable", "valeurViandesVolaillesRup", "valeurProduitsDeLaMerRup", "valeurCharcuterieRup", "valeurFruitsEtLegumesRup", "valeurProduitsLaitiersRup", "valeurBoulangerieRup", "valeurAutresRup", "valeurBoissonsRup", "valeurViandesVolaillesCommerceEquitable", "valeurProduitsDeLaMerCommerceEquitable", "valeurCharcuterieCommerceEquitable", "valeurFruitsEtLegumesCommerceEquitable", "valeurProduitsLaitiersCommerceEquitable", "valeurBoulangerieCommerceEquitable", "valeurAutresCommerceEquitable", "valeurBoissonsCommerceEquitable", "valeurViandesVolaillesFermier", "valeurProduitsDeLaMerFermier", "valeurCharcuterieFermier", "valeurFruitsEtLegumesFermier", "valeurProduitsLaitiersFermier", "valeurBoulangerieFermier", "valeurAutresFermier", "valeurBoissonsFermier", "valeurViandesVolaillesExternalites", "valeurProduitsDeLaMerExternalites", "valeurCharcuterieExternalites", "valeurFruitsEtLegumesExternalites", "valeurProduitsLaitiersExternalites", "valeurBoulangerieExternalites", "valeurAutresExternalites", "valeurBoissonsExternalites", "valeurViandesVolaillesPerformance", "valeurProduitsDeLaMerPerformance", "valeurCharcuteriePerformance", "valeurFruitsEtLegumesPerformance", "valeurProduitsLaitiersPerformance", "valeurBoulangeriePerformance", "valeurAutresPerformance", "valeurBoissonsPerformance"],
     "origine": ["valeurViandesVolailles", "valeurProduitsDeLaMer", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons", "valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurCharcuterieFrance", "valeurFruitsEtLegumesFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance", "valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurCharcuterieEurope", "valeurFruitsEtLegumesEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurAutresEurope", "valeurBoissonsEurope"],
-    "localCircuitCourt": ["definitionLocal", "definitionLocalKm", "valeurCircuitCourt", "valeurViandesVolaillesCircuitCourt", "valeurProduitsDeLaMerCircuitCourt", "valeurCharcuterieCircuitCourt", "valeurFruitsEtLegumesCircuitCourt", "valeurProduitsLaitiersCircuitCourt", "valeurBoulangerieCircuitCourt", "valeurAutresCircuitCourt", "valeurBoissonsCircuitCourt", "valeurLocal", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurCharcuterieLocal", "valeurFruitsEtLegumesLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurAutresLocal", "valeurBoissonsLocal"]
+    "localCircuitCourt": ["valeurCircuitCourt", "valeurViandesVolaillesCircuitCourt", "valeurProduitsDeLaMerCircuitCourt", "valeurCharcuterieCircuitCourt", "valeurFruitsEtLegumesCircuitCourt", "valeurProduitsLaitiersCircuitCourt", "valeurBoulangerieCircuitCourt", "valeurAutresCircuitCourt", "valeurBoissonsCircuitCourt", "valeurLocal", "definitionLocal", "definitionLocalKm", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurCharcuterieLocal", "valeurFruitsEtLegumesLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurAutresLocal", "valeurBoissonsLocal"]
   }
 }
