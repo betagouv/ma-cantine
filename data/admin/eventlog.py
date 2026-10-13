@@ -1,3 +1,5 @@
+import json
+
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
@@ -52,6 +54,7 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "user__username",
     )
     search_help_text = "La recherche est faite sur les champs : nom, utilisateur (ID, nom, prénom, email)"
+    readonly_fields = ("data_pretty",)
 
     fieldsets = (
         (
@@ -68,7 +71,7 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         ),
         (
             "Données",
-            {"fields": ("data",)},
+            {"fields": ("data_pretty",)},
         ),
         (
             "Metadonnées",
@@ -88,3 +91,9 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         return obj.message_short
 
     message_short.short_description = "message"
+
+    def data_pretty(self, obj):
+        # format_html escapes the content (data can contain user input, API responses...)
+        return format_html("<pre>{}</pre>", json.dumps(obj.data, indent=2, ensure_ascii=False))
+
+    data_pretty.short_description = EventLog._meta.get_field("data").verbose_name
