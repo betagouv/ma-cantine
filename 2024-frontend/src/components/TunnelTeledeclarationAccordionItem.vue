@@ -47,7 +47,7 @@ const rows = computed(() => {
   const fields = teledeclaration.groups[props.accordion.fieldsGroupName]
   return fields.map(field => {
     const isCanteen = props.accordion.isCanteenFields
-    const name = isCanteen ? field : teledeclaration.fields[field].label
+    const name = isCanteen ? field : teledeclaration.fields[field].labelRecap
     const value = isCanteen ? canteenInformations.value[field] : getPrettyDiagnosticValue(field)
     const hasError = teledeclarationStore.isFieldError(field)
     return {
