@@ -8,6 +8,7 @@ import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.
 import DiagnosticEgalimSimple from "@/components/DiagnosticEgalimSimple.vue"
 import DiagnosticEgalimComplete from "@/components/DiagnosticEgalimComplete.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import TunnelTeledeclarationUPSABanner from "@/components/TunnelTeledeclarationUPSABanner.vue"
 import teledeclarationFields from "@/data/teledeclaration.json"
 
 /* Fields names */
@@ -23,17 +24,7 @@ const coutRepas = computed(() => diagnostic.value[coutRepasFieldName] || '-')
 const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
 </script>
 <template>
-  <DsfrAlert
-    type="info"
-    title="Nouveauté EGalim : la loi UPSA élargit les catégories de produits éligibles depuis le 18 août 2026."
-    class="fr-mb-4w"
-  >
-    <p>
-      En phase transitoire, comptabilisez ces produits dans les catégories existantes. De nouvelles catégories seront
-      créées pour la télédéclaration 2028. En savoir plus :
-      <AppLinkRouter :to="{ name: 'ComprendreMesObligations' }" title="Comprendre mes obligations" />
-    </p>
-  </DsfrAlert>
+  <TunnelTeledeclarationUPSABanner />
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-6">
       <h2>Approvisionnements EGalim</h2>
