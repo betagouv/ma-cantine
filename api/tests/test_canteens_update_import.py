@@ -6,7 +6,7 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.tests.utils import assert_import_failure_created, authenticate
+from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, ImportFailure, ImportType, Sector
 
@@ -360,7 +360,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, 2)
         self.assertEqual(body["count"], 2)
         self.assertEqual(len(body["canteens"]), 2)
         self.assertEqual(len(errors), 0, errors)
