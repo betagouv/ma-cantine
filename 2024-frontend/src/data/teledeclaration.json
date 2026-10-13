@@ -12,21 +12,21 @@
       "options": [
         {
           "label": "Saisie simplifiée : vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.)",
-          "labelShort": "Saisie simplifiée",
+          "valueDisplay": "Saisie simplifiée",
           "value": "SIMPLE",
           "img": "/static/images/picto-dsfr/teledeclaration-saisie-simplifiee.svg",
           "hint": "11 champs dont 6 obligatoires"
         },
         {
           "label": "Saisie détaillée : vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Rouge, IGP, Commerce équitable, etc.)",
-          "labelShort": "Saisie détaillée",
+          "valueDisplay": "Saisie détaillée",
           "value": "COMPLETE",
           "img": "/static/images/picto-dsfr/teledeclaration-saisie-detaillee.svg",
           "hint": "100 champs, dont 75 obligatoires"
         },
         {
           "label": "Saisie automatique : vous utilisez l'Outil de Suivi des Achats",
-          "labelShort": "Saisie automatique",
+          "valueDisplay": "Saisie automatique",
           "value": "AUTO",
           "img": "/static/images/picto-dsfr/teledeclaration-saisie-automatique.svg"
         }
@@ -413,22 +413,27 @@
         },
         {
           "text": "Issu du Projet Alimentaire Territorial (PAT)",
+          "valueDisplay": "Issu du Projet Alimentaire Territorial (PAT)",
           "value": "PAT"
         },
         {
           "text": "Commune et/ou intercommunalité",
+          "valueDisplay": "Commune et/ou intercommunalité",
           "value": "COMMUNE"
         },
         {
           "text": "Département",
+          "valueDisplay": "Département",
           "value": "DEPARTEMENT"
         },
         {
           "text": "Région",
+          "valueDisplay": "Région",
           "value": "REGION"
         },
         {
           "text": "Distance (en km)",
+          "valueDisplay": "Distance (en km)",
           "value": "KM"
         }
       ]
