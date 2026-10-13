@@ -69,7 +69,7 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         ),
         (
             "Données",
-            {"fields": ("data_pretty",)},
+            {"fields": ("data_pretty", "file")},
         ),
         (
             "Metadonnées",

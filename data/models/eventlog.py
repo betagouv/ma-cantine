@@ -3,8 +3,14 @@ import logging
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models, transaction
+from django.utils.timezone import now
 
 logger = logging.getLogger(__name__)
+
+
+def event_log_file_upload_to(instance, filename):
+    """One folder per category, e.g. event-logs/import/2026/10/13/<filename>"""
+    return f"event-logs/{instance.category.lower()}/{now():%Y/%m/%d}/{filename}"
 
 
 class EventLog(models.Model):
@@ -37,6 +43,7 @@ class EventLog(models.Model):
         verbose_name="Application OAuth2 (API)",
     )
     data = models.JSONField(default=dict, blank=True, verbose_name="données")
+    file = models.FileField(null=True, blank=True, upload_to=event_log_file_upload_to, verbose_name="fichier")
 
     creation_date = models.DateTimeField(auto_now_add=True, verbose_name="date de création")
     modification_date = models.DateTimeField(auto_now=True, verbose_name="date de modification")
@@ -46,7 +53,7 @@ class EventLog(models.Model):
         verbose_name_plural = "journal d'événements"
 
     @classmethod
-    def log(cls, category, name, status, user=None, api_oauth2_application=None, data=None):
+    def log(cls, category, name, status, user=None, api_oauth2_application=None, data=None, file=None):
         """
         Create an EventLog without ever raising: logging must not break the request or task.
         The savepoint keeps a failed insert from breaking an outer transaction.
@@ -62,6 +69,7 @@ class EventLog(models.Model):
                     user=user,
                     api_oauth2_application=api_oauth2_application,
                     data=data or {},
+                    file=file,
                 )
         except Exception:
             logger.exception(f"EventLog: could not log event {category} {name} ({status})")

@@ -2,7 +2,9 @@ from unittest import mock
 
 from django.contrib.auth.models import AnonymousUser
 from django.db import transaction
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
+from freezegun import freeze_time
 
 from data.factories import EventLogFactory, UserFactory
 from data.models import EventLog
@@ -60,3 +62,19 @@ class EventLogLogTest(TestCase):
             EventLog.log(EventLog.Category.IMPORT, "PURCHASE_SIRET", EventLog.Status.SUCCESS)
 
         self.assertEqual(EventLog.objects.count(), 1)
+
+    @freeze_time("2026-10-13")
+    def test_log_with_file(self):
+        file = SimpleUploadedFile("achats.csv", b"siret,description\n", content_type="text/csv")
+
+        event_log = EventLog.log(EventLog.Category.IMPORT, "PURCHASE_SIRET", EventLog.Status.FAILURE, file=file)
+
+        self.assertTrue(event_log.file.name.startswith("event-logs/import/2026/10/13/achats"))
+        with event_log.file.open("rb") as stored_file:
+            self.assertEqual(stored_file.read(), b"siret,description\n")
+        event_log.file.delete()
+
+    def test_log_without_file(self):
+        event_log = EventLog.log(EventLog.Category.IMPORT, "PURCHASE_SIRET", EventLog.Status.SUCCESS)
+
+        self.assertFalse(event_log.file)
