@@ -1,12 +1,10 @@
-import json
-
 from django import forms
-from django.utils.safestring import mark_safe
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.utils.translation import gettext_lazy as _
 
+from data.admin.utils import json_pretty
 from data.models import User
 
 from .canteen import CanteenInline
@@ -165,8 +163,7 @@ class MaCanteenUserAdmin(UserAdmin):
     has_totp_device.boolean = True
 
     def data_pretty(self, obj):
-        data = json.dumps(obj.data, indent=2)
-        return mark_safe(f"<pre>{data}</pre>")
+        return json_pretty(obj.data)
 
     data_pretty.short_description = User._meta.get_field("data").verbose_name
 
