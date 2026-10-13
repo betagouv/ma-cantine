@@ -415,6 +415,27 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.family_sum("boissons"), 110)
         self.assertEqual(diagnostic.family_sum("autres"), 110)
 
+    @authenticate
+    def test_can_create_diagnostic_generated_from_purchases(self):
+        self.canteen.managers.add(authenticate.user)
+
+        # defaults to False, and is readable in the response (unlike creation_source & co)
+        response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["generatedFromPurchases"], False)
+        diagnostic = Diagnostic.objects.first()
+        self.assertEqual(diagnostic.generated_from_purchases, False)
+
+        # editable (unlike generated_from_groupe_diagnostic, which is read-only)
+        payload = {**self.DIAGNOSTIC_PAYLOAD, "year": 2022, "generated_from_purchases": True}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["generatedFromPurchases"], True)
+        diagnostic = Diagnostic.objects.get(year=2022)
+        self.assertEqual(diagnostic.generated_from_purchases, True)
+
     # Tests for unit conversion for total_leftovers. This is because the field was first
     # made in ton but then it was decided that it is best for the users to work in kg
     # for consistency.
@@ -734,6 +755,20 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.year, 2021)
+
+    @authenticate
+    def test_can_update_diagnostic_generated_from_purchases(self):
+        self.diagnostic.canteen.managers.add(authenticate.user)
+        self.assertEqual(self.diagnostic.generated_from_purchases, False)
+
+        payload = {"generated_from_purchases": True}
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["generatedFromPurchases"], True)
+        self.diagnostic.refresh_from_db()
+        self.assertEqual(self.diagnostic.generated_from_purchases, True)
 
     def test_can_update_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")

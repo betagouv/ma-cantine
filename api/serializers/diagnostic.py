@@ -133,7 +133,14 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
             + Diagnostic.TELEDECLARATION_FIELDS
             + Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS
             + Diagnostic.OTHER_COMPUTED_FIELDS
-            + ["status", "generated_from_groupe_diagnostic", "creation_source", "creation_date", "modification_date"]
+            + [
+                "generated_from_purchases",
+                "status",
+                "generated_from_groupe_diagnostic",
+                "creation_source",
+                "creation_date",
+                "modification_date",
+            ]
         )
 
     def get_fields(self):

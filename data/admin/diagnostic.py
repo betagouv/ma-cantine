@@ -90,6 +90,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
     form = DiagnosticForm
     autocomplete_fields = ("canteen",)
     readonly_fields = (
+        "generated_from_purchases",
         "status",
         *Diagnostic.MATOMO_FIELDS,
         *Diagnostic.TUNNEL_PROGRESS_FIELDS,
@@ -131,6 +132,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                         "canteen",
                         "year",
                         "diagnostic_type",
+                        "generated_from_purchases",
                         "central_kitchen_diagnostic_mode",
                         "status",
                     )

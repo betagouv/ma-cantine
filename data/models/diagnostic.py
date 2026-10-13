@@ -993,6 +993,11 @@ class Diagnostic(models.Model):
         verbose_name="Type de diagnostic (simplifié, détaillé)",
     )
 
+    generated_from_purchases = models.BooleanField(
+        verbose_name="A été automatiquement généré depuis les achats",
+        default=False,
+    )
+
     # Relevant only for central cuisines
     central_kitchen_diagnostic_mode = models.CharField(
         max_length=255,
