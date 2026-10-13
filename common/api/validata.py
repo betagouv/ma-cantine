@@ -27,7 +27,7 @@ import mimetypes
 
 FRICTIONLESS_SCHEMA_URL = "https://frictionlessdata.io/schemas/table-schema.json"
 VALIDATA_PREPROD_API_URL = "https://preprod-api-validata.dataeng.etalab.studio/validate"
-VALIDATA_PROD_API_URL = "https://api.validata.etalab.studio/validate"
+VALIDATA_PROD_API_URL = "https://api.validata.fr/validate"
 
 
 def validate_file_against_schema(file, schema_url):
@@ -147,7 +147,7 @@ def mock_post_validate_file_against_schema(mock, success=True):
     if not success:
         pass
     mock.post(
-        "https://api.validata.etalab.studio/validate",
+        VALIDATA_PROD_API_URL,
         json={"report": {"errors": [], "stats": {"errors": 0}, "tasks": []}},
         status_code=200,
     )
