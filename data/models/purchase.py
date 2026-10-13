@@ -47,9 +47,11 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
             self.only("id", "famille_produits", "caracteristiques", "prix_ht").filter(canteen=canteen).for_year(year)
         )
 
-    def simple_stats(self):
+    def total_stats(self):
+        return self.aggregate(valeur_totale=Sum("prix_ht"))
+
+    def label_totals_stats(self):
         return self.aggregate(
-            valeur_totale=Sum("prix_ht"),
             valeur_bio=Sum("prix_ht", filter=bio_query()),
             valeur_bio_dont_commerce_equitable=Sum(
                 "prix_ht",
@@ -74,6 +76,14 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
                 "prix_ht",
                 filter=~bio_query() & ~siqo_query() & ~egalim_autres_query() & valeur_externalites_performance_query(),
             ),
+            # origin
+            valeur_europe=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.EUROPE])),
+            valeur_france=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.FRANCE])),
+            # other
+            valeur_circuit_court=Sum(
+                "prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.CIRCUIT_COURT])
+            ),
+            valeur_local=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.LOCAL])),
         )
 
     def family_totals_stats(self):
@@ -404,8 +414,9 @@ class Purchase(SoftDeletionModel):
 
     @classmethod
     def _simple_diag_data(cls, purchases, data):
-        stats = purchases.simple_stats()
-        data["valeur_totale"] = stats["valeur_totale"] or 0
+        total_stats = purchases.total_stats()
+        data["valeur_totale"] = total_stats["valeur_totale"] or 0
+        stats = purchases.label_totals_stats()
         data["valeur_bio"] = stats["valeur_bio"] or 0
         data["valeur_bio_dont_commerce_equitable"] = stats["valeur_bio_dont_commerce_equitable"] or 0
         data["valeur_siqo"] = stats["valeur_siqo"] or 0
@@ -414,6 +425,10 @@ class Purchase(SoftDeletionModel):
             stats["valeur_egalim_autres_dont_commerce_equitable"] or 0
         )
         data["valeur_externalites_performance"] = stats["valeur_externalites_performance"] or 0
+        data["valeur_europe"] = stats["valeur_europe"] or 0
+        data["valeur_france"] = stats["valeur_france"] or 0
+        data["valeur_circuit_court"] = stats["valeur_circuit_court"] or 0
+        data["valeur_local"] = stats["valeur_local"] or 0
 
     @classmethod
     def _complete_diag_data(cls, purchases, data, year):
