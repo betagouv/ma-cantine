@@ -34,13 +34,16 @@ def assert_import_failure_created(self, user, type, file_path):
     self.assertIn("seconds", event_log.data)
 
 
-def assert_import_success_created(self, user, type, count):
+def assert_import_success_created(self, user, type, count=None):
+    """Checks the latest import (some tests run several imports)"""
     self.assertFalse(ImportFailure.objects.exists())
-    event_log = EventLog.objects.get(category=EventLog.Category.IMPORT)
+    event_log = EventLog.objects.filter(category=EventLog.Category.IMPORT).order_by("creation_date", "id").last()
+    self.assertIsNotNone(event_log)
     self.assertEqual(event_log.status, EventLog.Status.SUCCESS)
     self.assertEqual(event_log.user, user)
     self.assertEqual(event_log.name, type)
-    self.assertEqual(event_log.data["count"], count)
+    if count is not None:
+        self.assertEqual(event_log.data["count"], count)
     self.assertIn("seconds", event_log.data)
 
 
