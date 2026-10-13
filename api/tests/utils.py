@@ -1,7 +1,7 @@
 import filecmp
 import functools
 from data.factories import AccessTokenFactory, UserFactory
-from data.models import EventLog, ImportFailure
+from data.models import EventLog
 
 
 def authenticate(func):
@@ -21,23 +21,26 @@ def get_oauth2_token(scope):
 
 
 def assert_import_failure_created(self, user, type, file_path):
-    self.assertTrue(ImportFailure.objects.count() >= 1)
-    self.assertEqual(ImportFailure.objects.first().user, user)
-    self.assertEqual(ImportFailure.objects.first().import_type, type)
-    self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))
-    # EventLog
-    event_log = EventLog.objects.filter(category=EventLog.Category.IMPORT, status=EventLog.Status.FAILURE).first()
+    """Checks the latest failed import (some tests run several imports)"""
+    event_log = (
+        EventLog.objects.filter(category=EventLog.Category.IMPORT, status=EventLog.Status.FAILURE)
+        .order_by("creation_date", "id")
+        .last()
+    )
     self.assertIsNotNone(event_log)
     self.assertEqual(event_log.user, user)
     self.assertEqual(event_log.name, type)
     self.assertEqual(set(event_log.data.keys()), {"message", "count", "seconds"})
     self.assertTrue(event_log.data["message"])
     self.assertIsNone(event_log.data["count"])
+    self.assertTrue(filecmp.cmp(file_path, event_log.file.path, shallow=False))
 
 
 def assert_import_success_created(self, user, type, count=None):
     """Checks the latest import (some tests run several imports)"""
-    self.assertFalse(ImportFailure.objects.exists())
+    self.assertFalse(
+        EventLog.objects.filter(category=EventLog.Category.IMPORT, status=EventLog.Status.FAILURE).exists()
+    )
     event_log = EventLog.objects.filter(category=EventLog.Category.IMPORT).order_by("creation_date", "id").last()
     self.assertIsNotNone(event_log)
     self.assertEqual(event_log.status, EventLog.Status.SUCCESS)
