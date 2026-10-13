@@ -55,6 +55,14 @@ const europeFields = [
     </div>
     <div class="fr-col-12 fr-col-md-6">
       <AppHelpCard title="En savoir plus sur le suivi et la télédéclaration de l'origine des produits">
+        <p>
+          La télédéclaration sur l'origine des produits peut être réalisée sur certaines familles de produits et/ou sur
+          le total de vos approvisionnements.
+        </p>
+        <p>
+          En accord avec la loi UPSA, le suivi de l'origine des produits (Europe et France) sera rendu obligatoire dès
+          la campagne de télédéclaration 2028.
+        </p>
         <a :href="documentation.origineFrance" target="_blank">Consultez la documentation</a>
       </AppHelpCard>
     </div>
@@ -74,6 +82,10 @@ const europeFields = [
   </div>
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle title="2. Achats origine Europe (hors France)" />
+    <p>
+      Achats issus de l'Union Européenne (UE), de l'Espace économique européen (EEE) ou des pays et territoires
+      d'outre-mer (PTOM)
+    </p>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12">
         <TunnelTeledeclarationField name="valeurEurope" />
