@@ -1,6 +1,7 @@
 <script setup>
 import { formatNumber } from "@/utils"
 import Constants from "@/constants.js"
+import AppTooltipHover from "@/components/AppTooltipHover.vue"
 
 const props = defineProps(["measurement"])
 
@@ -79,7 +80,7 @@ const detailedFields = [
     <div v-for="field in detailedFields" :key="field.key" :class="field.tooltip ? 'calculated-field' : 'detail'">
       <p v-if="field.tooltip" class="fr-grid-row fr-grid-row--middle">
         {{ field.label }}
-        <DsfrTooltip v-if="field.tooltip" :content="field.tooltip" />
+        <AppTooltipHover v-if="field.tooltip" :content="field.tooltip" />
       </p>
       <p v-else-if="field.label" class="fr-mb-1w">{{ field.label }}</p>
       <h4 v-else-if="field.heading" class="fr-h6 fr-mt-6w">{{ field.heading }}</h4>
