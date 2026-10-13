@@ -6,6 +6,16 @@ import documentation from '@/data/documentation.json'
 import TunnelTeledeclarationField from '@/components/TunnelTeledeclarationField.vue'
 import TunnelTeledeclarationGroupTitle from '@/components/TunnelTeledeclarationGroupTitle.vue'
 
+const totalAchatsFields = [
+  "valeurViandesVolailles",
+  "valeurProduitsDeLaMer",
+  "valeurCharcuterie",
+  "valeurFruitsEtLegumes",
+  "valeurProduitsLaitiers",
+  "valeurBoulangerie",
+  "valeurAutres",
+  "valeurBoissons",
+]
 const circuitCourtFields = [
   "valeurViandesVolaillesCircuitCourt",
   "valeurProduitsDeLaMerCircuitCourt",
@@ -75,6 +85,18 @@ const updateDefinitionLocal = (value) => {
     </div>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in localFields" :key="field" class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField :name="field" />
+      </div>
+    </div>
+  </div>
+  <div class="fr-mb-6w">
+    <TunnelTeledeclarationGroupTitle title="3. Total des achats par famille de produits" />
+    <p>
+      Pour chaque famille de produits renseignée dans les achats en circuit court ou en « local », vous devez déclarer
+      le total des achats de cette famille.
+    </p>
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div v-for="field in totalAchatsFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
       </div>
     </div>
