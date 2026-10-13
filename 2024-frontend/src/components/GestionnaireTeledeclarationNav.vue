@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia"
 import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import canteensService from "@/services/canteens.js"
+import diagnosticsMacaron from "@/services/diagnosticsMacaron.js"
 import AppBadgeDiagnostic from "@/components/AppBadgeDiagnostic.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import IconLink from "@/components/IconLink.vue"
@@ -39,12 +40,7 @@ const currentCanteenAction = computed(() => {
 /* Macaron status */
 const teledeclarationStore = useStoreTeledeclaration()
 const { diagnoticCheck, isTeledeclared } = storeToRefs(teledeclarationStore)
-const getStatus = (name) => {
-  if (name !== "appro") return "empty"
-  if (isTeledeclared.value) return "teledeclared"
-  if (diagnoticCheck.value.isClean) return "fill"
-  return "empty"
-}
+const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value))
 </script>
 <template>
   <div v-if="isInTeledeclaration || isInCorrection" class="gestionnaire-teledeclaration-nav fr-sidemenu">
@@ -57,12 +53,12 @@ const getStatus = (name) => {
             <div class="gestionnaire-teledeclaration-nav__indicator ma-cantine--width-100">
               <IconLink bottom="50%" class="gestionnaire-teledeclaration-nav__link" />
               <div class="gestionnaire-teledeclaration-nav__macarons fr-py-1v fr-px-1w">
-                <IconMacaronAppro :status="getStatus('appro')" />
+                <IconMacaronAppro :status="macaronsStatus.appro" />
                 <AppSeparator orientation="vertical" class="fr-my-0-5v" />
-                <IconMacaronInfo :status="getStatus('info')" />
-                <IconMacaronWaste :status="getStatus('waste')" />
-                <IconMacaronDiversification :status="getStatus('diversification')" />
-                <IconMacaronPlastic :status="getStatus('plastic')" />
+                <IconMacaronInfo :status="macaronsStatus.info" />
+                <IconMacaronWaste :status="macaronsStatus.waste" />
+                <IconMacaronDiversification :status="macaronsStatus.diversification" />
+                <IconMacaronPlastic :status="macaronsStatus.plastic" />
               </div>
             </div>
           </router-link>

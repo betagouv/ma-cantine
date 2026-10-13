@@ -2,6 +2,7 @@
 import { ref, computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
+import diagnosticsMacaron from "@/services/diagnosticsMacaron.js"
 import DiagnosticSummaryTile from "@/components/DiagnosticSummaryTile.vue"
 import DiagnosticSummaryAccordions from "@/components/DiagnosticSummaryAccordions.vue"
 import IconMacaronAppro from "@/components/IconMacaronAppro.vue"
@@ -15,7 +16,7 @@ const openedAccordion = ref(-1)
 
 /* Diagnostic */
 const teledeclarationStore = useStoreTeledeclaration()
-const { isTeledeclared, hasErrors, hasDiagnostic } = storeToRefs(teledeclarationStore)
+const { isTeledeclared, hasErrors, hasDiagnostic, diagnoticCheck } = storeToRefs(teledeclarationStore)
 
 /* Get data */
 const getIsStarted = (key) => {
@@ -31,12 +32,14 @@ const getSentence = (key) => {
 }
 
 /* Volets */
+const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value))
 const volets = computed(() => {
   return [
     {
       title: "Approvisionnements",
       macaron: IconMacaronAppro,
       sentence: getSentence("appro"),
+      status: macaronsStatus.value.appro,
       page: { name: "GestionnaireTunnelApproRecapitulatif" },
       displayErrors: hasErrors.value
     },
@@ -45,6 +48,7 @@ const volets = computed(() => {
       shortTitle: "Information convives",
       macaron: IconMacaronInfo,
       sentence: getSentence("info"),
+      status: macaronsStatus.value.info,
       page: { name: "GestionnaireTunnelConvives" }
     },
     {
@@ -52,6 +56,7 @@ const volets = computed(() => {
       shortTitle: "Gaspillage alimentaire",
       macaron: IconMacaronWaste,
       sentence: getSentence("waste"),
+      status: macaronsStatus.value.waste,
       page: { name: "GestionnaireTunnelGaspillage" }
     },
     {
@@ -59,6 +64,7 @@ const volets = computed(() => {
       shortTitle: "Menus végétariens",
       macaron: IconMacaronDiversification,
       sentence: getSentence("diversification"),
+      status: macaronsStatus.value.diversification,
       page: { name: "GestionnaireTunnelVegetarien" }
     },
     {
@@ -66,6 +72,7 @@ const volets = computed(() => {
       shortTitle: "Substitution plastique",
       macaron: IconMacaronPlastic,
       sentence: getSentence("plastic"),
+      status: macaronsStatus.value.plastic,
       page: { name: "GestionnaireTunnelPlastique" }
     }
   ]
