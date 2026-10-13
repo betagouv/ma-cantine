@@ -48,7 +48,7 @@
       "label": "Dont achats bio issus du commerce équitable",
       "hint": "2.0.2 : Champ facultatif pour le suivi de la part des achats bio issus du commerce équitable",
       "isRelatedField": "horizontal",
-      "tooltip": "Achats à comptabiliser également dans le champ « bio ou en conversion »",
+      "tooltip": "Achats à comptabiliser également dans le champ « Total des achats bio ou avec mention en conversion vers l’agriculture biologique »",
       "placeholder": "Je ne sais pas",
       "type": "number",
       "required": false
