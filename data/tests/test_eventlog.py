@@ -1,11 +1,12 @@
 from unittest import mock
 
-from django.contrib.auth.models import AnonymousUser
+from django.contrib.auth.models import AnonymousUser, Permission
 from django.db import transaction
 from django.test import TestCase
 
+from data.admin.eventlog import EventLogNameListFilter
 from data.factories import EventLogFactory, UserFactory
-from data.models import EventLog
+from data.models import EventLog, ImportType
 
 
 class EventLogMessageShortTest(TestCase):
@@ -60,3 +61,49 @@ class EventLogLogTest(TestCase):
             EventLog.log(EventLog.Category.IMPORT, "PURCHASE_SIRET", EventLog.Status.SUCCESS)
 
         self.assertEqual(EventLog.objects.count(), 1)
+
+
+class EventLogAdminNameListFilterTest(TestCase):
+    url = "/admin/data/eventlog/"
+
+    def setUp(self):
+        # staff but not superuser: superusers need a verified OTP device to access the admin
+        staff_user = UserFactory(is_staff=True)
+        staff_user.user_permissions.add(Permission.objects.get(codename="view_eventlog"))
+        self.client.force_login(staff_user)
+        EventLogFactory(category=EventLog.Category.IMPORT, name="PURCHASE_SIRET")
+        EventLogFactory(category=EventLog.Category.TASK, name="macantine.tasks.update_user_data")
+        EventLogFactory(category=EventLog.Category.TASK, name="macantine.tasks.update_brevo_contacts")
+        EventLogFactory(category=EventLog.Category.TASK, name="macantine.tasks.update_brevo_contacts")
+
+    def get_name_filter(self, response):
+        # filters without output (no lookups) are not in filter_specs
+        return next(
+            (spec for spec in response.context["cl"].filter_specs if isinstance(spec, EventLogNameListFilter)), None
+        )
+
+    def test_hidden_without_category(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNone(self.get_name_filter(response))
+
+    def test_import_category_lists_import_types(self):
+        response = self.client.get(self.url, {"category__exact": EventLog.Category.IMPORT})
+
+        self.assertEqual(self.get_name_filter(response).lookup_choices, ImportType.choices)
+
+    def test_other_category_lists_its_distinct_names(self):
+        response = self.client.get(self.url, {"category__exact": EventLog.Category.TASK})
+
+        self.assertEqual(
+            [value for value, _ in self.get_name_filter(response).lookup_choices],
+            ["macantine.tasks.update_brevo_contacts", "macantine.tasks.update_user_data"],
+        )
+
+    def test_filters_by_name(self):
+        response = self.client.get(
+            self.url, {"category__exact": EventLog.Category.TASK, "name": "macantine.tasks.update_brevo_contacts"}
+        )
+
+        self.assertEqual(response.context["cl"].result_count, 2)
