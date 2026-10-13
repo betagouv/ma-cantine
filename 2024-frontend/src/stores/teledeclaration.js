@@ -11,6 +11,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const canteenAction = ref(null)
   const year = Number(window.TELEDECLARATION_YEAR)
   const diagnosticErrors = ref([])
+  const diagnoticCheck = ref({})
   const hasDiagnostic = computed(() => diagnostic.value !== null)
   const hasErrors = computed(() => diagnosticErrors.value.length > 0)
   const isSimple = computed(() => diagnostic.value?.diagnosticType === "SIMPLE")
@@ -27,9 +28,23 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setDiagnostic(diagnosticYear)
     setCanteenId(canteenId)
     await setCanteenAction()
-    const diagnosticCheck = await diagnosticService.checkDiagnostic(canteenId, diagnosticYear.id)
+    await checkDiagnosticSteps()
+  }
+
+  /* Check diagnostic and canteen for the "volets" */
+  async function checkDiagnosticSteps() {
+    if (!diagnostic.value) return
+    const canteenId = diagnostic.value.canteenId
+    const diagnosticCheck = await diagnosticService.checkDiagnostic(canteenId, diagnostic.value.id)
     const canteenCheck = await canteenService.checkCanteen(canteenId)
-    addErrorsFromCheck({...diagnosticCheck.errors, ...canteenCheck.errors})
+    const check = {
+      isClean: canteenCheck.isClean && diagnosticCheck.isClean,
+      isFilled: canteenCheck.isFilled && diagnosticCheck.isFilled,
+      errors: {...canteenCheck.errors, ...diagnosticCheck.errors}
+    }
+    addErrorsFromCheck(check.errors)
+    diagnoticCheck.value = check
+    return check
   }
 
   /* Save diagnostic */
@@ -87,6 +102,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     canteenSavedId.value = null
     canteenAction.value = null
     isSaved.value = true
+    diagnoticCheck.value = {}
   }
 
   /* Format errors object into a list of { field, message } */
@@ -128,6 +144,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Clear diagnostic errors for the current campaign */
   const clearErrors = () => {
     diagnosticErrors.value = []
+    diagnoticCheck.value = {}
   }
 
   /* Clear one error */
@@ -166,6 +183,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnostic,
     canteenAction,
     diagnosticErrors,
+    diagnoticCheck,
     hasDiagnostic,
     hasErrors,
     isSimple,
@@ -173,6 +191,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     isSaved,
     isTeledeclared,
     initStore,
+    checkDiagnosticSteps,
     deleteStore,
     getYear,
     setDiagnostic,
