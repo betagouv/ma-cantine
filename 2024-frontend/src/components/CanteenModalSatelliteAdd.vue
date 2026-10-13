@@ -56,7 +56,7 @@ const searchByNumber = () => {
       switch (true) {
         case response instanceof Error:
           hasCanteen = false
-          errorNotFound.value = "Une erreur est survenue lors de la recherche de l'établissement, vous pouvez réessayer plus tard ou nous contacter directement à contact@egalim.beta.gouv.fr"
+          errorNotFound.value = `Une erreur est survenue lors de la recherche de l'établissement, vous pouvez réessayer plus tard ou nous contacter directement à ${window.CONTACT_EMAIL}`
           break
         case response.length === 0:
           hasCanteen = false

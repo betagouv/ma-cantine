@@ -28,6 +28,11 @@ def hostname():
 
 
 @register.simple_tag
+def contact_email():
+    return getattr(settings, "CONTACT_EMAIL", "")
+
+
+@register.simple_tag
 def git_branch():
     return getattr(settings, "GIT_BRANCH", "")
 

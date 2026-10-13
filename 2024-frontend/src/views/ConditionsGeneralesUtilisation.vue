@@ -1,4 +1,5 @@
 <script setup>
+import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
 </script>
 
@@ -180,7 +181,7 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <p>
         Cette inscription est révocable à tout moment, soit en vous désabonnant à réception du courriel, ou en nous
         notifiant votre refus à l’adresse suivante :
-        <a rel="noopener" href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+        <AppLinkMailto />
       </p>
 
       <h2>6 - Statistiques et diffusion sur data.gouv.fr</h2>
@@ -283,12 +284,12 @@ import LayoutOneColumn from "@/layouts/LayoutOneColumn.vue"
       <ul>
         <li>
           Difficultés techniques :
-          <a rel="noopener" href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+          <AppLinkMailto />
           .
         </li>
         <li>
           Problèmes liés à la procédure :
-          <a rel="noopener" href="mailto:contact@egalim.beta.gouv.fr">contact@egalim.beta.gouv.fr</a>
+          <AppLinkMailto />
           .
         </li>
       </ul>
