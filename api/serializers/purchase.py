@@ -220,8 +220,28 @@ class PurchaseFactureSerializer(serializers.ModelSerializer):
         fields = ("id", "facture")
 
 
+class PurchaseSimpleSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer):
+    """
+    One year's worth of the "simple" totals (see Purchase._simple_diag_data), as returned
+    by Purchase.canteen_summary() for each year it covers.
+    """
+
+    year = serializers.IntegerField()
+    valeur_totale = PurchaseField()
+    valeur_bio = PurchaseField()
+    valeur_bio_dont_commerce_equitable = PurchaseField()
+    valeur_siqo = PurchaseField()
+    valeur_egalim_autres = PurchaseField()
+    valeur_egalim_autres_dont_commerce_equitable = PurchaseField()
+    valeur_externalites_performance = PurchaseField()
+
+
+class CanteenPurchasesSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer):
+    results = PurchaseSimpleSummarySerializer(many=True)
+
+
 # NB: these names reflect the names in the diagnostic model
-class PurchaseSummarySerializer(serializers.Serializer):
+class PurchaseSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer):
     year = serializers.IntegerField()
     valeur_totale = PurchaseField()
     valeur_bio = PurchaseField()
@@ -359,7 +379,7 @@ class PurchaseSummarySerializer(serializers.Serializer):
 
 
 # NB: these names reflect the names in the diagnostic model
-class PurchasePercentageSummarySerializer(serializers.Serializer):
+class PurchasePercentageSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer):
     year = serializers.IntegerField()
     percentage_valeur_totale = serializers.FloatField(required=False)
     percentage_valeur_bio = serializers.FloatField(required=False)

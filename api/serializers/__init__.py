@@ -62,6 +62,7 @@ from .purchase import (  # noqa: F401
     PurchaseFactureSerializer,
     PurchasePercentageSummarySerializer,
     PurchaseExportSerializer,
+    CanteenPurchasesSummarySerializer,
 )
 from .reservationexpe import ReservationExpeSerializer  # noqa: F401
 from .vegetarianexpe import VegetarianExpeSerializer  # noqa: F401
