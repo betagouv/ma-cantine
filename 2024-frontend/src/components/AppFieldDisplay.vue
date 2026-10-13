@@ -24,7 +24,7 @@ const errorMessage = computed(() => hasError.value ? props.error?.join(' ') : ""
     <div class="fr-col-12 fr-col-md-7">
       <div class="ma-cantine--flex-start ma-cantine--flex-top fr-mb-1w">
         <AppRawHTML :html="valueFormatted" />
-        <AppTooltipHover v-if="tooltip" :content="tooltip" class="fr-ml-1w" />
+        <AppTooltipHover v-if="tooltip" :content="tooltip" class="fr-ml-1w fr-mt-n1v" />
       </div>
       <p v-if="hasError" class="fr-message fr-message--error">{{ errorMessage }}</p>
     </div>
