@@ -40,7 +40,7 @@ const getPrettyDiagnosticValue = (field) => {
   const hasOptions = teledeclaration.fields[field]?.options?.length > 0
   const diagValue = diagnostic.value[field]
   const prettyValue = hasOptions ? teledeclaration.fields[field].options.find(option => option.value === diagValue)?.valueDisplay : diagValue
-  return prettyValue !== null ? prettyValue : "Non renseigné"
+  return prettyValue ?? "Non renseigné"
 }
 
 const rows = computed(() => {
@@ -52,7 +52,7 @@ const rows = computed(() => {
     const hasError = teledeclarationStore.isFieldError(field)
     return {
       name,
-      value: value || "Non renseigné",
+      value: value ?? "Non renseigné",
       error: hasError ? teledeclarationStore.getErrorMessage(field) : "",
     }
   })
