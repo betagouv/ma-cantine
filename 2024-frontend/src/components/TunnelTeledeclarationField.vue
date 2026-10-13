@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from "vue"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import IconLink from "@/components/IconLink.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
+import AppTooltipHover from "@/components/AppTooltipHover.vue"
 import diagnosticsFieldsService from "@/services/diagnosticsFields"
 
 /* Stores */
@@ -54,7 +55,7 @@ onMounted(prefillField)
       <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="errorMessage" :hint="hint"/>
     </div>
     <div v-if="tooltip" class="tunnel-teledeclaration-field__tooltip fr-pl-1w fr-pb-1v">
-      <DsfrTooltip :content="tooltip" title="Infobulle" />
+      <AppTooltipHover :content="tooltip" />
     </div>
   </div>
 </template>
