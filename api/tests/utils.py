@@ -1,7 +1,7 @@
 import filecmp
 import functools
 from data.factories import AccessTokenFactory, UserFactory
-from data.models import ImportFailure
+from data.models import EventLog, ImportFailure
 
 
 def authenticate(func):
@@ -25,6 +25,23 @@ def assert_import_failure_created(self, user, type, file_path):
     self.assertEqual(ImportFailure.objects.first().user, user)
     self.assertEqual(ImportFailure.objects.first().import_type, type)
     self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))
+    # EventLog
+    event_log = EventLog.objects.filter(category=EventLog.Category.IMPORT, status=EventLog.Status.FAILURE).first()
+    self.assertIsNotNone(event_log)
+    self.assertEqual(event_log.user, user)
+    self.assertEqual(event_log.name, type)
+    self.assertTrue(event_log.data["message"])
+    self.assertIn("seconds", event_log.data)
+
+
+def assert_import_success_created(self, user, type, count):
+    self.assertFalse(ImportFailure.objects.exists())
+    event_log = EventLog.objects.get(category=EventLog.Category.IMPORT)
+    self.assertEqual(event_log.status, EventLog.Status.SUCCESS)
+    self.assertEqual(event_log.user, user)
+    self.assertEqual(event_log.name, type)
+    self.assertEqual(event_log.data["count"], count)
+    self.assertIn("seconds", event_log.data)
 
 
 def assert_almost_equal(self, value, expected_value):

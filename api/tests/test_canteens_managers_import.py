@@ -6,7 +6,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.tests.utils import assert_import_failure_created, authenticate
+from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
 from data.factories import CanteenFactory, UserFactory
 from data.models import ImportFailure, ImportType, ManagerInvitation
 
@@ -246,7 +246,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
             response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_MANAGERS, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
