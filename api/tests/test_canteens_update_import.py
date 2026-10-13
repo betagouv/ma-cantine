@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
-from data.models import Canteen, ImportFailure, ImportType, Sector
+from data.models import Canteen, ImportType, Sector
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
@@ -418,7 +418,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, 1)
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["canteens"]), 1)
         self.assertEqual(len(errors), 0, errors)
@@ -448,7 +448,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, 1)
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["canteens"]), 1)
         self.assertEqual(len(errors), 0, errors)
@@ -475,7 +475,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, 1)
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(body["canteens"]), 1)
         self.assertEqual(len(errors), 0, errors)
