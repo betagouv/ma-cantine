@@ -1,4 +1,7 @@
+import json
+
 from django.contrib import admin
+from django.utils.html import format_html
 
 
 class ReadOnlyAdminMixin:
@@ -42,3 +45,11 @@ def get_arrayfield_list_filter(field_name, verbose_name):
         title = verbose_name
 
     return ArrayFieldListFilterForField
+
+
+def json_pretty(value):
+    """
+    Display a JSON value indented, in a <pre>
+    format_html escapes the content: JSON values can contain user input (canteen names...)
+    """
+    return format_html("<pre>{}</pre>", json.dumps(value, indent=2, ensure_ascii=False))
