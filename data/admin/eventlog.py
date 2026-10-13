@@ -1,11 +1,9 @@
-import json
-
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
 from data.models import EventLog, ImportType
-from data.admin.utils import ReadOnlyAdminMixin
+from data.admin.utils import ReadOnlyAdminMixin, json_pretty
 
 
 class EventLogNameListFilter(admin.SimpleListFilter):
@@ -93,7 +91,6 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
     message_short.short_description = "message"
 
     def data_pretty(self, obj):
-        # format_html escapes the content (data can contain user input, API responses...)
-        return format_html("<pre>{}</pre>", json.dumps(obj.data, indent=2, ensure_ascii=False))
+        return json_pretty(obj.data)
 
     data_pretty.short_description = EventLog._meta.get_field("data").verbose_name
