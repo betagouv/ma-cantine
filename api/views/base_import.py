@@ -256,7 +256,7 @@ class BaseImportView(ABC, APIView):
             self.import_type,
             EventLog.Status.FAILURE,
             user=self.request.user,
-            data={"message": message, "seconds": self._get_duration()},
+            data={"message": message, "count": None, "seconds": self._get_duration()},
         )
 
     def _log_success(self, response_data):
@@ -266,7 +266,7 @@ class BaseImportView(ABC, APIView):
             self.import_type,
             EventLog.Status.SUCCESS,
             user=self.request.user,
-            data={"count": response_data.get("count"), "seconds": self._get_duration()},
+            data={"message": None, "count": response_data.get("count"), "seconds": self._get_duration()},
         )
 
     def _get_duration(self):
