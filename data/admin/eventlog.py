@@ -72,12 +72,9 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         ),
         (
             "Metadonnées",
-            {"fields": ("creation_date",)},
+            {"fields": ("creation_date", "modification_date")},
         ),
     )
-
-    def has_delete_permission(self, request, obj=None):
-        return True
 
     def user_with_link(self, obj):
         if not obj.user_id:
