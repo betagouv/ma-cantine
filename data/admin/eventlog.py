@@ -2,8 +2,32 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from data.models import EventLog
+from data.models import EventLog, ImportType
 from data.admin.utils import ReadOnlyAdminMixin
+
+
+class EventLogNameListFilter(admin.SimpleListFilter):
+    """
+    Only shown once a category is selected, and only lists that category's names
+    (avoids a SELECT DISTINCT on the whole table)
+    """
+
+    title = "nom"
+    parameter_name = "name"
+
+    def lookups(self, request, model_admin):
+        category = request.GET.get("category__exact")
+        if not category:
+            return []
+        if category == EventLog.Category.IMPORT:
+            return ImportType.choices
+        names = EventLog.objects.filter(category=category).order_by("name").values_list("name", flat=True).distinct()
+        return [(name, name) for name in names]
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(name=self.value())
+        return queryset
 
 
 @admin.register(EventLog)
@@ -17,7 +41,7 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "api_oauth2_application",
         "message_short",
     )
-    list_filter = ["creation_date", "category", "status", "api_oauth2_application"]
+    list_filter = ["creation_date", "category", EventLogNameListFilter, "status", "api_oauth2_application"]
     list_select_related = ["user", "api_oauth2_application"]
     search_fields = (
         "name",
