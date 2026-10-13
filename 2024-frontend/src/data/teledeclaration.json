@@ -39,7 +39,7 @@
       "required": true
     },
     "valeurBio": {
-      "label": "Total des achats bio ou avec mention « En conversion vers l’agriculture biologique »",
+      "label": "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »",
       "hint": "2.0.1 : Renseigner 0 si non suivi",
       "type": "number",
       "required": true
@@ -48,7 +48,7 @@
       "label": "Dont achats bio issus du commerce équitable",
       "hint": "2.0.2 : Champ facultatif pour le suivi de la part des achats bio issus du commerce équitable",
       "isRelatedField": "horizontal",
-      "tooltip": "Achats à comptabiliser également dans le champ « Total des achats bio ou avec mention en conversion vers l’agriculture biologique »",
+      "tooltip": "Achats à comptabiliser également dans le champ « Total des achats bio ou avec mention en conversion vers l'agriculture biologique »",
       "placeholder": "Je ne sais pas",
       "type": "number",
       "required": false
@@ -94,14 +94,14 @@
       "required": true
     },
     "valeurProduitsDeLaMer": {
-      "label": "Total des achats en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "label": "Total des achats en poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "hint": "1.2 : Total des achats",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurProduitsDeLaMerEgalim": {
-      "label": "Achats EGalim en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "label": "Achats EGalim en poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "hint": "1.2bis : Renseigner 0 si non suivi",
       "type": "number",
       "placeholder": "Je ne sais pas",
@@ -488,7 +488,7 @@
     },
     "valeurViandesVolaillesBioDontCommerceEquitable": {
       "label": "Viandes et volailles fraîches ou surgelées",
-      "hint": "2.1.2 : dont bio issu du commerce équitable",
+      "hint": "2.1.2 : Dont bio issu du commerce équitable",
       "isRelatedField": "vertical",
       "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
@@ -503,7 +503,7 @@
     },
     "valeurProduitsDeLaMerBioDontCommerceEquitable": {
       "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "hint": "2.2.2 : dont bio issu du commerce équitable",
+      "hint": "2.2.2 : Dont bio issu du commerce équitable",
       "isRelatedField": "vertical",
       "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
@@ -518,7 +518,7 @@
     },
     "valeurCharcuterieBioDontCommerceEquitable": {
       "label": "Charcuteries",
-      "hint": "2.3.2 : dont bio issu du commerce équitable",
+      "hint": "2.3.2 : Dont bio issu du commerce équitable",
       "isRelatedField": "vertical",
       "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
@@ -533,7 +533,7 @@
     },
     "valeurFruitsEtLegumesBioDontCommerceEquitable": {
       "label": "Fruits et légumes frais et surgelés",
-      "hint": "2.4.2 : dont bio issu du commerce équitable",
+      "hint": "2.4.2 : Dont bio issu du commerce équitable",
       "isRelatedField": "vertical",
       "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
@@ -548,7 +548,7 @@
     },
     "valeurProduitsLaitiersBioDontCommerceEquitable": {
       "label": "BOF (Produits laitiers, beurre et œufs)",
-      "hint": "2.5.2 : dont bio issu du commerce équitable",
+      "hint": "2.5.2 : Dont bio issu du commerce équitable",
       "isRelatedField": "vertical",
       "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
@@ -563,7 +563,7 @@
     },
     "valeurBoulangerieBioDontCommerceEquitable": {
       "label": "Boulangerie/Pâtisseries fraîches",
-      "hint": "2.6.2 : dont bio issu du commerce équitable",
+      "hint": "2.6.2 : Dont bio issu du commerce équitable",
       "isRelatedField": "vertical",
       "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
@@ -578,7 +578,7 @@
     },
     "valeurAutresBioDontCommerceEquitable": {
       "label": "Autres produits frais, surgelés et d'épicerie",
-      "hint": "2.7.2 : dont bio issu du commerce équitable",
+      "hint": "2.7.2 : Dont bio issu du commerce équitable",
       "isRelatedField": "vertical",
       "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
@@ -593,7 +593,7 @@
     },
     "valeurBoissonsBioDontCommerceEquitable": {
       "label": "Boissons",
-      "hint": "2.8.2 : dont bio issu du commerce équitable",
+      "hint": "2.8.2 : Dont bio issu du commerce équitable",
       "isRelatedField": "vertical",
       "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
@@ -602,43 +602,43 @@
     },
     "valeurViandesVolaillesLabelRouge": {
       "label": "Viandes et volailles fraîches ou surgelées",
-      "hint": "3.1 : Label rouge",
+      "hint": "3.1 : Label Rouge",
       "type": "number",
       "required": true
     },
     "valeurProduitsDeLaMerLabelRouge": {
       "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "hint": "3.2 : Label rouge",
+      "hint": "3.2 : Label Rouge",
       "type": "number",
       "required": true
     },
     "valeurCharcuterieLabelRouge": {
       "label": "Charcuteries",
-      "hint": "3.3 : Label rouge",
+      "hint": "3.3 : Label Rouge",
       "type": "number",
       "required": true
     },
     "valeurFruitsEtLegumesLabelRouge": {
       "label": "Fruits et légumes frais et surgelés",
-      "hint": "3.4 : Label rouge",
+      "hint": "3.4 : Label Rouge",
       "type": "number",
       "required": true
     },
     "valeurProduitsLaitiersLabelRouge": {
       "label": "BOF (Produits laitiers, beurre et œufs)",
-      "hint": "3.5 : Label rouge",
+      "hint": "3.5 : Label Rouge",
       "type": "number",
       "required": true
     },
     "valeurBoulangerieLabelRouge": {
       "label": "Boulangerie/Pâtisseries fraîches",
-      "hint": "3.6 : Label rouge",
+      "hint": "3.6 : Label Rouge",
       "type": "number",
       "required": true
     },
     "valeurAutresLabelRouge": {
       "label": "Autres produits frais, surgelés et d'épicerie",
-      "hint": "3.7 : Label rouge",
+      "hint": "3.7 : Label Rouge",
       "type": "number",
       "required": true
     },
@@ -685,7 +685,7 @@
       "required": true
     },
     "valeurBoulangerieIgp": {
-      "label": "Boulangerie / Pâtisserie fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
       "hint": "5.6 : IGP",
       "type": "number",
       "required": true
@@ -751,62 +751,62 @@
       "required": true
     },
     "valeurViandesVolaillesHve": {
-      "label": "Viandes et volailles fraîches et surgelées",
-      "hint": "7.1 : Certification environnementale - niveau 2 ou 3 (HVE)",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "hint": "7.1 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
       "required": true
     },
     "valeurProduitsDeLaMerHve": {
       "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "hint": "7.2 : Certification environnementale - niveau 2 ou 3 (HVE)",
+      "hint": "7.2 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
       "required": true
     },
     "valeurCharcuterieHve": {
-      "label": "Charcuterie",
-      "hint": "7.3 : Certification environnementale - niveau 2 ou 3 (HVE)",
+      "label": "Charcuteries",
+      "hint": "7.3 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
       "required": true
     },
     "valeurFruitsEtLegumesHve": {
       "label": "Fruits et légumes frais et surgelés",
-      "hint": "7.4 : Certification environnementale - niveau 2 ou 3 (HVE)",
+      "hint": "7.4 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
       "required": true
     },
     "valeurProduitsLaitiersHve": {
       "label": "BOF (Produits laitiers, beurre et œufs)",
-      "hint": "7.5 : Certification environnementale - niveau 2 ou 3 (HVE)",
+      "hint": "7.5 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
       "required": true
     },
     "valeurBoulangerieHve": {
       "label": "Boulangerie/Pâtisseries fraîches",
-      "hint": "7.6 : Certification environnementale - niveau 2 ou 3 (HVE)",
+      "hint": "7.6 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
       "required": true
     },
     "valeurAutresHve": {
-      "label": "Autres produits frais, surgelés et d’épicerie",
-      "hint": "7.7 : Certification environnementale - niveau 2 ou 3 (HVE)",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "hint": "7.7 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
       "required": true
     },
     "valeurBoissonsHve": {
       "label": "Boissons",
-      "hint": "7.8 : Certification environnementale - niveau 2 ou 3 (HVE)",
+      "hint": "7.8 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
       "required": true
     },
     "valeurProduitsDeLaMerPecheDurable": {
-      "label": "Produits de la mer et aquaculture frais et surgelés",
-      "hint": "8 : Ecolabel pêche durable, 7°bis ou 7°ter",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "8 : Écolabel pêche durable, 7°bis ou 7°ter",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurViandesVolaillesRup": {
-      "label": "Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
       "hint": "9.1 : RUP",
       "type": "number",
       "required": true
@@ -818,7 +818,7 @@
       "required": true
     },
     "valeurCharcuterieRup": {
-      "label": "Charcuterie",
+      "label": "Charcuteries",
       "hint": "9.3 : RUP",
       "type": "number",
       "required": true
@@ -842,7 +842,7 @@
       "required": true
     },
     "valeurAutresRup": {
-      "label": "Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
       "hint": "9.7 : RUP",
       "type": "number",
       "required": true
@@ -854,7 +854,7 @@
       "required": true
     },
     "valeurViandesVolaillesCommerceEquitable": {
-      "label": "Viandes et volailles fraîches et surgelées hors bio",
+      "label": "Viandes et volailles fraîches ou surgelées non bio",
       "hint": "10.1 : Commerce équitable non bio",
       "type": "number",
       "required": true
@@ -866,7 +866,7 @@
       "required": true
     },
     "valeurCharcuterieCommerceEquitable": {
-      "label": "Charcuterie",
+      "label": "Charcuteries",
       "hint": "10.3 : Commerce équitable non bio",
       "type": "number",
       "required": true
@@ -890,7 +890,7 @@
       "required": true
     },
     "valeurAutresCommerceEquitable": {
-      "label": "Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
       "hint": "10.7 : Commerce équitable non bio",
       "type": "number",
       "required": true
@@ -902,7 +902,7 @@
       "required": true
     },
     "valeurViandesVolaillesFermier": {
-      "label": "Viandes et volailles fraîches et surgelées hors bio",
+      "label": "Viandes et volailles fraîches ou surgelées non bio",
       "hint": "11.1 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
       "required": true
@@ -914,7 +914,7 @@
       "required": true
     },
     "valeurCharcuterieFermier": {
-      "label": "Charcuterie",
+      "label": "Charcuteries",
       "hint": "11.3 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
       "required": true
@@ -938,7 +938,7 @@
       "required": true
     },
     "valeurAutresFermier": {
-      "label": "Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
       "hint": "11.7 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
       "required": true
@@ -950,113 +950,113 @@
       "required": true
     },
     "valeurViandesVolaillesExternalites": {
-      "label": "Viandes et volailles fraîches et surgelées",
-      "hint": "12.1 : Produits sélectionnés sur la base de critères d’externalités environnementales",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "hint": "12.1 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurProduitsDeLaMerExternalites": {
       "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "hint": "12.2 : Produits sélectionnés sur la base de critères d’externalités environnementales",
+      "hint": "12.2 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurCharcuterieExternalites": {
-      "label": "Charcuterie",
-      "hint": "12.3 : Produits sélectionnés sur la base de critères d’externalités environnementales",
+      "label": "Charcuteries",
+      "hint": "12.3 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurFruitsEtLegumesExternalites": {
       "label": "Fruits et légumes frais et surgelés",
-      "hint": "12.4 : Produits sélectionnés sur la base de critères d’externalités environnementales",
+      "hint": "12.4 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurProduitsLaitiersExternalites": {
       "label": "BOF (Produits laitiers, beurre et œufs)",
-      "hint": "12.5 : Produits sélectionnés sur la base de critères d’externalités environnementales",
+      "hint": "12.5 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurBoulangerieExternalites": {
       "label": "Boulangerie/Pâtisseries fraîches",
-      "hint": "12.6 : Produits sélectionnés sur la base de critères d’externalités environnementales",
+      "hint": "12.6 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurAutresExternalites": {
-      "label": "Autres produits frais, surgelés et d’épicerie",
-      "hint": "12.7 : Produits sélectionnés sur la base de critères d’externalités environnementales",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "hint": "12.7 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurBoissonsExternalites": {
       "label": "Boissons",
-      "hint": "12.8 : Produits sélectionnés sur la base de critères d’externalités environnementales",
+      "hint": "12.8 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurViandesVolaillesPerformance": {
-      "label": "Viandes et volailles fraîches et surgelées",
-      "hint": "13.1 : Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "hint": "13.1 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurProduitsDeLaMerPerformance": {
       "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "hint": "13.2 : Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs",
+      "hint": "13.2 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurCharcuteriePerformance": {
-      "label": "Charcuterie",
-      "hint": "13.3 : Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs",
+      "label": "Charcuteries",
+      "hint": "13.3 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurFruitsEtLegumesPerformance": {
       "label": "Fruits et légumes frais et surgelés",
-      "hint": "13.4 : Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs",
+      "hint": "13.4 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurProduitsLaitiersPerformance": {
       "label": "BOF (Produits laitiers, beurre et œufs)",
-      "hint": "13.5 : Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs",
+      "hint": "13.5 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurBoulangeriePerformance": {
       "label": "Boulangerie/Pâtisseries fraîches",
-      "hint": "13.6 : Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs",
+      "hint": "13.6 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurAutresPerformance": {
-      "label": "Autres produits frais, surgelés et d’épicerie",
-      "hint": "13.7 : Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "hint": "13.7 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
     },
     "valeurBoissonsPerformance": {
       "label": "Boissons",
-      "hint": "13.8 : Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs",
+      "hint": "13.8 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
       "placeholder": "Je ne sais pas",
       "required": false
