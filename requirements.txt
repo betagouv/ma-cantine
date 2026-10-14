@@ -341,7 +341,7 @@ msgpack==1.2.2
     # via
     #   cachecontrol
     #   mashumaro
-multidict==6.7.1
+multidict==6.9.1
     # via
     #   aiohttp
     #   yarl
