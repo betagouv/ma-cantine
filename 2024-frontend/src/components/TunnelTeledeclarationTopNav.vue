@@ -11,6 +11,7 @@ const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
 
 const saveAndQuit = async () => {
+  teledeclarationStore.markPageAsVisited(route.meta.slug)
   await teledeclarationStore.saveDiagnostic()
   router.push({ name: 'GestionnaireCantineTeledeclarationEnCours' })
 }
