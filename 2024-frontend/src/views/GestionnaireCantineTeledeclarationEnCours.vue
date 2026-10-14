@@ -61,7 +61,7 @@ const openTunnel = (pageName) => {
 }
 
 const createDiagnostic = () => {
-  diagnosticService.createDiagnostic(canteenInformations.value.id, { year })
+  diagnosticService.createDiagnostic(canteenInformations.value.id, { year, diagnosticType: "SIMPLE" })
     .then((response) => {
       if(response.status === "error") showError(response.message)
       else {
