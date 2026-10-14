@@ -1,4 +1,5 @@
 import logging
+import re
 import time
 
 from oauth2_provider.models import get_access_token_model
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 LOGGED_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
 MESSAGE_MAX_LENGTH = 1000
+ROUTE_PARAMETER_REGEX = re.compile(r"<(?:\w+:)?(\w+)>")  # <int:canteen_pk> or <canteen_pk>
 
 
 class EventLogMiddleware:
@@ -55,11 +57,21 @@ class EventLogMiddleware:
 
     @staticmethod
     def _get_route(request):
-        """The route (e.g. 'api/v1/canteens/<int:pk>') rather than the path, to group requests by endpoint"""
+        """
+        The route rather than the path, to group requests by endpoint
+        In the OpenAPI format (same as /api/docs/): '^api/v1/canteens/<int:canteen_pk>/diagnostics/<int:pk>'
+        -> '/api/v1/canteens/{canteen_pk}/diagnostics/{id}' (drf-spectacular renames pk to id)
+        """
         resolver_match = getattr(request, "resolver_match", None)
         if resolver_match and resolver_match.route:
-            return resolver_match.route.lstrip("^")
+            route = resolver_match.route.lstrip("^").rstrip("$")
+            return "/" + ROUTE_PARAMETER_REGEX.sub(EventLogMiddleware._format_route_parameter, route)
         return request.path
+
+    @staticmethod
+    def _format_route_parameter(match):
+        parameter = match.group(1)
+        return "{id}" if parameter == "pk" else "{" + parameter + "}"
 
     @staticmethod
     def _get_message(response):
