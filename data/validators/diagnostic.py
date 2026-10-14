@@ -179,11 +179,21 @@ def validate_valeur_famille(instance):
         - for each family field:
             - valeur_*famille* must be >= each of the valeur_*famille*_*label* fields
             - valeur_*famille* must be >= sum of each label for that family
+            - [NEW in 2026] valeur_*famille* becomes mandatory as soon as a sub-field (label,
+              origine/circuit_court/local, or egalim) is filled for that family — regardless of
+              diagnostic_type, even though valeur_*famille* is already required for COMPLETE
     """
     errors = {}
+    origine_labels = []
+    if instance.year and int(instance.year) >= 2026:
+        origine_labels = get_teledeclaration_field_groups(instance.year, "APPRO_LABELS_ORIGINE") + [
+            "circuit_court",
+            "local",
+        ]
     for family in get_teledeclaration_field_groups(instance.year, "APPRO_FAMILIES"):
         field_name = f"valeur_{family}"
         field_value = getattr(instance, field_name)
+        family_sum = instance.family_sum(family)
         if field_value is not None:
             for label in get_teledeclaration_field_groups(instance.year, "APPRO_LABELS_ALL"):
                 family_label_field_name = f"valeur_{family}_{label}"
@@ -194,12 +204,25 @@ def validate_valeur_famille(instance):
                         field_name,
                         f"La valeur (HT) {family}, {field_value}, est moins que la valeur (HT) {family}_{label}, {family_label_field_value}",
                     )
-            family_sum = instance.family_sum(family)
             if family_sum and family_sum > field_value:
                 utils_utils.add_validation_error(
                     errors,
                     field_name,
                     f"La valeur (HT) {family}, {field_value}, est moins que la somme des valeurs d'approvisionnement de tous les labels, {family_sum}",
+                )
+        elif origine_labels:
+            # NOTE: family_sum excludes origine/circuit_court/local & the egalim aggregate field,
+            # so they're checked separately here
+            sub_field_filled = (
+                family_sum
+                or any(getattr(instance, f"valeur_{family}_{label}", None) for label in origine_labels)
+                or getattr(instance, f"valeur_{family}_egalim", None)
+            )
+            if sub_field_filled:
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    "Ce champ est obligatoire dès qu'une valeur (HT) est renseignée pour une catégorie de cette famille.",
                 )
     return errors
 
