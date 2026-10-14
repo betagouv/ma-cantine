@@ -282,6 +282,29 @@ def validate_valeur_label(instance):
     return errors
 
 
+def validate_valeur_label_origine_circuit_court_local(instance):
+    """
+    - some validations arleady in validate_valeur_label
+    - extra validation:
+        - [NEW in 2026] for europe/france/circuit_court/local: valeur_*label* becomes mandatory
+          as soon as any valeur_*famille*_*label* is filled (these aren't auto-populated from
+          the family breakdown, unlike e.g. valeur_bio, so they can't just default to 0)
+    """
+    errors = {}
+    if instance.year and int(instance.year) >= 2026:
+        labels = get_teledeclaration_field_groups(instance.year, "APPRO_LABELS_ORIGINE") + ["circuit_court", "local"]
+        for label in labels:
+            field_name = f"valeur_{label}"
+            field_value = getattr(instance, field_name, None)  # some don't exist
+            if field_value is None and instance.label_sum(label):
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    f"Ce champ est obligatoire dès qu'une valeur (HT) {label} est renseignée pour une famille.",
+                )
+    return errors
+
+
 def validate_viandes_volailles_total(instance):
     """
     - extra validation:
