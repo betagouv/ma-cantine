@@ -2006,6 +2006,7 @@ class Diagnostic(models.Model):
                 diagnostic_validators.validate_valeur_famille(self),
                 diagnostic_validators.validate_valeur_famille_bio(self),
                 diagnostic_validators.validate_valeur_label(self),
+                diagnostic_validators.validate_valeur_label_origine_circuit_court_local(self),
                 diagnostic_validators.validate_viandes_volailles_total(self),
                 diagnostic_validators.validate_produits_de_la_mer_total(self),
                 diagnostic_validators.validate_viandes_volailles_produits_de_la_mer_egalim(self),
