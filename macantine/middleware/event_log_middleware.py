@@ -39,9 +39,9 @@ class EventLogMiddleware:
                 return
             is_success = response.status_code < 400
             EventLog.log(
-                EventLog.Category.API,
-                f"{request.method} {self._get_route(request)}",
-                EventLog.Status.SUCCESS if is_success else EventLog.Status.FAILURE,
+                category=EventLog.Category.API,
+                name=f"{request.method} {self._get_route(request)}",
+                status=EventLog.Status.SUCCESS if is_success else EventLog.Status.FAILURE,
                 user=getattr(request, "user", None),
                 api_oauth2_application=access_token.application,
                 data={
