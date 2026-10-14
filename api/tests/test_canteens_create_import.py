@@ -403,7 +403,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 3)
-        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_CREATE, 3)
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_CREATE, 3, canteen=None)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 3)

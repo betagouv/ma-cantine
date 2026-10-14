@@ -670,7 +670,7 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_ID, 1)
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_ID, 1, canteen=canteen)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
