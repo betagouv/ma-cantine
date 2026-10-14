@@ -39,10 +39,11 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "status",
         "user_with_link",  # clickable link to user change page
         "api_oauth2_application",
+        "canteen",
         "message_short",
     )
     list_filter = ["creation_date", "category", EventLogNameListFilter, "status", "api_oauth2_application"]
-    list_select_related = ["user", "api_oauth2_application"]
+    list_select_related = ["user", "api_oauth2_application", "canteen"]
     search_fields = (
         "name",
         "user__id",
@@ -50,8 +51,13 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "user__last_name",
         "user__email",
         "user__username",
+        "canteen__id",
+        "canteen__siret",
+        "canteen__name",
     )
-    search_help_text = "La recherche est faite sur les champs : nom, utilisateur (ID, nom, prénom, email)"
+    search_help_text = (
+        "La recherche est faite sur les champs : nom, utilisateur (ID, nom, prénom, email), cantine (ID, SIRET, nom)"
+    )
     readonly_fields = ("data_pretty",)
 
     fieldsets = (
@@ -64,6 +70,7 @@ class EventLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
                     "status",
                     "user",
                     "api_oauth2_application",
+                    "canteen",
                 ),
             },
         ),
