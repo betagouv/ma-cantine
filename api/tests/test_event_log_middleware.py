@@ -35,6 +35,7 @@ class EventLogMiddlewareTest(APITestCase):
         self.assertEqual(event_log.data["path"], f"/api/v1/canteens/{self.canteen.id}")
         self.assertEqual(event_log.data["status_code"], 200)
         self.assertIsNone(event_log.data["message"])
+        self.assertEqual(event_log.canteen, self.canteen)
 
     def test_oauth2_write_request_failure_is_logged(self):
         user, token = get_oauth2_token("canteen:write")
@@ -61,6 +62,29 @@ class EventLogMiddlewareTest(APITestCase):
         self.assertEqual(event_log.status, EventLog.Status.FAILURE)
         self.assertEqual(event_log.api_oauth2_application, token.application)
         self.assertEqual(event_log.data["status_code"], 403)
+
+    def test_oauth2_write_request_on_nested_route_is_linked_to_the_canteen(self):
+        user, token = get_oauth2_token("canteen:read")  # missing canteen:write scope: 403
+        self.canteen.managers.add(user)
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+
+        response = self.client.post(reverse("diagnostic_list_create", kwargs={"canteen_pk": self.canteen.id}), {})
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        event_log = EventLog.objects.get()
+        self.assertEqual(event_log.name, "POST /api/v1/canteens/{canteen_pk}/diagnostics/")
+        self.assertEqual(event_log.canteen, self.canteen)
+
+    def test_oauth2_write_request_on_unknown_canteen_is_logged_without_canteen(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+
+        response = self.client.patch(reverse("single_canteen", kwargs={"pk": 999999}), {"name": "Nouveau nom"})
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        event_log = EventLog.objects.get()
+        self.assertEqual(event_log.status, EventLog.Status.FAILURE)
+        self.assertIsNone(event_log.canteen)
 
     def test_oauth2_read_request_is_not_logged(self):
         user, token = get_oauth2_token("canteen:read")

@@ -4,7 +4,7 @@ import time
 
 from oauth2_provider.models import get_access_token_model
 
-from data.models import EventLog
+from data.models import Canteen, EventLog
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +44,7 @@ class EventLogMiddleware:
                 status=EventLog.Status.SUCCESS if is_success else EventLog.Status.FAILURE,
                 user=getattr(request, "user", None),
                 api_oauth2_application=access_token.application,
+                canteen_id=self._get_canteen_id(request, response),
                 data={
                     "method": request.method,
                     "path": request.path,
@@ -54,6 +55,27 @@ class EventLogMiddleware:
             )
         except Exception:
             logger.exception(f"EventLog: could not log API request {request.method} {request.path}")
+
+    @staticmethod
+    def _get_canteen_id(request, response):
+        """
+        The canteen concerned by the request:
+        - from the URL: canteens/<canteen_pk>/... or canteens/<pk>
+        - from the response for a canteen creation (POST canteens/)
+        Only if it exists (the FK constraint is checked at commit: an unknown id would lose the EventLog)
+        """
+        resolver_match = getattr(request, "resolver_match", None)
+        if not resolver_match:
+            return None
+        canteen_id = resolver_match.kwargs.get("canteen_pk")
+        if canteen_id is None and resolver_match.url_name == "single_canteen":
+            canteen_id = resolver_match.kwargs.get("pk")
+        if canteen_id is None and resolver_match.url_name == "user_canteens" and response.status_code == 201:
+            response_data = getattr(response, "data", None)
+            canteen_id = response_data.get("id") if isinstance(response_data, dict) else None
+        if canteen_id is None or not Canteen.all_objects.filter(id=canteen_id).exists():
+            return None
+        return canteen_id
 
     @staticmethod
     def _get_route(request):
