@@ -19,6 +19,7 @@ class Command(MaCantineBaseCommand):
 
     One import = one file = one file digest (Purchase.import_source)
     - user: the purchases creation_user
+    - canteen: if all the purchases are for the same canteen
     - creation_date: the first purchase creation_date
     - data: count (number of purchases), backfilled & file_digest (to skip the imports already backfilled)
 
@@ -69,7 +70,13 @@ class Command(MaCantineBaseCommand):
             .exclude(import_source__isnull=True)
             .exclude(import_source="")
             .values("import_source")
-            .annotate(count=Count("id"), first_creation_date=Min("creation_date"), user_id=Min("creation_user_id"))
+            .annotate(
+                count=Count("id"),
+                first_creation_date=Min("creation_date"),
+                user_id=Min("creation_user_id"),
+                canteen_count=Count("canteen_id", distinct=True),
+                canteen_id=Min("canteen_id"),
+            )
             .order_by("first_creation_date")
         )
 
@@ -93,6 +100,7 @@ class Command(MaCantineBaseCommand):
                     name=ImportType.PURCHASE,
                     status=EventLog.Status.SUCCESS,
                     user_id=purchase_import["user_id"],
+                    canteen_id=purchase_import["canteen_id"] if purchase_import["canteen_count"] == 1 else None,
                     data={
                         "message": None,
                         "count": purchase_import["count"],
