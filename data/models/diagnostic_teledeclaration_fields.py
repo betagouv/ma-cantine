@@ -829,10 +829,6 @@ TELEDECLARATION_FIELDS = {
                 "valeur_externalites_performance",
                 "valeur_egalim_autres",
                 "valeur_egalim_autres_dont_commerce_equitable",
-                "valeur_europe",
-                "valeur_france",
-                "valeur_circuit_court",
-                "valeur_local",
                 "valeur_viandes_volailles",
                 "valeur_viandes_volailles_egalim",
                 "valeur_produits_de_la_mer",
@@ -843,6 +839,10 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie",
                 "valeur_boissons",
                 "valeur_autres",
+                "valeur_europe",
+                "valeur_france",
+                "valeur_circuit_court",
+                "valeur_local",
                 "valeur_viandes_volailles_europe",
                 "valeur_produits_de_la_mer_europe",
                 "valeur_fruits_et_legumes_europe",
@@ -889,15 +889,18 @@ TELEDECLARATION_FIELDS = {
             ],
             "fields_added": [
                 "nombre_repas_an",
-                "valeur_europe",
-                "valeur_france",
-                "valeur_circuit_court",
-                "valeur_local",
+                # other valeur_famille
                 "valeur_charcuterie",
                 "valeur_produits_laitiers",
                 "valeur_boulangerie",
                 "valeur_boissons",
                 "valeur_autres",
+                # valeur_origine & circuit_court/local
+                "valeur_europe",
+                "valeur_france",
+                "valeur_circuit_court",
+                "valeur_local",
+                # valeur_famille_origine & co
                 "valeur_viandes_volailles_europe",
                 "valeur_produits_de_la_mer_europe",
                 "valeur_fruits_et_legumes_europe",
@@ -944,6 +947,10 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie",
                 "valeur_boissons",
                 "valeur_autres",
+                "valeur_europe",
+                "valeur_france",
+                "valeur_circuit_court",
+                "valeur_local",
                 # famille_label
                 "valeur_viandes_volailles_bio",
                 "valeur_viandes_volailles_bio_dont_commerce_equitable",
@@ -1144,6 +1151,11 @@ TELEDECLARATION_FIELDS = {
                 "valeur_boulangerie",
                 "valeur_boissons",
                 "valeur_autres",
+                # valeur_origine & circuit_court/local
+                "valeur_europe",
+                "valeur_france",
+                "valeur_circuit_court",
+                "valeur_local",
                 # valeur_famille_label
                 # aopac_igp_stg replaced by aop, igp, stg
                 "valeur_viandes_volailles_aocaop",
