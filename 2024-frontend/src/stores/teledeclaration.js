@@ -79,9 +79,14 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnostic.value.tunnelAppro = [...tunnelApproVisitedPages.value, slug].join(visitedPagesSeparator)
   }
 
+  /* Check if the step has been visited */
+  function isPageVisited(slug) {
+    return tunnelApproVisitedPages.value.includes(slug)
+  }
+
   /* Only display errors if the step has been visited before */
   function getDisplayedErrors(slug) {
-    if (!slug || tunnelApproVisitedPages.value.includes(slug)) return diagnosticErrors.value
+    if (!slug || isPageVisited(slug)) return diagnosticErrors.value
     return []
   }
 
@@ -213,6 +218,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     saveDiagnostic,
     updateMealCount,
     markPageAsVisited,
+    isPageVisited,
     getDisplayedErrors,
     addErrorsFromCheck,
     clearErrors,
