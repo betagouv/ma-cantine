@@ -105,12 +105,12 @@ INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "macantine.middleware.RedirectMiddleware",
+    "macantine.middleware.EventLogMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "macantine.middleware.EventLogMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django.contrib.sites.middleware.CurrentSiteMiddleware",
