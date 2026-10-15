@@ -2143,6 +2143,13 @@ class Diagnostic(models.Model):
             ]
         )
 
+    def label_has_any_family_filled(self, label):
+        """
+        Whether any valeur_<famille>_<label> field is filled, for any family
+        """
+        families = get_teledeclaration_field_groups(self.year, "APPRO_FAMILIES")
+        return any(getattr(self, f"valeur_{family}_{label}", None) for family in families)
+
     def family_sum(self, family: str):
         """
         NOTE: APPRO_LABELS does not include APPRO_LABELS_ORIGINE & circuit_court & local
@@ -2164,6 +2171,14 @@ class Diagnostic(models.Model):
                 ]
             ]
         )
+
+    def family_has_any_label_filled(self, family):
+        """
+        Whether any valeur_<famille>_<label> field is filled, for any label (including the
+        egalim aggregate, only defined for 2 families)
+        """
+        labels = get_teledeclaration_field_groups(self.year, "APPRO_LABELS_ALL") + ["egalim"]
+        return any(getattr(self, f"valeur_{family}_{label}", None) for label in labels)
 
     def compute_objectifs_egalim_atteints(self):
         canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
