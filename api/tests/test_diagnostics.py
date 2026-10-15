@@ -13,6 +13,7 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Diagnostic, Canteen
 from data.models.creation_source import CreationSource
+from data.models.definitionlocal import DefinitionLocal
 from data.models.geo import Region
 
 
@@ -559,6 +560,9 @@ class DiagnosticCreateApiTest(APITestCase):
             "valeur_boulangerie_europe": 10,
             "valeur_boissons_europe": 10,
             "valeur_autres_europe": 10,
+            # definition_local
+            "definition_local": DefinitionLocal.KM,
+            "definition_local_km": 5,
         }
         response = self.client.post(self.url, payload, format="json")
 

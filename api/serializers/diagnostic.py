@@ -15,6 +15,7 @@ FIELDS = (
     Diagnostic.META_FIELDS
     + Diagnostic.CANTEEN_FIELDS
     + Diagnostic.APPRO_FIELDS  # even the deprecated ones
+    + Diagnostic.APPRO_LOCAL_DEFINITION_FIELDS
     + Diagnostic.NON_APPRO_FIELDS
 )
 REQUIRED_FIELDS = ("year",)
@@ -180,13 +181,23 @@ class FullDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
 class SimpleTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.NON_APPRO_FIELDS
+        fields = (
+            Diagnostic.META_FIELDS
+            + Diagnostic.SIMPLE_APPRO_FIELDS
+            + Diagnostic.APPRO_LOCAL_DEFINITION_FIELDS
+            + Diagnostic.NON_APPRO_FIELDS
+        )
 
 
 class CompleteTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS + Diagnostic.NON_APPRO_FIELDS
+        fields = (
+            Diagnostic.META_FIELDS
+            + Diagnostic.COMPLETE_APPRO_FIELDS
+            + Diagnostic.APPRO_LOCAL_DEFINITION_FIELDS
+            + Diagnostic.NON_APPRO_FIELDS
+        )
 
 
 class ApproDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
@@ -204,13 +215,13 @@ class ApproDeferredTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, 
 class SimpleApproOnlyTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + Diagnostic.SIMPLE_APPRO_FIELDS + Diagnostic.APPRO_LOCAL_DEFINITION_FIELDS
 
 
 class CompleteApproOnlyTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + Diagnostic.COMPLETE_APPRO_FIELDS + Diagnostic.APPRO_LOCAL_DEFINITION_FIELDS
 
 
 class DiagnosticAndCanteenSerializer(FullDiagnosticSerializer):
