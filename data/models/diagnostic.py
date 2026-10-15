@@ -901,6 +901,7 @@ class Diagnostic(models.Model):
 
     OTHER_COMPUTED_FIELDS = [
         "cout_repas",
+        "is_filled",
     ]
 
     CANTEEN_FIELDS = [
