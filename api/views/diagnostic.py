@@ -147,29 +147,54 @@ class DiagnosticListRecapView(APIView):
             # skip years where the canteen was not yet created
             if canteen.creation_date > CAMPAIGN_DATES[year]["teledeclaration_end_date"]:
                 continue
-            # is_teledeclared: if at least 1 of the canteen's diagnostics is SUBMITTED
-            is_teledeclared = any(d.year == year and d.is_teledeclared for d in canteen_diagnostics)
-            # declaration_donnees: copy the canteeen's field value
-            declaration_donnees = getattr(canteen, f"declaration_donnees_{year}", None)
-            # canteen_diagnostic: the canteen's own diagnostic (if it exists)
-            canteen_diagnostic = next(
-                (d for d in canteen_diagnostics if d.year == year and not d.generated_from_groupe_diagnostic), None
-            )
-            # generated_from_groupe_diagnostic: the canteen's generated diagnostic (from its groupe) (if it exists)
-            generated_from_groupe_diagnostic = next(
-                (d for d in canteen_diagnostics if d.year == year and d.generated_from_groupe_diagnostic), None
-            )
-            result.append(
-                {
-                    "year": year,
-                    "is_teledeclared": is_teledeclared,
-                    "declaration_donnees": declaration_donnees,
-                    "canteen_diagnostic": canteen_diagnostic,
-                    "generated_from_groupe_diagnostic": generated_from_groupe_diagnostic,
-                    "notes": get_egalim_objectives_notes(year, get_egalim_group([canteen.region])),
-                }
-            )
+            result.append(_get_diagnostic_recap_for_year(canteen, canteen_diagnostics, year))
         return Response(DiagnosticRecapSerializer(result, many=True).data)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Récupérer le récapitulatif d'un bilan.",
+        description="Retourne le récapitulatif de l'année du bilan (même format qu'un élément de l'endpoint /recap).",
+        tags=["Bilans"],
+        responses=DiagnosticRecapSerializer,
+    ),
+)
+class DiagnosticRecapView(APIView):
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, canteen_pk, pk):
+        canteen = self._get_canteen()
+        diagnostic = get_object_or_404(Diagnostic, pk=pk, canteen=canteen)
+        canteen_diagnostics = Diagnostic.all_objects.filter(canteen=canteen, year=diagnostic.year)
+        result = _get_diagnostic_recap_for_year(canteen, canteen_diagnostics, diagnostic.year)
+        return Response(DiagnosticRecapSerializer(result).data)
+
+
+def _get_diagnostic_recap_for_year(canteen, canteen_diagnostics, year):
+    # is_teledeclared: if at least 1 of the canteen's diagnostics is SUBMITTED
+    is_teledeclared = any(d.year == year and d.is_teledeclared for d in canteen_diagnostics)
+    # declaration_donnees: copy the canteeen's field value
+    declaration_donnees = getattr(canteen, f"declaration_donnees_{year}", None)
+    # canteen_diagnostic: the canteen's own diagnostic (if it exists)
+    canteen_diagnostic = next(
+        (d for d in canteen_diagnostics if d.year == year and not d.generated_from_groupe_diagnostic), None
+    )
+    # generated_from_groupe_diagnostic: the canteen's generated diagnostic (from its groupe) (if it exists)
+    generated_from_groupe_diagnostic = next(
+        (d for d in canteen_diagnostics if d.year == year and d.generated_from_groupe_diagnostic), None
+    )
+    return {
+        "year": year,
+        "is_teledeclared": is_teledeclared,
+        "declaration_donnees": declaration_donnees,
+        "canteen_diagnostic": canteen_diagnostic,
+        "generated_from_groupe_diagnostic": generated_from_groupe_diagnostic,
+        "notes": get_egalim_objectives_notes(year, get_egalim_group([canteen.region])),
+    }
 
 
 @extend_schema_view(
