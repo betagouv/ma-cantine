@@ -1,7 +1,7 @@
 const getStatus = (key, isTeledeclared, check) => {
   if (key !== "appro") return "empty"
   if (isTeledeclared) return "teledeclared"
-  if (check?.isClean) return "fill"
+  if (check?.isClean) return "clean"
   return "empty"
 }
 
