@@ -31,19 +31,28 @@ export default {
       ...Constants.ProductFamilies[f],
     }))
     const familiesLabels = families.map((f) => f.text)
-    const characteristics = Constants.TeledeclarationCharacteristicGroups.egalim.characteristics
-      .concat(Constants.TeledeclarationCharacteristicGroups.nonEgalim.characteristics)
-      .map((c) => ({
-        id: c,
-        ...Constants.TeledeclarationCharacteristics[c],
-      }))
     return {
       families,
       familiesLabels,
-      characteristics,
     }
   },
   computed: {
+    characteristics() {
+      const splitAocaopIgpStg = this.diagnostic?.year >= 2026
+      return (
+        Constants.TeledeclarationCharacteristicGroups.egalim.characteristics
+          .concat(Constants.TeledeclarationCharacteristicGroups.nonEgalim.characteristics)
+          // from 2026, AOCAOP_IGP_STG is split into AOCAOP, IGP & STG
+          .map((caracteristicName) =>
+            splitAocaopIgpStg && caracteristicName === "AOCAOP_IGP_STG" ? ["AOCAOP", "IGP", "STG"] : caracteristicName
+          )
+          .flat()
+          .map((c) => ({
+            id: c,
+            ...Constants.TeledeclarationCharacteristics[c],
+          }))
+      )
+    },
     seriesData() {
       const seriesData = {}
       for (let i = 0; i < this.characteristics.length; i++) {
@@ -170,6 +179,9 @@ export default {
         BIO: "Bio",
         LABEL_ROUGE: "LabelRouge",
         AOCAOP_IGP_STG: "AocaopIgpStg",
+        AOCAOP: "Aocaop",
+        IGP: "Igp",
+        STG: "Stg",
         HVE: "Hve",
         PECHE_DURABLE: "PecheDurable",
         RUP: "Rup",

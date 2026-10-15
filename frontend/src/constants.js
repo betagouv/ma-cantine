@@ -176,6 +176,10 @@ export default Object.freeze({
       longText: "AOC / AOP / IGP / STG",
       color: "indigo",
     },
+    // from 2026, AOCAOP_IGP_STG is split into AOCAOP, IGP & STG
+    AOCAOP: { text: "AOC / AOP", longText: "Appellation d'origine (AOC / AOP)", color: "indigo" },
+    IGP: { text: "IGP", longText: "Indication Géographique Protégée (IGP)", color: "indigo lighten-2" },
+    STG: { text: "STG", longText: "Spécialité Traditionnelle Garantie (STG)", color: "cyan darken-3" },
     PECHE_DURABLE: { text: "Écolabel pêche durable", color: "blue" },
     RUP: { text: "RUP", longText: "Région ultrapériphérique (RUP)", color: "brown" },
     COMMERCE_EQUITABLE: { text: "Commerce équitable (hors bio)", color: "lime darken-2" },
