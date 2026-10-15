@@ -409,6 +409,16 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         # no sub-field filled: valeur_charcuterie stays optional
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026, valeur_charcuterie=None)
         diagnostic.full_clean()  # should not raise
+        # same rule, triggered by bio_dont_commerce_equitable, excluded from family_sum since it's
+        # a subset of bio rather than its own category
+        diagnostic = DiagnosticFactory(
+            **VALID_DIAGNOSTIC_SIMPLE_2026,
+            valeur_charcuterie_bio_dont_commerce_equitable=10,
+            valeur_charcuterie=None,
+        )
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic.valeur_charcuterie = 10
+        diagnostic.full_clean()  # should not raise anymore
 
     @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):

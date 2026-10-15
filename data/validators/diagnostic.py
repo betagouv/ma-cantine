@@ -211,12 +211,14 @@ def validate_valeur_famille(instance):
                     f"La valeur (HT) {family}, {field_value}, est moins que la somme des valeurs d'approvisionnement de tous les labels, {family_sum}",
                 )
         elif origine_labels:
-            # NOTE: family_sum excludes origine/circuit_court/local & the egalim aggregate field,
-            # so they're checked separately here
+            # NOTE: family_sum excludes origine/circuit_court/local, bio_dont_commerce_equitable
+            # (subset of bio, not its own category) & the egalim aggregate field, so they're
+            # checked separately here
             sub_field_filled = (
                 family_sum
                 or any(getattr(instance, f"valeur_{family}_{label}", None) for label in origine_labels)
                 or getattr(instance, f"valeur_{family}_egalim", None)
+                or getattr(instance, f"valeur_{family}_bio_dont_commerce_equitable", None)
             )
             if sub_field_filled:
                 utils_utils.add_validation_error(
