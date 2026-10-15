@@ -1,7 +1,7 @@
 import logging
 from collections import OrderedDict
 
-from django.core.exceptions import BadRequest, ObjectDoesNotExist, ValidationError
+from django.core.exceptions import BadRequest, ObjectDoesNotExist
 from django.http import JsonResponse
 from django_filters import rest_framework as django_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
@@ -30,7 +30,7 @@ from api.serializers import (
     PurchaseSummarySerializer,
 )
 from api.views.utils import get_oauth_application
-from data.models import Canteen, Diagnostic, Purchase
+from data.models import Canteen, Purchase
 from data.models.creation_source import CreationSource
 
 logger = logging.getLogger(__name__)
@@ -355,51 +355,6 @@ class CanteenPurchasesPercentageSummaryView(APIView):
             )
 
         return Response(PurchasePercentageSummarySerializer(data).data)
-
-
-class DiagnosticsFromPurchasesView(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
-        year = kwargs.get("year")
-        canteen_ids = request.data.get("canteen_ids")
-        if not year or not canteen_ids:
-            raise BadRequest("Missing year and/or canteen ids")
-
-        created_diags = []
-        errors = []
-        for canteen_id in canteen_ids:
-            try:
-                canteen = Canteen.objects.get(id=canteen_id)
-            except Canteen.DoesNotExist:
-                errors.append(f"Cantine inconnue : {canteen_id}")
-                continue
-            if request.user not in canteen.managers.all():
-                errors.append(f"Vous ne gérez pas la cantine : {canteen_id}")
-                continue
-            # NOTE: for 2026, canteen_summary_for_year() covers every Diagnostic field...
-            # except definition_local, definition_local_km & nombre_repas_an
-            values_dict = Purchase.canteen_summary_for_year(canteen, year)
-            valeur_totale = values_dict["valeur_totale"]
-            if valeur_totale == 0 or valeur_totale is None:
-                errors.append(f"Aucun achat trouvé pour la cantine : {canteen_id}")
-                continue
-            if canteen.is_groupe:
-                values_dict["central_kitchen_diagnostic_mode"] = Diagnostic.CentralKitchenDiagnosticMode.APPRO
-            diagnostic = Diagnostic(
-                canteen=canteen,
-                diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
-                generated_from_purchases=True,
-                **values_dict,
-            )
-            try:
-                diagnostic.full_clean()
-                diagnostic.save()
-                created_diags.append(diagnostic.id)
-            except ValidationError:
-                errors.append(f"Il existe déjà un diagnostic pour l'année {year} pour la cantine : {canteen_id}")
-                continue
-        return JsonResponse({"results": created_diags, "errors": errors}, status=status.HTTP_201_CREATED)
 
 
 class PurchaseOptionsView(APIView):
