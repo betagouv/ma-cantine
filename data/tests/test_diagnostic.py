@@ -68,6 +68,7 @@ VALID_DIAGNOSTIC_SIMPLE_2026 = {
     "valeur_viandes_volailles_bio": 30,
     "valeur_viandes_volailles_egalim": 50,
     "valeur_viandes_volailles_france": 20,
+    "valeur_france": 20,
     "valeur_produits_de_la_mer": 80,
     "valeur_produits_de_la_mer_bio": 30,
     "valeur_produits_de_la_mer_egalim": 40,
@@ -349,6 +350,42 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
     @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_valeur_origine_europe(self):
+        """
+        Same rules as test_diagnostic_valeur_label, but for an origine label (europe) instead of
+        an APPRO_LABELS_EGALIM one — both are validated by validate_valeur_label, via APPRO_LABELS_ALL.
+        """
+        VALID_DIAGNOSTIC_COMPLETE_2026 = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2026, valeur_europe=100)
+        diagnostic.full_clean()  # should not raise
+        # 1 valeur_famille_europe cannot be > valeur_europe
+        diagnostic.valeur_viandes_volailles_europe = 200
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        # sum of valeur_famille_europe cannot be > valeur_europe
+        diagnostic.valeur_viandes_volailles_europe = 30
+        diagnostic.valeur_fruits_et_legumes = 150
+        diagnostic.valeur_fruits_et_legumes_europe = 150
+        diagnostic.save()
+        self.assertEqual(diagnostic.label_sum("europe"), 180)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_valeur_origine_required_if_family_filled(self):
+        # since 2026, valeur_europe (& france/circuit_court/local) becomes mandatory as soon as a
+        # valeur_famille_europe is filled (unlike valeur_bio, it isn't auto-populated from the
+        # family breakdown, so it can't just default to 0)
+        diagnostic = DiagnosticFactory(
+            **VALID_DIAGNOSTIC_SIMPLE_2026, valeur_viandes_volailles_europe=30, valeur_europe=None
+        )
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic.valeur_europe = 30
+        diagnostic.full_clean()  # should not raise anymore
+        # no valeur_famille_europe filled: valeur_europe stays optional
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026, valeur_europe=None)
+        diagnostic.full_clean()  # should not raise
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok
@@ -488,9 +525,12 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         # so only families with an explicit value in VALID_DIAGNOSTIC_SIMPLE_2026 are used here
         for LOCAL_FIELD in ["valeur_local", "valeur_viandes_volailles_local", "valeur_produits_de_la_mer_local"]:
             with self.subTest(local_field=LOCAL_FIELD):
-                diagnostic = DiagnosticFactory(
-                    **VALID_DIAGNOSTIC_SIMPLE_2026, **{LOCAL_FIELD: 50}, definition_local=None
-                )
+                # valeur_local is itself required as soon as a per-family "_local" field is filled
+                # (see validate_valeur_label), so it must be set too when LOCAL_FIELD is per-family
+                extra_fields = {LOCAL_FIELD: 50}
+                if LOCAL_FIELD != "valeur_local":
+                    extra_fields["valeur_local"] = 50
+                diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026, **extra_fields, definition_local=None)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
                 diagnostic.definition_local = DefinitionLocal.PAT
                 diagnostic.full_clean()  # should not raise anymore
