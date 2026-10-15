@@ -31,7 +31,8 @@ class Command(MaCantineBaseCommand):
         year = options["year"]
         logger.info(f"Start task: diagnostic_fill_computed_fields for year {year}")
 
-        qs = Diagnostic.objects.in_year(year)
+        # all_objects: also include the diagnostics generated from a groupe diagnostic
+        qs = Diagnostic.all_objects.in_year(year)
 
         logger.info("Step 1: find the diagnostics for the specified year")
         logger.info(f"Found {qs.count()} diagnostics for year {year}")
@@ -47,7 +48,8 @@ class Command(MaCantineBaseCommand):
             # diagnostic.populate_aggregated_values()
             # diagnostic.populate_stats_values()
             # diagnostic.populate_cout_repas()
-            diagnostic.save(update_fields=FIELD_LIST)
+            # computed fields only: no need for a historical record
+            diagnostic.save_without_historical_record(update_fields=FIELD_LIST)
             if index % 5000 == 0:
                 logger.info(f"Updated {index} diagnostics")
 
