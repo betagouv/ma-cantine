@@ -72,8 +72,11 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
                 <IconAward class="diagnostic-summary-tile__award" />
               </div>
               <div class="fr-col-11">
-                <p class="fr-mb-0 fr-text--sm">
-                  {{ isTeledeclared ? "Résultat viande et poisson" : "Objectif viande et poisson" }}
+                <p v-if="isTeledeclared" class="fr-mb-0 fr-text--sm">
+                  <span class="ma-cantine--bold">XXX%</span> de viandes et poissons EGalim
+                </p>
+                <p v-else class="fr-mb-0 fr-text--sm">
+                  Objectif 60% de viandes et poissons EGalim
                 </p>
               </div>
             </div>
