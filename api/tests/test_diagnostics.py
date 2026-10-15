@@ -9,11 +9,13 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from common.utils.camelize import camelize
+from api.serializers.diagnostic import ManagerDiagnosticSerializer
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Diagnostic, Canteen
 from data.models.creation_source import CreationSource
 from data.models.definitionlocal import DefinitionLocal
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_fields_all
 from data.models.geo import Region
 
 
@@ -573,6 +575,21 @@ class DiagnosticCreateApiTest(APITestCase):
             self.assertEqual(body[camelize(field_name)], payload[field_name])
         # computed fields
         self.assertEqual(body["coutRepas"], 10)
+
+
+class DiagnosticTeledeclarationFieldsCoherenceTest(APITestCase):
+    def test_teledeclaration_fields_are_all_covered_by_the_manager_serializer(self):
+        """
+        Regression test: every TD field declared in the registry (get_teledeclaration_fields_all)
+        for a given year & diagnostic_type must have a matching field on ManagerDiagnosticSerializer,
+        otherwise it can be saved via import/teledeclaration but not via the manager-facing API.
+        """
+        serializer_fields = set(ManagerDiagnosticSerializer().get_fields().keys())
+        for year in TELEDECLARATION_FIELDS:
+            for diagnostic_type in TELEDECLARATION_FIELDS[year]:
+                with self.subTest(year=year, diagnostic_type=diagnostic_type):
+                    fields = set(get_teledeclaration_fields_all(year, diagnostic_type))
+                    self.assertEqual(fields - serializer_fields, set())
 
 
 class DiagnosticDetailApiTest(APITestCase):
