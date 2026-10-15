@@ -134,3 +134,83 @@ class DiagnosticFillCreationSourceApiOauth2ApplicationTest(TestCase):
         self.run_command(apply=False)
 
         self.assertIsNone(self.diagnostic.creation_source_api_oauth2_application)
+
+
+class DiagnosticFillHistorySourceTest(TestCase):
+    def setUp(self):
+        self.creator = UserFactory()
+        self.application = ApplicationFactory()
+        self.diagnostic = DiagnosticFactory()
+        # an API update (old row: no history_source, no application)
+        self.diagnostic.save()
+        Diagnostic.objects.filter(id=self.diagnostic.id).update(
+            creation_user=self.creator,
+            creation_source=CreationSource.API,
+            creation_source_api_oauth2_application=self.application,
+        )
+        self.history_row = Diagnostic.history.filter(id=self.diagnostic.id).latest("history_date")
+        Diagnostic.history.filter(history_id=self.history_row.history_id).update(
+            history_change_reason="OAuth2Authentication",
+            history_user=self.creator,
+            history_source=None,
+            history_source_api_oauth2_application=None,
+        )
+
+    def run_command(self, apply=True):
+        call_command("diagnostic_fill_creation_user_and_source", field="history_source", apply=apply)
+        self.history_row.refresh_from_db()
+
+    def test_fill_history_source_and_application_from_creation(self):
+        self.run_command()
+
+        self.assertEqual(self.history_row.history_source, CreationSource.API)
+        self.assertEqual(self.history_row.history_source_api_oauth2_application, self.application)
+
+    def test_fill_application_from_tokens_if_other_user(self):
+        other_user = UserFactory()
+        other_application = ApplicationFactory()
+        Diagnostic.history.filter(history_id=self.history_row.history_id).update(history_user=other_user)
+        AccessTokenFactory(
+            user=other_user,
+            application=other_application,
+            created=self.history_row.history_date - timedelta(minutes=10),
+            expires=self.history_row.history_date + timedelta(minutes=50),
+        )
+
+        self.run_command()
+
+        self.assertEqual(self.history_row.history_source_api_oauth2_application, other_application)
+
+    def test_application_stays_empty_if_unknown(self):
+        Diagnostic.history.filter(history_id=self.history_row.history_id).update(history_user=UserFactory())
+
+        self.run_command()
+
+        self.assertEqual(self.history_row.history_source, CreationSource.API)
+        self.assertIsNone(self.history_row.history_source_api_oauth2_application)
+
+    def test_does_not_change_filled_rows(self):
+        other_application = ApplicationFactory()
+        Diagnostic.history.filter(history_id=self.history_row.history_id).update(
+            history_source=CreationSource.API, history_source_api_oauth2_application=other_application
+        )
+
+        self.run_command()
+
+        self.assertEqual(self.history_row.history_source_api_oauth2_application, other_application)
+
+    def test_ignores_non_api_rows(self):
+        Diagnostic.history.filter(history_id=self.history_row.history_id).update(
+            history_change_reason="SessionAuthentication"
+        )
+
+        self.run_command()
+
+        self.assertIsNone(self.history_row.history_source)
+        self.assertIsNone(self.history_row.history_source_api_oauth2_application)
+
+    def test_dry_run_does_not_change_anything(self):
+        self.run_command(apply=False)
+
+        self.assertIsNone(self.history_row.history_source)
+        self.assertIsNone(self.history_row.history_source_api_oauth2_application)
