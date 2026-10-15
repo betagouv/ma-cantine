@@ -210,7 +210,7 @@ def validate_valeur_famille(instance):
                     field_name,
                     f"La valeur (HT) {family}, {field_value}, est moins que la somme des valeurs d'approvisionnement de tous les labels, {family_sum}",
                 )
-        elif origine_labels and instance.family_sub_fields_sum(family):
+        elif origine_labels and instance.family_has_any_label_filled(family):
             utils_utils.add_validation_error(
                 errors,
                 field_name,
