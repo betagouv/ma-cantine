@@ -12,6 +12,7 @@ from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, U
 from data.models import Canteen, Diagnostic, Purchase
 from data.models.creation_source import CreationSource
 from data.models.definitionlocal import DefinitionLocal
+from data.models.diagnostic_teledeclaration_field_groups import TELEDECLARATION_FIELD_GROUPS
 
 
 class PurchaseCreateApiTest(APITestCase):
@@ -935,10 +936,14 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         Regression test: every key that Purchase.canteen_summary_for_year() can produce must have a
         matching declared field on PurchaseSummarySerializer, otherwise it gets silently dropped from
         the API response.
+        NOTE: checked for every year, since the set of keys produced changes by year (e.g. "europe"
+        only exists from 2026), and checking a single year can miss fields added in another year.
         """
-        data = Purchase.canteen_summary_for_year(self.canteen, self.year)
         serializer_fields = set(PurchaseSummarySerializer().get_fields().keys())
-        self.assertEqual(set(data.keys()) - serializer_fields, set())
+        for year in TELEDECLARATION_FIELD_GROUPS.keys():
+            with self.subTest(year=year):
+                data = Purchase.canteen_summary_for_year(self.canteen, year)
+                self.assertEqual(set(data.keys()) - serializer_fields, set())
 
     @authenticate
     def test_complex_purchase_total_summary(self):
