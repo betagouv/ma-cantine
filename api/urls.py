@@ -28,6 +28,7 @@ from api.views import (
     DiagnosticCheckView,
     DiagnosticListCreateView,
     DiagnosticListRecapView,
+    DiagnosticRecapView,
     DiagnosticRetrieveUpdateView,
     DiagnosticsCompleteImportView,
     DiagnosticsSimpleImportView,
@@ -178,6 +179,11 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>",
         DiagnosticRetrieveUpdateView.as_view(),
         name="diagnostic_retrieve_update",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/diagnostics/<int:pk>/recap",
+        DiagnosticRecapView.as_view(),
+        name="diagnostic_recap",
     ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>/check",
