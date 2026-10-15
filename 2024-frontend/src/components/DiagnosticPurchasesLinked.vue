@@ -26,9 +26,9 @@ const goToPurchases = () => {
 
 <template>
   <div class="diagnostic-purchases-linked fr-background-alt--blue-france fr-p-4w">
-    <div class="diagnostic-purchases-linked__top">
-      <img :src="iconLink" alt="Logo outil Mes achats" class="diagnostic-purchases-linked__icon fr-mb-2w" />
-      <p class="diagnostic-purchases-linked__title fr-text--bold">Souhaitez-vous modifier votre déclaration en pré-remplissant une nouvelle déclaration à partir de votre suivi d’achats (outil “Mes achats”) ?</p>
+    <div class="diagnostic-purchases-linked__top fr-mb-2w">
+      <img :src="iconLink" alt="Logo outil Mes achats" class="diagnostic-purchases-linked__icon" />
+      <p class="diagnostic-purchases-linked__title fr-text--bold fr-mb-0">Souhaitez-vous modifier votre déclaration en pré-remplissant une nouvelle déclaration à partir de votre suivi d’achats (outil “Mes achats”) ?</p>
       <DsfrButton label="En savoir +" icon="ri-information-line" secondary class="diagnostic-purchases-linked__button" size="sm" @click="opened = true" />
     </div>
     <p v-if="hasPurchaseTotal" class="fr-mb-1w">
@@ -49,7 +49,7 @@ const goToPurchases = () => {
   &__top {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 2rem;
   }
 
