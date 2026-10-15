@@ -1921,7 +1921,7 @@ class Diagnostic(models.Model):
     )
     pourcentage_viandes_volailles_produits_de_la_mer_egalim = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage viandes, volailles et produits de la mer EGalim (champ calculé)",
-        help_text="par rapport à la valeur totale viandes, volailles et produits de la mer",
+        help_text="par rapport à la somme de valeur totale viandes et volailles + valeur totale produits de la mer",
     )
     objectifs_egalim_atteints = models.BooleanField(
         blank=True,

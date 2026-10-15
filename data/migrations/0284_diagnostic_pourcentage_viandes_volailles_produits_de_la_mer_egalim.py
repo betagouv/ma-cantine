@@ -15,11 +15,11 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='diagnostic',
             name='pourcentage_viandes_volailles_produits_de_la_mer_egalim',
-            field=models.DecimalField(blank=True, decimal_places=2, help_text='par rapport à la valeur totale viandes, volailles et produits de la mer', max_digits=5, null=True, validators=[django.core.validators.MinValueValidator(Decimal('0')), django.core.validators.MaxValueValidator(Decimal('100'))], verbose_name='pourcentage viandes, volailles et produits de la mer EGalim (champ calculé)'),
+            field=models.DecimalField(blank=True, decimal_places=2, help_text='par rapport à la somme de valeur totale viandes et volailles + valeur totale produits de la mer', max_digits=5, null=True, validators=[django.core.validators.MinValueValidator(Decimal('0')), django.core.validators.MaxValueValidator(Decimal('100'))], verbose_name='pourcentage viandes, volailles et produits de la mer EGalim (champ calculé)'),
         ),
         migrations.AddField(
             model_name='historicaldiagnostic',
             name='pourcentage_viandes_volailles_produits_de_la_mer_egalim',
-            field=models.DecimalField(blank=True, decimal_places=2, help_text='par rapport à la valeur totale viandes, volailles et produits de la mer', max_digits=5, null=True, validators=[django.core.validators.MinValueValidator(Decimal('0')), django.core.validators.MaxValueValidator(Decimal('100'))], verbose_name='pourcentage viandes, volailles et produits de la mer EGalim (champ calculé)'),
+            field=models.DecimalField(blank=True, decimal_places=2, help_text='par rapport à la somme de valeur totale viandes et volailles + valeur totale produits de la mer', max_digits=5, null=True, validators=[django.core.validators.MinValueValidator(Decimal('0')), django.core.validators.MaxValueValidator(Decimal('100'))], verbose_name='pourcentage viandes, volailles et produits de la mer EGalim (champ calculé)'),
         ),
     ]
