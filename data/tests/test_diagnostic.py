@@ -616,6 +616,7 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertEqual(diagnostic.pourcentage_viandes_volailles_france, 20)  # 20 / 100
         self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_egalim, 50)  # 40 / 80
         self.assertIsNone(diagnostic.pourcentage_produits_de_la_mer_france, 25)  # 20 / 80
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim, 50)  # (50 + 40) / 180
         # objectifs egalim
         self.assertTrue(diagnostic.objectifs_egalim_atteints)
 
@@ -633,6 +634,7 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertIsNotNone(diagnostic.pourcentage_viandes_volailles_france)
         self.assertIsNotNone(diagnostic.pourcentage_produits_de_la_mer_egalim)
         self.assertIsNone(diagnostic.pourcentage_produits_de_la_mer_france)
+        self.assertIsNotNone(diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim)
         self.assertIsNone(diagnostic.objectifs_egalim_atteints)
 
     def test_diagnostic_complete_populate_stats_values(self):
@@ -656,6 +658,9 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertEqual(diagnostic.pourcentage_viandes_volailles_france, 20)
         self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_egalim, 0)
         self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_france, 25)  # 20 / 80
+        self.assertEqual(
+            diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim, Decimal("38.89")
+        )  # (70 + 0) / 180
         self.assertFalse(diagnostic.objectifs_egalim_atteints)
 
 

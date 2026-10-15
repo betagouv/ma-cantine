@@ -847,6 +847,7 @@ class Diagnostic(models.Model):
         "pourcentage_viandes_volailles_france",
         "pourcentage_produits_de_la_mer_egalim",
         "pourcentage_produits_de_la_mer_france",
+        "pourcentage_viandes_volailles_produits_de_la_mer_egalim",
         "objectifs_egalim_atteints",
     ]
 
@@ -1918,6 +1919,10 @@ class Diagnostic(models.Model):
         verbose_name="pourcentage produits de la mer origine France (champ calculé)",
         help_text="par rapport à la valeur totale produits de la mer",
     )
+    pourcentage_viandes_volailles_produits_de_la_mer_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes, volailles et produits de la mer EGalim (champ calculé)",
+        help_text="par rapport à la valeur totale viandes, volailles et produits de la mer",
+    )
     objectifs_egalim_atteints = models.BooleanField(
         blank=True,
         null=True,
@@ -2104,6 +2109,10 @@ class Diagnostic(models.Model):
         )
         self.pourcentage_produits_de_la_mer_france = compute_percentage(
             self.valeur_produits_de_la_mer_france, self.valeur_produits_de_la_mer
+        )
+        self.pourcentage_viandes_volailles_produits_de_la_mer_egalim = compute_percentage(
+            sum_int_with_potential_null([self.valeur_viandes_volailles_egalim, self.valeur_produits_de_la_mer_egalim]),
+            sum_int_with_potential_null([self.valeur_viandes_volailles, self.valeur_produits_de_la_mer]),
         )
         self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
 

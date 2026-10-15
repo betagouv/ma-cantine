@@ -1429,6 +1429,7 @@ class DiagnosticRecapApiTest(APITestCase):
         self.assertEqual(len(stats), len(Diagnostic.APPRO_STATS_FIELDS))
         self.assertEqual(stats["pourcentageBio"], 20)
         self.assertEqual(stats["pourcentageEgalim"], 50)
+        self.assertEqual(stats["pourcentageViandesVolaillesProduitsDeLaMerEgalim"], 50)  # (50 + 40) / 180
         self.assertEqual(
             body["notes"], {"egalimGroup": "hexagone", "bioPercentObjective": 20, "egalimPercentObjective": 50}
         )
