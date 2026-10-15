@@ -234,14 +234,25 @@ def validate_valeur_label(instance):
         - for each (existing) label field:
             - [NEW in 2026] valeur_*label* must be >= each of the valeur_*famille*_*label* fields
             - [NEW in 2026] valeur_*label* must be >= sum of each family for that label
+            - [NEW in 2026] for europe/france/circuit_court/local: valeur_*label* becomes mandatory
+              as soon as any valeur_*famille*_*label* is filled (these aren't auto-populated from
+              the family breakdown, unlike e.g. valeur_bio, so they can't just default to 0)
         - valeur_bio_dont_commerce_equitable must be <= valeur_bio
         - valeur_egalim_autres_dont_commerce_equitable must be <= valeur_egalim_autres
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:
+        # NOTE: only europe/france/circuit_court/local have a top-level field that isn't
+        # auto-populated from the family breakdown (unlike e.g. valeur_bio) - the other labels
+        # (hve, aocaop, igp, stg, etc.) only exist per-family, with no top-level field to fill
+        origine_labels = get_teledeclaration_field_groups(instance.year, "APPRO_LABELS_ORIGINE") + [
+            "circuit_court",
+            "local",
+        ]
         for label in get_teledeclaration_field_groups(instance.year, "APPRO_LABELS_ALL"):
             field_name = f"valeur_{label}"
             field_value = getattr(instance, field_name, None)  # some don't exist
+            label_sum = instance.label_sum(label)
             if field_value is not None:
                 for family in get_teledeclaration_field_groups(instance.year, "APPRO_FAMILIES"):
                     family_label_field_name = f"valeur_{family}_{label}"
@@ -252,13 +263,18 @@ def validate_valeur_label(instance):
                             field_name,
                             f"La valeur (HT) {label}, {field_value}, est moins que la valeur (HT) {family}_{label}, {family_label_field_value}",
                         )
-                label_sum = instance.label_sum(label)
                 if label_sum and label_sum > field_value:
                     utils_utils.add_validation_error(
                         errors,
                         field_name,
                         f"La valeur (HT) {label}, {field_value}, est moins que la somme des valeurs d'approvisionnement de toutes les familles, {label_sum}",
                     )
+            elif label in origine_labels and label_sum:
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    f"Ce champ est obligatoire dès qu'une valeur (HT) {label} est renseignée pour une famille.",
+                )
     if instance.valeur_bio is not None:
         if (
             instance.valeur_bio_dont_commerce_equitable is not None
@@ -279,29 +295,6 @@ def validate_valeur_label(instance):
                 "valeur_egalim_autres",
                 f"La valeur (HT) achats commerce équitable (hors bio), {instance.valeur_egalim_autres_dont_commerce_equitable}, est plus que la valeur totale (HT) des autres achats EGalim, {instance.valeur_egalim_autres}",
             )
-    return errors
-
-
-def validate_valeur_label_origine_circuit_court_local(instance):
-    """
-    - some validations arleady in validate_valeur_label
-    - extra validation:
-        - [NEW in 2026] for europe/france/circuit_court/local: valeur_*label* becomes mandatory
-          as soon as any valeur_*famille*_*label* is filled (these aren't auto-populated from
-          the family breakdown, unlike e.g. valeur_bio, so they can't just default to 0)
-    """
-    errors = {}
-    if instance.year and int(instance.year) >= 2026:
-        labels = get_teledeclaration_field_groups(instance.year, "APPRO_LABELS_ORIGINE") + ["circuit_court", "local"]
-        for label in labels:
-            field_name = f"valeur_{label}"
-            field_value = getattr(instance, field_name, None)  # some don't exist
-            if field_value is None and instance.label_sum(label):
-                utils_utils.add_validation_error(
-                    errors,
-                    field_name,
-                    f"Ce champ est obligatoire dès qu'une valeur (HT) {label} est renseignée pour une famille.",
-                )
     return errors
 
 
