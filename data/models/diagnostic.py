@@ -2161,6 +2161,26 @@ class Diagnostic(models.Model):
                 sum = sum + value
         return sum
 
+    def family_sub_fields_sum(self, family: str):
+        """
+        Like family_sum(), but also includes origine/circuit_court/local,
+        bio_dont_commerce_equitable & the egalim aggregate field (only for 2 families) - all
+        excluded from family_sum() to avoid double-counting there, but relevant here to detect
+        whether any sub-field is filled for this family (see validate_valeur_famille).
+        """
+        origine_labels = get_teledeclaration_field_groups(self.year, "APPRO_LABELS_ORIGINE") + [
+            "circuit_court",
+            "local",
+        ]
+        return sum_int_with_potential_null(
+            [self.family_sum(family)]
+            + [getattr(self, f"valeur_{family}_{label}", None) for label in origine_labels]
+            + [
+                getattr(self, f"valeur_{family}_egalim", None),
+                getattr(self, f"valeur_{family}_bio_dont_commerce_equitable", None),
+            ]
+        )
+
     def egalim_sum(self):
         # return self.label_group_group_sum("egalim")
         return sum_int_with_potential_null(

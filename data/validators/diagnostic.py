@@ -210,22 +210,12 @@ def validate_valeur_famille(instance):
                     field_name,
                     f"La valeur (HT) {family}, {field_value}, est moins que la somme des valeurs d'approvisionnement de tous les labels, {family_sum}",
                 )
-        elif origine_labels:
-            # NOTE: family_sum excludes origine/circuit_court/local, bio_dont_commerce_equitable
-            # (subset of bio, not its own category) & the egalim aggregate field, so they're
-            # checked separately here
-            sub_field_filled = (
-                family_sum
-                or any(getattr(instance, f"valeur_{family}_{label}", None) for label in origine_labels)
-                or getattr(instance, f"valeur_{family}_egalim", None)
-                or getattr(instance, f"valeur_{family}_bio_dont_commerce_equitable", None)
+        elif origine_labels and instance.family_sub_fields_sum(family):
+            utils_utils.add_validation_error(
+                errors,
+                field_name,
+                "Ce champ est obligatoire dès qu'une valeur (HT) est renseignée pour une catégorie de cette famille.",
             )
-            if sub_field_filled:
-                utils_utils.add_validation_error(
-                    errors,
-                    field_name,
-                    "Ce champ est obligatoire dès qu'une valeur (HT) est renseignée pour une catégorie de cette famille.",
-                )
     return errors
 
 
