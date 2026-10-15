@@ -12,7 +12,7 @@ const router = useRouter()
 const purchaseSummaryStore = useStorePurchaseSummary()
 const { purchaseSummary, hasPurchaseTotal } = storeToRefs(purchaseSummaryStore)
 const purchaseAmount = computed(() => `${formatNumber(purchaseSummary.value?.valeurTotale)} €`)
-const iconLink = "/static/images/picto-dsfr/teledeclaration-saisie-automatique.svg"
+const iconLink = "/static/images/logo-osa-couleur.svg"
 
 /* Modal */
 const modalTitle = "En savoir plus sur l’outil “Mes achats”"
