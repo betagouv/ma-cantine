@@ -18,6 +18,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const isComplete = computed(() => diagnostic.value?.diagnosticType === "COMPLETE")
   const isSaved = ref(true)
   const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
+  const visitedPagesSeparator = ","
+  const tunnelApproVisitedPages = computed(() => diagnostic.value?.tunnelAppro?.split(visitedPagesSeparator) || [])
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
@@ -69,6 +71,23 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     if (response.status === "error") replaceErrors(response.list)
     else setValue(coutRepasFieldName, response[coutRepasFieldName])
     return response
+  }
+
+  /* Save the page slug in the list of the visited pages */
+  function markPageAsVisited(slug) {
+    if (!diagnostic.value || !slug || tunnelApproVisitedPages.value.includes(slug)) return
+    diagnostic.value.tunnelAppro = [...tunnelApproVisitedPages.value, slug].join(visitedPagesSeparator)
+  }
+
+  /* Check if the step has been visited */
+  function isPageVisited(slug) {
+    return tunnelApproVisitedPages.value.includes(slug)
+  }
+
+  /* Only display errors if the step has been visited before */
+  function getDisplayedErrors(slug) {
+    if (!slug || isPageVisited(slug)) return diagnosticErrors.value
+    return []
   }
 
   /* Set canteen id */
@@ -198,6 +217,9 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setValue,
     saveDiagnostic,
     updateMealCount,
+    markPageAsVisited,
+    isPageVisited,
+    getDisplayedErrors,
     addErrorsFromCheck,
     clearErrors,
     getErrorsPage,

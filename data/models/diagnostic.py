@@ -1011,7 +1011,7 @@ class Diagnostic(models.Model):
     # NB None = tunnel has not been started; "complet" = tunnel has finished
     # all other values are defined by the front end
     tunnel_appro = models.CharField(
-        max_length=50,
+        max_length=255,
         null=True,
         blank=True,
         verbose_name="Progrès tunnel appro",

@@ -29,6 +29,7 @@ const { isTeledeclared } = storeToRefs(teledeclarationStore)
 
 /* Save */
 const save = async (page) => {
+  teledeclarationStore.markPageAsVisited(route.meta.slug)
   const response = await teledeclarationStore.saveDiagnostic()
   if (response.status === "error") displayErrors(page)
   else checkDiagnostic(page)

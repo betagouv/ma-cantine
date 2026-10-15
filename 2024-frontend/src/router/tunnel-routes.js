@@ -64,6 +64,7 @@ const tunnelRoutes = {
           component: GestionnaireTunnelApproInformations,
           beforeEnter: redirectIfTeledeclared,
           meta: {
+            slug: "informations",
             title: "Informations",
             next: "GestionnaireTunnelApproCouverts",
             stepper: "approvisionnements",
@@ -75,6 +76,7 @@ const tunnelRoutes = {
           component: GestionnaireTunnelApproCouverts,
           beforeEnter: redirectIfTeledeclared,
           meta: {
+            slug: "couverts",
             title: "Couverts annuels",
             previous: "GestionnaireTunnelApproInformations",
             next: "GestionnaireTunnelApproSaisie",
@@ -87,6 +89,7 @@ const tunnelRoutes = {
           component: GestionnaireTunnelApproSaisie,
           beforeEnter: redirectIfTeledeclared,
           meta: {
+            slug: "saisie",
             title: "Mes approvisionnements : mode de saisie",
             previous: "GestionnaireTunnelApproCouverts",
             next: "GestionnaireTunnelApproEgalim",
@@ -99,6 +102,7 @@ const tunnelRoutes = {
           component: GestionnaireTunnelApproEgalim,
           beforeEnter: redirectIfTeledeclared,
           meta: {
+            slug: "egalim",
             title: "EGalim",
             previous: "GestionnaireTunnelApproSaisie",
             next: "GestionnaireTunnelApproOrigine",
@@ -111,6 +115,7 @@ const tunnelRoutes = {
           component: GestionnaireTunnelApproOrigine,
           beforeEnter: redirectIfTeledeclared,
           meta: {
+            slug: "origine",
             title: "Origine France et UE",
             previous: "GestionnaireTunnelApproEgalim",
             next: "GestionnaireTunnelApproLocalCircuitCourt",
@@ -123,6 +128,7 @@ const tunnelRoutes = {
           component: GestionnaireTunnelApproLocalCircuitCourt,
           beforeEnter: redirectIfTeledeclared,
           meta: {
+            slug: "localCircuitCourt",
             title: "« Local » et circuit court",
             previous: "GestionnaireTunnelApproOrigine",
             next: "GestionnaireTunnelApproRecapitulatif",

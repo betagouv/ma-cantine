@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted } from "vue"
+import { useRoute } from "vue-router"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import IconLink from "@/components/IconLink.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
@@ -10,6 +11,7 @@ import diagnosticsFieldsService from "@/services/diagnosticsFields"
 const props = defineProps(["name"])
 const emit = defineEmits(["change"])
 const storeTeledeclaration = useStoreTeledeclaration()
+const route = useRoute()
 
 /* Informations */
 const field = ref()
@@ -23,7 +25,7 @@ const tooltip = computed(() => data.value.tooltip)
 const isRelatedVertical = computed(() => data.value?.isRelatedField === "vertical")
 const isRelatedHorizontal = computed(() => data.value?.isRelatedField === "horizontal")
 const placeholder = computed(() => isRequired.value ? undefined : data.value?.placeholder)
-const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeTeledeclaration.diagnosticErrors))
+const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeTeledeclaration.getDisplayedErrors(route.meta.slug)))
 const hint = computed(() => data.value.hint)
 const options = computed(() => data.value.options)
 /* Related vertical fields only display the hint */

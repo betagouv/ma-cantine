@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed, onMounted } from "vue"
 import { storeToRefs } from "pinia"
+import { useRoute } from "vue-router"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { formatNumber } from "@/utils.js"
@@ -12,6 +13,7 @@ import AppLinkRouter from "@/components/AppLinkRouter.vue"
 /* Stores */
 const storePurchaseSummary = useStorePurchaseSummary()
 const storeTeledeclaration = useStoreTeledeclaration()
+const route = useRoute()
 
 /* Select */
 const select = ref()
@@ -20,7 +22,7 @@ const field = computed(() => diagnosticsFieldsService.getField(fieldName))
 const isRequired = computed(() => field.value.required)
 const label = computed(() => field.value.label)
 const errorMessage = computed(() => {
-  const errors = diagnosticsFieldsService.getFieldError(fieldName, storeTeledeclaration.diagnosticErrors)
+  const errors = diagnosticsFieldsService.getFieldError(fieldName, storeTeledeclaration.getDisplayedErrors(route.meta.slug))
   return errors ? errors.join('. ') : ''
 })
 const options = computed(() => {
