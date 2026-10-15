@@ -386,6 +386,41 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.full_clean()  # should not raise
 
     @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_valeur_famille_required_if_sub_filled(self):
+        # since 2026, valeur_<famille> becomes mandatory as soon as an origin sub-field is filled
+        # for that family, even when valeur_<famille> itself is optional (true for every family
+        # except valeur_viandes_volailles, which is already required)
+        diagnostic = DiagnosticFactory(
+            **VALID_DIAGNOSTIC_SIMPLE_2026,
+            valeur_charcuterie_europe=10,
+            valeur_charcuterie=None,
+            valeur_europe=10,  # also required by validate_valeur_label_origine_circuit_court_local
+        )
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic.valeur_charcuterie = 10
+        diagnostic.full_clean()  # should not raise anymore
+        # same rule, triggered by the egalim sub-field this time
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.valeur_produits_de_la_mer = None
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic.valeur_produits_de_la_mer = 80
+        diagnostic.full_clean()  # should not raise anymore
+        # no sub-field filled: valeur_charcuterie stays optional
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026, valeur_charcuterie=None)
+        diagnostic.full_clean()  # should not raise
+        # same rule, triggered by bio_dont_commerce_equitable, excluded from family_sum since it's
+        # a subset of bio rather than its own category
+        diagnostic = DiagnosticFactory(
+            **VALID_DIAGNOSTIC_SIMPLE_2026,
+            valeur_charcuterie_bio_dont_commerce_equitable=10,
+            valeur_charcuterie=None,
+        )
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic.valeur_charcuterie = 10
+        diagnostic.full_clean()  # should not raise anymore
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok
