@@ -69,45 +69,16 @@ def in_correction_campaign_query(year):
     )
 
 
-def diagnostic_type_simple_query():
-    return Q(diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-
-
-def diagnostic_type_complete_query():
-    return Q(diagnostic_type=Diagnostic.DiagnosticType.COMPLETE)
-
-
 def valeur_totale_is_filled_query():
     return Q(valeur_totale__isnull=False)
-
-
-def valeur_totale_is_filled_and_not_zero_query():
-    return Q(valeur_totale_is_filled_query() & ~Q(valeur_totale=0))
 
 
 def valeur_bio_agg_is_filled_query():
     return Q(valeur_bio_agg__isnull=False)
 
 
-def diagnostic_type_is_filled_query(diagnostic_type_query, diagnostic_type):
-    """
-    Required fields change from one year to the next (see diagnostic_teledeclaration_fields.py),
-    so we OR together a per-year Q for every possible year.
-    """
-    year_queries = [
-        Q(year=year)
-        & Q(**{f"{field}__isnull": False for field in get_teledeclaration_fields_required(year, diagnostic_type)})
-        for year in CAMPAIGN_DATES
-    ]
-    return diagnostic_type_query() & valeur_totale_is_filled_and_not_zero_query() & reduce(operator.or_, year_queries)
-
-
-def diagnostic_type_simple_is_filled_query():
-    return diagnostic_type_is_filled_query(diagnostic_type_simple_query, Diagnostic.DiagnosticType.SIMPLE)
-
-
-def diagnostic_type_complete_is_filled_query():
-    return diagnostic_type_is_filled_query(diagnostic_type_complete_query, Diagnostic.DiagnosticType.COMPLETE)
+def is_filled_query():
+    return Q(is_filled=True)
 
 
 def teledeclaration_mode_satellite_without_appro_query():
@@ -202,7 +173,7 @@ def is_teledeclared_query():
 
 class DiagnosticQuerySet(models.QuerySet):
     def filled(self):
-        return self.filter(diagnostic_type_simple_is_filled_query() | diagnostic_type_complete_is_filled_query())
+        return self.filter(is_filled_query())
 
     def not_teledeclared(self):
         return self.exclude(is_teledeclared_query())
