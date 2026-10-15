@@ -1200,6 +1200,12 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_complete_2.label_group_group_sum("egalim_hors_bio"), 7 + 8)
         self.assertEqual(self.diagnostic_complete_2.label_group_group_sum("egalim"), 10 + 15 + 7 + 8)
 
+    def test_label_has_any_family_filled_property(self):
+        # (validate_valeur_label's usage)
+        self.assertTrue(self.diagnostic_simple.label_has_any_family_filled("france"))  # viandes_volailles & autres
+        self.assertFalse(self.diagnostic_simple.label_has_any_family_filled("label_rouge"))
+        self.assertTrue(self.diagnostic_complete_1.label_has_any_family_filled("bio_dont_commerce_equitable"))
+
     def test_with_family_sum_queryset(self):
         diagnostic_qs = Diagnostic.objects.with_family_sum("viandes_volailles").with_family_sum("produits_de_la_mer")
         diagnostic_simple = diagnostic_qs.get(id=self.diagnostic_simple.id)
@@ -1221,6 +1227,15 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_complete_1.family_sum("produits_de_la_mer"), 15 + 8)
         self.assertEqual(self.diagnostic_complete_2.family_sum("viandes_volailles"), 10 + 7)
         self.assertEqual(self.diagnostic_complete_2.family_sum("produits_de_la_mer"), 15 + 8)
+
+    def test_family_has_any_label_filled_property(self):
+        # (validate_valeur_famille's usage)
+        self.assertTrue(self.diagnostic_simple.family_has_any_label_filled("viandes_volailles"))  # egalim & france
+        self.assertTrue(self.diagnostic_simple.family_has_any_label_filled("autres"))  # france
+        self.assertFalse(self.diagnostic_simple.family_has_any_label_filled("boulangerie"))
+        # a label that doesn't exist at all for this family (e.g. "egalim" only exists for 2
+        # families) is skipped, not an error
+        self.assertFalse(self.diagnostic_complete_1.family_has_any_label_filled("fruits_et_legumes"))
 
 
 class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
