@@ -6,6 +6,53 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.54.0](https://github.com/betagouv/ma-cantine/compare/v2026.53.0...v2026.54.0) (2026-10-13)
+
+
+### Nouveautés
+
+* **Diagnostics:** nouveau champ `generated_from_purchases` pour différencier les bilans créés depuis les achats ([#7301](https://github.com/betagouv/ma-cantine/issues/7301)) ([ae2f4c1](https://github.com/betagouv/ma-cantine/commit/ae2f4c1295c590e7fd1c362534ceaf1d45378ddc))
+
+
+### Améliorations
+
+* **Achats:** calcule le total de toutes les familles (pas seulement viandes/poisson) dans canteen_summary_for_year (TD 2026) ([#7296](https://github.com/betagouv/ma-cantine/issues/7296)) ([e1ae63a](https://github.com/betagouv/ma-cantine/commit/e1ae63a26bd249df1987962eaeb28f228cfb8679))
+* **Achats:** calcule le total des labels manquants (europe, france, circuit_court, local) dans canteen_summary_for_year (TD 2026) ([#7298](https://github.com/betagouv/ma-cantine/issues/7298)) ([0c07ecf](https://github.com/betagouv/ma-cantine/commit/0c07ecfaad97cbe05da0082361c281b3c44c8096))
+* **Diagnostics:** ajouter les 'notes' à l'endpoint /recap ([#7291](https://github.com/betagouv/ma-cantine/issues/7291)) ([5f7747f](https://github.com/betagouv/ma-cantine/commit/5f7747ffabd71f0cd187904281567c8f9d69f952))
+* **Télédéclaration:** dynamise le macaron "appro" en fonction de la TD ([#7320](https://github.com/betagouv/ma-cantine/issues/7320)) ([f2dfc41](https://github.com/betagouv/ma-cantine/commit/f2dfc4121b5bc23605562c1668cb5549f1b49841))
+* **Télédéclaration:** met à jour le formulaire de l'étape Local et circuit court ([#7310](https://github.com/betagouv/ma-cantine/issues/7310)) ([5d265c2](https://github.com/betagouv/ma-cantine/commit/5d265c28f58b22d5ba802ae5dfa676194f4a4e45))
+* **Télédéclaration:** met à jour le formulaire de l'étape Origine ([#7304](https://github.com/betagouv/ma-cantine/issues/7304)) ([f3e9521](https://github.com/betagouv/ma-cantine/commit/f3e9521bfdc8d6f727fa93c0fd522884b5765ed9))
+* **Télédéclaration:** met à jour le formulaire de la TD simplifié ([#7288](https://github.com/betagouv/ma-cantine/issues/7288)) ([ed262d5](https://github.com/betagouv/ma-cantine/commit/ed262d59dc5f6153e2966e51e75773c2fe9996f7))
+* **Télédéclaration:** met à jour le formulaire TD détaillée ([#7294](https://github.com/betagouv/ma-cantine/issues/7294)) ([bfea357](https://github.com/betagouv/ma-cantine/commit/bfea357db94a4592948d5bc67df54ff876d3c58c))
+
+
+### Corrections (bugs, typos...)
+
+* **Achats:** API: répare un cas où un PATCH partiel pouvait écraser des caracteristiques ([#7287](https://github.com/betagouv/ma-cantine/issues/7287)) ([a3d1deb](https://github.com/betagouv/ma-cantine/commit/a3d1debe4e7aedc32c4a38017d9c73abadb142b5))
+* **Email:** affiche l'adresse email en frontend avec une variable d'environnement ([#7262](https://github.com/betagouv/ma-cantine/issues/7262)) ([3f22460](https://github.com/betagouv/ma-cantine/commit/3f224602cfa821b49122cd8e8521685631952c9e))
+* **Imports:** utilise la nouvelle URL de l'API Validata (api.validata.fr) ([#7309](https://github.com/betagouv/ma-cantine/issues/7309)) ([804d7a7](https://github.com/betagouv/ma-cantine/commit/804d7a755537828d5f189581c30465627bd0e26b))
+* **Infobulles:** homogénéise le fonctionnement des infobulles au hover ([#7319](https://github.com/betagouv/ma-cantine/issues/7319)) ([f780fef](https://github.com/betagouv/ma-cantine/commit/f780fefa9cbce35fd03b51df904823af9f5cd870))
+* **Sentry:** before_send: répare certaines erreurs non loggées.. ([#7286](https://github.com/betagouv/ma-cantine/issues/7286)) ([1a6e6b4](https://github.com/betagouv/ma-cantine/commit/1a6e6b4a43559ea04f47c2c7aede54a76bc4fbf4))
+* **Télédéclaration:** divers correctifs de wordings ([#7318](https://github.com/betagouv/ma-cantine/issues/7318)) ([73793b8](https://github.com/betagouv/ma-cantine/commit/73793b853b776c915d25a91e16803eec4ad6cbcc))
+
+
+### Technique
+
+* **Achats:** API: ajout d'un serializer manquant pour CanteenPurchasesSummaryView ([#7295](https://github.com/betagouv/ma-cantine/issues/7295)) ([97781cc](https://github.com/betagouv/ma-cantine/commit/97781cce3f94feaae91ad5c75b93127fcec33349))
+* **Achats:** regroupe les calculs de totaux appro (origine, bio_dont_commerce_equitable, non_egalim) en une seule requête ([#7299](https://github.com/betagouv/ma-cantine/issues/7299)) ([61bdc68](https://github.com/betagouv/ma-cantine/commit/61bdc68fdfc1aa080353b3c4502d81776eb0200c))
+* **Admin:** méthode dédiée `json_pretty` pour l'affichage des JSON en lecture seule ([#7312](https://github.com/betagouv/ma-cantine/issues/7312)) ([b8f6455](https://github.com/betagouv/ma-cantine/commit/b8f6455ef7eec9b51d772b4166355318ff98dfc8))
+* **API:** ajouter un mixin 'ReadOnlySerializerMixin' et l'utiliser pour tous les serializers en lecture seule ([#7293](https://github.com/betagouv/ma-cantine/issues/7293)) ([cce96dc](https://github.com/betagouv/ma-cantine/commit/cce96dc261151b87e6f27f9223c8107497d29e2a))
+* **deps-dev:** bump postcss-selector-parser from 7.1.5 to 7.1.6 in /2024-frontend ([#7307](https://github.com/betagouv/ma-cantine/issues/7307)) ([bcb7640](https://github.com/betagouv/ma-cantine/commit/bcb7640be70908334834485782267a1d51b650e9))
+* **deps:** bump dompurify from 3.4.14 to 3.4.17 in /frontend ([#7306](https://github.com/betagouv/ma-cantine/issues/7306)) ([652e74a](https://github.com/betagouv/ma-cantine/commit/652e74ad8e2214e8605646bde43262e11eb281c8))
+* **deps:** bump source-map-js from 1.2.1 to 1.2.2 in /frontend ([#7305](https://github.com/betagouv/ma-cantine/issues/7305)) ([d4a2c83](https://github.com/betagouv/ma-cantine/commit/d4a2c83d87fcae6ec6c9a00db43c8ba7bd2e0102))
+* **Observatoire:** déplacer la construction des notes 'objectifs EGalim' dans le fichier dédié créé récemment ([#7290](https://github.com/betagouv/ma-cantine/issues/7290)) ([7745fd6](https://github.com/betagouv/ma-cantine/commit/7745fd604fb35655f8ec8942e9d81bfd42023c96))
+* **PR:** désactive l'ajout automatique des reviewers ([#7300](https://github.com/betagouv/ma-cantine/issues/7300)) ([25df7f5](https://github.com/betagouv/ma-cantine/commit/25df7f56eaea23ff05d59529c54aff3912abd3b4))
+
+
+### Documentation
+
+* **API:** Diagnostics: cache generated_from_purchases & TUNNEL_PROGRESS_FIELDS de la doc ([#7302](https://github.com/betagouv/ma-cantine/issues/7302)) ([034d969](https://github.com/betagouv/ma-cantine/commit/034d9691c3f8c39870105576beaa1adfd1c66ec8))
+
 ## [2026.53.0](https://github.com/betagouv/ma-cantine/compare/v2026.52.0...v2026.53.0) (2026-10-08)
 
 
