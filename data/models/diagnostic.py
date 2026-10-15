@@ -1934,6 +1934,8 @@ class Diagnostic(models.Model):
         help_text="le coût repas est calculé en divisant la valeur totale annuelle par le nombre de repas annuels de la cantine",
     )
 
+    is_filled = models.BooleanField(default=False, verbose_name="bilan complété ? (champ calculé)")
+
     # Data quality
     invalid_reason_list = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=InvalidReason.choices),
@@ -2035,7 +2037,11 @@ class Diagnostic(models.Model):
             self.populate_aggregated_values()
             self.populate_stats_values()
             self.populate_cout_repas()
+        self.set_is_filled()
         return super().save(**kwargs)
+
+    def set_is_filled(self):
+        self.is_filled = self._is_filled()
 
     def populate_required_fields_with_zero(self):
         """
@@ -2274,7 +2280,8 @@ class Diagnostic(models.Model):
     @property
     def is_filled_simple(self) -> bool:
         return (
-            self.is_diagnostic_type_simple
+            not diagnostic_validators.validate_year(self)
+            and self.is_diagnostic_type_simple
             and self.valeur_totale_is_filled
             and all(
                 getattr(self, field) is not None
@@ -2285,7 +2292,8 @@ class Diagnostic(models.Model):
     @property
     def is_filled_complete(self) -> bool:
         return (
-            self.is_diagnostic_type_complete
+            not diagnostic_validators.validate_year(self)
+            and self.is_diagnostic_type_complete
             and self.valeur_totale_is_filled
             and all(
                 getattr(self, field) is not None
@@ -2293,9 +2301,8 @@ class Diagnostic(models.Model):
             )
         )
 
-    @property
-    def is_filled(self) -> bool:
-        return self.is_filled_simple or self.is_filled_complete
+    def _is_filled(self) -> bool:
+        return bool(self.is_filled_simple or self.is_filled_complete)
 
     def is_clean(self, raise_errors=False) -> tuple[bool, dict]:
         try:

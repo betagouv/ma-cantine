@@ -1006,7 +1006,7 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(Diagnostic.all_objects.count(), 18 + 1)
 
 
-class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
+class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.diagnostic_2024_simple_not_filled = DiagnosticFactory(
@@ -1104,7 +1104,7 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
         self.assertEqual(Diagnostic.objects.all().count(), 9)
         self.assertEqual(Diagnostic.objects.filled().count(), 4)
 
-    def test_is_filled_property(self):
+    def test_is_filled_method(self):
         # filled
         for index, diagnostic in enumerate(
             [
@@ -1115,7 +1115,7 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             ]
         ):
             with self.subTest(index=index, diagnostic=diagnostic):
-                self.assertTrue(diagnostic.is_filled)
+                self.assertTrue(diagnostic._is_filled())
         # not filled
         for index, diagnostic in enumerate(
             [
@@ -1128,7 +1128,41 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
         ):
             diagnostic.refresh_from_db()
             with self.subTest(index=index, diagnostic=diagnostic):
-                self.assertFalse(diagnostic.is_filled)
+                self.assertFalse(diagnostic._is_filled())
+
+    def test_is_filled_field_set_on_save(self):
+        # filled
+        for index, diagnostic in enumerate(
+            [
+                self.diagnostic_2024_simple_filled,
+                self.diagnostic_2024_complete_filled,
+                self.diagnostic_2025_simple_filled,
+                self.diagnostic_2025_complete_filled,
+            ]
+        ):
+            diagnostic.refresh_from_db()
+            with self.subTest(index=index, diagnostic=diagnostic):
+                self.assertTrue(diagnostic.is_filled)
+        # becomes not filled
+        self.diagnostic_2024_simple_filled.valeur_totale = None
+        self.diagnostic_2024_simple_filled.save()
+        self.diagnostic_2024_simple_filled.refresh_from_db()
+        self.assertFalse(self.diagnostic_2024_simple_filled.is_filled)
+        # becomes filled
+        self.diagnostic_2024_simple_filled.valeur_totale = 1000
+        self.diagnostic_2024_simple_filled.save()
+        self.diagnostic_2024_simple_filled.refresh_from_db()
+        self.assertTrue(self.diagnostic_2024_simple_filled.is_filled)
+        # not filled (2026: nombre_repas_an is required)
+        self.diagnostic_2026_simple_not_filled.refresh_from_db()
+        self.diagnostic_2026_simple_not_filled.save()
+        self.diagnostic_2026_simple_not_filled.refresh_from_db()
+        self.assertFalse(self.diagnostic_2026_simple_not_filled.is_filled)
+        # not filled (invalid year)
+        self.diagnostic_2025_simple_filled.year = 2010
+        self.diagnostic_2025_simple_filled.save()
+        self.diagnostic_2025_simple_filled.refresh_from_db()
+        self.assertFalse(self.diagnostic_2025_simple_filled.is_filled)
 
 
 class DiagnosticIsCleanMethodTest(TestCase):

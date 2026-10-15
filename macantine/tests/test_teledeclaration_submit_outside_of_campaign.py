@@ -250,9 +250,9 @@ class TeledeclarationSubmitOutsideOfCampaignScriptTest(TestCase):
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 0)
 
             # Change the diagnostic to make it invalid
-            Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0)
+            Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0, is_filled=False)
             diagnostic.refresh_from_db()
-            self.assertFalse(diagnostic.is_filled)  # property
+            self.assertFalse(diagnostic.is_filled)  # model field
 
         with freeze_time("2025-08-30"):  # after the 2024 campaign
             # Run the script

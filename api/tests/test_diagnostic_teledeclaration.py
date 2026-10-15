@@ -346,7 +346,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
     def test_cannot_teledeclare_if_diagnostic_not_filled(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         self.canteen_site.managers.add(authenticate.user)
-        Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0)
+        Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0, is_filled=False)
 
         response = self.client.post(
             reverse(

@@ -218,7 +218,7 @@ class DiagnosticCheckView(APIView):
         diagnostic = get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
 
         is_empty = diagnostic.is_empty  # property
-        is_filled = diagnostic.is_filled  # property
+        is_filled = diagnostic.is_filled
         is_clean, errors = diagnostic.is_clean(raise_errors=False)
         is_teledeclared = diagnostic.is_teledeclared  # property
 

@@ -33,7 +33,7 @@ READ_ONLY_FIELDS = (
 
 class DiagnosticSerializer(serializers.ModelSerializer):
     is_teledeclared = serializers.BooleanField(read_only=True)  # property
-    is_filled = serializers.BooleanField(read_only=True)  # property
+    is_filled = serializers.BooleanField(read_only=True)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
