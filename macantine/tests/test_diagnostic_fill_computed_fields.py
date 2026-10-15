@@ -1,4 +1,4 @@
-from django.core.management import call_command
+from django.core.management import CommandError, call_command
 from django.test import TestCase
 from freezegun import freeze_time
 
@@ -72,6 +72,21 @@ class DiagnosticFillComputedFieldsCommandTest(TestCase):
         call_command("diagnostic_fill_computed_fields", "--year", 2022)
 
         self.assertEqual(Diagnostic.history.count(), history_count_before)
+
+    def test_run_with_field_only_updates_this_field(self):
+        diagnostic = self.canteen_site_diagnostic_2022
+        # simulate an empty field, and another field with an outdated value
+        Diagnostic.objects.filter(id=diagnostic.id).update(pourcentage_bio=None, pourcentage_siqo=99)
+
+        call_command("diagnostic_fill_computed_fields", "--year", 2022, "--field", "pourcentage_bio")
+
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.pourcentage_bio, 20)  # filled
+        self.assertEqual(diagnostic.pourcentage_siqo, 99)  # unchanged
+
+    def test_run_with_unknown_field(self):
+        with self.assertRaises(CommandError):
+            call_command("diagnostic_fill_computed_fields", "--year", 2022, "--field", "valeur_totale")
 
 
 @freeze_time("2026-03-30")  # during the 2025 campaign
