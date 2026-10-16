@@ -43,7 +43,7 @@ const getResultsDescription = () => {
     .join(", ")
 }
 const description = computed(() => {
-  const intro = [title, props.descriptionCustom].filter(Boolean).join(", ")
+  const intro = props.descriptionCustom || "Pour le graphique"
   const results = getResultsDescription()
   return `${intro} : ${results}.`
 })
