@@ -3,7 +3,6 @@ from django.core.management.base import BaseCommand
 from macantine.tasks import (
     export_dataset_canteen_analysis,
     export_dataset_canteen_opendata,
-    export_dataset_td_analysis,
     export_dataset_td_opendata,
     export_dataset_raw_analysis,
 )
@@ -14,12 +13,11 @@ class Command(BaseCommand):
     Exemples:
     - python manage.py export_dataset --model Canteen --destination analysis
     - python manage.py export_dataset --model Canteen --destination opendata
-    - python manage.py export_dataset --model Teledeclaration --destination analysis
     - python manage.py export_dataset --model Teledeclaration --destination opendata
     - python manage.py export_dataset --model Raw --destination analysis
     """
 
-    help = "Command to export datasets. 5 choices: Cantines (analysis) ; Cantines (opendata) ; Toutes les TD (analysis) ; TD par années (opendata) ; Raw (analysis)"
+    help = "Command to export datasets. 4 choices: Cantines (analysis) ; Cantines (opendata) ; TD par années (opendata) ; Raw (analysis)"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -49,9 +47,7 @@ class Command(BaseCommand):
             elif destination == "opendata":
                 export_dataset_canteen_opendata()
         elif model == "Teledeclaration":
-            if destination == "analysis":
-                export_dataset_td_analysis()
-            elif destination == "opendata":
+            if destination == "opendata":
                 export_dataset_td_opendata()
         elif model == "Raw":
             if destination == "analysis":

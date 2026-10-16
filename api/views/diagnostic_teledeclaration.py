@@ -19,9 +19,8 @@ from api.permissions import (
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManagerUrlParam,
 )
-from api.serializers import DiagnosticTeledeclaredAnalysisSerializer, DiagnosticTeledeclaredOpenDataSerializer
+from api.serializers import DiagnosticTeledeclaredOpenDataSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
-from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
 
 logger = logging.getLogger(__name__)
 
@@ -322,15 +321,6 @@ class DiagnosticTeledeclarationPdfView(APIView):
             for family, display_family in family_variable_to_display.items():
                 structured_data[display_label][display_family] = getattr(diagnostic, f"valeur_{family}_{label}")
         return structured_data
-
-
-class DiagnosticTeledeclaredAnalysisListView(ListAPIView):
-    serializer_class = DiagnosticTeledeclaredAnalysisSerializer
-    filter_backends = [django_filters.DjangoFilterBackend]
-    ordering_fields = ["creation_date"]
-
-    def get_queryset(self):
-        return Diagnostic.objects.valid_td_all_years(CAMPAIGN_DATES.keys()).order_by("teledeclaration_date")
 
 
 class DiagnosticTeledeclaredOpenDataListView(ListAPIView):

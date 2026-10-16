@@ -26,7 +26,6 @@ from .celery import app
 from .etl.analysis import (
     ETL_ANALYSIS_CANTEEN,
     ETL_ANALYSIS_RAW,
-    ETL_ANALYSIS_TELEDECLARATIONS,
 )
 from .etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
@@ -291,21 +290,6 @@ def export_dataset_raw_analysis():
     logger.info("Starting export_dataset_raw_analysis task")
 
     result = export_datasets(get_raw_analysis_datasets())
-
-    return result
-
-
-@app.task()
-def export_dataset_td_analysis():
-    """
-    Export the Teledeclaration datasets for analysis (Metabase)
-    """
-    logger.info("Starting export_dataset_td_analysis task")
-
-    datasets = {
-        "teledeclarations_analysis": ETL_ANALYSIS_TELEDECLARATIONS(),
-    }
-    result = export_datasets(datasets)
 
     return result
 
