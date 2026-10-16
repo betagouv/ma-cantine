@@ -3,7 +3,7 @@ import os
 import time
 
 from dotenv import load_dotenv
-from sqlalchemy import URL, create_engine, text
+from sqlalchemy import URL, create_engine
 
 logger = logging.getLogger(__name__)
 
@@ -72,40 +72,6 @@ class DataWareHouse:
             url_object,
             echo=False,
         )
-
-    def _drop_table_with_cascade(self, table):
-        with self.engine.begin() as connection:
-            connection.execute(text(f"DROP TABLE IF EXISTS {table} CASCADE;"))
-
-    def _insert_dataframe_delete_rows(self, dataframe, table):
-        dataframe.to_sql(
-            name=table,
-            con=self.engine,
-            if_exists="delete_rows",
-            index=False,
-            chunksize=1000,
-            # method="multi",  # Batch INSERTs for 2-3x speedup
-        )
-
-    def _insert_dataframe_replace(self, dataframe, table):
-        dataframe.to_sql(
-            name=table,
-            con=self.engine,
-            if_exists="replace",
-            index=False,
-            chunksize=1000,
-            # method="multi",  # Batch INSERTs for 2-3x speedup
-        )
-
-    def insert_dataframe(self, dataframe, table):
-        start = time.time()
-        try:
-            self._insert_dataframe_delete_rows(dataframe, table)
-        except:  # noqa
-            self._drop_table_with_cascade(table)
-            self._insert_dataframe_replace(dataframe, table)
-        end = time.time()
-        logger.info(f"Inserted {len(dataframe)} rows into table {table} in {end - start:.2f} seconds")
 
     def copy_file(self, file, table, column_types: dict):
         """
