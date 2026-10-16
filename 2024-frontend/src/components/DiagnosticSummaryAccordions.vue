@@ -1,11 +1,16 @@
 <script setup>
-import { ref, watch } from "vue"
+import { ref, watch, computed } from "vue"
 import { useRouter } from "vue-router"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import ObservatoryGraphSustainable from "@/components/ObservatoryGraphSustainable.vue"
 
-const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared'])
+const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared', 'diagnosticRecap'])
 const activeAccordion = ref(props.open)
 watch(() => props.open, (value) => activeAccordion.value = value)
+
+/* Appro */
+const approStats = computed(() => props.diagnosticRecap?.canteenDiagnosticApproStats)
+const objectives = computed(() => props.diagnosticRecap?.notes)
 
 /* Navigation */
 const router = useRouter()
@@ -34,6 +39,15 @@ const goToPage = (page) => router.push(page)
       <div v-else class="ma-cantine--flex-end">
         <DsfrButton @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
       </div>
+      <ObservatoryGraphSustainable
+        v-if="volet.key === 'appro' && isTeledeclared"
+        :egalim-percent="approStats.pourcentageEgalim"
+        :bio-percent="approStats.pourcentageBio"
+        :egalim-objective="objectives.egalimPercentObjective"
+        :bio-objective="objectives.bioPercentObjective"
+        :description-custom="`pour le bilan ${diagnosticRecap.year}`"
+        title="Objectifs EGalim"
+      />
     </DsfrAccordion>
   </DsfrAccordionsGroup>
 </template>

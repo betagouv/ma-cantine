@@ -36,6 +36,7 @@ const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTel
 const volets = computed(() => {
   return [
     {
+      key: "appro",
       title: "Approvisionnements",
       macaron: IconMacaronAppro,
       sentence: getSentence("appro"),
@@ -98,6 +99,7 @@ const appro = computed(() => volets.value[0])
       :volets="volets"
       :anchor-name="anchorName"
       :is-teledeclared="isTeledeclared"
+      :diagnostic-recap="diagnosticRecap"
       :open="openedAccordion"
     />
   </div>
