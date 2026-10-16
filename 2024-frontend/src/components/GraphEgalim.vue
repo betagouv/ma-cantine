@@ -48,7 +48,10 @@ const description = computed(() => {
 </script>
 
 <template>
-  <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
+  <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-my-2w">
+    <h3 class="fr-h6 fr-mb-0">{{ title }}</h3>
+    <p class="fr-text--sm fr-text-mention--grey fr-mb-0">sur {{ stringsService.prettyPercent(100) }} du Total des achats</p>
+  </div>
   <GraphBase :valuesToVerify="[egalimPercent, bioPercent, viandesPoissonsEgalimPercent, egalimObjective, bioObjective]" :description="description">
     <GraphGauge
       v-for="gauge in gauges"
