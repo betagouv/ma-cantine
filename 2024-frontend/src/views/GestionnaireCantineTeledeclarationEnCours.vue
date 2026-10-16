@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue"
+import { computed, ref } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
@@ -23,20 +23,9 @@ const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Teledeclaration */
 const teledeclarationStore = useStoreTeledeclaration()
-const { hasDiagnostic, canteenAction, isTeledeclared, diagnoticCheck } = storeToRefs(teledeclarationStore)
+const { diagnosticRecap, hasDiagnostic, canteenAction, isTeledeclared, diagnoticCheck } = storeToRefs(teledeclarationStore)
 const year = teledeclarationStore.getYear()
 const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
-
-/* Récapitulatif */
-const diagnosticRecap = ref(null)
-watch(
-  [() => canteenInformations.value.id, isTeledeclared],
-  async ([canteenId]) => {
-    const diagnostics = await diagnosticService.fetchDiagnosticsRecap(canteenId)
-    diagnosticRecap.value = diagnostics.find((diagnostic) => diagnostic.year === year) || null
-  },
-  { immediate: true }
-)
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
