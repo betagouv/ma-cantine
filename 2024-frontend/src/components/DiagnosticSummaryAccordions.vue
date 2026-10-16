@@ -2,7 +2,7 @@
 import { ref, watch, computed } from "vue"
 import { useRouter } from "vue-router"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
-import ObservatoryGraphSustainable from "@/components/ObservatoryGraphSustainable.vue"
+import GraphEgalim from "@/components/GraphEgalim.vue"
 
 const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared', 'diagnosticRecap'])
 const activeAccordion = ref(props.open)
@@ -39,7 +39,7 @@ const goToPage = (page) => router.push(page)
       <div v-else class="ma-cantine--flex-end">
         <DsfrButton @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
       </div>
-      <ObservatoryGraphSustainable
+      <GraphEgalim
         v-if="volet.key === 'appro' && isTeledeclared"
         :egalim-percent="approStats.pourcentageEgalim"
         :bio-percent="approStats.pourcentageBio"

@@ -3,7 +3,7 @@ import { useStoreFilters } from "@/stores/filters"
 import stringsService from "@/services/strings"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
-import ObservatoryGraphSustainable from "@/components/ObservatoryGraphSustainable.vue"
+import GraphEgalim from "@/components/GraphEgalim.vue"
 import ObservatoryGraphMeatFishEgalim from "@/components/ObservatoryGraphMeatFishEgalim.vue"
 import ObservatoryGraphMeatFrance from "@/components/ObservatoryGraphMeatFrance.vue"
 import ObservatoryGraphEgalim from "@/components/ObservatoryGraphEgalim.vue"
@@ -30,7 +30,7 @@ const approBadge = "/static/images/badges/badge-appro.svg"
         <ObservatoryGraphEgalim :approPercent="stats.approPercent" />
       </li>
       <li class="fr-mb-8w">
-        <ObservatoryGraphSustainable
+        <GraphEgalim
           :bioPercent="stats.bioPercent"
           :egalimPercent="stats.egalimPercent"
           :bioObjective="stats.notes.bioPercentObjective"
