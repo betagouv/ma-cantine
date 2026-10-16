@@ -40,6 +40,17 @@ const description = computed(() => {
 <template>
   <h3 v-if="title" class="fr-h6 fr-mb-2w">{{ title }}</h3>
   <GraphBase :valuesToVerify="[egalimPercent, bioPercent, egalimObjective, bioObjective]" :description="description">
-    <GraphGauge :objectives="objectives" :stats="stats" :legends="legends" />
+    <GraphGauge
+      :stat="egalimPercent"
+      :objective="egalimObjective"
+      :label="`au moins ${stringsService.prettyPercent(egalimObjective)} d’achats EGalim dont bio`"
+      color="#1F7046"
+    />
+    <GraphGauge
+      :stat="bioPercent"
+      :objective="bioObjective"
+      :label="`au moins ${stringsService.prettyPercent(bioObjective)} d’achats Bio ou en conversion`"
+      color="#8AE4B3"
+    />
   </GraphBase>
 </template>

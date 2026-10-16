@@ -23,6 +23,10 @@ const description = computed(() => {
 <template>
   <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
   <GraphBase :valuesToVerify="[props.viandesVolaillesProduitsDeLaMerEgalimPercent]" :description="description">
-    <GraphGauge :objectives="objectives" :stats="stats" />
+    <GraphGauge
+      :stat="stats[0]"
+      :objective="objectives[0].value"
+      :label="`au moins ${objectives[0].name} d’achats EGalim sur les familles viandes et poissons (${objectives[1].name})`"
+    />
   </GraphBase>
 </template>
