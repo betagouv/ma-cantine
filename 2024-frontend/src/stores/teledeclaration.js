@@ -24,15 +24,17 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
-    if (canteenSavedId.value === canteenId) return
+    if (canteenSavedId.value === Number(canteenId)) return
     const diagnosticsResponse = await diagnosticService.fetchDiagnostics(canteenId)
     const diagnosticYear = diagnosticsResponse["results"].find((result) => result.year === year) || null
-    if (!diagnosticYear) return
-    setDiagnostic(diagnosticYear)
-    setCanteenId(canteenId)
-    await setCanteenAction()
-    await checkDiagnosticSteps()
-    await setDiagnosticRecap()
+    if (!diagnosticYear) deleteStore()
+    else {
+      setDiagnostic(diagnosticYear)
+      setCanteenId(canteenId)
+      await setCanteenAction()
+      await checkDiagnosticSteps()
+      await setDiagnosticRecap()
+    }
   }
 
   /* Check diagnostic and canteen for the "volets" */
