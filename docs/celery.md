@@ -20,7 +20,7 @@ Sur le serveur dit "celery", renseigner les mêmes variables d'environnement que
     1. `CC_PYTHON_CELERY_USE_BEAT=true`
     1. `CC_PYTHON_CELERY_MODULE=macantine.celery`
     1. `CELERY_TIMEZONE='Europe/Paris'`
-1. Export des données via la task `export_datasets()`:
+1. Export des données vers le data warehouse (cf `macantine/etl/README.md`):
     1. `DATA_WARE_HOUSE_USER= Optionnel - l'utilisateur de la base postgres utilisée pour les analsyes stats`
     1. `DATA_WARE_HOUSE_PASSWORD= Optionnel - le mot de passe de la base de postgres utilisée pour les analsyes stats`
     1. `DATA_WARE_HOUSE_HOST=Optionnel - le host de la base postgres utilisée pour les analsyes stats`
