@@ -73,7 +73,7 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
               </div>
               <div class="fr-col-11">
                 <p v-if="isTeledeclared" class="fr-mb-0 fr-text--sm">
-                  <span class="ma-cantine--bold">XXX%</span> de viandes et poissons EGalim
+                  <span class="ma-cantine--bold">{{ formatNumber(approStats?.pourcentageViandesVolaillesProduitsDeLaMerEgalim) }}%</span> de viandes et poissons EGalim
                 </p>
                 <p v-else class="fr-mb-0 fr-text--sm">
                   Objectif 60% de viandes et poissons EGalim
