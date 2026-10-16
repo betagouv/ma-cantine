@@ -1,5 +1,6 @@
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
+import { useRootStore } from "@/stores/root.js"
 import diagnosticService from "@/services/diagnostics.js"
 import canteenService from "@/services/canteens.js"
 import diagnosticsFields from "@/services/diagnosticsFields.js"
@@ -24,15 +25,18 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
-    if (canteenSavedId.value === canteenId) return
+    if (canteenSavedId.value === Number(canteenId)) return
     const diagnosticsResponse = await diagnosticService.fetchDiagnostics(canteenId)
-    const diagnosticYear = diagnosticsResponse["results"].find((result) => result.year === year) || null
-    if (!diagnosticYear) return
-    setDiagnostic(diagnosticYear)
-    setCanteenId(canteenId)
-    await setCanteenAction()
-    await checkDiagnosticSteps()
-    await setDiagnosticRecap()
+    if (diagnosticsResponse?.status === "error") useRootStore().notifyServerError(diagnosticsResponse)
+    const diagnosticYear = diagnosticsResponse?.results?.find((result) => result.year === year) || null
+    if (!diagnosticYear) deleteStore()
+    else {
+      setDiagnostic(diagnosticYear)
+      setCanteenId(canteenId)
+      await setCanteenAction()
+      await checkDiagnosticSteps()
+      await setDiagnosticRecap()
+    }
   }
 
   /* Check diagnostic and canteen for the "volets" */
@@ -90,7 +94,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const diagnosticValues = diagnostic.value
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
     if (response.status === "error") replaceErrors(response.list)
-    else isSaved.value = true
+    else setDiagnostic(response)
     await setCanteenAction()
     return response
   }
@@ -151,12 +155,18 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Empty store */
   function deleteStore() {
+    refreshStore()
     diagnostic.value = null
-    canteenSavedId.value = null
     canteenAction.value = null
     isSaved.value = true
     diagnoticCheck.value = {}
     diagnosticRecap.value = null
+    diagnosticErrors.value = []
+  }
+
+  /* Force refresh store on next init */
+  function refreshStore() {
+    canteenSavedId.value = null
   }
 
   /* Format errors object into a list of { field, message } */
@@ -250,6 +260,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     teledeclare,
     cancelTeledeclaration,
     deleteStore,
+    refreshStore,
     getYear,
     setDiagnostic,
     setValue,
