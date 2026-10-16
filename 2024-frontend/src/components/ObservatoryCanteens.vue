@@ -21,7 +21,7 @@ const canteenBadge = "/static/images/badges/badge-canteen.svg"
       leur bilan annuel de l'année précédente.
     </ObservatoryBadgeTitle>
     <DsfrNotice v-if="stats.notes.alert" :title="stats.notes.alert.title" :desc="stats.notes.alert.message" type="warning" class="fr-mb-4w" />
-    <ol class="fr-grid-row fr-grid-row--gutters ma-cantine--ordered-list ma-cantine--unstyled-list">
+    <ul class="fr-grid-row fr-grid-row--gutters ma-cantine--unstyled-list">
       <li class="fr-col-12 fr-col-md-6 fr-mb-4w">
         <ObservatoryGraphEconomicModel :economicModels="stats.economicModels" :canteensCount="stats.canteenCount" />
       </li>
@@ -34,6 +34,6 @@ const canteenBadge = "/static/images/badges/badge-canteen.svg"
       <li class="fr-col-12">
         <ObservatoryGraphSectors :sectorCategories="stats.sectorCategories" :canteensCount="stats.canteenCount" />
       </li>
-    </ol>
+    </ul>
   </div>
 </template>
