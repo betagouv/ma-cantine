@@ -153,7 +153,6 @@ class ETL_OPEN_DATA_CANTEEN(etl.EXTRACTOR, OPEN_DATA):
 class ETL_OPEN_DATA_TELEDECLARATIONS(etl.EXTRACTOR, OPEN_DATA):
     def __init__(self, year: int):
         super().__init__()
-        self.years = [year]
         self.year = year
         self.dataset_name = f"campagne_td_{year}"
         self.datagouv_dataset_id = MA_CANTINE_DATAGOUV_TELEDECLARATION_DATASET_ID
