@@ -6,6 +6,13 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.56.0](https://github.com/betagouv/ma-cantine/compare/v2026.55.0...v2026.56.0) (2026-10-16)
+
+
+### Nouveautés
+
+* **Graphique:** nouveau graphique des approvisionnements EGalim ([#7361](https://github.com/betagouv/ma-cantine/issues/7361)) ([ee61753](https://github.com/betagouv/ma-cantine/commit/ee61753124ae3eefd8a1b24f87346486927e437c))
+
 ## [2026.55.0](https://github.com/betagouv/ma-cantine/compare/v2026.54.1...v2026.55.0) (2026-10-16)
 
 
