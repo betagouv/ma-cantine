@@ -22,7 +22,7 @@ const gauges = computed(() => {
       mention: props.mention,
       stat: props.bioPercent,
       objective: props.bioObjective,
-      color: "#8AE4B3",
+      color: "var(--ma-cantine-color-bio)",
     },
     {
       hidden: Number(props.year) !== 2026,
@@ -33,13 +33,13 @@ const gauges = computed(() => {
       label: `au moins ${stringsService.prettyPercent(props.egalimObjective)} d’achats EGalim dont bio`,
       stat: props.egalimPercent,
       objective: props.egalimObjective,
-      color: "#1F7046",
+      color: "var(--ma-cantine-color-egalim)",
     },
     {
       label: `au moins ${stringsService.prettyPercent(60)} d’achats EGalim sur les familles viandes et poissons (${stringsService.prettyPercent(100)} pour les restaurants d'État)`,
       stat: props.viandesPoissonsEgalimPercent,
       objective: 60,
-      color: "#0974F6",
+      color: "var(--ma-cantine-color-viandes-poissons)",
     },
   ]
   const displayedGauges = allGauges.filter((gauge) => !gauge.hidden)
