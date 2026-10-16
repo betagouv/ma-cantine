@@ -1,5 +1,6 @@
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
+import { useRootStore } from "@/stores/root.js"
 import diagnosticService from "@/services/diagnostics.js"
 import canteenService from "@/services/canteens.js"
 import diagnosticsFields from "@/services/diagnosticsFields.js"
@@ -26,7 +27,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   async function initStore(canteenId) {
     if (canteenSavedId.value === Number(canteenId)) return
     const diagnosticsResponse = await diagnosticService.fetchDiagnostics(canteenId)
-    const diagnosticYear = diagnosticsResponse["results"].find((result) => result.year === year) || null
+    if (diagnosticsResponse?.status === "error") useRootStore().notifyServerError(diagnosticsResponse)
+    const diagnosticYear = diagnosticsResponse?.results?.find((result) => result.year === year) || null
     if (!diagnosticYear) deleteStore()
     else {
       setDiagnostic(diagnosticYear)
