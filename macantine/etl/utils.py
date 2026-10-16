@@ -1,13 +1,9 @@
 import logging
-import warnings
 from typing import Dict
 
 import numpy as np
 import pandas as pd
 
-from macantine.etl.data_ware_house import DataWareHouse
-
-warnings.filterwarnings("ignore", message="SparkPandasCompare currently only supports Numpy < 2")  # Needed for the CI
 logger = logging.getLogger(__name__)
 
 
@@ -114,20 +110,3 @@ def datetimes_to_str(df):
     for date_column in date_columns:
         df[date_column] = df[date_column].apply(lambda x: x.strftime("%Y-%m-%d %H:%M"))
     return df
-
-
-def compare_datasets(table_version_A, table_version_B):
-    """
-    Prints an evaluation report that compares two versions of a dataset stored in the data-warehouse.
-    """
-    import datacompy
-
-    warehouse = DataWareHouse()
-
-    print("\n###### Evaluation Report #######\n")
-    print(f"Version A: {table_version_A} \n")
-    print(f"Version B: {table_version_B} \n")
-    dfA = warehouse.read_dataframe(table_version_A)
-    dfB = warehouse.read_dataframe(table_version_B)
-    compare = datacompy.PandasCompare(dfA, dfB, on_index=True)
-    print(compare.report())

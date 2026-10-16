@@ -2,7 +2,6 @@ import logging
 import os
 import time
 
-import pandas as pd
 from dotenv import load_dotenv
 from sqlalchemy import URL, create_engine, text
 
@@ -125,6 +124,3 @@ class DataWareHouse:
             raw_connection.close()
         end = time.time()
         logger.info(f"Copied {row_count} rows into table {table} in {end - start:.2f} seconds")
-
-    def read_dataframe(self, table_name):
-        return pd.read_sql(sql=table_name, index_col="id", con=self.engine)
