@@ -2,8 +2,8 @@ import logging
 import os
 import time
 
+import psycopg2
 from dotenv import load_dotenv
-from sqlalchemy import URL, create_engine
 
 logger = logging.getLogger(__name__)
 
@@ -60,33 +60,29 @@ def copy_into_table(cursor, table, column_types: dict, file):
 class DataWareHouse:
     def __init__(self):
         load_dotenv()
-        url_object = URL.create(
-            "postgresql+psycopg2",
-            username=os.environ.get("DATA_WARE_HOUSE_USER"),
-            password=os.environ.get("DATA_WARE_HOUSE_PASSWORD"),
-            host=os.environ.get("DATA_WARE_HOUSE_HOST"),
-            port=os.environ.get("DATA_WARE_HOUSE_PORT"),
-            database=os.environ.get("DATA_WARE_HOUSE_DB"),
-        )
-        self.engine = create_engine(
-            url_object,
-            echo=False,
-        )
+        # no connection here: it is opened (and closed) by each load
+        self.connection_params = {
+            "user": os.environ.get("DATA_WARE_HOUSE_USER"),
+            "password": os.environ.get("DATA_WARE_HOUSE_PASSWORD"),
+            "host": os.environ.get("DATA_WARE_HOUSE_HOST"),
+            "port": os.environ.get("DATA_WARE_HOUSE_PORT"),
+            "dbname": os.environ.get("DATA_WARE_HOUSE_DB"),
+        }
 
     def copy_file(self, file, table, column_types: dict):
         """
         Replace the content of a table with a Postgres COPY (text format) file, in a single transaction
         """
         start = time.time()
-        raw_connection = self.engine.raw_connection()
+        connection = psycopg2.connect(**self.connection_params)
         try:
-            with raw_connection.cursor() as cursor:
+            with connection.cursor() as cursor:
                 row_count = copy_into_table(cursor, table, column_types, file)
-            raw_connection.commit()
+            connection.commit()
         except Exception:
-            raw_connection.rollback()
+            connection.rollback()
             raise
         finally:
-            raw_connection.close()
+            connection.close()
         end = time.time()
         logger.info(f"Copied {row_count} rows into table {table} in {end - start:.2f} seconds")
