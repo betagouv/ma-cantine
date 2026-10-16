@@ -3,6 +3,7 @@ import { computed, ref, onMounted } from "vue"
 import { useRoute } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import canteenService from "@/services/canteens.js"
 import canteensTableService from "@/services/canteensTable.js"
 import GestionnaireSidebarTitle from "@/components/GestionnaireSidebarTitle.vue"
@@ -14,6 +15,7 @@ import CanteenModalSatelliteRemove from "@/components/CanteenModalSatelliteRemov
 const route = useRoute()
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
+const teledeclarationStore = useStoreTeledeclaration()
 const modalAddSatelliteOpened = ref(false)
 const modalRemoveSatelliteOpened = ref(false)
 const satelliteToRemove = ref()
@@ -28,6 +30,12 @@ const updateSatellites = () => {
   })
 }
 onMounted(() => updateSatellites())
+
+const onSatellitesChanged = () => {
+  updateSatellites()
+  canteenStore.refreshStore()
+  teledeclarationStore.refreshStore()
+}
 
 const satellitesCountSentence = computed(() => {
   const number = getSatellitesPrettCount(satellitesDisplayed.value.length)
@@ -98,20 +106,20 @@ const clickSearch = () => {
       v-if="satellitesDisplayed.length > 0"
       :satellites="satellitesDisplayed"
       :groupe="canteenInformations"
-      @updateSatellites="updateSatellites"
+      @updateSatellites="onSatellitesChanged"
       @showModalRemoveSatellite="showModalRemoveSatellite" />
     <CanteenModalSatelliteAdd
       :open="modalAddSatelliteOpened"
       :groupId="canteenInformations.id"
       @close="modalAddSatelliteOpened = false"
-      @updateSatellites="updateSatellites" />
+      @updateSatellites="onSatellitesChanged" />
     <CanteenModalSatelliteRemove
       v-if="satelliteToRemove"
       :opened="modalRemoveSatelliteOpened"
       :groupe="canteenInformations"
       :satellite="satelliteToRemove"
       @close="modalRemoveSatelliteOpened = false"
-      @satelliteRemoved="updateSatellites"
+      @satelliteRemoved="onSatellitesChanged"
     />
   </div>
 </template>
