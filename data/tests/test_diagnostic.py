@@ -1015,7 +1015,9 @@ class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             # valeur_totale will be set to None below
         )
-        Diagnostic.objects.filter(id=cls.diagnostic_2024_simple_not_filled.id).update(valeur_totale=None)
+        Diagnostic.objects.filter(id=cls.diagnostic_2024_simple_not_filled.id).update(
+            valeur_totale=None, is_filled=False
+        )
         cls.diagnostic_2024_simple_filled = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
         )
@@ -1025,7 +1027,9 @@ class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
             diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
             # valeur_totale will be set to None below
         )
-        Diagnostic.objects.filter(id=cls.diagnostic_2024_complete_not_filled.id).update(valeur_totale=None)
+        Diagnostic.objects.filter(id=cls.diagnostic_2024_complete_not_filled.id).update(
+            valeur_totale=None, is_filled=False
+        )
         cls.diagnostic_2024_complete_filled = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, valeur_totale=1000
         )
@@ -1036,7 +1040,7 @@ class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
             # valeur_totale & valeur_bio will be set to None below
         )
         Diagnostic.objects.filter(id=cls.diagnostic_2025_simple_not_filled.id).update(
-            valeur_totale=None, valeur_bio=None
+            valeur_totale=None, valeur_bio=None, is_filled=False
         )
         cls.diagnostic_2025_simple_filled = DiagnosticFactory(
             year=2025,
@@ -1061,7 +1065,9 @@ class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
             valeur_viandes_volailles_egalim=0,
             # valeur_produits_de_la_mer will be set to None below
         )
-        Diagnostic.objects.filter(id=cls.diagnostic_2025_complete_not_filled.id).update(valeur_produits_de_la_mer=None)
+        Diagnostic.objects.filter(id=cls.diagnostic_2025_complete_not_filled.id).update(
+            valeur_produits_de_la_mer=None, is_filled=False
+        )
         cls.diagnostic_2025_complete_filled = DiagnosticFactory(
             year=2025,
             canteen=CanteenFactory(),
@@ -1080,7 +1086,9 @@ class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             # nombre_repas_an will be set to None below
         )
-        Diagnostic.objects.filter(id=cls.diagnostic_2026_simple_not_filled.id).update(nombre_repas_an=None)
+        Diagnostic.objects.filter(id=cls.diagnostic_2026_simple_not_filled.id).update(
+            nombre_repas_an=None, is_filled=False
+        )
 
     def test_is_empty_property(self):
         Diagnostic.objects.filter(id=self.diagnostic_2024_simple_filled.id).update(year=None)
