@@ -13,10 +13,10 @@ const clickLink = (index) => emit("openAccordion", index)
 const objectives = computed(() => props.diagnosticRecap?.notes)
 const approStats = computed(() => props.diagnosticRecap?.canteenDiagnosticApproStats)
 
-const egalimColor = computed(() => props.isTeledeclared ? "#1F7046" : "var(--border-default-grey)")
-const siqoColor = computed(() => props.isTeledeclared ? "#29A86D" : "var(--border-default-grey)")
-const bioColor = computed(() => props.isTeledeclared ? "#8AE4B3" : "var(--border-default-grey)")
-const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "var(--border-default-grey)")
+const egalimColor = computed(() => props.isTeledeclared ? "var(--ma-cantine-color-egalim)" : "var(--border-default-grey)")
+const siqoColor = computed(() => props.isTeledeclared ? "var(--ma-cantine-color-siqo)" : "var(--border-default-grey)")
+const bioColor = computed(() => props.isTeledeclared ? "var(--ma-cantine-color-bio)" : "var(--border-default-grey)")
+const viandePoissonColor = computed(() => props.isTeledeclared ? "var(--ma-cantine-color-viandes-poissons)" : "var(--border-default-grey)")
 </script>
 
 <template>

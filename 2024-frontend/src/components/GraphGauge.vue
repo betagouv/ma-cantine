@@ -1,201 +1,82 @@
 <script setup>
+import { computed } from "vue"
 import stringsService from "@/services/strings"
-const props = defineProps(["objectives", "stats", "legends"])
+const props = defineProps(["stat", "objective", "label", "mention", "disabled", "color"])
 
-const checkOutside = (index) => {
-  const minValue = 5
-  const checkStatsDifference = props.stats.length > 1
-  if (checkStatsDifference) return Math.abs(props.stats[1] - props.stats[0]) < minValue && index === 0
-  else return props.stats[index] < minValue
-}
+const gaugeColor = computed(() => props.color || "var(--green-emeraude-main-632)")
+const hasObjective = computed(() => props.objective !== null && props.objective !== undefined)
+const hasHatch = computed(() => hasObjective.value && props.stat < props.objective)
 </script>
 
 <template>
-  <div class="graph-gauge fr-mb-3w" :class="{ 'fr-mt-7w': objectives, 'fr-mt-4w': !objectives }">
-    <div v-if="objectives" class="graph-gauge__objectives-container">
+  <div class="graph-gauge fr-mb-3w">
+    <div v-if="label || mention" class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mb-1w">
+      <p class="graph-gauge__label fr-mb-0 ma-cantine--bold">{{ label }}</p>
+      <p v-if="mention" class="fr-text--sm fr-text-mention--grey fr-mb-0">{{ mention }}</p>
+    </div>
+    <p v-if="disabled" class="fr-text--sm fr-text-mention--grey fr-mb-0">{{ disabled }}</p>
+    <div v-else class="graph-gauge__track">
+      <div class="graph-gauge__progress" :style="`width: ${stat}%`"></div>
+      <div
+        v-if="hasHatch"
+        class="graph-gauge__hatch"
+        :style="`left: ${stat}%; width: ${objective - stat}%`"
+      ></div>
+      <div v-if="hasObjective" class="graph-gauge__objective" :style="`left: ${objective}%`"></div>
       <p
-        v-for="objectif in objectives"
-        :key="objectif"
-        :style="`left: ${objectif.value}%`"
-        class="graph-gauge__objectif fr-text--sm ma-cantine--bold"
-        :class="{ alignRight: objectif.value === 100 }"
+        class="graph-gauge__stat fr-mb-0 ma-cantine--bold fr-text--sm fr-px-1v"
+        :style="`left: ${stat}%`"
       >
-        {{ objectif.name }}
-      </p>
-    </div>
-    <div class="graph-gauge__bars-container">
-      <div v-for="(stat, index) in stats" :key="stat" class="graph-gauge__bar" :style="`width: ${stat}%`">
-        <p
-          class="graph-gauge__stat fr-mb-0 ma-cantine--bold fr-text--sm fr-px-1w"
-          :class="{ outside: checkOutside(index) }"
-        >
-          {{ stringsService.prettyPercent(stat) }}
-        </p>
-      </div>
-    </div>
-    <div v-if="legends || objectives" class="graph-gauge__legends-container fr-mt-2w">
-      <p v-for="legend in legends" :key="legend" class="graph-gauge__legend fr-mb-0">
-        {{ legend }}
-      </p>
-      <p v-if="objectives" class="graph-gauge__legend graph-gauge__legend--objectif fr-mb-0">
-        objectifs EGalim
+        {{ stringsService.prettyPercent(stat) }}
       </p>
     </div>
   </div>
 </template>
 
 <style lang="scss">
-$graphHeight: 3rem;
-$objectivesHeight: 1rem;
-$dashColor: var(--green-emeraude-sun-425-moon-753);
-$fillColor: var(--green-emeraude-main-632);
-$objectifColor: black;
-$legendSquareSize: 1rem;
-$legendDashSize: calc($legendSquareSize / 5);
-
-@function getDashedBackground($size: 0.5rem) {
-  $dashSize: $size;
-  $doubleDashSize: $dashSize * 2;
-  @return repeating-linear-gradient(
-    to left,
-    $dashColor,
-    $dashColor $dashSize,
-    transparent $dashSize,
-    transparent $doubleDashSize
-  );
-}
+$graphHeight: 2.5rem;
+$objectifColor: var(--text-mention-grey);
+$hatchColor: var(--border-default-grey);
 
 .graph-gauge {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: stretch;
-
-  &__objectives-container {
-    z-index: 1;
+  &__track {
     position: relative;
-    height: $objectivesHeight;
-  }
-
-  &__objectif {
-    position: absolute;
-    top: 0;
-    transform: translateY(-100%);
-
-    &::before {
-      content: "";
-      height: calc($graphHeight + $objectivesHeight);
-      border-width: 1px;
-      border-style: dashed;
-      border-color: $objectifColor;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      transform: translateY(100%);
-    }
-
-    &.alignRight {
-      transform: translateY(-100%) translateX(-100%);
-      width: 10rem;
-      text-align: right;
-      &::before {
-        right: 0;
-        left: auto;
-      }
-    }
-  }
-
-  &__bars-container {
-    position: relative;
-    border: solid 1px $dashColor;
     height: $graphHeight;
+    background-color: var(--background-contrast-grey);
   }
 
-  &__bar {
+  &__progress,
+  &__hatch {
     position: absolute;
-    left: 0;
     top: 0;
     bottom: 0;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+  }
 
-    &:first-child {
-      background-color: $fillColor;
-      color: $fillColor;
-    }
+  &__progress {
+    left: 0;
+    background-color: v-bind(gaugeColor);
+  }
 
-    &:nth-child(2) {
-      background: getDashedBackground();
-      color: $dashColor;
-    }
+  &__hatch {
+    background: repeating-linear-gradient(-45deg, $hatchColor 0 1px, transparent 1px 0.4rem);
+  }
+
+  &__objective {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    border-left: 1px dashed $objectifColor;
+    transform: translateX(-50%);
   }
 
   &__stat {
-    color: white;
-
-    &.outside {
-      transform: translateX(100%);
-      color: inherit;
-    }
-  }
-
-  &__legends-container {
-    display: flex;
-    gap: 1rem;
-    flex-direction: column;
-
-    @media (min-width: 768px) {
-      flex-direction: row;
-      gap: 2rem;
-    }
-  }
-
-  &__legend {
-    padding-left: 1.5rem;
-    position: relative;
-
-    &:before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: $legendSquareSize;
-      height: $legendSquareSize;
-      border-style: solid;
-      border-width: 1px 0;
-    }
-
-    &:first-child:not(.graph-gauge__legend--objectif) {
-      color: $fillColor;
-      &:before {
-        border-color: $fillColor;
-        background-color: $fillColor;
-      }
-    }
-
-    &:nth-child(2):not(.graph-gauge__legend--objectif) {
-      color: $dashColor;
-      &:before {
-        background-color: transparent;
-        border-color: $dashColor;
-        background: getDashedBackground($legendDashSize);
-      }
-    }
-
-    &--objectif {
-      color: $objectifColor;
-      &:before {
-        background-color: transparent;
-        border-color: $objectifColor;
-        border-style: dashed;
-        border-bottom-width: 0;
-        border-left-width: 0;
-        border-top-width: 0;
-        border-right-width: 2px;
-      }
-    }
+    position: absolute;
+    top: 50%;
+    white-space: nowrap;
+    color: var(--text-title-grey);
+    background-color: var(--background-default-grey);
+    border-radius: 0.25rem;
+    transform: translate(-50%, -50%);
   }
 }
 </style>

@@ -1,8 +1,9 @@
 <script setup>
-import { computed, ref } from "vue"
+import { computed, ref, useId } from "vue"
 const props = defineProps(["valuesToVerify", "description"])
 
-const accordion = ref()
+const displayOptionName = useId()
+const displayOption = ref("graph")
 const displayGraph = computed(() => {
   const incorrectValues = props.valuesToVerify.filter(
     (value) => value === null || value === undefined || value === false
@@ -11,14 +12,30 @@ const displayGraph = computed(() => {
 })
 </script>
 <template>
-  <slot v-if="displayGraph"></slot>
+  <template v-if="displayGraph">
+    <DsfrSegmentedSet
+      v-if="description"
+      :name="displayOptionName"
+      label="Choix d'affichage"
+      :options="[
+        {
+          label: 'Graphique',
+          value: 'graph',
+        },
+        {
+          label: 'Texte',
+          value: 'text',
+        },
+      ]"
+      v-model="displayOption"
+      small
+      class="fr-mb-2w"
+    />
+    <p v-if="displayOption === 'text'" class="fr-mb-0">{{ description || "Aucune description" }}</p>
+    <slot v-else></slot>
+  </template>
   <p v-else>
     Une erreur est survenue lors de l'affichage du graphique, veuillez recharger la page et si l'erreur persiste
     contactez-nous.
   </p>
-  <DsfrAccordionsGroup v-if="description && displayGraph" v-model="accordion">
-    <DsfrAccordion title="Description du graphique" titleTag="p">
-      <p class="fr-mb-0">{{ description }}</p>
-    </DsfrAccordion>
-  </DsfrAccordionsGroup>
 </template>

@@ -1,3 +1,11 @@
+/* COLORS */
+:root {
+    --ma-cantine-color-bio: #8AE4B3;
+    --ma-cantine-color-egalim: #1F7046;
+    --ma-cantine-color-siqo: #29A86D;
+    --ma-cantine-color-viandes-poissons: #0974F6;
+}
+
 /* GENERAL */
 html {
     scroll-behavior: smooth;

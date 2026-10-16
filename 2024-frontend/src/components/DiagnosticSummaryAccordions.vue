@@ -1,11 +1,17 @@
 <script setup>
-import { ref, watch } from "vue"
+import { ref, watch, computed } from "vue"
 import { useRouter } from "vue-router"
+import stringsService from "@/services/strings"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import GraphEgalim from "@/components/GraphEgalim.vue"
 
-const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared'])
+const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared', 'diagnosticRecap'])
 const activeAccordion = ref(props.open)
 watch(() => props.open, (value) => activeAccordion.value = value)
+
+/* Appro */
+const approStats = computed(() => props.diagnosticRecap?.canteenDiagnosticApproStats)
+const objectives = computed(() => props.diagnosticRecap?.notes)
 
 /* Navigation */
 const router = useRouter()
@@ -34,6 +40,17 @@ const goToPage = (page) => router.push(page)
       <div v-else class="ma-cantine--flex-end">
         <DsfrButton @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
       </div>
+      <GraphEgalim
+        v-if="volet.key === 'appro' && isTeledeclared"
+        :egalim-percent="approStats.pourcentageEgalim"
+        :bio-percent="approStats.pourcentageBio"
+        :viandes-poissons-egalim-percent="approStats.pourcentageViandesVolaillesProduitsDeLaMerEgalim"
+        :egalim-objective="objectives.egalimPercentObjective"
+        :bio-objective="objectives.bioPercentObjective"
+        :mention="`sur ${stringsService.prettyPercent(100)} du Total de vos achats`"
+        :year="diagnosticRecap.year"
+        :description-custom="`Pour le bilan ${diagnosticRecap.year}`"
+      />
     </DsfrAccordion>
   </DsfrAccordionsGroup>
 </template>

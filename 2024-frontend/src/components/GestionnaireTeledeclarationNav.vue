@@ -39,8 +39,8 @@ const currentCanteenAction = computed(() => {
 
 /* Macaron status */
 const teledeclarationStore = useStoreTeledeclaration()
-const { diagnoticCheck, isTeledeclared } = storeToRefs(teledeclarationStore)
-const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value))
+const { diagnoticCheck, isTeledeclared, diagnosticRecap } = storeToRefs(teledeclarationStore)
+const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value, diagnosticRecap.value))
 </script>
 <template>
   <div v-if="isInTeledeclaration || isInCorrection" class="gestionnaire-teledeclaration-nav fr-sidemenu">

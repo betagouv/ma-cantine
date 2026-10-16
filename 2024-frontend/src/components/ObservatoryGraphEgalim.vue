@@ -18,6 +18,6 @@ const description = computed(() => {
 <template>
   <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
   <GraphBase :valuesToVerify="[approPercent]" :description="description">
-    <GraphGauge :stats="[approPercent]" />
+    <GraphGauge :stat="approPercent" />
   </GraphBase>
 </template>

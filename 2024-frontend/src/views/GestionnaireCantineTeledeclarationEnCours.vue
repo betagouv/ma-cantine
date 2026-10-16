@@ -118,7 +118,7 @@ const showError = (message) => rootStore.notifyServerError(message)
       </AppHelpCard>
     </div>
   </div>
-  <DiagnosticSummary class="fr-mb-5w" :diagnostic-recap="diagnosticRecap" />
+  <DiagnosticSummary class="fr-mb-5w" />
   <div v-if="!canTeledeclare && !isTeledeclared">
     <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
