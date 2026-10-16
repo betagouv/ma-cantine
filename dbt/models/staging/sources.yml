@@ -7,8 +7,6 @@ sources:
       These can be used as sources immediately without FDW.
     schema: public
     tables:
-      - name: teledeclarations
-        description: Télédéclarations loaded by the Python ETL. Will be obsolete once 1td1site is live.
       - name: canteens_raw
         description: Raw canteen data dumped from the production database (including deleted ones, see deletion_date).
       - name: canteen_managers_raw
