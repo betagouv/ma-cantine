@@ -16,17 +16,17 @@ const props = defineProps([
 const title = "Objectifs EGalim"
 const gauges = computed(() => [
   {
-    label: `au moins ${stringsService.prettyPercent(props.egalimObjective)} d’achats EGalim dont bio`,
-    mention: props.mention,
-    stat: props.egalimPercent,
-    objective: props.egalimObjective,
-    color: "#1F7046",
-  },
-  {
     label: `au moins ${stringsService.prettyPercent(props.bioObjective)} d’achats Bio ou en conversion`,
+    mention: props.mention,
     stat: props.bioPercent,
     objective: props.bioObjective,
     color: "#8AE4B3",
+  },
+  {
+    label: `au moins ${stringsService.prettyPercent(props.egalimObjective)} d’achats EGalim dont bio`,
+    stat: props.egalimPercent,
+    objective: props.egalimObjective,
+    color: "#1F7046",
   },
   {
     label: `au moins ${stringsService.prettyPercent(60)} d’achats EGalim sur les familles viandes et poissons (${stringsService.prettyPercent(100)} pour les restaurants d'État)`,
