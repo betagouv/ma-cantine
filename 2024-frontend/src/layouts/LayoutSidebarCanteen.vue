@@ -1,9 +1,8 @@
 <script setup>
 import { computed } from "vue"
-import { useRoute, RouterView, onBeforeRouteLeave } from "vue-router"
+import { useRoute, RouterView } from "vue-router"
 import { storeToRefs } from "pinia"
 import { useStoreCanteen } from "@/stores/canteen.js"
-import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
@@ -17,10 +16,6 @@ const currentRoute = computed(() => route.name)
 /* Store */
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
-const teledeclarationStore = useStoreTeledeclaration()
-
-/* Reload the teledeclaration data when coming back to the canteen pages */
-onBeforeRouteLeave(() => teledeclarationStore.refreshStore())
 
 /* Sidebar links */
 const menuItems = computed(() =>  {

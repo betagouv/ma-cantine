@@ -71,13 +71,10 @@ const quitBrowser = (event) => {
 }
 
 const quitTunnel = (to) => {
-  const canQuit = quitConfirmed.value || !teledeclarationStore.hasDiagnostic || teledeclarationStore.isSaved
-  if (canQuit) teledeclarationStore.refreshStore()
-  else {
-    quitRoute.value = to.fullPath
-    showQuitModal.value = true
-  }
-  return canQuit
+  if (quitConfirmed.value || !teledeclarationStore.hasDiagnostic || teledeclarationStore.isSaved) return true
+  quitRoute.value = to.fullPath
+  showQuitModal.value = true
+  return false
 }
 
 const quit = () => {
