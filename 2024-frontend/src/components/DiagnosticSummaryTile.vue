@@ -36,7 +36,7 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
               <IconLink class="fr-col-1" top="1.25rem" />
               <div class="fr-col-11">
                 <ul class="ma-cantine--unstyled-list fr-pl-1w">
-                  <li class="ma-cantine--flex-start ma-cantine--flex-gap-1">
+                  <li class="diagnostic-summary-tile__appro-item ma-cantine--flex-gap-1">
                     <div class="diagnostic-summary-tile__square diagnostic-summary-tile__square--egalim"></div>
                     <p v-if="isTeledeclared" class="fr-mb-0 fr-text--sm">
                       <span class="ma-cantine--bold">{{ formatNumber(approStats?.pourcentageEgalim) }}%</span> de produits EGalim
@@ -45,16 +45,13 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
                       Objectif {{ formatNumber(objectives?.egalimPercentObjective) }}% d’achat EGalim
                     </p>
                   </li>
-                  <li class="ma-cantine--flex-start ma-cantine--flex-gap-1">
+                  <li v-if="diagnosticRecap?.year === 2026" class="diagnostic-summary-tile__appro-item ma-cantine--flex-gap-1">
                     <div class="diagnostic-summary-tile__square diagnostic-summary-tile__square--siqo"></div>
-                    <p v-if="isTeledeclared" class="fr-mb-0 fr-text--sm">
-                      dont <span class="ma-cantine--bold">{{ formatNumber(approStats?.pourcentageSiqo) }}%</span> SIQO, HVE ou fermiers
-                    </p>
-                    <p v-else class="fr-mb-0 fr-text--sm">
-                      dont 30% SIQO, HVE ou fermiers
+                    <p class="fr-mb-0 fr-text--sm">
+                      le seuil des 30% SIQO, HVE ou fermiers sera comptabilisé dès implémentation des nouvelles catégories UPSA à partir des achats du 1er janvier 2027 pour télédéclaration en 2028
                     </p>
                   </li>
-                  <li class="ma-cantine--flex-start ma-cantine--flex-gap-1">
+                  <li class="diagnostic-summary-tile__appro-item ma-cantine--flex-gap-1">
                     <div class="diagnostic-summary-tile__square diagnostic-summary-tile__square--bio"></div>
                     <p v-if="isTeledeclared" class="fr-mb-0 fr-text--sm">
                       et <span class="ma-cantine--bold">{{ formatNumber(approStats?.pourcentageBio) }}%</span> bio ou en Conversion
@@ -126,9 +123,16 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
     height: 2rem;
   }
 
+  &__appro-item {
+    display: flex;
+    align-items: flex-start;
+  }
+
   &__square {
+    flex-shrink: 0;
     width: 0.5rem;
     height: 0.5rem;
+    margin-top: 0.5rem;
 
     &--egalim {
       background-color: v-bind(egalimColor);
