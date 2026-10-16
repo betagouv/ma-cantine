@@ -260,14 +260,23 @@ class BaseImportView(ABC, APIView):
         )
 
     def _log_success(self, response_data):
-        """Create EventLog record"""
+        """Create EventLog record (linked to the canteen if the import concerns a single canteen)"""
+        canteen_ids = self._get_canteen_ids()
         EventLog.log(
             EventLog.Category.IMPORT,
             self.import_type,
             EventLog.Status.SUCCESS,
             user=self.request.user,
+            canteen_id=next(iter(canteen_ids)) if len(canteen_ids) == 1 else None,
             data={"message": None, "count": response_data.get("count"), "seconds": self._get_duration()},
         )
+
+    def _get_canteen_ids(self):
+        """
+        Ids of the canteens concerned by the import (only called on success: on failure, the objects are rolled back)
+        Override in subclasses.
+        """
+        return set()
 
     def _get_duration(self):
         return round(time.time() - self.start_time, 2)

@@ -190,6 +190,9 @@ class BasePurchasesImportView(BaseImportView):
         if not self.errors:
             Purchase.objects.filter(import_source=self.tmp_id).update(import_source=self.file_digest)
 
+    def _get_canteen_ids(self):
+        return {purchase.canteen_id for purchase in self.purchases}
+
     def _get_response_data(self):
         """Return purchase-specific response data"""
         return {

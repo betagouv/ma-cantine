@@ -36,6 +36,15 @@ class EventLog(models.Model):
         related_name="+",
         verbose_name="Application OAuth2 (API)",
     )
+    canteen = models.ForeignKey(
+        "data.Canteen",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+        verbose_name="cantine",
+        help_text="Uniquement si l'événement concerne une seule cantine",
+    )
     data = models.JSONField(default=dict, blank=True, verbose_name="données")
 
     creation_date = models.DateTimeField(auto_now_add=True, verbose_name="date de création")
@@ -46,7 +55,7 @@ class EventLog(models.Model):
         verbose_name_plural = "journal d'événements"
 
     @classmethod
-    def log(cls, category, name, status, user=None, api_oauth2_application=None, data=None):
+    def log(cls, category, name, status, user=None, api_oauth2_application=None, canteen_id=None, data=None):
         """
         Create an EventLog without ever raising: logging must not break the request or task.
         The savepoint keeps a failed insert from breaking an outer transaction.
@@ -61,6 +70,7 @@ class EventLog(models.Model):
                     status=status,
                     user=user,
                     api_oauth2_application=api_oauth2_application,
+                    canteen_id=canteen_id,
                     data=data or {},
                 )
         except Exception:

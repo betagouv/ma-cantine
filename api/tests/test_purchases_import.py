@@ -401,7 +401,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
         """
         Tests that can import a well formatted purchases file
         """
-        CanteenFactory(siret="21010034300016", managers=[authenticate.user])
+        canteen = CanteenFactory(siret="21010034300016", managers=[authenticate.user])
         self.assertEqual(Purchase.objects.count(), 0)
 
         file_path = "./api/tests/files/achats/purchases_good.csv"
@@ -410,7 +410,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 8)
-        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE, 8)
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE, 8, canteen=canteen)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 8)

@@ -246,7 +246,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
             response = self.client.post(self.url, {"file": managers_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_MANAGERS, 1)
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_MANAGERS, 1, canteen=canteen)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)

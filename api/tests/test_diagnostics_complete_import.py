@@ -299,7 +299,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 2)
-        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, 2)
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, 2, canteen=None)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 2)

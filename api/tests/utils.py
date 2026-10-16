@@ -35,8 +35,14 @@ def assert_import_failure_created(self, user, type, file_path):
     self.assertIsNone(event_log.data["count"])
 
 
-def assert_import_success_created(self, user, type, count=None):
-    """Checks the latest import (some tests run several imports)"""
+NOT_CHECKED = object()
+
+
+def assert_import_success_created(self, user, type, count=None, canteen=NOT_CHECKED):
+    """
+    Checks the latest import (some tests run several imports)
+    canteen: the canteen if the import concerns a single canteen, None if several
+    """
     self.assertFalse(ImportFailure.objects.exists())
     event_log = EventLog.objects.filter(category=EventLog.Category.IMPORT).order_by("creation_date", "id").last()
     self.assertIsNotNone(event_log)
@@ -47,6 +53,8 @@ def assert_import_success_created(self, user, type, count=None):
     self.assertIsNone(event_log.data["message"])
     if count is not None:
         self.assertEqual(event_log.data["count"], count)
+    if canteen is not NOT_CHECKED:
+        self.assertEqual(event_log.canteen, canteen)
 
 
 def assert_almost_equal(self, value, expected_value):

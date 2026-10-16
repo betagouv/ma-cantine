@@ -13,7 +13,7 @@ from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory, UserFactory
-from data.models import Canteen, Diagnostic, Sector, Teledeclaration
+from data.models import Canteen, Diagnostic, EventLog, Sector, Teledeclaration
 from data.models.creation_source import CreationSource
 
 CURRENT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -567,6 +567,10 @@ class CanteenCreateApiTest(APITestCase):
         canteen_history = canteen.history.first()
         self.assertEqual(canteen_history.history_source, CreationSource.API)
         self.assertEqual(canteen_history.history_source_api_oauth2_application, token.application)
+        # EventLog
+        event_log = EventLog.objects.get()
+        self.assertEqual(event_log.name, "POST /api/v1/canteens/")
+        self.assertEqual(event_log.canteen, canteen)
 
     def test_cannot_create_canteen_via_oauth2_without_canteen_write_scope(self):
         canteen_count = Canteen.objects.count()

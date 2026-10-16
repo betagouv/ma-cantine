@@ -360,7 +360,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         errors = body["errors"]
-        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, 2)
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_UPDATE, 2, canteen=None)
         self.assertEqual(body["count"], 2)
         self.assertEqual(len(body["canteens"]), 2)
         self.assertEqual(len(errors), 0, errors)

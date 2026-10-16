@@ -4,14 +4,16 @@ from django.core.management import call_command
 from django.test import TestCase
 from django.utils import timezone
 
-from data.factories import PurchaseFactory, UserFactory
+from data.factories import CanteenFactory, PurchaseFactory, UserFactory
 from data.models import EventLog, ImportType, Purchase
 from data.models.creation_source import CreationSource
 
 
-def create_imported_purchases(user, file_digest, creation_date, count):
+def create_imported_purchases(user, file_digest, creation_date, count, canteen=None):
+    """Without canteen: each purchase is for a different canteen"""
+    extra = {"canteen": canteen} if canteen else {}
     purchases = PurchaseFactory.create_batch(
-        count, creation_user=user, creation_source=CreationSource.IMPORT, import_source=file_digest
+        count, creation_user=user, creation_source=CreationSource.IMPORT, import_source=file_digest, **extra
     )
     Purchase.objects.filter(id__in=[p.id for p in purchases]).update(creation_date=creation_date)
     return purchases
@@ -25,7 +27,8 @@ class EventLogBackfillPurchaseImportsTest(TestCase):
         self.user_2 = UserFactory()
         self.date_1 = timezone.make_aware(datetime.datetime(2025, 3, 1, 10, 0))
         self.date_2 = timezone.make_aware(datetime.datetime(2026, 1, 15, 9, 30))
-        create_imported_purchases(self.user_1, "digest_1", self.date_1, 3)
+        self.canteen = CanteenFactory()
+        create_imported_purchases(self.user_1, "digest_1", self.date_1, 3, canteen=self.canteen)
         create_imported_purchases(self.user_2, "digest_2", self.date_2, 2)
 
     def run_command(self, apply=True, before=None):
@@ -55,6 +58,12 @@ class EventLogBackfillPurchaseImportsTest(TestCase):
         event_log_2 = EventLog.objects.get(data__file_digest="digest_2")
         self.assertEqual(event_log_2.user, self.user_2)
         self.assertEqual(event_log_2.data["count"], 2)
+
+    def test_canteen_only_if_single_canteen(self):
+        self.run_command()
+
+        self.assertEqual(EventLog.objects.get(data__file_digest="digest_1").canteen, self.canteen)  # 1 canteen
+        self.assertIsNone(EventLog.objects.get(data__file_digest="digest_2").canteen)  # 2 canteens
 
     def test_dry_run_creates_nothing(self):
         self.run_command(apply=False)
