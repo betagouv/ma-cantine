@@ -21,6 +21,8 @@ sources:
         description: Raw user data dumped from the production database.
       - name: waste_measurements_raw
         description: Raw waste measurements dumped from the production database.
+      - name: event_logs_raw
+        description: Raw event logs (imports, API requests...) dumped from the production database (details in the data jsonb column).
       - name: oauth2_applications_raw
         description: Raw OAuth2 applications (API clients) dumped from the production database (without client_secret).
       - name: oauth2_applications_extra_raw

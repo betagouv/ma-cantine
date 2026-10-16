@@ -13,10 +13,11 @@ from data.factories import (
     ApplicationFactory,
     CanteenFactory,
     DiagnosticFactory,
+    EventLogFactory,
     RefreshTokenFactory,
     UserFactory,
 )
-from data.models import Canteen, Diagnostic, Sector, User
+from data.models import Canteen, Diagnostic, EventLog, Sector, User
 from macantine.etl.analysis import ETL_ANALYSIS_CANTEEN, ETL_ANALYSIS_RAW, ETL_ANALYSIS_TELEDECLARATIONS
 from macantine.etl.data_ware_house import copy_into_table, get_column_types
 from macantine.tasks import get_raw_analysis_datasets
@@ -717,6 +718,29 @@ class RawETLAnalysisTest(TestCase):
         with connection.cursor() as cursor:
             self.assertEqual(get_column_types(cursor, "test_canteens_raw")["sector_list"], "jsonb")
             self.assertEqual(get_column_types(cursor, "test_stg_canteens"), {})  # dependent view dropped
+
+    def test_copy_event_logs(self):
+        canteen = CanteenFactory()
+        EventLogFactory(canteen=canteen, data={"message": None, "count": 3, "seconds": 1.2})
+
+        etl = get_raw_analysis_datasets()["event_logs_raw_analysis"]
+        etl.dataset_name = "test_event_logs_raw"
+        self.run_etl(etl)
+
+        self.assertEqual(
+            fetch_all('SELECT category, name, status, canteen_id, data FROM "test_event_logs_raw"'),
+            [
+                (
+                    EventLog.Category.IMPORT,
+                    "PURCHASE_SIRET",
+                    EventLog.Status.SUCCESS,
+                    canteen.id,
+                    '{"count": 3, "message": null, "seconds": 1.2}',  # jsonb (not parsed by Django)
+                )
+            ],
+        )
+        with connection.cursor() as cursor:
+            self.assertEqual(get_column_types(cursor, "test_event_logs_raw")["data"], "jsonb")
 
 
 class OAuth2RawETLAnalysisTest(TestCase):
