@@ -30,7 +30,7 @@ const gauges = computed(() => [
     label: `au moins ${stringsService.prettyPercent(60)} d’achats EGalim sur les familles viandes et poissons (${stringsService.prettyPercent(100)} pour les restaurants d'État)`,
     stat: props.viandesPoissonsEgalimPercent,
     objective: 60,
-    color: "#695240",
+    color: "#0974F6",
   },
 ])
 

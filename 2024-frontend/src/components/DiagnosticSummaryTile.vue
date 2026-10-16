@@ -16,7 +16,7 @@ const approStats = computed(() => props.diagnosticRecap?.canteenDiagnosticApproS
 const egalimColor = computed(() => props.isTeledeclared ? "#1F7046" : "var(--border-default-grey)")
 const siqoColor = computed(() => props.isTeledeclared ? "#29A86D" : "var(--border-default-grey)")
 const bioColor = computed(() => props.isTeledeclared ? "#8AE4B3" : "var(--border-default-grey)")
-const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "var(--border-default-grey)")
+const viandePoissonColor = computed(() => props.isTeledeclared ? "#0974F6" : "var(--border-default-grey)")
 </script>
 
 <template>
