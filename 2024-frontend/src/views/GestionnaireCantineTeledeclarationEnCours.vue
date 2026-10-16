@@ -1,6 +1,5 @@
 <script setup>
 import { computed, ref } from "vue"
-import { computedAsync } from "@vueuse/core"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
@@ -24,14 +23,9 @@ const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Teledeclaration */
 const teledeclarationStore = useStoreTeledeclaration()
-const { hasDiagnostic, canteenAction, isTeledeclared, diagnoticCheck } = storeToRefs(teledeclarationStore)
+const { diagnosticRecap, hasDiagnostic, canteenAction, isTeledeclared, diagnoticCheck } = storeToRefs(teledeclarationStore)
 const year = teledeclarationStore.getYear()
 const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
-const diagnosticRecap = computedAsync(async () => {
-  if (!isTeledeclared.value) return null
-  const diagnostics = await diagnosticService.fetchDiagnosticsRecap(canteenInformations.value.id)
-  return diagnostics.find((diagnostic) => diagnostic.year === year) || null
-}, null)
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
@@ -124,7 +118,7 @@ const showError = (message) => rootStore.notifyServerError(message)
       </AppHelpCard>
     </div>
   </div>
-  <DiagnosticSummary class="fr-mb-5w" />
+  <DiagnosticSummary class="fr-mb-5w" :diagnostic-recap="diagnosticRecap" />
   <div v-if="!canTeledeclare && !isTeledeclared">
     <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />

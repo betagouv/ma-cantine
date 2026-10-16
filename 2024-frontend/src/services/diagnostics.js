@@ -66,6 +66,18 @@ const fetchDiagnosticsRecap = (canteenId) => {
     .catch((e) => e)
 }
 
+const fetchDiagnosticRecap = (canteenId, diagnosticId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/recap`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 const checkDiagnostic = (canteenId, diagnosticId) => {
   return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/check`, {
     method: "GET",
@@ -109,6 +121,7 @@ export default {
   fetchDiagnostic,
   fetchDiagnostics,
   fetchDiagnosticsRecap,
+  fetchDiagnosticRecap,
   teledeclareDiagnostic,
   cancelTeledeclaration,
 }

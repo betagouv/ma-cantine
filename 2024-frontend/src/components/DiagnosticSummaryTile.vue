@@ -1,12 +1,17 @@
 <script setup>
 import { computed } from "vue"
+import { formatNumber } from "@/utils"
 import IconLink from "@/components/IconLink.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import IconAward from "@/components/IconAward.vue"
 
-const props = defineProps(["thematiques", "anchorName", "isTeledeclared", "appro"])
+const props = defineProps(["thematiques", "anchorName", "isTeledeclared", "appro", "diagnosticRecap"])
 const emit = defineEmits(["openAccordion"])
 const clickLink = (index) => emit("openAccordion", index)
+
+/* Appro */
+const objectives = computed(() => props.diagnosticRecap?.notes)
+const approStats = computed(() => props.diagnosticRecap?.canteenDiagnosticApproStats)
 
 const egalimColor = computed(() => props.isTeledeclared ? "#1F7046" : "var(--border-default-grey)")
 const siqoColor = computed(() => props.isTeledeclared ? "#29A86D" : "var(--border-default-grey)")
@@ -31,22 +36,28 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
               <IconLink class="fr-col-1" top="1.25rem" />
               <div class="fr-col-11">
                 <ul class="ma-cantine--unstyled-list fr-pl-1w">
-                  <li class="ma-cantine--flex-start ma-cantine--flex-gap-1">
+                  <li class="diagnostic-summary-tile__appro-item ma-cantine--flex-gap-1">
                     <div class="diagnostic-summary-tile__square diagnostic-summary-tile__square--egalim"></div>
-                    <p class="fr-mb-0 fr-text--sm">
-                      {{ isTeledeclared ? "Résultat EGalim" : "Objectif EGalim" }}
+                    <p v-if="isTeledeclared" class="fr-mb-0 fr-text--sm">
+                      <span class="ma-cantine--bold">{{ formatNumber(approStats?.pourcentageEgalim) }}%</span> de produits EGalim
+                    </p>
+                    <p v-else class="fr-mb-0 fr-text--sm">
+                      Objectif {{ formatNumber(objectives?.egalimPercentObjective) }}% d’achat EGalim
                     </p>
                   </li>
-                  <li class="ma-cantine--flex-start ma-cantine--flex-gap-1">
+                  <li v-if="diagnosticRecap?.year === 2026" class="diagnostic-summary-tile__appro-item ma-cantine--flex-gap-1">
                     <div class="diagnostic-summary-tile__square diagnostic-summary-tile__square--siqo"></div>
                     <p class="fr-mb-0 fr-text--sm">
-                      {{ isTeledeclared ? "Résultat SIQO" : "Objectif SIQO" }}
+                      le seuil des 30% SIQO, HVE ou fermiers sera comptabilisé dès implémentation des nouvelles catégories UPSA à partir des achats du 1er janvier 2027 pour télédéclaration en 2028
                     </p>
                   </li>
-                  <li class="ma-cantine--flex-start ma-cantine--flex-gap-1">
+                  <li class="diagnostic-summary-tile__appro-item ma-cantine--flex-gap-1">
                     <div class="diagnostic-summary-tile__square diagnostic-summary-tile__square--bio"></div>
-                    <p class="fr-mb-0 fr-text--sm">
-                      {{ isTeledeclared ? "Résultat Bio" : "Objectif Bio" }}
+                    <p v-if="isTeledeclared" class="fr-mb-0 fr-text--sm">
+                      et <span class="ma-cantine--bold">{{ formatNumber(approStats?.pourcentageBio) }}%</span> bio ou en Conversion
+                    </p>
+                    <p v-else class="fr-mb-0 fr-text--sm">
+                      et {{ formatNumber(objectives?.bioPercentObjective) }}% Bio ou en Conversion
                     </p>
                   </li>
                 </ul>
@@ -58,8 +69,11 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
                 <IconAward class="diagnostic-summary-tile__award" />
               </div>
               <div class="fr-col-11">
-                <p class="fr-mb-0 fr-text--sm">
-                  {{ isTeledeclared ? "Résultat viande et poisson" : "Objectif viande et poisson" }}
+                <p v-if="isTeledeclared" class="fr-mb-0 fr-text--sm">
+                  <span class="ma-cantine--bold">{{ formatNumber(approStats?.pourcentageViandesVolaillesProduitsDeLaMerEgalim) }}%</span> de viandes et poissons EGalim
+                </p>
+                <p v-else class="fr-mb-0 fr-text--sm">
+                  Objectif 60% de viandes et poissons EGalim
                 </p>
               </div>
             </div>
@@ -109,9 +123,16 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "#695240" : "va
     height: 2rem;
   }
 
+  &__appro-item {
+    display: flex;
+    align-items: flex-start;
+  }
+
   &__square {
+    flex-shrink: 0;
     width: 0.5rem;
     height: 0.5rem;
+    margin-top: 0.5rem;
 
     &--egalim {
       background-color: v-bind(egalimColor);

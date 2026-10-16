@@ -12,6 +12,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const year = Number(window.TELEDECLARATION_YEAR)
   const diagnosticErrors = ref([])
   const diagnoticCheck = ref({})
+  const diagnosticRecap = ref(null)
   const hasDiagnostic = computed(() => diagnostic.value !== null)
   const hasErrors = computed(() => diagnosticErrors.value.length > 0)
   const isSimple = computed(() => diagnostic.value?.diagnosticType === "SIMPLE")
@@ -31,6 +32,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setCanteenId(canteenId)
     await setCanteenAction()
     await checkDiagnosticSteps()
+    await setDiagnosticRecap()
   }
 
   /* Check diagnostic and canteen for the "volets" */
@@ -47,6 +49,38 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     addErrorsFromCheck(check.errors)
     diagnoticCheck.value = check
     return check
+  }
+
+  /* Fetch the recap of the diagnostic */
+  async function setDiagnosticRecap() {
+    if (!diagnostic.value) {
+      diagnosticRecap.value = null
+      return
+    }
+    const response = await diagnosticService.fetchDiagnosticRecap(diagnostic.value.canteenId, diagnostic.value.id)
+    diagnosticRecap.value = response.status === "error" ? null : response
+  }
+
+  /* Teledeclare diagnostic */
+  async function teledeclare() {
+    if (!diagnostic.value) return
+    const response = await diagnosticService.teledeclareDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
+    if (response?.status === "error") return response
+    setDiagnostic({ ...diagnostic.value, isTeledeclared: true })
+    await setCanteenAction()
+    await setDiagnosticRecap()
+    return response
+  }
+
+  /* Cancel teledeclaration of the diagnostic */
+  async function cancelTeledeclaration() {
+    if (!diagnostic.value) return
+    const response = await diagnosticService.cancelTeledeclaration(diagnostic.value.canteenId, diagnostic.value.id)
+    if (response?.status === "error") return response
+    setDiagnostic({ ...diagnostic.value, isTeledeclared: false })
+    await setCanteenAction()
+    await setDiagnosticRecap()
+    return response
   }
 
   /* Save diagnostic */
@@ -122,6 +156,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     canteenAction.value = null
     isSaved.value = true
     diagnoticCheck.value = {}
+    diagnosticRecap.value = null
   }
 
   /* Format errors object into a list of { field, message } */
@@ -203,6 +238,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     canteenAction,
     diagnosticErrors,
     diagnoticCheck,
+    diagnosticRecap,
     hasDiagnostic,
     hasErrors,
     isSimple,
@@ -211,6 +247,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     isTeledeclared,
     initStore,
     checkDiagnosticSteps,
+    teledeclare,
+    cancelTeledeclaration,
     deleteStore,
     getYear,
     setDiagnostic,

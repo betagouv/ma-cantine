@@ -11,6 +11,7 @@ import IconMacaronWaste from "@/components/IconMacaronWaste.vue"
 import IconMacaronDiversification from "@/components/IconMacaronDiversification.vue"
 import IconMacaronPlastic from "@/components/IconMacaronPlastic.vue"
 
+defineProps(["diagnosticRecap"])
 const anchorName = "accordeons"
 const openedAccordion = ref(-1)
 
@@ -91,6 +92,7 @@ const appro = computed(() => volets.value[0])
       :appro="appro"
       :anchor-name="anchorName"
       :is-teledeclared="isTeledeclared"
+      :diagnostic-recap="diagnosticRecap"
       @openAccordion="openedAccordion = $event"
     />
     <DiagnosticSummaryAccordions
