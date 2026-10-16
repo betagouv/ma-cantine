@@ -19,7 +19,7 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models import Canteen, Diagnostic, User, WasteMeasurement, Purchase, Oauth2ProviderApplicationExtra
+from data.models import Canteen, Diagnostic, EventLog, User, WasteMeasurement, Purchase, Oauth2ProviderApplicationExtra
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
@@ -262,6 +262,7 @@ def get_raw_analysis_datasets():
             "canteen_managers_raw", Canteen.managers.through.objects.all()
         ),
         "waste_measurements_raw_analysis": ETL_ANALYSIS_RAW("waste_measurements_raw", WasteMeasurement.objects.all()),
+        "event_logs_raw_analysis": ETL_ANALYSIS_RAW("event_logs_raw", EventLog.objects.all()),
         # OAuth2 (API): never export secrets & tokens
         "oauth2_applications_raw_analysis": ETL_ANALYSIS_RAW(
             "oauth2_applications_raw", get_application_model().objects.all(), exclude_columns=["client_secret"]
