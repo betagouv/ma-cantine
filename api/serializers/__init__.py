@@ -41,10 +41,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticCheckSerializer,
     DiagnosticRecapSerializer,
 )
-from .diagnostic_teledeclaration import (  # noqa: F401
-    DiagnosticTeledeclaredAnalysisSerializer,
-    DiagnosticTeledeclaredOpenDataSerializer,
-)
+from .diagnostic_teledeclaration import DiagnosticTeledeclaredOpenDataSerializer  # noqa: F401
 from .wastemeasurement import WasteMeasurementSerializer  # noqa: F401
 from .sector import SectorM2MSerializer  # noqa: F401
 from .partnertype import PartnerTypeSerializer  # noqa: F401
