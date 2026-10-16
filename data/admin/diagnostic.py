@@ -93,6 +93,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         *Diagnostic.TUNNEL_PROGRESS_FIELDS,
         *Diagnostic.APPRO_AGGREGATED_FIELDS,
         *Diagnostic.APPRO_STATS_FIELDS,
+        *Diagnostic.OTHER_COMPUTED_FIELDS,
         *Diagnostic.TELEDECLARATION_FIELDS,
         *Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,
         "applicant",

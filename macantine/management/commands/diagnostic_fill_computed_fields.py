@@ -49,7 +49,8 @@ class Command(MaCantineBaseCommand):
         logger.info(
             "Step 2: reset the fields for all the diagnostics (both draft & teledeclared) for the specified year"
         )
-        qs.update(**{field_name: None for field_name in field_list})
+        # default: None for most fields, False for is_filled
+        qs.update(**{field_name: Diagnostic._meta.get_field(field_name).get_default() for field_name in field_list})
 
         logger.info("Step 3: fill the fields (and save)")
         for index, diagnostic in enumerate(qs):

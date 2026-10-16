@@ -84,6 +84,18 @@ class DiagnosticFillComputedFieldsCommandTest(TestCase):
         self.assertEqual(diagnostic.pourcentage_bio, 20)  # filled
         self.assertEqual(diagnostic.pourcentage_siqo, 99)  # unchanged
 
+    def test_run_with_field_is_filled(self):
+        diagnostic = self.canteen_site_diagnostic_2022
+        self.assertTrue(diagnostic.is_filled)
+        # simulate an outdated value (e.g. diagnostic saved before the field was introduced)
+        Diagnostic.objects.filter(id=diagnostic.id).update(is_filled=False, pourcentage_bio=None)
+
+        call_command("diagnostic_fill_computed_fields", "--year", 2022, "--field", "is_filled")
+
+        diagnostic.refresh_from_db()
+        self.assertTrue(diagnostic.is_filled)  # filled
+        self.assertIsNone(diagnostic.pourcentage_bio)  # unchanged
+
     def test_run_with_unknown_field(self):
         with self.assertRaises(CommandError):
             call_command("diagnostic_fill_computed_fields", "--year", 2022, "--field", "valeur_totale")
