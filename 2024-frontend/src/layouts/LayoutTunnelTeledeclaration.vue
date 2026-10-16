@@ -72,7 +72,8 @@ const quitBrowser = (event) => {
 
 const quitTunnel = (to) => {
   const canQuit = quitConfirmed.value || !teledeclarationStore.hasDiagnostic || teledeclarationStore.isSaved
-  if (!canQuit) {
+  if (canQuit) teledeclarationStore.refreshStore()
+  else {
     quitRoute.value = to.fullPath
     showQuitModal.value = true
   }
@@ -82,7 +83,6 @@ const quitTunnel = (to) => {
 const quit = () => {
   showQuitModal.value = false
   quitConfirmed.value = true
-  teledeclarationStore.refreshStore()
   router.push(quitRoute.value)
 }
 

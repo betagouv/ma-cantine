@@ -1,25 +1,19 @@
 <script setup>
 import { computed } from "vue"
 import { useRouter, useRoute } from "vue-router"
-import { useRootStore } from "@/stores/root.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 
 const emit = defineEmits(["save"])
 const router = useRouter()
 const route = useRoute()
-const rootStore = useRootStore()
 const teledeclarationStore = useStoreTeledeclaration()
 const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
 
 const saveAndQuit = async () => {
   teledeclarationStore.markPageAsVisited(route.meta.slug)
-  const response = await teledeclarationStore.saveDiagnostic()
-  if (response.status === "error") rootStore.notifyServerError(response)
-  else {
-    await teledeclarationStore.checkDiagnosticSteps()
-    router.push({ name: 'GestionnaireCantineTeledeclarationEnCours' })
-  }
+  await teledeclarationStore.saveDiagnostic()
+  router.push({ name: 'GestionnaireCantineTeledeclarationEnCours' })
 }
 </script>
 

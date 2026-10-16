@@ -92,7 +92,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const diagnosticValues = diagnostic.value
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
     if (response.status === "error") replaceErrors(response.list)
-    else setDiagnostic(response)
+    else isSaved.value = true
     await setCanteenAction()
     return response
   }
