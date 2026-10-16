@@ -24,7 +24,7 @@ const approBadge = "/static/images/badges/badge-appro.svg"
       />
     </ObservatoryBadgeTitle>
     <DsfrNotice v-if="stats.notes.alert" :title="stats.notes.alert.title" :desc="stats.notes.alert.message" type="warning" class="fr-mb-4w" />
-    <ul class="ma-cantine--unstyled-list">
+    <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
       <li class="fr-mb-8w">
         <ObservatoryGraphEgalim :approPercent="stats.approPercent" />
       </li>
@@ -42,6 +42,6 @@ const approBadge = "/static/images/badges/badge-appro.svg"
       <li class="fr-hidden">
         <ObservatoryGraphMeatFrance :viandesVolaillesFrancePercent="stats.viandesVolaillesFrancePercent"/>
       </li>
-    </ul>
+    </ol>
   </div>
 </template>
