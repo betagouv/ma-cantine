@@ -585,7 +585,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         verbose_name="Modèle économique",
     )
 
-    is_filled = models.BooleanField(default=False, verbose_name="cantine complète (champ calculé)")
+    is_filled = models.BooleanField(default=False, verbose_name="cantine complétée ? (champ calculé)")
 
     # TDs (rempli grâce à teledeclare & canteen_fill_declaration_donnees_year_field)
     declaration_donnees_2021 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2021")

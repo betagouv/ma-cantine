@@ -154,9 +154,9 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
 
             # Change the diagnostic to make it invalid
-            Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0)
+            Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0, is_filled=False)
             diagnostic.refresh_from_db()
-            self.assertFalse(diagnostic.is_filled)  # property
+            self.assertFalse(diagnostic.is_filled)  # model field
 
             # Run the script
             call_command("teledeclaration_submit_correction", year=2024)
