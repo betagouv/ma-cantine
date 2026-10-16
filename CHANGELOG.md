@@ -6,6 +6,32 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.55.0](https://github.com/betagouv/ma-cantine/compare/v2026.54.1...v2026.55.0) (2026-10-16)
+
+
+### Nouveautés
+
+* **EventLog:** Imports: garder une trâce des succès et échecs ([#7313](https://github.com/betagouv/ma-cantine/issues/7313)) ([dc9569f](https://github.com/betagouv/ma-cantine/commit/dc9569f56417fc70640d22071f20be269eff85d7))
+* **EventLog:** nouveau modèle pour garder une trâce des imports, appels API et tâches ([#7311](https://github.com/betagouv/ma-cantine/issues/7311)) ([5f33cc3](https://github.com/betagouv/ma-cantine/commit/5f33cc37fd99de6161125694d936fe02d927833c))
+
+
+### Améliorations
+
+* **Applications Oauth2:** commandes fill: pouvoir aussi remplir le champ `history_source` ([#7336](https://github.com/betagouv/ma-cantine/issues/7336)) ([7509d6d](https://github.com/betagouv/ma-cantine/commit/7509d6d0142405c26c468080dd4518f663862c2a))
+* **EventLog:** ajouter un champ `canteen` pour lier les événements à la cantine concernée ([#7322](https://github.com/betagouv/ma-cantine/issues/7322)) ([0077c2b](https://github.com/betagouv/ma-cantine/commit/0077c2b591d261c7d867444b2e9eac77c4213092))
+* **EventLog:** exporter la table vers le data warehouse (event_logs_raw, source dbt) ([#7354](https://github.com/betagouv/ma-cantine/issues/7354)) ([6e0e1d1](https://github.com/betagouv/ma-cantine/commit/6e0e1d1ec0be4000a19a49d1ada1b95408251e56))
+* **EventLog:** journaliser les requêtes API en écriture faites avec un token OAuth2 ([#7321](https://github.com/betagouv/ma-cantine/issues/7321)) ([8bc48fe](https://github.com/betagouv/ma-cantine/commit/8bc48fec1731f7748dd7b11819ea8ff839490fe1))
+* **EventLog:** migration des données: commande pour créer les EventLog des anciennes requêtes API (créations et modifications) ([#7334](https://github.com/betagouv/ma-cantine/issues/7334)) ([ef4fa56](https://github.com/betagouv/ma-cantine/commit/ef4fa56ec68f6282791dba6e708cbf9377429e1e))
+* **EventLog:** migration des données: commande pour créer les EventLog des anciens imports des achats ([#7317](https://github.com/betagouv/ma-cantine/issues/7317)) ([4002637](https://github.com/betagouv/ma-cantine/commit/4002637ad8bd96324a76cec9a9f36146d0ca40c0))
+* **EventLog:** migration des données: commande pour créer les EventLog des anciens imports des cantines et des bilans (depuis l'historique) ([#7333](https://github.com/betagouv/ma-cantine/issues/7333)) ([b9c1114](https://github.com/betagouv/ma-cantine/commit/b9c1114ca6ace8c4deacf166593af90d354ac21b))
+* **EventLog:** migration des données: copier les ImportFailure existants dans EventLog ([#7316](https://github.com/betagouv/ma-cantine/issues/7316)) ([a1f1f1d](https://github.com/betagouv/ma-cantine/commit/a1f1f1d91f539dea688f11ca271f223ac62a2558))
+* **Télédéclaration:** intègre les objectifs et résultats EGalim dans la synthèse avec l'API recap ([#7355](https://github.com/betagouv/ma-cantine/issues/7355)) ([1c91f5f](https://github.com/betagouv/ma-cantine/commit/1c91f5fb903a6a2c6dccbcbf336ac95dde5077d8))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** corrige le non rafraichissement des informations de la TD stockées en front ([#7356](https://github.com/betagouv/ma-cantine/issues/7356)) ([57a8d41](https://github.com/betagouv/ma-cantine/commit/57a8d41672befd24fc4b5e770156e9089a2216c4))
+
 ## [2026.54.1](https://github.com/betagouv/ma-cantine/compare/v2026.54.0...v2026.54.1) (2026-10-16)
 
 
