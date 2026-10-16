@@ -43,6 +43,7 @@ const goToPage = (page) => router.push(page)
         v-if="volet.key === 'appro' && isTeledeclared"
         :egalim-percent="approStats.pourcentageEgalim"
         :bio-percent="approStats.pourcentageBio"
+        :viandes-poissons-egalim-percent="approStats.pourcentageViandesVolaillesProduitsDeLaMerEgalim"
         :egalim-objective="objectives.egalimPercentObjective"
         :bio-objective="objectives.bioPercentObjective"
         :description-custom="`pour le bilan ${diagnosticRecap.year}`"

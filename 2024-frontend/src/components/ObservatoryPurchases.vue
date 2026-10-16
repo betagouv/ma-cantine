@@ -33,6 +33,7 @@ const approBadge = "/static/images/badges/badge-appro.svg"
         <GraphEgalim
           :bioPercent="stats.bioPercent"
           :egalimPercent="stats.egalimPercent"
+          :viandesPoissonsEgalimPercent="stats.viandesVolaillesProduitsDeLaMerEgalimPercent"
           :bioObjective="stats.notes.bioPercentObjective"
           :egalimObjective="stats.notes.egalimPercentObjective"
           title="Produits EGalim dont les produits bio"
