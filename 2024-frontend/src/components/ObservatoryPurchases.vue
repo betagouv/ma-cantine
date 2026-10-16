@@ -1,4 +1,5 @@
 <script setup>
+import { useStoreFilters } from "@/stores/filters"
 import stringsService from "@/services/strings"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
@@ -8,6 +9,7 @@ import ObservatoryGraphMeatFrance from "@/components/ObservatoryGraphMeatFrance.
 import ObservatoryGraphEgalim from "@/components/ObservatoryGraphEgalim.vue"
 
 defineProps(["stats"])
+const storeFilters = useStoreFilters()
 const approBadge = "/static/images/badges/badge-appro.svg"
 </script>
 
@@ -33,6 +35,8 @@ const approBadge = "/static/images/badges/badge-appro.svg"
           :egalimPercent="stats.egalimPercent"
           :bioObjective="stats.notes.bioPercentObjective"
           :egalimObjective="stats.notes.egalimPercentObjective"
+          title="Produits EGalim dont les produits bio"
+          :descriptionCustom="`pour la recherche ${storeFilters.getSelectionLabels()}`"
         />
       </li>
       <li class="fr-mb-8w">
