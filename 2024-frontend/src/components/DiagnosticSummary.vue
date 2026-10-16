@@ -11,13 +11,12 @@ import IconMacaronWaste from "@/components/IconMacaronWaste.vue"
 import IconMacaronDiversification from "@/components/IconMacaronDiversification.vue"
 import IconMacaronPlastic from "@/components/IconMacaronPlastic.vue"
 
-defineProps(["diagnosticRecap"])
 const anchorName = "accordeons"
 const openedAccordion = ref(-1)
 
 /* Diagnostic */
 const teledeclarationStore = useStoreTeledeclaration()
-const { isTeledeclared, hasErrors, hasDiagnostic, diagnoticCheck } = storeToRefs(teledeclarationStore)
+const { isTeledeclared, hasErrors, hasDiagnostic, diagnoticCheck, diagnosticRecap } = storeToRefs(teledeclarationStore)
 
 /* Get data */
 const getIsStarted = (key) => {
@@ -33,7 +32,7 @@ const getSentence = (key) => {
 }
 
 /* Volets */
-const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value))
+const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value, diagnosticRecap.value))
 const volets = computed(() => {
   return [
     {
