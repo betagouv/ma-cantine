@@ -10,7 +10,7 @@ const hasHatch = computed(() => hasObjective.value && props.stat < props.objecti
 
 <template>
   <div class="graph-gauge fr-mb-3w">
-    <p v-if="label" class="graph-gauge__label fr-mb-1w">{{ label }}</p>
+    <p v-if="label" class="graph-gauge__label fr-mb-1w ma-cantine--bold">{{ label }}</p>
     <div class="graph-gauge__track">
       <div class="graph-gauge__progress" :style="`width: ${stat}%`"></div>
       <div
@@ -20,7 +20,7 @@ const hasHatch = computed(() => hasObjective.value && props.stat < props.objecti
       ></div>
       <div v-if="hasObjective" class="graph-gauge__objective" :style="`left: ${objective}%`"></div>
       <p
-        class="graph-gauge__stat fr-mb-0 ma-cantine--bold fr-text--lg fr-px-1v"
+        class="graph-gauge__stat fr-mb-0 ma-cantine--bold fr-text--sm fr-px-1v"
         :style="`left: ${stat}%`"
       >
         {{ stringsService.prettyPercent(stat) }}
@@ -30,7 +30,7 @@ const hasHatch = computed(() => hasObjective.value && props.stat < props.objecti
 </template>
 
 <style lang="scss">
-$graphHeight: 3rem;
+$graphHeight: 2.5rem;
 $objectifColor: var(--text-mention-grey);
 $hatchColor: var(--border-default-grey);
 
