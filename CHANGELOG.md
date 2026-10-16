@@ -6,6 +6,38 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.54.1](https://github.com/betagouv/ma-cantine/compare/v2026.54.0...v2026.54.1) (2026-10-16)
+
+
+### Améliorations
+
+* **Cantines:** annotate_with_action_for_year: quelques optimisations (utiliser le champ 'is_filled' du bilan) ([#7351](https://github.com/betagouv/ma-cantine/issues/7351)) ([f15a56a](https://github.com/betagouv/ma-cantine/commit/f15a56ab87774356add647bcfaa200a27deb2055))
+* **Diagnostics:** commande `diagnostic_fill_computed_fields`: gérer le nouveau champ booléen `is_filled` ([#7349](https://github.com/betagouv/ma-cantine/issues/7349)) ([44c1b05](https://github.com/betagouv/ma-cantine/commit/44c1b0505652eba150b1ed770d6ca4ad9a138a0d))
+* **Diagnostics:** commande `diagnostic_fill_computed_fields`: pouvoir lancer sur un seul champ donné. inclure les bilans 1td1site. éviter l'entrée d'historique ([#7347](https://github.com/betagouv/ma-cantine/issues/7347)) ([58b187a](https://github.com/betagouv/ma-cantine/commit/58b187a1e96cd6d97fea9438d599d96e22454321))
+* **Diagnostics:** nouveau champ calculé `is_filled` ([#7348](https://github.com/betagouv/ma-cantine/issues/7348)) ([ec83890](https://github.com/betagouv/ma-cantine/commit/ec838902ecc393ce5fe19679cf5ecbbf9249394d))
+* **Diagnostics:** nouveau champ calculé `pourcentage_viandes_volailles_produits_de_la_mer_egalim` ([#7345](https://github.com/betagouv/ma-cantine/issues/7345)) ([b3aefa7](https://github.com/betagouv/ma-cantine/commit/b3aefa7473e4bfa017a634cd99db9a84e19b708c))
+* **Diagnostics:** nouvel endpoint `/recap` pour un bilan donné ([#7344](https://github.com/betagouv/ma-cantine/issues/7344)) ([e718d7e](https://github.com/betagouv/ma-cantine/commit/e718d7ec6915c921d4d1b428ceffdaaa8ae29c0d))
+* **Télédéclaration:** change l'affichage des macarons pour la TD commencée, commencée sans erreur, et télédéclarée sans atteindre les objectifs ([#7343](https://github.com/betagouv/ma-cantine/issues/7343)) ([c143789](https://github.com/betagouv/ma-cantine/commit/c1437892fe521c5670bcdd6e6ab06793d9d3e586))
+* **Télédéclaration:** enregistre les étapes du tunnel approvisionnement visitées pour afficher les erreurs et les icônes en fonction de la progression réelle de l'utilisateur ([#7323](https://github.com/betagouv/ma-cantine/issues/7323)) ([12f7dc6](https://github.com/betagouv/ma-cantine/commit/12f7dc6a03135ea35fc0803dd3b3e37644995fa4))
+* **Télédéclaration:** remplace le logo de la saisie automatique ([#7342](https://github.com/betagouv/ma-cantine/issues/7342)) ([427dec7](https://github.com/betagouv/ma-cantine/commit/427dec74e7297f77de1a836f9a05d93e6248da7d))
+* **Télédéclaration:** valeur_europe/france/circuit_court/local obligatoire si au moins un valeur_famille_label est rempli (TD 2026) ([#7326](https://github.com/betagouv/ma-cantine/issues/7326)) ([8ccd8ac](https://github.com/betagouv/ma-cantine/commit/8ccd8ac3abbe3361aad69204a5db643523f67131))
+* **Télédéclaration:** valeur_famille obligatoire si au moins un valeur_famille_label est rempli (TD 2026) ([#7328](https://github.com/betagouv/ma-cantine/issues/7328)) ([f1a5824](https://github.com/betagouv/ma-cantine/commit/f1a5824c6bdc104d1146588e8353c41344d78986))
+
+
+### Corrections (bugs, typos...)
+
+* **Achats:** ajoute valeur_famille_aopaoc/igp/stg manquant dans PurchaseSummarySerializer (TD 2026) + corrige le graphique de suivi des achats (catégories AOC/AOP, IGP, STG) ([#7324](https://github.com/betagouv/ma-cantine/issues/7324)) ([4f16845](https://github.com/betagouv/ma-cantine/commit/4f168457eb22f0917345cc6b2962a63961fe45f0))
+* **Achats:** ajoute valeur_famille_europe manquant dans PurchaseSummarySerializer (TD 2026) ([#7330](https://github.com/betagouv/ma-cantine/issues/7330)) ([825027d](https://github.com/betagouv/ma-cantine/commit/825027de3527e5fa869957605348f6cc80e729ed))
+* **Télédéclaration:** ajoute valeur_europe/france/circuit_court/local à la TD détaillée 2026 ([#7325](https://github.com/betagouv/ma-cantine/issues/7325)) ([afb294f](https://github.com/betagouv/ma-cantine/commit/afb294f18800412de62d840fe46cec38680ccd3a))
+* **Télédéclaration:** expose definition_local/definition_local_km dans les serializers (TD 2026) ([#7337](https://github.com/betagouv/ma-cantine/issues/7337)) ([478df9c](https://github.com/betagouv/ma-cantine/commit/478df9c2fc01db006c676fb1916c2eab64d618a2))
+
+
+### Technique
+
+* **Achats:** supprime DiagnosticsFromPurchasesView et son appel frontend, non utilisés ([#7332](https://github.com/betagouv/ma-cantine/issues/7332)) ([0c68c2e](https://github.com/betagouv/ma-cantine/commit/0c68c2e948e4b3735ca031e93f0a4ebd84b5e7a6))
+* **Diagnostics:** 2 nouvelles méthodes `family_has_any_label_filled` & `label_has_any_family_filled` ([#7340](https://github.com/betagouv/ma-cantine/issues/7340)) ([2523260](https://github.com/betagouv/ma-cantine/commit/252326037b54db52a21e2e7ac63ef7387711e5f1))
+* **Télédéclaration:** vérifie que tous les champs de la TD sont exposés par ManagerDiagnosticSerializer ([#7339](https://github.com/betagouv/ma-cantine/issues/7339)) ([108bd54](https://github.com/betagouv/ma-cantine/commit/108bd5470911c1c97de1c626fe9dbf637d2b328e))
+
 ## [2026.54.0](https://github.com/betagouv/ma-cantine/compare/v2026.53.0...v2026.54.0) (2026-10-13)
 
 
