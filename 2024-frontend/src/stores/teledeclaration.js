@@ -153,12 +153,18 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Empty store */
   function deleteStore() {
+    refreshStore()
     diagnostic.value = null
-    canteenSavedId.value = null
     canteenAction.value = null
     isSaved.value = true
     diagnoticCheck.value = {}
     diagnosticRecap.value = null
+    diagnosticErrors.value = []
+  }
+
+  /* Force refresh store on next init */
+  function refreshStore() {
+    canteenSavedId.value = null
   }
 
   /* Format errors object into a list of { field, message } */
@@ -252,6 +258,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     teledeclare,
     cancelTeledeclaration,
     deleteStore,
+    refreshStore,
     getYear,
     setDiagnostic,
     setValue,
