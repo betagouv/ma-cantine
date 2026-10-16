@@ -70,7 +70,6 @@ PERIODIC_TASKS = {
     #########################################################
     # Dataset exports
     "export_dataset_raw_analysis": {"schedule": nightly_1, "prod_only": True},
-    "export_dataset_canteen_analysis": {"schedule": nightly_2, "prod_only": True},  # every_6_hours_20 during campaigns
     "export_dataset_canteen_opendata": {"schedule": nightly_2, "prod_only": True},  # every_6_hours_20 during campaigns
     #########################################################
     # DBT (Metabase) — depends on export_dataset_raw_analysis (nightly_1)

@@ -23,10 +23,7 @@ from data.models import Canteen, Diagnostic, EventLog, User, WasteMeasurement, P
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
-from .etl.analysis import (
-    ETL_ANALYSIS_CANTEEN,
-    ETL_ANALYSIS_RAW,
-)
+from .etl.analysis import ETL_ANALYSIS_RAW
 from .etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
     ETL_OPEN_DATA_TELEDECLARATIONS,
@@ -308,21 +305,6 @@ def export_dataset_td_opendata():
         "teledeclarations_2023_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
         "teledeclarations_2024_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2024),
         # "teledeclarations_2025_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2025),  # wait for report to be published
-    }
-    result = export_datasets(datasets)
-
-    return result
-
-
-@app.task()
-def export_dataset_canteen_analysis():
-    """
-    Export the Canteen datasets for analysis (Metabase)
-    """
-    logger.info("Starting export_dataset_canteen_analysis task")
-
-    datasets = {
-        "canteens_analysis": ETL_ANALYSIS_CANTEEN(),
     }
     result = export_datasets(datasets)
 

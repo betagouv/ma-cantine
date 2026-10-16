@@ -28,7 +28,6 @@ from api.serializers import (
     CanteenCheckSerializer,
     CanteenActionsLightSerializer,
     CanteenActionsSerializer,
-    CanteenAnalysisSerializer,
     CanteenMinistriesSerializer,
     CanteenOpenDataSerializer,
     CanteenPreviewSerializer,
@@ -582,13 +581,6 @@ class CanteenMinistriesView(APIView):
                 }
             )
         return Response(CanteenMinistriesSerializer(ministries, many=True).data)
-
-
-class CanteenAnalysisListView(ListAPIView):
-    serializer_class = CanteenAnalysisSerializer
-
-    def get_queryset(self):
-        return Canteen.objects.prefetch_related("sectors_m2m", "managers").order_by("creation_date")
 
 
 class CanteenOpenDataListView(ListAPIView):
