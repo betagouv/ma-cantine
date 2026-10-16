@@ -36,6 +36,7 @@ const approBadge = "/static/images/badges/badge-appro.svg"
           :bioObjective="stats.notes.bioPercentObjective"
           :egalimObjective="stats.notes.egalimPercentObjective"
           :mention="`sur ${stringsService.prettyPercent(100)} du Total des achats`"
+          :year="storeFilters.getParam('year')"
           :descriptionCustom="`Pour la recherche ${storeFilters.getSelectionLabels()}`"
         />
       </li>

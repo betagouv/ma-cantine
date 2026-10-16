@@ -48,6 +48,7 @@ const goToPage = (page) => router.push(page)
         :egalim-objective="objectives.egalimPercentObjective"
         :bio-objective="objectives.bioPercentObjective"
         :mention="`sur ${stringsService.prettyPercent(100)} du Total de vos achats`"
+        :year="diagnosticRecap.year"
         :description-custom="`Pour le bilan ${diagnosticRecap.year}`"
       />
     </DsfrAccordion>

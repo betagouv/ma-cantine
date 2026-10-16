@@ -11,36 +11,49 @@ const props = defineProps([
   "bioObjective",
   "viandesPoissonsEgalimPercent",
   "mention",
+  "year",
   "descriptionCustom",
 ])
 const title = "Objectifs EGalim"
-const gauges = computed(() => [
-  {
-    label: `au moins ${stringsService.prettyPercent(props.bioObjective)} d’achats Bio ou en conversion`,
-    mention: props.mention,
-    stat: props.bioPercent,
-    objective: props.bioObjective,
-    color: "#8AE4B3",
-  },
-  {
-    label: `au moins ${stringsService.prettyPercent(props.egalimObjective)} d’achats EGalim dont bio`,
-    stat: props.egalimPercent,
-    objective: props.egalimObjective,
-    color: "#1F7046",
-  },
-  {
-    label: `au moins ${stringsService.prettyPercent(60)} d’achats EGalim sur les familles viandes et poissons (${stringsService.prettyPercent(100)} pour les restaurants d'État)`,
-    stat: props.viandesPoissonsEgalimPercent,
-    objective: 60,
-    color: "#0974F6",
-  },
-])
+const gauges = computed(() => {
+  const allGauges = [
+    {
+      label: `au moins ${stringsService.prettyPercent(props.bioObjective)} d’achats Bio ou en conversion`,
+      mention: props.mention,
+      stat: props.bioPercent,
+      objective: props.bioObjective,
+      color: "#8AE4B3",
+    },
+    {
+      hidden: Number(props.year) !== 2026,
+      label: `au moins ${stringsService.prettyPercent(30)} d’achats SIQO, HVE ou fermier`,
+      disabled: `le seuil des ${stringsService.prettyPercent(30)} SIQO, HVE ou fermiers sera comptabilisé dès implémentation des nouvelles catégories UPSA à partir des achats du 1er janvier 2027 pour télédéclaration en 2028`,
+    },
+    {
+      label: `au moins ${stringsService.prettyPercent(props.egalimObjective)} d’achats EGalim dont bio`,
+      stat: props.egalimPercent,
+      objective: props.egalimObjective,
+      color: "#1F7046",
+    },
+    {
+      label: `au moins ${stringsService.prettyPercent(60)} d’achats EGalim sur les familles viandes et poissons (${stringsService.prettyPercent(100)} pour les restaurants d'État)`,
+      stat: props.viandesPoissonsEgalimPercent,
+      objective: 60,
+      color: "#0974F6",
+    },
+  ]
+  const displayedGauges = allGauges.filter((gauge) => !gauge.hidden)
+  return displayedGauges
+})
 
 /* Description */
 const getResultsDescription = () => {
   return gauges.value
-    .map((gauge) => `pour l'objectif "${gauge.label}" le résultat est ${stringsService.prettyPercent(gauge.stat)}`)
-    .join(", ")
+    .map((gauge) => {
+      const result = gauge.disabled || `le résultat est ${stringsService.prettyPercent(gauge.stat)}`
+      return `pour l'objectif "${gauge.label}" ${result}`
+    })
+    .join(" ; ")
 }
 const description = computed(() => {
   const intro = props.descriptionCustom || "Pour le graphique"
@@ -59,6 +72,7 @@ const description = computed(() => {
       :objective="gauge.objective"
       :label="gauge.label"
       :mention="gauge.mention"
+      :disabled="gauge.disabled"
       :color="gauge.color"
     />
   </GraphBase>
