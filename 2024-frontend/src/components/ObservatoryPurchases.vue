@@ -4,7 +4,6 @@ import stringsService from "@/services/strings"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import GraphEgalim from "@/components/GraphEgalim.vue"
-import ObservatoryGraphMeatFishEgalim from "@/components/ObservatoryGraphMeatFishEgalim.vue"
 import ObservatoryGraphMeatFrance from "@/components/ObservatoryGraphMeatFrance.vue"
 import ObservatoryGraphEgalim from "@/components/ObservatoryGraphEgalim.vue"
 
@@ -29,20 +28,14 @@ const approBadge = "/static/images/badges/badge-appro.svg"
       <li class="fr-mb-8w">
         <ObservatoryGraphEgalim :approPercent="stats.approPercent" />
       </li>
-      <li class="fr-mb-8w">
+      <li>
         <GraphEgalim
           :bioPercent="stats.bioPercent"
           :egalimPercent="stats.egalimPercent"
           :viandesPoissonsEgalimPercent="stats.viandesVolaillesProduitsDeLaMerEgalimPercent"
           :bioObjective="stats.notes.bioPercentObjective"
           :egalimObjective="stats.notes.egalimPercentObjective"
-          title="Produits EGalim dont les produits bio"
           :descriptionCustom="`pour la recherche ${storeFilters.getSelectionLabels()}`"
-        />
-      </li>
-      <li class="fr-mb-8w">
-        <ObservatoryGraphMeatFishEgalim
-          :viandesVolaillesProduitsDeLaMerEgalimPercent="stats.viandesVolaillesProduitsDeLaMerEgalimPercent"
         />
       </li>
       <li class="fr-hidden">

@@ -11,8 +11,8 @@ const props = defineProps([
   "bioObjective",
   "viandesPoissonsEgalimPercent",
   "descriptionCustom",
-  "title",
 ])
+const title = "Objectifs EGalim"
 const gauges = computed(() => [
   {
     label: `au moins ${stringsService.prettyPercent(props.egalimObjective)} d’achats EGalim dont bio`,
@@ -41,14 +41,14 @@ const getResultsDescription = () => {
     .join(", ")
 }
 const description = computed(() => {
-  const intro = [props.title, props.descriptionCustom].filter(Boolean).join(", ") || "Pour le graphique"
+  const intro = [title, props.descriptionCustom].filter(Boolean).join(", ")
   const results = getResultsDescription()
   return `${intro} : ${results}.`
 })
 </script>
 
 <template>
-  <h3 v-if="title" class="fr-h6 fr-mb-2w">{{ title }}</h3>
+  <h3 class="fr-h6 fr-mb-2w">{{ title }}</h3>
   <GraphBase :valuesToVerify="[egalimPercent, bioPercent, viandesPoissonsEgalimPercent, egalimObjective, bioObjective]" :description="description">
     <GraphGauge
       v-for="gauge in gauges"

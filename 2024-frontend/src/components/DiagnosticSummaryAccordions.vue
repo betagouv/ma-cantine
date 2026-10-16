@@ -47,7 +47,6 @@ const goToPage = (page) => router.push(page)
         :egalim-objective="objectives.egalimPercentObjective"
         :bio-objective="objectives.bioPercentObjective"
         :description-custom="`pour le bilan ${diagnosticRecap.year}`"
-        title="Objectifs EGalim"
       />
     </DsfrAccordion>
   </DsfrAccordionsGroup>
