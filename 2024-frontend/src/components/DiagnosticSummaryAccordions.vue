@@ -1,6 +1,7 @@
 <script setup>
 import { ref, watch, computed } from "vue"
 import { useRouter } from "vue-router"
+import stringsService from "@/services/strings"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import GraphEgalim from "@/components/GraphEgalim.vue"
 
@@ -46,6 +47,7 @@ const goToPage = (page) => router.push(page)
         :viandes-poissons-egalim-percent="approStats.pourcentageViandesVolaillesProduitsDeLaMerEgalim"
         :egalim-objective="objectives.egalimPercentObjective"
         :bio-objective="objectives.bioPercentObjective"
+        :mention="`sur ${stringsService.prettyPercent(100)} du Total de vos achats`"
         :description-custom="`pour le bilan ${diagnosticRecap.year}`"
       />
     </DsfrAccordion>

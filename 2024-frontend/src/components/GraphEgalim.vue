@@ -10,12 +10,14 @@ const props = defineProps([
   "bioPercent",
   "bioObjective",
   "viandesPoissonsEgalimPercent",
+  "mention",
   "descriptionCustom",
 ])
 const title = "Objectifs EGalim"
 const gauges = computed(() => [
   {
     label: `au moins ${stringsService.prettyPercent(props.egalimObjective)} d’achats EGalim dont bio`,
+    mention: props.mention,
     stat: props.egalimPercent,
     objective: props.egalimObjective,
     color: "#1F7046",
@@ -48,10 +50,7 @@ const description = computed(() => {
 </script>
 
 <template>
-  <div class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-my-2w">
-    <h3 class="fr-h6 fr-mb-0">{{ title }}</h3>
-    <p class="fr-text--sm fr-text-mention--grey fr-mb-0">sur {{ stringsService.prettyPercent(100) }} du Total des achats</p>
-  </div>
+  <h3 class="fr-h6 fr-my-2w">{{ title }}</h3>
   <GraphBase :valuesToVerify="[egalimPercent, bioPercent, viandesPoissonsEgalimPercent, egalimObjective, bioObjective]" :description="description">
     <GraphGauge
       v-for="gauge in gauges"
@@ -59,6 +58,7 @@ const description = computed(() => {
       :stat="gauge.stat"
       :objective="gauge.objective"
       :label="gauge.label"
+      :mention="gauge.mention"
       :color="gauge.color"
     />
   </GraphBase>

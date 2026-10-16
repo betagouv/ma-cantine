@@ -35,6 +35,7 @@ const approBadge = "/static/images/badges/badge-appro.svg"
           :viandesPoissonsEgalimPercent="stats.viandesVolaillesProduitsDeLaMerEgalimPercent"
           :bioObjective="stats.notes.bioPercentObjective"
           :egalimObjective="stats.notes.egalimPercentObjective"
+          :mention="`sur ${stringsService.prettyPercent(100)} du Total des achats`"
           :descriptionCustom="`pour la recherche ${storeFilters.getSelectionLabels()}`"
         />
       </li>

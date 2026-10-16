@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue"
 import stringsService from "@/services/strings"
-const props = defineProps(["stat", "objective", "label", "color"])
+const props = defineProps(["stat", "objective", "label", "mention", "color"])
 
 const gaugeColor = computed(() => props.color || "var(--green-emeraude-main-632)")
 const hasObjective = computed(() => props.objective !== null && props.objective !== undefined)
@@ -10,7 +10,10 @@ const hasHatch = computed(() => hasObjective.value && props.stat < props.objecti
 
 <template>
   <div class="graph-gauge fr-mb-3w">
-    <p v-if="label" class="graph-gauge__label fr-mb-1w ma-cantine--bold">{{ label }}</p>
+    <div v-if="label || mention" class="ma-cantine--flex-between ma-cantine--flex-gap-1 fr-mb-1w">
+      <p class="graph-gauge__label fr-mb-0 ma-cantine--bold">{{ label }}</p>
+      <p v-if="mention" class="fr-text--sm fr-text-mention--grey fr-mb-0">{{ mention }}</p>
+    </div>
     <div class="graph-gauge__track">
       <div class="graph-gauge__progress" :style="`width: ${stat}%`"></div>
       <div
