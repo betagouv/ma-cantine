@@ -11,9 +11,9 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.tests.utils import assert_import_failure_created, authenticate
+from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
 from data.factories import CanteenFactory
-from data.models import ImportFailure, ImportType
+from data.models import ImportType
 from data.models.creation_source import CreationSource
 from data.models.definitionlocal import DefinitionLocal
 from data.models.purchase import Purchase
@@ -402,7 +402,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 8)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE, 8)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 8)
@@ -464,7 +464,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE)
 
     @authenticate
     def test_import_number_decimal_point(self):
@@ -477,7 +477,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
@@ -500,7 +500,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
@@ -524,7 +524,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE)
 
         # tab
         file_path = "./api/tests/files/achats/purchases_good_separator_tab_old.tsv"
@@ -533,7 +533,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1 + 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE)
 
         # semicolon
         file_path = "./api/tests/files/achats/purchases_good_separator_semicolon_old.csv"
@@ -542,7 +542,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 2 + 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE)
 
     @authenticate
     @override_settings(CSV_PURCHASE_CHUNK_LINES=1)
@@ -574,7 +574,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 8)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE)
 
         # second upload: duplicate warning
         with open(file_path) as purchase_file:
@@ -605,7 +605,7 @@ class PurchasesImportOldApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE)
         self.assertEqual(Purchase.objects.first().prix_ht, Decimal("90.11"))
 
 
@@ -652,7 +652,7 @@ class PurchasesImportOldIdApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE_ID, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
@@ -672,7 +672,7 @@ class PurchasesImportOldIdApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Purchase.objects.count(), 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.PURCHASE_ID, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)

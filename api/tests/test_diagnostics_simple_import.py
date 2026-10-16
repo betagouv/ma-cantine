@@ -8,9 +8,9 @@ from django.conf import settings
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.tests.utils import assert_import_failure_created, authenticate
+from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
-from data.models import Canteen, Diagnostic, ImportFailure, ImportType
+from data.models import Canteen, Diagnostic, ImportType
 from data.models.creation_source import CreationSource
 
 
@@ -421,7 +421,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 2)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, 2)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 2)
@@ -490,7 +490,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
@@ -535,7 +535,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
@@ -625,7 +625,7 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_ID, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
@@ -670,7 +670,7 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_ID, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)

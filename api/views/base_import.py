@@ -13,7 +13,7 @@ from rest_framework.views import APIView
 from api.permissions import IsAuthenticated
 from common.api import validata
 from common.utils import file_import
-from data.models import ImportFailure
+from data.models import EventLog, ImportFailure
 
 logger = logging.getLogger(__name__)
 
@@ -242,7 +242,7 @@ class BaseImportView(ABC, APIView):
         logger.info(f"{self.__class__.__name__} bulk import started")
 
     def _log_error(self, message, level="warning"):
-        """Log error and create ImportFailure record"""
+        """Log error and create ImportFailure & EventLog records"""
         logger_function = getattr(logger, level)
         logger_function(message)
         ImportFailure.objects.create(
@@ -251,6 +251,26 @@ class BaseImportView(ABC, APIView):
             details=message,
             import_type=self.import_type,
         )
+        EventLog.log(
+            EventLog.Category.IMPORT,
+            self.import_type,
+            EventLog.Status.FAILURE,
+            user=self.request.user,
+            data={"message": message, "count": None, "seconds": self._get_duration()},
+        )
+
+    def _log_success(self, response_data):
+        """Create EventLog record"""
+        EventLog.log(
+            EventLog.Category.IMPORT,
+            self.import_type,
+            EventLog.Status.SUCCESS,
+            user=self.request.user,
+            data={"message": None, "count": response_data.get("count"), "seconds": self._get_duration()},
+        )
+
+    def _get_duration(self):
+        return round(time.time() - self.start_time, 2)
 
     def _get_success_response(self):
         """Build final response with errors and timing"""
@@ -261,6 +281,8 @@ class BaseImportView(ABC, APIView):
         }
         if len(self.errors) > 0:
             response_data["count"] = 0
+        else:
+            self._log_success(response_data)
         return JsonResponse({**response_data, **base_response}, status=status.HTTP_200_OK)
 
     def _parse_errors(self, e, row, identifier=None):
