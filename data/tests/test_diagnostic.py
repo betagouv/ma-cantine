@@ -772,6 +772,11 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
                 "valeur_france": 300,
                 "valeur_circuit_court": 50,
                 "valeur_local": 80,
+                "valeur_fruits_et_legumes": 200,
+                "valeur_fruits_et_legumes_europe": 20,
+                "valeur_fruits_et_legumes_france": 100,
+                "valeur_fruits_et_legumes_circuit_court": 30,
+                "valeur_fruits_et_legumes_local": 50,
             }
         )
         diagnostic.refresh_from_db()
@@ -780,6 +785,14 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.pourcentage_france, 30)
         self.assertEqual(diagnostic.pourcentage_circuit_court, 5)
         self.assertEqual(diagnostic.pourcentage_local, 8)
+        # relative to the family total
+        self.assertEqual(diagnostic.pourcentage_fruits_et_legumes_europe, 10)  # 20 / 200
+        self.assertEqual(diagnostic.pourcentage_fruits_et_legumes_france, 50)  # 100 / 200
+        self.assertEqual(diagnostic.pourcentage_fruits_et_legumes_circuit_court, 15)  # 30 / 200
+        self.assertEqual(diagnostic.pourcentage_fruits_et_legumes_local, 25)  # 50 / 200
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_france, 20)  # 20 / 100
+        self.assertIsNone(diagnostic.pourcentage_viandes_volailles_europe)  # not filled
+        self.assertIsNone(diagnostic.pourcentage_charcuterie_france)  # no family total
 
         # if valeur_totale is emptied, then set the fields back to None
         diagnostic.valeur_totale = None

@@ -823,6 +823,36 @@ class Diagnostic(models.Model):
         "pourcentage_france",
         "pourcentage_circuit_court",
         "pourcentage_local",
+        "pourcentage_viandes_volailles_europe",
+        "pourcentage_produits_de_la_mer_europe",
+        "pourcentage_fruits_et_legumes_europe",
+        "pourcentage_charcuterie_europe",
+        "pourcentage_produits_laitiers_europe",
+        "pourcentage_boulangerie_europe",
+        "pourcentage_boissons_europe",
+        "pourcentage_autres_europe",
+        "pourcentage_fruits_et_legumes_france",
+        "pourcentage_charcuterie_france",
+        "pourcentage_produits_laitiers_france",
+        "pourcentage_boulangerie_france",
+        "pourcentage_boissons_france",
+        "pourcentage_autres_france",
+        "pourcentage_viandes_volailles_circuit_court",
+        "pourcentage_produits_de_la_mer_circuit_court",
+        "pourcentage_fruits_et_legumes_circuit_court",
+        "pourcentage_charcuterie_circuit_court",
+        "pourcentage_produits_laitiers_circuit_court",
+        "pourcentage_boulangerie_circuit_court",
+        "pourcentage_boissons_circuit_court",
+        "pourcentage_autres_circuit_court",
+        "pourcentage_viandes_volailles_local",
+        "pourcentage_produits_de_la_mer_local",
+        "pourcentage_fruits_et_legumes_local",
+        "pourcentage_charcuterie_local",
+        "pourcentage_produits_laitiers_local",
+        "pourcentage_boulangerie_local",
+        "pourcentage_boissons_local",
+        "pourcentage_autres_local",
         "objectifs_egalim_atteints",
     ]
 
@@ -1911,6 +1941,126 @@ class Diagnostic(models.Model):
     pourcentage_local = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage local (champ calculé)",
     )
+    pourcentage_viandes_volailles_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
+    pourcentage_fruits_et_legumes_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes origine France (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie origine France (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) origine France (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie origine France (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons origine France (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits origine France (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
+    pourcentage_viandes_volailles_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
+    pourcentage_viandes_volailles_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles local (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer local (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes local (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie local (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) local (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie local (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons local (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits local (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
     objectifs_egalim_atteints = models.BooleanField(
         blank=True,
         null=True,
@@ -2095,14 +2245,8 @@ class Diagnostic(models.Model):
         self.pourcentage_viandes_volailles_egalim = compute_percentage(
             self.valeur_viandes_volailles_egalim, self.valeur_viandes_volailles
         )
-        self.pourcentage_viandes_volailles_france = compute_percentage(
-            self.valeur_viandes_volailles_france, self.valeur_viandes_volailles
-        )
         self.pourcentage_produits_de_la_mer_egalim = compute_percentage(
             self.valeur_produits_de_la_mer_egalim, self.valeur_produits_de_la_mer
-        )
-        self.pourcentage_produits_de_la_mer_france = compute_percentage(
-            self.valeur_produits_de_la_mer_france, self.valeur_produits_de_la_mer
         )
         self.pourcentage_viandes_volailles_produits_de_la_mer_egalim = compute_percentage(
             sum_int_with_potential_null([self.valeur_viandes_volailles_egalim, self.valeur_produits_de_la_mer_egalim]),
@@ -2112,6 +2256,15 @@ class Diagnostic(models.Model):
         self.pourcentage_france = compute_percentage(self.valeur_france, self.valeur_totale)
         self.pourcentage_circuit_court = compute_percentage(self.valeur_circuit_court, self.valeur_totale)
         self.pourcentage_local = compute_percentage(self.valeur_local, self.valeur_totale)
+        # per family & origine: relative to the family total
+        for family_field in Diagnostic.APPRO_FAMILY_FIELDS:
+            family = family_field.removeprefix("valeur_")
+            for origine in ["europe", "france", "circuit_court", "local"]:
+                setattr(
+                    self,
+                    f"pourcentage_{family}_{origine}",
+                    compute_percentage(getattr(self, f"valeur_{family}_{origine}"), getattr(self, family_field)),
+                )
         self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
 
     def populate_cout_repas(self):
