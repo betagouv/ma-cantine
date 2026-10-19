@@ -219,6 +219,11 @@ export default {
           authenticationState: true,
         },
         {
+          text: "Outil Suivi Anti-Gaspi",
+          to: { name: "GestionnaireGaspillageAlimentaire" },
+          authenticationState: true,
+        },
+        {
           text: "M'auto-évaluer",
           to: { name: "DiagnosticPage" },
           authenticationState: false,
