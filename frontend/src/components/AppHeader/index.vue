@@ -283,11 +283,6 @@ export default {
             },
           ],
         },
-        {
-          text: "Mon compte",
-          to: { name: "AccountSummaryPage" },
-          authenticationState: true,
-        },
       ],
       childMenu: null,
     }
@@ -329,12 +324,8 @@ export default {
         return [login, signup]
       }
       const logout = { logout: true }
-      if (this.loggedUser.isDev) {
-        const apis = { to: { name: "Developpeurs" }, text: "Développement et APIs" }
-        return [apis, logout]
-      }
-      const mesCantines = { to: { name: "GestionnaireTableauDeBord" }, text: "Mon tableau de bord" }
-      return [mesCantines, logout]
+      const monCompte = { to: { name: "AccountSummaryPage" }, text: "Mon compte" }
+      return [monCompte, logout]
     },
   },
   methods: {

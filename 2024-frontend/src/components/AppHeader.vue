@@ -14,12 +14,8 @@ const quickLinks = computed(() => {
     return [login, signup]
   }
   // TODO: logout action
-  if (store.loggedUser.isDev) {
-    const apis = { to: { name: "Developpeurs" }, label: "Développement et APIs" }
-    return [apis]
-  }
-  const mesCantines = { to: { name: "GestionnaireTableauDeBord" }, label: "Mon tableau de bord" }
-  return [mesCantines]
+  const monCompte = { to: { name: "AccountSummaryPage" }, label: "Mon compte" }
+  return [monCompte]
 })
 
 const navItems = [
@@ -99,11 +95,6 @@ const navItems = [
         rel: "noopener external",
       },
     ],
-  },
-  {
-    text: "Mon compte",
-    to: { name: "AccountSummaryPage" },
-    authenticationState: true,
   },
 ]
 
