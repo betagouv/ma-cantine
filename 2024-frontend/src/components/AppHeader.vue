@@ -73,11 +73,6 @@ const navItems = computed(() => [
     title: "Toutes les cantines",
     links: [
       {
-        text: "Dans mon territoire",
-        to: { name: "TerritoryCanteens" },
-        forElected: true,
-      },
-      {
         text: "Trouver une cantine",
         to: { name: "CanteenSearchLanding" },
       },
@@ -109,19 +104,11 @@ const navItems = computed(() => [
 ])
 
 const navItemsForUser = computed(() => {
-  const userLinks = navItems.value.filter((parentItem) => {
+  return navItems.value.filter((parentItem) => {
     if (parentItem.authenticationState) return !!store.loggedUser
     else if (parentItem.authenticationState === false) return !store.loggedUser
     return true
   })
-  userLinks.forEach((parentGroup) => {
-    if (parentGroup.links && !store.loggedUser?.isElectedOfficial) {
-      parentGroup.links = parentGroup.links.filter((childLink) =>
-        childLink.forElected ? !!store.loggedUser?.isElectedOfficial : true
-      )
-    }
-  })
-  return userLinks
 })
 </script>
 
