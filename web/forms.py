@@ -99,6 +99,8 @@ def _clean_cgu_approved(form):
 class LoginUserForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # the login identifier is always an email now, so hint browsers/password managers accordingly
+        self.fields["username"].widget.attrs.update({"autocomplete": "email"})
         self.error_messages["invalid_login"] = (
             "Saisissez une adresse électronique et un mot de passe valides. Remarquez que chacun de ces champs est sensible à la casse (différenciation des majuscules/minuscules)."
         )
