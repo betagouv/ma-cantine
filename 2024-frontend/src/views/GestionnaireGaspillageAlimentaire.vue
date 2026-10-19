@@ -5,6 +5,7 @@ import { useRouter } from "vue-router"
 import { formatNumber } from "@/utils"
 import WasteMeasurementSummary from "@/components/WasteMeasurementSummary.vue"
 import EmphasiseText from "@/components/EmphasiseText.vue"
+import AppLinkMailto from "@/components/AppLinkMailto.vue"
 
 const props = defineProps(["canteenUrlComponent"])
 const store = useRootStore()
@@ -38,6 +39,13 @@ onMounted(() => {
 
 <template>
   <div>
+    <DsfrAlert title="Cette page va bientôt évoluer" type="info" class="fr-mb-4w">
+      <p>
+        Une nouvelle version de la page de suivi des déchets alimentaires sera bientôt disponible, construite à partir
+        de vos retours dans un souci de simplicité et de performance.
+      </p>
+      <p>Pour toute remarque ou question : <AppLinkMailto /></p>
+    </DsfrAlert>
     <h1>Déchets alimentaires</h1>
     <p>
       {{ canteen.name }}&nbsp;
