@@ -44,16 +44,13 @@ const routes = [
     },
   },
   {
-    path: "/gaspillage-alimentaire/:canteenUrlComponent",
+    path: "/gaspillage-alimentaire/:canteenUrlComponent?",
     name: "GestionnaireGaspillageAlimentaire",
     component: GestionnaireGaspillageAlimentaire,
     props: (route) => ({ ...route.params }),
     meta: {
       title: "Déchets alimentaires",
-      breadcrumbs: [
-        { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-        { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-      ],
+      breadcrumbs: [{ to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" }],
     },
   },
   {
