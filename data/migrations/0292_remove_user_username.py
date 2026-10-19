@@ -12,6 +12,8 @@ class Migration(migrations.Migration):
     operations = [
         # SeparateDatabaseAndState: drop 'username' from the Django model/ORM only.
         # The DB column is kept (not dropped) for a few weeks, for debugging purposes.
+        # It's no longer populated by the ORM, so its NOT NULL constraint must be dropped
+        # (existing rows keep their value, new rows get NULL instead of an empty string).
         migrations.SeparateDatabaseAndState(
             state_operations=[
                 migrations.RemoveField(
@@ -19,6 +21,11 @@ class Migration(migrations.Migration):
                     name='username',
                 ),
             ],
-            database_operations=[],
+            database_operations=[
+                migrations.RunSQL(
+                    sql='ALTER TABLE data_user ALTER COLUMN username DROP NOT NULL;',
+                    reverse_sql='ALTER TABLE data_user ALTER COLUMN username SET NOT NULL;',
+                ),
+            ],
         ),
     ]
