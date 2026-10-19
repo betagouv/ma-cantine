@@ -270,7 +270,7 @@ const routes = [
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-            { to: { name: "PurchasesHome" }, title: "Mes achats"},
+            { to: { name: "PurchasesHome" }, title: "Outil Suivi des Achats"},
           ],
         },
       },
@@ -283,7 +283,7 @@ const routes = [
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-            { to: { name: "PurchasesHome" }, title: "Mes achats" },
+            { to: { name: "PurchasesHome" }, title: "Outil Suivi des Achats" },
           ],
         },
       },

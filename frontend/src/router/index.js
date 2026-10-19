@@ -233,7 +233,7 @@ const routes = [
     name: "PurchasesHome",
     component: PurchasesHome,
     meta: {
-      title: "Mes achats",
+      title: "Outil Suivi des Achats",
       authenticationRequired: true,
     },
   },
