@@ -1,10 +1,12 @@
 <script setup>
 import { computed } from "vue"
+import { useRoute } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import documentation from "@/data/documentation.json"
 
 defineProps(["showNav"])
 const store = useRootStore()
+const route = useRoute()
 const logoText = ["République", "française"]
 
 const quickLinks = computed(() => {
@@ -18,7 +20,8 @@ const quickLinks = computed(() => {
   return [monCompte]
 })
 
-const navItems = [
+const hasForceActive = (routeName) => (route.meta?.forceActiveNav === routeName ? "page" : undefined)
+const navItems = computed(() => [
   {
     text: "Mon tableau de bord",
     to: { name: "GestionnaireTableauDeBord" },
@@ -33,6 +36,7 @@ const navItems = [
     text: "Outil Suivi Anti-Gaspi",
     to: { name: "GestionnaireGaspillageAlimentaire" },
     authenticationState: true,
+    ariaCurrent: hasForceActive("GestionnaireGaspillageAlimentaire"),
   },
   {
     text: "M'auto-évaluer",
@@ -101,10 +105,10 @@ const navItems = [
       },
     ],
   },
-]
+])
 
 const navItemsForUser = computed(() => {
-  const userLinks = navItems.filter((parentItem) => {
+  const userLinks = navItems.value.filter((parentItem) => {
     if (parentItem.authenticationState) return !!store.loggedUser
     else if (parentItem.authenticationState === false) return !store.loggedUser
     return true

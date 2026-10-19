@@ -51,6 +51,7 @@ const routes = [
     meta: {
       title: "Déchets alimentaires",
       breadcrumbs: [{ to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" }],
+      forceActiveNav: "GestionnaireGaspillageAlimentaire",
     },
   },
   {
