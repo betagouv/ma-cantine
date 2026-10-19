@@ -421,6 +421,52 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.full_clean()  # should not raise anymore
 
     @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_teledeclare_clears_appro_fields_not_matching_diagnostic_type(self):
+        # since 2026, fields that don't belong to this diagnostic's type must be cleared before
+        # teledeclaring (not before, so a manager can freely switch type while filling it out)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        # COMPLETE-only fields, stray on a SIMPLE diagnostic
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+        self.assertEqual(diagnostic.valeur_produits_de_la_mer_bio, 30)
+        diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
+        self.assertIsNone(diagnostic.valeur_viandes_volailles_bio)
+        self.assertIsNone(diagnostic.valeur_produits_de_la_mer_bio)
+        # SIMPLIFIED_DIAGNOSTIC_FIELDS stay, regardless of type
+        self.assertEqual(diagnostic.valeur_viandes_volailles_egalim, 50)
+        # fields that do belong to SIMPLE stay too
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_teledeclare_does_not_clear_appro_fields_if_an_earlier_check_raises(self):
+        # clearing must happen after every check that can raise, otherwise a failed teledeclare()
+        # call would still leave the instance mutated (with nothing actually saved)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
+        diagnostic.valeur_viandes_volailles_bio = 30  # simulate a stray field again
+        diagnostic.save()
+        with self.assertRaises(ValidationError):
+            # is_teledeclared check raises before reaching the clear() call
+            diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first())
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_clear_appro_fields_not_matching_diagnostic_type_noop_if_type_empty_or_invalid(self):
+        # nothing to clear against if the type isn't a real, known value
+        for diagnostic_type in [None, ""]:
+            with self.subTest(diagnostic_type=diagnostic_type):
+                diagnostic = DiagnosticFactory(**{**VALID_DIAGNOSTIC_SIMPLE_2026, "diagnostic_type": diagnostic_type})
+                diagnostic.clear_appro_fields_not_matching_diagnostic_type()
+                self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+                self.assertEqual(diagnostic.valeur_bio, 200)
+        # defensive guard against a bogus value (shouldn't happen via normal use, since
+        # diagnostic_type's choices are already enforced by the serializer & model field)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.diagnostic_type = "NOT_A_REAL_TYPE"
+        diagnostic.clear_appro_fields_not_matching_diagnostic_type()
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok

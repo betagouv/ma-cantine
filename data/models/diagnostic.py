@@ -33,7 +33,10 @@ from data.models.diagnostic_teledeclaration_dates import (
     is_in_correction,
     is_in_teledeclaration_or_correction,
 )
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
+    get_teledeclaration_fields_required,
+)
 from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
     get_teledeclaration_field_groups,
@@ -2427,6 +2430,27 @@ class Diagnostic(models.Model):
                 return Diagnostic.TeledeclarationMode.CENTRAL_APPRO
         return Diagnostic.TeledeclarationMode.SITE
 
+    def clear_appro_fields_not_matching_diagnostic_type(self):
+        """
+        Since 2026, appro fields that don't belong to this diagnostic's type must stay empty:
+        only the fields for that type (SIMPLE or COMPLETE) may be filled, the rest are cleared.
+        NOTE: called from teledeclare() (not save()), so a manager can freely switch
+        diagnostic_type while filling out a diagnostic without losing data until they actually
+        submit it.
+        NOTE: SIMPLIFIED_DIAGNOSTIC_FIELDS are kept regardless of type, since COMPLETE diagnostics
+        derive them automatically (see populate_simplified_diagnostic_values).
+        """
+        if not (self.year and int(self.year) >= 2026):
+            return
+        if not self.diagnostic_type or self.diagnostic_type not in Diagnostic.DiagnosticType.values:
+            return
+        matching_fields = set(get_teledeclaration_fields_all(self.year, self.diagnostic_type)) | set(
+            Diagnostic.SIMPLIFIED_DIAGNOSTIC_FIELDS
+        )
+        for field_name in Diagnostic.APPRO_FIELDS:
+            if field_name not in matching_fields:
+                setattr(self, field_name, None)
+
     def teledeclare(self, applicant, skip_validations=False):
         """
         Teledeclare the diagnostic
@@ -2456,6 +2480,10 @@ class Diagnostic(models.Model):
                     )
             if applicant not in self.canteen.managers.all():
                 raise ValidationError("Le déclarant n'est pas un gestionnaire de la cantine associée à ce diagnostic")
+        # only once past every check above that could still raise: clearing earlier would mutate
+        # the instance even if teledeclare() ends up failing
+        self.clear_appro_fields_not_matching_diagnostic_type()
+        if not skip_validations:
             # field validations
             self.is_clean(raise_errors=True)
 
