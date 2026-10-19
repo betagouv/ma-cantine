@@ -15,7 +15,7 @@ const purchaseAmount = computed(() => `${formatNumber(purchaseSummary.value?.val
 const iconLink = "/static/images/logo-osa-couleur.svg"
 
 /* Modal */
-const modalTitle = "En savoir plus sur l’outil “Mes achats”"
+const modalTitle = "En savoir plus sur l’Outil Suivi des Achats"
 const opened = ref(false)
 
 /* Actions */
@@ -28,7 +28,7 @@ const goToPurchases = () => {
   <div class="diagnostic-purchases-linked fr-background-alt--blue-france fr-p-4w">
     <div class="diagnostic-purchases-linked__top fr-mb-2w">
       <img :src="iconLink" alt="Logo outil Mes achats" class="diagnostic-purchases-linked__icon" />
-      <p class="diagnostic-purchases-linked__title fr-text--bold fr-mb-0">Souhaitez-vous modifier votre déclaration en pré-remplissant une nouvelle déclaration à partir de votre suivi d’achats (outil “Mes achats”) ?</p>
+      <p class="diagnostic-purchases-linked__title fr-text--bold fr-mb-0">Souhaitez-vous modifier votre déclaration en pré-remplissant une nouvelle déclaration à partir de votre suivi d’achats ?</p>
       <DsfrButton label="En savoir +" icon="ri-information-line" secondary class="diagnostic-purchases-linked__button" size="sm" @click="opened = true" />
     </div>
     <p v-if="hasPurchaseTotal" class="fr-mb-1w">
@@ -38,9 +38,9 @@ const goToPurchases = () => {
       Vous n’avez pas d’achats détectés dans votre suivi des achats.
     </p>
     <p>
-      Si vous utilisez l’Outil de suivi des achats, pour pré-remplir votre télédéclaration, assurez-vous d’avoir complété l’ensemble de vos achats de l’année précédente.
+      Si vous utilisez l’Outil de Suivi des Achats, pour pré-remplir votre télédéclaration, assurez-vous d’avoir complété l’ensemble de vos achats de l’année précédente.
     </p>
-    <DsfrButton label="Consulter mes achats" @click="goToPurchases" secondary />
+    <DsfrButton label="Consulter l'Outil Suivi des Achats'" @click="goToPurchases" secondary />
     <AppModalIframe :opened="opened" :title="modalTitle" :src="documentation.mesAchats" @close="opened = false" />
   </div>
 </template>
