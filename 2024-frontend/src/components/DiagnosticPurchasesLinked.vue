@@ -40,7 +40,7 @@ const goToPurchases = () => {
     <p>
       Si vous utilisez l’Outil de Suivi des Achats, pour pré-remplir votre télédéclaration, assurez-vous d’avoir complété l’ensemble de vos achats de l’année précédente.
     </p>
-    <DsfrButton label="Consulter l'Outil Suivi des Achats'" @click="goToPurchases" secondary />
+    <DsfrButton label="Consulter l'Outil Suivi des Achats" @click="goToPurchases" secondary />
     <AppModalIframe :opened="opened" :title="modalTitle" :src="documentation.mesAchats" @close="opened = false" />
   </div>
 </template>
