@@ -2256,14 +2256,14 @@ class Diagnostic(models.Model):
         self.pourcentage_france = compute_percentage(self.valeur_france, self.valeur_totale)
         self.pourcentage_circuit_court = compute_percentage(self.valeur_circuit_court, self.valeur_totale)
         self.pourcentage_local = compute_percentage(self.valeur_local, self.valeur_totale)
-        # per family & origine: relative to the family total
+        # per family & origine/circuit_court/local: relative to the family total
         for family_field in Diagnostic.APPRO_FAMILY_FIELDS:
             family = family_field.removeprefix("valeur_")
-            for origine in ["europe", "france", "circuit_court", "local"]:
+            for label in ["europe", "france", "circuit_court", "local"]:
                 setattr(
                     self,
-                    f"pourcentage_{family}_{origine}",
-                    compute_percentage(getattr(self, f"valeur_{family}_{origine}"), getattr(self, family_field)),
+                    f"pourcentage_{family}_{label}",
+                    compute_percentage(getattr(self, f"valeur_{family}_{label}"), getattr(self, family_field)),
                 )
         self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
 
