@@ -421,6 +421,23 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.full_clean()  # should not raise anymore
 
     @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_teledeclare_clears_appro_fields_not_matching_diagnostic_type(self):
+        # since 2026, fields that don't belong to this diagnostic's type must be cleared before
+        # teledeclaring (not before, so a manager can freely switch type while filling it out)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        # COMPLETE-only fields, stray on a SIMPLE diagnostic
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+        self.assertEqual(diagnostic.valeur_produits_de_la_mer_bio, 30)
+        diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
+        self.assertIsNone(diagnostic.valeur_viandes_volailles_bio)
+        self.assertIsNone(diagnostic.valeur_produits_de_la_mer_bio)
+        # SIMPLIFIED_DIAGNOSTIC_FIELDS stay, regardless of type
+        self.assertEqual(diagnostic.valeur_viandes_volailles_egalim, 50)
+        # fields that do belong to SIMPLE stay too
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok
