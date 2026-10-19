@@ -28,10 +28,10 @@ from data.utils import (
     to_decimal,
 )
 from data.validators import diagnostic as diagnostic_validators
+from data.validators import diagnostic_teledeclaration as diagnostic_teledeclaration_validators
 from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
     is_in_correction,
-    is_in_teledeclaration_or_correction,
 )
 from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_all,
@@ -2459,27 +2459,14 @@ class Diagnostic(models.Model):
         """
         if not skip_validations:
             # status & campaign dates validations
-            if not is_in_teledeclaration_or_correction():
-                raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
-            if not is_in_teledeclaration_or_correction(self.year):
-                raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
-            if self.is_teledeclared:
-                raise ValidationError("Ce diagnostic a déjà été télédéclaré")
+            diagnostic_teledeclaration_validators.validate_is_in_teledeclaration_or_correction_period("teledeclare")
+            diagnostic_teledeclaration_validators.validate_diagnostic_year_in_teledeclaration_period(self)
+            diagnostic_teledeclaration_validators.validate_not_already_teledeclared(self)
             # canteen validations
-            uses_central_kitchen_appro = self._should_use_central_kitchen_appro()
-            if not self.is_filled and not uses_central_kitchen_appro:
-                raise ValidationError("Ce diagnostic n'est pas rempli")
-            if not self.canteen.is_filled:
-                raise ValidationError("La cantine associée à ce diagnostic n'est pas remplie")
-            if self.canteen.is_groupe:
-                if self.canteen.satellites_count == 0:
-                    raise ValidationError("Le groupe associe à ce diagnostic n'a pas de cantine satellite")
-                if self.canteen.satellites_missing_data_count > 0:
-                    raise ValidationError(
-                        f"{self.canteen.satellites_missing_data_count} satellites du groupe associée à ce diagnostic ne sont pas remplis"
-                    )
-            if applicant not in self.canteen.managers.all():
-                raise ValidationError("Le déclarant n'est pas un gestionnaire de la cantine associée à ce diagnostic")
+            diagnostic_teledeclaration_validators.validate_diagnostic_is_filled(self)
+            diagnostic_teledeclaration_validators.validate_canteen_is_filled(self)
+            diagnostic_teledeclaration_validators.validate_canteen_groupe_satellites(self)
+            diagnostic_teledeclaration_validators.validate_applicant_is_canteen_manager(self, applicant)
         # only once past every check above that could still raise: clearing earlier would mutate
         # the instance even if teledeclare() ends up failing
         self.clear_appro_fields_not_matching_diagnostic_type()
@@ -2530,14 +2517,9 @@ class Diagnostic(models.Model):
         """
         Cancel the teledeclared diagnostic
         """
-        if not is_in_teledeclaration_or_correction():
-            raise ValidationError(
-                "Ce n'est pas possible d'annuler une télédéclaration hors de la période de la campagne"
-            )
-        if not is_in_teledeclaration_or_correction(self.year):
-            raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
-        if not self.is_teledeclared:
-            raise ValidationError("Ce diagnostic doit avoir été télédéclaré")
+        diagnostic_teledeclaration_validators.validate_is_in_teledeclaration_or_correction_period("cancel")
+        diagnostic_teledeclaration_validators.validate_diagnostic_year_in_teledeclaration_period(self)
+        diagnostic_teledeclaration_validators.validate_is_teledeclared(self)
 
         # before deleting the snapshots
         canteen_id_list_to_update = []
