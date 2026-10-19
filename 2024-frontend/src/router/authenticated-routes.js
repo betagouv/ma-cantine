@@ -270,6 +270,7 @@ const routes = [
             { to: { name: "GestionnaireCantine" }, useCanteenName: true },
             { to: { name: "PurchasesHome" }, title: "Outil Suivi des Achats"},
           ],
+          forceActiveNav: "PurchasesHome",
         },
       },
       {
@@ -283,6 +284,7 @@ const routes = [
             { to: { name: "GestionnaireCantine" }, useCanteenName: true },
             { to: { name: "PurchasesHome" }, title: "Outil Suivi des Achats" },
           ],
+          forceActiveNav: "PurchasesHome",
         },
       },
     ],

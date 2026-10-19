@@ -31,12 +31,13 @@ const navItems = computed(() => [
     text: "Outil Suivi des Achats",
     to: { name: "PurchasesHome" },
     authenticationState: true,
+    "aria-current": hasForceActive("PurchasesHome"),
   },
   {
     text: "Outil Suivi Anti-Gaspi",
     to: { name: "GestionnaireGaspillageAlimentaire" },
     authenticationState: true,
-    ariaCurrent: hasForceActive("GestionnaireGaspillageAlimentaire"),
+    "aria-current": hasForceActive("GestionnaireGaspillageAlimentaire"),
   },
   {
     text: "M'auto-évaluer",
