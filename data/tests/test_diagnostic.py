@@ -438,6 +438,19 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.valeur_totale, 1000)
 
     @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_teledeclare_does_not_clear_appro_fields_if_an_earlier_check_raises(self):
+        # clearing must happen after every check that can raise, otherwise a failed teledeclare()
+        # call would still leave the instance mutated (with nothing actually saved)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
+        diagnostic.valeur_viandes_volailles_bio = 30  # simulate a stray field again
+        diagnostic.save()
+        with self.assertRaises(ValidationError):
+            # is_teledeclared check raises before reaching the clear() call
+            diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first())
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok

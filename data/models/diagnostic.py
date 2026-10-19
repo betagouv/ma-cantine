@@ -2460,7 +2460,6 @@ class Diagnostic(models.Model):
         - applicant is mandatory (User instance)
         - skip_validations: if True, skip validation checks (USE WITH CAUTION) (only for tests)
         """
-        self.clear_appro_fields_not_matching_diagnostic_type()
         if not skip_validations:
             # status & campaign dates validations
             if not is_in_teledeclaration_or_correction():
@@ -2484,6 +2483,10 @@ class Diagnostic(models.Model):
                     )
             if applicant not in self.canteen.managers.all():
                 raise ValidationError("Le déclarant n'est pas un gestionnaire de la cantine associée à ce diagnostic")
+        # only once past every check above that could still raise: clearing earlier would mutate
+        # the instance even if teledeclare() ends up failing
+        self.clear_appro_fields_not_matching_diagnostic_type()
+        if not skip_validations:
             # field validations
             self.is_clean(raise_errors=True)
 
