@@ -815,9 +815,7 @@ class Diagnostic(models.Model):
         "pourcentage_egalim_hors_bio",
         "pourcentage_egalim",
         "pourcentage_viandes_volailles_egalim",
-        "pourcentage_viandes_volailles_france",
         "pourcentage_produits_de_la_mer_egalim",
-        "pourcentage_produits_de_la_mer_france",
         "pourcentage_viandes_volailles_produits_de_la_mer_egalim",
         "pourcentage_europe",
         "pourcentage_france",
@@ -831,6 +829,8 @@ class Diagnostic(models.Model):
         "pourcentage_boulangerie_europe",
         "pourcentage_boissons_europe",
         "pourcentage_autres_europe",
+        "pourcentage_viandes_volailles_france",
+        "pourcentage_produits_de_la_mer_france",
         "pourcentage_fruits_et_legumes_france",
         "pourcentage_charcuterie_france",
         "pourcentage_produits_laitiers_france",
@@ -1913,16 +1913,8 @@ class Diagnostic(models.Model):
         verbose_name="pourcentage viandes et volailles EGalim (champ calculé)",
         help_text="par rapport à la valeur totale viandes et volailles",
     )
-    pourcentage_viandes_volailles_france = make_optional_positive_percentage_decimal_field(
-        verbose_name="pourcentage viandes et volailles origine France (champ calculé)",
-        help_text="par rapport à la valeur totale viandes et volailles",
-    )
     pourcentage_produits_de_la_mer_egalim = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage produits de la mer EGalim (champ calculé)",
-        help_text="par rapport à la valeur totale produits de la mer",
-    )
-    pourcentage_produits_de_la_mer_france = make_optional_positive_percentage_decimal_field(
-        verbose_name="pourcentage produits de la mer origine France (champ calculé)",
         help_text="par rapport à la valeur totale produits de la mer",
     )
     pourcentage_viandes_volailles_produits_de_la_mer_egalim = make_optional_positive_percentage_decimal_field(
@@ -1972,6 +1964,14 @@ class Diagnostic(models.Model):
     pourcentage_autres_europe = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage autres produits origine UE (hors France) (champ calculé)",
         help_text="par rapport à la valeur totale autres produits",
+    )
+    pourcentage_viandes_volailles_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles origine France (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer origine France (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
     )
     pourcentage_fruits_et_legumes_france = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage fruits et légumes origine France (champ calculé)",
