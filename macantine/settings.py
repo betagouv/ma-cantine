@@ -44,7 +44,7 @@ DEBUG = os.getenv("DEBUG") == "True"
 DEBUG_FRONT = os.getenv("DEBUG_FRONT") == "True" if os.getenv("DEBUG_FRONT") else True
 AUTH_USER_MODEL = "data.User"
 AUTHENTICATION_BACKENDS = [
-    "macantine.backends.EmailUsernameBackend",
+    "macantine.backends.EmailBackend",
 ]
 ALLOWED_HOSTS = [x.strip() for x in os.getenv("ALLOWED_HOSTS").split(",")]
 ENFORCE_HOST = os.getenv("ENFORCE_HOST", None)

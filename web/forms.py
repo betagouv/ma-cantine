@@ -25,7 +25,6 @@ class RegisterUserForm(UserCreationForm):
             "is_dev",
             "email",
             "phone_number",
-            "username",
             "password1",
             "password2",
             "cgu_approved",
@@ -39,7 +38,6 @@ class RegisterUserForm(UserCreationForm):
         self.label_suffix = ""
         self.fields["first_name"].widget.attrs.update({"placeholder": "Agnès", "autocomplete": "given-name"})
         self.fields["last_name"].widget.attrs.update({"placeholder": "Dufresne", "autocomplete": "family-name"})
-        self.fields["username"].widget.attrs.update({"placeholder": "agnes.dufresne", "autofocus": False})
         self.fields["email"].label = "Adresse électronique"
         self.fields["email"].help_text = "Format attendu : nom@domaine.fr"
         self.fields["email"].widget.attrs.update({"placeholder": "agnes.d@example.com", "autocomplete": "email"})
@@ -65,7 +63,6 @@ class RegisterUserForm(UserCreationForm):
 
     def right_column_fields(self):
         field_names = [
-            "username",
             "password1",
             "password2",
         ]
@@ -73,9 +70,6 @@ class RegisterUserForm(UserCreationForm):
 
     def clean_cgu_approved(self):
         return _clean_cgu_approved(self)
-
-    def clean_username(self):
-        return _clean_username(self)
 
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get("phone_number")
@@ -102,19 +96,9 @@ def _clean_cgu_approved(form):
     return form.cleaned_data["cgu_approved"]
 
 
-def _clean_username(form):
-    # username can't be an email
-    username = form.cleaned_data.get("username", "")
-    at_index = username.find("@")
-    if at_index != -1 and "." in username[at_index + 1 :]:
-        raise forms.ValidationError("Vous ne pouvez pas utiliser une adresse email comme nom d'utilisateur.")
-
-    return username
-
-
 class LoginUserForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.error_messages["invalid_login"] = (
-            "Saisissez un nom d'utilisateur ou adresse électronique et un mot de passe valides. Remarquez que chacun de ces champs est sensible à la casse (différenciation des majuscules/minuscules)."
+            "Saisissez une adresse électronique et un mot de passe valides. Remarquez que chacun de ces champs est sensible à la casse (différenciation des majuscules/minuscules)."
         )
