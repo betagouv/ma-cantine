@@ -2432,10 +2432,8 @@ class Diagnostic(models.Model):
 
     def clear_appro_fields_not_matching_diagnostic_type(self):
         """
-        Since 2026, appro fields that don't belong to this diagnostic's year & type must stay empty:
-        - if diagnostic_type is empty, every appro field must stay empty
-        - if filled, only the fields for that type (SIMPLE or COMPLETE) may be filled; the rest
-          are cleared
+        Since 2026, appro fields that don't belong to this diagnostic's type must stay empty:
+        only the fields for that type (SIMPLE or COMPLETE) may be filled, the rest are cleared.
         NOTE: called from teledeclare() (not save()), so a manager can freely switch
         diagnostic_type while filling out a diagnostic without losing data until they actually
         submit it.
@@ -2444,12 +2442,11 @@ class Diagnostic(models.Model):
         """
         if not (self.year and int(self.year) >= 2026):
             return
-        if self.diagnostic_type:
-            matching_fields = set(get_teledeclaration_fields_all(self.year, self.diagnostic_type)) | set(
-                Diagnostic.SIMPLIFIED_DIAGNOSTIC_FIELDS
-            )
-        else:
-            matching_fields = set()
+        if not self.diagnostic_type or self.diagnostic_type not in Diagnostic.DiagnosticType.values:
+            return
+        matching_fields = set(get_teledeclaration_fields_all(self.year, self.diagnostic_type)) | set(
+            Diagnostic.SIMPLIFIED_DIAGNOSTIC_FIELDS
+        )
         for field_name in Diagnostic.APPRO_FIELDS:
             if field_name not in matching_fields:
                 setattr(self, field_name, None)

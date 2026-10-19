@@ -451,6 +451,22 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
 
     @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_clear_appro_fields_not_matching_diagnostic_type_noop_if_type_empty_or_invalid(self):
+        # nothing to clear against if the type isn't a real, known value
+        for diagnostic_type in [None, ""]:
+            with self.subTest(diagnostic_type=diagnostic_type):
+                diagnostic = DiagnosticFactory(**{**VALID_DIAGNOSTIC_SIMPLE_2026, "diagnostic_type": diagnostic_type})
+                diagnostic.clear_appro_fields_not_matching_diagnostic_type()
+                self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+                self.assertEqual(diagnostic.valeur_bio, 200)
+        # defensive guard against a bogus value (shouldn't happen via normal use, since
+        # diagnostic_type's choices are already enforced by the serializer & model field)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.diagnostic_type = "NOT_A_REAL_TYPE"
+        diagnostic.clear_appro_fields_not_matching_diagnostic_type()
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok
