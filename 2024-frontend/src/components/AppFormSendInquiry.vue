@@ -102,7 +102,7 @@ const sendInquiry = () => {
             :error-message="formatError(v$.inquiryType)"
           />
           <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
-            <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-col-12">
               <DsfrInputGroup
                 v-model="form.fromEmail"
                 label="Adresse électronique *"
