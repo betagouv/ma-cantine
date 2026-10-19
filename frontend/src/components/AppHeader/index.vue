@@ -214,7 +214,7 @@ export default {
           authenticationState: true,
         },
         {
-          text: "Mes achats",
+          text: "Outil Suivi des Achats",
           to: { name: "PurchasesHome" },
           authenticationState: true,
         },
