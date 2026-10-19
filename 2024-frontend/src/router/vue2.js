@@ -10,7 +10,7 @@ const vue2routes = [
     path: "/mes-achats",
     name: "PurchasesHome",
     meta: {
-      title: "Mes achats",
+      title: "Outil Suivi des Achats",
       siteMap: diag,
       authenticationRequired: true,
     },

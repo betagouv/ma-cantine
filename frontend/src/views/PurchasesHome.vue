@@ -4,7 +4,7 @@
     <div class="d-flex mb-8">
       <div>
         <h1 class="font-weight-black text-h5 text-sm-h4 mb-4" style="width: 100%">
-          Mes achats
+          Outil Suivi des Achats
         </h1>
         <p>
           Une alimentation saine et durable commence par un suivi comptable de vos achats.

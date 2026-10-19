@@ -1,69 +1,99 @@
 <script setup>
-import { computed, onMounted, ref } from "vue"
+import { computed, ref, watch } from "vue"
 import { useRootStore } from "@/stores/root"
 import { useRouter } from "vue-router"
 import { formatNumber } from "@/utils"
+import urlService from "@/services/urls"
 import WasteMeasurementSummary from "@/components/WasteMeasurementSummary.vue"
 import EmphasiseText from "@/components/EmphasiseText.vue"
+import AppLinkMailto from "@/components/AppLinkMailto.vue"
 
 const props = defineProps(["canteenUrlComponent"])
 const store = useRootStore()
 const router = useRouter()
 
-const canteenId = computed(() => +props.canteenUrlComponent.split("--")[0])
-const canteen = computed(() => {
-  const canteen = store.canteenPreviews.find((canteen) => canteen.id === canteenId.value)
-  if (!canteen) router.replace({ name: "GestionnaireTableauDeBord" })
-  return {
-    id: canteenId,
-    name: canteen?.name,
-  }
-})
+const canteenId = computed(() => props.canteenUrlComponent ? +props.canteenUrlComponent.split("--")[0] : null)
+const canteen = computed(() => store.canteenPreviews.find((canteen) => canteen.id === canteenId.value))
 
-const newMeasurementRoute = {
-  name: "GestionnaireGaspillageAlimentaireModifier",
-  params: { canteenUrlComponent: props.canteenUrlComponent },
+/* Selector */
+const canteenOptions = computed(() =>
+  store.canteenPreviews
+    .map((canteen) => ({ value: canteen.id, text: canteen.name }))
+    .sort((a, b) => a.text.localeCompare(b.text))
+)
+
+const selectCanteen = (id) => {
+  const selectedCanteen = store.canteenPreviews.find((canteen) => canteen.id === Number(id))
+  if (!selectedCanteen) return
+  router.push({
+    name: "GestionnaireGaspillageAlimentaire",
+    params: { canteenUrlComponent: urlService.getCanteenUrl(selectedCanteen) },
+  })
 }
 
+/* Redirect */
+const newMeasurementRoute = computed(() => ({
+  name: "GestionnaireGaspillageAlimentaireModifier",
+  params: { canteenUrlComponent: props.canteenUrlComponent },
+}))
+
+/* Measurements */
 const measurements = ref([])
 
-onMounted(() => {
-  fetch(`/api/v1/canteens/${canteenId.value}/wasteMeasurements`)
-    .then((response) => response.json())
-    .then((response) => {
-      measurements.value = response
-    })
-})
+watch(
+  canteenId,
+  (id) => {
+    measurements.value = []
+    if (!id) return
+    fetch(`/api/v1/canteens/${id}/wasteMeasurements`)
+      .then((response) => response.json())
+      .then((response) => {
+        measurements.value = response
+      })
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
   <div>
-    <h1>Déchets alimentaires</h1>
-    <p>
-      {{ canteen.name }}&nbsp;
-      <router-link :to="{ name: 'GestionnaireTableauDeBord' }" class="fr-btn fr-btn--tertiary fr-btn--sm">
-        Changer d'établissement
-      </router-link>
-    </p>
-    <h2>Mes déchets alimentaires mesurés</h2>
-    <div v-if="measurements.length">
-      <WasteMeasurementSummary
-        :measurements="measurements"
-        :editable="true"
-        :canteenUrlComponent="canteenUrlComponent"
-      />
-    </div>
-    <div v-else>
+    <DsfrAlert title="Cette page va bientôt évoluer" type="info" class="fr-mb-4w">
       <p>
-        Votre établissement est soumis à l'obligation de faire une analyse des causes des déchets alimentaires, et de
-        mettre en place une démarche de lutte contre les déchets alimentaires.
+        Une nouvelle version de l'Outil Suivi Anti-Gaspi sera bientôt disponible, construite à partir de vos retours
+        dans un souci de simplicité et de performance.
       </p>
-      <DsfrBadge label="Pas encore de données" type="none" />
-      <EmphasiseText :emphasisText="`${formatNumber()} g`" contextText="par repas et par convive" />
-      <router-link :to="newMeasurementRoute" class="fr-btn">
-        Saisir une évaluation
-      </router-link>
-    </div>
+      <p>Pour toute remarque ou question : <AppLinkMailto /></p>
+    </DsfrAlert>
+    <h1>Outil Suivi Anti-Gaspi</h1>
+    <DsfrSelect
+      :modelValue="canteen?.id"
+      @update:modelValue="selectCanteen"
+      label="Pour l'établissement :"
+      :options="canteenOptions"
+      defaultUnselectedText="Sélectionnez une cantine ou un groupe de cantines"
+      class="fr-mb-4w"
+    />
+    <template v-if="canteen">
+      <h2>Mes déchets alimentaires mesurés</h2>
+      <div v-if="measurements.length">
+        <WasteMeasurementSummary
+          :measurements="measurements"
+          :editable="true"
+          :canteenUrlComponent="canteenUrlComponent"
+        />
+      </div>
+      <div v-else>
+        <p>
+          Votre établissement est soumis à l'obligation de faire une analyse des causes des déchets alimentaires, et
+          de mettre en place une démarche de lutte contre les déchets alimentaires.
+        </p>
+        <DsfrBadge label="Pas encore de données" type="none" />
+        <EmphasiseText :emphasisText="`${formatNumber()} g`" contextText="par repas et par convive" />
+        <router-link :to="newMeasurementRoute" class="fr-btn">
+          Saisir une évaluation
+        </router-link>
+      </div>
+    </template>
   </div>
 </template>
 
