@@ -80,8 +80,8 @@ const getResult = (statName) => hasValue(statName) ? stringsService.prettyPercen
     :year="diagnosticRecap.year"
     :description-custom="`Pour le bilan ${diagnosticRecap.year}`"
   />
+  <AppSeparator v-if="displayedGroups.length > 0" class="fr-mt-4w" />
   <template v-for="group in displayedGroups" :key="group.title">
-    <AppSeparator class="fr-mt-4w" />
     <div class="fr-mt-4w">
       <h3 class="fr-h6 fr-mb-2w">{{ group.title }}</h3>
       <ul class="ma-cantine--unstyled-list fr-grid-row">
