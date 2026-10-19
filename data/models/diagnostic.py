@@ -819,6 +819,10 @@ class Diagnostic(models.Model):
         "pourcentage_produits_de_la_mer_egalim",
         "pourcentage_produits_de_la_mer_france",
         "pourcentage_viandes_volailles_produits_de_la_mer_egalim",
+        "pourcentage_europe",
+        "pourcentage_france",
+        "pourcentage_circuit_court",
+        "pourcentage_local",
         "objectifs_egalim_atteints",
     ]
 
@@ -1895,6 +1899,18 @@ class Diagnostic(models.Model):
         verbose_name="pourcentage viandes, volailles et produits de la mer EGalim (champ calculé)",
         help_text="par rapport à la somme de valeur totale viandes et volailles + valeur totale produits de la mer",
     )
+    pourcentage_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage origine UE (hors France) (champ calculé)",
+    )
+    pourcentage_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage origine France (champ calculé)",
+    )
+    pourcentage_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage circuit court (champ calculé)",
+    )
+    pourcentage_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage local (champ calculé)",
+    )
     objectifs_egalim_atteints = models.BooleanField(
         blank=True,
         null=True,
@@ -2092,6 +2108,10 @@ class Diagnostic(models.Model):
             sum_int_with_potential_null([self.valeur_viandes_volailles_egalim, self.valeur_produits_de_la_mer_egalim]),
             sum_int_with_potential_null([self.valeur_viandes_volailles, self.valeur_produits_de_la_mer]),
         )
+        self.pourcentage_europe = compute_percentage(self.valeur_europe, self.valeur_totale)
+        self.pourcentage_france = compute_percentage(self.valeur_france, self.valeur_totale)
+        self.pourcentage_circuit_court = compute_percentage(self.valeur_circuit_court, self.valeur_totale)
+        self.pourcentage_local = compute_percentage(self.valeur_local, self.valeur_totale)
         self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
 
     def populate_cout_repas(self):
