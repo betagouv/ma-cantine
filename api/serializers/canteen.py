@@ -13,7 +13,6 @@ from .diagnostic import (
     CentralKitchenDiagnosticSerializer,
     FullDiagnosticSerializer,
     PublicApproDiagnosticSerializer,
-    PublicDiagnosticSerializer,
 )
 from .resourceaction import ResourceActionFullSerializer
 from .canteen_images import CanteenImageSerializer
@@ -177,47 +176,6 @@ class PublicCanteenSerializer(serializers.ModelSerializer):
             "badges",
             "resource_actions",
         )
-
-
-class ElectedCanteenSerializer(serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
-    diagnostics = PublicDiagnosticSerializer(many=True, read_only=True)
-    central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True, read_only=True)
-    is_managed_by_user = serializers.BooleanField(read_only=True)
-    publication_status = serializers.CharField(source="publication_status_display_to_public", read_only=True)
-
-    class Meta:
-        model = Canteen
-        fields = (
-            "id",
-            "name",
-            "siret",
-            "diagnostics",
-            "city",
-            "city_insee_code",
-            "postal_code",
-            "epci",
-            "epci_lib",
-            "pat_list",
-            "pat_lib_list",
-            "department",
-            "department_lib",
-            "region",
-            "region_lib",
-            "sectors",  # from "sectors_m2m"
-            "daily_meal_count",
-            "yearly_meal_count",
-            "production_type",
-            "quality_comments",
-            "waste_comments",
-            "diversification_comments",
-            "plastics_comments",
-            "information_comments",
-            "is_managed_by_user",  # annotate
-            "central_kitchen_diagnostics",
-            "publication_status",  # property
-        )
-        read_only_fields = ("publication_status",)
 
 
 class SatelliteCanteenSerializer(serializers.ModelSerializer):

@@ -34,7 +34,6 @@ class BrevoUserDataTest(TestCase):
 
         self.assertEqual(attributes.get("MA_CANTINE_DATE_INSCRIPTION"), "2026-01-30")
         self.assertEqual(attributes.get("MA_CANTINE_COMPTE_DEV"), user_without_canteen.is_dev)
-        self.assertEqual(attributes.get("MA_CANTINE_COMPTE_ELU_E"), user_without_canteen.is_elected_official)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_2025"), 0)
 

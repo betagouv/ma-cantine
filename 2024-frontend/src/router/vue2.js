@@ -77,15 +77,6 @@ const vue2routes = [
     },
   },
   {
-    path: "/les-cantines-de-mon-territoire",
-    name: "TerritoryCanteens",
-    meta: {
-      title: "Les cantines de mon territoire",
-      siteMap: diag,
-      authenticationRequired: true,
-    },
-  },
-  {
     path: "/trouver-une-cantine",
     name: "CanteenSearchLanding",
     meta: {

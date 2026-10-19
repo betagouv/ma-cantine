@@ -68,7 +68,6 @@ from api.views import (
     TeamJoinRequestView,
     TeledeclarationCampaignDatesListView,
     TeledeclarationCampaignDatesRetrieveView,
-    TerritoryCanteensListView,
     UndoClaimCanteenView,
     UpdateUserView,
     UserCanteenActions,
@@ -325,7 +324,6 @@ urlpatterns = {
     path("canteenStatus/siren/<str:siren>", CanteenStatusBySirenView.as_view(), name="canteen_status_by_siren"),
     path("videoTutorials/", VideoTutorialListView.as_view(), name="video_tutorials"),
     path("initialData/", InitialDataView.as_view(), name="initial_data"),
-    path("territoryCanteens/", TerritoryCanteensListView.as_view(), name="territory_canteens"),
     path("wasteActions/", WasteActionsView.as_view(), name="waste_actions_list"),
     path("wasteActions/<int:pk>", WasteActionView.as_view(), name="waste_action_detail"),
     path(

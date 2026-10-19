@@ -9,7 +9,6 @@ from .canteen import (  # noqa: F401
     PublishedCanteenSingleView,
     PublishedCanteensView,
     RetrieveUpdateUserCanteenView,
-    TerritoryCanteensListView,
     UserCanteenActions,
     UserCanteenCheckView,
     UserCanteenPreviews,

@@ -51,7 +51,6 @@ class MaCanteenUserAdmin(UserAdmin):
     )
     list_filter = (
         "email_confirmed",
-        "is_elected_official",
         "is_dev",
         "is_staff",
         "groups",
@@ -84,15 +83,6 @@ class MaCanteenUserAdmin(UserAdmin):
                     "job",
                     "other_job_description",
                 )
-            },
-        ),
-        (
-            _("Section pour les élu·e·s"),
-            {
-                "fields": (
-                    "is_elected_official",
-                    "departments",
-                ),
             },
         ),
         (
