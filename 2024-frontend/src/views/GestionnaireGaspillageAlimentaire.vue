@@ -59,12 +59,12 @@ watch(
   <div>
     <DsfrAlert title="Cette page va bientôt évoluer" type="info" class="fr-mb-4w">
       <p>
-        Une nouvelle version de la page de suivi des déchets alimentaires sera bientôt disponible, construite à partir
-        de vos retours dans un souci de simplicité et de performance.
+        Une nouvelle version de l'Outil Suivi Anti-Gaspi sera bientôt disponible, construite à partir de vos retours
+        dans un souci de simplicité et de performance.
       </p>
       <p>Pour toute remarque ou question : <AppLinkMailto /></p>
     </DsfrAlert>
-    <h1>Déchets alimentaires</h1>
+    <h1>Outil Suivi Anti-Gaspi</h1>
     <DsfrSelect
       :modelValue="canteen?.id"
       @update:modelValue="selectCanteen"

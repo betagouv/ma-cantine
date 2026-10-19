@@ -49,7 +49,7 @@ const routes = [
     component: GestionnaireGaspillageAlimentaire,
     props: (route) => ({ ...route.params }),
     meta: {
-      title: "Déchets alimentaires",
+      title: "Outil Suivi Anti-Gaspi",
       breadcrumbs: [{ to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" }],
       forceActiveNav: "GestionnaireGaspillageAlimentaire",
     },
