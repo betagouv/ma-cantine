@@ -22,7 +22,6 @@ from api.permissions import (
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManager,
     IsCanteenManagerUrlParam,
-    IsElectedOfficial,
 )
 from api.serializers import (
     CanteenCheckSerializer,
@@ -34,7 +33,6 @@ from api.serializers import (
     CanteenPreviewSerializer,
     CanteenStatusSerializer,
     CanteenSummarySerializer,
-    ElectedCanteenSerializer,
     FullCanteenSerializer,
     PublicCanteenPreviewSerializer,
     PublicCanteenSerializer,
@@ -540,24 +538,6 @@ class ActionableCanteenRetrieveView(RetrieveAPIView):
         canteen_id = self.request.parser_context.get("kwargs").get("pk")
         single_canteen_queryset = self.request.user.canteens.filter(id=canteen_id)
         return single_canteen_queryset.annotate_with_action_for_year(year)
-
-
-class TerritoryCanteensListView(ListAPIView):
-    model = Canteen
-    permission_classes = [IsElectedOfficial]
-    serializer_class = ElectedCanteenSerializer
-    pagination_class = PublishedCanteensPagination
-    filter_backends = [
-        django_filters.DjangoFilterBackend,
-        UnaccentSearchFilter,
-        MaCantineOrderingFilter,
-    ]
-    search_fields = ["name", "siret"]
-    ordering_fields = ["name", "city", "siret", "daily_meal_count"]
-
-    def get_queryset(self):
-        departments = self.request.user.departments
-        return Canteen.objects.annotate_with_is_managed_by_user(self.request.user).filter(department__in=departments)
 
 
 @extend_schema_view(

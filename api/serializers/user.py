@@ -36,7 +36,6 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "avatar",
             "is_staff",
             "is_dev",
-            "is_elected_official",
             "job",
             "other_job_description",
             "source",
@@ -44,7 +43,6 @@ class LoggedUserSerializer(serializers.ModelSerializer):
             "has_mtm_data",
             "reviews",
             "mcp_organizations",
-            "departments",
         )
         read_only_fields = (
             "id",
