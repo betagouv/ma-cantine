@@ -169,6 +169,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   function setValue(field, value) {
     diagnostic.value[field] = value
     isSaved.value = false
+    clearError(field)
   }
 
   /* Empty store */
