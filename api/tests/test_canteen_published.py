@@ -290,20 +290,18 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         """
         In meal count, "null" values should be placed first
         """
-        canteen_daily_meal_count_none = CanteenFactory(
+        CanteenFactory(
             name="Shiso",
             creation_date=(timezone.now() - datetime.timedelta(days=10)),
-            # daily_meal_count=None
+            daily_meal_count=None,
+            skip_validations=True,
         )
-        canteen_daily_meal_count_none.daily_meal_count = None
-        canteen_daily_meal_count_none.save(skip_validations=True)
-        canteen_daily_meal_count_0 = CanteenFactory(
+        CanteenFactory(
             name="Wasabi",
             creation_date=(timezone.now() - datetime.timedelta(days=8)),
-            # daily_meal_count=0
+            daily_meal_count=0,
+            skip_validations=True,
         )
-        canteen_daily_meal_count_0.daily_meal_count = 0
-        canteen_daily_meal_count_0.save(skip_validations=True)
         CanteenFactory(
             daily_meal_count=3,
             name="Mochi",
@@ -367,18 +365,14 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         )
         good_canteen_empty_siret = CanteenFactory(
             name="Cantine avec bilan mais siret vide",
-            # siret="",
+            siret="",
+            skip_validations=True,
         )
-        good_canteen_empty_siret.siret = ""
-        good_canteen_empty_siret.save(skip_validations=True)
-        good_canteen_empty_siret.refresh_from_db()
         good_canteen_siret_none = CanteenFactory(
             name="Cantine avec bilan mais siret null",
-            # siret=None,
+            siret=None,
+            skip_validations=True,
         )
-        good_canteen_siret_none.siret = None
-        good_canteen_siret_none.save(skip_validations=True)
-        good_canteen_siret_none.refresh_from_db()
         CanteenFactory(
             name="Cantine sans bilan avec siret cuisine centrale vide",
             siret="21730065600014",

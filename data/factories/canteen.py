@@ -283,6 +283,16 @@ class CanteenFactory(factory.django.DjangoModelFactory):
         else []
     )
 
+    @classmethod
+    def _create(cls, model_class, *args, skip_validations=False, **kwargs):
+        """
+        skip_validations=True: to create a canteen that doesn't pass the validations (e.g. missing or invalid data)
+        Usage: CanteenFactory(siret=None, skip_validations=True)
+        """
+        obj = model_class(*args, **kwargs)
+        obj.save(skip_validations=skip_validations)
+        return obj
+
     @factory.post_generation
     def sectors_m2m(self, create, extracted, **kwargs):
         if not create or extracted == []:

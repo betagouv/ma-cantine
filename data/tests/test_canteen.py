@@ -579,6 +579,16 @@ class CanteenModelSaveTest(TransactionTestCase):
         canteen.save(skip_validations=True)
         self.assertEqual(canteen.siret, None)
 
+    def test_canteen_factory_skip_validations(self):
+        # without skip_validations
+        self.assertRaises(ValidationError, CanteenFactory, siret=None, siren_unite_legale=None)
+
+        # with skip_validations
+        canteen = CanteenFactory(siret=None, siren_unite_legale=None, skip_validations=True)
+        canteen.refresh_from_db()
+        self.assertIsNone(canteen.siret)
+        self.assertFalse(canteen.is_filled)  # still computed
+
     def test_canteen_dirty_fields_on_save(self):
         canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
         self.assertFalse(canteen.is_dirty())
@@ -1083,15 +1093,8 @@ class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
         cls.canteen_siret_2 = CanteenFactory(siret="21010034300016", siren_unite_legale=None)  # OK
         cls.canteen_siren_1 = CanteenFactory(siret="", siren_unite_legale="756656218")  # OK
         cls.canteen_siren_2 = CanteenFactory(siret=None, siren_unite_legale="756656218")  # OK
-        cls.canteen_none_1 = CanteenFactory()
-        cls.canteen_none_1.siret = ""  # missing data
-        cls.canteen_none_1.save(skip_validations=True)
-        cls.canteen_none_1.refresh_from_db()
-        cls.canteen_none_2 = CanteenFactory()
-        cls.canteen_none_2.siret = None
-        cls.canteen_none_2.siren_unite_legale = ""  # missing
-        cls.canteen_none_2.save(skip_validations=True)
-        cls.canteen_none_2.refresh_from_db()
+        cls.canteen_none_1 = CanteenFactory(siret="", skip_validations=True)  # missing data
+        cls.canteen_none_2 = CanteenFactory(siret=None, siren_unite_legale="", skip_validations=True)  # missing
 
     def has_siret_or_siren_unite_legale_queryset(self):
         self.assertEqual(Canteen.objects.count(), 7)
@@ -1217,40 +1220,32 @@ class CanteenIsFilledQuerySetAndPropertyTest(TestCase):
         cls.canteen_on_site_missing_data_1 = CanteenFactory(
             siret="21380185500015",
             production_type=Canteen.ProductionType.ON_SITE,
-            # daily_meal_count=12,
+            daily_meal_count=0,  # missing data
+            skip_validations=True,
         )
-        cls.canteen_on_site_missing_data_1.daily_meal_count = 0  # missing data
-        cls.canteen_on_site_missing_data_1.save(skip_validations=True)
-        cls.canteen_on_site_missing_data_1.refresh_from_db()
         cls.canteen_on_site_missing_data_2 = CanteenFactory(
             siret="21670482500019",
             production_type=Canteen.ProductionType.ON_SITE,
-            # sector_list=[],  # missing data
+            sector_list=[],  # missing data
+            skip_validations=True,
         )
-        cls.canteen_on_site_missing_data_2.sector_list = []  # missing data
-        cls.canteen_on_site_missing_data_2.save(skip_validations=True)
-        cls.canteen_on_site_missing_data_2.refresh_from_db()
         cls.canteen_on_site_missing_data_3 = CanteenFactory(
             siret="21640122400011",
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[Sector.ADMINISTRATION_PRISON],
-            line_ministry=Canteen.Ministries.SPORT,
+            line_ministry=None,  # missing data
+            skip_validations=True,
         )
-        cls.canteen_on_site_missing_data_3.line_ministry = None  # missing data
-        cls.canteen_on_site_missing_data_3.save(skip_validations=True)
-        cls.canteen_on_site_missing_data_3.refresh_from_db()
         cls.canteen_satellite_not_in_groupe_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="21340172201787"
         )
         cls.canteen_satellite_not_in_groupe_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
         cls.canteen_satellite_missing_data = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            # economic_model=Canteen.EconomicModel.PRIVATE,  # missing data
+            economic_model=None,  # missing data
+            skip_validations=True,
         )
-        cls.canteen_satellite_missing_data.economic_model = None  # missing data
-        cls.canteen_satellite_missing_data.save(skip_validations=True)
-        cls.canteen_satellite_missing_data.refresh_from_db()
         cls.canteen_filled_list = [
             cls.canteen_groupe_with_satellite,
             cls.canteen_groupe_without_satellite,
@@ -1298,11 +1293,10 @@ class CanteenIsCleanMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_on_site_not_valid = CanteenFactory(
-            siret="21380185500015",
+            siret=None,
             production_type=Canteen.ProductionType.ON_SITE,
+            skip_validations=True,
         )
-        cls.canteen_on_site_not_valid.siret = None
-        cls.canteen_on_site_not_valid.save(skip_validations=True)
         cls.canteen_on_site_valid = CanteenFactory(
             siret=None,
             siren_unite_legale="967669103",

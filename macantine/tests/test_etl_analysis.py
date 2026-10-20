@@ -347,10 +347,11 @@ class TeledeclarationETLAnalysisTest(TestCase):
             self.assertEqual(data["cout_denrees"], 0.5)
 
         with freeze_time("2022-08-30"):  # during the 2021 campaign
-            canteen_invalid_yearly_meal_count = CanteenFactory(daily_meal_count=10, yearly_meal_count=2000)
-            canteen_invalid_yearly_meal_count.yearly_meal_count = 0  # invalid data
-            canteen_invalid_yearly_meal_count.save(skip_validations=True)
-            canteen_invalid_yearly_meal_count.refresh_from_db()
+            canteen_invalid_yearly_meal_count = CanteenFactory(
+                daily_meal_count=10,
+                yearly_meal_count=0,
+                skip_validations=True,  # invalid data
+            )
             diagnostic = DiagnosticFactory(canteen=canteen_invalid_yearly_meal_count, year=2021, valeur_totale=1000)
             diagnostic.teledeclare(applicant=canteen_invalid_yearly_meal_count.managers.first(), skip_validations=True)
 

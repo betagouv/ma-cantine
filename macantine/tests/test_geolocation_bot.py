@@ -7,7 +7,6 @@ from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_e
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
 from data.factories import CanteenFactory
 from macantine import tasks
-from data.models import Canteen
 
 
 @requests_mock.Mocker()
@@ -16,11 +15,9 @@ class SiretToGeoDataBotTest(TestCase):
         cache.clear()  # clear cache before each test
 
     def test_get_geo_data(self, mock):
-        canteen_without_city_insee_code = CanteenFactory(siret="92341284500011")
-        Canteen.objects.filter(id=canteen_without_city_insee_code.id).update(
-            city_insee_code=None, city=None, postal_code=None, department=None, region=None
+        canteen_without_city_insee_code = CanteenFactory(
+            siret="92341284500011", city_insee_code=None, city=None, postal_code=None, department=None, region=None
         )
-        canteen_without_city_insee_code.refresh_from_db()
 
         self.assertEqual(canteen_without_city_insee_code.city_insee_code, None)
         self.assertEqual(canteen_without_city_insee_code.city, None)
@@ -51,11 +48,9 @@ class CityInseeCodeToGeoDataBotTest(TestCase):
         cache.clear()  # clear cache before each test
 
     def test_get_geo_data(self, mock):
-        canteen_with_city_insee_code = CanteenFactory(siret="92341284500011", city_insee_code="59512")
-        Canteen.objects.filter(id=canteen_with_city_insee_code.id).update(
-            city=None, postal_code=None, department=None, region=None
+        canteen_with_city_insee_code = CanteenFactory(
+            siret="92341284500011", city_insee_code="59512", city=None, postal_code=None, department=None, region=None
         )
-        canteen_with_city_insee_code.refresh_from_db()
 
         self.assertEqual(canteen_with_city_insee_code.city_insee_code, "59512")
         self.assertEqual(canteen_with_city_insee_code.city, None)

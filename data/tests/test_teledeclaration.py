@@ -19,10 +19,9 @@ class TeledeclarationQuerySetTest(TestCase):
         cls.valid_canteen_1 = CanteenFactory(siret="92341284500011", production_type=Canteen.ProductionType.CENTRAL)
         cls.valid_canteen_2 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.valid_canteen_3 = CanteenFactory(siret=None, siren_unite_legale="123456789")
-        cls.valid_canteen_4 = CanteenFactory(siret="40419443300078")
-        cls.valid_canteen_4.yearly_meal_count = 0  # not aberrant
-        cls.valid_canteen_4.save(skip_validations=True)
-        cls.valid_canteen_4.refresh_from_db()
+        cls.valid_canteen_4 = CanteenFactory(
+            siret="40419443300078", yearly_meal_count=0, skip_validations=True
+        )  # not aberrant
         cls.valid_canteen_sat = CanteenFactory(
             siret="21380185500015",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -34,10 +33,7 @@ class TeledeclarationQuerySetTest(TestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[Sector.ADMINISTRATION_ARMEE],
         )
-        cls.invalid_canteen = CanteenFactory(deletion_date=None)
-        cls.invalid_canteen.siret = ""  # siret missing
-        cls.invalid_canteen.save(skip_validations=True)
-        cls.invalid_canteen.refresh_from_db()
+        cls.invalid_canteen = CanteenFactory(deletion_date=None, siret="", skip_validations=True)  # siret missing
         cls.deleted_canteen = CanteenFactory(
             siret="21730065600014",
             deletion_date=now().replace(month=3, day=1, year=2025),
