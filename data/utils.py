@@ -100,6 +100,13 @@ def compute_percentage(numerator, denominator) -> Decimal | None:
     return None
 
 
+def has_any_value_filled(values) -> bool:
+    """
+    Whether at least one of the values is filled (0 counts as filled, only None is empty).
+    """
+    return any(value is not None for value in values)
+
+
 def sum_int_with_potential_null(values_to_sum):
     if all(value is None for value in values_to_sum):
         return 0

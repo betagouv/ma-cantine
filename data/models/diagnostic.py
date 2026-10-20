@@ -20,6 +20,7 @@ from data.models.definitionlocal import DefinitionLocal
 from data.utils import (
     CustomJSONEncoder,
     compute_percentage,
+    has_any_value_filled,
     has_arrayfield_missing_query,
     make_optional_positive_integer_field,
     make_optional_positive_decimal_field,
@@ -2314,10 +2315,10 @@ class Diagnostic(models.Model):
 
     def label_has_any_family_filled(self, label):
         """
-        Whether any valeur_<famille>_<label> field is filled, for any family
+        Whether any valeur_<famille>_<label> field is filled (0 counts as filled), for any family
         """
         families = get_teledeclaration_field_groups(self.year, "APPRO_FAMILIES")
-        return any(getattr(self, f"valeur_{family}_{label}", None) for family in families)
+        return has_any_value_filled(getattr(self, f"valeur_{family}_{label}", None) for family in families)
 
     def family_sum(self, family: str):
         """
@@ -2343,11 +2344,11 @@ class Diagnostic(models.Model):
 
     def family_has_any_label_filled(self, family):
         """
-        Whether any valeur_<famille>_<label> field is filled, for any label (including the
+        Whether any valeur_<famille>_<label> field is filled (0 counts as filled), for any label (including the
         egalim aggregate, only defined for 2 families)
         """
         labels = get_teledeclaration_field_groups(self.year, "APPRO_LABELS_ALL") + ["egalim"]
-        return any(getattr(self, f"valeur_{family}_{label}", None) for label in labels)
+        return has_any_value_filled(getattr(self, f"valeur_{family}_{label}", None) for label in labels)
 
     def compute_objectifs_egalim_atteints(self):
         canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
