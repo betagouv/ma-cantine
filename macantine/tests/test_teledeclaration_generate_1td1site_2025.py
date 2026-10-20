@@ -403,6 +403,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             yearly_meal_count=1011,
             daily_meal_count=3,
             managers=[self.user],
+            skip_validations=True,
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret

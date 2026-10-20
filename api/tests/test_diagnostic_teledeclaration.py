@@ -764,7 +764,9 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
     @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
     def test_can_generate_pdf_central(self):
-        canteen_central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
+        canteen_central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user], skip_validations=True
+        )
         diagnostic = DiagnosticFactory(
             canteen=canteen_central, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )

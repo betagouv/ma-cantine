@@ -108,8 +108,12 @@ class CanteenListFilterApiTest(APITestCase):
     @authenticate
     def test_can_get_canteens_filter_production_type(self):
         CanteenFactory(production_type="site", managers=[authenticate.user])
-        user_central_cuisine = CanteenFactory(production_type="central", managers=[authenticate.user])
-        user_central_serving_cuisine = CanteenFactory(production_type="central_serving", managers=[authenticate.user])
+        user_central_cuisine = CanteenFactory(
+            production_type="central", managers=[authenticate.user], skip_validations=True
+        )
+        user_central_serving_cuisine = CanteenFactory(
+            production_type="central_serving", managers=[authenticate.user], skip_validations=True
+        )
 
         response = self.client.get(f"{reverse('user_canteens')}?production_type=central,central_serving")
 

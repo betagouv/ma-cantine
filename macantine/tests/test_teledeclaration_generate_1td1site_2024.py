@@ -27,7 +27,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         The script should generate one diagnostic for each satellite saved in snapshot.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
 
@@ -62,7 +64,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         The script should generate one diagnostic for each satellite saved in snapshot (the central serving is already in the snapshot)
         """
-        central_serving = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING, managers=[self.user])
+        central_serving = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL_SERVING, managers=[self.user], skip_validations=True
+        )
         CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_serving.siret
         )
@@ -99,8 +103,12 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         Test that when the script is run again, it deletes the previous generated diagnostics and create one.
         """
-        central_1 = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
-        central_2 = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
+        central_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_1.siret
         )
@@ -170,7 +178,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         Test when a satellite canteen has a teledeclaration, and it's also teledeclared by the central the script tags it as doublon.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None, managers=[self.user]
         )
@@ -212,7 +222,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         Test when a satellite canteen has a teledeclaration, and it's also teledeclared by the central with mode "appro only" the script does not tag it as doublon.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None, managers=[self.user]
         )
@@ -254,7 +266,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         If a satellite has the tag "DOUBLON_1TD1SITE" when the script is re-run, it should be removed.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None, managers=[self.user]
         )
@@ -320,7 +334,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         Test when a central is deleted after the teledeclaration, the script still generates diagnostics for its satellites.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         with freeze_time("2025-03-30"):  # during the 2024 campaign
@@ -333,7 +349,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             )
             central_diagnostic.teledeclare(applicant=self.user)
 
-        central.delete()
+        central.delete(skip_validations=True)
 
         # Before the script is run
         self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
@@ -356,7 +372,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         """
         Test when a satellite is deleted after the teledeclaration, it still has a generated diagnostic.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
@@ -395,7 +413,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         Test when a satellite is hard deleted after the teledeclaration, it still has a generated diagnostic.
         Note: hard delete is not possible anymore
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
@@ -444,6 +464,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             yearly_meal_count=1011,
             daily_meal_count=3,
             managers=[self.user],
+            skip_validations=True,
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -474,6 +495,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             yearly_meal_count=1011,
             daily_meal_count=3,
             managers=[self.user],
+            skip_validations=True,
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -505,6 +527,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             yearly_meal_count=1011,
             daily_meal_count=3,
             managers=[self.user],
+            skip_validations=True,
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -530,7 +553,9 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         """
         Test the teledeclaration_mode value is updated in the generated diagnostics.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL_SERVING, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL_SERVING, managers=[self.user], skip_validations=True
+        )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             central_diagnostic = DiagnosticFactory(
@@ -562,6 +587,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             yearly_meal_count=1011,
             daily_meal_count=3,
             managers=[self.user],
+            skip_validations=True,
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -595,6 +621,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             yearly_meal_count=1011,
             daily_meal_count=3,
             managers=[self.user],
+            skip_validations=True,
         )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
@@ -622,7 +649,9 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         """
         The invalid reason list from the central diagnostic are copied in the generated diagnostics.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
@@ -672,7 +701,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             central = CanteenFactory.build(
                 siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL, city_insee_code="34172"
             )
-            central.save()
+            central.save(skip_validations=True)
             central.managers.add(self.user)
             satellite_siret = CanteenFactory.build(
                 name="Mon premier nom SIRET",
@@ -809,7 +838,10 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         The yearly meal count is divided by the number of satellites (and converted to integer)
         """
         central = CanteenFactory(
-            production_type=Canteen.ProductionType.CENTRAL, yearly_meal_count=1011, managers=[self.user]
+            production_type=Canteen.ProductionType.CENTRAL,
+            yearly_meal_count=1011,
+            managers=[self.user],
+            skip_validations=True,
         )
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -864,6 +896,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             yearly_meal_count=1011,
             daily_meal_count=100,
             managers=[self.user],
+            skip_validations=True,
         )
         satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -952,6 +985,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             yearly_meal_count=1011,
             daily_meal_count=3,
             managers=[cls.user],
+            skip_validations=True,
         )
         cls.satellite_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -1405,6 +1439,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
             yearly_meal_count=1011,
             daily_meal_count=3,
             managers=[self.user],
+            skip_validations=True,
         )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
@@ -1455,7 +1490,9 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         """
         Test that when a central canteen has no satellites, the script does not generate any diagnostic.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
@@ -1473,7 +1510,9 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         """
         Test that when a diagnostic is draft, it is not modified when the script is run.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             DiagnosticFactory(
@@ -1494,7 +1533,9 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         """
         If a teledeclaration is cancelled, no diagnostics should be generated.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
+        )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             central_diagnostic = DiagnosticFactory(
