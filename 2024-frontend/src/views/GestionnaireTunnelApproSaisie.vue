@@ -27,15 +27,22 @@ const errorMessage = computed(() => {
   return errors ? errors.join('. ') : ''
 })
 const options = computed(() => {
-  const newOptions = field.value.options || []
+  const newOptions = [...(field.value.options || [])]
   const autoIndex = newOptions.findIndex(field => field.value === "AUTO")
-  newOptions[autoIndex].disabled = !hasPurchaseTotal.value
-  newOptions[autoIndex].hint = !hasPurchaseTotal.value ? "Aucun achat détecté" : `${formatNumber(purchaseSummary.value?.valeurTotale)}€ d'achats détectés dans votre suivi des achats`
+  newOptions[autoIndex] = getAutoOption(newOptions[autoIndex])
   return newOptions
 })
+const getAutoOption = (option) => {
+  const autoOption = { ...option, disabled: !hasPurchaseTotal.value }
+  autoOption.label = hasPurchaseTotal.value ? `Saisie automatique : vous utilisez l'Outil Suivi des Achats avec ${formatNumber(purchaseSummary.value?.valeurTotale)}€ d'achats détectés` : "Saisie automatique : vous n'utilisez pas l'Outil Suivi des Achats"
+  autoOption.hint = hasPurchaseTotal.value ? "Tous les champs de la télédéclaration seront automatiquement renseignés." : undefined
+  if (hasPurchaseTotal.value && hasPurchaseLocal.value) autoOption.hint += " Vous avez également des achats « locaux », un des champs de la catégorie n'est pas automatisable : « définition de local », vous devrez le renseigner manuellement pour finaliser votre télédéclaration."
+  return autoOption
+}
 
 /* OSA */
 const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
+const hasPurchaseLocal = computed(() => purchaseSummary.value?.valeurLocal > 0)
 
 /* Prefill */
 const prefillSelect = () => {
