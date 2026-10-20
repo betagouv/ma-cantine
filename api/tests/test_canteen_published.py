@@ -592,7 +592,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertIn("75", body.get("departments"))
         self.assertIn("69", body.get("departments"))
 
-    def test_deprecated_pagination_sectors(self):
+    def test_legacy_pagination_sectors(self):
         """
         The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
         """

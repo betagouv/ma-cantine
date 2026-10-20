@@ -1787,7 +1787,7 @@ class Diagnostic(models.Model):
         verbose_name="Autres produits frais, surgelés et d'épicerie, Origine France (dont local)",
     )
 
-    # deprecated
+    # legacy
     valeur_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Valeur label rouge",
     )
