@@ -1451,6 +1451,9 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertTrue(self.diagnostic_simple.label_has_any_family_filled("france"))  # viandes_volailles & autres
         self.assertFalse(self.diagnostic_simple.label_has_any_family_filled("label_rouge"))
         self.assertTrue(self.diagnostic_complete_1.label_has_any_family_filled("bio_dont_commerce_equitable"))
+        # 0 counts as filled
+        self.diagnostic_simple.valeur_boulangerie_label_rouge = 0
+        self.assertTrue(self.diagnostic_simple.label_has_any_family_filled("label_rouge"))
 
     def test_with_family_sum_queryset(self):
         diagnostic_qs = Diagnostic.objects.with_family_sum("viandes_volailles").with_family_sum("produits_de_la_mer")
@@ -1481,7 +1484,11 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertFalse(self.diagnostic_simple.family_has_any_label_filled("boulangerie"))
         # a label that doesn't exist at all for this family (e.g. "egalim" only exists for 2
         # families) is skipped, not an error
-        self.assertFalse(self.diagnostic_complete_1.family_has_any_label_filled("fruits_et_legumes"))
+        # (the required fields are set to 0 by DiagnosticFactory, and 0 counts as filled)
+        self.assertTrue(self.diagnostic_complete_1.family_has_any_label_filled("fruits_et_legumes"))
+        # 0 counts as filled
+        self.diagnostic_simple.valeur_boulangerie_france = 0
+        self.assertTrue(self.diagnostic_simple.family_has_any_label_filled("boulangerie"))
 
 
 class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
