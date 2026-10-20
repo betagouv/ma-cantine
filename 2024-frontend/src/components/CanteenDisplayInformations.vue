@@ -30,7 +30,7 @@ const tooltips = computed(() => {
 /* Value */
 const getPrettyValue = (name, field) => {
   if (!name) return null
-  return cantines[field].find(model => model.value === name).label
+  return cantines[field].find(model => model.value === name)?.label
 }
 
 /* Errors */
