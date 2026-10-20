@@ -31,6 +31,7 @@ const isRelatedVertical = computed(() => data.value?.isRelatedField === "vertica
 const isRelatedHorizontal = computed(() => data.value?.isRelatedField === "horizontal")
 const placeholder = computed(() => isRequired.value ? undefined : data.value?.placeholder)
 const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeTeledeclaration.getDisplayedErrors(route.meta.slug)))
+const selectErrorMessage = computed(() => errorMessage.value?.join(". "))
 const hint = computed(() => data.value.hint)
 const options = computed(() => data.value.options)
 
@@ -85,7 +86,7 @@ const resetField = () => {
           <TunnelTeledeclarationAutofill v-if="displayAutofill" :name="props.name" :value="field" @fill="fillField" @reset="resetField" class="tunnel-teledeclaration-field__container-tag" />
         </template>
       </DsfrInputGroup>
-      <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="errorMessage" :hint="hint"/>
+      <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint"/>
     </div>
     <div v-if="tooltip" class="tunnel-teledeclaration-field__tooltip fr-pl-1w fr-pb-1v">
       <AppTooltipHover :content="tooltip" />
