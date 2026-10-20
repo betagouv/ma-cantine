@@ -123,11 +123,7 @@ const getDropdownLinks = (canteen) => {
           v-if="cell.button"
           :to="{
             name: cell.button.name,
-            params: {
-              year: cell.button.year,
-              canteenUrlComponent: cell.button.canteenUrlComponent,
-              measureId: cell.button.measure,
-            },
+            params: { canteenUrlComponent: cell.button.canteenUrlComponent },
           }"
           class="ma-cantine--unstyled-link"
         >
