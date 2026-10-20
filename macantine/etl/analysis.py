@@ -11,29 +11,7 @@ from macantine.etl.data_ware_house import DataWareHouse, get_column_types
 logger = logging.getLogger(__name__)
 
 
-class ANALYSIS(etl.TRANSFORMER_LOADER):
-    """
-    Create a dataset for analysis in a Data Warehouse
-    * Extract data from prod
-    * Run a SQL query using Metabase API to transform the dataset
-    * Load the transformed data in a new table within the Data WareHouse
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.warehouse = DataWareHouse()
-        self.dataset_name = ""
-        self.schema = ""
-
-    def load_dataset(self):
-        """
-        Load in database
-        """
-        logger.info(f"Loading {len(self.df)} objects in db")
-        self.warehouse.insert_dataframe(self.df, self.dataset_name)
-
-
-class ETL_ANALYSIS_RAW(ANALYSIS):
+class ETL_ANALYSIS_RAW(etl.TRANSFORMER_LOADER):
     """
     Copy a table as-is to the analysis Data Warehouse (used as a dbt source).
     * Extract: Postgres COPY of the queryset rows into a temporary file on disk (no pandas)
@@ -45,6 +23,7 @@ class ETL_ANALYSIS_RAW(ANALYSIS):
 
     def __init__(self, dataset_name, queryset, exclude_columns=None):
         super().__init__()
+        self.warehouse = DataWareHouse()
         self.dataset_name = dataset_name
         self.queryset = queryset
         self.exclude_columns = exclude_columns or []

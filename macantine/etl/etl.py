@@ -39,9 +39,6 @@ class ETL(ABC):
                 del self.df[f"{col_geo_zoom}_lib"]
             self.df.insert(self.df.columns.get_loc(col_geo_zoom) + 1, f"{col_geo_zoom}_lib", col_to_insert)
 
-    def get_schema(self):
-        return self.schema
-
     def get_dataset(self):
         return self.df
 
