@@ -27,12 +27,23 @@ const { canteenInformations } = storeToRefs(canteenStore)
 const teledeclarationStore = useStoreTeledeclaration()
 const { isTeledeclared } = storeToRefs(teledeclarationStore)
 
+/* Saisie automatique */
+const checkRedirect = (page) => {
+  const isSaisie = currentRoute.value === "GestionnaireTunnelApproSaisie"
+  const isAddAutofill = teledeclarationStore.hasSelectAutofill
+  const isNotGeneratedFromPurchasesYet = !teledeclarationStore.diagnostic?.generatedFromPurchases
+  const isNext = page === route.meta.next
+  if (isSaisie && isAddAutofill && isNotGeneratedFromPurchasesYet && isNext) return "GestionnaireTunnelApproRecapitulatif"
+  return page
+}
+
 /* Save */
 const save = async (page) => {
+  const pageToGo = checkRedirect(page)
   teledeclarationStore.markPageAsVisited(route.meta.slug)
   const response = await teledeclarationStore.saveDiagnostic()
-  if (response.status === "error") displayErrors(page)
-  else checkDiagnostic(page)
+  if (response.status === "error") displayErrors(pageToGo)
+  else checkDiagnostic(pageToGo)
 }
 
 /* Errors */
