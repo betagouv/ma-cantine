@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 FIELDS = (
     Diagnostic.META_FIELDS
     + Diagnostic.CANTEEN_FIELDS
-    + Diagnostic.APPRO_FIELDS  # even the deprecated ones
+    + Diagnostic.APPRO_FIELDS  # even the legacy ones
     + Diagnostic.APPRO_LOCAL_DEFINITION_FIELDS
     + Diagnostic.NON_APPRO_FIELDS
 )

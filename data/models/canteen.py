@@ -386,8 +386,8 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
 
     class ProductionType(models.TextChoices):
         GROUPE = "groupe", "Groupe"
-        CENTRAL = "central", "Cuisine centrale"
-        CENTRAL_SERVING = "central_serving", "Cuisine centrale et site"
+        CENTRAL = "central", "Cuisine centrale"  # legacy
+        CENTRAL_SERVING = "central_serving", "Cuisine centrale et site"  # legacy
         ON_SITE = "site", "Restaurant avec cuisine sur place"
         ON_SITE_CENTRAL = (
             "site_cooked_elsewhere",

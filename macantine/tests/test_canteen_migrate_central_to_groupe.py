@@ -16,6 +16,7 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
         cls.canteen_central_1 = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=2,
+            skip_validations=True,
         )
         cls.canteen_satellite_1_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -30,6 +31,7 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
         cls.canteen_central_2_deleted = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=2,
+            skip_validations=True,
         )
         cls.canteen_central_2_deleted.delete()
         cls.canteen_satellite_2_1 = CanteenFactory(
@@ -40,6 +42,7 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
         cls.canteen_central_serving_3 = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             satellite_canteens_count=1,
+            skip_validations=True,
         )
         cls.canteen_satellite_3_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,

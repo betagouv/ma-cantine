@@ -345,6 +345,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
             region=Region.auvergne_rhone_alpes,
             production_type=Canteen.ProductionType.CENTRAL,
             siret="21380185500015",
+            skip_validations=True,
         )
         CanteenFactory(
             name="Satellite",
@@ -591,7 +592,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertIn("75", body.get("departments"))
         self.assertIn("69", body.get("departments"))
 
-    def test_deprecated_pagination_sectors(self):
+    def test_legacy_pagination_sectors(self):
         """
         The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
         """
@@ -674,8 +675,8 @@ class CanteenPublishedListFilterApiTest(APITestCase):
 
     def test_get_canteens_filter_production_type(self):
         site_canteen = CanteenFactory(production_type="site")
-        central_cuisine = CanteenFactory(production_type="central")
-        central_serving_cuisine = CanteenFactory(production_type="central_serving")
+        central_cuisine = CanteenFactory(production_type="central", skip_validations=True)
+        central_serving_cuisine = CanteenFactory(production_type="central_serving", skip_validations=True)
 
         response = self.client.get(f"{reverse('published_canteens')}?production_type=central,central_serving")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
