@@ -214,6 +214,17 @@ class PurchaseModelSaveTest(TransactionTestCase):
         purchase.save(skip_validations=True)
         self.assertEqual(len(purchase.caracteristiques), 2)
 
+    def test_purchase_factory_skip_validations(self):
+        caracteristiques = [Purchase.Characteristic.EUROPE, Purchase.Characteristic.FRANCE]
+
+        # without skip_validations
+        self.assertRaises(ValidationError, PurchaseFactory, caracteristiques=caracteristiques)
+
+        # with skip_validations
+        purchase = PurchaseFactory(caracteristiques=caracteristiques, skip_validations=True)
+        purchase.refresh_from_db()
+        self.assertEqual(len(purchase.caracteristiques), 2)
+
 
 class PurchaseModelDeleteTest(TestCase):
     @classmethod
