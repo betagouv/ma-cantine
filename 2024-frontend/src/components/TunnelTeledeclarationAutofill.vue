@@ -6,16 +6,25 @@ import { formatNumber } from "@/utils"
 import IconOSA from "@/components/IconOSA.vue"
 
 /* Stores */
-const props = defineProps(["name"])
+const props = defineProps(["name", "value"])
+const emit = defineEmits(["fill", "reset"])
 const storePurchaseSummary = useStorePurchaseSummary()
 const { purchaseSummary } = storeToRefs(storePurchaseSummary)
 
 /* Content */
-const label = computed(() => `${formatNumber(purchaseSummary.value?.[props.name])}€ HT`)
+const amount = computed(() => purchaseSummary.value?.[props.name])
+const label = computed(() => `${formatNumber(amount.value)}€ HT`)
+const isSelected = computed(() => props.value !== null && props.value !== undefined && props.value !== "" && Number(props.value) === amount.value)
+
+/* Actions */
+const toggle = () => {
+  if (isSelected.value) emit("reset")
+  else emit("fill", amount.value)
+}
 </script>
 <template>
   <div class="tunnel-teledeclaration-autofill fr-input">
-    <DsfrTag small>
+    <DsfrTag small selectable :selected="isSelected" @select="toggle">
       <IconOSA class="tunnel-teledeclaration-autofill__logo fr-mr-1v" />
       {{ label }}
     </DsfrTag>
