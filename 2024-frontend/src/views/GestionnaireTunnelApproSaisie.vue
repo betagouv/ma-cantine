@@ -17,12 +17,13 @@ const route = useRoute()
 
 /* Select */
 const select = ref()
-const fieldName = "diagnosticType"
-const field = computed(() => diagnosticsFieldsService.getField(fieldName))
+const diagnosticTypeFieldName = "diagnosticType"
+const generatedFromPurchasesFieldName = "generatedFromPurchases"
+const field = computed(() => diagnosticsFieldsService.getField(diagnosticTypeFieldName))
 const isRequired = computed(() => field.value.required)
 const label = computed(() => field.value.label)
 const errorMessage = computed(() => {
-  const errors = diagnosticsFieldsService.getFieldError(fieldName, storeTeledeclaration.getDisplayedErrors(route.meta.slug))
+  const errors = diagnosticsFieldsService.getFieldError(diagnosticTypeFieldName, storeTeledeclaration.getDisplayedErrors(route.meta.slug))
   return errors ? errors.join('. ') : ''
 })
 const options = computed(() => {
@@ -37,13 +38,17 @@ const options = computed(() => {
 const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
 
 /* Prefill */
-const prefillSelect = () => { select.value = storeTeledeclaration.diagnostic[fieldName] }
+const prefillSelect = () => {
+  const diagnostic = storeTeledeclaration.diagnostic
+  select.value = diagnostic[generatedFromPurchasesFieldName] ? "AUTO" : diagnostic[diagnosticTypeFieldName]
+}
 onMounted(prefillSelect)
 
 /* Change */
 const selectRadio = () => {
-  if (select.value === "AUTO") alert('TODO: Saisie auto')
-  else storeTeledeclaration.setValue(fieldName, select.value)
+  const isAuto = select.value === "AUTO"
+  storeTeledeclaration.setValue(diagnosticTypeFieldName, isAuto ? "COMPLETE" : select.value)
+  storeTeledeclaration.setValue(generatedFromPurchasesFieldName, isAuto)
 }
 </script>
 <template>
