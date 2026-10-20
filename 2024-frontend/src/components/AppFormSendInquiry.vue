@@ -103,6 +103,9 @@ const sendInquiry = () => {
           />
           <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
             <div class="fr-col-12">
+              <DsfrInputGroup v-model="form.name" label="Prénom et Nom" :label-visible="true" />
+            </div>
+            <div class="fr-col-12">
               <DsfrInputGroup
                 v-model="form.fromEmail"
                 label="Adresse électronique *"
@@ -110,10 +113,7 @@ const sendInquiry = () => {
                 :error-message="formatError(v$.fromEmail)"
               />
             </div>
-            <div class="fr-col-12 fr-col-lg-6">
-              <DsfrInputGroup v-model="form.name" label="Prénom et Nom" :label-visible="true" />
-            </div>
-            <div class="fr-col-12 fr-col-lg-6">
+            <div class="fr-col-12">
               <DsfrInputGroup
                 v-model="form.siretOrSiren"
                 label="SIRET de la cantine ou SIREN de rattachement"
