@@ -41,7 +41,8 @@ const toggle = () => {
   border-top-left-radius: 0;
 
   &__logo {
-    height: 0.75rem;
+    height: 1rem;
+    margin-left: -0.25rem
   }
 }
 </style>
