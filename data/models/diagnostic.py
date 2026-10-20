@@ -2251,9 +2251,15 @@ class Diagnostic(models.Model):
         self.pourcentage_produits_de_la_mer_egalim = compute_percentage(
             self.valeur_produits_de_la_mer_egalim, self.valeur_produits_de_la_mer
         )
+        # keep None (not 0) if neither viandes_volailles nor produits_de_la_mer are filled
+        valeur_viandes_volailles_produits_de_la_mer = (
+            None
+            if self.valeur_viandes_volailles is None and self.valeur_produits_de_la_mer is None
+            else sum_int_with_potential_null([self.valeur_viandes_volailles, self.valeur_produits_de_la_mer])
+        )
         self.pourcentage_viandes_volailles_produits_de_la_mer_egalim = compute_percentage(
             sum_int_with_potential_null([self.valeur_viandes_volailles_egalim, self.valeur_produits_de_la_mer_egalim]),
-            sum_int_with_potential_null([self.valeur_viandes_volailles, self.valeur_produits_de_la_mer]),
+            valeur_viandes_volailles_produits_de_la_mer,
         )
         self.pourcentage_europe = compute_percentage(self.valeur_europe, self.valeur_totale)
         self.pourcentage_france = compute_percentage(self.valeur_france, self.valeur_totale)

@@ -688,6 +688,40 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertIsNotNone(diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim)
         self.assertIsNone(diagnostic.objectifs_egalim_atteints)
 
+    def test_diagnostic_populate_stats_values_with_family_total_zero(self):
+        diagnostic = DiagnosticFactory(
+            **{
+                **VALID_DIAGNOSTIC_SIMPLE_2025,
+                "valeur_viandes_volailles": 0,
+                "valeur_viandes_volailles_egalim": 0,
+                "valeur_viandes_volailles_france": 0,
+                "valeur_produits_de_la_mer": 0,
+                "valeur_produits_de_la_mer_egalim": 0,
+            }
+        )
+        diagnostic.refresh_from_db()
+        # 0 / 0: 0 (instead of None)
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_egalim, 0)
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_france, 0)
+        self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_egalim, 0)
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim, 0)
+
+        # if the family totals are emptied, then set the fields back to None
+        for field_name in [
+            "valeur_viandes_volailles",
+            "valeur_viandes_volailles_egalim",
+            "valeur_viandes_volailles_france",
+            "valeur_produits_de_la_mer",
+            "valeur_produits_de_la_mer_egalim",
+        ]:
+            setattr(diagnostic, field_name, None)
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertIsNone(diagnostic.pourcentage_viandes_volailles_egalim)
+        self.assertIsNone(diagnostic.pourcentage_viandes_volailles_france)
+        self.assertIsNone(diagnostic.pourcentage_produits_de_la_mer_egalim)
+        self.assertIsNone(diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim)
+
     def test_diagnostic_complete_populate_stats_values(self):
         VALID_DIAGNOSTIC_COMPLETE_2025 = {
             **VALID_DIAGNOSTIC_SIMPLE_2025,
