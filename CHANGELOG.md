@@ -6,6 +6,48 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.56.0](https://github.com/betagouv/ma-cantine/compare/v2026.55.0...v2026.56.0) (2026-10-20)
+
+
+### Nouveautés
+
+* **Graphique:** nouveau graphique des approvisionnements EGalim ([#7361](https://github.com/betagouv/ma-cantine/issues/7361)) ([ee61753](https://github.com/betagouv/ma-cantine/commit/ee61753124ae3eefd8a1b24f87346486927e437c))
+* **Télédéclaration:** ajoute le bouton de remplissage rapide de l'OSA sur le champs ([#7377](https://github.com/betagouv/ma-cantine/issues/7377)) ([75c1e3b](https://github.com/betagouv/ma-cantine/commit/75c1e3b79d5aef877774576b4074583e3f97c9e0))
+* **Télédéclaration:** ajoute le remplissage automatique depuis le mode de saisie ([#7384](https://github.com/betagouv/ma-cantine/issues/7384)) ([b5f6794](https://github.com/betagouv/ma-cantine/commit/b5f6794174ab77af2f4c610d2d31e9127274bde0))
+* **Utilisateurs:** supprimer le champ "compte élu" ([#7366](https://github.com/betagouv/ma-cantine/issues/7366)) ([4d180cc](https://github.com/betagouv/ma-cantine/commit/4d180cc4b75a6b5ec3019586be5b67ee91034127))
+* **Utilisateurs:** supprimer le champ "username" ([#7228](https://github.com/betagouv/ma-cantine/issues/7228)) ([636848f](https://github.com/betagouv/ma-cantine/commit/636848f580600412fbf52482e40447fa18ad037d))
+
+
+### Améliorations
+
+* **Diagnostics:** champs calculés `pourcentage_` supplémentaires (par origine, circuit_court & local) (total et par famille) ([#7364](https://github.com/betagouv/ma-cantine/issues/7364)) ([fa02828](https://github.com/betagouv/ma-cantine/commit/fa028283fe1dd49c0202220158bab2e5e897c269))
+* **Diagnostics:** compute_percentage: renvoyer 0 si le numérateur et le dénominateur sont à 0 ([#7373](https://github.com/betagouv/ma-cantine/issues/7373)) ([5085f12](https://github.com/betagouv/ma-cantine/commit/5085f121eb10302f53db6022c835c77b84dc5e4d))
+* **Formulaire Connexion:** ajoute autocomplete='email' (pour aider au pré-remplissage des navigateurs) ([#7371](https://github.com/betagouv/ma-cantine/issues/7371)) ([abdb917](https://github.com/betagouv/ma-cantine/commit/abdb917dc178103111467445f240da769b4a388a))
+* **Navigation:** réorganise le menu principal pour valoriser l'outil de suivi anti-gaspi ([#7367](https://github.com/betagouv/ma-cantine/issues/7367)) ([857d580](https://github.com/betagouv/ma-cantine/commit/857d580404f56cc5f9144b22ec6c0b2d2c42a1b1))
+* **Télédéclaration:** ajoute les chiffres récapitulatif des volets non EGalim des approvisionnements ([#7369](https://github.com/betagouv/ma-cantine/issues/7369)) ([03f0348](https://github.com/betagouv/ma-cantine/commit/03f0348a3137e0c1c212b219fbb293339e9d7093))
+* **Télédéclarations:** au moment de télédéclarer, vider les champs non concernés par le type de bilan choisi ([#7165](https://github.com/betagouv/ma-cantine/issues/7165)) ([291614b](https://github.com/betagouv/ma-cantine/commit/291614bcdb340501a56455c3eb4979eaafaf65f6))
+
+
+### Corrections (bugs, typos...)
+
+* **Diagnostics:** valeur_famille obligatoire si au moins un valeur_famille_label est rempli (TD 2026) (v2 : 0 compte comme rempli) ([#7374](https://github.com/betagouv/ma-cantine/issues/7374)) ([79d2d19](https://github.com/betagouv/ma-cantine/commit/79d2d19e04b878c9735201ddd6e812d8e58cd6b5))
+* **Formulaire Contact:** réorganise un peu les champs suite à la suppression du champ "username" ([#7370](https://github.com/betagouv/ma-cantine/issues/7370)) ([eebccb7](https://github.com/betagouv/ma-cantine/commit/eebccb72a889f7e9c50cc00c5eb6cd0e72348090))
+* **Formulaire Contact:** réorganise un peu les champs suite à la suppression du champ "username" (v2 : 1 champ par ligne) ([#7372](https://github.com/betagouv/ma-cantine/issues/7372)) ([c3e4f6f](https://github.com/betagouv/ma-cantine/commit/c3e4f6fc68bba57407e0a4e1ad6f573b84279455))
+* **Gaspillage alimentaire:** précise le mode de création "APP" ([#7363](https://github.com/betagouv/ma-cantine/issues/7363)) ([010e381](https://github.com/betagouv/ma-cantine/commit/010e38105ba1336747ce1624ec38947b352fdcde))
+* **Télédéclaration:** divers correctifs ([#7385](https://github.com/betagouv/ma-cantine/issues/7385)) ([b2ed7b8](https://github.com/betagouv/ma-cantine/commit/b2ed7b8e0f81702dd589981e6c096d4ee37926d0))
+
+
+### Technique
+
+* **Cantines:** Règles métiers: améliorer la validation du type de production ([#7382](https://github.com/betagouv/ma-cantine/issues/7382)) ([2689803](https://github.com/betagouv/ma-cantine/commit/268980322d730bd4fc9ccd8c65d503370a96e8e5))
+* **Diagnostics:** extrait les validateurs de teledeclare/cancel dans un nouveau fichier dédié ([#7365](https://github.com/betagouv/ma-cantine/issues/7365)) ([d4d612f](https://github.com/betagouv/ma-cantine/commit/d4d612fac38c34f7cccb7532525bf1b9c267b245))
+* **ETL:** ménage après la suppression des exports analysis (datacompy, sqlalchemy, code mort, README) ([#7360](https://github.com/betagouv/ma-cantine/issues/7360)) ([17ead24](https://github.com/betagouv/ma-cantine/commit/17ead24a343fb07134ee3e75f738eeaee07d9eab))
+* **ETL:** supprime l'export export_dataset_canteen_analysis (remplacé par dbt) ([#7358](https://github.com/betagouv/ma-cantine/issues/7358)) ([441cb83](https://github.com/betagouv/ma-cantine/commit/441cb838d5c91a518a6e3a9120cfe8d9d94ecd5f))
+* **ETL:** supprime l'export export_dataset_td_analysis (remplacé par dbt) ([#7357](https://github.com/betagouv/ma-cantine/issues/7357)) ([ace81e6](https://github.com/betagouv/ma-cantine/commit/ace81e67d579aa5475d91a2633a9e94949d93c90))
+* **Tests:** CanteenFactory: nouveau paramètre skip_validations (et nettoyage des tests) ([#7378](https://github.com/betagouv/ma-cantine/issues/7378)) ([fc6f978](https://github.com/betagouv/ma-cantine/commit/fc6f97813bd355e5451122c0e67870f88c67dee3))
+* **Tests:** PurchaseFactory: nouveau paramètre skip_validations ([#7379](https://github.com/betagouv/ma-cantine/issues/7379)) ([2036689](https://github.com/betagouv/ma-cantine/commit/2036689256be80d62f7ab3a81f8483f6ddd41a0b))
+* **Tests:** UserFactory: nouveau paramètre skip_validations ([#7381](https://github.com/betagouv/ma-cantine/issues/7381)) ([3e19ac5](https://github.com/betagouv/ma-cantine/commit/3e19ac546da327771958868326f41f47d82e5956))
+
 ## [2026.55.0](https://github.com/betagouv/ma-cantine/compare/v2026.54.1...v2026.55.0) (2026-10-16)
 
 
