@@ -15,7 +15,7 @@ const props = defineProps(["name"])
 const emit = defineEmits(["change"])
 const storeTeledeclaration = useStoreTeledeclaration()
 const storePurchaseSummary = useStorePurchaseSummary()
-const { hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
+const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
 const route = useRoute()
 
 /* Informations */
@@ -67,7 +67,9 @@ const fillField = (amount) => {
   fieldChange()
 }
 const resetField = () => {
-  field.value = valueBeforeAutofill.value
+  const previousEqualsAutofill = Number(valueBeforeAutofill.value) === purchaseSummary.value?.[props.name]
+  const emptyValue = isRequired.value ? 0 : null
+  field.value = previousEqualsAutofill ? emptyValue : valueBeforeAutofill.value
   fieldChange()
 }
 </script>

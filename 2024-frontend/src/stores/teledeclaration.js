@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
 import { useRootStore } from "@/stores/root.js"
+import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import diagnosticService from "@/services/diagnostics.js"
 import canteenService from "@/services/canteens.js"
 import diagnosticsFields from "@/services/diagnosticsFields.js"
@@ -19,6 +20,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const isSimple = computed(() => diagnostic.value?.diagnosticType === "SIMPLE")
   const isComplete = computed(() => diagnostic.value?.diagnosticType === "COMPLETE")
   const isSaved = ref(true)
+  const hasSelectAutofill = ref(false)
   const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
   const visitedPagesSeparator = ","
   const tunnelApproVisitedPages = computed(() => diagnostic.value?.tunnelAppro?.split(visitedPagesSeparator) || [])
@@ -91,6 +93,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   async function saveDiagnostic() {
     if (!diagnostic.value) return
     const canteenId = diagnostic.value.canteenId
+    if (hasSelectAutofill.value && !diagnostic.value.generatedFromPurchases) autofillDiagnostic()
     const diagnosticValues = diagnostic.value
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
     if (response.status === "error") replaceErrors(response.list)
@@ -109,6 +112,21 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     if (response.status === "error") replaceErrors(response.list)
     else setValue(coutRepasFieldName, response[coutRepasFieldName])
     return response
+  }
+
+  /* Fill the diagnostic with the purchases values */
+  function autofillDiagnostic() {
+    const autofillSteps = ["egalim", "origine", "localCircuitCourt"]
+    const purchaseSummary = useStorePurchaseSummary().purchaseSummary
+    const fields = Object.keys(teledeclarationFields.fields).filter((field) => teledeclarationFields.fields[field].autofill)
+    for (const field of fields) setValue(field, purchaseSummary[field])
+    setValue("generatedFromPurchases", true)
+    autofillSteps.forEach((slug) => markPageAsVisited(slug))
+  }
+
+  /* Set if the diagnostic must be filled from purchases on next save */
+  function setSelectAutofill(value) {
+    hasSelectAutofill.value = value
   }
 
   /* Save the page slug in the list of the visited pages */
@@ -159,6 +177,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnostic.value = null
     canteenAction.value = null
     isSaved.value = true
+    hasSelectAutofill.value = false
     diagnoticCheck.value = {}
     diagnosticRecap.value = null
     diagnosticErrors.value = []
@@ -254,6 +273,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     isSimple,
     isComplete,
     isSaved,
+    hasSelectAutofill,
     isTeledeclared,
     initStore,
     checkDiagnosticSteps,
@@ -266,6 +286,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setValue,
     saveDiagnostic,
     updateMealCount,
+    autofillDiagnostic,
+    setSelectAutofill,
     markPageAsVisited,
     isPageVisited,
     getDisplayedErrors,

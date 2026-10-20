@@ -17,33 +17,45 @@ const route = useRoute()
 
 /* Select */
 const select = ref()
-const fieldName = "diagnosticType"
-const field = computed(() => diagnosticsFieldsService.getField(fieldName))
+const diagnosticTypeFieldName = "diagnosticType"
+const generatedFromPurchasesFieldName = "generatedFromPurchases"
+const field = computed(() => diagnosticsFieldsService.getField(diagnosticTypeFieldName))
 const isRequired = computed(() => field.value.required)
 const label = computed(() => field.value.label)
 const errorMessage = computed(() => {
-  const errors = diagnosticsFieldsService.getFieldError(fieldName, storeTeledeclaration.getDisplayedErrors(route.meta.slug))
+  const errors = diagnosticsFieldsService.getFieldError(diagnosticTypeFieldName, storeTeledeclaration.getDisplayedErrors(route.meta.slug))
   return errors ? errors.join('. ') : ''
 })
 const options = computed(() => {
-  const newOptions = field.value.options || []
+  const newOptions = [...(field.value.options || [])]
   const autoIndex = newOptions.findIndex(field => field.value === "AUTO")
-  newOptions[autoIndex].disabled = !hasPurchaseTotal.value
-  newOptions[autoIndex].hint = !hasPurchaseTotal.value ? "Aucun achat détecté" : `${formatNumber(purchaseSummary.value?.valeurTotale)}€ d'achats détectés dans votre suivi des achats`
+  newOptions[autoIndex] = getAutoOption(newOptions[autoIndex])
   return newOptions
 })
+const getAutoOption = (option) => {
+  const autoOption = { ...option, disabled: !hasPurchaseTotal.value }
+  autoOption.label = hasPurchaseTotal.value ? `Saisie automatique : vous utilisez l'Outil Suivi des Achats avec ${formatNumber(purchaseSummary.value?.valeurTotale)}€ d'achats détectés` : "Saisie automatique : vous n'utilisez pas l'Outil Suivi des Achats"
+  autoOption.hint = hasPurchaseTotal.value ? "Tous les champs de la télédéclaration seront automatiquement renseignés." : undefined
+  if (hasPurchaseTotal.value && hasPurchaseLocal.value) autoOption.hint += " Vous avez également des achats « locaux », un des champs de la catégorie n'est pas automatisable : « définition de local », vous devrez le renseigner manuellement pour finaliser votre télédéclaration."
+  return autoOption
+}
 
 /* OSA */
-const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
+const { purchaseSummary, hasPurchaseTotal, hasPurchaseLocal } = storeToRefs(storePurchaseSummary)
 
 /* Prefill */
-const prefillSelect = () => { select.value = storeTeledeclaration.diagnostic[fieldName] }
+const prefillSelect = () => {
+  const diagnostic = storeTeledeclaration.diagnostic
+  select.value = diagnostic[generatedFromPurchasesFieldName] ? "AUTO" : diagnostic[diagnosticTypeFieldName]
+}
 onMounted(prefillSelect)
 
 /* Change */
 const selectRadio = () => {
-  if (select.value === "AUTO") alert('TODO: Saisie auto')
-  else storeTeledeclaration.setValue(fieldName, select.value)
+  const isAuto = select.value === "AUTO"
+  storeTeledeclaration.setSelectAutofill(isAuto)
+  storeTeledeclaration.setValue(diagnosticTypeFieldName, isAuto ? "COMPLETE" : select.value)
+  if (!isAuto) storeTeledeclaration.setValue(generatedFromPurchasesFieldName, false)
 }
 </script>
 <template>

@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia"
 import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
+import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
 import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
 import TunnelTeledeclarationModalErrors from "@/components/TunnelTeledeclarationModalErrors.vue"
@@ -26,13 +27,26 @@ const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const teledeclarationStore = useStoreTeledeclaration()
 const { isTeledeclared } = storeToRefs(teledeclarationStore)
+const purchaseSummaryStore = useStorePurchaseSummary()
+
+/* Saisie automatique */
+const checkRedirect = (page) => {
+  const isSaisie = currentRoute.value === "GestionnaireTunnelApproSaisie"
+  const hasSelectAutofill = teledeclarationStore.hasSelectAutofill
+  const isNotGeneratedFromPurchasesYet = !teledeclarationStore.diagnostic?.generatedFromPurchases
+  const goToNextPage = page === route.meta.next
+  const autofillRedirect = isSaisie && hasSelectAutofill && isNotGeneratedFromPurchasesYet && goToNextPage
+  if (!autofillRedirect) return page
+  return purchaseSummaryStore.hasPurchaseLocal ? "GestionnaireTunnelApproLocalCircuitCourt" : "GestionnaireTunnelApproRecapitulatif"
+}
 
 /* Save */
 const save = async (page) => {
+  const pageToGo = checkRedirect(page)
   teledeclarationStore.markPageAsVisited(route.meta.slug)
   const response = await teledeclarationStore.saveDiagnostic()
-  if (response.status === "error") displayErrors(page)
-  else checkDiagnostic(page)
+  if (response.status === "error") displayErrors(pageToGo)
+  else checkDiagnostic(pageToGo)
 }
 
 /* Errors */
