@@ -1,4 +1,3 @@
-import json
 import logging
 import tempfile
 import time
@@ -6,7 +5,6 @@ import time
 from django.contrib.postgres.fields import ArrayField
 from django.db import connection
 
-from api.views.canteen import CanteenAnalysisListView
 from macantine.etl import etl
 from macantine.etl.data_ware_house import DataWareHouse, get_column_types
 
@@ -33,31 +31,6 @@ class ANALYSIS(etl.TRANSFORMER_LOADER):
         """
         logger.info(f"Loading {len(self.df)} objects in db")
         self.warehouse.insert_dataframe(self.df, self.dataset_name)
-
-
-class ETL_ANALYSIS_CANTEEN(etl.EXTRACTOR, ANALYSIS):
-    """
-    Create a dataset for analysis in a Data Warehouse
-    * Extract data from prod
-    * Run a SQL query using Metabase API to transform the dataset
-    * Load the transformed data in a new table within the Data WareHouse
-
-    How to add a new field ? Add it to the corresponding schema : schema_analysis_cantines.json
-    - If it's a extracted field : Add it to the columns_mapper with its translation
-    - If it's a generated field : Add it in the transform_dataset()
-    """
-
-    def __init__(self):
-        super().__init__()
-        self.warehouse = DataWareHouse()
-        self.dataset_name = "canteens"
-        self.schema = json.load(open("data/schemas/export_analysis/schema_cantines.json"))
-        self.view = CanteenAnalysisListView
-
-    def transform_dataset(self):
-        # Calling this method is still needed to respect the structure of the code
-        # TODO : Make it possible to stop calling transform_dataset()
-        logger.info("No more transformation needed here !")
 
 
 class ETL_ANALYSIS_RAW(ANALYSIS):
