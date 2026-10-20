@@ -14,7 +14,7 @@ const props = defineProps(["canteenIsGroupe", "canteenInformation"])
 const showCentralProducerSiret = computed(() => {
   const isFilled = props.canteenInformation.centralProducerSiret
   const isGroupe = props.canteenIsGroupe
-  const isSatellite = props.canteenInformation.productionType === "siteCookedElsewhere"
+  const isSatellite = props.canteenInformation.isSatellite
   return isFilled || isGroupe || isSatellite
 })
 const showGroupeInformations = computed(() => props.canteenInformation.groupe !== null)
