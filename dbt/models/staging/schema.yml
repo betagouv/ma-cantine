@@ -57,3 +57,91 @@ models:
         tests:
           - unique
           - not_null
+      - name: creation_source_api_oauth2_application_id
+        description: >
+          OAuth2 application that created the diagnostic through the API (filled retroactively
+          since 08/10/2026). Copied as is on the satellite diagnostics generated from a groupe.
+      - name: creation_user_id
+        description: User who created the diagnostic.
+
+  - name: stg_event_logs
+    description: >
+      One row per event logged by the application (EventLog), thin layer on top of
+      event_logs_raw with the data jsonb keys unpacked into columns.
+      Category API: write requests (POST, PUT, PATCH, DELETE) made with an OAuth2 token,
+      successful or failed, never GET; name = method + route in the OpenAPI format.
+      Category IMPORT: file imports, successful or failed; name = import type.
+      History was backfilled (eventlog_backfill_* commands, failed imports from
+      data_importfailure): see is_backfilled.
+    columns:
+      - name: event_log_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+      - name: category
+        description: API or IMPORT.
+        tests:
+          - accepted_values:
+              values: ['API', 'IMPORT']
+      - name: status
+        description: SUCCESS or FAILURE.
+        tests:
+          - accepted_values:
+              values: ['SUCCESS', 'FAILURE']
+      - name: application_id
+        description: >
+          OAuth2 application of the API request. Always filled for requests logged live;
+          missing for some backfilled ones (creations backfilled from creation_source = 'API').
+      - name: path
+        description: >
+          Requested path. For a creation (POST on a collection route), it does not contain
+          the id of the created object.
+      - name: is_backfilled
+        description: >
+          True if the event was rebuilt afterwards (eventlog_backfill_* commands) or migrated
+          from data_importfailure; false for events logged live.
+
+  - name: stg_oauth_applications
+    description: One row per OAuth2 application (API client software).
+    columns:
+      - name: application_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        description: Owner of the application.
+
+  - name: stg_oauth_applications_extra
+    description: >
+      One row per OAuth2 application: extra fields entered in the admin (company_name,
+      empty string when not filled).
+    columns:
+      - name: application_id
+        description: Primary key (one-to-one with stg_oauth_applications).
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_oauth_access_tokens
+    description: >
+      One row per OAuth2 access token still in the database. On refresh,
+      django-oauth-toolkit deletes the access token and keeps the refresh token.
+    columns:
+      - name: access_token_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_oauth_refresh_tokens
+    description: >
+      One row per OAuth2 refresh token. A revoked refresh token has no linked access token
+      anymore (access_token_id is null).
+    columns:
+      - name: refresh_token_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
