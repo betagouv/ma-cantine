@@ -47,8 +47,9 @@ onMounted(prefillSelect)
 /* Change */
 const selectRadio = () => {
   const isAuto = select.value === "AUTO"
+  storeTeledeclaration.setSelectAutofill(isAuto)
   storeTeledeclaration.setValue(diagnosticTypeFieldName, isAuto ? "COMPLETE" : select.value)
-  storeTeledeclaration.setValue(generatedFromPurchasesFieldName, isAuto)
+  if (!isAuto) storeTeledeclaration.setValue(generatedFromPurchasesFieldName, false)
 }
 </script>
 <template>
