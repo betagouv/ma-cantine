@@ -253,6 +253,15 @@ class UserStaffSuperuserTest(TestCase):
         user.save()
         self.assertTrue(user.is_superuser)
 
+    def test_user_factory_skip_validations(self):
+        # without skip_validations
+        self.assertRaises(ValidationError, UserFactory, is_staff=False, is_superuser=True)
+
+        # with skip_validations
+        user = UserFactory(is_staff=False, is_superuser=True, skip_validations=True)
+        user.refresh_from_db()
+        self.assertTrue(user.is_superuser)
+
 
 class UserTOTPDeviceTest(TestCase):
     def test_can_create_and_save_non_staff_without_totp_device(self):
