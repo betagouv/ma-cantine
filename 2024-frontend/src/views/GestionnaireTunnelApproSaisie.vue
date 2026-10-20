@@ -41,8 +41,7 @@ const getAutoOption = (option) => {
 }
 
 /* OSA */
-const { purchaseSummary, hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
-const hasPurchaseLocal = computed(() => purchaseSummary.value?.valeurLocal > 0)
+const { purchaseSummary, hasPurchaseTotal, hasPurchaseLocal } = storeToRefs(storePurchaseSummary)
 
 /* Prefill */
 const prefillSelect = () => {
