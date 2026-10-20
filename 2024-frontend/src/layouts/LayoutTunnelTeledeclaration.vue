@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia"
 import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
+import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
 import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
 import TunnelTeledeclarationModalErrors from "@/components/TunnelTeledeclarationModalErrors.vue"
@@ -26,15 +27,17 @@ const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const teledeclarationStore = useStoreTeledeclaration()
 const { isTeledeclared } = storeToRefs(teledeclarationStore)
+const purchaseSummaryStore = useStorePurchaseSummary()
 
 /* Saisie automatique */
 const checkRedirect = (page) => {
   const isSaisie = currentRoute.value === "GestionnaireTunnelApproSaisie"
-  const isAddAutofill = teledeclarationStore.hasSelectAutofill
+  const hasSelectAutofill = teledeclarationStore.hasSelectAutofill
   const isNotGeneratedFromPurchasesYet = !teledeclarationStore.diagnostic?.generatedFromPurchases
-  const isNext = page === route.meta.next
-  if (isSaisie && isAddAutofill && isNotGeneratedFromPurchasesYet && isNext) return "GestionnaireTunnelApproRecapitulatif"
-  return page
+  const goToNextPage = page === route.meta.next
+  const autofillRedirect = isSaisie && hasSelectAutofill && isNotGeneratedFromPurchasesYet && goToNextPage
+  if (!autofillRedirect) return page
+  return purchaseSummaryStore.hasPurchaseLocal ? "GestionnaireTunnelApproLocalCircuitCourt" : "GestionnaireTunnelApproRecapitulatif"
 }
 
 /* Save */
