@@ -169,9 +169,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         CanteenFactory(siret="11007001800012", managers=[authenticate.user])
         CanteenFactory(siret="21070017500016", managers=[authenticate.user])
         # creating 2 canteens with same siret here to error when this situation exists IRL
-        canteen_with_same_siret = CanteenFactory()
-        canteen_with_same_siret.siret = "21340172201787"
-        canteen_with_same_siret.save(skip_validations=True)
+        CanteenFactory(siret="21340172201787", skip_validations=True)
         self.assertEqual(Canteen.objects.count(), 15)
         self.assertEqual(Diagnostic.objects.count(), 0)
 

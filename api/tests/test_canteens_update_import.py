@@ -324,7 +324,8 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
         """
         canteen1 = CanteenFactory(
             id=9999999993,
-            siret="21340172201787",
+            siret=None,
+            siren_unite_legale="213401722",
             name="Canteen 1",
             daily_meal_count=3,
             yearly_meal_count=420,
@@ -332,10 +333,8 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
             management_type=Canteen.ManagementType.DIRECT,
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[Sector.EDUCATION_PRIMAIRE],
+            skip_validations=True,
         )
-        canteen1.siret = None
-        canteen1.siren_unite_legale = "213401722"
-        canteen1.save(skip_validations=True)
         canteen2 = CanteenFactory(
             id=9999999994,
             siren_unite_legale=None,
@@ -348,8 +347,6 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
             economic_model=Canteen.EconomicModel.PRIVATE,
             sector_list=[Sector.ENTERPRISE_ENTREPRISE],
         )
-        canteen2.siren_unite_legale = None
-        canteen2.save(skip_validations=True)
         canteen1.managers.add(authenticate.user)
         canteen2.managers.add(authenticate.user)
 

@@ -236,9 +236,9 @@ class CanteenActionTestCase(TestCase):
         new_canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=self.canteen_groupe_2_without_satellites,
+            yearly_meal_count=None,
+            skip_validations=True,
         )
-        new_canteen_satellite.yearly_meal_count = None
-        new_canteen_satellite.save(skip_validations=True)
 
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
 
@@ -284,10 +284,9 @@ class CanteenActionTestCase(TestCase):
         canteen_satellite_incorrect = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             groupe=canteen_groupe_with_satellites_incorrect,
-            # daily_meal_count=None,  # missing data
+            yearly_meal_count=None,  # missing data
+            skip_validations=True,
         )
-        canteen_satellite_incorrect.yearly_meal_count = None
-        canteen_satellite_incorrect.save(skip_validations=True)
         DiagnosticFactory(
             canteen=canteen_groupe_with_satellites_incorrect,
             central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,

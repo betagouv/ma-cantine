@@ -143,10 +143,8 @@ class CanteenClaimApiTest(APITestCase):
 
     @authenticate
     def test_can_claim_canteen_not_valid(self):
-        canteen = CanteenFactory()
+        canteen = CanteenFactory(siret=None, skip_validations=True)
         canteen.managers.clear()
-        canteen.siret = None
-        canteen.save(skip_validations=True)
         self.assertIsNone(canteen.siret)
         self.assertFalse(canteen.is_filled)
 
@@ -189,9 +187,13 @@ class CanteenClaimApiTest(APITestCase):
 
     @authenticate
     def test_can_undo_claim_for_canteen_not_valid(self):
-        canteen = CanteenFactory(claimed_by=authenticate.user, has_been_claimed=True, managers=[authenticate.user])
-        canteen.siret = None
-        canteen.save(skip_validations=True)
+        canteen = CanteenFactory(
+            siret=None,
+            claimed_by=authenticate.user,
+            has_been_claimed=True,
+            managers=[authenticate.user],
+            skip_validations=True,
+        )
 
         self.assertIsNone(canteen.siret)
         self.assertFalse(canteen.is_filled)

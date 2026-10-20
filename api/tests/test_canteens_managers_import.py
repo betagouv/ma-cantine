@@ -349,9 +349,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         user.save()
 
         # Create a canteen with an error in a field
-        canteen = CanteenFactory(siret="21340172201787")
-        canteen.yearly_meal_count = None
-        canteen.save(skip_validations=True)
+        canteen = CanteenFactory(siret="21340172201787", yearly_meal_count=None, skip_validations=True)
         canteen.managers.clear()
 
         self.assertFalse(canteen.is_filled)

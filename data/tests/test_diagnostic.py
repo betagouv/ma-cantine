@@ -890,14 +890,12 @@ class DiagnosticQuerySetTest(TestCase):
         cls.canteen_valid_1 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         cls.canteen_valid_2 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.canteen_valid_3 = CanteenFactory(siret=None, siren_unite_legale="123456789")
-        cls.canteen_valid_4 = CanteenFactory(siret="40419443300078")
-        cls.canteen_valid_4.yearly_meal_count = 0  # not aberrant
-        cls.canteen_valid_4.save(skip_validations=True)
-        cls.canteen_valid_4.refresh_from_db()
-        cls.canteen_valid_5 = CanteenFactory(siret="21340172201787")
-        cls.canteen_valid_5.yearly_meal_count = None  # not aberrant
-        cls.canteen_valid_5.save(skip_validations=True)
-        cls.canteen_valid_5.refresh_from_db()
+        cls.canteen_valid_4 = CanteenFactory(
+            siret="40419443300078", yearly_meal_count=0, skip_validations=True
+        )  # not aberrant
+        cls.canteen_valid_5 = CanteenFactory(
+            siret="21340172201787", yearly_meal_count=None, skip_validations=True
+        )  # not aberrant
         cls.canteen_valid_sat = CanteenFactory(
             siret="21380185500015",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -909,10 +907,7 @@ class DiagnosticQuerySetTest(TestCase):
             sector_list=[Sector.ADMINISTRATION_ARMEE],
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
-        cls.canteen_missing_siret = CanteenFactory()
-        cls.canteen_missing_siret.siret = ""  # missing data
-        cls.canteen_missing_siret.save(skip_validations=True)
-        cls.canteen_missing_siret.refresh_from_db()
+        cls.canteen_missing_siret = CanteenFactory(siret="", skip_validations=True)  # missing data
         cls.canteen_cout_repas_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)
         cls.canteen_valeur_totale_aberrant = CanteenFactory(siret="21630113500010", yearly_meal_count=100000)
         cls.canteen_aberrant = CanteenFactory(siret="21130055300016", yearly_meal_count=1000)
@@ -1494,9 +1489,7 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
 class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_empty = CanteenFactory()
-        Canteen.objects.filter(id=cls.canteen_empty.id).update(yearly_meal_count=None)
-        cls.canteen_empty.refresh_from_db()
+        cls.canteen_empty = CanteenFactory(yearly_meal_count=None, skip_validations=True)
         cls.diagnostic_draft_canteen_empty = DiagnosticFactory(
             canteen=cls.canteen_empty,
             year=year_data,

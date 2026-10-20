@@ -752,26 +752,25 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             pat_list=["1294", "1295"],
             department="38",
             region="84",
+            sector_list=[Sector.ADMINISTRATION_INTER_ADMINISTRATIF],
+            line_ministry=Canteen.Ministries.AFFAIRES_ETRANGERES,
             managers=[self.user],
+            skip_validations=True,
         )
-        central.sector_list = [Sector.ADMINISTRATION_INTER_ADMINISTRATIF]
-        central.line_ministry = Canteen.Ministries.AFFAIRES_ETRANGERES
-        central.save(skip_validations=True)
 
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             economic_model=Canteen.EconomicModel.PRIVATE,  # Private economic model for the satellite
             central_producer_siret=central.siret,
-            # sector_list=[],
+            sector_list=[],
             line_ministry=None,
             city_insee_code=None,
             epci=None,
             pat_list=[],
             department=None,
             region=None,
+            skip_validations=True,
         )
-        satellite.sector_list = []
-        satellite.save(skip_validations=True)
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             central_diagnostic = DiagnosticFactory(
@@ -820,9 +819,9 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         satellite_2 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
+            yearly_meal_count=None,
+            skip_validations=True,
         )
-        satellite_2.yearly_meal_count = None
-        satellite_2.save(skip_validations=True)
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             central_diagnostic = DiagnosticFactory(
@@ -917,9 +916,12 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         """
         Test that when the central has a None yearly meal count, the script generates a diagnostic with a None value.
         """
-        central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[self.user])
-        central.yearly_meal_count = None
-        central.save(skip_validations=True)
+        central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL,
+            yearly_meal_count=None,
+            managers=[self.user],
+            skip_validations=True,
+        )
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret=central.siret,
