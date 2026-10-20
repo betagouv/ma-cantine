@@ -3,7 +3,7 @@ import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary"
 import { formatNumber } from "@/utils"
-import IconOSA from "@/components/IconOSA.vue"
+import IconOSAMonochrome from "@/components/IconOSAMonochrome.vue"
 
 /* Stores */
 const props = defineProps(["name", "value"])
@@ -25,7 +25,7 @@ const toggle = () => {
 <template>
   <div class="tunnel-teledeclaration-autofill fr-input">
     <DsfrTag small selectable :selected="isSelected" @select="toggle">
-      <IconOSA class="tunnel-teledeclaration-autofill__logo fr-mr-1v" />
+      <IconOSAMonochrome class="tunnel-teledeclaration-autofill__logo fr-mr-1v" />
       {{ label }}
     </DsfrTag>
   </div>
