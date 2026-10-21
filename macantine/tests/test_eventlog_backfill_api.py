@@ -95,12 +95,23 @@ class EventLogBackfillApiTest(TestCase):
         )
         self.assertEqual(EventLog.objects.get(name="POST /api/v1/canteens/").canteen, self.canteen)
 
-    def test_creation_without_application(self):
+    def test_ignores_purchase_and_waste_measurement_creations_without_application(self):
+        # creation_source = API alone is not reliable (API by default in the views)
         set_api_creation(PurchaseFactory(canteen=self.canteen), self.user, None)
+        set_api_creation(WasteMeasurementFactory(canteen=self.canteen), self.user, None)
 
         run_command()
 
-        self.assertIsNone(EventLog.objects.get().api_oauth2_application)
+        self.assertFalse(EventLog.objects.exists())
+
+    def test_canteen_and_diagnostic_creations_without_application(self):
+        set_api_creation(self.canteen, self.user, None)
+        set_api_creation(DiagnosticFactory(canteen=self.canteen), self.user, None)
+
+        run_command()
+
+        self.assertEqual(EventLog.objects.count(), 2)
+        self.assertFalse(EventLog.objects.exclude(api_oauth2_application__isnull=True).exists())
 
     def test_ignores_non_api_creations(self):
         purchase = PurchaseFactory(canteen=self.canteen)
