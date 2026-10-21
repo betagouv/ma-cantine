@@ -25,6 +25,34 @@ class LoggedUserApiTest(APITestCase):
         self.assertEqual(logged_user_response.status_code, status.HTTP_200_OK)
         self.assertEqual(logged_user_response.json().get("email"), user.email)
 
+    def test_login_with_wrong_password_fails(self):
+        user = UserFactory(email="user@example.com")
+        user.set_password("testPw1234#!")
+        user.save(update_fields=["password"])
+
+        url = reverse("login")
+        payload = {"username": "user@example.com", "password": "wrongPassword!"}
+        login_response = self.client.post(url, payload)
+
+        self.assertEqual(login_response.status_code, status.HTTP_200_OK)  # form re-rendered with an error
+        self.assertIsNone(self.client.session.get("_auth_user_id"))
+
+    def test_login_with_unconfirmed_email_still_works(self):
+        """
+        email_confirmed is not currently a login gate (only Django's is_active is):
+        documenting this on purpose so a future change to that behavior is a deliberate one.
+        """
+        user = UserFactory(email="unconfirmed@example.com", email_confirmed=False)
+        user.set_password("testPw1234#!")
+        user.save(update_fields=["password"])
+
+        url = reverse("login")
+        payload = {"username": "unconfirmed@example.com", "password": "testPw1234#!"}
+        login_response = self.client.post(url, payload)
+
+        self.assertEqual(login_response.status_code, status.HTTP_302_FOUND)
+        self.assertEqual(self.client.session.get("_auth_user_id"), str(user.id))
+
     def test_unauthenticated_logged_user_call(self):
         """
         When calling this API unathenticated we expect a 204
