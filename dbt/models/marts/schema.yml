@@ -495,15 +495,14 @@ models:
 
   - name: mart_api_ecritures
     description: >
-      Une ligne par requête d'écriture API (POST, PUT, PATCH, DELETE) faite avec une
-      application OAuth2, réussie ou en échec, depuis EventLog. Règle retenue le 20/10/2026 :
-      une écriture API = un événement API avec une application. La reprise de l'historique a
-      recopié `creation_source = 'API'`, faux pour les achats et le gaspillage, et qui inclut
-      les bilans de satellites générés depuis un groupe (sans application) ; en direct, toute
-      requête journalisée a une application. L'historique repris ne contient que des écritures
-      réussies : les échecs ne sont journalisés que depuis le 16/10/2026. Jamais les GET.
-      `jour` est à l'heure de Paris. Pas d'email ni de nom : les cartes nominatives joignent
-      `public.users_raw`.
+      Une ligne par requête d'écriture API (POST, PUT, PATCH, DELETE) faite avec un jeton
+      OAuth2, réussie ou en échec, depuis EventLog : une écriture API = un événement `API`.
+      En direct, toute requête journalisée a une application ; pour l'historique repris
+      (`eventlog_backfill_api`), l'application peut manquer sur des requêtes antérieures au
+      23/06/2026 (non stockée avant, et non retrouvée par les commandes fill).
+      L'historique repris ne contient que des écritures réussies : les échecs ne sont
+      journalisés que depuis le 16/10/2026. Jamais les GET. `jour` est à l'heure de Paris.
+      Pas d'email ni de nom : les cartes nominatives joignent `public.users_raw`.
       Les tests de ce mart ne tournent qu'en dev : la tâche de nuit lance `dbt run`, pas `dbt test`.
     columns:
       - name: event_log_id
@@ -540,7 +539,7 @@ models:
       - name: message
         description: Réponse tronquée à 1 000 caractères pour une requête en échec, vide sinon.
       - name: application_id
-        description: Identifiant de l'application OAuth2 (toujours renseigné).
+        description: Identifiant de l'application OAuth2 (peut manquer pour des requêtes reprises, voir ci-dessus).
       - name: application_nom
         description: Nom de l'application OAuth2.
       - name: editeur

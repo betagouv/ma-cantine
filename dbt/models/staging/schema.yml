@@ -92,7 +92,8 @@ models:
       - name: application_id
         description: >
           OAuth2 application of the API request. Always filled for requests logged live;
-          missing for some backfilled ones (creations backfilled from creation_source = 'API').
+          missing for some backfilled ones (requests before 2026-06-23, when the application
+          was not stored yet, and not found by the fill commands).
       - name: path
         description: >
           Requested path. For a creation (POST on a collection route), it does not contain

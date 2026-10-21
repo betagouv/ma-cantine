@@ -1,5 +1,7 @@
--- Une ligne par requête d'écriture API (POST, PUT, PATCH, DELETE) faite par un logiciel,
--- c'est-à-dire avec une application OAuth2, réussie ou en échec.
+-- Une ligne par requête d'écriture API (POST, PUT, PATCH, DELETE) faite avec un jeton OAuth2,
+-- réussie ou en échec.
+-- application_id peut manquer pour des requêtes reprises antérieures au 23/06/2026
+-- (application non stockée avant, et non retrouvée par les commandes fill).
 -- jour = date de la requête à l'heure de Paris.
 
 with evenements as (
@@ -9,11 +11,6 @@ with evenements as (
         split_part(name, ' ', 2)                            as route
     from {{ ref('stg_event_logs') }}
     where category = 'API'
-      -- Règle validée le 20/10/2026 : seules les requêtes avec une application OAuth comptent.
-      -- La reprise de l'historique a recopié creation_source, faux pour les achats et le
-      -- gaspillage, et y a mis les bilans de satellites générés depuis un groupe (sans
-      -- application). En direct, toute requête journalisée a une application.
-      and application_id is not null
 ),
 
 qualifiees as (
