@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
             name='publication_status',
             field=models.CharField(choices=[('draft', '🔒 Non publié'), ('pending', '❓ En attente de vérification'), ('published', '✅ Publié')], default='draft', max_length=50, verbose_name='état de publication'),
         ),
-        migrations.RunPython(migrate_publication_status, undo_migrate_publication_status),
+        migrations.RunPython(migrate_publication_status, undo_migrate_publication_status, elidable=True),
         migrations.RemoveField(
             model_name='canteen',
             name='data_is_public',

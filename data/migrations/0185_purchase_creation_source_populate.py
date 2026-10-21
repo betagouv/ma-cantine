@@ -33,5 +33,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_purchase_creation_source, undo_populate_purchase_creation_source)
+        migrations.RunPython(populate_purchase_creation_source, undo_populate_purchase_creation_source, elidable=True)
     ]

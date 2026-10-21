@@ -109,5 +109,5 @@ class Migration(migrations.Migration):
                 "ordering": ["-modification_date"],
             },
         ),
-        migrations.RunPython(restore_waste_action_data),
+        migrations.RunPython(restore_waste_action_data, elidable=True),
     ]

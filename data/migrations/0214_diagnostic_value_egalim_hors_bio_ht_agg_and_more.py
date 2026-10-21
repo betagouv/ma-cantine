@@ -55,5 +55,5 @@ class Migration(migrations.Migration):
                 verbose_name="EGalim (Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)",
             ),
         ),
-        migrations.RunPython(populate_diagnostic_value_egalim_hors_bio_ht_agg, undo_populate_diagnostic_value_egalim_hors_bio_ht_agg),
+        migrations.RunPython(populate_diagnostic_value_egalim_hors_bio_ht_agg, undo_populate_diagnostic_value_egalim_hors_bio_ht_agg, elidable=True),
     ]

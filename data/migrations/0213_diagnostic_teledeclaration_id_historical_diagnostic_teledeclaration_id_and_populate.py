@@ -47,5 +47,5 @@ class Migration(migrations.Migration):
                 verbose_name="ancien identifiant de la télédéclaration (concerne la période 2021-2024)",
             ),
         ),
-        migrations.RunPython(populate_diagnostic_teledeclaration_id, undo_populate_diagnostic_teledeclaration_id),
+        migrations.RunPython(populate_diagnostic_teledeclaration_id, undo_populate_diagnostic_teledeclaration_id, elidable=True),
     ]

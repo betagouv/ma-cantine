@@ -51,5 +51,5 @@ class Migration(migrations.Migration):
                 verbose_name="région",
             ),
         ),
-        migrations.RunPython(add_region, undo_add_region),
+        migrations.RunPython(add_region, undo_add_region, elidable=True),
     ]

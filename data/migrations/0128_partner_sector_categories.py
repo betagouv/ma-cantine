@@ -42,5 +42,5 @@ class Migration(migrations.Migration):
                 verbose_name="Catégorie du secteur dans lequel ce partenaire situe son activité",
             ),
         ),
-        migrations.RunPython(populate_sector_categories, undo_populate_sector_categories),
+        migrations.RunPython(populate_sector_categories, undo_populate_sector_categories, elidable=True),
     ]

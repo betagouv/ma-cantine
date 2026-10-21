@@ -44,5 +44,5 @@ class Migration(migrations.Migration):
                 verbose_name="Besoin(s) comblé(s) par ce partenaire",
             ),
         ),
-        migrations.RunPython(migrate_partner_categories, undo_migrate_partner_categories),
+        migrations.RunPython(migrate_partner_categories, undo_migrate_partner_categories, elidable=True),
     ]

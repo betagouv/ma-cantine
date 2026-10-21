@@ -21,5 +21,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_diagnostic_source, undo_populate_diagnostic_source)
+        migrations.RunPython(populate_diagnostic_source, undo_populate_diagnostic_source, elidable=True)
     ]

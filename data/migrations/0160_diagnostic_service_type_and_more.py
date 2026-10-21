@@ -60,5 +60,5 @@ class Migration(migrations.Migration):
                 verbose_name="type de service",
             ),
         ),
-        migrations.RunPython(init_service_type, reverse_init_service_type),
+        migrations.RunPython(init_service_type, reverse_init_service_type, elidable=True),
     ]

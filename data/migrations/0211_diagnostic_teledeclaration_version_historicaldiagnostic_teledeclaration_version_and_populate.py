@@ -46,5 +46,5 @@ class Migration(migrations.Migration):
                 blank=True, null=True, verbose_name="version de la télédéclaration"
             ),
         ),
-        migrations.RunPython(populate_diagnostic_teledeclaration_version, undo_populate_diagnostic_teledeclaration_version),
+        migrations.RunPython(populate_diagnostic_teledeclaration_version, undo_populate_diagnostic_teledeclaration_version, elidable=True),
     ]

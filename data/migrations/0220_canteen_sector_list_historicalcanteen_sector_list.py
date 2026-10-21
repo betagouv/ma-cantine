@@ -183,5 +183,5 @@ class Migration(migrations.Migration):
                 verbose_name="secteurs d'activité",
             ),
         ),
-        migrations.RunPython(populate_sector_list_from_sectors_m2m, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(populate_sector_list_from_sectors_m2m, reverse_code=migrations.RunPython.noop, elidable=True),
     ]

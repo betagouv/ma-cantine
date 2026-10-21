@@ -55,5 +55,5 @@ class Migration(migrations.Migration):
                 verbose_name="déclarant",
             ),
         ),
-        migrations.RunPython(populate_diagnostic_applicant, undo_populate_diagnostic_applicant),
+        migrations.RunPython(populate_diagnostic_applicant, undo_populate_diagnostic_applicant, elidable=True),
     ]

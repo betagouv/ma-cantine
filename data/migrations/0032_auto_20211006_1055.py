@@ -72,5 +72,5 @@ class Migration(migrations.Migration):
                 ),
             ],
         ),
-        migrations.RunPython(migrate_images, undo_migrate_images),
+        migrations.RunPython(migrate_images, undo_migrate_images, elidable=True),
     ]

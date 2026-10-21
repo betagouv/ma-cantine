@@ -61,5 +61,5 @@ class Migration(migrations.Migration):
                 verbose_name="caractéristiques",
             ),
         ),
-        migrations.RunPython(migrate_igp_typo, undo_migrate_igp_typo),
+        migrations.RunPython(migrate_igp_typo, undo_migrate_igp_typo, elidable=True),
     ]

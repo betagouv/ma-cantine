@@ -22,7 +22,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(validate_pending_publications, undo_validate_pending_publications),
+        migrations.RunPython(validate_pending_publications, undo_validate_pending_publications, elidable=True),
         migrations.AlterField(
             model_name="canteen",
             name="publication_status",

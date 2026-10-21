@@ -79,5 +79,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_aggregated_food_fields, unpopulate_aggregated_fields)
+        migrations.RunPython(populate_aggregated_food_fields, unpopulate_aggregated_fields, elidable=True)
     ]

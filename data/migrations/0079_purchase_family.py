@@ -67,5 +67,5 @@ class Migration(migrations.Migration):
                 verbose_name="famille de produits",
             ),
         ),
-        migrations.RunPython(migrate_product_family, undo_migrate_product_family),
+        migrations.RunPython(migrate_product_family, undo_migrate_product_family, elidable=True),
     ]

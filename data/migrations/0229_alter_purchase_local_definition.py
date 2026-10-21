@@ -49,6 +49,6 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(
             update_purchase_local_definition_rename_department_to_departement_forward,
-            update_purchase_local_definition_rename_department_to_departement_backward,
+            update_purchase_local_definition_rename_department_to_departement_backward, elidable=True,
         ),
     ]

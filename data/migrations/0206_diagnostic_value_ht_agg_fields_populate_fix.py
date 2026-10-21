@@ -44,5 +44,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_diagnostic_value_ht_agg_fields, undo_populate_diagnostic_value_ht_agg_fields)
+        migrations.RunPython(populate_diagnostic_value_ht_agg_fields, undo_populate_diagnostic_value_ht_agg_fields, elidable=True)
     ]

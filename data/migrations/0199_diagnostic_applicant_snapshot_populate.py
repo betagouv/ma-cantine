@@ -29,5 +29,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_diagnostic_applicant_snapshot, undo_populate_diagnostic_applicant_snapshot)
+        migrations.RunPython(populate_diagnostic_applicant_snapshot, undo_populate_diagnostic_applicant_snapshot, elidable=True)
     ]

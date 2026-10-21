@@ -57,5 +57,5 @@ class Migration(migrations.Migration):
                 verbose_name="méthode d'authentification",
             ),
         ),
-        migrations.RunPython(migrate_auth_method, undo_migrate_auth_method),
+        migrations.RunPython(migrate_auth_method, undo_migrate_auth_method, elidable=True),
     ]

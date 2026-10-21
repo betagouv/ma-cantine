@@ -22,5 +22,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(remove_central_production_type, undo_remove_central_production_type),
+        migrations.RunPython(remove_central_production_type, undo_remove_central_production_type, elidable=True),
     ]

@@ -156,5 +156,5 @@ class Migration(migrations.Migration):
                 verbose_name="caractéristiques",
             ),
         ),
-        migrations.RunPython(update_purchase_characteristics_rename_short_distribution_to_circuit_court_forward, reverse_code=update_purchase_characteristics_rename_short_distribution_to_circuit_court_backward),
+        migrations.RunPython(update_purchase_characteristics_rename_short_distribution_to_circuit_court_forward, reverse_code=update_purchase_characteristics_rename_short_distribution_to_circuit_court_backward, elidable=True),
     ]

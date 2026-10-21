@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 verbose_name="Type d'offre",
             ),
         ),
-        migrations.RunPython(migrate_gratuity_option, undo_migrate_gratuity_option),
+        migrations.RunPython(migrate_gratuity_option, undo_migrate_gratuity_option, elidable=True),
         migrations.RemoveField(
             model_name="partner",
             name="free",

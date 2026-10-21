@@ -29,5 +29,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_diagnostic_teledeclaration_date, undo_populate_diagnostic_teledeclaration_date)
+        migrations.RunPython(populate_diagnostic_teledeclaration_date, undo_populate_diagnostic_teledeclaration_date, elidable=True)
     ]

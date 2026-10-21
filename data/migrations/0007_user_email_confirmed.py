@@ -23,5 +23,5 @@ class Migration(migrations.Migration):
             name='email_confirmed',
             field=models.BooleanField(default='False', verbose_name='adresse email confirmée'),
         ),
-        migrations.RunPython(migrate_email_confirmed, undo_migrate_email_confirmed),
+        migrations.RunPython(migrate_email_confirmed, undo_migrate_email_confirmed, elidable=True),
     ]
