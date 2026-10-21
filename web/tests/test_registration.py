@@ -199,9 +199,48 @@ class ActivationTokenViewTest(APITestCase):
 
         response = self.client.post(reverse("registration_email"), {"email": victim.email})
 
-        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertRedirects(
+            response,
+            reverse("registration_email_sent", kwargs={"email": victim.email}),
+            status.HTTP_302_FOUND,
+            fetch_redirect_response=False,
+        )
         self.assertIsNone(self.client.session.get("_auth_user_id"))
 
         # the activation email was still sent
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, [victim.email])
+
+    def test_resending_activation_email_for_unknown_email_looks_like_success(self):
+        """
+        Regression test (enumeration): a nonexistent email must get the exact same response
+        as a real, unconfirmed account, so this form can't be used to probe who's registered.
+        """
+        email = "nobody-registered-with-this@example.com"
+
+        response = self.client.post(reverse("registration_email"), {"email": email})
+
+        self.assertRedirects(
+            response,
+            reverse("registration_email_sent", kwargs={"email": email}),
+            status.HTTP_302_FOUND,
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(len(mail.outbox), 0)
+
+    def test_resending_activation_email_for_already_confirmed_account_looks_like_success(self):
+        """
+        Regression test (enumeration): an already-confirmed account must get the exact same
+        response as an unconfirmed one, so this form can't be used to probe account status.
+        """
+        user = UserFactory(email="already-confirmed@example.com", email_confirmed=True)
+
+        response = self.client.post(reverse("registration_email"), {"email": user.email})
+
+        self.assertRedirects(
+            response,
+            reverse("registration_email_sent", kwargs={"email": user.email}),
+            status.HTTP_302_FOUND,
+            fetch_redirect_response=False,
+        )
+        self.assertEqual(len(mail.outbox), 0)
