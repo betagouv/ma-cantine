@@ -239,6 +239,22 @@ class PartnerCreateApiTest(APITestCase):
         self.assertEqual(partner.types.first().id, partner_type.id)
         self.assertFalse(partner.published, "A user can't create a published partner")  # draft
 
+    def test_long_description_is_escaped(self):
+        payload = {
+            "name": "New partner please",
+            "shortDescription": "This is a required field",
+            "longDescription": "Bonjour <img src=x onerror=alert(1)>\n\nDeuxième <script>alert(2)</script> paragraphe\nsuite",
+        }
+        response = self.client.post(reverse("partners_list"), payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        partner = Partner.objects.get()
+        self.assertEqual(
+            partner.long_description,
+            "<p>Bonjour &lt;img src=x onerror=alert(1)&gt;</p>\n\n"
+            "<p>Deuxième &lt;script&gt;alert(2)&lt;/script&gt; paragraphe<br>suite</p>",
+        )
+
 
 class PartnerDetailApiTest(APITestCase):
     def test_can_get_single_partner(self):
