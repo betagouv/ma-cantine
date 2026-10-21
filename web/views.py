@@ -148,7 +148,8 @@ class ActivationTokenView(View):
             _send_activation_email(email)
         except Exception:
             return redirect(reverse_lazy("registration_email_sent_error", kwargs={"email": email}))
-        return redirect(reverse_lazy("app"))
+        # same redirect whether or not this email is actually registered/unconfirmed: avoid leaking that
+        return redirect(reverse_lazy("registration_email_sent", kwargs={"email": email}))
 
 
 class RegisterDoneView(TemplateView):
@@ -220,6 +221,11 @@ def _send_activation_email(email):
         return
     try:
         user = get_user_model().objects.get(email=email, email_confirmed=False)
+    except get_user_model().DoesNotExist:
+        # Don't reveal whether this email is registered or already confirmed: the caller
+        # must treat this exactly like a successful send (same redirect either way).
+        return
+    try:
         token = tokens.default_token_generator.make_token(user)
         context = {
             "token": token,
@@ -233,7 +239,6 @@ def _send_activation_email(email):
             context=context,
             to=[user.email],
         )
-        return redirect(reverse_lazy("app"))
     except Exception:
         raise Exception("Error occurred : the mail could not be sent.")
 
