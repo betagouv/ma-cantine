@@ -395,7 +395,7 @@ def validate_definition_local(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the value is empty or in the choices
     - extra validation (since 2026, when definition_local was added):
-        - if definition_local is "KM", then definition_local_km can be filled
+        - if definition_local is "KM", then definition_local_km becomes mandatory
         - if definition_local is not "KM", then definition_local_km must be empty
         - if any of the appro "_local" fields is filled, definition_local becomes mandatory
     """
@@ -404,7 +404,14 @@ def validate_definition_local(instance):
         field_name = "definition_local"
         value = getattr(instance, field_name)
         definition_local_km = getattr(instance, "definition_local_km")
-        if value != DefinitionLocal.KM:
+        if value == DefinitionLocal.KM:
+            if definition_local_km in [None, ""]:
+                utils_utils.add_validation_error(
+                    errors,
+                    "definition_local_km",
+                    "La distance en km est obligatoire lorsque la définition locale est 'KM'.",
+                )
+        else:
             if definition_local_km not in [None, ""]:
                 utils_utils.add_validation_error(
                     errors,
