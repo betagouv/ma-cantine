@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('data', '0250_alter_diagnostic_status_and_more'),
+        ('data', '0152_wasteaction_squashed_0250_alter_diagnostic_status_and_more'),
     ]
 
     operations = [
