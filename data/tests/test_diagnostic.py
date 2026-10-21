@@ -201,6 +201,18 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
         diagnostic.full_clean()
 
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_nombre_repas_an_required_only_once(self):
+        # nombre_repas_an is checked both by validate_canteen_fields_required (CANTEEN_FIELDS) and
+        # validate_appro_fields_required (it's also in the TD registry's fields_required) - it
+        # should only be flagged once, not twice with the same message
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.nombre_repas_an = None
+        diagnostic.save()
+        with self.assertRaises(ValidationError) as cm:
+            diagnostic.full_clean()
+        self.assertEqual(len(cm.exception.message_dict["nombre_repas_an"]), 1)
+
     @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_totale_validation(self):
         # TODO: add tests against each simple field / sum of each label / sum of egalim fields

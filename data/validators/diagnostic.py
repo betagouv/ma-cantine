@@ -116,12 +116,15 @@ def validate_appro_fields_required(instance):
       BUT most of the model fields are optional...
     - extra validation: depending on the year & diagnostic_type of the diagnostic
         - e.g. before 2025, only valeur_totale is required
+    NOTE: nombre_repas_an is excluded, it's already checked by validate_canteen_fields_required
+    (it would otherwise be flagged twice, since it's also a CANTEEN_FIELDS entry)
     """
     errors = {}
     if instance.year:
         required_fields = get_teledeclaration_fields_required(instance.year, instance.diagnostic_type)
+        excluded_fields = ["nombre_repas_an"]
         for field in required_fields:
-            if getattr(instance, field) is None:
+            if field not in excluded_fields and getattr(instance, field) is None:
                 utils_utils.add_validation_error(
                     errors, field, f"Ce champ est obligatoire pour l'année {instance.year}."
                 )
