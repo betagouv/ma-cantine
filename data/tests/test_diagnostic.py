@@ -552,8 +552,10 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         - field is optional
         - field is only relevant when definition_local is "KM"
         """
-        # definition_local is "KM"
-        for TUPLE_OK in [(None, None), (0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
+        # definition_local is "KM": definition_local_km becomes mandatory
+        diagnostic = DiagnosticFactory(year=2026, definition_local=DefinitionLocal.KM, definition_local_km=None)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        for TUPLE_OK in [(0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
             with self.subTest(definition_local=DefinitionLocal.KM, definition_local_km=TUPLE_OK[0]):
                 diagnostic = DiagnosticFactory(
                     year=2026,
