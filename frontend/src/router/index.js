@@ -25,12 +25,10 @@ import PartnersHome from "@/views/PartnersPage/PartnersHome"
 import PartnerPage from "@/views/PartnersPage/PartnerPage"
 import NewPartner from "@/views/NewPartner"
 import NotFound from "@/views/NotFound"
-import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
 import VideoTutorial from "@/views/VideoTutorial"
-import MyProgress from "@/views/MyProgress"
 
 Vue.use(VueRouter)
 
@@ -217,17 +215,6 @@ const routes = [
     },
   },
   {
-    path: "/diagnostic-tunnel/:canteenUrlComponent/:year/:measureId",
-    name: "DiagnosticTunnel",
-    component: DiagnosticTunnel,
-    props: true,
-    meta: {
-      title: "Bilan",
-      authenticationRequired: true,
-      fullscreen: true,
-    },
-  },
-  {
     path: "/mes-achats",
     name: "PurchasesHome",
     component: PurchasesHome,
@@ -260,19 +247,6 @@ const routes = [
     props: true,
   },
 ]
-
-if (window.ENABLE_DASHBOARD) {
-  routes.push({
-    path: "/ma-progression/:canteenUrlComponent/:year/:measure",
-    name: "MyProgress",
-    component: MyProgress,
-    props: true,
-    meta: {
-      title: "Mon bilan annuel",
-      authenticationRequired: true,
-    },
-  })
-}
 
 const vue3Routes = [
   {
@@ -451,6 +425,20 @@ routes.push({
 routes.push({
   path: "/accueil-gestionnaire",
   redirect: { name: "LandingPage" },
+})
+
+routes.push({
+  path: "/diagnostic-tunnel/:canteenUrlComponent/*",
+  beforeEnter: (to, from, next) => {
+    next({ name: "GestionnaireCantine", params: { canteenUrlComponent: to.params.canteenUrlComponent } })
+  },
+})
+
+routes.push({
+  path: "/ma-progression/:canteenUrlComponent/*",
+  beforeEnter: (to, from, next) => {
+    next({ name: "GestionnaireCantine", params: { canteenUrlComponent: to.params.canteenUrlComponent } })
+  },
 })
 
 routes.push({
