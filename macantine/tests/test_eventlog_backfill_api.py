@@ -24,6 +24,7 @@ def run_command(apply=True, before=BEFORE):
 
 
 def set_api_creation(obj, user, application, date=DATE):
+    """Purchase & WasteMeasurement: creation_source = API (with or without an application)"""
     type(obj)._base_manager.filter(id=obj.id).update(
         creation_source=CreationSource.API,
         creation_user=user,
@@ -32,15 +33,19 @@ def set_api_creation(obj, user, application, date=DATE):
     )
 
 
-def create_api_update_history(obj, user, date=DATE, application=None, reason="OAuth2Authentication"):
-    """An update ("~") history row, as written by an API view"""
+def create_api_history(obj, user, history_type, date=DATE, application=None, reason="OAuth2Authentication"):
+    """A history row ("+" creation or "~" update), as written by an API view"""
     model = type(obj)
     model.history.bulk_history_create([obj], default_user=user, default_change_reason=reason, default_date=date)
     model.history.model.objects.filter(id=obj.id, history_date=date).update(
-        history_type="~",
+        history_type=history_type,
         history_source=CreationSource.API if application else None,
         history_source_api_oauth2_application=application,
     )
+
+
+def create_api_update_history(obj, user, date=DATE, application=None, reason="OAuth2Authentication"):
+    create_api_history(obj, user, "~", date=date, application=application, reason=reason)
 
 
 class EventLogBackfillApiTest(TestCase):
@@ -49,9 +54,9 @@ class EventLogBackfillApiTest(TestCase):
         self.application = ApplicationFactory()
         self.canteen = CanteenFactory()
 
-    def test_creations(self):
+    def test_creation_from_history(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen)
-        set_api_creation(diagnostic, self.user, self.application)
+        create_api_history(diagnostic, self.user, "+", application=self.application)
 
         run_command()
 
@@ -72,13 +77,13 @@ class EventLogBackfillApiTest(TestCase):
                 "seconds": None,
                 "message": None,
                 "backfilled": True,
-                "source": "creation",
+                "source": "history",
             },
         )
 
     def test_creations_of_each_model(self):
-        set_api_creation(self.canteen, self.user, self.application)
-        set_api_creation(DiagnosticFactory(canteen=self.canteen), self.user, self.application)
+        create_api_history(self.canteen, self.user, "+", application=self.application)
+        create_api_history(DiagnosticFactory(canteen=self.canteen), self.user, "+", application=self.application)
         set_api_creation(PurchaseFactory(canteen=self.canteen), self.user, self.application)
         set_api_creation(WasteMeasurementFactory(canteen=self.canteen), self.user, self.application)
 
@@ -94,8 +99,11 @@ class EventLogBackfillApiTest(TestCase):
             ],
         )
         self.assertEqual(EventLog.objects.get(name="POST /api/v1/canteens/").canteen, self.canteen)
+        self.assertEqual(
+            EventLog.objects.get(name="POST /api/v1/canteens/{canteen_pk}/purchases/").data["source"], "creation"
+        )
 
-    def test_ignores_purchase_and_waste_measurement_creations_without_application(self):
+    def test_ignores_object_creations_without_application(self):
         # creation_source = API alone is not reliable (API by default in the views)
         set_api_creation(PurchaseFactory(canteen=self.canteen), self.user, None)
         set_api_creation(WasteMeasurementFactory(canteen=self.canteen), self.user, None)
@@ -104,20 +112,34 @@ class EventLogBackfillApiTest(TestCase):
 
         self.assertFalse(EventLog.objects.exists())
 
-    def test_canteen_and_diagnostic_creations_without_application(self):
-        set_api_creation(self.canteen, self.user, None)
-        set_api_creation(DiagnosticFactory(canteen=self.canteen), self.user, None)
+    def test_ignores_canteen_and_diagnostic_creation_source(self):
+        # Canteen & Diagnostic creations only come from the history
+        diagnostic = DiagnosticFactory(canteen=self.canteen)
+        Diagnostic.objects.filter(id=diagnostic.id).update(
+            creation_source=CreationSource.API, creation_source_api_oauth2_application=self.application
+        )
 
         run_command()
 
-        self.assertEqual(EventLog.objects.count(), 2)
-        self.assertFalse(EventLog.objects.exclude(api_oauth2_application__isnull=True).exists())
+        self.assertFalse(EventLog.objects.exists())
+
+    def test_ignores_diagnostics_generated_from_a_groupe(self):
+        diagnostic = DiagnosticFactory(canteen=self.canteen)
+        Diagnostic.all_objects.filter(id=diagnostic.id).update(generated_from_groupe_diagnostic=True)
+        diagnostic.refresh_from_db()
+        create_api_history(diagnostic, self.user, "+")
+        create_api_update_history(diagnostic, self.user, date=DATE + datetime.timedelta(days=1))
+
+        run_command()
+
+        self.assertFalse(EventLog.objects.exists())
 
     def test_ignores_non_api_creations(self):
         purchase = PurchaseFactory(canteen=self.canteen)
-        Purchase.objects.filter(id=purchase.id).update(creation_source=CreationSource.APP)
-        diagnostic = DiagnosticFactory(canteen=self.canteen)
-        Diagnostic.objects.filter(id=diagnostic.id).update(creation_source=CreationSource.IMPORT)
+        Purchase.objects.filter(id=purchase.id).update(
+            creation_source=CreationSource.APP, creation_source_api_oauth2_application=self.application
+        )
+        create_api_history(DiagnosticFactory(canteen=self.canteen), self.user, "+", reason="SessionAuthentication")
 
         run_command()
 
