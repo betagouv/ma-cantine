@@ -89,6 +89,6 @@ class PurchaseAdmin(SoftDeletionAdmin):
 
     def canteen_with_link(self, obj):
         url = reverse("admin:data_canteen_change", args=[obj.canteen_id])
-        return format_html(f'<a href="{url}">{obj.canteen}</a>')
+        return format_html('<a href="{}">{}</a>', url, obj.canteen)
 
     canteen_with_link.short_description = Purchase._meta.get_field("canteen").verbose_name
