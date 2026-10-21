@@ -42,7 +42,7 @@ def validate_purchase_definition_local(instance):
     - extra validation:
         - if caracteristiques includes "LOCAL"
             - definition_local can be filled
-            - if definition_local is "KM", then definition_local_km can be filled
+            - if definition_local is "KM", then definition_local_km becomes mandatory
             - if definition_local is not "KM", then definition_local_km must be empty
         - if caracteristiques does not include "LOCAL", definition_local & definition_local_km must be empty
     """
@@ -52,7 +52,14 @@ def validate_purchase_definition_local(instance):
     definition_local_km = getattr(instance, "definition_local_km")
     caracteristiques = getattr(instance, "caracteristiques") or []
     if instance.Characteristic.LOCAL in caracteristiques:
-        if value != DefinitionLocal.KM:
+        if value == DefinitionLocal.KM:
+            if definition_local_km in [None, ""]:
+                utils_utils.add_validation_error(
+                    errors,
+                    "definition_local_km",
+                    "La distance en km est obligatoire lorsque la définition locale est 'KM'.",
+                )
+        else:
             if definition_local_km not in [None, ""]:
                 utils_utils.add_validation_error(
                     errors,

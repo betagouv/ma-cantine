@@ -228,7 +228,7 @@ class PurchaseCreateApiTest(APITestCase):
         response = self.client.post(self.url, payload)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        # definition_local_km is optional
+        # definition_local_km is mandatory if definition_local is KM
         payload = {
             **self.PURCHASE_PAYLOAD,
             "est_local": True,
@@ -236,14 +236,7 @@ class PurchaseCreateApiTest(APITestCase):
             "definition_local_km": "",
         }
         response = self.client.post(self.url, payload)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        purchase = Purchase.objects.first()
-        self.assertEqual(purchase.est_local, True)
-        self.assertEqual(purchase.definition_local, DefinitionLocal.KM)
-        self.assertEqual(purchase.definition_local_km, None)
-
-        # cleanup
-        Purchase.objects.all().delete()
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
         # definition_local_km can be filled if definition_local is KM
         payload = {

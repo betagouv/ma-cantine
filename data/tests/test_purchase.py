@@ -123,8 +123,9 @@ class PurchaseModelSaveTest(TransactionTestCase):
                 )
 
     def test_purchase_definition_local_km_validation(self):
-        # caracteristiques includes "LOCAL" and definition_local is "KM"
-        for TUPLE_OK in [(None, None), (0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
+        # caracteristiques includes "LOCAL" and definition_local is "KM": definition_local_km
+        # becomes mandatory
+        for TUPLE_OK in [(0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
             with self.subTest(
                 caracteristiques=[Purchase.Characteristic.LOCAL],
                 definition_local=DefinitionLocal.KM,
@@ -136,7 +137,7 @@ class PurchaseModelSaveTest(TransactionTestCase):
                     definition_local_km=TUPLE_OK[0],
                 )
                 self.assertEqual(purchase.definition_local_km, TUPLE_OK[1])
-        for VALUE_NOT_OK in ["", "  ", -1, -100, "invalid", "123.45"]:
+        for VALUE_NOT_OK in [None, "", "  ", -1, -100, "invalid", "123.45"]:
             with self.subTest(
                 caracteristiques=[Purchase.Characteristic.LOCAL],
                 definition_local=DefinitionLocal.KM,

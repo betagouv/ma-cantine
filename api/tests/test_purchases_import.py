@@ -445,9 +445,9 @@ class PurchasesImportApiSuccessTest(APITestCase):
         # purchase with definition_local COMMUNE
         purchase = Purchase.objects.filter(description="Pommes, vertes 5").first()
         self.assertEqual(purchase.definition_local, DefinitionLocal.COMMUNE)
-        # purchase with definition_local KM
+        # purchase with definition_local REGION
         purchase = Purchase.objects.filter(description="Pommes, vertes 6").first()
-        self.assertEqual(purchase.definition_local, DefinitionLocal.KM)
+        self.assertEqual(purchase.definition_local, DefinitionLocal.REGION)
         self.assertEqual(purchase.definition_local_km, None)
         # purchase with definition_local KM & 200
         purchase = Purchase.objects.filter(description="Pommes, vertes 7").first()

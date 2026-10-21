@@ -35,6 +35,9 @@ class PurchaseFactory(factory.django.DjangoModelFactory):
         if Purchase.Characteristic.LOCAL in x.caracteristiques
         else None
     )
+    definition_local_km = factory.LazyAttribute(
+        lambda x: random.randint(0, 1000) if x.definition_local == DefinitionLocal.KM else None
+    )
 
     @classmethod
     def _create(cls, model_class, *args, skip_validations=False, **kwargs):
