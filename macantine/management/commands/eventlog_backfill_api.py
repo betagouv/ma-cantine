@@ -20,6 +20,11 @@ CREATION_ROUTES = {
     Purchase: ("/api/v1/canteens/{canteen_pk}/purchases/", "canteen_id"),
     WasteMeasurement: ("/api/v1/canteens/{canteen_pk}/wasteMeasurements/", "canteen_id"),
 }
+# Purchase & WasteMeasurement: creation_source = API alone is not a proof of an API request
+# (the API views use API by default when the client does not send a creation_source: web creations while the frontend
+# did not send it, or while creation_source was read-only in the PurchaseSerializer)
+# but the OAuth2 application is always stored on API creations (since OAuth2 access to purchases was opened)
+CREATIONS_REQUIRING_APPLICATION = {Purchase, WasteMeasurement}
 # updates: PATCH (the only update method in /api/docs/), from the history ("~" rows)
 # the API views write "OAuth2Authentication" as history_change_reason (update_change_reason_with_auth)
 UPDATE_ROUTES = {
@@ -37,6 +42,7 @@ class Command(MaCantineBaseCommand):
     Reuses what is in the DB (see the *_fill_creation_user_and_source commands, to run before):
     - creations (POST): objects with creation_source = API (see CREATION_ROUTES)
         - user: creation_user, application: creation_source_api_oauth2_application, date: creation_date
+        - Purchase & WasteMeasurement: only with a creation_source_api_oauth2_application (see CREATIONS_REQUIRING_APPLICATION)
     - updates (PATCH): history "~" rows with history_change_reason = "OAuth2Authentication"
       or history_source = API (see UPDATE_ROUTES)
         - user: history_user, application: history_source_api_oauth2_application (only since its creation),
@@ -46,7 +52,8 @@ class Command(MaCantineBaseCommand):
     - data: same keys as the live EventLog (method, path, status_code, seconds = None, message = None)
       + backfilled & source ("creation" or "history")
 
-    Lost: failed requests, deletions, updates of the models without history (Purchase)
+    Lost: failed requests, deletions, updates of the models without history (Purchase),
+    Purchase & WasteMeasurement creations without a known application
 
     Not idempotent: run it only once (each run creates the EventLog again)
 
@@ -102,7 +109,10 @@ class Command(MaCantineBaseCommand):
         events = []
         for model, (route, canteen_field) in CREATION_ROUTES.items():
             manager = getattr(model, "all_objects", model.objects)  # with the soft-deleted objects
-            queryset = manager.filter(creation_source=CreationSource.API, creation_date__lt=before).values_list(
+            queryset = manager.filter(creation_source=CreationSource.API, creation_date__lt=before)
+            if model in CREATIONS_REQUIRING_APPLICATION:
+                queryset = queryset.filter(creation_source_api_oauth2_application__isnull=False)
+            queryset = queryset.values_list(
                 "creation_user_id", "creation_source_api_oauth2_application_id", "creation_date", "id", canteen_field
             )
             for user_id, application_id, date, object_id, canteen_id in queryset.iterator(chunk_size=BATCH_SIZE):
