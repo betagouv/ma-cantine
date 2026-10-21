@@ -184,8 +184,24 @@ class AccountActivationViewTest(APITestCase):
         self.assertTrue(user.email_confirmed)
 
 
-class ActivationTokenViewGetTest(APITestCase):
+class ActivationTokenViewTest(APITestCase):
     def test_get_resend_activation_email_page(self):
         response = self.client.get(reverse("registration_email"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertTemplateUsed(response, "auth/register_resend_email.html")
+
+    def test_resending_activation_email_does_not_log_in_as_target_user(self):
+        """
+        Regression test: posting someone else's email to the "resend activation email"
+        endpoint must not authenticate the requester as that user (account takeover).
+        """
+        victim = UserFactory(email="victim@example.com", email_confirmed=False)
+
+        response = self.client.post(reverse("registration_email"), {"email": victim.email})
+
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        self.assertIsNone(self.client.session.get("_auth_user_id"))
+
+        # the activation email was still sent
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].to, [victim.email])

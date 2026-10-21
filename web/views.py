@@ -114,10 +114,11 @@ class RegisterUserView(FormView):
         return super().get(request, *args, **kwargs)
 
     def form_valid(self, form):
-        form.save()
+        user = form.save()
+        login(self.request, user)
         email = form.cleaned_data["email"]
         try:
-            _login_and_send_activation_email(email, self.request)
+            _send_activation_email(email)
         except Exception:
             self.success_url = reverse_lazy("registration_email_sent_error", kwargs={"email": email})
             return super().form_valid(form)
@@ -144,9 +145,10 @@ class ActivationTokenView(View):
     def post(self, request, *args, **kwargs):
         email = request.POST.get("email")
         try:
-            return _login_and_send_activation_email(email, self.request)
+            _send_activation_email(email)
         except Exception:
             return redirect(reverse_lazy("registration_email_sent_error", kwargs={"email": email}))
+        return redirect(reverse_lazy("app"))
 
 
 class RegisterDoneView(TemplateView):
@@ -211,13 +213,13 @@ class AccountActivationView(View):
             return redirect(reverse_lazy("invalid_token"))
 
 
-def _login_and_send_activation_email(email, request):
+def _send_activation_email(email):
+    # NOTE: must never log the requester in here — this is reachable unauthenticated
+    # (ActivationTokenView.post) with an attacker-supplied email and no credential check.
     if not email:
-        return redirect(reverse_lazy("app"))
+        return
     try:
         user = get_user_model().objects.get(email=email, email_confirmed=False)
-        login(request, user)
-
         token = tokens.default_token_generator.make_token(user)
         context = {
             "token": token,
