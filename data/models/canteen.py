@@ -585,6 +585,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     )
 
     is_filled = models.BooleanField(default=False, verbose_name="cantine complétée ? (champ calculé)")
+    is_clean = models.BooleanField(default=False, verbose_name="cantine valide ? (champ calculé)")
 
     # TDs (rempli grâce à teledeclare & canteen_fill_declaration_donnees_year_field)
     declaration_donnees_2021 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2021")
@@ -743,6 +744,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     def set_is_filled(self):
         self.is_filled = self._is_filled()
 
+    def set_is_clean(self):
+        self.is_clean, _ = self._is_clean(raise_errors=False)
+
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(
             canteen_validators.validate_canteen_siret_or_siren_unite_legale(self),
@@ -764,12 +768,16 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         - set region from department
         - full_clean(): run validations (with extra validations in clean())
             - this can be skipped with skip_validations=True (USE WITH CAUTION)
+        - set is_clean & is_filled (always, even with skip_validations=True)
         """
         self.normalize_fields()
         self.optimize_logo()
         self.reset_geo_fields_if_siret_or_city_insee_code_changed()
-        if not skip_validations:
-            self.is_clean(raise_errors=True)
+        if skip_validations:
+            self.set_is_clean()
+        else:
+            self._is_clean(raise_errors=True)
+            self.is_clean = True
         self.set_is_filled()
         super().save(**kwargs)
         # see also: post_save signal
@@ -942,7 +950,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             is_filled = bool(self.line_ministry)
         return is_filled
 
-    def is_clean(self, raise_errors=False) -> tuple[bool, dict]:
+    def _is_clean(self, raise_errors=False) -> tuple[bool, dict]:
         try:
             self.full_clean()
             return True, {}

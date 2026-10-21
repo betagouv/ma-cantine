@@ -78,6 +78,8 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "region",
         "department",
         "import_source",
+        "is_filled",
+        "is_clean",
     )
     search_fields = (
         "id",
@@ -120,7 +122,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         ("Images", {"fields": ("logo", "logo_display", "image_count")}),
         (
             "Informations supplémentaires",
-            {"fields": ("is_filled", "publication_status_display", "has_been_claimed")},
+            {"fields": ("is_filled", "is_clean", "publication_status_display", "has_been_claimed")},
         ),
         (
             "Télédéclaration",
@@ -147,6 +149,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "logo_display",
         "image_count",
         "is_filled",
+        "is_clean",
         "publication_status_display",
         "has_been_claimed",
         *[field_name for field_name in Canteen.GEO_FIELDS if field_name not in ("city_insee_code",)],

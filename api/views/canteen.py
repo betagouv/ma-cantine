@@ -343,7 +343,7 @@ class UserCanteenCheckView(APIView):
         canteen = self._get_canteen()
 
         is_filled = canteen.is_filled
-        is_clean, errors = canteen.is_clean(raise_errors=False)
+        is_clean, errors = canteen._is_clean(raise_errors=False)
 
         response = {"is_filled": is_filled, "is_clean": is_clean, "errors": errors}
         return Response(CanteenCheckSerializer(response).data)
