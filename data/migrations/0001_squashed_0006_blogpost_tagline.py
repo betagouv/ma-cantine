@@ -13,8 +13,6 @@ import django.utils.timezone
 
 class Migration(migrations.Migration):
 
-    replaces = [('data', '0001_initial'), ('data', '0002_alter_blogpost_published'), ('data', '0003_blogpost_display_date'), ('data', '0004_alter_blogpost_display_date'), ('data', '0005_alter_blogpost_display_date'), ('data', '0006_blogpost_tagline')]
-
     initial = True
 
     dependencies = [
