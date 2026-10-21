@@ -122,8 +122,9 @@ def validate_appro_fields_required(instance):
     errors = {}
     if instance.year:
         required_fields = get_teledeclaration_fields_required(instance.year, instance.diagnostic_type)
+        excluded_fields = ["nombre_repas_an"]
         for field in required_fields:
-            if field != "nombre_repas_an" and getattr(instance, field) is None:
+            if field not in excluded_fields and getattr(instance, field) is None:
                 utils_utils.add_validation_error(
                     errors, field, f"Ce champ est obligatoire pour l'année {instance.year}."
                 )
