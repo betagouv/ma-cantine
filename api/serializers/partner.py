@@ -1,3 +1,4 @@
+from django.template.defaultfilters import linebreaks_filter
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
@@ -76,3 +77,12 @@ class PartnerContactSerializer(serializers.ModelSerializer):
             "contact_message",
             "contact_phone_number",
         )
+
+    def validate_long_description(self, value):
+        """
+        The public form sends plain text, but the field is rendered as HTML (rich text, editable in the admin):
+        escape it (avoid a stored-XSS) and keep the line breaks as <p> & <br>
+        """
+        if not value:
+            return value
+        return linebreaks_filter(value, autoescape=True)
