@@ -1297,7 +1297,7 @@ class CanteenIsFilledQuerySetAndPropertyTest(TestCase):
                 self.assertFalse(canteen._is_filled())
 
 
-class CanteenIsCleanMethodTest(TestCase):
+class CanteenIsCleanMethodAndFieldTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_on_site_not_valid = CanteenFactory(
@@ -1312,21 +1312,43 @@ class CanteenIsCleanMethodTest(TestCase):
         )
 
     def test_is_clean_without_raise_errors(self):
-        is_clean, errors = self.canteen_on_site_not_valid.is_clean(raise_errors=False)
+        is_clean, errors = self.canteen_on_site_not_valid._is_clean(raise_errors=False)
         self.assertFalse(is_clean)
         self.assertNotEqual(errors, {})
 
-        is_clean, errors = self.canteen_on_site_valid.is_clean(raise_errors=False)
+        is_clean, errors = self.canteen_on_site_valid._is_clean(raise_errors=False)
         self.assertTrue(is_clean)
         self.assertEqual(errors, {})
 
     def test_is_clean_with_raise_errors(self):
         with self.assertRaises(ValidationError):
-            self.canteen_on_site_not_valid.is_clean(raise_errors=True)
+            self.canteen_on_site_not_valid._is_clean(raise_errors=True)
 
-        is_clean, errors = self.canteen_on_site_valid.is_clean(raise_errors=True)
+        is_clean, errors = self.canteen_on_site_valid._is_clean(raise_errors=True)
         self.assertTrue(is_clean)
         self.assertEqual(errors, {})
+
+    def test_is_clean_field(self):
+        self.canteen_on_site_not_valid.refresh_from_db()
+        self.assertFalse(self.canteen_on_site_not_valid.is_clean)
+        self.canteen_on_site_valid.refresh_from_db()
+        self.assertTrue(self.canteen_on_site_valid.is_clean)
+
+    def test_is_clean_field_set_on_save(self):
+        canteen = CanteenFactory(siret="21380185500015", production_type=Canteen.ProductionType.ON_SITE)
+        canteen.refresh_from_db()
+        self.assertTrue(canteen.is_clean)
+        # becomes not valid (only possible with skip_validations)
+        canteen.daily_meal_count = 0
+        canteen.save(skip_validations=True)
+        canteen.refresh_from_db()
+        self.assertFalse(canteen.is_clean)
+        self.assertFalse(canteen._is_clean()[0])
+        # becomes valid again
+        canteen.daily_meal_count = 12
+        canteen.save()
+        canteen.refresh_from_db()
+        self.assertTrue(canteen.is_clean)
 
 
 class CanteenAggregateQuerySetTest(TestCase):
