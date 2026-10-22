@@ -5,13 +5,13 @@ L'ETL extrait les données de la plateforme vers deux destinations :
 * **data.gouv.fr** : ouverture des données en open data (cf `open_data.py`)
 * **le data warehouse** : copie brute des tables, utilisée comme source par dbt, pour l'analyse et les indicateurs (cf `analysis.py`)
 
-| Tâche celery | Classe | Planification | Résultat |
+| Tâche | Classe | Planification | Résultat |
 |---|---|---|---|
 | `export_dataset_raw_analysis` | `ETL_ANALYSIS_RAW` | toutes les nuits (prod) | tables `*_raw` dans le data warehouse |
 | `export_dataset_canteen_opendata` | `ETL_OPEN_DATA_CANTEEN` | toutes les nuits (prod) | `registre_cantines.csv/.xlsx` |
 | `export_dataset_td_opendata` | `ETL_OPEN_DATA_TELEDECLARATIONS` | manuelle, une fois par campagne | `campagne_td_{année}.csv/.xlsx` |
 
-Les planifications sont dans `macantine/celery.py`. Pour lancer un export manuellement :
+Les planifications sont dans `clevercloud/cron.json` (cf `docs/cron.md`). Pour lancer un export manuellement :
 
 ```sh
 python manage.py export_dataset --model Raw --destination analysis

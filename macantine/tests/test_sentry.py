@@ -30,7 +30,7 @@ class SentryBeforeSendTest(SimpleTestCase):
         self.assertEqual(before_send(self.event, hint), self.event)
 
     def test_captured_exception_without_log_record_is_kept(self):
-        # e.g. unhandled exception in a view (DjangoIntegration), failed Celery task (CeleryIntegration)
+        # e.g. unhandled exception in a view (DjangoIntegration), failed task (run_task command)
         hint = {"exc_info": get_exc_info(RuntimeError("boom"))}
         self.assertEqual(before_send(self.event, hint), self.event)
 

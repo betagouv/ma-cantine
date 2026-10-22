@@ -22,7 +22,6 @@ from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.models import Canteen, Diagnostic, EventLog, User, WasteMeasurement, Purchase, Oauth2ProviderApplicationExtra
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
-from .celery import app
 from .etl.analysis import ETL_ANALYSIS_RAW
 from .etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
@@ -36,7 +35,6 @@ logger = logging.getLogger(__name__)
 # User data
 
 
-@app.task()
 def update_user_data():
     """
     Update calculated fields in User.data JSONField
@@ -74,7 +72,6 @@ def batched(iterable, n):
 #########################################################
 
 
-@app.task()
 def update_brevo_contacts():
     """
     Send custom information on Brevo contacts for automatisation
@@ -98,7 +95,6 @@ def update_brevo_contacts():
     return result
 
 
-@app.task()
 def update_canteen_geo_fields_from_siret(canteen):
     """
     Input: Canteen with siret but no city_insee_code
@@ -137,7 +133,6 @@ def update_canteen_geo_fields_from_siret(canteen):
     return True
 
 
-@app.task()
 def update_canteen_geo_data_from_insee_code(canteen):
     """
     Similar to update_canteen_geo_fields_from_siret, but this time we already have the city_insee_code.
@@ -211,7 +206,6 @@ def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
         return True
 
 
-@app.task()
 def delete_old_historical_records():
     logger.info("Starting delete_old_historical_records task")
 
@@ -223,7 +217,6 @@ def delete_old_historical_records():
     call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
 
 
-@app.task()
 def canteen_fill_declaration_donnees_year_field():
     logger.info("Starting canteen_fill_declaration_donnees_year_field task")
 
@@ -279,7 +272,6 @@ def get_raw_analysis_datasets():
     }
 
 
-@app.task()
 def export_dataset_raw_analysis():
     """
     Export the raw datasets for analysis (Metabase, dbt sources)
@@ -291,7 +283,6 @@ def export_dataset_raw_analysis():
     return result
 
 
-@app.task()
 def export_dataset_td_opendata():
     """
     Export the Teledeclaration datasets for opendata (data.gouv.fr) (1 per year)
@@ -311,7 +302,6 @@ def export_dataset_td_opendata():
     return result
 
 
-@app.task()
 def export_dataset_canteen_opendata():
     """
     Export the Canteen datasets for opendata (data.gouv.fr)
@@ -350,7 +340,6 @@ def _invoke_dbt(command: str, dbt_project_dir: str):
         raise result.exception or RuntimeError(f"dbt {command} failed")
 
 
-@app.task()
 def dbt_run():
     """
     Run dbt models against the analytics data warehouse (Metabase).
