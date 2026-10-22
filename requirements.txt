@@ -8,7 +8,7 @@ agate==1.9.1
     #   dbt-postgres
 aiohappyeyeballs==2.7.1
     # via aiohttp
-aiohttp==3.14.3
+aiohttp==3.14.4
     # via
     #   pyhanko
     #   pyhanko-certvalidator
