@@ -148,7 +148,7 @@ diff-cover==10.5.1
     # via sqlfluff
 distlib==0.4.3
     # via virtualenv
-django==5.2.17
+django==5.2.18
     # via
     #   django-anymail
     #   django-celery-results
