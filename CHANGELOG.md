@@ -6,6 +6,29 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.56.1](https://github.com/betagouv/ma-cantine/compare/v2026.56.0...v2026.56.1) (2026-10-22)
+
+
+### Corrections (bugs, typos...)
+
+* **Admin:** Achats & Erreurs d'import: généraliser l'usage de format_html (éviter une attaque stored-XSS) ([#7396](https://github.com/betagouv/ma-cantine/issues/7396)) ([319fdb7](https://github.com/betagouv/ma-cantine/commit/319fdb7496dfdc8008028e7ce1e3b1ca3c266499))
+* **CI:** dbt: fixer la version de Python à 3.11 (comme pour le backend) ([#7404](https://github.com/betagouv/ma-cantine/issues/7404)) ([6c7112e](https://github.com/betagouv/ma-cantine/commit/6c7112ef8f21042c2a398694df953efdd08b7388))
+* **Diagnostics:** `definition_local_km` obligatoire si `definition_local` est 'KM' ([#7400](https://github.com/betagouv/ma-cantine/issues/7400)) ([e06a246](https://github.com/betagouv/ma-cantine/commit/e06a246e811cf64490e9162cc39f7b8b6304db07))
+* **Diagnostics:** `nombre_repas_an` n'est plus signalé 2 fois comme obligatoire ([#7401](https://github.com/betagouv/ma-cantine/issues/7401)) ([8ebd65b](https://github.com/betagouv/ma-cantine/commit/8ebd65ba7ee25b8c024cf774554efecf2eb485bf))
+* **EventLog:** migration des données: cantines et bilans: créations depuis l'historique (trace OAuth2), sans les bilans générés depuis un groupe ([#7388](https://github.com/betagouv/ma-cantine/issues/7388)) ([144a793](https://github.com/betagouv/ma-cantine/commit/144a793703ccc4dc1879aa02d4267865819c97d2))
+* **EventLog:** migration des données: ne garder en API que les requêtes avec une trace OAuth2 (creation_source=API seul ne suffit pas) ([#7387](https://github.com/betagouv/ma-cantine/issues/7387)) ([8183adf](https://github.com/betagouv/ma-cantine/commit/8183adf25a6ae2f6b14520f1c35b0d966ce1433b))
+* **Partenaires:** API: échapper la description longue envoyée par le formulaire public (éviter une attaque stored-XSS) ([#7397](https://github.com/betagouv/ma-cantine/issues/7397)) ([e147dd7](https://github.com/betagouv/ma-cantine/commit/e147dd7ffb06114d7e4b4cdc38d6283e98a9e766))
+* **Sécurité:** corrige une faille de contournement d'authentification via le renvoi d'email de confirmation ([#7393](https://github.com/betagouv/ma-cantine/issues/7393)) ([14f15ef](https://github.com/betagouv/ma-cantine/commit/14f15ef91e5ec5bd3fb980bee634f2757bfc140f))
+* **Sécurité:** le renvoi d'email de confirmation ne révèle plus si un email est inscrit ou déjà confirmé ([#7395](https://github.com/betagouv/ma-cantine/issues/7395)) ([41b154f](https://github.com/betagouv/ma-cantine/commit/41b154f9496f17bafb402e011e9bfeb89193f592))
+
+
+### Technique
+
+* **deps:** màj de certifi ([#7403](https://github.com/betagouv/ma-cantine/issues/7403)) ([0420ed1](https://github.com/betagouv/ma-cantine/commit/0420ed1c27fe4b2da53e29270bf4fe145598ad87))
+* **deps:** màj de django (5.2.18) ([#7407](https://github.com/betagouv/ma-cantine/issues/7407)) ([6c068a4](https://github.com/betagouv/ma-cantine/commit/6c068a4704ebd6b06466ed1469c8f4b96afada17))
+* **Migrations:** squash des migrations 0001→0250 et archivage des fichiers remplacés ([#7402](https://github.com/betagouv/ma-cantine/issues/7402)) ([6d0b42c](https://github.com/betagouv/ma-cantine/commit/6d0b42c8e567b1a895e320bd26bd35d542d4a112))
+* **Utilisateurs:** couvre les cas d'erreur de connexion, inscription et activation de compte ([#7392](https://github.com/betagouv/ma-cantine/issues/7392)) ([ac908bf](https://github.com/betagouv/ma-cantine/commit/ac908bf053d5274eafd54eb02f2bdfda2bbe2cf3))
+
 ## [2026.56.0](https://github.com/betagouv/ma-cantine/compare/v2026.55.0...v2026.56.0) (2026-10-20)
 
 
