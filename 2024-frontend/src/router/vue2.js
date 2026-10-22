@@ -10,7 +10,7 @@ const vue2routes = [
     path: "/mes-achats",
     name: "PurchasesHome",
     meta: {
-      title: "Mes achats",
+      title: "Outil Suivi des Achats",
       siteMap: diag,
       authenticationRequired: true,
     },
@@ -74,15 +74,6 @@ const vue2routes = [
     meta: {
       title: "Blog",
       siteMap: law,
-    },
-  },
-  {
-    path: "/les-cantines-de-mon-territoire",
-    name: "TerritoryCanteens",
-    meta: {
-      title: "Les cantines de mon territoire",
-      siteMap: diag,
-      authenticationRequired: true,
     },
   },
   {

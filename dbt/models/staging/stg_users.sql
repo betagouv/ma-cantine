@@ -5,7 +5,6 @@ with source as (
 renamed as (
     select
         id                          as user_id,
-        username,
         email,
         first_name,
         last_name,
@@ -13,7 +12,6 @@ renamed as (
         is_staff,
         is_superuser,
         is_dev,
-        is_elected_official,
         created_with_mcp,
         mcp_id,
         mcp_organizations,
@@ -24,7 +22,6 @@ renamed as (
         source,
         other_source_description,
         law_awareness,
-        departments,
         email_confirmed,
         opt_out_reminder_emails,
         date_joined,

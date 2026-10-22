@@ -15,6 +15,7 @@ from .partner import Partner  # noqa: F401
 from .partnertype import PartnerType  # noqa: F401
 from .videotutorial import VideoTutorial  # noqa: F401
 from .importfailure import ImportFailureAdmin  # noqa: F401
+from .eventlog import EventLogAdmin  # noqa: F401
 from .wasteaction import WasteActionAdmin  # noqa: F401
 from .resourceaction import ResourceActionAdmin  # noqa: F401
 from .oauth2 import Oauth2ProviderApplicationAdmin  # noqa: F401

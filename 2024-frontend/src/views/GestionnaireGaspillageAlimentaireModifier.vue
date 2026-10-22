@@ -131,7 +131,10 @@ const saveAndQuit = () => {
 }
 
 const quit = () => {
-  router.push({ name: "GestionnaireGaspillageAlimentaire" })
+  router.push({
+    name: "GestionnaireGaspillageAlimentaire",
+    params: { canteenUrlComponent: props.canteenUrlComponent },
+  })
 }
 
 let v$

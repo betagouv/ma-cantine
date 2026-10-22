@@ -35,6 +35,7 @@ class CanteenStatsApiTest(APITestCase):
                 production_type=Canteen.ProductionType.CENTRAL,
                 economic_model=Canteen.EconomicModel.PUBLIC,
                 managers=[user],
+                skip_validations=True,
             )
             canteen_diagnostic_1 = DiagnosticFactory(
                 canteen=cls.canteen_1,
@@ -64,6 +65,7 @@ class CanteenStatsApiTest(APITestCase):
                 production_type=Canteen.ProductionType.CENTRAL_SERVING,
                 economic_model=Canteen.EconomicModel.PUBLIC,
                 managers=[user],
+                skip_validations=True,
             )
             canteen_diagnostic_2 = DiagnosticFactory(
                 canteen=cls.canteen_2,
@@ -134,16 +136,12 @@ class CanteenStatsApiTest(APITestCase):
                 pat_list=[],
                 department="67",
                 region="44",
-                # sector_list=[],
-                # management_type=None,
-                # production_type=None,
-                # economic_model=None,
+                sector_list=[],
+                management_type=None,
+                production_type=None,
+                economic_model=None,
+                skip_validations=True,
             )
-            cls.canteen_5_empty.sector_list = []
-            cls.canteen_5_empty.management_type = None
-            cls.canteen_5_empty.production_type = None
-            cls.canteen_5_empty.economic_model = None
-            cls.canteen_5_empty.save(skip_validations=True)
         with freeze_time("1990-01-01"):
             cls.canteen_old_armee = CanteenFactory(
                 siret="21730065600014",
@@ -177,7 +175,7 @@ class CanteenStatsApiTest(APITestCase):
     def test_canteen_count_include_deletion_and_creation_dates(self):
         # During the campaign
         with freeze_time(date_in_2023_teledeclaration_campaign):
-            self.canteen_1.delete()
+            self.canteen_1.delete(skip_validations=True)  # legacy CENTRAL
 
         # After the campaign
         with freeze_time("2024-06-15"):

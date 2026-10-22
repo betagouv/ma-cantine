@@ -182,9 +182,8 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         canteen_diagnostics = diagnostics.filter(canteen=OuterRef("pk"))
         groupe_diagnostics = diagnostics.filter(canteen=OuterRef("groupe_id"))
         diagnostics_filled = diagnostics.filled()
-        diagnostic_for_year_with_cc_mode = Diagnostic.objects.filter(
-            pk=OuterRef("groupe_diagnostic_for_year"),
-            central_kitchen_diagnostic_mode__isnull=False,
+        groupe_diagnostics_with_cc_mode = groupe_diagnostics.filter(
+            central_kitchen_diagnostic_mode__isnull=False
         ).exclude(central_kitchen_diagnostic_mode="")
         diagnostics_teledeclared = diagnostics.teledeclared()
         diagnostic_groupe_mode_all = canteen_diagnostics.filter(
@@ -195,12 +194,12 @@ class CanteenQuerySet(SoftDeletionQuerySet):
             diagnostic_for_year_status=Subquery(diagnostics.values("status")[:1]),
             groupe_diagnostic_for_year=Subquery(groupe_diagnostics.values("id")[:1]),
             groupe_diagnostic_for_year_status=Subquery(groupe_diagnostics.values("status")[:1]),
-            has_diagnostic_filled_for_year=Exists(Subquery(diagnostics_filled)),
+            has_diagnostic_filled_for_year=Exists(diagnostics_filled),
             diagnostic_for_year_cc_mode=Subquery(
-                diagnostic_for_year_with_cc_mode.values("central_kitchen_diagnostic_mode")[:1]
+                groupe_diagnostics_with_cc_mode.values("central_kitchen_diagnostic_mode")[:1]
             ),
             groupe_mode=Subquery(diagnostic_groupe_mode_all.values("teledeclaration_mode")[:1]),
-            has_diagnostic_teledeclared_for_year=Exists(Subquery(diagnostics_teledeclared)),
+            has_diagnostic_teledeclared_for_year=Exists(diagnostics_teledeclared),
         )
 
     def annotate_with_requires_line_ministry(self):
@@ -387,8 +386,8 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
 
     class ProductionType(models.TextChoices):
         GROUPE = "groupe", "Groupe"
-        CENTRAL = "central", "Cuisine centrale"
-        CENTRAL_SERVING = "central_serving", "Cuisine centrale et site"
+        CENTRAL = "central", "Cuisine centrale"  # legacy
+        CENTRAL_SERVING = "central_serving", "Cuisine centrale et site"  # legacy
         ON_SITE = "site", "Restaurant avec cuisine sur place"
         ON_SITE_CENTRAL = (
             "site_cooked_elsewhere",
@@ -585,7 +584,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         verbose_name="Modèle économique",
     )
 
-    is_filled = models.BooleanField(default=False, verbose_name="cantine complète (champ calculé)")
+    is_filled = models.BooleanField(default=False, verbose_name="cantine complétée ? (champ calculé)")
 
     # TDs (rempli grâce à teledeclare & canteen_fill_declaration_donnees_year_field)
     declaration_donnees_2021 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2021")
@@ -855,9 +854,10 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     def satellites_already_teledeclared_count(self):
         if self.is_groupe:
             year = timezone.now().year - 1
+            # same as filtering annotate_with_action_for_year on NOTHING_SATELLITE_TELEDECLARED & NOTHING
             return (
-                self.satellites.annotate_with_action_for_year(year)
-                .filter(action__in=[Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED, Canteen.Actions.NOTHING])
+                self.satellites.annotate_with_diagnostic_for_year(year)
+                .filter(has_diagnostic_teledeclared_for_year=True)
                 .count()
             )
 

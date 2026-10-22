@@ -1,11 +1,8 @@
-import json
-
 from django import forms
 from django.contrib import admin
-from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
 
-from data.admin.utils import ReadOnlyAdminMixin
+from data.admin.utils import ReadOnlyAdminMixin, json_pretty
 from data.models import Teledeclaration
 
 
@@ -93,13 +90,11 @@ class TeledeclarationAdmin(ReadOnlyAdminMixin, SimpleHistoryAdmin):
         "canteen__name",
         "canteen__siret",
         "canteen__siren_unite_legale",
-        "applicant__username",
         "applicant__email",
     )
 
     def declared_data_pretty(self, obj):
-        data = json.dumps(obj.declared_data, indent=2)
-        return mark_safe(f"<pre>{data}</pre>")
+        return json_pretty(obj.declared_data)
 
     def canteen_name(self, obj):
         return obj.declared_data["canteen"]["name"]

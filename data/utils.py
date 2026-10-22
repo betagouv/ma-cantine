@@ -90,11 +90,21 @@ def make_optional_positive_percentage_decimal_field(**kwargs):
 def compute_percentage(numerator, denominator) -> Decimal | None:
     """
     Percentage (0 to 100, 2 decimals) of numerator / denominator.
+    Returns 0 if both the numerator and the denominator are 0 (e.g. 0€ spent on a family).
     Returns None if the denominator is empty/0, the numerator is None, or the numerator exceeds the denominator.
     """
+    if numerator == 0 and denominator == 0:
+        return Decimal("0.00")
     if denominator and numerator is not None and denominator >= numerator:
         return round(100 * to_decimal(numerator) / to_decimal(denominator), 2)
     return None
+
+
+def has_any_value_filled(values) -> bool:
+    """
+    Whether at least one of the values is filled (0 counts as filled, only None is empty).
+    """
+    return any(value is not None for value in values)
 
 
 def sum_int_with_potential_null(values_to_sum):

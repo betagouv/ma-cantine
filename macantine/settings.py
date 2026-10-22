@@ -43,7 +43,7 @@ DEBUG = os.getenv("DEBUG") == "True"
 DEBUG_FRONT = os.getenv("DEBUG_FRONT") == "True" if os.getenv("DEBUG_FRONT") else True
 AUTH_USER_MODEL = "data.User"
 AUTHENTICATION_BACKENDS = [
-    "macantine.backends.EmailUsernameBackend",
+    "macantine.backends.EmailBackend",
 ]
 ALLOWED_HOSTS = [x.strip() for x in os.getenv("ALLOWED_HOSTS").split(",")]
 ENFORCE_HOST = os.getenv("ENFORCE_HOST", None)
@@ -103,6 +103,7 @@ INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "macantine.middleware.RedirectMiddleware",
+    "macantine.middleware.EventLogMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",

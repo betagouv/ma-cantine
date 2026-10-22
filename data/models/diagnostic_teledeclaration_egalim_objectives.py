@@ -102,6 +102,18 @@ def get_egalim_objectives_appro(year, canteen_region):
     return get_egalim_objectives(year, "APPRO")[get_egalim_group([canteen_region])]
 
 
+def get_egalim_objectives_notes(year, egalim_group):
+    """
+    Return the year's appro thresholds for the egalim group
+    """
+    egalim_objectives_appro = get_egalim_objectives(year, "APPRO")[egalim_group]
+    return {
+        "egalim_group": egalim_group,
+        "bio_percent_objective": egalim_objectives_appro["bio_percent"],
+        "egalim_percent_objective": egalim_objectives_appro["egalim_percent"],
+    }
+
+
 def objectifs_egalim_atteints(year, canteen_region, pourcentage_bio, pourcentage_egalim):
     """
     Determine if the EGALIM objectives are met.

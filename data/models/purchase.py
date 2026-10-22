@@ -47,9 +47,11 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
             self.only("id", "famille_produits", "caracteristiques", "prix_ht").filter(canteen=canteen).for_year(year)
         )
 
-    def aggregated_stats(self):
+    def total_stats(self):
+        return self.aggregate(valeur_totale=Sum("prix_ht"))
+
+    def label_totals_stats(self):
         return self.aggregate(
-            valeur_totale=Sum("prix_ht"),
             valeur_bio=Sum("prix_ht", filter=bio_query()),
             valeur_bio_dont_commerce_equitable=Sum(
                 "prix_ht",
@@ -74,19 +76,63 @@ class PurchaseQuerySet(SoftDeletionQuerySet):
                 "prix_ht",
                 filter=~bio_query() & ~siqo_query() & ~egalim_autres_query() & valeur_externalites_performance_query(),
             ),
-            # misc totals
-            valeur_viandes_volailles=Sum("prix_ht", filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)),
+            # origin
+            valeur_europe=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.EUROPE])),
+            valeur_france=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.FRANCE])),
+            # other
+            valeur_circuit_court=Sum(
+                "prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.CIRCUIT_COURT])
+            ),
+            valeur_local=Sum("prix_ht", filter=Q(caracteristiques__contains=[Purchase.Characteristic.LOCAL])),
+        )
+
+    def family_totals_stats(self):
+        return self.aggregate(
+            **{
+                "valeur_" + family.lower(): Sum("prix_ht", filter=Q(famille_produits=family))
+                for family in Purchase.Family.values
+            }
+        )
+
+    def family_label_totals_stats(self):
+        """Totals per family x label, except APPRO_LABELS_EGALIM (see _complete_diag_data_appro_labels)."""
+        return self.aggregate(
+            **{
+                "valeur_" + family.lower() + "_bio_dont_commerce_equitable": Sum(
+                    "prix_ht",
+                    filter=Q(famille_produits=family)
+                    & Q(caracteristiques__contains=[Purchase.Characteristic.BIO])
+                    & Q(caracteristiques__contains=[Purchase.Characteristic.COMMERCE_EQUITABLE]),
+                )
+                for family in Purchase.Family.values
+            },
+            **{
+                "valeur_" + family.lower() + "_" + label: Sum(
+                    "prix_ht",
+                    filter=Q(famille_produits=family)
+                    & Q(caracteristiques__contains=[Purchase.Characteristic[label.upper()]]),
+                )
+                for family in Purchase.Family.values
+                for label in ["europe", "france", "circuit_court", "local"]
+            },
+            **{
+                "valeur_" + family.lower() + "_non_egalim": Sum(
+                    "prix_ht",
+                    filter=Q(famille_produits=family)
+                    & ~Q(caracteristiques__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
+                )
+                for family in Purchase.Family.values
+            },
+        )
+
+    def misc_stats(self):
+        """Totals '_egalim', only for 2 families (other origin labels are in family_label_totals_stats)."""
+        return self.aggregate(
             valeur_viandes_volailles_egalim=Sum(
                 "prix_ht",
                 filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)
                 & Q(caracteristiques__overlap=Purchase.CHARACTERISTIC_LABELS_EGALIM),
             ),
-            valeur_viandes_volailles_france=Sum(
-                "prix_ht",
-                filter=Q(famille_produits=Purchase.Family.VIANDES_VOLAILLES)
-                & Q(caracteristiques__contains=[Purchase.Characteristic.FRANCE]),
-            ),
-            valeur_produits_de_la_mer=Sum("prix_ht", filter=Q(famille_produits=Purchase.Family.PRODUITS_DE_LA_MER)),
             valeur_produits_de_la_mer_egalim=Sum(
                 "prix_ht",
                 filter=Q(famille_produits=Purchase.Family.PRODUITS_DE_LA_MER)
@@ -342,6 +388,7 @@ class Purchase(SoftDeletionModel):
         data = {"year": year}
         cls._simple_diag_data(purchases, data)
         cls._complete_diag_data(purchases, data, year)
+        cls._family_totals(purchases, data, year)
         cls._misc_totals(purchases, data)
 
         return data
@@ -393,8 +440,9 @@ class Purchase(SoftDeletionModel):
 
     @classmethod
     def _simple_diag_data(cls, purchases, data):
-        stats = purchases.aggregated_stats()
-        data["valeur_totale"] = stats["valeur_totale"] or 0
+        total_stats = purchases.total_stats()
+        data["valeur_totale"] = total_stats["valeur_totale"] or 0
+        stats = purchases.label_totals_stats()
         data["valeur_bio"] = stats["valeur_bio"] or 0
         data["valeur_bio_dont_commerce_equitable"] = stats["valeur_bio_dont_commerce_equitable"] or 0
         data["valeur_siqo"] = stats["valeur_siqo"] or 0
@@ -403,6 +451,10 @@ class Purchase(SoftDeletionModel):
             stats["valeur_egalim_autres_dont_commerce_equitable"] or 0
         )
         data["valeur_externalites_performance"] = stats["valeur_externalites_performance"] or 0
+        data["valeur_europe"] = stats["valeur_europe"] or 0
+        data["valeur_france"] = stats["valeur_france"] or 0
+        data["valeur_circuit_court"] = stats["valeur_circuit_court"] or 0
+        data["valeur_local"] = stats["valeur_local"] or 0
 
     @classmethod
     def _complete_diag_data(cls, purchases, data, year):
@@ -410,12 +462,11 @@ class Purchase(SoftDeletionModel):
         Summary for detailed teledeclaration totals, by family and label.
         """
         cls._complete_diag_data_appro_labels(purchases, data, year)
-        cls._complete_diag_data_appro_label_bio_dont_commerce_equitable(purchases, data, year)
+        cls._family_label_totals(purchases, data, year)
         if int(year) == 2025:
-            cls._complete_diag_appro_labels_origine_circuit_court_local_2025(purchases, data, year)
-        else:
-            cls._complete_diag_appro_labels_origine_circuit_court_local(purchases, data, year)
-        cls._complete_diag_appro_labels_non_egalim(purchases, data, year)
+            # in 2025, circuit_court & local were part of France, so "france" is overridden here
+            # (circuit_court & local themselves are already correctly set just above)
+            cls._complete_diag_appro_labels_france_2025(purchases, data, year)
 
     @classmethod
     def _complete_diag_data_appro_labels(cls, purchases, data, year):
@@ -448,88 +499,53 @@ class Purchase(SoftDeletionModel):
                 data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_data_appro_label_bio_dont_commerce_equitable(cls, purchases, data, year):
+    def _complete_diag_appro_labels_france_2025(cls, purchases, data, year):
         """
-        How we manage bio_dont_commerce_equitable:
-        - outside of APPRO_LABELS_EGALIM
-        - products can be counted twice across caracteristiques
-        """
-
-        for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
-            purchase_family = purchases.filter(famille_produits=family.upper())
-            purchase_family_label = purchase_family.filter(
-                Q(caracteristiques__contains=[cls.Characteristic.BIO])
-                & Q(caracteristiques__contains=[cls.Characteristic.COMMERCE_EQUITABLE])
-            )
-            key = "valeur_" + family + "_" + "bio_dont_commerce_equitable"
-            data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
-
-    @classmethod
-    def _complete_diag_appro_labels_origine_circuit_court_local_2025(cls, purchases, data, year):
-        """
-        How we manage France/Circuit court/local:
+        How we manage France in 2025:
         - outside of APPRO_LABELS_EGALIM
         - products can be counted in multiple of these caracteristiques
-        - NOTE: in 2025, circuit_court & local were part of France, so we count them as France
+        - NOTE: in 2025, circuit_court & local were part of France, so we count them as France too
+          (circuit_court & local themselves are already correctly set by _family_label_totals)
         - NOTE: in 2025, Europe did not exist yet
         """
-
         for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
-            purchase_family = purchases.filter(famille_produits=family.upper())
-            for label in ["circuit_court", "local"]:  # "france" is done just after
-                purchase_family_label = purchase_family.filter(
-                    Q(caracteristiques__contains=[cls.Characteristic[label.upper()]])
-                )
-                key = "valeur_" + family + "_" + label
-                data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
-            # France total
-            purchase_family_label = purchase_family.filter(
+            purchase_family_label = purchases.filter(famille_produits=family.upper()).filter(
                 caracteristiques__overlap=[
                     cls.Characteristic(label.upper()) for label in ["france", "circuit_court", "local"]
                 ]
-            ).distinct()
+            )
             key = "valeur_" + family + "_france"
             data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_origine_circuit_court_local(cls, purchases, data, year):
+    def _family_label_totals(cls, purchases, data, year):
         """
-        How we manage France/(Europe)/Circuit court/local:
-        - outside of APPRO_LABELS_EGALIM
-        - products can be counted in multiple of these caracteristiques
-        - NOTE: circuit_court & local are not counted as France
-        - NOTE: covers both before 2025 (no Europe) and from 2026 onwards (Europe added) — see
-          APPRO_LABELS_ORIGINE in diagnostic_teledeclaration_field_groups.py. 2025 is a special
-          transitional case handled separately (circuit_court & local counted as France too).
+        Fills valeur_<famille>_<label> for every label whose count doesn't depend on any other
+        label (unlike APPRO_LABELS_EGALIM, see _complete_diag_data_appro_labels): origin
+        (europe/france/circuit_court/local — NOTE: circuit_court & local are not counted as
+        France; 2025 is a special transitional case, "france" gets overridden by
+        _complete_diag_appro_labels_france_2025), bio_dont_commerce_equitable, and non_egalim.
         """
-        labels = get_teledeclaration_field_groups(year, "APPRO_LABELS_ORIGINE") + ["circuit_court", "local"]
+        stats = purchases.family_label_totals_stats()
+        labels = get_teledeclaration_field_groups(year, "APPRO_LABELS_ORIGINE") + [
+            "circuit_court",
+            "local",
+            "bio_dont_commerce_equitable",
+            "non_egalim",
+        ]
         for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
-            purchase_family = purchases.filter(famille_produits=family.upper())
             for label in labels:
-                purchase_family_label = purchase_family.filter(
-                    Q(caracteristiques__contains=[cls.Characteristic[label.upper()]])
-                )
                 key = "valeur_" + family + "_" + label
-                data[key] = purchase_family_label.aggregate(total=Sum("prix_ht"))["total"] or 0
+                data[key] = stats[key] or 0
 
     @classmethod
-    def _complete_diag_appro_labels_non_egalim(cls, purchases, data, year):
-        """
-        How we manage Non-EGalim:
-        """
-
+    def _family_totals(cls, purchases, data, year):
+        stats = purchases.family_totals_stats()
         for family in get_teledeclaration_field_groups(year, "APPRO_FAMILIES"):
-            non_egalim_purchases = purchases.filter(famille_produits=family.upper()).exclude(
-                caracteristiques__overlap=cls.CHARACTERISTIC_LABELS_EGALIM
-            )
-            key = "valeur_" + family + "_non_egalim"
-            data[key] = non_egalim_purchases.aggregate(total=Sum("prix_ht"))["total"] or 0
+            data["valeur_" + family] = stats["valeur_" + family] or 0
 
     @classmethod
     def _misc_totals(cls, purchases, data):
-        stats = purchases.aggregated_stats()
-        data["valeur_viandes_volailles"] = stats["valeur_viandes_volailles"] or 0
+        stats = purchases.misc_stats()
         data["valeur_viandes_volailles_egalim"] = stats["valeur_viandes_volailles_egalim"] or 0
-        data["valeur_viandes_volailles_france"] = stats["valeur_viandes_volailles_france"] or 0
-        data["valeur_produits_de_la_mer"] = stats["valeur_produits_de_la_mer"] or 0
         data["valeur_produits_de_la_mer_egalim"] = stats["valeur_produits_de_la_mer_egalim"] or 0

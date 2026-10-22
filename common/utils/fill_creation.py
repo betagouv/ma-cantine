@@ -40,10 +40,11 @@ def get_first_versions(history_manager, object_ids):
     return first_versions
 
 
-def update_objects(manager, field, values_by_object_id, apply, log_values=True):
+def update_objects(manager, field, values_by_object_id, apply, log_values=True, id_field="id"):
     """
     values_by_object_id: {object_id: value}
     Grouped by value to limit the number of queries
+    id_field: "history_id" for history rows
     """
     logger.info(f"{'Filling' if apply else 'Would fill'} {len(values_by_object_id)} {manager.model.__name__}")
     if log_values:
@@ -54,7 +55,7 @@ def update_objects(manager, field, values_by_object_id, apply, log_values=True):
             object_ids_by_value[value].append(object_id)
         for value, object_ids in object_ids_by_value.items():
             for start in range(0, len(object_ids), CHUNK_SIZE):
-                manager.filter(id__in=object_ids[start : start + CHUNK_SIZE]).update(**{field: value})
+                manager.filter(**{f"{id_field}__in": object_ids[start : start + CHUNK_SIZE]}).update(**{field: value})
 
 
 def fill_creation_user(manager, history_manager, apply):
@@ -190,4 +191,82 @@ def fill_creation_source_api_oauth2_application(manager, history_manager, apply)
     ).count()
     logger.info(
         f"Done! {filled_count} API {manager.model.__name__} with filled creation_source_api_oauth2_application"
+    )
+
+
+def fill_history_source_api(manager, history_manager, apply):
+    """
+    Only for the history rows with history_change_reason = "OAuth2Authentication"
+    (written by the API views, see update_change_reason_with_auth: API requests made before history_source existed)
+    Run creation_user & creation_source_api_oauth2_application first (used by the rules below)
+
+    Rules:
+    - history_source: "API" (if empty)
+    - history_source_api_oauth2_application (if empty):
+        - if history_user is the object creation_user, and the object has a creation_source_api_oauth2_application,
+          then use it (same user, same object: very likely the same application)
+        - else look at the OAuth2 tokens of the history_user at history_date (see get_application_from_token_periods)
+        - else history_source_api_oauth2_application stays empty
+    """
+    rows = list(
+        history_manager.filter(history_change_reason="OAuth2Authentication").values_list(
+            "history_id",
+            "id",
+            "history_user_id",
+            "history_date",
+            "history_source",
+            "history_source_api_oauth2_application_id",
+        )
+    )
+    logger.info(
+        f"Found {len(rows)} API {history_manager.model.__name__} (history_change_reason = OAuth2Authentication)"
+    )
+
+    # history_source
+    history_source_by_history_id = {row[0]: CreationSource.API for row in rows if not row[4]}
+    update_objects(history_manager, "history_source", history_source_by_history_id, apply=apply, id_field="history_id")
+
+    # history_source_api_oauth2_application
+    rows_without_application = [row for row in rows if not row[5]]
+    object_ids = list({row[1] for row in rows_without_application})
+    creation_by_object_id = {}
+    for start in range(0, len(object_ids), CHUNK_SIZE):
+        creation_by_object_id.update(
+            {
+                object_id: (creation_user_id, application_id)
+                for object_id, creation_user_id, application_id in manager.filter(
+                    id__in=object_ids[start : start + CHUNK_SIZE]
+                ).values_list("id", "creation_user_id", "creation_source_api_oauth2_application_id")
+            }
+        )
+    token_periods_by_user_id = get_user_token_periods({row[2] for row in rows_without_application if row[2]})
+
+    application_by_history_id = {}
+    rule_counter = Counter()
+    for history_id, object_id, history_user_id, history_date, _, _ in rows_without_application:
+        creation_user_id, creation_application_id = creation_by_object_id.get(object_id, (None, None))
+        if history_user_id and history_user_id == creation_user_id and creation_application_id:
+            application_by_history_id[history_id] = creation_application_id
+            rule_counter["creation"] += 1
+        elif history_user_id:
+            application_id = get_application_from_token_periods(
+                token_periods_by_user_id.get(history_user_id, []), history_date
+            )
+            if application_id:
+                application_by_history_id[history_id] = application_id
+                rule_counter["tokens"] += 1
+    logger.info(f"Applications found from: {dict(rule_counter)}")
+    update_objects(
+        history_manager,
+        "history_source_api_oauth2_application_id",
+        application_by_history_id,
+        apply=apply,
+        id_field="history_id",
+    )
+
+    filled_count = history_manager.filter(
+        history_change_reason="OAuth2Authentication", history_source_api_oauth2_application__isnull=False
+    ).count()
+    logger.info(
+        f"Done! {filled_count} API {history_manager.model.__name__} with filled history_source_api_oauth2_application"
     )

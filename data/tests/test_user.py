@@ -14,11 +14,13 @@ class UserModelTest(TestCase):
         cls.user_with_canteens = UserFactory()
         cls.user_without_canteens = UserFactory()
 
-        cls.canteen_empty = CanteenFactory(managers=[cls.user_with_canteens])
-        cls.canteen_empty.management_type = None
-        cls.canteen_empty.production_type = None
-        cls.canteen_empty.economic_model = None
-        cls.canteen_empty.save(skip_validations=True)
+        cls.canteen_empty = CanteenFactory(
+            managers=[cls.user_with_canteens],
+            management_type=None,
+            production_type=None,
+            economic_model=None,
+            skip_validations=True,
+        )
         cls.canteen_groupe = CanteenFactory(
             production_type=Canteen.ProductionType.GROUPE,
             management_type=Canteen.ManagementType.DIRECT,
@@ -30,6 +32,7 @@ class UserModelTest(TestCase):
             management_type=Canteen.ManagementType.DIRECT,
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[cls.user_with_canteens],
+            skip_validations=True,
         )
         cls.canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -188,11 +191,6 @@ class UserModelSaveTest(TransactionTestCase):
         with self.assertRaises(Exception):
             UserFactory(email="user@example.com")
 
-    def test_username_unique(self):
-        UserFactory(username="user1")
-        with self.assertRaises(Exception):
-            UserFactory(username="user1")
-
     def test_email_normalized_on_save(self):
         user = UserFactory(email="user@example.com ")
         self.assertEqual(user.email, "user@example.com")
@@ -254,6 +252,15 @@ class UserStaffSuperuserTest(TestCase):
 
         user.is_superuser = True
         user.save()
+        self.assertTrue(user.is_superuser)
+
+    def test_user_factory_skip_validations(self):
+        # without skip_validations
+        self.assertRaises(ValidationError, UserFactory, is_staff=False, is_superuser=True)
+
+        # with skip_validations
+        user = UserFactory(is_staff=False, is_superuser=True, skip_validations=True)
+        user.refresh_from_db()
         self.assertTrue(user.is_superuser)
 
 

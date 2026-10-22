@@ -10,6 +10,7 @@ const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
     const total = purchaseSummary.value?.valeurTotale
     return total != null && total > 0
   })
+  const hasPurchaseLocal = computed(() => purchaseSummary.value?.valeurLocal > 0)
 
   /* Init store with last year purchases summary */
   async function initStore(canteenId) {
@@ -32,6 +33,7 @@ const useStorePurchaseSummary = defineStore("purchaseSummary", () => {
   return {
     purchaseSummary,
     hasPurchaseTotal,
+    hasPurchaseLocal,
     initStore,
     deleteStore,
     refreshStore,

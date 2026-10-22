@@ -110,7 +110,9 @@ class CanteenModelSaveTest(TransactionTestCase):
                     )
 
     def test_canteen_siret_unique_validation(self):
-        central_kitchen = CanteenFactory(siret="21590350100017", production_type=Canteen.ProductionType.CENTRAL)
+        central_kitchen = CanteenFactory(
+            siret="21590350100017", production_type=Canteen.ProductionType.CENTRAL, skip_validations=True
+        )
         canteen_existing = CanteenFactory(siret="75665621899905", siren_unite_legale=None)
         # on create
         for VALUE_NOT_OK in ["75665621899905", "756 656 218 99905", 75665621899905]:
@@ -207,16 +209,19 @@ class CanteenModelSaveTest(TransactionTestCase):
         """
         - the field is mandatory
         - the field should be one of the choices
-        - some types are not available anymore
+        - some types are not available anymore (CENTRAL & CENTRAL_SERVING)
         """
-        for TUPLE_OK in [(key, key) for key in Canteen.ProductionType.values]:
+        PRODUCTION_TYPES_NOT_ALLOWED = [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]
+        for TUPLE_OK in [
+            (key, key) for key in Canteen.ProductionType.values if key not in PRODUCTION_TYPES_NOT_ALLOWED
+        ]:
             with self.subTest(production_type=TUPLE_OK[0]):
                 canteen = CanteenFactory(production_type=TUPLE_OK[0])
                 self.assertEqual(canteen.production_type, TUPLE_OK[1])
-        for VALUE_NOT_OK in [None, "", "  ", 123, "invalid"]:
+        for VALUE_NOT_OK in [None, "", "  ", 123, "invalid", *PRODUCTION_TYPES_NOT_ALLOWED]:
             with self.subTest(production_type=VALUE_NOT_OK):
                 self.assertRaises(ValidationError, CanteenFactory, production_type=VALUE_NOT_OK)
-        # cannot change a Canteen to CENTRAL & CENTRAL_SERVING anymore
+        # cannot change a Canteen to CENTRAL & CENTRAL_SERVING either
         canteen = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         for production_type in [Canteen.ProductionType.CENTRAL, Canteen.ProductionType.CENTRAL_SERVING]:
             canteen.production_type = production_type
@@ -240,8 +245,6 @@ class CanteenModelSaveTest(TransactionTestCase):
                         economic_model=VALUE_NOT_OK,
                     )
         for production_type in [
-            Canteen.ProductionType.CENTRAL,
-            Canteen.ProductionType.CENTRAL_SERVING,
             Canteen.ProductionType.ON_SITE,
             Canteen.ProductionType.ON_SITE_CENTRAL,
         ]:
@@ -256,8 +259,8 @@ class CanteenModelSaveTest(TransactionTestCase):
                     )
 
     def test_canteen_sector_list_validation(self):
-        # groupe & central kitchen: must be empty
-        for production_type in [Canteen.ProductionType.GROUPE, Canteen.ProductionType.CENTRAL]:
+        # groupe: must be empty
+        for production_type in [Canteen.ProductionType.GROUPE]:
             for TUPLE_OK in [([], [])]:
                 with self.subTest(production_type=production_type, sector_list=TUPLE_OK[0]):
                     canteen = CanteenFactory(production_type=production_type, sector_list=TUPLE_OK[0])
@@ -274,7 +277,6 @@ class CanteenModelSaveTest(TransactionTestCase):
                     )
         # other types: must be filled, between 1 & 3
         for production_type in [
-            Canteen.ProductionType.CENTRAL_SERVING,
             Canteen.ProductionType.ON_SITE,
             Canteen.ProductionType.ON_SITE_CENTRAL,
         ]:
@@ -372,8 +374,6 @@ class CanteenModelSaveTest(TransactionTestCase):
         # not a satellite: must be empty
         for production_type in [
             Canteen.ProductionType.GROUPE,
-            Canteen.ProductionType.CENTRAL,
-            Canteen.ProductionType.CENTRAL_SERVING,
             Canteen.ProductionType.ON_SITE,
         ]:
             for TUPLE_OK in [(None, None)]:
@@ -403,7 +403,9 @@ class CanteenModelSaveTest(TransactionTestCase):
                     )
 
     def test_canteen_central_producer_siret_validation(self):
-        central_kitchen = CanteenFactory(siret="21590350100017", production_type=Canteen.ProductionType.CENTRAL)
+        central_kitchen = CanteenFactory(
+            siret="21590350100017", production_type=Canteen.ProductionType.CENTRAL, skip_validations=True
+        )
         canteen_site = CanteenFactory(siret="83014132100034", production_type=Canteen.ProductionType.ON_SITE)
 
         for production_type in [Canteen.ProductionType.GROUPE, Canteen.ProductionType.ON_SITE_CENTRAL]:
@@ -427,7 +429,11 @@ class CanteenModelSaveTest(TransactionTestCase):
                 production_type=production_type,
                 central_producer_siret="21380185500015",
             )
-        for production_type in Canteen.ProductionType.values:
+        for production_type in [
+            Canteen.ProductionType.GROUPE,
+            Canteen.ProductionType.ON_SITE,
+            Canteen.ProductionType.ON_SITE_CENTRAL,
+        ]:
             for TUPLE_OK in [(None, None), ("", "")]:
                 with self.subTest(
                     production_type=production_type,
@@ -436,8 +442,6 @@ class CanteenModelSaveTest(TransactionTestCase):
                     canteen = CanteenFactory(production_type=production_type, central_producer_siret=TUPLE_OK[0])
                     self.assertEqual(canteen.central_producer_siret, TUPLE_OK[1])
         for production_type in [
-            Canteen.ProductionType.CENTRAL,
-            Canteen.ProductionType.CENTRAL_SERVING,
             Canteen.ProductionType.ON_SITE,
         ]:
             for VALUE_NOT_OK in [
@@ -578,6 +582,16 @@ class CanteenModelSaveTest(TransactionTestCase):
         # with skip_validations
         canteen.save(skip_validations=True)
         self.assertEqual(canteen.siret, None)
+
+    def test_canteen_factory_skip_validations(self):
+        # without skip_validations
+        self.assertRaises(ValidationError, CanteenFactory, siret=None, siren_unite_legale=None)
+
+        # with skip_validations
+        canteen = CanteenFactory(siret=None, siren_unite_legale=None, skip_validations=True)
+        canteen.refresh_from_db()
+        self.assertIsNone(canteen.siret)
+        self.assertFalse(canteen.is_filled)  # still computed
 
     def test_canteen_dirty_fields_on_save(self):
         canteen = CanteenFactory(siret="21340172201787", city_insee_code="34172", department="34", region="76")
@@ -833,8 +847,11 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
             siret="21340172201787",
             production_type=Canteen.ProductionType.CENTRAL,
             sector_list=[],
+            skip_validations=True,
         )
-        cls.canteen_central_2 = CanteenFactory(siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL)
+        cls.canteen_central_2 = CanteenFactory(
+            siret="21380185500015", production_type=Canteen.ProductionType.CENTRAL, skip_validations=True
+        )
         cls.canteen_satellite_1 = CanteenFactory(
             siret="92341284500011",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -859,6 +876,7 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
             siret="11007001800012",
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             sector_list=[Sector.EDUCATION_PRIMAIRE],
+            skip_validations=True,
         )
         cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
 
@@ -1083,15 +1101,8 @@ class CanteenSiretOrSirenUniteLegaleQuerySetAndPropertyTest(TestCase):
         cls.canteen_siret_2 = CanteenFactory(siret="21010034300016", siren_unite_legale=None)  # OK
         cls.canteen_siren_1 = CanteenFactory(siret="", siren_unite_legale="756656218")  # OK
         cls.canteen_siren_2 = CanteenFactory(siret=None, siren_unite_legale="756656218")  # OK
-        cls.canteen_none_1 = CanteenFactory()
-        cls.canteen_none_1.siret = ""  # missing data
-        cls.canteen_none_1.save(skip_validations=True)
-        cls.canteen_none_1.refresh_from_db()
-        cls.canteen_none_2 = CanteenFactory()
-        cls.canteen_none_2.siret = None
-        cls.canteen_none_2.siren_unite_legale = ""  # missing
-        cls.canteen_none_2.save(skip_validations=True)
-        cls.canteen_none_2.refresh_from_db()
+        cls.canteen_none_1 = CanteenFactory(siret="", skip_validations=True)  # missing data
+        cls.canteen_none_2 = CanteenFactory(siret=None, siren_unite_legale="", skip_validations=True)  # missing
 
     def has_siret_or_siren_unite_legale_queryset(self):
         self.assertEqual(Canteen.objects.count(), 7)
@@ -1217,40 +1228,32 @@ class CanteenIsFilledQuerySetAndPropertyTest(TestCase):
         cls.canteen_on_site_missing_data_1 = CanteenFactory(
             siret="21380185500015",
             production_type=Canteen.ProductionType.ON_SITE,
-            # daily_meal_count=12,
+            daily_meal_count=0,  # missing data
+            skip_validations=True,
         )
-        cls.canteen_on_site_missing_data_1.daily_meal_count = 0  # missing data
-        cls.canteen_on_site_missing_data_1.save(skip_validations=True)
-        cls.canteen_on_site_missing_data_1.refresh_from_db()
         cls.canteen_on_site_missing_data_2 = CanteenFactory(
             siret="21670482500019",
             production_type=Canteen.ProductionType.ON_SITE,
-            # sector_list=[],  # missing data
+            sector_list=[],  # missing data
+            skip_validations=True,
         )
-        cls.canteen_on_site_missing_data_2.sector_list = []  # missing data
-        cls.canteen_on_site_missing_data_2.save(skip_validations=True)
-        cls.canteen_on_site_missing_data_2.refresh_from_db()
         cls.canteen_on_site_missing_data_3 = CanteenFactory(
             siret="21640122400011",
             production_type=Canteen.ProductionType.ON_SITE,
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[Sector.ADMINISTRATION_PRISON],
-            line_ministry=Canteen.Ministries.SPORT,
+            line_ministry=None,  # missing data
+            skip_validations=True,
         )
-        cls.canteen_on_site_missing_data_3.line_ministry = None  # missing data
-        cls.canteen_on_site_missing_data_3.save(skip_validations=True)
-        cls.canteen_on_site_missing_data_3.refresh_from_db()
         cls.canteen_satellite_not_in_groupe_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="21340172201787"
         )
         cls.canteen_satellite_not_in_groupe_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
         cls.canteen_satellite_missing_data = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            # economic_model=Canteen.EconomicModel.PRIVATE,  # missing data
+            economic_model=None,  # missing data
+            skip_validations=True,
         )
-        cls.canteen_satellite_missing_data.economic_model = None  # missing data
-        cls.canteen_satellite_missing_data.save(skip_validations=True)
-        cls.canteen_satellite_missing_data.refresh_from_db()
         cls.canteen_filled_list = [
             cls.canteen_groupe_with_satellite,
             cls.canteen_groupe_without_satellite,
@@ -1298,11 +1301,10 @@ class CanteenIsCleanMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_on_site_not_valid = CanteenFactory(
-            siret="21380185500015",
+            siret=None,
             production_type=Canteen.ProductionType.ON_SITE,
+            skip_validations=True,
         )
-        cls.canteen_on_site_not_valid.siret = None
-        cls.canteen_on_site_not_valid.save(skip_validations=True)
         cls.canteen_on_site_valid = CanteenFactory(
             siret=None,
             siren_unite_legale="967669103",
@@ -1336,6 +1338,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             production_type=Canteen.ProductionType.CENTRAL,
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[],
+            skip_validations=True,
         )
         cls.canteen_central_serving = CanteenFactory(
             siret="21010034300016",
@@ -1344,6 +1347,7 @@ class CanteenAggregateQuerySetTest(TestCase):
             economic_model=Canteen.EconomicModel.PUBLIC,
             daily_meal_count=12,
             sector_list=[Sector.EDUCATION_SECONDAIRE_LYCEE, Sector.ENTERPRISE_ENTREPRISE],
+            skip_validations=True,
         )
         cls.canteen_on_site = CanteenFactory(
             siret=None,
@@ -1498,6 +1502,7 @@ class CanteenModelPropertiesTest(TestCase):
             siret="21590350100017",
             production_type=Canteen.ProductionType.CENTRAL,
             declaration_donnees_2024=True,
+            skip_validations=True,
         )
         canteen_satellite_with_central_diagnostic_submitted = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,

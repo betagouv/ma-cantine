@@ -12,7 +12,7 @@
     <hr aria-hidden="true" role="presentation" />
     <form method="post" action="{% url 'registration_email' %}">
         {% csrf_token %}
-        <input type="hidden" name="username" value="{{ username }}">
+        <input type="hidden" name="email" value="{{ email }}">
         <button type="submit">Renvoyer email de confirmation</button>
     </form>
     <a href="/"><button style="margin-top: 10px;">Accèder à Ma Cantine</button></a>

@@ -1,5 +1,7 @@
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
+import { useRootStore } from "@/stores/root.js"
+import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import diagnosticService from "@/services/diagnostics.js"
 import canteenService from "@/services/canteens.js"
 import diagnosticsFields from "@/services/diagnosticsFields.js"
@@ -11,35 +13,91 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const canteenAction = ref(null)
   const year = Number(window.TELEDECLARATION_YEAR)
   const diagnosticErrors = ref([])
+  const diagnoticCheck = ref({})
+  const diagnosticRecap = ref(null)
   const hasDiagnostic = computed(() => diagnostic.value !== null)
   const hasErrors = computed(() => diagnosticErrors.value.length > 0)
   const isSimple = computed(() => diagnostic.value?.diagnosticType === "SIMPLE")
   const isComplete = computed(() => diagnostic.value?.diagnosticType === "COMPLETE")
   const isSaved = ref(true)
+  const hasSelectAutofill = ref(false)
   const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
+  const visitedPagesSeparator = ","
+  const tunnelApproVisitedPages = computed(() => diagnostic.value?.tunnelAppro?.split(visitedPagesSeparator) || [])
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
-    if (canteenSavedId.value === canteenId) return
+    if (canteenSavedId.value === Number(canteenId)) return
     const diagnosticsResponse = await diagnosticService.fetchDiagnostics(canteenId)
-    const diagnosticYear = diagnosticsResponse["results"].find((result) => result.year === year) || null
-    if (!diagnosticYear) return
-    setDiagnostic(diagnosticYear)
-    setCanteenId(canteenId)
-    await setCanteenAction()
-    const diagnosticCheck = await diagnosticService.checkDiagnostic(canteenId, diagnosticYear.id)
+    if (diagnosticsResponse?.status === "error") useRootStore().notifyServerError(diagnosticsResponse)
+    const diagnosticYear = diagnosticsResponse?.results?.find((result) => result.year === year) || null
+    if (!diagnosticYear) deleteStore()
+    else {
+      setDiagnostic(diagnosticYear)
+      setCanteenId(canteenId)
+      await setCanteenAction()
+      await checkDiagnosticSteps()
+      await setDiagnosticRecap()
+    }
+  }
+
+  /* Check diagnostic and canteen for the "volets" */
+  async function checkDiagnosticSteps() {
+    if (!diagnostic.value) return
+    const canteenId = diagnostic.value.canteenId
+    const diagnosticCheck = await diagnosticService.checkDiagnostic(canteenId, diagnostic.value.id)
     const canteenCheck = await canteenService.checkCanteen(canteenId)
-    addErrorsFromCheck({...diagnosticCheck.errors, ...canteenCheck.errors})
+    const check = {
+      isClean: canteenCheck.isClean && diagnosticCheck.isClean,
+      isFilled: canteenCheck.isFilled && diagnosticCheck.isFilled,
+      errors: {...canteenCheck.errors, ...diagnosticCheck.errors}
+    }
+    addErrorsFromCheck(check.errors)
+    diagnoticCheck.value = check
+    return check
+  }
+
+  /* Fetch the recap of the diagnostic */
+  async function setDiagnosticRecap() {
+    if (!diagnostic.value) {
+      diagnosticRecap.value = null
+      return
+    }
+    const response = await diagnosticService.fetchDiagnosticRecap(diagnostic.value.canteenId, diagnostic.value.id)
+    diagnosticRecap.value = response.status === "error" ? null : response
+  }
+
+  /* Teledeclare diagnostic */
+  async function teledeclare() {
+    if (!diagnostic.value) return
+    const response = await diagnosticService.teledeclareDiagnostic(diagnostic.value.canteenId, diagnostic.value.id)
+    if (response?.status === "error") return response
+    setDiagnostic({ ...diagnostic.value, isTeledeclared: true })
+    await setCanteenAction()
+    await setDiagnosticRecap()
+    return response
+  }
+
+  /* Cancel teledeclaration of the diagnostic */
+  async function cancelTeledeclaration() {
+    if (!diagnostic.value) return
+    const response = await diagnosticService.cancelTeledeclaration(diagnostic.value.canteenId, diagnostic.value.id)
+    if (response?.status === "error") return response
+    setDiagnostic({ ...diagnostic.value, isTeledeclared: false })
+    await setCanteenAction()
+    await setDiagnosticRecap()
+    return response
   }
 
   /* Save diagnostic */
   async function saveDiagnostic() {
     if (!diagnostic.value) return
     const canteenId = diagnostic.value.canteenId
+    if (hasSelectAutofill.value && !diagnostic.value.generatedFromPurchases) autofillDiagnostic()
     const diagnosticValues = diagnostic.value
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
     if (response.status === "error") replaceErrors(response.list)
-    else isSaved.value = true
+    else setDiagnostic(response)
     await setCanteenAction()
     return response
   }
@@ -54,6 +112,38 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     if (response.status === "error") replaceErrors(response.list)
     else setValue(coutRepasFieldName, response[coutRepasFieldName])
     return response
+  }
+
+  /* Fill the diagnostic with the purchases values */
+  function autofillDiagnostic() {
+    const autofillSteps = ["egalim", "origine", "localCircuitCourt"]
+    const purchaseSummary = useStorePurchaseSummary().purchaseSummary
+    const fields = Object.keys(teledeclarationFields.fields).filter((field) => teledeclarationFields.fields[field].autofill)
+    for (const field of fields) setValue(field, purchaseSummary[field])
+    setValue("generatedFromPurchases", true)
+    autofillSteps.forEach((slug) => markPageAsVisited(slug))
+  }
+
+  /* Set if the diagnostic must be filled from purchases on next save */
+  function setSelectAutofill(value) {
+    hasSelectAutofill.value = value
+  }
+
+  /* Save the page slug in the list of the visited pages */
+  function markPageAsVisited(slug) {
+    if (!diagnostic.value || !slug || tunnelApproVisitedPages.value.includes(slug)) return
+    diagnostic.value.tunnelAppro = [...tunnelApproVisitedPages.value, slug].join(visitedPagesSeparator)
+  }
+
+  /* Check if the step has been visited */
+  function isPageVisited(slug) {
+    return tunnelApproVisitedPages.value.includes(slug)
+  }
+
+  /* Only display errors if the step has been visited before */
+  function getDisplayedErrors(slug) {
+    if (!slug || isPageVisited(slug)) return diagnosticErrors.value
+    return []
   }
 
   /* Set canteen id */
@@ -79,14 +169,24 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   function setValue(field, value) {
     diagnostic.value[field] = value
     isSaved.value = false
+    clearError(field)
   }
 
   /* Empty store */
   function deleteStore() {
+    refreshStore()
     diagnostic.value = null
-    canteenSavedId.value = null
     canteenAction.value = null
     isSaved.value = true
+    hasSelectAutofill.value = false
+    diagnoticCheck.value = {}
+    diagnosticRecap.value = null
+    diagnosticErrors.value = []
+  }
+
+  /* Force refresh store on next init */
+  function refreshStore() {
+    canteenSavedId.value = null
   }
 
   /* Format errors object into a list of { field, message } */
@@ -128,6 +228,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Clear diagnostic errors for the current campaign */
   const clearErrors = () => {
     diagnosticErrors.value = []
+    diagnoticCheck.value = {}
   }
 
   /* Clear one error */
@@ -166,19 +267,31 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnostic,
     canteenAction,
     diagnosticErrors,
+    diagnoticCheck,
+    diagnosticRecap,
     hasDiagnostic,
     hasErrors,
     isSimple,
     isComplete,
     isSaved,
+    hasSelectAutofill,
     isTeledeclared,
     initStore,
+    checkDiagnosticSteps,
+    teledeclare,
+    cancelTeledeclaration,
     deleteStore,
+    refreshStore,
     getYear,
     setDiagnostic,
     setValue,
     saveDiagnostic,
     updateMealCount,
+    autofillDiagnostic,
+    setSelectAutofill,
+    markPageAsVisited,
+    isPageVisited,
+    getDisplayedErrors,
     addErrorsFromCheck,
     clearErrors,
     getErrorsPage,

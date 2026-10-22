@@ -68,6 +68,7 @@ VALID_DIAGNOSTIC_SIMPLE_2026 = {
     "valeur_viandes_volailles_bio": 30,
     "valeur_viandes_volailles_egalim": 50,
     "valeur_viandes_volailles_france": 20,
+    "valeur_france": 20,
     "valeur_produits_de_la_mer": 80,
     "valeur_produits_de_la_mer_bio": 30,
     "valeur_produits_de_la_mer_egalim": 40,
@@ -199,6 +200,18 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         # with
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
         diagnostic.full_clean()
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_nombre_repas_an_required_only_once(self):
+        # nombre_repas_an is checked both by validate_canteen_fields_required (CANTEEN_FIELDS) and
+        # validate_appro_fields_required (it's also in the TD registry's fields_required) - it
+        # should only be flagged once, not twice with the same message
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.nombre_repas_an = None
+        diagnostic.save()
+        with self.assertRaises(ValidationError) as cm:
+            diagnostic.full_clean()
+        self.assertEqual(len(cm.exception.message_dict["nombre_repas_an"]), 1)
 
     @freeze_time("2026-01-30")  # during the 2025 campaign
     def test_diagnostic_valeur_totale_validation(self):
@@ -349,6 +362,123 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
     @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_valeur_origine_europe(self):
+        """
+        Same rules as test_diagnostic_valeur_label, but for an origine label (europe) instead of
+        an APPRO_LABELS_EGALIM one — both are validated by validate_valeur_label, via APPRO_LABELS_ALL.
+        """
+        VALID_DIAGNOSTIC_COMPLETE_2026 = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2026, valeur_europe=100)
+        diagnostic.full_clean()  # should not raise
+        # 1 valeur_famille_europe cannot be > valeur_europe
+        diagnostic.valeur_viandes_volailles_europe = 200
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        # sum of valeur_famille_europe cannot be > valeur_europe
+        diagnostic.valeur_viandes_volailles_europe = 30
+        diagnostic.valeur_fruits_et_legumes = 150
+        diagnostic.valeur_fruits_et_legumes_europe = 150
+        diagnostic.save()
+        self.assertEqual(diagnostic.label_sum("europe"), 180)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_valeur_origine_required_if_family_filled(self):
+        # since 2026, valeur_europe (& france/circuit_court/local) becomes mandatory as soon as a
+        # valeur_famille_europe is filled (unlike valeur_bio, it isn't auto-populated from the
+        # family breakdown, so it can't just default to 0)
+        diagnostic = DiagnosticFactory(
+            **VALID_DIAGNOSTIC_SIMPLE_2026, valeur_viandes_volailles_europe=30, valeur_europe=None
+        )
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic.valeur_europe = 30
+        diagnostic.full_clean()  # should not raise anymore
+        # no valeur_famille_europe filled: valeur_europe stays optional
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026, valeur_europe=None)
+        diagnostic.full_clean()  # should not raise
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_diagnostic_valeur_famille_required_if_sub_filled(self):
+        # since 2026, valeur_<famille> becomes mandatory as soon as an origin sub-field is filled
+        # for that family, even when valeur_<famille> itself is optional (true for every family
+        # except valeur_viandes_volailles, which is already required)
+        diagnostic = DiagnosticFactory(
+            **VALID_DIAGNOSTIC_SIMPLE_2026,
+            valeur_charcuterie_europe=10,
+            valeur_charcuterie=None,
+            valeur_europe=10,  # also required by validate_valeur_label_origine_circuit_court_local
+        )
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic.valeur_charcuterie = 10
+        diagnostic.full_clean()  # should not raise anymore
+        # same rule, triggered by the egalim sub-field this time
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.valeur_produits_de_la_mer = None
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic.valeur_produits_de_la_mer = 80
+        diagnostic.full_clean()  # should not raise anymore
+        # no sub-field filled: valeur_charcuterie stays optional
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026, valeur_charcuterie=None)
+        diagnostic.full_clean()  # should not raise
+        # same rule, triggered by bio_dont_commerce_equitable, excluded from family_sum since it's
+        # a subset of bio rather than its own category
+        diagnostic = DiagnosticFactory(
+            **VALID_DIAGNOSTIC_SIMPLE_2026,
+            valeur_charcuterie_bio_dont_commerce_equitable=10,
+            valeur_charcuterie=None,
+        )
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        diagnostic.valeur_charcuterie = 10
+        diagnostic.full_clean()  # should not raise anymore
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_teledeclare_clears_appro_fields_not_matching_diagnostic_type(self):
+        # since 2026, fields that don't belong to this diagnostic's type must be cleared before
+        # teledeclaring (not before, so a manager can freely switch type while filling it out)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        # COMPLETE-only fields, stray on a SIMPLE diagnostic
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+        self.assertEqual(diagnostic.valeur_produits_de_la_mer_bio, 30)
+        diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
+        self.assertIsNone(diagnostic.valeur_viandes_volailles_bio)
+        self.assertIsNone(diagnostic.valeur_produits_de_la_mer_bio)
+        # SIMPLIFIED_DIAGNOSTIC_FIELDS stay, regardless of type
+        self.assertEqual(diagnostic.valeur_viandes_volailles_egalim, 50)
+        # fields that do belong to SIMPLE stay too
+        self.assertEqual(diagnostic.valeur_bio, 200)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_teledeclare_does_not_clear_appro_fields_if_an_earlier_check_raises(self):
+        # clearing must happen after every check that can raise, otherwise a failed teledeclare()
+        # call would still leave the instance mutated (with nothing actually saved)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
+        diagnostic.valeur_viandes_volailles_bio = 30  # simulate a stray field again
+        diagnostic.save()
+        with self.assertRaises(ValidationError):
+            # is_teledeclared check raises before reaching the clear() call
+            diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first())
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_clear_appro_fields_not_matching_diagnostic_type_noop_if_type_empty_or_invalid(self):
+        # nothing to clear against if the type isn't a real, known value
+        for diagnostic_type in [None, ""]:
+            with self.subTest(diagnostic_type=diagnostic_type):
+                diagnostic = DiagnosticFactory(**{**VALID_DIAGNOSTIC_SIMPLE_2026, "diagnostic_type": diagnostic_type})
+                diagnostic.clear_appro_fields_not_matching_diagnostic_type()
+                self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+                self.assertEqual(diagnostic.valeur_bio, 200)
+        # defensive guard against a bogus value (shouldn't happen via normal use, since
+        # diagnostic_type's choices are already enforced by the serializer & model field)
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        diagnostic.diagnostic_type = "NOT_A_REAL_TYPE"
+        diagnostic.clear_appro_fields_not_matching_diagnostic_type()
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok
@@ -434,8 +564,10 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         - field is optional
         - field is only relevant when definition_local is "KM"
         """
-        # definition_local is "KM"
-        for TUPLE_OK in [(None, None), (0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
+        # definition_local is "KM": definition_local_km becomes mandatory
+        diagnostic = DiagnosticFactory(year=2026, definition_local=DefinitionLocal.KM, definition_local_km=None)
+        self.assertRaises(ValidationError, diagnostic.full_clean)
+        for TUPLE_OK in [(0, 0), (1, 1), (100, 100), ("200", 200), (Decimal("123.45"), 123)]:
             with self.subTest(definition_local=DefinitionLocal.KM, definition_local_km=TUPLE_OK[0]):
                 diagnostic = DiagnosticFactory(
                     year=2026,
@@ -488,9 +620,12 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         # so only families with an explicit value in VALID_DIAGNOSTIC_SIMPLE_2026 are used here
         for LOCAL_FIELD in ["valeur_local", "valeur_viandes_volailles_local", "valeur_produits_de_la_mer_local"]:
             with self.subTest(local_field=LOCAL_FIELD):
-                diagnostic = DiagnosticFactory(
-                    **VALID_DIAGNOSTIC_SIMPLE_2026, **{LOCAL_FIELD: 50}, definition_local=None
-                )
+                # valeur_local is itself required as soon as a per-family "_local" field is filled
+                # (see validate_valeur_label), so it must be set too when LOCAL_FIELD is per-family
+                extra_fields = {LOCAL_FIELD: 50}
+                if LOCAL_FIELD != "valeur_local":
+                    extra_fields["valeur_local"] = 50
+                diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026, **extra_fields, definition_local=None)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
                 diagnostic.definition_local = DefinitionLocal.PAT
                 diagnostic.full_clean()  # should not raise anymore
@@ -541,6 +676,12 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertEqual(diagnostic.pourcentage_viandes_volailles_france, 20)  # 20 / 100
         self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_egalim, 50)  # 40 / 80
         self.assertIsNone(diagnostic.pourcentage_produits_de_la_mer_france, 25)  # 20 / 80
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim, 50)  # (50 + 40) / 180
+        # origine (new in 2026)
+        self.assertIsNone(diagnostic.pourcentage_europe)
+        self.assertIsNone(diagnostic.pourcentage_france)
+        self.assertIsNone(diagnostic.pourcentage_circuit_court)
+        self.assertIsNone(diagnostic.pourcentage_local)
         # objectifs egalim
         self.assertTrue(diagnostic.objectifs_egalim_atteints)
 
@@ -558,7 +699,42 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertIsNotNone(diagnostic.pourcentage_viandes_volailles_france)
         self.assertIsNotNone(diagnostic.pourcentage_produits_de_la_mer_egalim)
         self.assertIsNone(diagnostic.pourcentage_produits_de_la_mer_france)
+        self.assertIsNotNone(diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim)
         self.assertIsNone(diagnostic.objectifs_egalim_atteints)
+
+    def test_diagnostic_populate_stats_values_with_family_total_zero(self):
+        diagnostic = DiagnosticFactory(
+            **{
+                **VALID_DIAGNOSTIC_SIMPLE_2025,
+                "valeur_viandes_volailles": 0,
+                "valeur_viandes_volailles_egalim": 0,
+                "valeur_viandes_volailles_france": 0,
+                "valeur_produits_de_la_mer": 0,
+                "valeur_produits_de_la_mer_egalim": 0,
+            }
+        )
+        diagnostic.refresh_from_db()
+        # 0 / 0: 0 (instead of None)
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_egalim, 0)
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_france, 0)
+        self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_egalim, 0)
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim, 0)
+
+        # if the family totals are emptied, then set the fields back to None
+        for field_name in [
+            "valeur_viandes_volailles",
+            "valeur_viandes_volailles_egalim",
+            "valeur_viandes_volailles_france",
+            "valeur_produits_de_la_mer",
+            "valeur_produits_de_la_mer_egalim",
+        ]:
+            setattr(diagnostic, field_name, None)
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertIsNone(diagnostic.pourcentage_viandes_volailles_egalim)
+        self.assertIsNone(diagnostic.pourcentage_viandes_volailles_france)
+        self.assertIsNone(diagnostic.pourcentage_produits_de_la_mer_egalim)
+        self.assertIsNone(diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim)
 
     def test_diagnostic_complete_populate_stats_values(self):
         VALID_DIAGNOSTIC_COMPLETE_2025 = {
@@ -581,6 +757,9 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertEqual(diagnostic.pourcentage_viandes_volailles_france, 20)
         self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_egalim, 0)
         self.assertEqual(diagnostic.pourcentage_produits_de_la_mer_france, 25)  # 20 / 80
+        self.assertEqual(
+            diagnostic.pourcentage_viandes_volailles_produits_de_la_mer_egalim, Decimal("38.89")
+        )  # (70 + 0) / 180
         self.assertFalse(diagnostic.objectifs_egalim_atteints)
 
 
@@ -679,6 +858,45 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
         self.assertIsNone(diagnostic.valeur_viandes_volailles_igp)  # not populated (not required)
         self.assertIsNone(diagnostic.nombre_repas_an)  # not populated (not covered)
 
+    def test_diagnostic_2026_simple_populate_origine_stats_values(self):
+        diagnostic = DiagnosticFactory(
+            **{
+                **VALID_DIAGNOSTIC_SIMPLE_2026,
+                "valeur_europe": 100,
+                "valeur_france": 300,
+                "valeur_circuit_court": 50,
+                "valeur_local": 80,
+                "valeur_fruits_et_legumes": 200,
+                "valeur_fruits_et_legumes_europe": 20,
+                "valeur_fruits_et_legumes_france": 100,
+                "valeur_fruits_et_legumes_circuit_court": 30,
+                "valeur_fruits_et_legumes_local": 50,
+            }
+        )
+        diagnostic.refresh_from_db()
+        # relative to valeur_totale (1000)
+        self.assertEqual(diagnostic.pourcentage_europe, 10)
+        self.assertEqual(diagnostic.pourcentage_france, 30)
+        self.assertEqual(diagnostic.pourcentage_circuit_court, 5)
+        self.assertEqual(diagnostic.pourcentage_local, 8)
+        # relative to the family total
+        self.assertEqual(diagnostic.pourcentage_fruits_et_legumes_europe, 10)  # 20 / 200
+        self.assertEqual(diagnostic.pourcentage_fruits_et_legumes_france, 50)  # 100 / 200
+        self.assertEqual(diagnostic.pourcentage_fruits_et_legumes_circuit_court, 15)  # 30 / 200
+        self.assertEqual(diagnostic.pourcentage_fruits_et_legumes_local, 25)  # 50 / 200
+        self.assertEqual(diagnostic.pourcentage_viandes_volailles_france, 20)  # 20 / 100
+        self.assertIsNone(diagnostic.pourcentage_viandes_volailles_europe)  # not filled
+        self.assertIsNone(diagnostic.pourcentage_charcuterie_france)  # no family total
+
+        # if valeur_totale is emptied, then set the fields back to None
+        diagnostic.valeur_totale = None
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertIsNone(diagnostic.pourcentage_europe)
+        self.assertIsNone(diagnostic.pourcentage_france)
+        self.assertIsNone(diagnostic.pourcentage_circuit_court)
+        self.assertIsNone(diagnostic.pourcentage_local)
+
 
 class DiagnosticQuerySetTest(TestCase):
     @classmethod
@@ -686,14 +904,12 @@ class DiagnosticQuerySetTest(TestCase):
         cls.canteen_valid_1 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         cls.canteen_valid_2 = CanteenFactory(siret=None, siren_unite_legale="123456789")
         cls.canteen_valid_3 = CanteenFactory(siret=None, siren_unite_legale="123456789")
-        cls.canteen_valid_4 = CanteenFactory(siret="40419443300078")
-        cls.canteen_valid_4.yearly_meal_count = 0  # not aberrant
-        cls.canteen_valid_4.save(skip_validations=True)
-        cls.canteen_valid_4.refresh_from_db()
-        cls.canteen_valid_5 = CanteenFactory(siret="21340172201787")
-        cls.canteen_valid_5.yearly_meal_count = None  # not aberrant
-        cls.canteen_valid_5.save(skip_validations=True)
-        cls.canteen_valid_5.refresh_from_db()
+        cls.canteen_valid_4 = CanteenFactory(
+            siret="40419443300078", yearly_meal_count=0, skip_validations=True
+        )  # not aberrant
+        cls.canteen_valid_5 = CanteenFactory(
+            siret="21340172201787", yearly_meal_count=None, skip_validations=True
+        )  # not aberrant
         cls.canteen_valid_sat = CanteenFactory(
             siret="21380185500015",
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -705,10 +921,7 @@ class DiagnosticQuerySetTest(TestCase):
             sector_list=[Sector.ADMINISTRATION_ARMEE],
             economic_model=Canteen.EconomicModel.PUBLIC,
         )
-        cls.canteen_missing_siret = CanteenFactory()
-        cls.canteen_missing_siret.siret = ""  # missing data
-        cls.canteen_missing_siret.save(skip_validations=True)
-        cls.canteen_missing_siret.refresh_from_db()
+        cls.canteen_missing_siret = CanteenFactory(siret="", skip_validations=True)  # missing data
         cls.canteen_cout_repas_aberrant = CanteenFactory(siret="21670482500019", yearly_meal_count=1000)
         cls.canteen_valeur_totale_aberrant = CanteenFactory(siret="21630113500010", yearly_meal_count=100000)
         cls.canteen_aberrant = CanteenFactory(siret="21130055300016", yearly_meal_count=1000)
@@ -926,7 +1139,7 @@ class DiagnosticQuerySetTest(TestCase):
         self.assertEqual(Diagnostic.all_objects.count(), 18 + 1)
 
 
-class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
+class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.diagnostic_2024_simple_not_filled = DiagnosticFactory(
@@ -935,7 +1148,9 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             # valeur_totale will be set to None below
         )
-        Diagnostic.objects.filter(id=cls.diagnostic_2024_simple_not_filled.id).update(valeur_totale=None)
+        Diagnostic.objects.filter(id=cls.diagnostic_2024_simple_not_filled.id).update(
+            valeur_totale=None, is_filled=False
+        )
         cls.diagnostic_2024_simple_filled = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
         )
@@ -945,7 +1160,9 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
             # valeur_totale will be set to None below
         )
-        Diagnostic.objects.filter(id=cls.diagnostic_2024_complete_not_filled.id).update(valeur_totale=None)
+        Diagnostic.objects.filter(id=cls.diagnostic_2024_complete_not_filled.id).update(
+            valeur_totale=None, is_filled=False
+        )
         cls.diagnostic_2024_complete_filled = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.COMPLETE, valeur_totale=1000
         )
@@ -956,7 +1173,7 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             # valeur_totale & valeur_bio will be set to None below
         )
         Diagnostic.objects.filter(id=cls.diagnostic_2025_simple_not_filled.id).update(
-            valeur_totale=None, valeur_bio=None
+            valeur_totale=None, valeur_bio=None, is_filled=False
         )
         cls.diagnostic_2025_simple_filled = DiagnosticFactory(
             year=2025,
@@ -981,7 +1198,9 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             valeur_viandes_volailles_egalim=0,
             # valeur_produits_de_la_mer will be set to None below
         )
-        Diagnostic.objects.filter(id=cls.diagnostic_2025_complete_not_filled.id).update(valeur_produits_de_la_mer=None)
+        Diagnostic.objects.filter(id=cls.diagnostic_2025_complete_not_filled.id).update(
+            valeur_produits_de_la_mer=None, is_filled=False
+        )
         cls.diagnostic_2025_complete_filled = DiagnosticFactory(
             year=2025,
             canteen=CanteenFactory(),
@@ -1000,7 +1219,9 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             # nombre_repas_an will be set to None below
         )
-        Diagnostic.objects.filter(id=cls.diagnostic_2026_simple_not_filled.id).update(nombre_repas_an=None)
+        Diagnostic.objects.filter(id=cls.diagnostic_2026_simple_not_filled.id).update(
+            nombre_repas_an=None, is_filled=False
+        )
 
     def test_is_empty_property(self):
         Diagnostic.objects.filter(id=self.diagnostic_2024_simple_filled.id).update(year=None)
@@ -1024,7 +1245,7 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
         self.assertEqual(Diagnostic.objects.all().count(), 9)
         self.assertEqual(Diagnostic.objects.filled().count(), 4)
 
-    def test_is_filled_property(self):
+    def test_is_filled_method(self):
         # filled
         for index, diagnostic in enumerate(
             [
@@ -1035,7 +1256,7 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
             ]
         ):
             with self.subTest(index=index, diagnostic=diagnostic):
-                self.assertTrue(diagnostic.is_filled)
+                self.assertTrue(diagnostic._is_filled())
         # not filled
         for index, diagnostic in enumerate(
             [
@@ -1048,7 +1269,41 @@ class DiagnosticIsFilledQuerySetAndPropertyTest(TestCase):
         ):
             diagnostic.refresh_from_db()
             with self.subTest(index=index, diagnostic=diagnostic):
-                self.assertFalse(diagnostic.is_filled)
+                self.assertFalse(diagnostic._is_filled())
+
+    def test_is_filled_field_set_on_save(self):
+        # filled
+        for index, diagnostic in enumerate(
+            [
+                self.diagnostic_2024_simple_filled,
+                self.diagnostic_2024_complete_filled,
+                self.diagnostic_2025_simple_filled,
+                self.diagnostic_2025_complete_filled,
+            ]
+        ):
+            diagnostic.refresh_from_db()
+            with self.subTest(index=index, diagnostic=diagnostic):
+                self.assertTrue(diagnostic.is_filled)
+        # becomes not filled
+        self.diagnostic_2024_simple_filled.valeur_totale = None
+        self.diagnostic_2024_simple_filled.save()
+        self.diagnostic_2024_simple_filled.refresh_from_db()
+        self.assertFalse(self.diagnostic_2024_simple_filled.is_filled)
+        # becomes filled
+        self.diagnostic_2024_simple_filled.valeur_totale = 1000
+        self.diagnostic_2024_simple_filled.save()
+        self.diagnostic_2024_simple_filled.refresh_from_db()
+        self.assertTrue(self.diagnostic_2024_simple_filled.is_filled)
+        # not filled (2026: nombre_repas_an is required)
+        self.diagnostic_2026_simple_not_filled.refresh_from_db()
+        self.diagnostic_2026_simple_not_filled.save()
+        self.diagnostic_2026_simple_not_filled.refresh_from_db()
+        self.assertFalse(self.diagnostic_2026_simple_not_filled.is_filled)
+        # not filled (invalid year)
+        self.diagnostic_2025_simple_filled.year = 2010
+        self.diagnostic_2025_simple_filled.save()
+        self.diagnostic_2025_simple_filled.refresh_from_db()
+        self.assertFalse(self.diagnostic_2025_simple_filled.is_filled)
 
 
 class DiagnosticIsCleanMethodTest(TestCase):
@@ -1200,6 +1455,15 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_complete_2.label_group_group_sum("egalim_hors_bio"), 7 + 8)
         self.assertEqual(self.diagnostic_complete_2.label_group_group_sum("egalim"), 10 + 15 + 7 + 8)
 
+    def test_label_has_any_family_filled_property(self):
+        # (validate_valeur_label's usage)
+        self.assertTrue(self.diagnostic_simple.label_has_any_family_filled("france"))  # viandes_volailles & autres
+        self.assertFalse(self.diagnostic_simple.label_has_any_family_filled("label_rouge"))
+        self.assertTrue(self.diagnostic_complete_1.label_has_any_family_filled("bio_dont_commerce_equitable"))
+        # 0 counts as filled
+        self.diagnostic_simple.valeur_boulangerie_label_rouge = 0
+        self.assertTrue(self.diagnostic_simple.label_has_any_family_filled("label_rouge"))
+
     def test_with_family_sum_queryset(self):
         diagnostic_qs = Diagnostic.objects.with_family_sum("viandes_volailles").with_family_sum("produits_de_la_mer")
         diagnostic_simple = diagnostic_qs.get(id=self.diagnostic_simple.id)
@@ -1222,13 +1486,24 @@ class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_complete_2.family_sum("viandes_volailles"), 10 + 7)
         self.assertEqual(self.diagnostic_complete_2.family_sum("produits_de_la_mer"), 15 + 8)
 
+    def test_family_has_any_label_filled_property(self):
+        # (validate_valeur_famille's usage)
+        self.assertTrue(self.diagnostic_simple.family_has_any_label_filled("viandes_volailles"))  # egalim & france
+        self.assertTrue(self.diagnostic_simple.family_has_any_label_filled("autres"))  # france
+        self.assertFalse(self.diagnostic_simple.family_has_any_label_filled("boulangerie"))
+        # a label that doesn't exist at all for this family (e.g. "egalim" only exists for 2
+        # families) is skipped, not an error
+        # (the required fields are set to 0 by DiagnosticFactory, and 0 counts as filled)
+        self.assertTrue(self.diagnostic_complete_1.family_has_any_label_filled("fruits_et_legumes"))
+        # 0 counts as filled
+        self.diagnostic_simple.valeur_boulangerie_france = 0
+        self.assertTrue(self.diagnostic_simple.family_has_any_label_filled("boulangerie"))
+
 
 class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen_empty = CanteenFactory()
-        Canteen.objects.filter(id=cls.canteen_empty.id).update(yearly_meal_count=None)
-        cls.canteen_empty.refresh_from_db()
+        cls.canteen_empty = CanteenFactory(yearly_meal_count=None, skip_validations=True)
         cls.diagnostic_draft_canteen_empty = DiagnosticFactory(
             canteen=cls.canteen_empty,
             year=year_data,

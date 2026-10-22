@@ -22,19 +22,16 @@ from api.permissions import (
     IsAuthenticatedOrTokenHasResourceScope,
     IsCanteenManager,
     IsCanteenManagerUrlParam,
-    IsElectedOfficial,
 )
 from api.serializers import (
     CanteenCheckSerializer,
     CanteenActionsLightSerializer,
     CanteenActionsSerializer,
-    CanteenAnalysisSerializer,
     CanteenMinistriesSerializer,
     CanteenOpenDataSerializer,
     CanteenPreviewSerializer,
     CanteenStatusSerializer,
     CanteenSummarySerializer,
-    ElectedCanteenSerializer,
     FullCanteenSerializer,
     PublicCanteenPreviewSerializer,
     PublicCanteenSerializer,
@@ -542,24 +539,6 @@ class ActionableCanteenRetrieveView(RetrieveAPIView):
         return single_canteen_queryset.annotate_with_action_for_year(year)
 
 
-class TerritoryCanteensListView(ListAPIView):
-    model = Canteen
-    permission_classes = [IsElectedOfficial]
-    serializer_class = ElectedCanteenSerializer
-    pagination_class = PublishedCanteensPagination
-    filter_backends = [
-        django_filters.DjangoFilterBackend,
-        UnaccentSearchFilter,
-        MaCantineOrderingFilter,
-    ]
-    search_fields = ["name", "siret"]
-    ordering_fields = ["name", "city", "siret", "daily_meal_count"]
-
-    def get_queryset(self):
-        departments = self.request.user.departments
-        return Canteen.objects.annotate_with_is_managed_by_user(self.request.user).filter(department__in=departments)
-
-
 @extend_schema_view(
     get=extend_schema(
         summary="Lister les options pour le ministère de tutelle.",
@@ -582,13 +561,6 @@ class CanteenMinistriesView(APIView):
                 }
             )
         return Response(CanteenMinistriesSerializer(ministries, many=True).data)
-
-
-class CanteenAnalysisListView(ListAPIView):
-    serializer_class = CanteenAnalysisSerializer
-
-    def get_queryset(self):
-        return Canteen.objects.prefetch_related("sectors_m2m", "managers").order_by("creation_date")
 
 
 class CanteenOpenDataListView(ListAPIView):

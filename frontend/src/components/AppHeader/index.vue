@@ -214,8 +214,13 @@ export default {
           authenticationState: true,
         },
         {
-          text: "Mes achats",
+          text: "Outil Suivi des Achats",
           to: { name: "PurchasesHome" },
+          authenticationState: true,
+        },
+        {
+          text: "Outil Suivi Anti-Gaspi",
+          to: { name: "GestionnaireGaspillageAlimentaire" },
           authenticationState: true,
         },
         {
@@ -252,11 +257,6 @@ export default {
           text: "Toutes les cantines",
           children: [
             {
-              text: "Dans mon territoire",
-              to: { name: "TerritoryCanteens" },
-              forElected: true,
-            },
-            {
               text: "Trouver une cantine",
               to: { name: "CanteenSearchLanding" },
             },
@@ -283,11 +283,6 @@ export default {
             },
           ],
         },
-        {
-          text: "Mon compte",
-          to: { name: "AccountSummaryPage" },
-          authenticationState: true,
-        },
       ],
       childMenu: null,
     }
@@ -311,14 +306,9 @@ export default {
         }
       })
       if (this.loggedUser) {
-        const navlinks = this.navLinks.filter((link) => link.authenticationState !== false)
-        if (!this.loggedUser.isElectedOfficial)
-          navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.forElected)))
-        return navlinks
+        return this.navLinks.filter((link) => link.authenticationState !== false)
       } else {
-        const navlinks = this.navLinks.filter((link) => !link.authenticationState)
-        navlinks.forEach((x) => (x.children = x.children?.filter((y) => !y.forElected)))
-        return navlinks
+        return this.navLinks.filter((link) => !link.authenticationState)
       }
     },
     quickLinks() {
@@ -329,20 +319,8 @@ export default {
         return [login, signup]
       }
       const logout = { logout: true }
-      if (this.loggedUser.isDev) {
-        const apis = { to: { name: "Developpeurs" }, text: "Développement et APIs" }
-        return [apis, logout]
-      }
-      const mesCantines = { to: { name: "GestionnaireTableauDeBord" }, text: "Mon tableau de bord" }
-      return [mesCantines, logout]
-    },
-  },
-  methods: {
-    shouldDisplayChild(child) {
-      if (child.authenticationState === undefined && !child.forElected) return true
-      if (!this.loggedUser) return child.authenticationState === false
-      if (child.forElected) return this.loggedUser.isElectedOfficial
-      return child.authenticationState === true
+      const monCompte = { to: { name: "AccountSummaryPage" }, text: "Mon compte" }
+      return [monCompte, logout]
     },
   },
   watch: {

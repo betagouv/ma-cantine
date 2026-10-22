@@ -9,9 +9,9 @@ def before_send(event, hint):
     that occur on the imports can be safely ignored.
     """
 
-    # only logged exceptions can be filtered out. The other events (e.g. sentry_sdk.capture_exception(),
-    # captured messages) have no "exc_info" and/or "log_record": unpacking them would raise,
-    # and Sentry drops the event when before_send raises
+    # only logged exceptions can be filtered out. The other events (e.g. unhandled exceptions captured by
+    # the Django integration or by the run_task command, errors logged without exception) have no "exc_info" and/or "log_record":
+    # unpacking them would raise, and Sentry drops the event when before_send raises
     exc_info = hint.get("exc_info")
     log_record = hint.get("log_record")
     if not exc_info or not log_record:

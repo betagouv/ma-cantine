@@ -5,6 +5,7 @@ import { useVuelidate } from "@vuelidate/core"
 import { formatError } from "@/utils.js"
 import HelpText from "./HelpText.vue"
 import DsfrBooleanRadio from "@/components/DsfrBooleanRadio.vue"
+import AppTooltipHover from "@/components/AppTooltipHover.vue"
 import { helpers } from "@vuelidate/validators"
 import { useValidators } from "@/validators.js"
 const { decimal, minValue, maxValue } = useValidators()
@@ -162,7 +163,7 @@ onMounted(() => {
         <p class="source-title-tooltip fr-mb-0">
           {{ source.title }}
         </p>
-        <DsfrTooltip :content="source.edibleHelp" />
+        <AppTooltipHover :content="source.edibleHelp" />
       </div>
       <DsfrInputGroup :error-message="formatError(v$.combined)">
         <DsfrInputGroup

@@ -7,9 +7,9 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from api.tests.utils import assert_import_failure_created, authenticate
+from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, ImportFailure, ImportType, Sector
+from data.models import Canteen, ImportType, Sector
 from data.models.creation_source import CreationSource
 
 
@@ -403,7 +403,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 3)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_CREATE, 3, canteen=None)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 3)
@@ -424,7 +424,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_CREATE, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
@@ -491,7 +491,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         self.assertEqual(body["count"], 1)
         self.assertEqual(len(errors), 0, errors)
         self.assertEqual(len(body["canteens"]), 1)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_CREATE, 1)
         self.assertEqual(Canteen.objects.count(), 1)
 
         canteen = Canteen.objects.first()
@@ -511,7 +511,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 3)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_CREATE, 3)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 3)
@@ -534,7 +534,7 @@ class CanteensImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Canteen.objects.count(), 2)
-        self.assertFalse(ImportFailure.objects.exists())
+        assert_import_success_created(self, authenticate.user, ImportType.CANTEEN_CREATE, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)

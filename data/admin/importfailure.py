@@ -20,7 +20,6 @@ class ImportFailureAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         "user__first_name",
         "user__last_name",
         "user__email",
-        "user__username",
     )
     search_help_text = "La recherche est faite sur les champs : utilisateur (ID, nom, prénom, email)"
 
@@ -47,7 +46,7 @@ class ImportFailureAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
 
     def user_with_link(self, obj):
         url = reverse("admin:data_user_change", args=[obj.user_id])
-        return format_html(f'<a href="{url}">{obj.user}</a>')
+        return format_html('<a href="{}">{}</a>', url, obj.user)
 
     user_with_link.short_description = ImportFailure._meta.get_field("user").verbose_name
 

@@ -31,6 +31,7 @@ class DiagnosticsImportView(BaseImportView):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.diagnostics_created_count = 0
+        self.canteen_ids = set()
         self.is_siret_import = True
 
     def _process_file(self, data):
@@ -86,6 +87,10 @@ class DiagnosticsImportView(BaseImportView):
         diagnostic.save()
         update_change_reason(diagnostic, f"Mass CSV import. {self.__class__.__name__[:100]}")
         self.diagnostics_created_count += 1
+        self.canteen_ids.add(diagnostic.canteen_id)
+
+    def _get_canteen_ids(self):
+        return self.canteen_ids
 
     def _get_response_data(self):
         return {

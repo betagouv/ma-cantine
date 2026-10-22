@@ -17,7 +17,7 @@ class TestManagerInvitation(APITestCase):
         ]
         canteens = [pms[0].canteen, pms[1].canteen]
 
-        user = get_user_model()(email="smith@example.com", username="smith.example")
+        user = get_user_model()(email="smith@example.com")
         user.save()
 
         for canteen in canteens:

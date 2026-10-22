@@ -13,7 +13,6 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from common.utils import utils as utils_utils
 from common.utils.images import optimize_image
 from data.fields import ChoiceArrayField
-from data.models.geo import Department
 from data.validators import user as user_validators
 from macantine import brevo
 
@@ -101,10 +100,35 @@ class UserQuerySet(models.QuerySet):
 
 
 class UserManager(BaseUserManager):
-    pass
+    def _create_user(self, email, password, **extra_fields):
+        if not email:
+            raise ValueError("L'email est obligatoire")
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", False)
+        extra_fields.setdefault("is_superuser", False)
+        return self._create_user(email, password, **extra_fields)
+
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault("is_superuser", True)
+        if extra_fields.get("is_staff") is not True:
+            raise ValueError("Un superuser doit avoir is_staff=True.")
+        if extra_fields.get("is_superuser") is not True:
+            raise ValueError("Un superuser doit avoir is_superuser=True.")
+        return self._create_user(email, password, **extra_fields)
 
 
 class User(DirtyFieldsMixin, AbstractUser):
+    username = None
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
     class LawAwareness(models.TextChoices):
         NONE = (
             "NONE",
@@ -192,7 +216,6 @@ class User(DirtyFieldsMixin, AbstractUser):
     )
 
     is_dev = models.BooleanField(default="False", verbose_name="Compte développeur / technique")
-    is_elected_official = models.BooleanField(default="False", verbose_name="Compte élu·e")
 
     # MonComptePro
     created_with_mcp = models.BooleanField(default="False", verbose_name="Compte créé avec MonComptePro")
@@ -238,15 +261,6 @@ class User(DirtyFieldsMixin, AbstractUser):
         null=True, blank=True, verbose_name="mtm_medium du lien tracké lors de la création"
     )
 
-    # Geographical scope for elected profiles
-    departments = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=Department.choices),
-        blank=True,
-        null=True,
-        size=None,
-        verbose_name="departements où l'élu·e peut regarder les cantines",
-    )
-
     # Emails
     opt_out_reminder_emails = models.BooleanField(default="False", verbose_name="Désactiver les emails de rappel")
     brevo_last_update_date = models.DateTimeField(
@@ -262,19 +276,16 @@ class User(DirtyFieldsMixin, AbstractUser):
     objects = UserManager.from_queryset(UserQuerySet)()
 
     def __str__(self):
-        return f"{self.get_full_name()} ({self.username})"
+        return f"{self.get_full_name()} ({self.email})"
 
     def normalize_fields(self):
-        for field_name in ["email", "username"]:
-            if field_name in self.get_dirty_fields():
-                setattr(self, field_name, utils_utils.normalize_string(getattr(self, field_name)))
+        if "email" in self.get_dirty_fields():
+            self.email = utils_utils.normalize_string(self.email)
 
     def lowercase_fields(self):
-        for field_name in ["email", "username"]:
-            if field_name in self.get_dirty_fields():
-                value = getattr(self, field_name)
-                if value:
-                    setattr(self, field_name, value.lower())
+        if "email" in self.get_dirty_fields():
+            if self.email:
+                self.email = self.email.lower()
 
     def optimize_avatar(self):
         max_avatar_size = 640
@@ -359,7 +370,6 @@ class User(DirtyFieldsMixin, AbstractUser):
             "MA_CANTINE_DATE_INSCRIPTION": self.date_joined.strftime("%Y-%m-%d"),
             "MA_CANTINE_DERNIERE_CONNEXION": self.last_login.strftime("%Y-%m-%d") if self.last_login else "",
             "MA_CANTINE_COMPTE_DEV": self.is_dev,
-            "MA_CANTINE_COMPTE_ELU_E": self.is_elected_official,
             # user canteen & diagnostic info
             **data_canteen_fields_dict,
             **data_canteen_diagnostic_fields_dict,

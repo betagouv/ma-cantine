@@ -20,6 +20,7 @@ from data.models.definitionlocal import DefinitionLocal
 from data.utils import (
     CustomJSONEncoder,
     compute_percentage,
+    has_any_value_filled,
     has_arrayfield_missing_query,
     make_optional_positive_integer_field,
     make_optional_positive_decimal_field,
@@ -28,12 +29,15 @@ from data.utils import (
     to_decimal,
 )
 from data.validators import diagnostic as diagnostic_validators
+from data.validators import diagnostic_teledeclaration as diagnostic_teledeclaration_validators
 from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
     is_in_correction,
-    is_in_teledeclaration_or_correction,
 )
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
+    get_teledeclaration_fields_required,
+)
 from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
     get_teledeclaration_field_groups,
@@ -69,45 +73,16 @@ def in_correction_campaign_query(year):
     )
 
 
-def diagnostic_type_simple_query():
-    return Q(diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-
-
-def diagnostic_type_complete_query():
-    return Q(diagnostic_type=Diagnostic.DiagnosticType.COMPLETE)
-
-
 def valeur_totale_is_filled_query():
     return Q(valeur_totale__isnull=False)
-
-
-def valeur_totale_is_filled_and_not_zero_query():
-    return Q(valeur_totale_is_filled_query() & ~Q(valeur_totale=0))
 
 
 def valeur_bio_agg_is_filled_query():
     return Q(valeur_bio_agg__isnull=False)
 
 
-def diagnostic_type_is_filled_query(diagnostic_type_query, diagnostic_type):
-    """
-    Required fields change from one year to the next (see diagnostic_teledeclaration_fields.py),
-    so we OR together a per-year Q for every possible year.
-    """
-    year_queries = [
-        Q(year=year)
-        & Q(**{f"{field}__isnull": False for field in get_teledeclaration_fields_required(year, diagnostic_type)})
-        for year in CAMPAIGN_DATES
-    ]
-    return diagnostic_type_query() & valeur_totale_is_filled_and_not_zero_query() & reduce(operator.or_, year_queries)
-
-
-def diagnostic_type_simple_is_filled_query():
-    return diagnostic_type_is_filled_query(diagnostic_type_simple_query, Diagnostic.DiagnosticType.SIMPLE)
-
-
-def diagnostic_type_complete_is_filled_query():
-    return diagnostic_type_is_filled_query(diagnostic_type_complete_query, Diagnostic.DiagnosticType.COMPLETE)
+def is_filled_query():
+    return Q(is_filled=True)
 
 
 def teledeclaration_mode_satellite_without_appro_query():
@@ -202,7 +177,7 @@ def is_teledeclared_query():
 
 class DiagnosticQuerySet(models.QuerySet):
     def filled(self):
-        return self.filter(diagnostic_type_simple_is_filled_query() | diagnostic_type_complete_is_filled_query())
+        return self.filter(is_filled_query())
 
     def not_teledeclared(self):
         return self.exclude(is_teledeclared_query())
@@ -627,6 +602,10 @@ class Diagnostic(models.Model):
     # valeur_local (simple) + valeur_<famille>_local (complete), see validate_definition_local
     APPRO_LOCAL_FIELDS = ["valeur_local"] + [f"{family_field}_local" for family_field in APPRO_FAMILY_FIELDS]
 
+    # kept out of APPRO_FIELDS/SIMPLE_APPRO_FIELDS/COMPLETE_APPRO_FIELDS since those are also used
+    # as numeric value fields (see validate_valeur_totale, macantine.utils.get_appro_fields_satellite)
+    APPRO_LOCAL_DEFINITION_FIELDS = ["definition_local", "definition_local_km"]
+
     APPRO_LABEL_GROUPE_FIELDS = [
         "valeur_bio",
         "valeur_siqo",
@@ -840,9 +819,44 @@ class Diagnostic(models.Model):
         "pourcentage_egalim_hors_bio",
         "pourcentage_egalim",
         "pourcentage_viandes_volailles_egalim",
-        "pourcentage_viandes_volailles_france",
         "pourcentage_produits_de_la_mer_egalim",
+        "pourcentage_viandes_volailles_produits_de_la_mer_egalim",
+        "pourcentage_europe",
+        "pourcentage_france",
+        "pourcentage_circuit_court",
+        "pourcentage_local",
+        "pourcentage_viandes_volailles_europe",
+        "pourcentage_produits_de_la_mer_europe",
+        "pourcentage_fruits_et_legumes_europe",
+        "pourcentage_charcuterie_europe",
+        "pourcentage_produits_laitiers_europe",
+        "pourcentage_boulangerie_europe",
+        "pourcentage_boissons_europe",
+        "pourcentage_autres_europe",
+        "pourcentage_viandes_volailles_france",
         "pourcentage_produits_de_la_mer_france",
+        "pourcentage_fruits_et_legumes_france",
+        "pourcentage_charcuterie_france",
+        "pourcentage_produits_laitiers_france",
+        "pourcentage_boulangerie_france",
+        "pourcentage_boissons_france",
+        "pourcentage_autres_france",
+        "pourcentage_viandes_volailles_circuit_court",
+        "pourcentage_produits_de_la_mer_circuit_court",
+        "pourcentage_fruits_et_legumes_circuit_court",
+        "pourcentage_charcuterie_circuit_court",
+        "pourcentage_produits_laitiers_circuit_court",
+        "pourcentage_boulangerie_circuit_court",
+        "pourcentage_boissons_circuit_court",
+        "pourcentage_autres_circuit_court",
+        "pourcentage_viandes_volailles_local",
+        "pourcentage_produits_de_la_mer_local",
+        "pourcentage_fruits_et_legumes_local",
+        "pourcentage_charcuterie_local",
+        "pourcentage_produits_laitiers_local",
+        "pourcentage_boulangerie_local",
+        "pourcentage_boissons_local",
+        "pourcentage_autres_local",
         "objectifs_egalim_atteints",
     ]
 
@@ -896,6 +910,7 @@ class Diagnostic(models.Model):
 
     OTHER_COMPUTED_FIELDS = [
         "cout_repas",
+        "is_filled",
     ]
 
     CANTEEN_FIELDS = [
@@ -993,6 +1008,11 @@ class Diagnostic(models.Model):
         verbose_name="Type de diagnostic (simplifié, détaillé)",
     )
 
+    generated_from_purchases = models.BooleanField(
+        verbose_name="A été automatiquement généré depuis les achats",
+        default=False,
+    )
+
     # Relevant only for central cuisines
     central_kitchen_diagnostic_mode = models.CharField(
         max_length=255,
@@ -1006,7 +1026,7 @@ class Diagnostic(models.Model):
     # NB None = tunnel has not been started; "complet" = tunnel has finished
     # all other values are defined by the front end
     tunnel_appro = models.CharField(
-        max_length=50,
+        max_length=255,
         null=True,
         blank=True,
         verbose_name="Progrès tunnel appro",
@@ -1767,7 +1787,7 @@ class Diagnostic(models.Model):
         verbose_name="Autres produits frais, surgelés et d'épicerie, Origine France (dont local)",
     )
 
-    # deprecated
+    # legacy
     valeur_label_rouge = make_optional_positive_decimal_field(
         verbose_name="Valeur label rouge",
     )
@@ -1897,17 +1917,153 @@ class Diagnostic(models.Model):
         verbose_name="pourcentage viandes et volailles EGalim (champ calculé)",
         help_text="par rapport à la valeur totale viandes et volailles",
     )
-    pourcentage_viandes_volailles_france = make_optional_positive_percentage_decimal_field(
-        verbose_name="pourcentage viandes et volailles origine France (champ calculé)",
-        help_text="par rapport à la valeur totale viandes et volailles",
-    )
     pourcentage_produits_de_la_mer_egalim = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage produits de la mer EGalim (champ calculé)",
         help_text="par rapport à la valeur totale produits de la mer",
     )
+    pourcentage_viandes_volailles_produits_de_la_mer_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes, volailles et produits de la mer EGalim (champ calculé)",
+        help_text="par rapport à la somme de valeur totale viandes et volailles + valeur totale produits de la mer",
+    )
+    pourcentage_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage origine UE (hors France) (champ calculé)",
+    )
+    pourcentage_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage origine France (champ calculé)",
+    )
+    pourcentage_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage circuit court (champ calculé)",
+    )
+    pourcentage_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage local (champ calculé)",
+    )
+    pourcentage_viandes_volailles_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
+    pourcentage_viandes_volailles_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles origine France (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
     pourcentage_produits_de_la_mer_france = make_optional_positive_percentage_decimal_field(
         verbose_name="pourcentage produits de la mer origine France (champ calculé)",
         help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes origine France (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie origine France (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) origine France (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie origine France (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons origine France (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits origine France (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
+    pourcentage_viandes_volailles_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
+    pourcentage_viandes_volailles_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles local (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer local (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes local (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie local (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) local (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie local (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons local (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits local (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
     )
     objectifs_egalim_atteints = models.BooleanField(
         blank=True,
@@ -1919,6 +2075,8 @@ class Diagnostic(models.Model):
         verbose_name="coût repas (champ calculé)",
         help_text="le coût repas est calculé en divisant la valeur totale annuelle par le nombre de repas annuels de la cantine",
     )
+
+    is_filled = models.BooleanField(default=False, verbose_name="bilan complété ? (champ calculé)")
 
     # Data quality
     invalid_reason_list = ChoiceArrayField(
@@ -2021,7 +2179,11 @@ class Diagnostic(models.Model):
             self.populate_aggregated_values()
             self.populate_stats_values()
             self.populate_cout_repas()
+        self.set_is_filled()
         return super().save(**kwargs)
+
+    def set_is_filled(self):
+        self.is_filled = self._is_filled()
 
     def populate_required_fields_with_zero(self):
         """
@@ -2087,15 +2249,32 @@ class Diagnostic(models.Model):
         self.pourcentage_viandes_volailles_egalim = compute_percentage(
             self.valeur_viandes_volailles_egalim, self.valeur_viandes_volailles
         )
-        self.pourcentage_viandes_volailles_france = compute_percentage(
-            self.valeur_viandes_volailles_france, self.valeur_viandes_volailles
-        )
         self.pourcentage_produits_de_la_mer_egalim = compute_percentage(
             self.valeur_produits_de_la_mer_egalim, self.valeur_produits_de_la_mer
         )
-        self.pourcentage_produits_de_la_mer_france = compute_percentage(
-            self.valeur_produits_de_la_mer_france, self.valeur_produits_de_la_mer
+        # keep None (not 0) if neither viandes_volailles nor produits_de_la_mer are filled
+        valeur_viandes_volailles_produits_de_la_mer = (
+            None
+            if self.valeur_viandes_volailles is None and self.valeur_produits_de_la_mer is None
+            else sum_int_with_potential_null([self.valeur_viandes_volailles, self.valeur_produits_de_la_mer])
         )
+        self.pourcentage_viandes_volailles_produits_de_la_mer_egalim = compute_percentage(
+            sum_int_with_potential_null([self.valeur_viandes_volailles_egalim, self.valeur_produits_de_la_mer_egalim]),
+            valeur_viandes_volailles_produits_de_la_mer,
+        )
+        self.pourcentage_europe = compute_percentage(self.valeur_europe, self.valeur_totale)
+        self.pourcentage_france = compute_percentage(self.valeur_france, self.valeur_totale)
+        self.pourcentage_circuit_court = compute_percentage(self.valeur_circuit_court, self.valeur_totale)
+        self.pourcentage_local = compute_percentage(self.valeur_local, self.valeur_totale)
+        # per family & origine/circuit_court/local: relative to the family total
+        for family_field in Diagnostic.APPRO_FAMILY_FIELDS:
+            family = family_field.removeprefix("valeur_")
+            for label in ["europe", "france", "circuit_court", "local"]:
+                setattr(
+                    self,
+                    f"pourcentage_{family}_{label}",
+                    compute_percentage(getattr(self, f"valeur_{family}_{label}"), getattr(self, family_field)),
+                )
         self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
 
     def populate_cout_repas(self):
@@ -2134,6 +2313,13 @@ class Diagnostic(models.Model):
             ]
         )
 
+    def label_has_any_family_filled(self, label):
+        """
+        Whether any valeur_<famille>_<label> field is filled (0 counts as filled), for any family
+        """
+        families = get_teledeclaration_field_groups(self.year, "APPRO_FAMILIES")
+        return has_any_value_filled(getattr(self, f"valeur_{family}_{label}", None) for family in families)
+
     def family_sum(self, family: str):
         """
         NOTE: APPRO_LABELS does not include APPRO_LABELS_ORIGINE & circuit_court & local
@@ -2155,6 +2341,14 @@ class Diagnostic(models.Model):
                 ]
             ]
         )
+
+    def family_has_any_label_filled(self, family):
+        """
+        Whether any valeur_<famille>_<label> field is filled (0 counts as filled), for any label (including the
+        egalim aggregate, only defined for 2 families)
+        """
+        labels = get_teledeclaration_field_groups(self.year, "APPRO_LABELS_ALL") + ["egalim"]
+        return has_any_value_filled(getattr(self, f"valeur_{family}_{label}", None) for label in labels)
 
     def compute_objectifs_egalim_atteints(self):
         canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
@@ -2241,7 +2435,8 @@ class Diagnostic(models.Model):
     @property
     def is_filled_simple(self) -> bool:
         return (
-            self.is_diagnostic_type_simple
+            not diagnostic_validators.validate_year(self)
+            and self.is_diagnostic_type_simple
             and self.valeur_totale_is_filled
             and all(
                 getattr(self, field) is not None
@@ -2252,7 +2447,8 @@ class Diagnostic(models.Model):
     @property
     def is_filled_complete(self) -> bool:
         return (
-            self.is_diagnostic_type_complete
+            not diagnostic_validators.validate_year(self)
+            and self.is_diagnostic_type_complete
             and self.valeur_totale_is_filled
             and all(
                 getattr(self, field) is not None
@@ -2260,9 +2456,8 @@ class Diagnostic(models.Model):
             )
         )
 
-    @property
-    def is_filled(self) -> bool:
-        return self.is_filled_simple or self.is_filled_complete
+    def _is_filled(self) -> bool:
+        return bool(self.is_filled_simple or self.is_filled_complete)
 
     def is_clean(self, raise_errors=False) -> tuple[bool, dict]:
         try:
@@ -2415,6 +2610,27 @@ class Diagnostic(models.Model):
                 return Diagnostic.TeledeclarationMode.CENTRAL_APPRO
         return Diagnostic.TeledeclarationMode.SITE
 
+    def clear_appro_fields_not_matching_diagnostic_type(self):
+        """
+        Since 2026, appro fields that don't belong to this diagnostic's type must stay empty:
+        only the fields for that type (SIMPLE or COMPLETE) may be filled, the rest are cleared.
+        NOTE: called from teledeclare() (not save()), so a manager can freely switch
+        diagnostic_type while filling out a diagnostic without losing data until they actually
+        submit it.
+        NOTE: SIMPLIFIED_DIAGNOSTIC_FIELDS are kept regardless of type, since COMPLETE diagnostics
+        derive them automatically (see populate_simplified_diagnostic_values).
+        """
+        if not (self.year and int(self.year) >= 2026):
+            return
+        if not self.diagnostic_type or self.diagnostic_type not in Diagnostic.DiagnosticType.values:
+            return
+        matching_fields = set(get_teledeclaration_fields_all(self.year, self.diagnostic_type)) | set(
+            Diagnostic.SIMPLIFIED_DIAGNOSTIC_FIELDS
+        )
+        for field_name in Diagnostic.APPRO_FIELDS:
+            if field_name not in matching_fields:
+                setattr(self, field_name, None)
+
     def teledeclare(self, applicant, skip_validations=False):
         """
         Teledeclare the diagnostic
@@ -2423,27 +2639,18 @@ class Diagnostic(models.Model):
         """
         if not skip_validations:
             # status & campaign dates validations
-            if not is_in_teledeclaration_or_correction():
-                raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
-            if not is_in_teledeclaration_or_correction(self.year):
-                raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
-            if self.is_teledeclared:
-                raise ValidationError("Ce diagnostic a déjà été télédéclaré")
+            diagnostic_teledeclaration_validators.validate_is_in_teledeclaration_or_correction_period("teledeclare")
+            diagnostic_teledeclaration_validators.validate_diagnostic_year_in_teledeclaration_period(self)
+            diagnostic_teledeclaration_validators.validate_not_already_teledeclared(self)
             # canteen validations
-            uses_central_kitchen_appro = self._should_use_central_kitchen_appro()
-            if not self.is_filled and not uses_central_kitchen_appro:
-                raise ValidationError("Ce diagnostic n'est pas rempli")
-            if not self.canteen.is_filled:
-                raise ValidationError("La cantine associée à ce diagnostic n'est pas remplie")
-            if self.canteen.is_groupe:
-                if self.canteen.satellites_count == 0:
-                    raise ValidationError("Le groupe associe à ce diagnostic n'a pas de cantine satellite")
-                if self.canteen.satellites_missing_data_count > 0:
-                    raise ValidationError(
-                        f"{self.canteen.satellites_missing_data_count} satellites du groupe associée à ce diagnostic ne sont pas remplis"
-                    )
-            if applicant not in self.canteen.managers.all():
-                raise ValidationError("Le déclarant n'est pas un gestionnaire de la cantine associée à ce diagnostic")
+            diagnostic_teledeclaration_validators.validate_diagnostic_is_filled(self)
+            diagnostic_teledeclaration_validators.validate_canteen_is_filled(self)
+            diagnostic_teledeclaration_validators.validate_canteen_groupe_satellites(self)
+            diagnostic_teledeclaration_validators.validate_applicant_is_canteen_manager(self, applicant)
+        # only once past every check above that could still raise: clearing earlier would mutate
+        # the instance even if teledeclare() ends up failing
+        self.clear_appro_fields_not_matching_diagnostic_type()
+        if not skip_validations:
             # field validations
             self.is_clean(raise_errors=True)
 
@@ -2490,14 +2697,9 @@ class Diagnostic(models.Model):
         """
         Cancel the teledeclared diagnostic
         """
-        if not is_in_teledeclaration_or_correction():
-            raise ValidationError(
-                "Ce n'est pas possible d'annuler une télédéclaration hors de la période de la campagne"
-            )
-        if not is_in_teledeclaration_or_correction(self.year):
-            raise ValidationError("Ce diagnostic n'est pas dans la bonne année de télédéclaration")
-        if not self.is_teledeclared:
-            raise ValidationError("Ce diagnostic doit avoir été télédéclaré")
+        diagnostic_teledeclaration_validators.validate_is_in_teledeclaration_or_correction_period("cancel")
+        diagnostic_teledeclaration_validators.validate_diagnostic_year_in_teledeclaration_period(self)
+        diagnostic_teledeclaration_validators.validate_is_teledeclared(self)
 
         # before deleting the snapshots
         canteen_id_list_to_update = []

@@ -174,9 +174,9 @@ class TeledeclarationResubmitScriptTest(TestCase):
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
             # Change the diagnostic to make it invalid
-            Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0)
+            Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0, is_filled=False)
             diagnostic.refresh_from_db()
-            self.assertFalse(diagnostic.is_filled)  # property
+            self.assertFalse(diagnostic.is_filled)  # model field
 
         with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             # Run the script

@@ -20,11 +20,8 @@ Les tâches régulières (export des données, mise à jour des contacts Brevo, 
 | `update_brevo_contacts` | 22h30 | 0h30 | 23h30 | ✅ | |
 | `export_dataset_raw_analysis` | 23h00 | 1h00 | 0h00 | ✅ | Nécessaire pour `dbt_run` |
 | `dbt_run` | 23h30 | 1h30 | 0h30 | ✅ | |
-| `export_dataset_canteen_analysis` | 0h00 | 2h00 | 1h00 | ✅ | Toutes les 6h pendant la campagne |
 | `export_dataset_canteen_opendata` | 0h00 | 2h00 | 1h00 | ✅ | Toutes les 6h pendant la campagne |
 | `delete_old_historical_records` | 1h00 | 3h00 | 2h00 | | |
-
-Pendant la campagne de télédéclaration, on peut aussi ajouter `export_dataset_td_analysis` (par exemple toutes les 6h : `"0 */6 * * * $ROOT/clevercloud/cron.sh export_dataset_td_analysis --prod-only"`).
 
 ## En local
 
@@ -41,7 +38,7 @@ Sur cette application, renseigner les mêmes variables d'environnement que le se
 
 1. Fonctionnement des crons :
     1. `CRON_ENABLED=true`
-1. Export des données via la task `export_datasets()`:
+1. Export des données vers le data warehouse (cf `macantine/etl/README.md`):
     1. `DATA_WARE_HOUSE_USER= Optionnel - l'utilisateur de la base postgres utilisée pour les analsyes stats`
     1. `DATA_WARE_HOUSE_PASSWORD= Optionnel - le mot de passe de la base de postgres utilisée pour les analsyes stats`
     1. `DATA_WARE_HOUSE_HOST=Optionnel - le host de la base postgres utilisée pour les analsyes stats`

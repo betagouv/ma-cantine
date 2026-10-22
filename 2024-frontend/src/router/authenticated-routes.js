@@ -44,16 +44,14 @@ const routes = [
     },
   },
   {
-    path: "/gaspillage-alimentaire/:canteenUrlComponent",
+    path: "/gaspillage-alimentaire/:canteenUrlComponent?",
     name: "GestionnaireGaspillageAlimentaire",
     component: GestionnaireGaspillageAlimentaire,
     props: (route) => ({ ...route.params }),
     meta: {
-      title: "Déchets alimentaires",
-      breadcrumbs: [
-        { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
-        { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-      ],
+      title: "Outil Suivi Anti-Gaspi",
+      breadcrumbs: [{ to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" }],
+      forceActiveNav: "GestionnaireGaspillageAlimentaire",
     },
   },
   {
@@ -270,8 +268,9 @@ const routes = [
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-            { to: { name: "PurchasesHome" }, title: "Mes achats"},
+            { to: { name: "PurchasesHome" }, title: "Outil Suivi des Achats"},
           ],
+          forceActiveNav: "PurchasesHome",
         },
       },
       {
@@ -283,8 +282,9 @@ const routes = [
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireCantine" }, useCanteenName: true },
-            { to: { name: "PurchasesHome" }, title: "Mes achats" },
+            { to: { name: "PurchasesHome" }, title: "Outil Suivi des Achats" },
           ],
+          forceActiveNav: "PurchasesHome",
         },
       },
     ],

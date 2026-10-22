@@ -27,6 +27,7 @@ const generateNav = (name) => {
       to: list[i].to,
       icon: list[i].icon,
       pageName: list[i].to.name,
+      slug: router.resolve(list[i].to).meta.slug,
     })
   }
   return links
@@ -60,7 +61,7 @@ const goTo = (to) => router.push(to)
               class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
               @click="emit('save', link.pageName)"
             >
-              <TunnelTeledeclarationIconCheck v-if="!link.icon" :fieldsPageName="link.pageName" class="fr-mr-1w" />
+              <TunnelTeledeclarationIconCheck v-if="!link.icon" :fieldsPageName="link.pageName" :slug="link.slug" class="fr-mr-1w" />
               <span v-else :class="`${link.icon} ma-cantine--icon-xs`" ></span>
               {{ link.label }}
             </DsfrButton>

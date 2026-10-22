@@ -1,13 +1,14 @@
 <script setup>
+import { useStoreFilters } from "@/stores/filters"
 import stringsService from "@/services/strings"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
-import ObservatoryGraphSustainable from "@/components/ObservatoryGraphSustainable.vue"
-import ObservatoryGraphMeatFishEgalim from "@/components/ObservatoryGraphMeatFishEgalim.vue"
+import GraphEgalim from "@/components/GraphEgalim.vue"
 import ObservatoryGraphMeatFrance from "@/components/ObservatoryGraphMeatFrance.vue"
 import ObservatoryGraphEgalim from "@/components/ObservatoryGraphEgalim.vue"
 
 defineProps(["stats"])
+const storeFilters = useStoreFilters()
 const approBadge = "/static/images/badges/badge-appro.svg"
 </script>
 
@@ -27,17 +28,16 @@ const approBadge = "/static/images/badges/badge-appro.svg"
       <li class="fr-mb-8w">
         <ObservatoryGraphEgalim :approPercent="stats.approPercent" />
       </li>
-      <li class="fr-mb-8w">
-        <ObservatoryGraphSustainable
+      <li>
+        <GraphEgalim
           :bioPercent="stats.bioPercent"
           :egalimPercent="stats.egalimPercent"
+          :viandesPoissonsEgalimPercent="stats.viandesVolaillesProduitsDeLaMerEgalimPercent"
           :bioObjective="stats.notes.bioPercentObjective"
           :egalimObjective="stats.notes.egalimPercentObjective"
-        />
-      </li>
-      <li class="fr-mb-8w">
-        <ObservatoryGraphMeatFishEgalim
-          :viandesVolaillesProduitsDeLaMerEgalimPercent="stats.viandesVolaillesProduitsDeLaMerEgalimPercent"
+          :mention="`sur ${stringsService.prettyPercent(100)} du Total des achats`"
+          :year="storeFilters.getParam('year')"
+          :descriptionCustom="`Pour la recherche ${storeFilters.getSelectionLabels()}`"
         />
       </li>
       <li class="fr-hidden">

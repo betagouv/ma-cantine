@@ -7,7 +7,7 @@ from rest_framework import serializers
 
 from data.models import Canteen, SectorCategory
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES, get_year_campaign_end_date_or_today_date
-from data.models.diagnostic_teledeclaration_egalim_objectives import get_egalim_objectives
+from data.models.diagnostic_teledeclaration_egalim_objectives import get_egalim_objectives_notes
 
 logger = logging.getLogger(__name__)
 
@@ -164,10 +164,7 @@ class CanteenStatisticsSerializer(serializers.Serializer):
             locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
             data["canteen_count_description"] = f"Au {canteen_created_before_date.strftime('%-d %B %Y')}"
         # egalim objectives
-        data["egalim_group"] = egalim_group
-        egalim_objectives_appro = get_egalim_objectives(year, "APPRO")[egalim_group]
-        data["bio_percent_objective"] = egalim_objectives_appro["bio_percent"]
-        data["egalim_percent_objective"] = egalim_objectives_appro["egalim_percent"]
+        data.update(get_egalim_objectives_notes(year, egalim_group))
         return data
 
     @staticmethod

@@ -1,12 +1,10 @@
-import json
-
 from django import forms
-from django.utils.safestring import mark_safe
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.forms import UserChangeForm
 from django.utils.translation import gettext_lazy as _
 
+from data.admin.utils import json_pretty
 from data.models import User
 
 from .canteen import CanteenInline
@@ -41,11 +39,11 @@ class HasTOTPDeviceFilter(admin.SimpleListFilter):
 
 @admin.register(User)
 class MaCanteenUserAdmin(UserAdmin):
+    ordering = ("email",)
     list_display = (
-        "username",
+        "email",
         "first_name",
         "last_name",
-        "email",
         "date_joined",
         "email_confirmed",
         "is_staff",
@@ -53,7 +51,6 @@ class MaCanteenUserAdmin(UserAdmin):
     )
     list_filter = (
         "email_confirmed",
-        "is_elected_official",
         "is_dev",
         "is_staff",
         "groups",
@@ -65,36 +62,25 @@ class MaCanteenUserAdmin(UserAdmin):
         "first_name",
         "last_name",
         "email",
-        "username",
     )
-    search_help_text = "La recherche est faite sur les champs : ID, prénom, nom, email, nom d'utilisateur."
+    search_help_text = "La recherche est faite sur les champs : ID, prénom, nom, email."
 
     form = UserForm
     inlines = (CanteenInline, UserDiagnosticInline)
     fieldsets = (
-        (None, {"fields": ("username", "password")}),
+        (None, {"fields": ("email", "password")}),
         (
             _("Personal info"),
             {
                 "fields": (
                     "first_name",
                     "last_name",
-                    "email",
                     "avatar",
                     "phone_number",
                     "is_dev",
                     "job",
                     "other_job_description",
                 )
-            },
-        ),
-        (
-            _("Section pour les élu·e·s"),
-            {
-                "fields": (
-                    "is_elected_official",
-                    "departments",
-                ),
             },
         ),
         (
@@ -148,7 +134,7 @@ class MaCanteenUserAdmin(UserAdmin):
             None,
             {
                 "classes": ("wide",),
-                "fields": ("username", "email", "first_name", "last_name", "password1", "password2"),
+                "fields": ("email", "first_name", "last_name", "password1", "password2"),
             },
         ),
     )
@@ -165,8 +151,7 @@ class MaCanteenUserAdmin(UserAdmin):
     has_totp_device.boolean = True
 
     def data_pretty(self, obj):
-        data = json.dumps(obj.data, indent=2)
-        return mark_safe(f"<pre>{data}</pre>")
+        return json_pretty(obj.data)
 
     data_pretty.short_description = User._meta.get_field("data").verbose_name
 

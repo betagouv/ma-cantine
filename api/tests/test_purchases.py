@@ -2,15 +2,16 @@ from decimal import Decimal
 
 from django.urls import reverse
 from django.utils import timezone
-from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from api.serializers.purchase import PurchaseSimpleSummarySerializer, PurchaseSummarySerializer
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
-from data.models import Canteen, Diagnostic, Purchase
+from data.factories import CanteenFactory, PurchaseFactory, UserFactory
+from data.models import Purchase
 from data.models.creation_source import CreationSource
 from data.models.definitionlocal import DefinitionLocal
+from data.models.diagnostic_teledeclaration_field_groups import TELEDECLARATION_FIELD_GROUPS
 
 
 class PurchaseCreateApiTest(APITestCase):
@@ -504,6 +505,48 @@ class PurchaseUpdateApiTest(APITestCase):
             ],
         )
 
+    @authenticate
+    def test_partial_update_without_caracteristiques_fields_keeps_caracteristiques(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+
+        response = self.client.patch(self.url, {"description": "Saumon"}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.description, "Saumon")
+        self.assertEqual(self.purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.EUROPE])
+
+    @authenticate
+    def test_partial_update_with_some_caracteristiques_fields_keeps_the_others(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+
+        # origine only: categories_egalim is kept
+        response = self.client.patch(self.url, {"origine": Purchase.Characteristic.FRANCE}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(self.purchase.caracteristiques, [Purchase.Characteristic.BIO, Purchase.Characteristic.FRANCE])
+
+        # est_local only: categories_egalim & origine are kept
+        response = self.client.patch(self.url, {"est_local": True}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(
+            self.purchase.caracteristiques,
+            [Purchase.Characteristic.BIO, Purchase.Characteristic.FRANCE, Purchase.Characteristic.LOCAL],
+        )
+
+        # categories_egalim only: replaces the egalim categories, keeps the others
+        response = self.client.patch(self.url, {"categories_egalim": [Purchase.Characteristic.HVE]}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.purchase.refresh_from_db()
+        self.assertEqual(
+            self.purchase.caracteristiques,
+            [Purchase.Characteristic.HVE, Purchase.Characteristic.FRANCE, Purchase.Characteristic.LOCAL],
+        )
+
     def test_can_update_purchase_via_oauth2_only_if_same_creation_source(self):
         user, token = get_oauth2_token("canteen:write")
         self.purchase.canteen.managers.add(user)
@@ -741,6 +784,20 @@ class CanteenPurchasesSummaryApiTest(APITestCase):
         self.assertEqual(body["results"][1]["year"], 2022)
         self.assertEqual(body["results"][1]["valeurTotale"], 450)
 
+    def test_canteen_summary_keys_are_all_covered_by_the_serializer(self):
+        """
+        Regression test: every key that each year entry of Purchase.canteen_summary() can produce
+        must have a matching declared field on PurchaseSimpleSummarySerializer, otherwise it gets
+        silently dropped from the API response.
+        """
+        PurchaseFactory(canteen=self.canteen, prix_ht=100, date="2021-01-01")
+
+        data = Purchase.canteen_summary(self.canteen)
+        serializer_fields = set(PurchaseSimpleSummarySerializer().get_fields().keys())
+        self.assertTrue(len(data["results"]) > 0)
+        for year_data in data["results"]:
+            self.assertEqual(set(year_data.keys()) - serializer_fields, set())
+
 
 class CanteenPurchasesSummaryForYearApiTest(APITestCase):
     @classmethod
@@ -872,6 +929,20 @@ class CanteenPurchasesSummaryForYearApiTest(APITestCase):
         self.assertEqual(body["valeurEgalimAutres"], 260.0)
         self.assertEqual(body["valeurEgalimAutresDontCommerceEquitable"], 10.0)
         self.assertEqual(body["valeurExternalitesPerformance"], 45.0)
+
+    def test_canteen_summary_for_year_keys_are_all_covered_by_the_serializer(self):
+        """
+        Regression test: every key that Purchase.canteen_summary_for_year() can produce must have a
+        matching declared field on PurchaseSummarySerializer, otherwise it gets silently dropped from
+        the API response.
+        NOTE: checked for every year, since the set of keys produced changes by year (e.g. "europe"
+        only exists from 2026), and checking a single year can miss fields added in another year.
+        """
+        serializer_fields = set(PurchaseSummarySerializer().get_fields().keys())
+        for year in TELEDECLARATION_FIELD_GROUPS.keys():
+            with self.subTest(year=year):
+                data = Purchase.canteen_summary_for_year(self.canteen, year)
+                self.assertEqual(set(data.keys()) - serializer_fields, set())
 
     @authenticate
     def test_complex_purchase_total_summary(self):
@@ -1163,211 +1234,6 @@ class PurchaseOptionsApiTest(APITestCase):
         self.assertIn("fournisseur2", body["providers"])
         self.assertNotIn("secret product", body["products"])
         self.assertNotIn("secret fournisseur", body["providers"])
-
-
-class DiagnosticsFromPurchasesApiTest(APITestCase):
-    def test_cannot_create_diagnostics_from_purchases_if_unauthenticated(self):
-        url = reverse("diagnostics_from_purchases", kwargs={"year": 2020})
-        response = self.client.post(url, {})
-
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
-    @authenticate
-    def test_cannot_create_diagnostics_from_purchases_if_missing_canteen_ids(self):
-        url = reverse("diagnostics_from_purchases", kwargs={"year": 2021})
-        response = self.client.post(url, {})
-
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    @freeze_time("2024-02-10")  # during the 2023 campaign
-    @authenticate
-    def test_errors_for_create_diagnostics_from_purchases(self):
-        """
-        Handle canteen errors in diagnostic creation gracefully, creating what can be created
-        """
-        year = 2023
-        canteen_with_diagnostic = CanteenFactory(managers=[authenticate.user])
-        canteen_without_purchases = CanteenFactory(managers=[authenticate.user])
-        canteen_ok = CanteenFactory(managers=[authenticate.user])
-        not_my_canteen = CanteenFactory()
-
-        DiagnosticFactory(canteen=canteen_with_diagnostic, year=year, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
-        PurchaseFactory(canteen=canteen_ok, date=f"{year}-01-01", prix_ht=100)
-        PurchaseFactory(canteen=canteen_with_diagnostic, date=f"{year}-01-01", prix_ht=666)
-        PurchaseFactory(canteen=not_my_canteen, date=f"{year}-01-01", prix_ht=666)
-
-        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
-        payload = {
-            "canteenIds": [
-                "666",
-                not_my_canteen.id,
-                canteen_with_diagnostic.id,
-                canteen_without_purchases.id,
-                canteen_ok.id,
-            ]
-        }
-        response = self.client.post(url, payload, format="json")
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        results = body["results"]
-        self.assertEqual(len(results), 1)  # canteen_ok
-        errors = body["errors"]
-        self.assertEqual(len(errors), 4)
-        self.assertEqual(errors[0], "Cantine inconnue : 666")
-        self.assertEqual(errors[1], f"Vous ne gérez pas la cantine : {not_my_canteen.id}")
-        self.assertEqual(
-            errors[2], f"Il existe déjà un diagnostic pour l'année 2023 pour la cantine : {canteen_with_diagnostic.id}"
-        )
-        self.assertEqual(errors[3], f"Aucun achat trouvé pour la cantine : {canteen_without_purchases.id}")
-
-    @freeze_time("2022-02-10")  # during the 2021 campaign
-    @authenticate
-    def test_create_diagnostics_from_purchases(self):
-        """
-        Given a list of canteen ids and a year, create diagnostics
-        pre-filled with purchase totals for that year
-        """
-        year = 2021
-        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
-        central_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
-        # purchases to be included in totals
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2021-01-01",
-            prix_ht=50,
-            famille_produits=Purchase.Family.BOISSONS,
-            caracteristiques=[Purchase.Characteristic.AOCAOP],
-        )
-        # TODO: would be nice to double check the AOCAOP IGP STG aggregation vs other labels
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2021-12-31",
-            prix_ht=150,
-            famille_produits=Purchase.Family.BOULANGERIE,
-            caracteristiques=[],
-        )
-        PurchaseFactory(canteen=central_groupe, date="2021-01-01", prix_ht=5)
-        PurchaseFactory(canteen=central_groupe, date="2021-12-31", prix_ht=15)
-        # purchases to be filtered out from totals
-        PurchaseFactory(canteen=canteen_site, date="2022-01-01", prix_ht=666)
-        PurchaseFactory(canteen=central_groupe, date="2020-12-31", prix_ht=666)
-
-        self.assertEqual(Diagnostic.objects.filter(year=year, canteen__in=[canteen_site, central_groupe]).count(), 0)
-
-        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
-        payload = {"canteenIds": [canteen_site.id, central_groupe.id]}
-        response = self.client.post(url, payload, format="json")
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        results = body["results"]
-        self.assertEqual(len(results), 2)
-        diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
-        self.assertIn(diag_site.id, results)
-        self.assertEqual(diag_site.valeur_totale, 200)
-        # TODO: would be nice to test the aggregation for a simple value (e.g. valeur_siqo)
-        self.assertEqual(diag_site.valeur_boissons_aocaop_igp_stg, 50)
-        self.assertEqual(diag_site.valeur_boulangerie_non_egalim, 150)
-        self.assertEqual(diag_site.valeur_autres_aocaop_igp_stg, 0)
-        self.assertEqual(diag_site.central_kitchen_diagnostic_mode, None)
-        self.assertEqual(diag_site.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
-        diag_cc = Diagnostic.objects.get(year=year, canteen=central_groupe)
-        self.assertIn(diag_cc.id, results)
-        self.assertEqual(diag_cc.valeur_totale, 20)
-        self.assertEqual(diag_cc.central_kitchen_diagnostic_mode, "APPRO")
-
-    @freeze_time("2026-03-15")  # during the 2025 campaign
-    @authenticate
-    def test_create_diagnostics_from_purchases_france_value_2025(self):
-        """
-        Test that the france total value is calculated correctly : France + Circuit court + Local
-        """
-        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2025-01-01",
-            prix_ht=10,
-            caracteristiques=[Purchase.Characteristic.FRANCE],
-            famille_produits=Purchase.Family.BOULANGERIE,
-        )
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2025-01-01",
-            prix_ht=50,
-            caracteristiques=[Purchase.Characteristic.CIRCUIT_COURT],
-            famille_produits=Purchase.Family.BOULANGERIE,
-        )
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2025-01-01",
-            prix_ht=15,
-            caracteristiques=[Purchase.Characteristic.LOCAL],
-            famille_produits=Purchase.Family.BOULANGERIE,
-        )
-
-        year = 2025
-        self.assertEqual(Diagnostic.objects.filter(year=year, canteen=canteen_site).count(), 0)
-
-        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
-        payload = {"canteenIds": [canteen_site.id]}
-        response = self.client.post(url, payload, format="json")
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        results = body["results"]
-        diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
-        self.assertIn(diag_site.id, results)
-        self.assertEqual(diag_site.valeur_totale, 75)
-        self.assertEqual(diag_site.valeur_boulangerie_france, 10 + 50 + 15)
-        self.assertEqual(diag_site.valeur_boulangerie_circuit_court, 50)
-        self.assertEqual(diag_site.valeur_boulangerie_local, 15)
-
-    @freeze_time("2024-03-30")  # before the 2025 campaign
-    @authenticate
-    def test_create_diagnostics_from_purchases_france_value_before_2025(self):
-        """
-        Test that the france total value is calculated correctly : France only
-        """
-        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2024-01-01",
-            prix_ht=10,
-            caracteristiques=[Purchase.Characteristic.FRANCE],
-            famille_produits=Purchase.Family.BOULANGERIE,
-        )
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2024-01-01",
-            prix_ht=50,
-            caracteristiques=[Purchase.Characteristic.CIRCUIT_COURT],
-            famille_produits=Purchase.Family.BOULANGERIE,
-        )
-        PurchaseFactory(
-            canteen=canteen_site,
-            date="2024-01-01",
-            prix_ht=15,
-            caracteristiques=[Purchase.Characteristic.LOCAL],
-            famille_produits=Purchase.Family.BOULANGERIE,
-        )
-
-        year = 2024
-        self.assertEqual(Diagnostic.objects.filter(year=year, canteen=canteen_site).count(), 0)
-
-        url = reverse("diagnostics_from_purchases", kwargs={"year": year})
-        payload = {"canteenIds": [canteen_site.id]}
-        response = self.client.post(url, payload, format="json")
-
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        body = response.json()
-        results = body["results"]
-        diag_site = Diagnostic.objects.get(year=year, canteen=canteen_site)
-        self.assertIn(diag_site.id, results)
-        self.assertEqual(diag_site.valeur_totale, 75)
-        self.assertEqual(diag_site.valeur_boulangerie_france, 10)
-        self.assertEqual(diag_site.valeur_boulangerie_circuit_court, 50)
-        self.assertEqual(diag_site.valeur_boulangerie_local, 15)
 
 
 class PublicPurchasePercentageSummaryApiTest(APITestCase):

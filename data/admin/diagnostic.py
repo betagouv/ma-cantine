@@ -1,11 +1,8 @@
-import json
-
 from django import forms
 from django.contrib import admin
-from django.utils.safestring import mark_safe
 from simple_history.admin import SimpleHistoryAdmin
 
-from data.admin.utils import ReadOnlyAdminMixin
+from data.admin.utils import ReadOnlyAdminMixin, json_pretty
 from data.models import Diagnostic
 from data.models.creation_source import CreationSource
 from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
@@ -90,11 +87,13 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
     form = DiagnosticForm
     autocomplete_fields = ("canteen",)
     readonly_fields = (
+        "generated_from_purchases",
         "status",
         *Diagnostic.MATOMO_FIELDS,
         *Diagnostic.TUNNEL_PROGRESS_FIELDS,
         *Diagnostic.APPRO_AGGREGATED_FIELDS,
         *Diagnostic.APPRO_STATS_FIELDS,
+        *Diagnostic.OTHER_COMPUTED_FIELDS,
         *Diagnostic.TELEDECLARATION_FIELDS,
         *Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,
         "applicant",
@@ -131,6 +130,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                         "canteen",
                         "year",
                         "diagnostic_type",
+                        "generated_from_purchases",
                         "central_kitchen_diagnostic_mode",
                         "status",
                     )
@@ -248,25 +248,21 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         return obj.canteen.name
 
     def canteen_snapshot_pretty(self, obj):
-        data = json.dumps(obj.canteen_snapshot, indent=2)
-        return mark_safe(f"<pre>{data}</pre>")
+        return json_pretty(obj.canteen_snapshot)
 
     canteen_snapshot_pretty.short_description = Diagnostic._meta.get_field("canteen_snapshot").verbose_name
 
     def satellites_snapshot_pretty(self, obj):
-        data = json.dumps(obj.satellites_snapshot, indent=2)
-        return mark_safe(f"<pre>{data}</pre>")
+        return json_pretty(obj.satellites_snapshot)
 
     satellites_snapshot_pretty.short_description = Diagnostic._meta.get_field("satellites_snapshot").verbose_name
 
     def applicant_snapshot_pretty(self, obj):
-        data = json.dumps(obj.applicant_snapshot, indent=2)
-        return mark_safe(f"<pre>{data}</pre>")
+        return json_pretty(obj.applicant_snapshot)
 
     applicant_snapshot_pretty.short_description = Diagnostic._meta.get_field("applicant_snapshot").verbose_name
 
     def groupe_snapshot_pretty(self, obj):
-        data = json.dumps(obj.groupe_snapshot, indent=2)
-        return mark_safe(f"<pre>{data}</pre>")
+        return json_pretty(obj.groupe_snapshot)
 
     groupe_snapshot_pretty.short_description = Diagnostic._meta.get_field("groupe_snapshot").verbose_name

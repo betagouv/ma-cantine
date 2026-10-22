@@ -5,18 +5,15 @@ Admin configuration for the common app
 - CommandLogAdmin (read-only)
 """
 
-import json
-
 from django import forms
 from django.contrib.auth.models import Group
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.admin.widgets import FilteredSelectMultiple
-from django.utils.safestring import mark_safe
 
 from common.models import CommandLog
 from common.cache.admin import CacheAdmin  # needed to help Django discover the models in the subfolders  # noqa
-from data.admin.utils import ReadOnlyAdminMixin
+from data.admin.utils import ReadOnlyAdminMixin, json_pretty
 
 
 User = get_user_model()
@@ -120,7 +117,6 @@ class CommandLogAdmin(ReadOnlyAdminMixin, admin.ModelAdmin):
         return f"{obj.duration:.2f} s"
 
     def input_data_pretty(self, obj):
-        data = json.dumps(obj.input_data, indent=2)
-        return mark_safe(f"<pre>{data}</pre>")
+        return json_pretty(obj.input_data)
 
     input_data_pretty.short_description = CommandLog._meta.get_field("input_data").verbose_name

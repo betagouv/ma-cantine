@@ -1,6 +1,5 @@
 <script setup>
 import { computed, ref } from "vue"
-import { computedAsync } from "@vueuse/core"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
@@ -24,14 +23,9 @@ const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Teledeclaration */
 const teledeclarationStore = useStoreTeledeclaration()
-const { hasDiagnostic, canteenAction, isTeledeclared } = storeToRefs(teledeclarationStore)
+const { diagnosticRecap, hasDiagnostic, canteenAction, isTeledeclared, diagnoticCheck } = storeToRefs(teledeclarationStore)
 const year = teledeclarationStore.getYear()
 const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
-const diagnosticRecap = computedAsync(async () => {
-  if (!isTeledeclared.value) return null
-  const diagnostics = await diagnosticService.fetchDiagnosticsRecap(canteenInformations.value.id)
-  return diagnostics.find((diagnostic) => diagnostic.year === year) || null
-}, null)
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
@@ -61,7 +55,7 @@ const openTunnel = (pageName) => {
 }
 
 const createDiagnostic = () => {
-  diagnosticService.createDiagnostic(canteenInformations.value.id, { year })
+  diagnosticService.createDiagnostic(canteenInformations.value.id, { year, diagnosticType: "SIMPLE" })
     .then((response) => {
       if(response.status === "error") showError(response.message)
       else {
@@ -110,15 +104,17 @@ const showError = (message) => rootStore.notifyServerError(message)
         <DiagnosticPdf v-if="diagnosticRecap" :diagnostic="diagnosticRecap" :canteen-id="canteenInformations.id" />
       </AppHelpCard>
       <AppHelpCard v-else title="Infos utiles pour consolider vos données">
-        <p class="fr-mb-1w">
-          <a :href="documentation.teledeclarationMatrice" target="_blank" class="fr-text-title--blue-france">La matrice de télédéclaration</a>
-        </p>
-        <p class="fr-mb-1w">
-          <a :href="documentation.teledeclarationChecklist" target="_blank" class="fr-text-title--blue-france">L’antisèche</a>
-        </p>
-        <p class="fr-mb-1w">
-          <a :href="documentation.gestionConcedee" target="_blank" class="fr-text-title--blue-france">Gestion concédée : bien m’organiser</a>
-        </p>
+        <ul class="ma-cantine--unstyled-list fr-mb-0">
+          <li class="fr-mb-1w">
+            <a :href="documentation.teledeclarationMatrice" target="_blank">La matrice de télédéclaration</a>
+          </li>
+          <li class="fr-mb-1w">
+            <a :href="documentation.teledeclarationChecklist" target="_blank">L’antisèche</a>
+          </li>
+          <li class="fr-mb-1w">
+            <a :href="documentation.gestionConcedee" target="_blank">Gestion concédée : bien m’organiser</a>
+          </li>
+        </ul>
       </AppHelpCard>
     </div>
   </div>
@@ -126,6 +122,6 @@ const showError = (message) => rootStore.notifyServerError(message)
   <div v-if="!canTeledeclare && !isTeledeclared">
     <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
-    <DiagnosticPurchasesLinked class="fr-mt-4w" />
+    <DiagnosticPurchasesLinked v-if="!diagnoticCheck.isClean" class="fr-mt-4w" />
   </div>
 </template>

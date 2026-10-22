@@ -57,6 +57,7 @@ export const useRootStore = defineStore("root", () => {
   }
 
   const createWasteMeasurement = async (canteenId, payload) => {
+    payload["creationSource"] = "APP"
     return fetch(`/api/v1/canteens/${canteenId}/wasteMeasurements/`, {
       method: "POST",
       headers,

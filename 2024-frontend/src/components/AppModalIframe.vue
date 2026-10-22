@@ -4,7 +4,11 @@ import { computed } from "vue"
 const props = defineProps(["opened", "title", "src"])
 defineEmits(["close"])
 
-const iframeSrc = computed(() => `${props.src}/reader/`)
+const iframeSrc = computed(() => {
+  const [url, anchor] = (props.src || "").split("#")
+  const reader = `${url.replace(/\/$/, "")}/reader/`
+  return anchor ? `${reader}#${anchor}` : reader
+})
 </script>
 
 <template>

@@ -9,7 +9,6 @@ from .canteen import (  # noqa: F401
     PublishedCanteenSingleView,
     PublishedCanteensView,
     RetrieveUpdateUserCanteenView,
-    TerritoryCanteensListView,
     UserCanteenActions,
     UserCanteenCheckView,
     UserCanteenPreviews,
@@ -43,6 +42,7 @@ from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
     DiagnosticListCreateView,
     DiagnosticListRecapView,
+    DiagnosticRecapView,
     DiagnosticCheckView,
     DiagnosticRetrieveUpdateView,
     DiagnosticsToTeledeclareListView,
@@ -63,7 +63,6 @@ from .purchase import (  # noqa: F401
     CanteenPurchasesPercentageSummaryView,
     CanteenPurchasesSummaryView,
     CanteenPurchasesSummaryForYearView,
-    DiagnosticsFromPurchasesView,
     PurchaseCreateView,
     PurchaseFactureView,
     PurchaseOldListCreateView,
@@ -91,7 +90,6 @@ from .user import (  # noqa: F401
     LoggedUserView,
     UpdateUserView,
     UserInfoView,
-    UsernameSuggestionView,
 )
 from .vegetarianexpe import VegetarianExpeView  # noqa: F401
 from .videotutorial import VideoTutorialListView  # noqa: F401

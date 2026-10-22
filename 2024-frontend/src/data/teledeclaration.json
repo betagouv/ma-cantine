@@ -2,426 +2,517 @@
   "fields": {
     "nombreRepasAn": {
       "label": "Nombre de couverts par an",
+      "labelRecap": "Nombre de couverts par an",
       "type": "number",
       "required": true
     },
     "diagnosticType": {
       "label": "Quel mode de saisie souhaitez-vous utiliser ?",
+      "labelRecap": "Quel mode de saisie souhaitez-vous utiliser ?",
       "type": "radioRiche",
       "required": true,
       "options": [
         {
           "label": "Saisie simplifiée : vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.)",
-          "labelShort": "Saisie simplifiée",
+          "valueDisplay": "Saisie simplifiée",
           "value": "SIMPLE",
           "img": "/static/images/picto-dsfr/teledeclaration-saisie-simplifiee.svg",
           "hint": "11 champs dont 6 obligatoires"
         },
         {
-          "label": "Saisie détaillée : vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Roug, IGP, Commerce équitable, etc.)",
-          "labelShort": "Saisie simplifiée",
+          "label": "Saisie détaillée : vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Rouge, IGP, Commerce équitable, etc.)",
+          "valueDisplay": "Saisie détaillée",
           "value": "COMPLETE",
           "img": "/static/images/picto-dsfr/teledeclaration-saisie-detaillee.svg",
           "hint": "100 champs, dont 75 obligatoires"
         },
         {
           "label": "Saisie automatique : vous utilisez l'Outil de Suivi des Achats",
-          "labelShort": "Saisie automatique",
+          "valueDisplay": "Saisie automatique",
           "value": "AUTO",
-          "img": "/static/images/picto-dsfr/teledeclaration-saisie-automatique.svg"
+          "img": "/static/images/logo-osa-couleur.svg"
         }
       ]
     },
     "valeurTotale": {
       "label": "Total des achats alimentaires toutes familles de produits confondues",
-      "placeholder": "Valeur totale € HT",
+      "labelRecap": "Total des achats alimentaires toutes familles de produits confondues",
+      "hint": "1.0 : Total des achats HT",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBio": {
-      "label": "Total des achats Bio ou en conversion Bio",
+      "label": "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »",
+      "labelRecap": "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »",
+      "hint": "2.0.1 : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Valeur totale € HT",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-bio.jpg",
-      "imgAlt": "Label bio"
+      "autofill": true,
+      "required": true
     },
     "valeurBioDontCommerceEquitable": {
-      "label": "Dont total des achats bio issus du commerce équitable",
-      "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Total des achats Bio ou en conversion Bio",
+      "label": "Dont achats bio issus du commerce équitable",
+      "labelRecap": "Dont total des achats bio issus du commerce équitable",
+      "hint": "2.0.2 : Champ facultatif pour le suivi de la part des achats bio issus du commerce équitable",
+      "isRelatedField": "horizontal",
+      "tooltip": "Achats à comptabiliser également dans le champ « Total des achats bio ou avec mention en conversion vers l'agriculture biologique »",
       "placeholder": "Je ne sais pas",
       "type": "number",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
-      "imgAlt": "Label bio issu du commerce équitable"
+      "autofill": true,
+      "required": false
     },
     "valeurSiqo": {
-      "label": "Total des achats SIQO (Label Rouge, AOC / AOP, IGP, STG)",
+      "label": "Total des achats SIQO (hors bio) : Label Rouge, AOC / AOP, IGP, STG",
+      "labelRecap": "Total des achats SIQO (hors bio) : Label Rouge, AOC / AOP, IGP, STG",
+      "hint": "3.0 : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Valeur totale € HT",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-siqo.jpg",
-      "imgAlt": "Labels SIQO : lable rouge, AOC, AOP, IGP, STG."
+      "autofill": true,
+      "required": true
     },
     "valeurEgalimAutres": {
       "label": "Total des autres achats EGalim",
+      "labelRecap": "Total des autres achats EGalim",
+      "hint": "4.0.1 : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Valeur totale € HT",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-autres.jpg",
-      "imgAlt": "Labels HVE, Pêche durable, RUP, Fermier, Commerce équitable."
+      "autofill": true,
+      "required": true
     },
     "valeurEgalimAutresDontCommerceEquitable": {
-      "label": "Dont total des achats issus du commerce équitable non bio",
-      "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Total des autres achats EGalim",
+      "label": "Dont total des achats non bio issus du commerce équitable",
+      "labelRecap": "Dont total des achats non bio issus du commerce équitable",
+      "hint": "4.0.2 : Champ facultatif pour le suivi de la part des achats issus du commerce équitable non bio",
+      "isRelatedField": "horizontal",
+      "tooltip": "Achats à comptabiliser également dans le champ « Total des autres achats EGalim »",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/commerce-equitable.jpg",
-      "imgAlt": "Label commerce équitable"
+      "required": false
     },
     "valeurExternalitesPerformance": {
-      "label": "Total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs",
+      "label": "Achats prenant en compte les externalités environnementales",
+      "labelRecap": "Total des achats prenant en compte les externalités environnementales",
+      "hint": "5.0 : Renseigner 0 si non suivi",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "modaleDocLink": "criteresSelection",
-      "img": "/static/images/quality-labels/environnement.jpg",
-      "imgAlt": "Labels coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs"
+      "required": false
     },
     "valeurViandesVolailles": {
-      "label": "Total des achats en viandes et volailles fraiches ou surgelées",
+      "label": "Total des achats en viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "1.1 : Total des achats",
       "type": "number",
-      "placeholder": "Valeur totale € HT",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurViandesVolaillesEgalim": {
-      "label": "Total des achats EGalim en viandes et volailles fraiches ou surgelées",
+      "label": "Achats EGalim en viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats EGalim en viandes et volailles fraîches ou surgelées",
+      "hint": "1.1bis : Renseigner 0 si non suivi",
       "type": "number",
-      "placeholder": "Valeur totale € HT",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMer": {
-      "label": "Total des achats en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "label": "Total des achats en poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "1.2 : Total des achats",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurProduitsDeLaMerEgalim": {
-      "label": "Total des achats EGalim en poissons, produits de la mer et de l’aquaculture frais et surgelés",
+      "label": "Achats EGalim en poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats EGalim en poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "1.2bis : Renseigner 0 si non suivi",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurCharcuterie": {
-      "label": "Total des achats pour la famille Charcuteries",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats pour la famille Charcuteries",
+      "hint": "1.3 : Total des achats",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurFruitsEtLegumes": {
-      "label": "Total des achats pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats pour la famille Fruits et légumes frais et surgelés",
+      "hint": "1.4 : Total des achats",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurProduitsLaitiers": {
-      "label": "Total des achats pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "1.5 : Total des achats",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurBoulangerie": {
-      "label": "Total des achats pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "1.6 : Total des achats",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurAutres": {
-      "label": "Total des achats pour la famille Autres produits frais, surgelés et d'épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "1.7 : Total des achats",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurBoissons": {
-      "label": "Total des achats pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats pour la famille Boissons",
+      "hint": "1.8 : Total des achats",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "requiredByType": { "SIMPLE": false, "COMPLETE": true }
     },
     "valeurFrance": {
-      "label": "Total des achats origine France toutes familles de produits confondues",
+      "label": "Total des achats toutes familles de produits confondues",
+      "labelRecap": "Total des achats origine France toutes familles de produits confondues",
+      "hint": "14.0 : Origine France",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesFrance": {
-      "label": "Total des achats origine France pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats origine France pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "14.1 : Origine France",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsDeLaMerFrance": {
-      "label": "Total des achats origine France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats origine France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "14.2 : Origine France",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurCharcuterieFrance": {
-      "label": "Total des achats origine France pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats origine France pour la famille Charcuteries",
+      "hint": "14.3 : Origine France",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurFruitsEtLegumesFrance": {
-      "label": "Total des achats origine France pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats origine France pour la famille Fruits et légumes frais et surgelés",
+      "hint": "14.4 : Origine France",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsLaitiersFrance": {
-      "label": "Total des achats origine France pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats origine France pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "14.5 : Origine France",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoulangerieFrance": {
-      "label": "Total des achats origine France pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats origine France pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "14.6 : Origine France",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurAutresFrance": {
-      "label": "Total des achats origine France pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats origine France pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "14.7 : Origine France",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoissonsFrance": {
-      "label": "Total des achats origine France pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats origine France pour la famille Boissons",
+      "hint": "14.8 : Origine France",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurEurope": {
-      "label": "Total des achats Origine UE (hors France) toutes familles de produits confondues",
+      "label": "Total des achats toutes familles de produits confondues",
+      "labelRecap": "Total des achats origine Europe (hors France) toutes familles de produits confondues",
+      "hint": "15.0 : Origine Europe (hors France)",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats origine Europe (hors France) pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "15.1 : Origine Europe (hors France)",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsDeLaMerEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats origine Europe (hors France) pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "15.2 : Origine Europe (hors France)",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurCharcuterieEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats origine Europe (hors France) pour la famille Charcuteries",
+      "hint": "15.3 : Origine Europe (hors France)",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurFruitsEtLegumesEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats origine Europe (hors France) pour la famille Fruits et légumes frais et surgelés",
+      "hint": "15.4 : Origine Europe (hors France)",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsLaitiersEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats origine Europe (hors France) pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "15.5 : Origine Europe (hors France)",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoulangerieEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats origine Europe (hors France) pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "15.6 : Origine Europe (hors France)",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurAutresEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats origine Europe (hors France) pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "15.7 : Origine Europe (hors France)",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoissonsEurope": {
-      "label": "Total des achats origine Union européenne hors France pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats origine Europe (hors France) pour la famille Boissons",
+      "hint": "15.8 : Origine Europe (hors France)",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs toutes familles de produits confondues",
+      "label": "Total des achats toutes familles de produits confondues",
+      "labelRecap": "Total des achats en circuit court toutes familles de produits confondues",
+      "hint": "16.0 : Circuit court",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats circuit court pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "16.1 : Circuit court",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsDeLaMerCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats circuit court pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "16.2 : Circuit court",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurCharcuterieCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats circuit court pour la famille Charcuteries",
+      "hint": "16.3 : Circuit court",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurFruitsEtLegumesCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats circuit court pour la famille Fruits et légumes frais et surgelés",
+      "hint": "16.4 : Circuit court",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsLaitiersCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats circuit court pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "16.5 : Circuit court",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoulangerieCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats circuit court pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "16.6 : Circuit court",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurAutresCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats circuit court pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "16.7 : Circuit court",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoissonsCircuitCourt": {
-      "label": "Total des achats circuits courts ou approvisionnements directs pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats circuit court pour la famille Boissons",
+      "hint": "16.8 : Circuit court",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurLocal": {
-      "label": "Total des achats « locaux » toutes familles de produits confondues",
+      "label": "Total des achats toutes familles de produits confondues",
+      "labelRecap": "Total des achats en produits « locaux » toutes familles de produits confondues",
+      "hint": "17.0 : Local",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurViandesVolaillesLocal": {
-      "label": "Total des achats « locaux » pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats locaux pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "17.1 : Local",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsDeLaMerLocal": {
-      "label": "Total des achats « locaux » pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats locaux pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "17.2 : Local",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurCharcuterieLocal": {
-      "label": "Total des achats « locaux » pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats locaux pour la famille Charcuteries",
+      "hint": "17.3 : Local",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurFruitsEtLegumesLocal": {
-      "label": "Total des achats « locaux » pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats locaux pour la famille Fruits et légumes frais et surgelés",
+      "hint": "17.4 : Local",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurProduitsLaitiersLocal": {
-      "label": "Total des achats « locaux » pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats locaux pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "17.5 : Local",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoulangerieLocal": {
-      "label": "Total des achats « locaux » pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats locaux pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "17.6 : Local",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurAutresLocal": {
-      "label": "Total des achats « locaux » pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats locaux pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "17.7 : Local",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "valeurBoissonsLocal": {
-      "label": "Total des achats « locaux » pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats locaux pour la famille Boissons",
+      "hint": "17.8 : Local",
       "type": "number",
+      "autofill": true,
       "required": false,
-      "enablePurchaseSummary": true,
       "placeholder": "Je ne sais pas"
     },
     "definitionLocal": {
       "label": "Définition du « local » : périmètre administratif",
+      "labelRecap": "Définition du « local » : périmètre administratif",
+      "hint": "17bis : Veuillez renseigner le périmètre qui représente le mieux vos achats « locaux » : soit le périmètre majoritaire, soit la distance maximale",
       "type": "select",
       "required": false,
       "options": [
@@ -431,680 +522,846 @@
         },
         {
           "text": "Issu du Projet Alimentaire Territorial (PAT)",
+          "valueDisplay": "Issu du Projet Alimentaire Territorial (PAT)",
           "value": "PAT"
         },
         {
           "text": "Commune et/ou intercommunalité",
+          "valueDisplay": "Commune et/ou intercommunalité",
           "value": "COMMUNE"
         },
         {
           "text": "Département",
+          "valueDisplay": "Département",
           "value": "DEPARTEMENT"
         },
         {
           "text": "Région",
+          "valueDisplay": "Région",
           "value": "REGION"
         },
         {
           "text": "Distance (en km)",
+          "valueDisplay": "Distance (en km)",
           "value": "KM"
         }
       ]
     },
     "definitionLocalKm": {
       "label": "Définition du « local » : distance (en km)",
+      "labelRecap": "Définition du « local » : distance (en km)",
+      "hint": "17ter : Veuillez renseigner la distance qui représente le mieux vos achats « locaux » : soit la distance majoritaire, soit la distance maximale",
       "type": "number",
-      "required": false,
-      "placeholder": "Je ne sais pas"
+      "required": false
     },
     "valeurFruitsEtLegumesAocaop": {
-      "label": "AOC / AOP pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats AOC / AOP pour la famille Fruits et légumes frais et surgelés",
+      "hint": "4.4 : AOC / AOP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurCharcuterieAocaop": {
-      "label": "AOC / AOP pour la famille Charcuteries",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats AOC / AOP pour la famille Charcuteries",
+      "hint": "4.3 : AOC / AOP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsLaitiersAocaop": {
-      "label": "AOC / AOP pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats AOC / AOP pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "4.5 : AOC / AOP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoulangerieAocaop": {
-      "label": "AOC / AOP pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats AOC / AOP pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "4.6 : AOC / AOP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurAutresAocaop": {
-      "label": "AOC / AOP pour la famille Autres produits frais, surgelés et d'épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats AOC / AOP pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "4.7 : AOC / AOP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoissonsAocaop": {
-      "label": "AOC / AOP pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats AOC / AOP pour la famille Boissons",
+      "hint": "4.8 : AOC / AOP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurViandesVolaillesBio": {
-      "label": "Bio ou en conversion Bio pour la famille Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats bio ou en conversion pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "2.1.1 : Bio ou en conversion",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-bio.jpg",
-      "imgAlt": "Label bio"
+      "autofill": true,
+      "required": true
     },
     "valeurViandesVolaillesBioDontCommerceEquitable": {
-      "label": "dont total des achats Bio issus du commerce équitable pour la famille Viandes et volailles fraiches ou surgelées",
-      "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Dont total des achats bio issus du commerce équitable pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "2.1.2 : Dont bio issu du commerce équitable",
+      "isRelatedField": "vertical",
+      "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
-      "imgAlt": "Label bio issu du commerce équitable"
+      "required": false
     },
     "valeurProduitsDeLaMerBio": {
-      "label": "Bio ou en conversion Bio pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats bio ou en conversion pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "2.2.1 : Bio ou en conversion",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-bio.jpg",
-      "imgAlt": "Label bio"
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMerBioDontCommerceEquitable": {
-      "label": "dont total des achats Bio issus du commerce équitable pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Dont total des achats bio issus du commerce équitable pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "2.2.2 : Dont bio issu du commerce équitable",
+      "isRelatedField": "vertical",
+      "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
-      "imgAlt": "Label bio issu du commerce équitable"
+      "required": false
     },
     "valeurCharcuterieBio": {
-      "label": "Bio ou en conversion Bio pour la famille Charcuteries",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats bio ou en conversion pour la famille Charcuteries",
+      "hint": "2.3.1 : Bio ou en conversion",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-bio.jpg",
-      "imgAlt": "Label bio"
+      "autofill": true,
+      "required": true
     },
     "valeurCharcuterieBioDontCommerceEquitable": {
-      "label": "dont total des achats Bio issus du commerce équitable pour la famille Charcuteries",
-      "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Charcuteries",
+      "label": "Charcuteries",
+      "labelRecap": "Dont total des achats bio issus du commerce équitable pour la famille Charcuteries",
+      "hint": "2.3.2 : Dont bio issu du commerce équitable",
+      "isRelatedField": "vertical",
+      "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
-      "imgAlt": "Label bio issu du commerce équitable"
+      "required": false
     },
     "valeurFruitsEtLegumesBio": {
-      "label": "Bio ou en conversion Bio pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats bio ou en conversion pour la famille Fruits et légumes frais et surgelés",
+      "hint": "2.4.1 : Bio ou en conversion",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-bio.jpg",
-      "imgAlt": "Label bio"
+      "autofill": true,
+      "required": true
     },
     "valeurFruitsEtLegumesBioDontCommerceEquitable": {
-      "label": "dont total des achats Bio issus du commerce équitable pour la famille Fruits et légumes frais et surgelés",
-      "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Dont total des achats bio issus du commerce équitable pour la famille Fruits et légumes frais et surgelés",
+      "hint": "2.4.2 : Dont bio issu du commerce équitable",
+      "isRelatedField": "vertical",
+      "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
-      "imgAlt": "Label bio issu du commerce équitable"
+      "required": false
     },
     "valeurProduitsLaitiersBio": {
-      "label": "Bio ou en conversion Bio pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats bio ou en conversion pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "2.5.1 : Bio ou en conversion",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-bio.jpg",
-      "imgAlt": "Label bio"
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsLaitiersBioDontCommerceEquitable": {
-      "label": "dont total des achats Bio issus du commerce équitable pour la famille BOF (Produits laitiers, beurre et œufs)",
-      "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Dont total des achats bio issus du commerce équitable pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "2.5.2 : Dont bio issu du commerce équitable",
+      "isRelatedField": "vertical",
+      "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
-      "imgAlt": "Label bio issu du commerce équitable"
+      "required": false
     },
     "valeurBoulangerieBio": {
-      "label": "Bio ou en conversion Bio pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats bio ou en conversion pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "2.6.1 : Bio ou en conversion",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-bio.jpg",
-      "imgAlt": "Label bio"
+      "autofill": true,
+      "required": true
     },
     "valeurBoulangerieBioDontCommerceEquitable": {
-      "label": "dont total des achats Bio issus du commerce équitable pour la famille Boulangerie/Pâtisseries fraîches",
-      "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Dont total des achats bio issus du commerce équitable pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "2.6.2 : Dont bio issu du commerce équitable",
+      "isRelatedField": "vertical",
+      "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
-      "imgAlt": "Label bio issu du commerce équitable"
+      "required": false
     },
     "valeurAutresBio": {
-      "label": "Bio ou en conversion Bio pour la famille Autres produits frais, surgelés et d'épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats bio ou en conversion pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "2.7.1 : Bio ou en conversion",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-bio.jpg",
-      "imgAlt": "Label bio"
+      "autofill": true,
+      "required": true
     },
     "valeurAutresBioDontCommerceEquitable": {
-      "label": "dont total des achats Bio issus du commerce équitable pour la famille Autres produits frais, surgelés et d'épicerie",
-      "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Autres produits frais, surgelés et d'épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Dont total des achats bio issus du commerce équitable pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "2.7.2 : Dont bio issu du commerce équitable",
+      "isRelatedField": "vertical",
+      "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
-      "imgAlt": "Label bio issu du commerce équitable"
+      "required": false
     },
     "valeurBoissonsBio": {
-      "label": "Bio ou en conversion Bio pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats bio ou en conversion pour la famille Boissons",
+      "hint": "2.8.1 : Bio ou en conversion",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/egalim-bio.jpg",
-      "imgAlt": "Label bio"
+      "autofill": true,
+      "required": true
     },
     "valeurBoissonsBioDontCommerceEquitable": {
-      "label": "dont total des achats Bio issus du commerce équitable pour la famille Boissons",
-      "isRelatedField": true,
-      "tooltip": "Achats à comptabiliser également dans le champ Bio ou en conversion Bio pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Dont total des achats bio issus du commerce équitable pour la famille Boissons",
+      "hint": "2.8.2 : Dont bio issu du commerce équitable",
+      "isRelatedField": "vertical",
+      "tooltip": "Achats à comptabiliser également dans le champ obligatoire ci-dessus",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true,
-      "img": "/static/images/quality-labels/bio-dont-commerce-equitable.jpg",
-      "imgAlt": "Label bio issu du commerce équitable"
+      "required": false
     },
     "valeurViandesVolaillesLabelRouge": {
-      "label": "Label rouge pour la famille Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats Label Rouge pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "3.1 : Label Rouge",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMerLabelRouge": {
-      "label": "Label rouge pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats Label Rouge pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "3.2 : Label Rouge",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurCharcuterieLabelRouge": {
-      "label": "Label rouge pour la famille Charcuteries",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats Label Rouge pour la famille Charcuteries",
+      "hint": "3.3 : Label Rouge",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurFruitsEtLegumesLabelRouge": {
-      "label": "Label rouge pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats Label Rouge pour la famille Fruits et légumes frais et surgelés",
+      "hint": "3.4 : Label Rouge",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsLaitiersLabelRouge": {
-      "label": "Label rouge pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats Label Rouge pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "3.5 : Label Rouge",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoulangerieLabelRouge": {
-      "label": "Label rouge pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats Label Rouge pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "3.6 : Label Rouge",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurAutresLabelRouge": {
-      "label": "Label rouge pour la famille Autres produits frais, surgelés et d'épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats Label Rouge pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "3.7 : Label Rouge",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurViandesVolaillesAocaop": {
-      "label": "AOC / AOP pour la famille Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats AOC / AOP pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "4.1 : AOC / AOP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMerAocaop": {
-      "label": "AOC / AOP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats AOC / AOP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "4.2 : AOC / AOP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurViandesVolaillesIgp": {
-      "label": "IGP pour la famille Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats IGP pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "5.1 : IGP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMerIgp": {
-      "label": "IGP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats IGP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "5.2 : IGP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurCharcuterieIgp": {
-      "label": "IGP pour la famille Charcuteries",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats IGP pour la famille Charcuteries",
+      "hint": "5.3 : IGP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurFruitsEtLegumesIgp": {
-      "label": "IGP pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats IGP pour la famille Fruits et légumes frais et surgelés",
+      "hint": "5.4 : IGP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsLaitiersIgp": {
-      "label": "IGP pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats IGP pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "5.5 : IGP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoulangerieIgp": {
-      "label": "IGP pour la famille Boulangerie / Pâtisserie fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats IGP pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "5.6 : IGP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurAutresIgp": {
-      "label": "IGP pour la famille Autres produits frais, surgelés et d'épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats IGP pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "5.7 : IGP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoissonsIgp": {
-      "label": "IGP pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats IGP pour la famille Boissons",
+      "hint": "5.8 : IGP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurViandesVolaillesStg": {
-      "label": "STG pour la famille Viandes et volailles fraiches ou surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats STG pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "6.1 : STG",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMerStg": {
-      "label": "STG pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats STG pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "6.2 : STG",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurCharcuterieStg": {
-      "label": "STG pour la famille Charcuteries",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats STG pour la famille Charcuteries",
+      "hint": "6.3 : STG",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurFruitsEtLegumesStg": {
-      "label": "STG pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats STG pour la famille Fruits et légumes frais et surgelés",
+      "hint": "6.4 : STG",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsLaitiersStg": {
-      "label": "STG pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats STG pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "6.5 : STG",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoulangerieStg": {
-      "label": "STG pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats STG pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "6.6 : STG",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurAutresStg": {
-      "label": "STG pour la famille Autres produits frais, surgelés et d'épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats STG pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "6.7 : STG",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoissonsStg": {
-      "label": "STG pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats STG pour la famille Boissons",
+      "hint": "6.8 : STG",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurViandesVolaillesHve": {
-      "label": "Certification environnementale - niveau 2 ou 3 (HVE) pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "7.1 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMerHve": {
-      "label": "Certification environnementale - niveau 2 ou 3 (HVE) pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "7.2 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurCharcuterieHve": {
-      "label": "Certification environnementale - niveau 2 ou 3 (HVE) pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Charcuteries",
+      "hint": "7.3 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurFruitsEtLegumesHve": {
-      "label": "Certification environnementale - niveau 2 ou 3 (HVE) pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Fruits et légumes frais et surgelés",
+      "hint": "7.4 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsLaitiersHve": {
-      "label": "Certification environnementale - niveau 2 ou 3 (HVE) pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "7.5 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoulangerieHve": {
-      "label": "Certification environnementale - niveau 2 ou 3 (HVE) pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "7.6 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurAutresHve": {
-      "label": "Certification environnementale - niveau 2 ou 3 (HVE) pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "7.7 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoissonsHve": {
-      "label": "Certification environnementale - niveau 2 ou 3 (HVE) pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Boissons",
+      "hint": "7.8 : Certification environnementale – niveau 2 ou 3 (HVE)",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMerPecheDurable": {
-      "label": "Ecolabel pêche durable ou pêche répondant à des exigences environnementales et dont l’origine la traçabilité et la fraîcheur sont garanties ou aquaculture dont l’origine la traçabilité et la fraîcheur sont garanties pour la famille Produits de la mer et aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats Écolabel pêche durable, 7°bis ou 7°ter pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "8 : Écolabel pêche durable, 7°bis ou 7°ter",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurViandesVolaillesRup": {
-      "label": "RUP pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats RUP pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "9.1 : RUP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMerRup": {
-      "label": "RUP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats RUP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "9.2 : RUP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurCharcuterieRup": {
-      "label": "RUP pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats RUP pour la famille Charcuteries",
+      "hint": "9.3 : RUP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurFruitsEtLegumesRup": {
-      "label": "RUP pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats RUP pour la famille Fruits et légumes frais et surgelés",
+      "hint": "9.4 : RUP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsLaitiersRup": {
-      "label": "RUP pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats RUP pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "9.5 : RUP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoulangerieRup": {
-      "label": "RUP pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats RUP pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "9.6 : RUP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurAutresRup": {
-      "label": "RUP pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats RUP pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "9.7 : RUP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoissonsRup": {
-      "label": "RUP pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats RUP pour la famille Boissons",
+      "hint": "9.8 : RUP",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurViandesVolaillesCommerceEquitable": {
-      "label": "Commerce équitable non Bio pour la famille Viandes et volailles fraîches et surgelées hors bio",
+      "label": "Viandes et volailles fraîches ou surgelées non bio",
+      "labelRecap": "Total des achats non bio issus du commerce équitable pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "10.1 : Commerce équitable non bio",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMerCommerceEquitable": {
-      "label": "Commerce équitable non Bio pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats non bio issus du commerce équitable pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "10.2 : Commerce équitable non bio",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurCharcuterieCommerceEquitable": {
-      "label": "Commerce équitable non Bio pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats non bio issus du commerce équitable pour la famille Charcuteries",
+      "hint": "10.3 : Commerce équitable non bio",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurFruitsEtLegumesCommerceEquitable": {
-      "label": "Commerce équitable non Bio pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats non bio issus du commerce équitable pour la famille Fruits et légumes frais et surgelés",
+      "hint": "10.4 : Commerce équitable non bio",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsLaitiersCommerceEquitable": {
-      "label": "Commerce équitable non Bio pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats non bio issus du commerce équitable pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "10.5 : Commerce équitable non bio",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoulangerieCommerceEquitable": {
-      "label": "Commerce équitable non Bio pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats non bio issus du commerce équitable pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "10.6 : Commerce équitable non bio",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurAutresCommerceEquitable": {
-      "label": "Commerce équitable non Bio pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats non bio issus du commerce équitable pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "10.7 : Commerce équitable non bio",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoissonsCommerceEquitable": {
-      "label": "Commerce équitable non Bio pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats non bio issus du commerce équitable pour la famille Boissons",
+      "hint": "10.8 : Commerce équitable non bio",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurViandesVolaillesFermier": {
-      "label": "Produits fermiers ou de montagne ou certifiés répondant à des exigences nutritionnelles et environnementales, pour la famille Viandes et volailles fraîches et surgelées hors bio",
+      "label": "Viandes et volailles fraîches ou surgelées non bio",
+      "labelRecap": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "11.1 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsDeLaMerFermier": {
-      "label": "Produits fermiers ou de montagne ou certifiés répondant à des exigences nutritionnelles et environnementales, pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "11.2 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurCharcuterieFermier": {
-      "label": "Produits fermiers ou de montagne ou certifiés répondant à des exigences nutritionnelles et environnementales, pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Charcuteries",
+      "hint": "11.3 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurFruitsEtLegumesFermier": {
-      "label": "Produits fermiers ou de montagne ou certifiés répondant à des exigences nutritionnelles et environnementales, pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Fruits et légumes frais et surgelés",
+      "hint": "11.4 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurProduitsLaitiersFermier": {
-      "label": "Produits fermiers ou de montagne ou certifiés répondant à des exigences nutritionnelles et environnementales, pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "11.5 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoulangerieFermier": {
-      "label": "Produits fermiers ou de montagne ou certifiés répondant à des exigences nutritionnelles et environnementales, pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "11.6 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurAutresFermier": {
-      "label": "Produits fermiers ou de montagne ou certifiés répondant à des exigences nutritionnelles et environnementales, pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "11.7 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurBoissonsFermier": {
-      "label": "Produits fermiers ou de montagne ou certifiés répondant à des exigences nutritionnelles et environnementales, pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Boissons",
+      "hint": "11.8 : Produits fermiers, 3°quater ou 4°bis",
       "type": "number",
-      "required": true,
-      "enablePurchaseSummary": true
+      "autofill": true,
+      "required": true
     },
     "valeurViandesVolaillesExternalites": {
-      "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "12.1 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurProduitsDeLaMerExternalites": {
-      "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "12.2 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurCharcuterieExternalites": {
-      "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Charcuteries",
+      "hint": "12.3 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurFruitsEtLegumesExternalites": {
-      "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Fruits et légumes frais et surgelés",
+      "hint": "12.4 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurProduitsLaitiersExternalites": {
-      "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "12.5 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurBoulangerieExternalites": {
-      "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "12.6 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurAutresExternalites": {
-      "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "12.7 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurBoissonsExternalites": {
-      "label": "Produits sélectionnés sur la base de critères d’externalités environnementales pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Boissons",
+      "hint": "12.8 : Produits sélectionnés sur la base de critères d'externalités environnementales",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurViandesVolaillesPerformance": {
-      "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Viandes et volailles fraîches et surgelées",
+      "label": "Viandes et volailles fraîches ou surgelées",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Viandes et volailles fraîches ou surgelées",
+      "hint": "13.1 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurProduitsDeLaMerPerformance": {
-      "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "label": "Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
+      "hint": "13.2 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurCharcuteriePerformance": {
-      "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Charcuterie",
+      "label": "Charcuteries",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Charcuteries",
+      "hint": "13.3 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurFruitsEtLegumesPerformance": {
-      "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Fruits et légumes frais et surgelés",
+      "label": "Fruits et légumes frais et surgelés",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Fruits et légumes frais et surgelés",
+      "hint": "13.4 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurProduitsLaitiersPerformance": {
-      "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "label": "BOF (Produits laitiers, beurre et œufs)",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille BOF (Produits laitiers, beurre et œufs)",
+      "hint": "13.5 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurBoulangeriePerformance": {
-      "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Boulangerie/Pâtisseries fraîches",
+      "label": "Boulangerie/Pâtisseries fraîches",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Boulangerie/Pâtisseries fraîches",
+      "hint": "13.6 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurAutresPerformance": {
-      "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Autres produits frais, surgelés et d’épicerie",
+      "label": "Autres produits frais, surgelés et d'épicerie",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Autres produits frais, surgelés et d'épicerie",
+      "hint": "13.7 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     },
     "valeurBoissonsPerformance": {
-      "label": "Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs pour la famille Boissons",
+      "label": "Boissons",
+      "labelRecap": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Boissons",
+      "hint": "13.8 : Produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs",
       "type": "number",
+      "autofill": true,
       "placeholder": "Je ne sais pas",
-      "required": false,
-      "enablePurchaseSummary": true
+      "required": false
     }
   },
   "groups": {
@@ -1114,9 +1371,9 @@
     "saisie": ["diagnosticType"],
     "valeurTotale": ["valeurTotale"],
     "coutRepas": ["coutRepas"],
-    "egalimSimple": ["valeurTotale", "valeurBio", "valeurBioDontCommerceEquitable", "valeurSiqo", "valeurEgalimAutres", "valeurEgalimAutresDontCommerceEquitable", "valeurExternalitesPerformance", "valeurViandesVolailles", "valeurViandesVolaillesEgalim", "valeurProduitsDeLaMer", "valeurProduitsDeLaMerEgalim", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons"],
+    "egalimSimple": ["valeurTotale", "valeurBio", "valeurBioDontCommerceEquitable", "valeurSiqo", "valeurViandesVolailles", "valeurViandesVolaillesEgalim", "valeurEgalimAutres", "valeurEgalimAutresDontCommerceEquitable", "valeurExternalitesPerformance", "valeurProduitsDeLaMer", "valeurProduitsDeLaMerEgalim"],
     "egalimComplete": ["valeurTotale", "valeurViandesVolailles", "valeurProduitsDeLaMer", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons", "valeurViandesVolaillesBio", "valeurViandesVolaillesBioDontCommerceEquitable", "valeurProduitsDeLaMerBio", "valeurProduitsDeLaMerBioDontCommerceEquitable", "valeurCharcuterieBio", "valeurCharcuterieBioDontCommerceEquitable", "valeurFruitsEtLegumesBio", "valeurFruitsEtLegumesBioDontCommerceEquitable", "valeurProduitsLaitiersBio", "valeurProduitsLaitiersBioDontCommerceEquitable", "valeurBoulangerieBio", "valeurBoulangerieBioDontCommerceEquitable", "valeurAutresBio", "valeurAutresBioDontCommerceEquitable", "valeurBoissonsBio", "valeurBoissonsBioDontCommerceEquitable", "valeurViandesVolaillesLabelRouge", "valeurProduitsDeLaMerLabelRouge", "valeurCharcuterieLabelRouge", "valeurFruitsEtLegumesLabelRouge", "valeurProduitsLaitiersLabelRouge", "valeurBoulangerieLabelRouge", "valeurAutresLabelRouge", "valeurViandesVolaillesAocaop", "valeurProduitsDeLaMerAocaop", "valeurCharcuterieAocaop", "valeurFruitsEtLegumesAocaop", "valeurProduitsLaitiersAocaop", "valeurBoulangerieAocaop", "valeurAutresAocaop", "valeurBoissonsAocaop", "valeurViandesVolaillesIgp", "valeurProduitsDeLaMerIgp", "valeurCharcuterieIgp", "valeurFruitsEtLegumesIgp", "valeurProduitsLaitiersIgp", "valeurBoulangerieIgp", "valeurAutresIgp", "valeurBoissonsIgp", "valeurViandesVolaillesStg", "valeurProduitsDeLaMerStg", "valeurCharcuterieStg", "valeurFruitsEtLegumesStg", "valeurProduitsLaitiersStg", "valeurBoulangerieStg", "valeurAutresStg", "valeurBoissonsStg", "valeurViandesVolaillesHve", "valeurProduitsDeLaMerHve", "valeurCharcuterieHve", "valeurFruitsEtLegumesHve", "valeurProduitsLaitiersHve", "valeurBoulangerieHve", "valeurAutresHve", "valeurBoissonsHve", "valeurProduitsDeLaMerPecheDurable", "valeurViandesVolaillesRup", "valeurProduitsDeLaMerRup", "valeurCharcuterieRup", "valeurFruitsEtLegumesRup", "valeurProduitsLaitiersRup", "valeurBoulangerieRup", "valeurAutresRup", "valeurBoissonsRup", "valeurViandesVolaillesCommerceEquitable", "valeurProduitsDeLaMerCommerceEquitable", "valeurCharcuterieCommerceEquitable", "valeurFruitsEtLegumesCommerceEquitable", "valeurProduitsLaitiersCommerceEquitable", "valeurBoulangerieCommerceEquitable", "valeurAutresCommerceEquitable", "valeurBoissonsCommerceEquitable", "valeurViandesVolaillesFermier", "valeurProduitsDeLaMerFermier", "valeurCharcuterieFermier", "valeurFruitsEtLegumesFermier", "valeurProduitsLaitiersFermier", "valeurBoulangerieFermier", "valeurAutresFermier", "valeurBoissonsFermier", "valeurViandesVolaillesExternalites", "valeurProduitsDeLaMerExternalites", "valeurCharcuterieExternalites", "valeurFruitsEtLegumesExternalites", "valeurProduitsLaitiersExternalites", "valeurBoulangerieExternalites", "valeurAutresExternalites", "valeurBoissonsExternalites", "valeurViandesVolaillesPerformance", "valeurProduitsDeLaMerPerformance", "valeurCharcuteriePerformance", "valeurFruitsEtLegumesPerformance", "valeurProduitsLaitiersPerformance", "valeurBoulangeriePerformance", "valeurAutresPerformance", "valeurBoissonsPerformance"],
-    "origine": ["valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurCharcuterieFrance", "valeurFruitsEtLegumesFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance", "valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurCharcuterieEurope", "valeurFruitsEtLegumesEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurAutresEurope", "valeurBoissonsEurope"],
-    "localCircuitCourt": ["definitionLocal", "definitionLocalKm", "valeurCircuitCourt", "valeurViandesVolaillesCircuitCourt", "valeurProduitsDeLaMerCircuitCourt", "valeurCharcuterieCircuitCourt", "valeurFruitsEtLegumesCircuitCourt", "valeurProduitsLaitiersCircuitCourt", "valeurBoulangerieCircuitCourt", "valeurAutresCircuitCourt", "valeurBoissonsCircuitCourt", "valeurLocal", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurCharcuterieLocal", "valeurFruitsEtLegumesLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurAutresLocal", "valeurBoissonsLocal"]
+    "origine": ["valeurViandesVolailles", "valeurProduitsDeLaMer", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons", "valeurFrance", "valeurViandesVolaillesFrance", "valeurProduitsDeLaMerFrance", "valeurCharcuterieFrance", "valeurFruitsEtLegumesFrance", "valeurProduitsLaitiersFrance", "valeurBoulangerieFrance", "valeurAutresFrance", "valeurBoissonsFrance", "valeurEurope", "valeurViandesVolaillesEurope", "valeurProduitsDeLaMerEurope", "valeurCharcuterieEurope", "valeurFruitsEtLegumesEurope", "valeurProduitsLaitiersEurope", "valeurBoulangerieEurope", "valeurAutresEurope", "valeurBoissonsEurope"],
+    "localCircuitCourt": ["valeurCircuitCourt", "valeurViandesVolaillesCircuitCourt", "valeurProduitsDeLaMerCircuitCourt", "valeurCharcuterieCircuitCourt", "valeurFruitsEtLegumesCircuitCourt", "valeurProduitsLaitiersCircuitCourt", "valeurBoulangerieCircuitCourt", "valeurAutresCircuitCourt", "valeurBoissonsCircuitCourt", "valeurLocal", "definitionLocal", "definitionLocalKm", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurCharcuterieLocal", "valeurFruitsEtLegumesLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurAutresLocal", "valeurBoissonsLocal", "valeurViandesVolailles", "valeurProduitsDeLaMer", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons"]
   }
 }

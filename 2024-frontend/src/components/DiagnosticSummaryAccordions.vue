@@ -2,8 +2,9 @@
 import { ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
+import DiagnosticSummaryAppro from "@/components/DiagnosticSummaryAppro.vue"
 
-const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared'])
+const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared', 'diagnosticRecap'])
 const activeAccordion = ref(props.open)
 watch(() => props.open, (value) => activeAccordion.value = value)
 
@@ -21,7 +22,7 @@ const goToPage = (page) => router.push(page)
     >
       <template #title>
         <span class="ma-cantine--flex-start ma-cantine--flex-gap-1">
-          <component :is="volet.macaron" status="empty" class="diagnostic-summary-accordions__image" />
+          <component :is="volet.macaron" :status="volet.status" class="diagnostic-summary-accordions__image" />
           {{ volet.title }}
           <DsfrBadge v-if="volet.displayErrors" label="Erreurs" type="error"/>
         </span>
@@ -34,6 +35,10 @@ const goToPage = (page) => router.push(page)
       <div v-else class="ma-cantine--flex-end">
         <DsfrButton @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
       </div>
+      <DiagnosticSummaryAppro
+        v-if="volet.key === 'appro' && isTeledeclared"
+        :diagnostic-recap="diagnosticRecap"
+      />
     </DsfrAccordion>
   </DsfrAccordionsGroup>
 </template>

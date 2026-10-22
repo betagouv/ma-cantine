@@ -49,16 +49,14 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
 
         # siret needs to be filled for the diag to be teledeclarable
         canteen_with_missing_data = CanteenFactory(
-            # siret=None,
+            siret=None,
             production_type=Canteen.ProductionType.ON_SITE,
             management_type=Canteen.ManagementType.DIRECT,
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             managers=[authenticate.user],
+            skip_validations=True,
         )
-        canteen_with_missing_data.siret = None
-        canteen_with_missing_data.save(skip_validations=True)
-        canteen_with_missing_data.refresh_from_db()
         DiagnosticFactory(canteen=canteen_with_missing_data, year=self.year, valeur_totale=10000)
 
         canteen_without_line_ministry = CanteenFactory(
@@ -68,12 +66,10 @@ class DiagnosticToTeledeclareApiTest(APITestCase):
             city_insee_code="69123",
             economic_model=Canteen.EconomicModel.PUBLIC,
             sector_list=[Sector.ADMINISTRATION_PRISON],
-            line_ministry=Canteen.Ministries.SPORT,
+            line_ministry=None,
             managers=[authenticate.user],
+            skip_validations=True,
         )
-        canteen_without_line_ministry.line_ministry = None
-        canteen_without_line_ministry.save(skip_validations=True)
-        canteen_without_line_ministry.refresh_from_db()
         DiagnosticFactory(canteen=canteen_without_line_ministry, year=self.year, valeur_totale=10000)
 
         # to verify we are returning the correct diag for the canteen, create another diag for a different year
@@ -346,7 +342,7 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
     def test_cannot_teledeclare_if_diagnostic_not_filled(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         self.canteen_site.managers.add(authenticate.user)
-        Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0)
+        Diagnostic.objects.filter(id=diagnostic.id).update(valeur_totale=0, is_filled=False)
 
         response = self.client.post(
             reverse(
@@ -768,7 +764,9 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
     @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
     def test_can_generate_pdf_central(self):
-        canteen_central = CanteenFactory(production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user])
+        canteen_central = CanteenFactory(
+            production_type=Canteen.ProductionType.CENTRAL, managers=[authenticate.user], skip_validations=True
+        )
         diagnostic = DiagnosticFactory(
             canteen=canteen_central, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )

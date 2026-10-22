@@ -29,7 +29,6 @@ import DiagnosticTunnel from "@/views/DiagnosticTunnel"
 import PurchasesHome from "@/views/PurchasesHome"
 import PurchasesSummary from "@/views/PurchasesSummary"
 import CommunityPage from "@/views/CommunityPage"
-import TerritoryCanteens from "@/views/TerritoryCanteens"
 import VideoTutorial from "@/views/VideoTutorial"
 import MyProgress from "@/views/MyProgress"
 
@@ -233,7 +232,7 @@ const routes = [
     name: "PurchasesHome",
     component: PurchasesHome,
     meta: {
-      title: "Mes achats",
+      title: "Outil Suivi des Achats",
       authenticationRequired: true,
     },
   },
@@ -260,18 +259,6 @@ const routes = [
     component: VideoTutorial,
     props: true,
   },
-  {
-    path: "/les-cantines-de-mon-territoire",
-    name: "TerritoryCanteens",
-    component: TerritoryCanteens,
-    meta: {
-      title: "Les cantines de mon territoire",
-      authenticationRequired: true,
-    },
-    beforeEnter: (_to, _from, next) => {
-      store.state.loggedUser?.isElectedOfficial ? next() : next({ name: "GestionnaireTableauDeBord" })
-    },
-  },
 ]
 
 if (window.ENABLE_DASHBOARD) {
@@ -289,7 +276,7 @@ if (window.ENABLE_DASHBOARD) {
 
 const vue3Routes = [
   {
-    path: "/gaspillage-alimentaire/:canteenUrlComponent",
+    path: "/gaspillage-alimentaire/:canteenUrlComponent?",
     name: "GestionnaireGaspillageAlimentaire",
   },
   {

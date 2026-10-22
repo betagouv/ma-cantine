@@ -11,10 +11,8 @@ from .canteen import (  # noqa: F401
     CanteenStatusSerializer,
     CanteenTeledeclarationSerializer,
     SatelliteTeledeclarationSerializer,
-    ElectedCanteenSerializer,
     MinimalCanteenSerializer,
     CanteenSummarySerializer,
-    CanteenAnalysisSerializer,
     CanteenOpenDataSerializer,
     CanteenExportSerializer,
     CanteenMinistriesSerializer,
@@ -41,10 +39,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticCheckSerializer,
     DiagnosticRecapSerializer,
 )
-from .diagnostic_teledeclaration import (  # noqa: F401
-    DiagnosticTeledeclaredAnalysisSerializer,
-    DiagnosticTeledeclaredOpenDataSerializer,
-)
+from .diagnostic_teledeclaration import DiagnosticTeledeclaredOpenDataSerializer  # noqa: F401
 from .wastemeasurement import WasteMeasurementSerializer  # noqa: F401
 from .sector import SectorM2MSerializer  # noqa: F401
 from .partnertype import PartnerTypeSerializer  # noqa: F401
@@ -62,6 +57,7 @@ from .purchase import (  # noqa: F401
     PurchaseFactureSerializer,
     PurchasePercentageSummarySerializer,
     PurchaseExportSerializer,
+    CanteenPurchasesSummarySerializer,
 )
 from .reservationexpe import ReservationExpeSerializer  # noqa: F401
 from .vegetarianexpe import VegetarianExpeSerializer  # noqa: F401

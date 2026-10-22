@@ -9,10 +9,14 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from common.utils.camelize import camelize
+from api.serializers.diagnostic import ManagerDiagnosticSerializer
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Diagnostic, Canteen
 from data.models.creation_source import CreationSource
+from data.models.definitionlocal import DefinitionLocal
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_fields_all
+from data.models.geo import Region
 
 
 class DiagnosticListApiTest(APITestCase):
@@ -414,6 +418,27 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(diagnostic.family_sum("boissons"), 110)
         self.assertEqual(diagnostic.family_sum("autres"), 110)
 
+    @authenticate
+    def test_can_create_diagnostic_generated_from_purchases(self):
+        self.canteen.managers.add(authenticate.user)
+
+        # defaults to False, and is readable in the response (unlike creation_source & co)
+        response = self.client.post(self.url, self.DIAGNOSTIC_PAYLOAD)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["generatedFromPurchases"], False)
+        diagnostic = Diagnostic.objects.first()
+        self.assertEqual(diagnostic.generated_from_purchases, False)
+
+        # editable (unlike generated_from_groupe_diagnostic, which is read-only)
+        payload = {**self.DIAGNOSTIC_PAYLOAD, "year": 2022, "generated_from_purchases": True}
+        response = self.client.post(self.url, payload)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        body = response.json()
+        self.assertEqual(body["generatedFromPurchases"], True)
+        diagnostic = Diagnostic.objects.get(year=2022)
+        self.assertEqual(diagnostic.generated_from_purchases, True)
+
     # Tests for unit conversion for total_leftovers. This is because the field was first
     # made in ton but then it was decided that it is best for the users to work in kg
     # for consistency.
@@ -537,6 +562,9 @@ class DiagnosticCreateApiTest(APITestCase):
             "valeur_boulangerie_europe": 10,
             "valeur_boissons_europe": 10,
             "valeur_autres_europe": 10,
+            # definition_local
+            "definition_local": DefinitionLocal.KM,
+            "definition_local_km": 5,
         }
         response = self.client.post(self.url, payload, format="json")
 
@@ -547,6 +575,21 @@ class DiagnosticCreateApiTest(APITestCase):
             self.assertEqual(body[camelize(field_name)], payload[field_name])
         # computed fields
         self.assertEqual(body["coutRepas"], 10)
+
+
+class DiagnosticTeledeclarationFieldsCoherenceTest(APITestCase):
+    def test_teledeclaration_fields_are_all_covered_by_the_manager_serializer(self):
+        """
+        Regression test: every TD field declared in the registry (get_teledeclaration_fields_all)
+        for a given year & diagnostic_type must have a matching field on ManagerDiagnosticSerializer,
+        otherwise it can be saved via import/teledeclaration but not via the manager-facing API.
+        """
+        serializer_fields = set(ManagerDiagnosticSerializer().get_fields().keys())
+        for year in TELEDECLARATION_FIELDS:
+            for diagnostic_type in TELEDECLARATION_FIELDS[year]:
+                with self.subTest(year=year, diagnostic_type=diagnostic_type):
+                    fields = set(get_teledeclaration_fields_all(year, diagnostic_type))
+                    self.assertEqual(fields - serializer_fields, set())
 
 
 class DiagnosticDetailApiTest(APITestCase):
@@ -733,6 +776,20 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.year, 2021)
+
+    @authenticate
+    def test_can_update_diagnostic_generated_from_purchases(self):
+        self.diagnostic.canteen.managers.add(authenticate.user)
+        self.assertEqual(self.diagnostic.generated_from_purchases, False)
+
+        payload = {"generated_from_purchases": True}
+        response = self.client.patch(self.url, payload)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["generatedFromPurchases"], True)
+        self.diagnostic.refresh_from_db()
+        self.assertEqual(self.diagnostic.generated_from_purchases, True)
 
     def test_can_update_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
@@ -1114,6 +1171,31 @@ class DiagnosticListRecapApiTest(APITestCase):
 
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
+    def test_list_recap_diagnostics_notes(self):
+        for canteen_region, egalim_group, bio_percent_objective, egalim_percent_objective in [
+            (None, "hexagone", 20, 50),
+            (Region.bretagne, "hexagone", 20, 50),
+            (Region.guadeloupe, "groupe_1", 5, 20),
+        ]:
+            with self.subTest(canteen_region=canteen_region):
+                with freeze_time("2025-01-01"):  # before the 2024 campaign
+                    canteen = CanteenFactory(region=canteen_region, managers=[authenticate.user])
+
+                response = self.client.get(reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen.id}))
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                for recap in response.json():  # every year has notes, even without diagnostic
+                    self.assertEqual(
+                        recap["notes"],
+                        {
+                            "egalimGroup": egalim_group,
+                            "bioPercentObjective": bio_percent_objective,
+                            "egalimPercentObjective": egalim_percent_objective,
+                        },
+                    )
+
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
     def test_list_recap_diagnostics_groupe_appro_only_with_satellite(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
         canteen_satellite_1_before = CanteenFactory(
@@ -1257,6 +1339,111 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertEqual(body[0]["canteenDiagnosticId"], None)
         self.assertIsNotNone(body[0]["generatedFromGroupeDiagnosticId"])
         self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], Diagnostic.CentralKitchenDiagnosticMode.ALL)
+
+
+@freeze_time("2026-03-30")  # during the 2025 campaign
+class DiagnosticRecapApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        with freeze_time("2025-01-01"):  # before the 2024 campaign
+            cls.canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user])
+        cls.diagnostic = DiagnosticFactory(
+            canteen=cls.canteen,
+            year=2025,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=200,
+            valeur_siqo=100,
+            valeur_externalites_performance=100,
+            valeur_egalim_autres=100,
+            valeur_viandes_volailles=100,
+            valeur_viandes_volailles_egalim=50,
+            valeur_produits_de_la_mer=80,
+            valeur_produits_de_la_mer_egalim=40,
+        )
+        cls.url = reverse("diagnostic_recap", kwargs={"canteen_pk": cls.canteen.id, "pk": cls.diagnostic.id})
+
+    def test_cannot_get_diagnostic_recap_if_unauthenticated(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_diagnostic_recap_if_canteen_unknown(self):
+        response = self.client.get(reverse("diagnostic_recap", kwargs={"canteen_pk": 9999, "pk": self.diagnostic.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_get_diagnostic_recap_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_diagnostic_recap_if_diagnostic_unknown(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(reverse("diagnostic_recap", kwargs={"canteen_pk": self.canteen.id, "pk": 9999}))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_get_diagnostic_recap_if_diagnostic_of_another_canteen(self):
+        self.canteen.managers.add(authenticate.user)
+        other_canteen = CanteenFactory(managers=[authenticate.user])
+
+        response = self.client.get(
+            reverse("diagnostic_recap", kwargs={"canteen_pk": other_canteen.id, "pk": self.diagnostic.id})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_cannot_get_diagnostic_recap_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_get_diagnostic_recap(self):
+        self.canteen.managers.add(authenticate.user)
+        self.diagnostic.teledeclare(applicant=authenticate.user)
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["year"], 2025)
+        self.assertEqual(body["isTeledeclared"], True)
+        self.assertEqual(body["declarationDonnees"], True)
+        self.assertEqual(body["canteenDiagnosticId"], self.diagnostic.id)
+        self.assertEqual(body["generatedFromGroupeDiagnosticId"], None)
+        self.assertEqual(body["generatedFromGroupeDiagnosticMode"], None)
+        self.assertIsNone(body["generatedFromGroupeDiagnosticApproStats"])
+        stats = body["canteenDiagnosticApproStats"]
+        self.assertEqual(len(stats), len(Diagnostic.APPRO_STATS_FIELDS))
+        self.assertEqual(stats["pourcentageBio"], 20)
+        self.assertEqual(stats["pourcentageEgalim"], 50)
+        self.assertEqual(stats["pourcentageViandesVolaillesProduitsDeLaMerEgalim"], 50)  # (50 + 40) / 180
+        self.assertEqual(
+            body["notes"], {"egalimGroup": "hexagone", "bioPercentObjective": 20, "egalimPercentObjective": 50}
+        )
+
+    @authenticate
+    def test_get_diagnostic_recap_matches_list_recap(self):
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.get(self.url)
+        list_response = self.client.get(reverse("diagnostic_list_recap", kwargs={"canteen_pk": self.canteen.id}))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        list_recap_2025 = next(recap for recap in list_response.json() if recap["year"] == 2025)
+        self.assertEqual(response.json(), list_recap_2025)
 
 
 @freeze_time("2026-03-30")  # during the 2025 campaign

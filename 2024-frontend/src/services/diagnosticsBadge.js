@@ -63,7 +63,6 @@ const getTeledeclareButton = (action) => {
     name: "GestionnaireTunnelApproRecapitulatif",
     type: "primary",
     icon: "fr-icon-send-plane-line",
-    measure: "etablissement",
   }
 }
 
@@ -75,7 +74,6 @@ const getCompleteButton = (action) => {
     name: "GestionnaireCantineTeledeclarationEnCours",
     type: "tertiary",
     noIcon: true,
-    measure: "etablissement",
   }
 }
 

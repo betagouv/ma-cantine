@@ -5,6 +5,7 @@ from common.utils.commands import MaCantineBaseCommand
 from common.utils.fill_creation import (
     fill_creation_source_api_oauth2_application,
     fill_creation_user,
+    fill_history_source_api,
     get_creation_source_from_first_version,
     get_first_versions,
     update_objects,
@@ -14,7 +15,7 @@ from data.utils import has_charfield_missing_query
 
 logger = logging.getLogger(__name__)
 
-FIELD_CHOICES = ["creation_user", "creation_source", "creation_source_api_oauth2_application"]
+FIELD_CHOICES = ["creation_user", "creation_source", "creation_source_api_oauth2_application", "history_source"]
 
 
 class Command(MaCantineBaseCommand):
@@ -23,8 +24,10 @@ class Command(MaCantineBaseCommand):
     - python manage.py wastemeasurement_fill_creation_user_and_source --field creation_user
     - python manage.py wastemeasurement_fill_creation_user_and_source --field creation_source --apply
     - python manage.py wastemeasurement_fill_creation_user_and_source --field creation_source_api_oauth2_application --apply
+    - python manage.py wastemeasurement_fill_creation_user_and_source --field history_source --apply
 
     Note: run creation_user & creation_source first (creation_source_api_oauth2_application depends on them)
+    and history_source last (it uses creation_user & creation_source_api_oauth2_application)
     """
 
     def add_arguments(self, parser):
@@ -58,6 +61,8 @@ class Command(MaCantineBaseCommand):
             fill_creation_source_api_oauth2_application(
                 WasteMeasurement.objects, WasteMeasurement.history, apply=apply
             )
+        elif field == "history_source":
+            fill_history_source_api(WasteMeasurement.objects, WasteMeasurement.history, apply=apply)
 
 
 def fill_creation_source(apply):

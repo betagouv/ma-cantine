@@ -116,12 +116,15 @@ def validate_appro_fields_required(instance):
       BUT most of the model fields are optional...
     - extra validation: depending on the year & diagnostic_type of the diagnostic
         - e.g. before 2025, only valeur_totale is required
+    NOTE: nombre_repas_an is excluded, it's already checked by validate_canteen_fields_required
+    (it would otherwise be flagged twice, since it's also a CANTEEN_FIELDS entry)
     """
     errors = {}
     if instance.year:
         required_fields = get_teledeclaration_fields_required(instance.year, instance.diagnostic_type)
+        excluded_fields = ["nombre_repas_an"]
         for field in required_fields:
-            if getattr(instance, field) is None:
+            if field not in excluded_fields and getattr(instance, field) is None:
                 utils_utils.add_validation_error(
                     errors, field, f"Ce champ est obligatoire pour l'année {instance.year}."
                 )
@@ -179,11 +182,21 @@ def validate_valeur_famille(instance):
         - for each family field:
             - valeur_*famille* must be >= each of the valeur_*famille*_*label* fields
             - valeur_*famille* must be >= sum of each label for that family
+            - [NEW in 2026] valeur_*famille* becomes mandatory as soon as a sub-field (label,
+              origine/circuit_court/local, or egalim) is filled for that family — regardless of
+              diagnostic_type, even though valeur_*famille* is already required for COMPLETE
     """
     errors = {}
+    origine_labels = []
+    if instance.year and int(instance.year) >= 2026:
+        origine_labels = get_teledeclaration_field_groups(instance.year, "APPRO_LABELS_ORIGINE") + [
+            "circuit_court",
+            "local",
+        ]
     for family in get_teledeclaration_field_groups(instance.year, "APPRO_FAMILIES"):
         field_name = f"valeur_{family}"
         field_value = getattr(instance, field_name)
+        family_sum = instance.family_sum(family)
         if field_value is not None:
             for label in get_teledeclaration_field_groups(instance.year, "APPRO_LABELS_ALL"):
                 family_label_field_name = f"valeur_{family}_{label}"
@@ -194,13 +207,18 @@ def validate_valeur_famille(instance):
                         field_name,
                         f"La valeur (HT) {family}, {field_value}, est moins que la valeur (HT) {family}_{label}, {family_label_field_value}",
                     )
-            family_sum = instance.family_sum(family)
             if family_sum and family_sum > field_value:
                 utils_utils.add_validation_error(
                     errors,
                     field_name,
                     f"La valeur (HT) {family}, {field_value}, est moins que la somme des valeurs d'approvisionnement de tous les labels, {family_sum}",
                 )
+        elif origine_labels and instance.family_has_any_label_filled(family):
+            utils_utils.add_validation_error(
+                errors,
+                field_name,
+                "Ce champ est obligatoire dès qu'une valeur (HT) est renseignée pour une catégorie de cette famille.",
+            )
     return errors
 
 
@@ -234,14 +252,25 @@ def validate_valeur_label(instance):
         - for each (existing) label field:
             - [NEW in 2026] valeur_*label* must be >= each of the valeur_*famille*_*label* fields
             - [NEW in 2026] valeur_*label* must be >= sum of each family for that label
+            - [NEW in 2026] for europe/france/circuit_court/local: valeur_*label* becomes mandatory
+              as soon as any valeur_*famille*_*label* is filled (these aren't auto-populated from
+              the family breakdown, unlike e.g. valeur_bio, so they can't just default to 0)
         - valeur_bio_dont_commerce_equitable must be <= valeur_bio
         - valeur_egalim_autres_dont_commerce_equitable must be <= valeur_egalim_autres
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:
+        # NOTE: only europe/france/circuit_court/local have a top-level field that isn't
+        # auto-populated from the family breakdown (unlike e.g. valeur_bio) - the other labels
+        # (hve, aocaop, igp, stg, etc.) only exist per-family, with no top-level field to fill
+        origine_labels = get_teledeclaration_field_groups(instance.year, "APPRO_LABELS_ORIGINE") + [
+            "circuit_court",
+            "local",
+        ]
         for label in get_teledeclaration_field_groups(instance.year, "APPRO_LABELS_ALL"):
             field_name = f"valeur_{label}"
             field_value = getattr(instance, field_name, None)  # some don't exist
+            label_sum = instance.label_sum(label)
             if field_value is not None:
                 for family in get_teledeclaration_field_groups(instance.year, "APPRO_FAMILIES"):
                     family_label_field_name = f"valeur_{family}_{label}"
@@ -252,13 +281,18 @@ def validate_valeur_label(instance):
                             field_name,
                             f"La valeur (HT) {label}, {field_value}, est moins que la valeur (HT) {family}_{label}, {family_label_field_value}",
                         )
-                label_sum = instance.label_sum(label)
                 if label_sum and label_sum > field_value:
                     utils_utils.add_validation_error(
                         errors,
                         field_name,
                         f"La valeur (HT) {label}, {field_value}, est moins que la somme des valeurs d'approvisionnement de toutes les familles, {label_sum}",
                     )
+            elif label in origine_labels and instance.label_has_any_family_filled(label):
+                utils_utils.add_validation_error(
+                    errors,
+                    field_name,
+                    f"Ce champ est obligatoire dès qu'une valeur (HT) {label} est renseignée pour une famille.",
+                )
     if instance.valeur_bio is not None:
         if (
             instance.valeur_bio_dont_commerce_equitable is not None
@@ -364,7 +398,7 @@ def validate_definition_local(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the value is empty or in the choices
     - extra validation (since 2026, when definition_local was added):
-        - if definition_local is "KM", then definition_local_km can be filled
+        - if definition_local is "KM", then definition_local_km becomes mandatory
         - if definition_local is not "KM", then definition_local_km must be empty
         - if any of the appro "_local" fields is filled, definition_local becomes mandatory
     """
@@ -373,7 +407,14 @@ def validate_definition_local(instance):
         field_name = "definition_local"
         value = getattr(instance, field_name)
         definition_local_km = getattr(instance, "definition_local_km")
-        if value != DefinitionLocal.KM:
+        if value == DefinitionLocal.KM:
+            if definition_local_km in [None, ""]:
+                utils_utils.add_validation_error(
+                    errors,
+                    "definition_local_km",
+                    "La distance en km est obligatoire lorsque la définition locale est 'KM'.",
+                )
+        else:
             if definition_local_km not in [None, ""]:
                 utils_utils.add_validation_error(
                     errors,

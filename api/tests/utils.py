@@ -1,7 +1,7 @@
 import filecmp
 import functools
 from data.factories import AccessTokenFactory, UserFactory
-from data.models import ImportFailure
+from data.models import EventLog, ImportFailure
 
 
 def authenticate(func):
@@ -25,6 +25,36 @@ def assert_import_failure_created(self, user, type, file_path):
     self.assertEqual(ImportFailure.objects.first().user, user)
     self.assertEqual(ImportFailure.objects.first().import_type, type)
     self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))
+    # EventLog
+    event_log = EventLog.objects.filter(category=EventLog.Category.IMPORT, status=EventLog.Status.FAILURE).first()
+    self.assertIsNotNone(event_log)
+    self.assertEqual(event_log.user, user)
+    self.assertEqual(event_log.name, type)
+    self.assertEqual(set(event_log.data.keys()), {"message", "count", "seconds"})
+    self.assertTrue(event_log.data["message"])
+    self.assertIsNone(event_log.data["count"])
+
+
+NOT_CHECKED = object()
+
+
+def assert_import_success_created(self, user, type, count=None, canteen=NOT_CHECKED):
+    """
+    Checks the latest import (some tests run several imports)
+    canteen: the canteen if the import concerns a single canteen, None if several
+    """
+    self.assertFalse(ImportFailure.objects.exists())
+    event_log = EventLog.objects.filter(category=EventLog.Category.IMPORT).order_by("creation_date", "id").last()
+    self.assertIsNotNone(event_log)
+    self.assertEqual(event_log.status, EventLog.Status.SUCCESS)
+    self.assertEqual(event_log.user, user)
+    self.assertEqual(event_log.name, type)
+    self.assertEqual(set(event_log.data.keys()), {"message", "count", "seconds"})
+    self.assertIsNone(event_log.data["message"])
+    if count is not None:
+        self.assertEqual(event_log.data["count"], count)
+    if canteen is not NOT_CHECKED:
+        self.assertEqual(event_log.canteen, canteen)
 
 
 def assert_almost_equal(self, value, expected_value):

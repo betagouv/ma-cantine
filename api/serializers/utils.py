@@ -6,6 +6,28 @@ class PurchaseField(serializers.DecimalField):
         super().__init__(max_digits=20, decimal_places=2, required=False)
 
 
+# Set all the serializer fields as read_only (declared fields & ModelSerializer generated fields)
+# Usage: class MySerializer(ReadOnlySerializerMixin, serializers.ModelSerializer)
+# (comment instead of docstring: drf-spectacular would use it as the description of every serializer)
+class ReadOnlySerializerMixin:
+    def get_extra_kwargs(self):
+        # ModelSerializer only: build the generated fields as read_only (like Meta.read_only_fields)
+        extra_kwargs = super().get_extra_kwargs()
+        fields = getattr(self.Meta, "fields", None)
+        if isinstance(fields, (list, tuple)):
+            for field_name in fields:
+                extra_kwargs.setdefault(field_name, {})["read_only"] = True
+        return extra_kwargs
+
+    def get_fields(self):
+        # declared fields (& ModelSerializer generated fields if Meta.fields = "__all__")
+        fields = super().get_fields()
+        for field in fields.values():
+            field.read_only = True
+            field.required = False  # read_only fields can't be required
+        return fields
+
+
 def choice_list_to_choices(choice_list):
     return [(choice.value, choice.label) for choice in choice_list]
 

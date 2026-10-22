@@ -87,6 +87,9 @@ class CanteensManagersImportView(BaseImportView):
             except IntegrityError:
                 pass
 
+    def _get_canteen_ids(self):
+        return {canteen.id for canteen in self.canteens_updated.values()}
+
     def _get_response_data(self):
         """Return canteen-specific response data"""
         serialized_canteens = (

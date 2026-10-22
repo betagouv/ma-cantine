@@ -2,7 +2,12 @@ from drf_base64.fields import Base64FileField
 from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
-from api.serializers.utils import PurchaseField, choice_list_to_choices, set_help_text_from_verbose_name
+from api.serializers.utils import (
+    PurchaseField,
+    ReadOnlySerializerMixin,
+    choice_list_to_choices,
+    set_help_text_from_verbose_name,
+)
 from data.models import Purchase
 from data.models.definitionlocal import DefinitionLocal
 
@@ -86,6 +91,8 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
 REQUIRED_FIELDS = ["description", "date", "prix_ht", "famille_produits"]
 CREATE_ONLY_FIELDS = ["creation_source", "import_source"]
 READ_ONLY_FIELDS = ["id", "canteen", "creation_date", "modification_date"]
+# caracteristiques is split into these 4 fields (see the Purchase model properties)
+CARACTERISTIQUES_FIELDS = ["categories_egalim", "origine", "est_circuit_court", "est_local"]
 
 
 @set_help_text_from_verbose_name
@@ -177,6 +184,15 @@ class PurchaseSerializer(serializers.ModelSerializer):
         """
         internal_value = super().to_internal_value(data)
 
+        # partial update: only rebuild caracteristiques if at least one of the 4 fields is passed,
+        # and fallback on the instance values for the missing ones
+        if self.partial and self.instance is not None:
+            if not any(field in internal_value for field in CARACTERISTIQUES_FIELDS):
+                return internal_value
+            for field in CARACTERISTIQUES_FIELDS:
+                if field not in internal_value:
+                    internal_value[field] = getattr(self.instance, field)
+
         caracteristiques = []
 
         caracteristiques.extend(internal_value.pop("categories_egalim", []))
@@ -204,8 +220,12 @@ class PurchaseFactureSerializer(serializers.ModelSerializer):
         fields = ("id", "facture")
 
 
-# NB: these names reflect the names in the diagnostic model
-class PurchaseSummarySerializer(serializers.Serializer):
+class PurchaseSimpleSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer):
+    """
+    One year's worth of the "simple" totals (see Purchase._simple_diag_data), as returned
+    by Purchase.canteen_summary() for each year it covers.
+    """
+
     year = serializers.IntegerField()
     valeur_totale = PurchaseField()
     valeur_bio = PurchaseField()
@@ -214,10 +234,43 @@ class PurchaseSummarySerializer(serializers.Serializer):
     valeur_egalim_autres = PurchaseField()
     valeur_egalim_autres_dont_commerce_equitable = PurchaseField()
     valeur_externalites_performance = PurchaseField()
-    # meat and fish aggregates
+    valeur_europe = PurchaseField()
+    valeur_france = PurchaseField()
+    valeur_circuit_court = PurchaseField()
+    valeur_local = PurchaseField()
+
+
+class CanteenPurchasesSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer):
+    results = PurchaseSimpleSummarySerializer(many=True)
+
+
+# NB: these names reflect the names in the diagnostic model
+class PurchaseSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer):
+    year = serializers.IntegerField()
+    valeur_totale = PurchaseField()
+    valeur_bio = PurchaseField()
+    valeur_bio_dont_commerce_equitable = PurchaseField()
+    valeur_siqo = PurchaseField()
+    valeur_egalim_autres = PurchaseField()
+    valeur_egalim_autres_dont_commerce_equitable = PurchaseField()
+    valeur_externalites_performance = PurchaseField()
+    # labels: origin totals
+    valeur_europe = PurchaseField()
+    valeur_france = PurchaseField()
+    # labels: other totals
+    valeur_circuit_court = PurchaseField()
+    valeur_local = PurchaseField()
+    # family totals
     valeur_viandes_volailles = PurchaseField()
-    valeur_viandes_volailles_egalim = PurchaseField()
     valeur_produits_de_la_mer = PurchaseField()
+    valeur_fruits_et_legumes = PurchaseField()
+    valeur_charcuterie = PurchaseField()
+    valeur_produits_laitiers = PurchaseField()
+    valeur_boulangerie = PurchaseField()
+    valeur_boissons = PurchaseField()
+    valeur_autres = PurchaseField()
+    # misc totals: meat and fish aggregates
+    valeur_viandes_volailles_egalim = PurchaseField()
     valeur_produits_de_la_mer_egalim = PurchaseField()
     # complex: by family and label
     valeur_viandes_volailles_bio = PurchaseField()
@@ -252,6 +305,31 @@ class PurchaseSummarySerializer(serializers.Serializer):
     valeur_boulangerie_aocaop_igp_stg = PurchaseField()
     valeur_boissons_aocaop_igp_stg = PurchaseField()
     valeur_autres_aocaop_igp_stg = PurchaseField()
+    # from 2026, aocaop_igp_stg is split into aocaop, igp & stg
+    valeur_viandes_volailles_aocaop = PurchaseField()
+    valeur_produits_de_la_mer_aocaop = PurchaseField()
+    valeur_fruits_et_legumes_aocaop = PurchaseField()
+    valeur_charcuterie_aocaop = PurchaseField()
+    valeur_produits_laitiers_aocaop = PurchaseField()
+    valeur_boulangerie_aocaop = PurchaseField()
+    valeur_boissons_aocaop = PurchaseField()
+    valeur_autres_aocaop = PurchaseField()
+    valeur_viandes_volailles_igp = PurchaseField()
+    valeur_produits_de_la_mer_igp = PurchaseField()
+    valeur_fruits_et_legumes_igp = PurchaseField()
+    valeur_charcuterie_igp = PurchaseField()
+    valeur_produits_laitiers_igp = PurchaseField()
+    valeur_boulangerie_igp = PurchaseField()
+    valeur_boissons_igp = PurchaseField()
+    valeur_autres_igp = PurchaseField()
+    valeur_viandes_volailles_stg = PurchaseField()
+    valeur_produits_de_la_mer_stg = PurchaseField()
+    valeur_fruits_et_legumes_stg = PurchaseField()
+    valeur_charcuterie_stg = PurchaseField()
+    valeur_produits_laitiers_stg = PurchaseField()
+    valeur_boulangerie_stg = PurchaseField()
+    valeur_boissons_stg = PurchaseField()
+    valeur_autres_stg = PurchaseField()
     valeur_viandes_volailles_hve = PurchaseField()
     valeur_produits_de_la_mer_hve = PurchaseField()
     valeur_fruits_et_legumes_hve = PurchaseField()
@@ -316,6 +394,15 @@ class PurchaseSummarySerializer(serializers.Serializer):
     valeur_boulangerie_non_egalim = PurchaseField()
     valeur_boissons_non_egalim = PurchaseField()
     valeur_autres_non_egalim = PurchaseField()
+    # from 2026, europe is added to APPRO_LABELS_ORIGINE
+    valeur_viandes_volailles_europe = PurchaseField()
+    valeur_produits_de_la_mer_europe = PurchaseField()
+    valeur_fruits_et_legumes_europe = PurchaseField()
+    valeur_charcuterie_europe = PurchaseField()
+    valeur_produits_laitiers_europe = PurchaseField()
+    valeur_boulangerie_europe = PurchaseField()
+    valeur_boissons_europe = PurchaseField()
+    valeur_autres_europe = PurchaseField()
     valeur_viandes_volailles_france = PurchaseField()
     valeur_produits_de_la_mer_france = PurchaseField()
     valeur_fruits_et_legumes_france = PurchaseField()
@@ -343,7 +430,7 @@ class PurchaseSummarySerializer(serializers.Serializer):
 
 
 # NB: these names reflect the names in the diagnostic model
-class PurchasePercentageSummarySerializer(serializers.Serializer):
+class PurchasePercentageSummarySerializer(ReadOnlySerializerMixin, serializers.Serializer):
     year = serializers.IntegerField()
     percentage_valeur_totale = serializers.FloatField(required=False)
     percentage_valeur_bio = serializers.FloatField(required=False)
@@ -357,7 +444,7 @@ class PurchasePercentageSummarySerializer(serializers.Serializer):
     last_purchase_date = serializers.DateField(required=False)
 
 
-class PurchaseExportSerializer(serializers.ModelSerializer):
+class PurchaseExportSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     canteen = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
     class Meta:
@@ -371,4 +458,3 @@ class PurchaseExportSerializer(serializers.ModelSerializer):
             "caracteristiques_display",
             "prix_ht",
         )
-        read_only_fields = fields

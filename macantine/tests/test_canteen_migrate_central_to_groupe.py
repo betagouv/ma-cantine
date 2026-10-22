@@ -16,6 +16,7 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
         cls.canteen_central_1 = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=2,
+            skip_validations=True,
         )
         cls.canteen_satellite_1_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -30,6 +31,7 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
         cls.canteen_central_2_deleted = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL,
             satellite_canteens_count=2,
+            skip_validations=True,
         )
         cls.canteen_central_2_deleted.delete()
         cls.canteen_satellite_2_1 = CanteenFactory(
@@ -40,6 +42,7 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
         cls.canteen_central_serving_3 = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
             satellite_canteens_count=1,
+            skip_validations=True,
         )
         cls.canteen_satellite_3_1 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
@@ -48,17 +51,15 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
         # canteen_central_serving_4 has 0 satellites
         cls.canteen_central_serving_4 = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL_SERVING,
-            satellite_canteens_count=1,
+            satellite_canteens_count=0,
+            skip_validations=True,
         )
-        cls.canteen_central_serving_4.satellite_canteens_count = 0
-        cls.canteen_central_serving_4.save(skip_validations=True)
         # extra satellites & sites
         cls.canteen_satellite_central_producer_empty = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
-            central_producer_siret=cls.canteen_central_serving_4.siret,
+            central_producer_siret=None,
+            skip_validations=True,
         )
-        cls.canteen_satellite_central_producer_empty.central_producer_siret = None
-        cls.canteen_satellite_central_producer_empty.save(skip_validations=True)
         cls.canteen_satellite_central_producer_unknown = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
             central_producer_siret="00000000000000",
@@ -68,9 +69,9 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
         )
         cls.canteen_site_with_central_producer_siret = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE,
+            central_producer_siret=cls.canteen_central_1.siret,
+            skip_validations=True,
         )
-        cls.canteen_site_with_central_producer_siret.central_producer_siret = cls.canteen_central_1.siret
-        cls.canteen_site_with_central_producer_siret.save(skip_validations=True)
         # existing GROUPE canteen
         cls.canteen_groupe_1 = CanteenFactory(
             production_type=Canteen.ProductionType.GROUPE,

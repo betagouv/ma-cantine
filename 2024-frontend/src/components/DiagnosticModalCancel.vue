@@ -4,7 +4,6 @@ import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
-import diagnosticService from "@/services/diagnostics.js"
 
 defineProps(["opened"])
 const emit = defineEmits(["close"])
@@ -18,12 +17,11 @@ const loading = ref(false)
 const cancelTeledeclaration = () => {
   if (!diagnostic.value) return
   loading.value = true
-  diagnosticService
-    .cancelTeledeclaration(diagnostic.value.canteenId, diagnostic.value.id)
+  teledeclarationStore
+    .cancelTeledeclaration()
     .then((response) => {
       if (response?.status === "error" || response instanceof Error) rootStore.notifyServerError(response)
       else {
-        teledeclarationStore.setDiagnostic({ ...diagnostic.value, isTeledeclared: false })
         router.push({ name: "GestionnaireTunnelApproInformations" })
       }
     })

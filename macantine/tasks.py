@@ -19,14 +19,10 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models import Canteen, Diagnostic, User, WasteMeasurement, Purchase, Oauth2ProviderApplicationExtra
+from data.models import Canteen, Diagnostic, EventLog, User, WasteMeasurement, Purchase, Oauth2ProviderApplicationExtra
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
-from .etl.analysis import (
-    ETL_ANALYSIS_CANTEEN,
-    ETL_ANALYSIS_RAW,
-    ETL_ANALYSIS_TELEDECLARATIONS,
-)
+from .etl.analysis import ETL_ANALYSIS_RAW
 from .etl.open_data import (
     ETL_OPEN_DATA_CANTEEN,
     ETL_OPEN_DATA_TELEDECLARATIONS,
@@ -255,6 +251,7 @@ def get_raw_analysis_datasets():
             "canteen_managers_raw", Canteen.managers.through.objects.all()
         ),
         "waste_measurements_raw_analysis": ETL_ANALYSIS_RAW("waste_measurements_raw", WasteMeasurement.objects.all()),
+        "event_logs_raw_analysis": ETL_ANALYSIS_RAW("event_logs_raw", EventLog.objects.all()),
         # OAuth2 (API): never export secrets & tokens
         "oauth2_applications_raw_analysis": ETL_ANALYSIS_RAW(
             "oauth2_applications_raw", get_application_model().objects.all(), exclude_columns=["client_secret"]
@@ -286,20 +283,6 @@ def export_dataset_raw_analysis():
     return result
 
 
-def export_dataset_td_analysis():
-    """
-    Export the Teledeclaration datasets for analysis (Metabase)
-    """
-    logger.info("Starting export_dataset_td_analysis task")
-
-    datasets = {
-        "teledeclarations_analysis": ETL_ANALYSIS_TELEDECLARATIONS(),
-    }
-    result = export_datasets(datasets)
-
-    return result
-
-
 def export_dataset_td_opendata():
     """
     Export the Teledeclaration datasets for opendata (data.gouv.fr) (1 per year)
@@ -313,20 +296,6 @@ def export_dataset_td_opendata():
         "teledeclarations_2023_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
         "teledeclarations_2024_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2024),
         # "teledeclarations_2025_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2025),  # wait for report to be published
-    }
-    result = export_datasets(datasets)
-
-    return result
-
-
-def export_dataset_canteen_analysis():
-    """
-    Export the Canteen datasets for analysis (Metabase)
-    """
-    logger.info("Starting export_dataset_canteen_analysis task")
-
-    datasets = {
-        "canteens_analysis": ETL_ANALYSIS_CANTEEN(),
     }
     result = export_datasets(datasets)
 
