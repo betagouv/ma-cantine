@@ -14,6 +14,41 @@ Notes sur le squash de 2026-10-21 :
 - les `RunPython` / `RunSQL` (migrations de données uniquement) ont été retirés des squash : sans effet sur une base vide, et déjà appliqués sur les bases existantes
 - les migrations suivantes (`0251_…`, 2026-05-04 →) restent des migrations normales
 
+## Comment squasher
+
+Django fournit la commande `squashmigrations` :
+
+```bash
+uv run python manage.py squashmigrations <app> [<début>] <fin>
+```
+
+- sans `<début>`, part de la 1ère migration de l'app. Les préfixes (`0151`) suffisent s'ils sont uniques
+- concatène les opérations des migrations, puis les optimise (fusion des `CreateModel` / `AddField` / `AlterField`… successifs), et écrit un nouveau fichier `<début>_squashed_<fin>.py` avec un attribut `replaces`
+- options utiles : `--noinput` (pas de confirmation), `--squashed-name <nom>` (nom du fichier), `--no-optimize` (concaténer sans optimiser)
+
+Commandes utilisées pour le squash de 2026-10-21 :
+
+```bash
+uv run python manage.py squashmigrations data 0151 --noinput
+uv run python manage.py squashmigrations data 0152 0250 --noinput
+```
+
+Étapes autour de la commande :
+
+1. **Avant**
+   - `uv run python manage.py makemigrations --check --dry-run` : aucun changement de modèle en attente
+   - aucune migration de la plage ne doit avoir de `replaces` (Django refuse de squasher un squash) : finaliser d'abord les squash précédents
+   - marquer les `RunPython` / `RunSQL` de la plage avec `elidable=True`, pour qu'ils soient retirés du squash (sinon il faut recopier leurs fonctions à la main dans le fichier squashé)
+2. **Après**
+   - en cas de `CircularDependencyError` (ex. avec Wagtail) : couper en plusieurs squash, juste avant la 1ère migration qui dépend de l'autre app
+   - vérifier sur une base vide (`migrate`) et sur une base existante (`migrate --plan` → rien à appliquer)
+   - déplacer les migrations remplacées dans `archive/`, et faire pointer les migrations qui en dépendaient vers le squash
+   - garder `replaces` tant que toutes les bases (staging, prod) n'ont pas été migrées avec le squash, puis le retirer dans une PR ultérieure
+
+Pour ré-optimiser une seule migration existante : `uv run python manage.py optimizemigration <app> <migration>`.
+
+Documentation Django : https://docs.djangoproject.com/fr/5.2/topics/migrations/#migration-squashing
+
 ## Dossier `archive/`
 
 Migrations d'origine remplacées par les squash (contenu identique à avant le squash), gardées pour référence uniquement : historique du schéma, migrations de données retirées des squash.
