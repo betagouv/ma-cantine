@@ -60,7 +60,7 @@ celery==5.6.3
     # via
     #   django-celery-results
     #   ma-cantine
-certifi==2026.7.22
+certifi==2026.10.19
     # via
     #   pyhanko-certvalidator
     #   requests
