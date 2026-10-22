@@ -7,6 +7,9 @@ from django.core.serializers import serialize
 def backup_waste_action_data(apps, schema_editor):
     try:
         WasteAction = apps.get_model("cms", "WasteAction")
+        # nothing to backup on a fresh database (the restore step was dropped when squashing data migrations)
+        if not WasteAction.objects.exists():
+            return
         data = serialize("json", WasteAction.objects.all())
         with open("waste_action_backup.json", "w") as f:
             f.write(data)
