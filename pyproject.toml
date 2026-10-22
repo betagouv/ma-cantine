@@ -10,7 +10,7 @@ dependencies = [
     "chardet==5.2.0",
     "dbt-core>=1.9.0",
     "dbt-postgres>=1.9.0",
-    "django==5.2.17",
+    "django==5.2.18",
     "django-anymail==12.0",
     "django-celery-results==2.6.0",
     "django-ckeditor==6.7.3",
