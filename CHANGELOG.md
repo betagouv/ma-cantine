@@ -6,6 +6,20 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.56.2](https://github.com/betagouv/ma-cantine/compare/v2026.56.1...v2026.56.2) (2026-10-23)
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** affichage des informations: ne plus interpréter les valeurs comme du HTML (éviter une attaque stored-XSS) ([#7398](https://github.com/betagouv/ma-cantine/issues/7398)) ([36b9132](https://github.com/betagouv/ma-cantine/commit/36b9132b36200a0524f873d60b2cd63427e32849))
+* **Télédéclaration:** divers correctifs ([#7411](https://github.com/betagouv/ma-cantine/issues/7411)) ([3c69568](https://github.com/betagouv/ma-cantine/commit/3c6956828cbc58545ec0d8ad5220f42378c4b512))
+
+
+### Technique
+
+* ajout du SECURITY.md ([#7413](https://github.com/betagouv/ma-cantine/issues/7413)) ([a447762](https://github.com/betagouv/ma-cantine/commit/a447762bca2b0f37ad16d31356e83913725da105))
+* **deps-dev:** bump vite from 8.3.2 to 8.3.5 in /2024-frontend ([#7386](https://github.com/betagouv/ma-cantine/issues/7386)) ([f092d75](https://github.com/betagouv/ma-cantine/commit/f092d750f5f5ac5e8d5ee1203c3a93cd9221b1c7))
+
 ## [2026.56.1](https://github.com/betagouv/ma-cantine/compare/v2026.56.0...v2026.56.1) (2026-10-22)
 
 
