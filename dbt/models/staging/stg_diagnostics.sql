@@ -10,6 +10,8 @@ renamed as (
         creation_date,
         modification_date,
         creation_source,
+        creation_source_api_oauth2_application_id,
+        creation_user_id,
         diagnostic_type,
         central_kitchen_diagnostic_mode,
         status,
