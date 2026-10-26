@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     # Skip if PR is in draft
     if: ${{ !github.event.pull_request.draft }}
+    # usually ~1 min: avoid blocking a runner for hours (default 6h) if a step hangs
+    timeout-minutes: 10
 
     steps:
       - uses: actions/checkout@v4
