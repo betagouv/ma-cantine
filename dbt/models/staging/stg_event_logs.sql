@@ -1,7 +1,8 @@
 -- Une ligne par événement journalisé par l'application (EventLog) :
 -- - API : écriture (POST, PUT, PATCH, DELETE) faite avec un jeton OAuth, réussie ou en échec
 --   (jamais les GET) ; name = méthode et route au format OpenAPI ;
--- - IMPORT : import de fichier, réussi ou en échec ; name = type d'import.
+-- - IMPORT : import de fichier, réussi ou en échec ; name = type d'import ;
+-- - COMMAND : exécution d'une commande manage.py, réussie ou en échec ; name = nom de la commande.
 -- Les détails de la colonne jsonb data sont éclatés en colonnes.
 
 with source as (
@@ -24,10 +25,14 @@ renamed as (
         data ->> 'message'                                      as message,
         (data ->> 'count')::int                                 as row_count,
         (data ->> 'seconds')::numeric                           as duration_seconds,
-        -- repris = reconstitué après coup (commandes eventlog_backfill_*) ou échec d'import
-        -- migré depuis data_importfailure ; faux pour les événements journalisés en direct
+        -- COMMAND : cron (exécution planifiée) ou manual ; vide pour les commandes reprises
+        data ->> 'trigger'                                      as command_trigger,
+        -- repris = reconstitué après coup (commandes eventlog_backfill_*), échec d'import
+        -- migré depuis data_importfailure, ou commande migrée depuis common_commandlog ;
+        -- faux pour les événements journalisés en direct
         coalesce((data ->> 'backfilled')::boolean, false)
-            or data ? 'import_failure_id'                       as is_backfilled,
+            or data ? 'import_failure_id'
+            or data ? 'commandlog_id'                           as is_backfilled,
         (data ->> 'import_type_uncertain')::boolean             as is_import_type_uncertain
     from source
 )
