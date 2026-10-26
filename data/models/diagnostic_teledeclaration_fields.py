@@ -1,56 +1,3 @@
-GASPILLAGE_FIELDS = [
-    "has_waste_diagnostic",
-    "has_waste_plan",
-    "waste_actions",
-    "other_waste_action",
-    "has_donation_agreement",
-    "has_waste_measures",
-    "total_leftovers",
-    "duration_leftovers_measurement",
-    "bread_leftovers",
-    "served_leftovers",
-    "unserved_leftovers",
-    "side_leftovers",
-    "donation_frequency",
-    "donation_quantity",
-    "donation_food_type",
-    "other_waste_comments",
-]
-
-DIVERSIFICATION_FIELDS_2021 = [
-    "has_diversification_plan",
-    "diversification_plan_actions",
-    "vegetarian_weekly_recurrence",
-    "vegetarian_menu_type",
-    "vegetarian_menu_bases",
-]
-
-# service_type added in 2024
-DIVERSIFICATION_FIELDS_2024 = [
-    "has_diversification_plan",
-    "diversification_plan_actions",
-    "service_type",
-    "vegetarian_weekly_recurrence",
-    "vegetarian_menu_type",
-    "vegetarian_menu_bases",
-]
-
-PLASTIQUE_FIELDS = [
-    "cooking_plastic_substituted",
-    "serving_plastic_substituted",
-    "plastic_bottles_substituted",
-    "plastic_tableware_substituted",
-]
-
-INFORMATION_FIELDS = [
-    "communication_supports",
-    "other_communication_support",
-    "communication_support_url",
-    "communicates_on_food_plan",
-    "communicates_on_food_quality",
-    "communication_frequency",
-]
-
 TELEDECLARATION_FIELDS = {
     2021: {
         "APPROVISIONNEMENT": {
@@ -174,10 +121,57 @@ TELEDECLARATION_FIELDS = {
                 "fields_required": ["valeur_totale"],
             },
         },
-        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
-        "DIVERSIFICATION": {"fields": DIVERSIFICATION_FIELDS_2021, "fields_required": []},
-        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
-        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
+        "GASPILLAGE": {
+            "fields": [
+                "has_waste_diagnostic",
+                "has_waste_plan",
+                "waste_actions",
+                "other_waste_action",
+                "has_donation_agreement",
+                "has_waste_measures",
+                "total_leftovers",
+                "duration_leftovers_measurement",
+                "bread_leftovers",
+                "served_leftovers",
+                "unserved_leftovers",
+                "side_leftovers",
+                "donation_frequency",
+                "donation_quantity",
+                "donation_food_type",
+                "other_waste_comments",
+            ],
+            "fields_required": [],
+        },
+        "DIVERSIFICATION": {
+            "fields": [
+                "has_diversification_plan",
+                "diversification_plan_actions",
+                "vegetarian_weekly_recurrence",
+                "vegetarian_menu_type",
+                "vegetarian_menu_bases",
+            ],
+            "fields_required": [],
+        },
+        "PLASTIQUE": {
+            "fields": [
+                "cooking_plastic_substituted",
+                "serving_plastic_substituted",
+                "plastic_bottles_substituted",
+                "plastic_tableware_substituted",
+            ],
+            "fields_required": [],
+        },
+        "INFORMATION": {
+            "fields": [
+                "communication_supports",
+                "other_communication_support",
+                "communication_support_url",
+                "communicates_on_food_plan",
+                "communicates_on_food_quality",
+                "communication_frequency",
+            ],
+            "fields_required": [],
+        },
     },
     2022: {
         "APPROVISIONNEMENT": {
@@ -318,10 +312,57 @@ TELEDECLARATION_FIELDS = {
                 "fields_required": ["valeur_totale"],
             },
         },
-        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
-        "DIVERSIFICATION": {"fields": DIVERSIFICATION_FIELDS_2021, "fields_required": []},
-        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
-        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
+        "GASPILLAGE": {
+            "fields": [
+                "has_waste_diagnostic",
+                "has_waste_plan",
+                "waste_actions",
+                "other_waste_action",
+                "has_donation_agreement",
+                "has_waste_measures",
+                "total_leftovers",
+                "duration_leftovers_measurement",
+                "bread_leftovers",
+                "served_leftovers",
+                "unserved_leftovers",
+                "side_leftovers",
+                "donation_frequency",
+                "donation_quantity",
+                "donation_food_type",
+                "other_waste_comments",
+            ],
+            "fields_required": [],
+        },
+        "DIVERSIFICATION": {
+            "fields": [
+                "has_diversification_plan",
+                "diversification_plan_actions",
+                "vegetarian_weekly_recurrence",
+                "vegetarian_menu_type",
+                "vegetarian_menu_bases",
+            ],
+            "fields_required": [],
+        },
+        "PLASTIQUE": {
+            "fields": [
+                "cooking_plastic_substituted",
+                "serving_plastic_substituted",
+                "plastic_bottles_substituted",
+                "plastic_tableware_substituted",
+            ],
+            "fields_required": [],
+        },
+        "INFORMATION": {
+            "fields": [
+                "communication_supports",
+                "other_communication_support",
+                "communication_support_url",
+                "communicates_on_food_plan",
+                "communicates_on_food_quality",
+                "communication_frequency",
+            ],
+            "fields_required": [],
+        },
     },
     2023: {
         "APPROVISIONNEMENT": {
@@ -462,10 +503,57 @@ TELEDECLARATION_FIELDS = {
                 "fields_required": ["valeur_totale"],
             },
         },
-        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
-        "DIVERSIFICATION": {"fields": DIVERSIFICATION_FIELDS_2021, "fields_required": []},
-        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
-        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
+        "GASPILLAGE": {
+            "fields": [
+                "has_waste_diagnostic",
+                "has_waste_plan",
+                "waste_actions",
+                "other_waste_action",
+                "has_donation_agreement",
+                "has_waste_measures",
+                "total_leftovers",
+                "duration_leftovers_measurement",
+                "bread_leftovers",
+                "served_leftovers",
+                "unserved_leftovers",
+                "side_leftovers",
+                "donation_frequency",
+                "donation_quantity",
+                "donation_food_type",
+                "other_waste_comments",
+            ],
+            "fields_required": [],
+        },
+        "DIVERSIFICATION": {
+            "fields": [
+                "has_diversification_plan",
+                "diversification_plan_actions",
+                "vegetarian_weekly_recurrence",
+                "vegetarian_menu_type",
+                "vegetarian_menu_bases",
+            ],
+            "fields_required": [],
+        },
+        "PLASTIQUE": {
+            "fields": [
+                "cooking_plastic_substituted",
+                "serving_plastic_substituted",
+                "plastic_bottles_substituted",
+                "plastic_tableware_substituted",
+            ],
+            "fields_required": [],
+        },
+        "INFORMATION": {
+            "fields": [
+                "communication_supports",
+                "other_communication_support",
+                "communication_support_url",
+                "communicates_on_food_plan",
+                "communicates_on_food_quality",
+                "communication_frequency",
+            ],
+            "fields_required": [],
+        },
     },
     2024: {
         "APPROVISIONNEMENT": {
@@ -606,14 +694,59 @@ TELEDECLARATION_FIELDS = {
                 "fields_required": ["valeur_totale"],
             },
         },
-        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
+        "GASPILLAGE": {
+            "fields": [
+                "has_waste_diagnostic",
+                "has_waste_plan",
+                "waste_actions",
+                "other_waste_action",
+                "has_donation_agreement",
+                "has_waste_measures",
+                "total_leftovers",
+                "duration_leftovers_measurement",
+                "bread_leftovers",
+                "served_leftovers",
+                "unserved_leftovers",
+                "side_leftovers",
+                "donation_frequency",
+                "donation_quantity",
+                "donation_food_type",
+                "other_waste_comments",
+            ],
+            "fields_required": [],
+        },
         "DIVERSIFICATION": {
-            "fields": DIVERSIFICATION_FIELDS_2024,
+            "fields": [
+                "has_diversification_plan",
+                "diversification_plan_actions",
+                "service_type",
+                "vegetarian_weekly_recurrence",
+                "vegetarian_menu_type",
+                "vegetarian_menu_bases",
+            ],
             "fields_required": [],
             "fields_added": ["service_type"],
         },
-        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
-        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
+        "PLASTIQUE": {
+            "fields": [
+                "cooking_plastic_substituted",
+                "serving_plastic_substituted",
+                "plastic_bottles_substituted",
+                "plastic_tableware_substituted",
+            ],
+            "fields_required": [],
+        },
+        "INFORMATION": {
+            "fields": [
+                "communication_supports",
+                "other_communication_support",
+                "communication_support_url",
+                "communicates_on_food_plan",
+                "communicates_on_food_quality",
+                "communication_frequency",
+            ],
+            "fields_required": [],
+        },
     },
     2025: {
         "APPROVISIONNEMENT": {
@@ -900,10 +1033,58 @@ TELEDECLARATION_FIELDS = {
                 ],
             },
         },
-        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
-        "DIVERSIFICATION": {"fields": DIVERSIFICATION_FIELDS_2024, "fields_required": []},
-        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
-        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
+        "GASPILLAGE": {
+            "fields": [
+                "has_waste_diagnostic",
+                "has_waste_plan",
+                "waste_actions",
+                "other_waste_action",
+                "has_donation_agreement",
+                "has_waste_measures",
+                "total_leftovers",
+                "duration_leftovers_measurement",
+                "bread_leftovers",
+                "served_leftovers",
+                "unserved_leftovers",
+                "side_leftovers",
+                "donation_frequency",
+                "donation_quantity",
+                "donation_food_type",
+                "other_waste_comments",
+            ],
+            "fields_required": [],
+        },
+        "DIVERSIFICATION": {
+            "fields": [
+                "has_diversification_plan",
+                "diversification_plan_actions",
+                "service_type",
+                "vegetarian_weekly_recurrence",
+                "vegetarian_menu_type",
+                "vegetarian_menu_bases",
+            ],
+            "fields_required": [],
+        },
+        "PLASTIQUE": {
+            "fields": [
+                "cooking_plastic_substituted",
+                "serving_plastic_substituted",
+                "plastic_bottles_substituted",
+                "plastic_tableware_substituted",
+            ],
+            "fields_required": [],
+        },
+        "INFORMATION": {
+            "fields": [
+                "communication_supports",
+                "other_communication_support",
+                "communication_support_url",
+                "communicates_on_food_plan",
+                "communicates_on_food_quality",
+                "communication_frequency",
+            ],
+            "fields_required": [],
+        },
     },
     2026: {
         "APPROVISIONNEMENT": {
@@ -1310,10 +1491,58 @@ TELEDECLARATION_FIELDS = {
                 ],
             },
         },
-        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
-        "DIVERSIFICATION": {"fields": DIVERSIFICATION_FIELDS_2024, "fields_required": []},
-        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
-        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
+        "GASPILLAGE": {
+            "fields": [
+                "has_waste_diagnostic",
+                "has_waste_plan",
+                "waste_actions",
+                "other_waste_action",
+                "has_donation_agreement",
+                "has_waste_measures",
+                "total_leftovers",
+                "duration_leftovers_measurement",
+                "bread_leftovers",
+                "served_leftovers",
+                "unserved_leftovers",
+                "side_leftovers",
+                "donation_frequency",
+                "donation_quantity",
+                "donation_food_type",
+                "other_waste_comments",
+            ],
+            "fields_required": [],
+        },
+        "DIVERSIFICATION": {
+            "fields": [
+                "has_diversification_plan",
+                "diversification_plan_actions",
+                "service_type",
+                "vegetarian_weekly_recurrence",
+                "vegetarian_menu_type",
+                "vegetarian_menu_bases",
+            ],
+            "fields_required": [],
+        },
+        "PLASTIQUE": {
+            "fields": [
+                "cooking_plastic_substituted",
+                "serving_plastic_substituted",
+                "plastic_bottles_substituted",
+                "plastic_tableware_substituted",
+            ],
+            "fields_required": [],
+        },
+        "INFORMATION": {
+            "fields": [
+                "communication_supports",
+                "other_communication_support",
+                "communication_support_url",
+                "communicates_on_food_plan",
+                "communicates_on_food_quality",
+                "communication_frequency",
+            ],
+            "fields_required": [],
+        },
     },
 }
 
