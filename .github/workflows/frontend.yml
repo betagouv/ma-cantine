@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     # Skip if PR is in draft
     if: ${{ !github.event.pull_request.draft }}
+    timeout-minutes: 15  # default: 360 (6 hours)
 
     steps:
       - uses: actions/checkout@v4
