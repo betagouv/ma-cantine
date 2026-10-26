@@ -1,9 +1,9 @@
 [
-  "10 4,10,16,22 * * * $ROOT/clevercloud/cron.sh canteen_fill_declaration_donnees_year_field",
-  "20 22 * * * $ROOT/clevercloud/cron.sh update_user_data",
-  "30 22 * * * $ROOT/clevercloud/cron.sh update_brevo_contacts --prod-only",
-  "0 23 * * * $ROOT/clevercloud/cron.sh export_dataset_raw_analysis --prod-only",
-  "30 23 * * * $ROOT/clevercloud/cron.sh dbt_run --prod-only",
-  "0 0 * * * $ROOT/clevercloud/cron.sh export_dataset_canteen_opendata --prod-only",
-  "0 1 * * * $ROOT/clevercloud/cron.sh delete_old_historical_records"
+  "10 4,10,16,22 * * * $ROOT/clevercloud/cron.sh canteen_fill_declaration_donnees_year_field --year 2025",
+  "20 22 * * * $ROOT/clevercloud/cron.sh user_update_data",
+  "30 22 * * * $ROOT/clevercloud/cron.sh --prod-only user_update_brevo_contacts",
+  "0 23 * * * $ROOT/clevercloud/cron.sh --prod-only export_dataset --model Raw --destination analysis",
+  "30 23 * * * $ROOT/clevercloud/cron.sh --prod-only dbt_run",
+  "0 0 * * * $ROOT/clevercloud/cron.sh --prod-only export_dataset --model Canteen --destination opendata",
+  "0 1 * * * $ROOT/clevercloud/cron.sh history_delete_old_records"
 ]

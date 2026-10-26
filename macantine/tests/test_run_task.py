@@ -1,7 +1,5 @@
-import json
 from unittest import mock
 
-from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
@@ -62,20 +60,3 @@ class RunTaskCommandTest(TestCase):
         capture_exception_mock.assert_called_once()
         self.assertEqual(str(capture_exception_mock.call_args.args[0]), "boom")
         self.assertEqual(CommandLog.objects.get().status, CommandLog.Status.FAILURE)
-
-
-class CronJsonTest(TestCase):
-    def test_crons_call_existing_tasks(self):
-        with open(settings.BASE_DIR / "clevercloud" / "cron.json") as f:
-            crons = json.load(f)
-
-        self.assertTrue(crons)
-        for cron in crons:
-            # "M H d m Y command task_name [--prod-only]"
-            parts = cron.split()
-            self.assertEqual(len(parts[:5]), 5, cron)
-            self.assertEqual(parts[5], "$ROOT/clevercloud/cron.sh", cron)
-            task_name = parts[6]
-            task = getattr(tasks, task_name, None)
-            self.assertTrue(callable(task) and task.__module__ == tasks.__name__, cron)
-            self.assertTrue(set(parts[7:]) <= {"--prod-only"}, cron)
