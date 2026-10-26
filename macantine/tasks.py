@@ -282,42 +282,9 @@ def export_dataset_canteen_opendata():
 # DBT (Metabase)
 
 
-def _invoke_dbt(command: str, dbt_project_dir: str):
-    # imported here: dbt is heavy, and importing it at module level breaks the (lazy) imports of this module
-    from dbt.cli.main import dbtRunner
-
-    target = "prod" if settings.ENVIRONMENT == "prod" else "dev"
-    result = dbtRunner().invoke(
-        [
-            command,
-            "--target",
-            target,
-            "--project-dir",
-            dbt_project_dir,
-            "--profiles-dir",
-            dbt_project_dir,
-        ]
-    )
-    if not result.success:
-        raise result.exception or RuntimeError(f"dbt {command} failed")
-
-
 @app.task()
 def dbt_run():
     """
-    Run dbt models against the analytics data warehouse (Metabase).
-    Depends on export_dataset_raw_analysis having populated the *_raw source tables.
+    See the dbt_run command
     """
-    logger.info("Starting dbt_run task")
-    start = time.time()
-
-    dbt_project_dir = str(settings.BASE_DIR / "dbt")
-    # dbt_packages/ isn't committed (see dbt/.gitignore), so packages must be
-    # (re)installed before every run.
-    _invoke_dbt("deps", dbt_project_dir)
-    _invoke_dbt("run", dbt_project_dir)
-
-    end = time.time()
-    message = f"dbt run completed in {end - start:.2f} seconds"
-    logger.info(message)
-    return message
+    call_command("dbt_run")
