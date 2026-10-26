@@ -10,6 +10,8 @@ from data.models import EventLog
 
 DJANGO_DEFAULT_OPTIONS = {"no_color", "settings", "traceback", "verbosity", "pythonpath", "force_color", "skip_checks"}
 EVENT_LOG_MESSAGE_MAX_LENGTH = 1000
+TRIGGER_CRON = "cron"
+TRIGGER_MANUAL = "manual"
 
 
 class MaCantineBaseCommand(BaseCommand):
@@ -19,8 +21,21 @@ class MaCantineBaseCommand(BaseCommand):
         - input_data: captures args (positional) & options (named)
         - output_data: captures INFO-level logs and above
     - creates an EventLog entry (category COMMAND)
-        - data: args, options, seconds & message (the error, if the command failed)
+        - data: args, options, trigger, seconds & message (the error, if the command failed)
+
+    Every command gets a --trigger option: "cron" for the scheduled runs (clevercloud/cron.json), "manual" by default
     """
+
+    def create_parser(self, prog_name, subcommand, **kwargs):
+        parser = super().create_parser(prog_name, subcommand, **kwargs)
+        parser.add_argument(
+            "--trigger",
+            type=str,
+            choices=[TRIGGER_CRON, TRIGGER_MANUAL],
+            default=TRIGGER_MANUAL,
+            help="How the command was started: cron (scheduled run) or manual (default).",
+        )
+        return parser
 
     def execute(self, *args, **options):
         # init
@@ -72,6 +87,7 @@ class MaCantineBaseCommand(BaseCommand):
             status=EventLog.Status.FAILURE if error else EventLog.Status.SUCCESS,
             data={
                 **input_data,
+                "trigger": input_data["options"].get("trigger"),
                 "seconds": round((end_date - start_date).total_seconds(), 2),
                 "message": str(error)[:EVENT_LOG_MESSAGE_MAX_LENGTH] if error else None,
             },
