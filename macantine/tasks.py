@@ -1,7 +1,6 @@
 import logging
 import time
 
-from django.conf import settings
 from django.core.management import call_command
 from oauth2_provider.models import get_access_token_model, get_application_model, get_refresh_token_model
 
@@ -165,14 +164,10 @@ def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
 
 @app.task()
 def delete_old_historical_records():
-    logger.info("Starting delete_old_historical_records task")
-
-    if not settings.MAX_DAYS_HISTORICAL_RECORDS:
-        logger.info("Environment variable MAX_DAYS_HISTORICAL_RECORDS not set. Old history items will not be removed.")
-        return
-
-    logger.info(f"History items older than {settings.MAX_DAYS_HISTORICAL_RECORDS} days will be removed.")
-    call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
+    """
+    See the history_delete_old_records command
+    """
+    call_command("history_delete_old_records")
 
 
 @app.task()
