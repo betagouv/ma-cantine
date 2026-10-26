@@ -1,7 +1,7 @@
 {% load static %}
 <html>
 
-<head>{% include "./style.html" %}</head>
+<head>{% include "./blocks/style.html" %}</head>
 
 <body>
   <div>
@@ -16,7 +16,7 @@
     {{ date|date:"l j F Y" }} par
     {{ applicant }}
   </h2>
-  {% include "./canteen.html" %}
+  {% include "./blocks/canteen.html" %}
 
   {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
   <h3>Vous avez choisi la télédéclaration
@@ -27,7 +27,7 @@
     L'arrêté du 14 septembre 2022 rend obligatoire la saisie et la transmission des données d'achat de l'année n-1 à
     l'administration.
   </p>
-  {% include "./diagnostic_mode_description.html" %}
+  {% include "./blocks/diagnostic_mode_description.html" %}
   <p>
     Pour l'année
     {{ year }}, les données suivantes ont été télédéclarées le
@@ -36,21 +36,21 @@
   <!-- SIMPLIFIED DECLARATION -->
 
   {% if teledeclaration_mode != "SATELLITE_WITHOUT_APPRO" %}
-  {% include "./measure_quality_common.html" %}
+  {% include "./blocks/measure_quality_common.html" %}
   {% if not diagnostic_type == "détaillée" %}
-  {% include "./measure_quality_france.html" %}
+  {% include "./blocks/measure_quality_france.html" %}
   {% else %}
   <!-- COMPLETE DECLARATION -->
-  {% include "./measure_quality_all_families.html" %}
+  {% include "./blocks/measure_quality_all_families.html" %}
   {% endif %}
   {% endif %}
 
   {% if teledeclaration_mode != "CENTRAL_APPRO" %}
   <div class="other-measures">
-    {% include "./measure_waste.html" %}
-    {% include "./measure_diversification.html" %}
-    {% include "./measure_plastic.html" %}
-    {% include "./measure_info.html" %}
+    {% include "./blocks/measure_waste.html" %}
+    {% include "./blocks/measure_diversification.html" %}
+    {% include "./blocks/measure_plastic.html" %}
+    {% include "./blocks/measure_info.html" %}
   </div>
   {% endif %}
   <hr />
