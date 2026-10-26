@@ -71,8 +71,9 @@ models:
       Category API: write requests (POST, PUT, PATCH, DELETE) made with an OAuth2 token,
       successful or failed, never GET; name = method + route in the OpenAPI format.
       Category IMPORT: file imports, successful or failed; name = import type.
+      Category COMMAND: manage.py command runs, successful or failed; name = command name.
       History was backfilled (eventlog_backfill_* commands, failed imports from
-      data_importfailure): see is_backfilled.
+      data_importfailure, commands from common_commandlog): see is_backfilled.
     columns:
       - name: event_log_id
         description: Primary key.
@@ -80,10 +81,10 @@ models:
           - unique
           - not_null
       - name: category
-        description: API or IMPORT.
+        description: API, IMPORT or COMMAND.
         tests:
           - accepted_values:
-              values: ['API', 'IMPORT']
+              values: ['API', 'IMPORT', 'COMMAND']
       - name: status
         description: SUCCESS or FAILURE.
         tests:
@@ -98,10 +99,17 @@ models:
         description: >
           Requested path. For a creation (POST on a collection route), it does not contain
           the id of the created object.
+      - name: command_trigger
+        description: >
+          COMMAND only: cron (scheduled run, clevercloud/cron.json) or manual;
+          empty for the commands migrated from common_commandlog.
+        tests:
+          - accepted_values:
+              values: ['cron', 'manual']
       - name: is_backfilled
         description: >
           True if the event was rebuilt afterwards (eventlog_backfill_* commands) or migrated
-          from data_importfailure; false for events logged live.
+          from data_importfailure or common_commandlog; false for events logged live.
 
   - name: stg_oauth_applications
     description: One row per OAuth2 application (API client software).
