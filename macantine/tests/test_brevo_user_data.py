@@ -26,7 +26,7 @@ class BrevoUserDataTest(TestCase):
 
         # run task to fill the User.data field
         call_command("user_update_data")
-        tasks.update_brevo_contacts()
+        call_command("user_update_brevo_contacts")
         batch_update_mock.assert_not_called()
         create_contact_mock.assert_called_once()
 
@@ -46,7 +46,7 @@ class BrevoUserDataTest(TestCase):
 
         # run task to fill the User.data field
         call_command("user_update_data")
-        tasks.update_brevo_contacts()
+        call_command("user_update_brevo_contacts")
         create_contact_mock.assert_called_once()
         batch_update_mock.assert_not_called()
 
@@ -66,7 +66,7 @@ class BrevoUserDataTest(TestCase):
 
         # run task to fill the User.data field
         call_command("user_update_data")
-        tasks.update_brevo_contacts()
+        call_command("user_update_brevo_contacts")
         batch_update_mock.assert_not_called()
         create_contact_mock.assert_called_once()
 
@@ -93,7 +93,7 @@ class BrevoUserDataTest(TestCase):
         # run tasks to fill the Canteen.declaration_donnees_year & User.data fields
         tasks.canteen_fill_declaration_donnees_year_field()
         call_command("user_update_data")
-        tasks.update_brevo_contacts()
+        call_command("user_update_brevo_contacts")
         batch_update_mock.assert_not_called()
         create_contact_mock.assert_called_once()
 
@@ -130,7 +130,7 @@ class BrevoUserDataTest(TestCase):
         # run tasks to fill the Canteen.declaration_donnees_year & User.data fields
         tasks.canteen_fill_declaration_donnees_year_field()
         call_command("user_update_data")
-        tasks.update_brevo_contacts()
+        call_command("user_update_brevo_contacts")
         create_contact_mock.assert_called_once()
         batch_update_mock.assert_not_called()
 
@@ -172,7 +172,7 @@ class BrevoUserDataTest(TestCase):
         # run tasks to fill the Canteen.declaration_donnees_year & User.data fields
         tasks.canteen_fill_declaration_donnees_year_field()
         call_command("user_update_data")
-        tasks.update_brevo_contacts()
+        call_command("user_update_brevo_contacts")
         self.assertEqual(create_contact_mock.call_count, 2)
         batch_update_mock.assert_not_called()
 
