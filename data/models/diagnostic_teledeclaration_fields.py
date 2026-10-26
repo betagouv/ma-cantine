@@ -1,6 +1,6 @@
 TELEDECLARATION_FIELDS = {
     2021: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {"fields": ["valeur_totale", "valeur_bio", "valeur_siqo"], "fields_required": ["valeur_totale"]},
             "COMPLETE": {
                 "fields": [
@@ -123,7 +123,7 @@ TELEDECLARATION_FIELDS = {
         },
     },
     2022: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {
                 "fields": [
                     "valeur_totale",
@@ -263,7 +263,7 @@ TELEDECLARATION_FIELDS = {
         },
     },
     2023: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {
                 "fields": [
                     "valeur_totale",
@@ -403,7 +403,7 @@ TELEDECLARATION_FIELDS = {
         },
     },
     2024: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {
                 "fields": [
                     "valeur_totale",
@@ -543,7 +543,7 @@ TELEDECLARATION_FIELDS = {
         },
     },
     2025: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {
                 "fields": [
                     "valeur_totale",
@@ -829,7 +829,7 @@ TELEDECLARATION_FIELDS = {
         },
     },
     2026: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {
                 "fields": [
                     "nombre_repas_an",
@@ -1241,14 +1241,14 @@ def _get_teledeclaration_fields(year, diagnostic_type, required=False):
     year = int(year) if year else None
     if year not in TELEDECLARATION_FIELDS:
         raise ValueError(f"Field 'year' expected one of {list(TELEDECLARATION_FIELDS.keys())} but got '{year}'.")
-    if diagnostic_type not in TELEDECLARATION_FIELDS[year]["APPRO"]:
-        valid_diagnostic_types = list(TELEDECLARATION_FIELDS[year]["APPRO"].keys())
+    if diagnostic_type not in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
+        valid_diagnostic_types = list(TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"].keys())
         raise ValueError(
             f"Field 'diagnostic_type' expected one of {valid_diagnostic_types} but got '{diagnostic_type}'."
         )
     if required:
-        return TELEDECLARATION_FIELDS[year]["APPRO"][diagnostic_type]["fields_required"]
-    return TELEDECLARATION_FIELDS[year]["APPRO"][diagnostic_type]["fields"]
+        return TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"][diagnostic_type]["fields_required"]
+    return TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"][diagnostic_type]["fields"]
 
 
 def get_teledeclaration_fields_all(year, diagnostic_type):
