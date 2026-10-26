@@ -25,7 +25,7 @@ dependencies = [
     "django-simple-history==3.13.0",
     "django-storages[s3]==1.14.6",
     "django-vite==3.2.0",
-    "djangorestframework==3.18.1",
+    "djangorestframework==3.18.2",
     "djangorestframework-camel-case==1.4.2",
     "drf-base64==2.0",
     "drf-excel==2.6.0",
