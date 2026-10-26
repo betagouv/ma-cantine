@@ -13,7 +13,7 @@ from data.factories import (
 from data.models import Canteen, EventLog, Sector, User
 from macantine.etl.analysis import ETL_ANALYSIS_RAW
 from macantine.etl.data_ware_house import copy_into_table, get_column_types
-from macantine.tasks import get_raw_analysis_datasets
+from macantine.etl.datasets import get_raw_analysis_datasets
 
 
 def copy_into_test_db(file, table, column_types):

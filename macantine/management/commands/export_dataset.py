@@ -1,21 +1,39 @@
-from django.core.management.base import BaseCommand
+import logging
 
-from macantine.tasks import (
-    export_dataset_canteen_opendata,
-    export_dataset_td_opendata,
-    export_dataset_raw_analysis,
+from django.core.management.base import CommandError
+
+from common.utils.commands import MaCantineBaseCommand
+from macantine.etl.datasets import (
+    export_datasets,
+    get_canteen_opendata_datasets,
+    get_raw_analysis_datasets,
+    get_teledeclaration_opendata_datasets,
 )
 
+logger = logging.getLogger(__name__)
 
-class Command(BaseCommand):
+# (model, destination) -> function returning the datasets to export
+DATASETS = {
+    ("Canteen", "opendata"): get_canteen_opendata_datasets,
+    ("Teledeclaration", "opendata"): get_teledeclaration_opendata_datasets,
+    ("Raw", "analysis"): get_raw_analysis_datasets,
+}
+
+
+class Command(MaCantineBaseCommand):
     """
-    Exemples:
+    Export datasets (see macantine/etl/datasets.py)
+    - Canteen (opendata): the canteens, to data.gouv.fr
+    - Teledeclaration (opendata): the teledeclarations by year, to data.gouv.fr
+    - Raw (analysis): the raw tables, to the analytics data warehouse (Metabase, dbt sources)
+
+    Usage:
     - python manage.py export_dataset --model Canteen --destination opendata
     - python manage.py export_dataset --model Teledeclaration --destination opendata
     - python manage.py export_dataset --model Raw --destination analysis
     """
 
-    help = "Command to export datasets. 3 choices: Cantines (opendata) ; TD par années (opendata) ; Raw (analysis)"
+    help = "Export datasets. 3 choices: Cantines (opendata) ; TD par années (opendata) ; Raw (analysis)"
 
     def add_arguments(self, parser):
         parser.add_argument(
@@ -39,12 +57,10 @@ class Command(BaseCommand):
         model = options["model"]
         destination = options["destination"]
 
-        if model == "Canteen":
-            if destination == "opendata":
-                export_dataset_canteen_opendata()
-        elif model == "Teledeclaration":
-            if destination == "opendata":
-                export_dataset_td_opendata()
-        elif model == "Raw":
-            if destination == "analysis":
-                export_dataset_raw_analysis()
+        get_datasets = DATASETS.get((model, destination))
+        if get_datasets is None:
+            choices = ", ".join(f"{m} ({d})" for m, d in DATASETS)
+            raise CommandError(f"No dataset for {model} ({destination}). Choices: {choices}")
+
+        logger.info(f"Start task: export_dataset {model} ({destination})")
+        export_datasets(get_datasets())

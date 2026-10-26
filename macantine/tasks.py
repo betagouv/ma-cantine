@@ -1,8 +1,6 @@
 import logging
-import time
 
 from django.core.management import call_command
-from oauth2_provider.models import get_access_token_model, get_application_model, get_refresh_token_model
 
 from api.views.utils import update_change_reason
 from common.api.datagouv import (
@@ -16,15 +14,9 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models import Canteen, Diagnostic, EventLog, User, WasteMeasurement, Purchase, Oauth2ProviderApplicationExtra
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
 from .celery import app
-from .etl.analysis import ETL_ANALYSIS_RAW
-from .etl.open_data import (
-    ETL_OPEN_DATA_CANTEEN,
-    ETL_OPEN_DATA_TELEDECLARATIONS,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -180,97 +172,28 @@ def canteen_fill_declaration_donnees_year_field():
     return result
 
 
-def export_datasets(datasets: dict):
-    start = time.time()
-
-    for key, etl in datasets.items():
-        logger.info(f"Starting {key} dataset extraction")
-        etl.extract_dataset()
-        etl.transform_dataset()
-        etl.load_dataset()
-
-    end = time.time()
-    result = f"Exported {len(datasets)} datasets in {end - start:.2f} seconds"
-    logger.info(result)
-    return result
-
-
-def get_raw_analysis_datasets():
-    return {
-        "diagnostics_raw_analysis": ETL_ANALYSIS_RAW("diagnostics_raw", Diagnostic.all_objects.all()),
-        "canteens_raw_analysis": ETL_ANALYSIS_RAW("canteens_raw", Canteen.all_objects.all()),
-        "purchases_raw_analysis": ETL_ANALYSIS_RAW("purchases_raw", Purchase.all_objects.all()),
-        "users_raw_analysis": ETL_ANALYSIS_RAW("users_raw", User.objects.all(), exclude_columns=["password"]),
-        "canteen_managers_raw_analysis": ETL_ANALYSIS_RAW(
-            "canteen_managers_raw", Canteen.managers.through.objects.all()
-        ),
-        "waste_measurements_raw_analysis": ETL_ANALYSIS_RAW("waste_measurements_raw", WasteMeasurement.objects.all()),
-        "event_logs_raw_analysis": ETL_ANALYSIS_RAW("event_logs_raw", EventLog.objects.all()),
-        # OAuth2 (API): never export secrets & tokens
-        "oauth2_applications_raw_analysis": ETL_ANALYSIS_RAW(
-            "oauth2_applications_raw", get_application_model().objects.all(), exclude_columns=["client_secret"]
-        ),
-        "oauth2_applications_extra_raw_analysis": ETL_ANALYSIS_RAW(
-            "oauth2_applications_extra_raw", Oauth2ProviderApplicationExtra.objects.all()
-        ),
-        "oauth2_access_tokens_raw_analysis": ETL_ANALYSIS_RAW(
-            "oauth2_access_tokens_raw",
-            get_access_token_model().objects.all(),
-            exclude_columns=["token", "token_checksum"],
-        ),
-        "oauth2_refresh_tokens_raw_analysis": ETL_ANALYSIS_RAW(
-            "oauth2_refresh_tokens_raw",
-            get_refresh_token_model().objects.all(),
-            exclude_columns=["token", "token_checksum"],
-        ),
-    }
-
-
 @app.task()
 def export_dataset_raw_analysis():
     """
-    Export the raw datasets for analysis (Metabase, dbt sources)
+    See the export_dataset command
     """
-    logger.info("Starting export_dataset_raw_analysis task")
-
-    result = export_datasets(get_raw_analysis_datasets())
-
-    return result
+    call_command("export_dataset", model="Raw", destination="analysis")
 
 
 @app.task()
 def export_dataset_td_opendata():
     """
-    Export the Teledeclaration datasets for opendata (data.gouv.fr) (1 per year)
-    This datasets are updated every year by adding a new campaign
+    See the export_dataset command
     """
-    logger.info("Starting export_dataset_td_opendata task")
-
-    datasets = {
-        "teledeclarations_2021_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
-        "teledeclarations_2022_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
-        "teledeclarations_2023_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
-        "teledeclarations_2024_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2024),
-        # "teledeclarations_2025_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2025),  # wait for report to be published
-    }
-    result = export_datasets(datasets)
-
-    return result
+    call_command("export_dataset", model="Teledeclaration", destination="opendata")
 
 
 @app.task()
 def export_dataset_canteen_opendata():
     """
-    Export the Canteen datasets for opendata (data.gouv.fr)
+    See the export_dataset command
     """
-    logger.info("Starting export_dataset_canteen_opendata task")
-
-    datasets = {
-        "canteens_opendata": ETL_OPEN_DATA_CANTEEN(),
-    }
-    result = export_datasets(datasets)
-
-    return result
+    call_command("export_dataset", model="Canteen", destination="opendata")
 
 
 #########################################################
