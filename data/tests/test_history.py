@@ -7,7 +7,6 @@ from django.db.models.signals import post_save
 
 from data.models.canteen import Canteen, fill_geo_fields_from_siret
 from data.factories import CanteenFactory
-from macantine import tasks
 
 
 class HistoryModelTest(TestCase):
@@ -106,7 +105,7 @@ class HistoryModelTest(TestCase):
         creation_history_item.history_date = creation_history_item.history_date - timedelta(days=2)
         creation_history_item.save()
 
-        tasks.delete_old_historical_records()
+        call_command("history_delete_old_records")
 
         # Verify the creation historical record does not exist anymore
         self.assertFalse(canteen.history.filter(history_type="+").exists())
@@ -129,7 +128,7 @@ class HistoryModelTest(TestCase):
         creation_history_item.history_date = creation_history_item.history_date - timedelta(days=160)
         creation_history_item.save()
 
-        tasks.delete_old_historical_records()
+        call_command("history_delete_old_records")
 
         # Verify all history items are still there
         self.assertEqual(canteen.history.count(), history_count)
