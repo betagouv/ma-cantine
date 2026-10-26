@@ -1,6 +1,8 @@
 import logging
 import io
 
+import sentry_sdk
+
 from django.utils import timezone
 from django.core.management.base import BaseCommand
 
@@ -61,11 +63,23 @@ class MaCantineBaseCommand(BaseCommand):
         except Exception as e:
             log_contents = log_capture.getvalue() + f"\nERROR: {str(e)}"
             self._log_run(command_name, input_data, start_date, log_contents, error=e)
+            self._send_to_sentry(command_name, e)
             raise e
         finally:
             root_logger.removeHandler(handler)
             root_logger.setLevel(original_level)
             log_capture.close()
+
+    @staticmethod
+    def _send_to_sentry(command_name, error):
+        """
+        Management commands are not covered by the Sentry Django integration
+        The process may exit right after (e.g. crons, see clevercloud/cron.sh): make sure the event is sent
+        """
+        with sentry_sdk.new_scope() as scope:
+            scope.set_tag("command", command_name)
+            sentry_sdk.capture_exception(error)
+        sentry_sdk.flush()
 
     @staticmethod
     def _log_run(command_name, input_data, start_date, log_contents, error=None):

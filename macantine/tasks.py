@@ -1,6 +1,5 @@
 import logging
 
-from django.core.management import call_command
 
 from api.views.utils import update_change_reason
 from common.api.datagouv import (
@@ -16,32 +15,14 @@ from common.api.decoupage_administratif import (
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
-from .celery import app
 
 logger = logging.getLogger(__name__)
 
 
 #########################################################
-# User data
+# Canteen geo data (called on the Canteen post_save, see data/models/canteen.py)
 
 
-@app.task()
-def update_user_data():
-    """
-    See the user_update_data command
-    """
-    call_command("user_update_data")
-
-
-@app.task()
-def update_brevo_contacts():
-    """
-    See the user_update_brevo_contacts command
-    """
-    call_command("user_update_brevo_contacts")
-
-
-@app.task()
 def update_canteen_geo_fields_from_siret(canteen):
     """
     Input: Canteen with siret but no city_insee_code
@@ -80,7 +61,6 @@ def update_canteen_geo_fields_from_siret(canteen):
     return True
 
 
-@app.task()
 def update_canteen_geo_data_from_insee_code(canteen):
     """
     Similar to update_canteen_geo_fields_from_siret, but this time we already have the city_insee_code.
@@ -152,57 +132,3 @@ def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
         canteen.save(skip_validations=True)
         update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
         return True
-
-
-@app.task()
-def delete_old_historical_records():
-    """
-    See the history_delete_old_records command
-    """
-    call_command("history_delete_old_records")
-
-
-@app.task()
-def canteen_fill_declaration_donnees_year_field():
-    logger.info("Starting canteen_fill_declaration_donnees_year_field task")
-
-    # TODO teledeclaration_campaign: update every year
-    result = call_command("canteen_fill_declaration_donnees_year_field", year=2025)
-
-    return result
-
-
-@app.task()
-def export_dataset_raw_analysis():
-    """
-    See the export_dataset command
-    """
-    call_command("export_dataset", model="Raw", destination="analysis")
-
-
-@app.task()
-def export_dataset_td_opendata():
-    """
-    See the export_dataset command
-    """
-    call_command("export_dataset", model="Teledeclaration", destination="opendata")
-
-
-@app.task()
-def export_dataset_canteen_opendata():
-    """
-    See the export_dataset command
-    """
-    call_command("export_dataset", model="Canteen", destination="opendata")
-
-
-#########################################################
-# DBT (Metabase)
-
-
-@app.task()
-def dbt_run():
-    """
-    See the dbt_run command
-    """
-    call_command("dbt_run")

@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.test import TestCase
 from django.core.management import CommandError, call_command
 
@@ -79,3 +81,17 @@ class CommandsTest(TestCase):
     def test_ma_cantine_base_command_trigger_choices(self):
         with self.assertRaises(CommandError):
             call_command("canteen_delete", "--canteen-siret-list", "92341284500011", "--trigger", "celery")
+
+    @mock.patch("common.utils.commands.sentry_sdk.capture_exception")
+    def test_ma_cantine_base_command_failure_is_sent_to_sentry(self, capture_exception_mock):
+        with self.assertRaises(CommandError):
+            call_command("export_dataset", model="Canteen", destination="analysis")
+
+        capture_exception_mock.assert_called_once()
+        self.assertIn("No dataset for Canteen (analysis)", str(capture_exception_mock.call_args.args[0]))
+
+    @mock.patch("common.utils.commands.sentry_sdk.capture_exception")
+    def test_ma_cantine_base_command_success_is_not_sent_to_sentry(self, capture_exception_mock):
+        call_command("canteen_delete", "--canteen-siret-list", "92341284500011")
+
+        capture_exception_mock.assert_not_called()
