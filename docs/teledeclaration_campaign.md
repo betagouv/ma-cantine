@@ -7,6 +7,7 @@
 * ajouter les groupes de champs dans [models/diagnostic_teledeclaration_field_groups.py](../data/models/diagnostic_teledeclaration_field_groups.py)
 * ajouter le nouveau champ `Canteen.declaration_donnees_YEAR`
 * modifier les endroits avec `# TODO teledeclaration_campaign`
+* dans [clevercloud/cron.json](../clevercloud/cron.json) : mettre à jour l'année de `canteen_fill_declaration_donnees_year_field --year YEAR` (pas de commentaire possible dans un fichier JSON)
 
 ## Pendant la campagne
 
