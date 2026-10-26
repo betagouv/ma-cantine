@@ -3,10 +3,8 @@ import time
 
 from django.conf import settings
 from django.core.management import call_command
-from django.utils import timezone
 from oauth2_provider.models import get_access_token_model, get_application_model, get_refresh_token_model
 
-import macantine.brevo as brevo
 from api.views.utils import update_change_reason
 from common.api.datagouv import (
     fetch_commune_pat_list,
@@ -44,48 +42,12 @@ def update_user_data():
     call_command("user_update_data")
 
 
-#########################################################
-# Taken from itertools recipes. Will be able to remove once we pass to
-# Python 3.12 since they added it as itertools.batched. Server is currently
-# on Python 3.11
-from itertools import islice  # noqa: E402
-
-
-def batched(iterable, n):
-    "Batch data into lists of length n. The last batch may be shorter."
-    it = iter(iterable)
-    while True:
-        batch = list(islice(it, n))
-        if not batch:
-            return
-        yield batch
-
-
-#########################################################
-
-
 @app.task()
 def update_brevo_contacts():
     """
-    Send custom information on Brevo contacts for automatisation
-    API rate limit is 10 req per second : https://developers.brevo.com/docs/api-limits
+    See the user_update_brevo_contacts command
     """
-    logger.info("Starting update_brevo_contacts task")
-    start = time.time()
-
-    logger.info("Create individually new Brevo users (allowing the update flag to be set)")
-    users_to_create_qs = User.objects.brevo_to_create()
-    brevo.create_new_brevo_contacts(users_to_create_qs, timezone.now())
-
-    logger.info("Update existing Brevo contacts by batch")
-    users_to_update_qs = User.objects.brevo_to_update()
-    chunks = batched(users_to_update_qs, brevo.CONTACT_BULK_UPDATE_SIZE)
-    brevo.update_existing_brevo_contacts(chunks, timezone.now())
-
-    end = time.time()
-    result = f"Created {users_to_create_qs.count()} and updated {users_to_update_qs.count()} contacts in {end - start:.2f} seconds"
-    logger.info(result)
-    return result
+    call_command("user_update_brevo_contacts")
 
 
 @app.task()
