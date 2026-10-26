@@ -1,3 +1,56 @@
+GASPILLAGE_FIELDS = [
+    "has_waste_diagnostic",
+    "has_waste_plan",
+    "waste_actions",
+    "other_waste_action",
+    "has_donation_agreement",
+    "has_waste_measures",
+    "total_leftovers",
+    "duration_leftovers_measurement",
+    "bread_leftovers",
+    "served_leftovers",
+    "unserved_leftovers",
+    "side_leftovers",
+    "donation_frequency",
+    "donation_quantity",
+    "donation_food_type",
+    "other_waste_comments",
+]
+
+DIVERSIFICATION_FIELDS_2021 = [
+    "has_diversification_plan",
+    "diversification_plan_actions",
+    "vegetarian_weekly_recurrence",
+    "vegetarian_menu_type",
+    "vegetarian_menu_bases",
+]
+
+# service_type added in 2024
+DIVERSIFICATION_FIELDS_2024 = [
+    "has_diversification_plan",
+    "diversification_plan_actions",
+    "service_type",
+    "vegetarian_weekly_recurrence",
+    "vegetarian_menu_type",
+    "vegetarian_menu_bases",
+]
+
+PLASTIQUE_FIELDS = [
+    "cooking_plastic_substituted",
+    "serving_plastic_substituted",
+    "plastic_bottles_substituted",
+    "plastic_tableware_substituted",
+]
+
+INFORMATION_FIELDS = [
+    "communication_supports",
+    "other_communication_support",
+    "communication_support_url",
+    "communicates_on_food_plan",
+    "communicates_on_food_quality",
+    "communication_frequency",
+]
+
 TELEDECLARATION_FIELDS = {
     2021: {
         "APPRO": {
@@ -121,6 +174,10 @@ TELEDECLARATION_FIELDS = {
                 "fields_required": ["valeur_totale"],
             },
         },
+        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
+        "DIVERSIFICATION": {"fields": DIVERSIFICATION_FIELDS_2021, "fields_required": []},
+        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
+        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
     2022: {
         "APPRO": {
@@ -261,6 +318,10 @@ TELEDECLARATION_FIELDS = {
                 "fields_required": ["valeur_totale"],
             },
         },
+        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
+        "DIVERSIFICATION": {"fields": DIVERSIFICATION_FIELDS_2021, "fields_required": []},
+        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
+        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
     2023: {
         "APPRO": {
@@ -401,6 +462,10 @@ TELEDECLARATION_FIELDS = {
                 "fields_required": ["valeur_totale"],
             },
         },
+        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
+        "DIVERSIFICATION": {"fields": DIVERSIFICATION_FIELDS_2021, "fields_required": []},
+        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
+        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
     2024: {
         "APPRO": {
@@ -541,6 +606,14 @@ TELEDECLARATION_FIELDS = {
                 "fields_required": ["valeur_totale"],
             },
         },
+        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
+        "DIVERSIFICATION": {
+            "fields": DIVERSIFICATION_FIELDS_2024,
+            "fields_required": [],
+            "fields_added": ["service_type"],
+        },
+        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
+        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
     2025: {
         "APPRO": {
@@ -827,6 +900,10 @@ TELEDECLARATION_FIELDS = {
                 ],
             },
         },
+        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
+        "DIVERSIFICATION": {"fields": DIVERSIFICATION_FIELDS_2024, "fields_required": []},
+        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
+        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
     2026: {
         "APPRO": {
@@ -1233,27 +1310,39 @@ TELEDECLARATION_FIELDS = {
                 ],
             },
         },
+        "GASPILLAGE": {"fields": GASPILLAGE_FIELDS, "fields_required": []},
+        "DIVERSIFICATION": {"fields": DIVERSIFICATION_FIELDS_2024, "fields_required": []},
+        "PLASTIQUE": {"fields": PLASTIQUE_FIELDS, "fields_required": []},
+        "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
 }
 
 
-def _get_teledeclaration_fields(year, diagnostic_type, required=False):
+def _get_teledeclaration_fields(year, diagnostic_type=None, volet="APPRO", required=False):
+    """
+    diagnostic_type (SIMPLE / COMPLETE) is only used by the APPRO volet
+    """
     year = int(year) if year else None
     if year not in TELEDECLARATION_FIELDS:
         raise ValueError(f"Field 'year' expected one of {list(TELEDECLARATION_FIELDS.keys())} but got '{year}'.")
-    if diagnostic_type not in TELEDECLARATION_FIELDS[year]["APPRO"]:
-        valid_diagnostic_types = list(TELEDECLARATION_FIELDS[year]["APPRO"].keys())
-        raise ValueError(
-            f"Field 'diagnostic_type' expected one of {valid_diagnostic_types} but got '{diagnostic_type}'."
-        )
+    if volet not in TELEDECLARATION_FIELDS[year]:
+        raise ValueError(f"Volet expected one of {list(TELEDECLARATION_FIELDS[year].keys())} but got '{volet}'.")
+    volet_fields = TELEDECLARATION_FIELDS[year][volet]
+    if volet == "APPRO":
+        if diagnostic_type not in volet_fields:
+            valid_diagnostic_types = list(volet_fields.keys())
+            raise ValueError(
+                f"Field 'diagnostic_type' expected one of {valid_diagnostic_types} but got '{diagnostic_type}'."
+            )
+        volet_fields = volet_fields[diagnostic_type]
     if required:
-        return TELEDECLARATION_FIELDS[year]["APPRO"][diagnostic_type]["fields_required"]
-    return TELEDECLARATION_FIELDS[year]["APPRO"][diagnostic_type]["fields"]
+        return volet_fields["fields_required"]
+    return volet_fields["fields"]
 
 
-def get_teledeclaration_fields_all(year, diagnostic_type):
-    return _get_teledeclaration_fields(year, diagnostic_type, required=False)
+def get_teledeclaration_fields_all(year, diagnostic_type=None, volet="APPRO"):
+    return _get_teledeclaration_fields(year, diagnostic_type, volet=volet, required=False)
 
 
-def get_teledeclaration_fields_required(year, diagnostic_type):
-    return _get_teledeclaration_fields(year, diagnostic_type, required=True)
+def get_teledeclaration_fields_required(year, diagnostic_type=None, volet="APPRO"):
+    return _get_teledeclaration_fields(year, diagnostic_type, volet=volet, required=True)

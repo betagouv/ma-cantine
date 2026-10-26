@@ -590,6 +590,12 @@ class DiagnosticTeledeclarationFieldsCoherenceTest(APITestCase):
                 with self.subTest(year=year, diagnostic_type=diagnostic_type):
                     fields = set(get_teledeclaration_fields_all(year, diagnostic_type))
                     self.assertEqual(fields - serializer_fields, set())
+            for volet in TELEDECLARATION_FIELDS[year]:
+                if volet == "APPRO":
+                    continue
+                with self.subTest(year=year, volet=volet):
+                    fields = set(get_teledeclaration_fields_all(year, volet=volet))
+                    self.assertEqual(fields - serializer_fields, set())
 
 
 class DiagnosticDetailApiTest(APITestCase):
