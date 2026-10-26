@@ -22,6 +22,7 @@ urlpatterns = [
 ]
 urlpatterns.append(re_path(r"", include("web.urls")))
 urlpatterns.append(re_path(r"^api/v1/", include("api.urls")))
+urlpatterns.append(re_path(r"^api/v2/", include("api.urls_v2")))
 
 
 if settings.DEBUG:

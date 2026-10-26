@@ -45,6 +45,15 @@ from .diagnostic import (  # noqa: F401
     DiagnosticsToTeledeclareListView,
     EmailDiagnosticImportFileView,
 )
+from .diagnostic_v2 import (  # noqa: F401
+    DiagnosticV2ListCreateView,
+    DiagnosticV2RetrieveUpdateView,
+    DiagnosticVoletApprovisionnementV2RetrieveUpdateView,
+    DiagnosticVoletGaspillageV2RetrieveUpdateView,
+    DiagnosticVoletDiversificationV2RetrieveUpdateView,
+    DiagnosticVoletPlastiqueV2RetrieveUpdateView,
+    DiagnosticVoletInformationV2RetrieveUpdateView,
+)
 from .diagnostic_teledeclaration import (  # noqa: F401
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
