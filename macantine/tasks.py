@@ -1,6 +1,5 @@
 import logging
 
-from django.core.management import call_command
 
 from api.views.utils import update_change_reason
 from common.api.datagouv import (
@@ -21,21 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 #########################################################
-# User data
-
-
-def update_user_data():
-    """
-    See the user_update_data command
-    """
-    call_command("user_update_data")
-
-
-def update_brevo_contacts():
-    """
-    See the user_update_brevo_contacts command
-    """
-    call_command("user_update_brevo_contacts")
+# Canteen geo data (called on the Canteen post_save, see data/models/canteen.py)
 
 
 def update_canteen_geo_fields_from_siret(canteen):
@@ -147,51 +132,3 @@ def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
         canteen.save(skip_validations=True)
         update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
         return True
-
-
-def delete_old_historical_records():
-    """
-    See the history_delete_old_records command
-    """
-    call_command("history_delete_old_records")
-
-
-def canteen_fill_declaration_donnees_year_field():
-    logger.info("Starting canteen_fill_declaration_donnees_year_field task")
-
-    # TODO teledeclaration_campaign: update every year
-    result = call_command("canteen_fill_declaration_donnees_year_field", year=2025)
-
-    return result
-
-
-def export_dataset_raw_analysis():
-    """
-    See the export_dataset command
-    """
-    call_command("export_dataset", model="Raw", destination="analysis")
-
-
-def export_dataset_td_opendata():
-    """
-    See the export_dataset command
-    """
-    call_command("export_dataset", model="Teledeclaration", destination="opendata")
-
-
-def export_dataset_canteen_opendata():
-    """
-    See the export_dataset command
-    """
-    call_command("export_dataset", model="Canteen", destination="opendata")
-
-
-#########################################################
-# DBT (Metabase)
-
-
-def dbt_run():
-    """
-    See the dbt_run command
-    """
-    call_command("dbt_run")

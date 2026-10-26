@@ -7,7 +7,6 @@ from freezegun import freeze_time
 
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic
-from macantine import tasks
 
 
 class BrevoUserDataTest(TestCase):
@@ -91,7 +90,7 @@ class BrevoUserDataTest(TestCase):
             DiagnosticFactory(year=2025, canteen=canteen_site).teledeclare(applicant=user_with_canteen)
 
         # run tasks to fill the Canteen.declaration_donnees_year & User.data fields
-        tasks.canteen_fill_declaration_donnees_year_field()
+        call_command("canteen_fill_declaration_donnees_year_field", year=2025)
         call_command("user_update_data")
         call_command("user_update_brevo_contacts")
         batch_update_mock.assert_not_called()
@@ -128,7 +127,7 @@ class BrevoUserDataTest(TestCase):
         )
 
         # run tasks to fill the Canteen.declaration_donnees_year & User.data fields
-        tasks.canteen_fill_declaration_donnees_year_field()
+        call_command("canteen_fill_declaration_donnees_year_field", year=2025)
         call_command("user_update_data")
         call_command("user_update_brevo_contacts")
         create_contact_mock.assert_called_once()
@@ -170,7 +169,7 @@ class BrevoUserDataTest(TestCase):
             ).teledeclare(applicant=user_with_canteen_groupe)
 
         # run tasks to fill the Canteen.declaration_donnees_year & User.data fields
-        tasks.canteen_fill_declaration_donnees_year_field()
+        call_command("canteen_fill_declaration_donnees_year_field", year=2025)
         call_command("user_update_data")
         call_command("user_update_brevo_contacts")
         self.assertEqual(create_contact_mock.call_count, 2)
