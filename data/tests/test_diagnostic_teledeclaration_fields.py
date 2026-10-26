@@ -4,7 +4,6 @@ from data.models import Diagnostic
 from data.models.diagnostic_teledeclaration_fields import (
     TELEDECLARATION_FIELDS,
     get_teledeclaration_fields_all,
-    get_teledeclaration_fields_all_years,
     get_teledeclaration_fields_required,
 )
 
@@ -46,22 +45,16 @@ class TeledeclarationFieldsTest(SimpleTestCase):
                 )
                 self.assertEqual(get_teledeclaration_fields_required(2025, volet=volet), [])
 
-    def test_get_teledeclaration_fields_all_years(self):
-        approvisionnement_fields = get_teledeclaration_fields_all_years("APPROVISIONNEMENT")
-        self.assertEqual(len(approvisionnement_fields), len(set(approvisionnement_fields)))  # no duplicates
-        self.assertIn("valeur_bio", approvisionnement_fields)  # SIMPLE
-        self.assertIn("valeur_viandes_volailles_aocaop", approvisionnement_fields)  # COMPLETE, since 2026
-        self.assertIn("valeur_viandes_volailles_aocaop_igp_stg", approvisionnement_fields)  # COMPLETE, until 2025
-        # most recent year first, then legacy fields
-        self.assertLess(
-            approvisionnement_fields.index("valeur_viandes_volailles_aocaop"),
-            approvisionnement_fields.index("valeur_viandes_volailles_aocaop_igp_stg"),
-        )
-        # service_type (since 2024) keeps its position of the most recent year
-        self.assertEqual(
-            get_teledeclaration_fields_all_years("DIVERSIFICATION"),
-            get_teledeclaration_fields_all(max(TELEDECLARATION_FIELDS), volet="DIVERSIFICATION"),
-        )
+    def test_current_year_matches_the_model_volet_fields(self):
+        latest_year = max(TELEDECLARATION_FIELDS)
+        for volet, model_volet_fields in [
+            ("GASPILLAGE", Diagnostic.WASTE_FIELDS),
+            ("DIVERSIFICATION", Diagnostic.DIVERSIFICATION_FIELDS),
+            ("PLASTIQUE", Diagnostic.PLASTIC_FIELDS),
+            ("INFORMATION", Diagnostic.INFO_FIELDS),
+        ]:
+            with self.subTest(volet=volet):
+                self.assertEqual(get_teledeclaration_fields_all(latest_year, volet=volet), model_volet_fields)
 
     def test_service_type_only_from_2024(self):
         self.assertNotIn("service_type", get_teledeclaration_fields_all(2023, volet="DIVERSIFICATION"))
