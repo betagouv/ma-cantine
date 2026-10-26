@@ -12,6 +12,11 @@ BEFORE = "2026-10-20T00:00"
 DATE = timezone.make_aware(datetime.datetime(2025, 3, 1, 10, 0))
 
 
+def event_logs():
+    """The EventLog created by the backfill (without the COMMAND one of the backfill command run itself)"""
+    return EventLog.objects.exclude(category=EventLog.Category.COMMAND)
+
+
 def run_command(source, apply=True, before=BEFORE):
     call_command("eventlog_backfill_imports", before=before, source=source, apply=apply)
 
@@ -48,8 +53,8 @@ class EventLogBackfillImportsPurchaseTest(TestCase):
     def test_one_event_log_per_file_digest(self):
         run_command("purchase")
 
-        self.assertEqual(EventLog.objects.count(), 2)
-        event_log_1 = EventLog.objects.get(data__file_digest="digest_1")
+        self.assertEqual(event_logs().count(), 2)
+        event_log_1 = event_logs().get(data__file_digest="digest_1")
         self.assertEqual(event_log_1.category, EventLog.Category.IMPORT)
         self.assertEqual(event_log_1.status, EventLog.Status.SUCCESS)
         self.assertEqual(event_log_1.name, ImportType.PURCHASE)
@@ -67,20 +72,20 @@ class EventLogBackfillImportsPurchaseTest(TestCase):
                 "file_digest": "digest_1",
             },
         )
-        event_log_2 = EventLog.objects.get(data__file_digest="digest_2")
+        event_log_2 = event_logs().get(data__file_digest="digest_2")
         self.assertEqual(event_log_2.user, self.user_2)
         self.assertEqual(event_log_2.data["count"], 2)
 
     def test_canteen_only_if_single_canteen(self):
         run_command("purchase")
 
-        self.assertEqual(EventLog.objects.get(data__file_digest="digest_1").canteen, self.canteen)  # 1 canteen
-        self.assertIsNone(EventLog.objects.get(data__file_digest="digest_2").canteen)  # 2 canteens
+        self.assertEqual(event_logs().get(data__file_digest="digest_1").canteen, self.canteen)  # 1 canteen
+        self.assertIsNone(event_logs().get(data__file_digest="digest_2").canteen)  # 2 canteens
 
     def test_only_before_date(self):
         run_command("purchase", before="2026-01-01T00:00")
 
-        self.assertEqual(list(EventLog.objects.values_list("data__file_digest", flat=True)), ["digest_1"])
+        self.assertEqual(list(event_logs().values_list("data__file_digest", flat=True)), ["digest_1"])
 
     def test_ignores_non_imported_purchases(self):
         PurchaseFactory(creation_user=self.user_1, creation_source=CreationSource.APP, import_source=None)
@@ -89,14 +94,14 @@ class EventLogBackfillImportsPurchaseTest(TestCase):
 
         run_command("purchase")
 
-        self.assertEqual(EventLog.objects.count(), 2)
+        self.assertEqual(event_logs().count(), 2)
 
     def test_counts_soft_deleted_purchases(self):
         Purchase.objects.filter(import_source="digest_1").first().delete()  # soft delete
 
         run_command("purchase")
 
-        self.assertEqual(EventLog.objects.get(data__file_digest="digest_1").data["count"], 3)
+        self.assertEqual(event_logs().get(data__file_digest="digest_1").data["count"], 3)
 
 
 class EventLogBackfillImportsHistoryTest(TestCase):
@@ -113,8 +118,8 @@ class EventLogBackfillImportsHistoryTest(TestCase):
 
         run_command("history")
 
-        self.assertEqual(EventLog.objects.count(), 2)
-        event_log = EventLog.objects.order_by("creation_date").first()
+        self.assertEqual(event_logs().count(), 2)
+        event_log = event_logs().order_by("creation_date").first()
         self.assertEqual(event_log.category, EventLog.Category.IMPORT)
         self.assertEqual(event_log.status, EventLog.Status.SUCCESS)
         self.assertEqual(event_log.name, ImportType.CANTEEN_UPDATE)
@@ -140,7 +145,7 @@ class EventLogBackfillImportsHistoryTest(TestCase):
 
         run_command("history")
 
-        event_log = EventLog.objects.get()
+        event_log = event_logs().get()
         self.assertEqual(event_log.name, ImportType.CANTEEN_MANAGERS)
         self.assertEqual(event_log.canteen, canteen)
 
@@ -156,7 +161,7 @@ class EventLogBackfillImportsHistoryTest(TestCase):
 
         run_command("history")
 
-        event_log = EventLog.objects.get()
+        event_log = event_logs().get()
         self.assertEqual(event_log.name, ImportType.DIAGNOSTIC_SIMPLE_SIRET)
         self.assertEqual(event_log.data["count"], 3)  # diagnostics
         self.assertFalse(event_log.data["import_type_uncertain"])
@@ -167,7 +172,7 @@ class EventLogBackfillImportsHistoryTest(TestCase):
 
         run_command("history")
 
-        event_log = EventLog.objects.get()
+        event_log = event_logs().get()
         self.assertEqual(event_log.name, ImportType.DIAGNOSTIC_SIMPLE_SIRET)
         self.assertTrue(event_log.data["import_type_uncertain"])
         self.assertEqual(event_log.canteen, diagnostic.canteen)
@@ -178,7 +183,7 @@ class EventLogBackfillImportsHistoryTest(TestCase):
 
         run_command("history")
 
-        self.assertEqual(EventLog.objects.count(), 2)
+        self.assertEqual(event_logs().count(), 2)
 
     def test_ignores_other_history_rows(self):
         set_import_history(CanteenFactory(), self.user, "Données de localisation MAJ par bot", DATE)
@@ -187,14 +192,14 @@ class EventLogBackfillImportsHistoryTest(TestCase):
 
         run_command("history")
 
-        self.assertFalse(EventLog.objects.exists())
+        self.assertFalse(event_logs().exists())
 
     def test_only_before_date(self):
         set_import_history(CanteenFactory(), self.user, "Mass CSV import. CanteensUpdateImportView", DATE)
 
         run_command("history", before="2025-01-01T00:00")
 
-        self.assertFalse(EventLog.objects.exists())
+        self.assertFalse(event_logs().exists())
 
     def test_hard_deleted_canteen_is_not_linked(self):
         canteen = CanteenFactory()
@@ -203,7 +208,7 @@ class EventLogBackfillImportsHistoryTest(TestCase):
 
         run_command("history")
 
-        event_log = EventLog.objects.get()
+        event_log = event_logs().get()
         self.assertIsNone(event_log.canteen)
         self.assertEqual(event_log.data["count"], 1)
 
@@ -217,12 +222,12 @@ class EventLogBackfillImportsCommandTest(TestCase):
     def test_only_the_given_source(self):
         run_command("history")
 
-        self.assertEqual(list(EventLog.objects.values_list("data__source", flat=True)), ["history"])
+        self.assertEqual(list(event_logs().values_list("data__source", flat=True)), ["history"])
 
     def test_dry_run_creates_nothing(self):
         run_command("history", apply=False)
 
-        self.assertFalse(EventLog.objects.exists())
+        self.assertFalse(event_logs().exists())
 
     def test_source_is_required(self):
         with self.assertRaises(CommandError):

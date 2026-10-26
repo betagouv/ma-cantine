@@ -1,6 +1,7 @@
 from unittest import mock
 
 # import sib_api_v3_sdk
+from django.core.management import call_command
 from django.test import TestCase
 from freezegun import freeze_time
 
@@ -24,8 +25,8 @@ class BrevoUserDataTest(TestCase):
         user_without_canteen = UserFactory()
 
         # run task to fill the User.data field
-        tasks.update_user_data()
-        tasks.update_brevo_contacts()
+        call_command("user_update_data")
+        call_command("user_update_brevo_contacts")
         batch_update_mock.assert_not_called()
         create_contact_mock.assert_called_once()
 
@@ -44,8 +45,8 @@ class BrevoUserDataTest(TestCase):
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[user_with_canteen])
 
         # run task to fill the User.data field
-        tasks.update_user_data()
-        tasks.update_brevo_contacts()
+        call_command("user_update_data")
+        call_command("user_update_brevo_contacts")
         create_contact_mock.assert_called_once()
         batch_update_mock.assert_not_called()
 
@@ -64,8 +65,8 @@ class BrevoUserDataTest(TestCase):
         DiagnosticFactory(year=2025, canteen=canteen_site)
 
         # run task to fill the User.data field
-        tasks.update_user_data()
-        tasks.update_brevo_contacts()
+        call_command("user_update_data")
+        call_command("user_update_brevo_contacts")
         batch_update_mock.assert_not_called()
         create_contact_mock.assert_called_once()
 
@@ -91,8 +92,8 @@ class BrevoUserDataTest(TestCase):
 
         # run tasks to fill the Canteen.declaration_donnees_year & User.data fields
         tasks.canteen_fill_declaration_donnees_year_field()
-        tasks.update_user_data()
-        tasks.update_brevo_contacts()
+        call_command("user_update_data")
+        call_command("user_update_brevo_contacts")
         batch_update_mock.assert_not_called()
         create_contact_mock.assert_called_once()
 
@@ -128,8 +129,8 @@ class BrevoUserDataTest(TestCase):
 
         # run tasks to fill the Canteen.declaration_donnees_year & User.data fields
         tasks.canteen_fill_declaration_donnees_year_field()
-        tasks.update_user_data()
-        tasks.update_brevo_contacts()
+        call_command("user_update_data")
+        call_command("user_update_brevo_contacts")
         create_contact_mock.assert_called_once()
         batch_update_mock.assert_not_called()
 
@@ -170,8 +171,8 @@ class BrevoUserDataTest(TestCase):
 
         # run tasks to fill the Canteen.declaration_donnees_year & User.data fields
         tasks.canteen_fill_declaration_donnees_year_field()
-        tasks.update_user_data()
-        tasks.update_brevo_contacts()
+        call_command("user_update_data")
+        call_command("user_update_brevo_contacts")
         self.assertEqual(create_contact_mock.call_count, 2)
         batch_update_mock.assert_not_called()
 

@@ -407,3 +407,246 @@ models:
         description: >
           Niveau ADEME calculé sur le ratio agrégé annuel :
           Niveau 3 (≤47 g/couvert), Niveau 2 (≤74), Niveau 1 (≤95), Non atteint (>95).
+
+  - name: mart_api_applications
+    description: >
+      Une ligne par application OAuth2 (logiciel client de l'API), utilisée ou non : les
+      colonnes de int_api_applications (éditeur, application de test), ses connexions et ses
+      écritures réussies. Connexion = jeton obtenu ou renouvelé par le logiciel. Une
+      application jamais utilisée garde sa ligne, avec des comptes à 0. Pas de statut calculé
+      à la date du jour : il reste dans les cartes.
+      Les tests de ce mart ne tournent qu'en dev : la tâche de nuit lance `dbt run`, pas `dbt test`.
+    columns:
+      - name: application_id
+        description: Identifiant de l'application OAuth2.
+        tests:
+          - unique
+          - not_null
+      - name: application_nom
+        description: Nom de l'application OAuth2.
+      - name: editeur
+        description: >
+          Éditeur du logiciel : « nom de l'entreprise » saisi dans l'admin (fiche de
+          l'application OAuth2), sinon « À qualifier : <nom de l'application> ».
+      - name: est_a_qualifier
+        description: Vrai si le « nom de l'entreprise » n'est pas renseigné dans l'admin.
+      - name: est_test
+        description: >
+          Vrai si le nom de l'application évoque un test (test, recette, demo, dev), contient
+          `<` ou `>`, ou est vide. Le « nom de l'entreprise » ne distingue pas les tests.
+      - name: type_autorisation
+        description: Type d'autorisation OAuth2 (authorization-code, client-credentials…).
+      - name: proprietaire_domaine
+        description: Domaine de l'email du propriétaire de l'application.
+      - name: date_creation
+        description: Date et heure de création de l'application.
+      - name: premiere_connexion
+        description: Première connexion (jeton obtenu ou renouvelé). Vide si jamais connectée.
+      - name: derniere_connexion
+        description: Dernière connexion (jeton obtenu ou renouvelé). Vide si jamais connectée.
+      - name: nb_utilisateurs
+        description: Nombre d'utilisateurs distincts connectés via l'application.
+      - name: nb_jours_connexion
+        description: >
+          Nombre de couples (utilisateur, jour) distincts avec au moins une connexion, jour à
+          l'heure de Paris.
+      - name: nb_ecritures
+        description: >
+          Nombre de requêtes d'écriture API réussies faites avec l'application (EventLog,
+          historique repris compris).
+      - name: nb_utilisateurs_ayant_ecrit
+        description: Nombre d'utilisateurs distincts ayant fait au moins une écriture réussie.
+      - name: derniere_ecriture
+        description: Date et heure de la dernière écriture réussie. Vide si aucune.
+
+  - name: mart_api_connexions
+    description: >
+      Une ligne par (application, utilisateur, jour de connexion). Connexion = jeton obtenu ou
+      renouvelé par un logiciel : au renouvellement, django-oauth-toolkit supprime le jeton
+      d'accès et garde le jeton de renouvellement, repris pour ne pas sous-compter les
+      logiciels qui renouvellent (voir int_api_connexions). `jour` est à l'heure de Paris.
+      Pas d'email ni de nom : les cartes nominatives joignent `public.users_raw`.
+      Les tests de ce mart ne tournent qu'en dev : la tâche de nuit lance `dbt run`, pas `dbt test`.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - application_id
+            - user_id
+            - jour
+    columns:
+      - name: jour
+        description: Jour de connexion, à l'heure de Paris.
+      - name: application_id
+        description: Identifiant de l'application OAuth2.
+      - name: application_nom
+        description: Nom de l'application OAuth2.
+      - name: editeur
+        description: Éditeur du logiciel (voir mart_api_applications).
+      - name: est_test
+        description: Vrai pour une application de test (voir mart_api_applications).
+      - name: user_id
+        description: Utilisateur pour lequel le jeton a été obtenu. Vide pour quelques jetons.
+      - name: utilisateur_est_equipe
+        description: Vrai si l'utilisateur fait partie de l'équipe ma cantine (is_staff ou is_dev).
+      - name: nb_jetons
+        description: Nombre de jetons obtenus ou renouvelés ce jour-là.
+      - name: premiere_connexion_du_jour
+        description: Date et heure de la première connexion du jour.
+
+  - name: mart_api_ecritures
+    description: >
+      Une ligne par requête d'écriture API (POST, PUT, PATCH, DELETE) faite avec un jeton
+      OAuth2, réussie ou en échec, depuis EventLog : une écriture API = un événement `API`.
+      En direct, toute requête journalisée a une application ; pour l'historique repris
+      (`eventlog_backfill_api`), l'application peut manquer sur des requêtes antérieures au
+      23/06/2026 (non stockée avant, et non retrouvée par les commandes fill).
+      L'historique repris ne contient que des écritures réussies : les échecs ne sont
+      journalisés que depuis le 16/10/2026. Jamais les GET. `jour` est à l'heure de Paris.
+      Pas d'email ni de nom : les cartes nominatives joignent `public.users_raw`.
+      Les tests de ce mart ne tournent qu'en dev : la tâche de nuit lance `dbt run`, pas `dbt test`.
+    columns:
+      - name: event_log_id
+        description: Identifiant de l'événement EventLog.
+        tests:
+          - unique
+          - not_null
+      - name: date_ecriture
+        description: Date et heure de la requête.
+      - name: jour
+        description: Jour de la requête, à l'heure de Paris.
+      - name: route
+        description: Route appelée, au format OpenAPI (ex. `/api/v1/canteens/{canteen_pk}/diagnostics/`).
+      - name: type_donnees
+        description: Données écrites, d'après la route (Bilans, Achats, Évaluations gaspillage, Cantines).
+        tests:
+          - accepted_values:
+              values: ['Bilans', 'Achats', 'Évaluations gaspillage', 'Cantines', 'Autre']
+      - name: action
+        description: >
+          Création, Modification, Suppression, Télédéclaration ou Annulation de télédéclaration,
+          d'après la méthode et la route.
+        tests:
+          - not_null
+      - name: objet_id
+        description: >
+          Identifiant de l'objet visé quand on le connaît : cantine créée, ou identifiant `{id}`
+          du chemin. Vide pour une création de bilan, d'achat ou d'évaluation (route de
+          collection) : la part télédéclarée des bilans créés se lit dans mart_api_bilans_crees.
+      - name: est_reussie
+        description: Vrai si la requête a réussi (code HTTP inférieur à 400).
+      - name: code_http
+        description: Code HTTP de la réponse.
+      - name: message
+        description: Réponse tronquée à 1 000 caractères pour une requête en échec, vide sinon.
+      - name: application_id
+        description: Identifiant de l'application OAuth2 (peut manquer pour des requêtes reprises, voir ci-dessus).
+      - name: application_nom
+        description: Nom de l'application OAuth2.
+      - name: editeur
+        description: Éditeur du logiciel (voir mart_api_applications).
+      - name: est_test
+        description: Vrai pour une application de test (voir mart_api_applications).
+      - name: user_id
+        description: Utilisateur authentifié par le jeton.
+      - name: utilisateur_est_equipe
+        description: Vrai si l'utilisateur fait partie de l'équipe ma cantine (is_staff ou is_dev).
+      - name: canteen_id
+        description: Cantine concernée (chemin de la requête, ou cantine créée).
+      - name: est_repris
+        description: Vrai si l'écriture a été reconstituée après coup (avant le 16/10/2026).
+
+  - name: mart_api_bilans_crees
+    description: >
+      Une ligne par bilan créé via l'API par un logiciel connu
+      (`creation_source_api_oauth2_application_id` renseigné). Les bilans de satellites générés
+      depuis celui d'un groupe copient ses champs de création : ils sont exclus. Lu dans les
+      bilans et non dans EventLog, qui ne connaît pas l'identifiant du bilan créé : c'est ici
+      que se lit la part télédéclarée des bilans créés via l'API. `jour_creation` est à l'heure
+      de Paris.
+      Les tests de ce mart ne tournent qu'en dev : la tâche de nuit lance `dbt run`, pas `dbt test`.
+    columns:
+      - name: diagnostic_id
+        description: Identifiant du bilan.
+        tests:
+          - unique
+          - not_null
+      - name: canteen_id
+        description: Identifiant de la cantine.
+      - name: annee_bilan
+        description: Année du bilan.
+      - name: date_creation
+        description: Date et heure de création du bilan.
+      - name: jour_creation
+        description: Jour de création du bilan, à l'heure de Paris.
+      - name: application_id
+        description: Identifiant de l'application OAuth2 qui a créé le bilan.
+      - name: application_nom
+        description: Nom de l'application OAuth2.
+      - name: editeur
+        description: Éditeur du logiciel (voir mart_api_applications).
+      - name: est_test
+        description: Vrai pour une application de test (voir mart_api_applications).
+      - name: user_id
+        description: Utilisateur qui a créé le bilan.
+      - name: statut
+        description: Statut du bilan (DRAFT, SUBMITTED…).
+      - name: est_teledeclare
+        description: Vrai si le bilan est télédéclaré (statut SUBMITTED).
+      - name: date_teledeclaration
+        description: Date et heure de la télédéclaration.
+
+  - name: mart_imports
+    description: >
+      Une ligne par tentative d'import de fichier (événement IMPORT d'EventLog), réussie ou en
+      échec. Historique repris : imports réussis depuis 12/2022, échecs depuis 03/2024
+      (data_importfailure). Les types d'import sont regroupés par famille, car les noms
+      d'échecs anciens (PURCHASE, CANTEEN_ONLY_OR_DIAGNOSTIC_SIMPLE, DIAGNOSTIC_SIMPLE) n'ont
+      pas d'équivalent côté succès. `jour` est à l'heure de Paris. Pas d'email ni de nom : les
+      cartes nominatives joignent `public.users_raw`.
+      Les tests de ce mart ne tournent qu'en dev : la tâche de nuit lance `dbt run`, pas `dbt test`.
+    columns:
+      - name: event_log_id
+        description: Identifiant de l'événement EventLog.
+        tests:
+          - unique
+          - not_null
+      - name: date_import
+        description: Date et heure de l'import.
+      - name: jour
+        description: Jour de l'import, à l'heure de Paris.
+      - name: type_import
+        description: Type d'import, en code (PURCHASE_SIRET, CANTEEN_CREATE…).
+      - name: famille_import
+        description: Famille d'import (Achats, Bilans, Cantines, Gestionnaires).
+        tests:
+          - accepted_values:
+              values: ['Achats', 'Bilans', 'Cantines', 'Gestionnaires', 'Autre']
+      - name: est_reussi
+        description: Vrai si l'import a réussi.
+      - name: motif_echec
+        description: >
+          Motif de l'échec regroupé en une dizaine de catégories (règle de la carte 3811),
+          vide pour un import réussi.
+      - name: schema_validata
+        description: Schéma Validata cité dans le message d'échec, le cas échéant.
+      - name: message
+        description: Détail de l'échec, vide pour un import réussi.
+      - name: nb_lignes
+        description: Nombre de lignes importées.
+      - name: duree_secondes
+        description: Durée de l'import, en secondes (imports journalisés en direct seulement).
+      - name: user_id
+        description: Utilisateur qui a importé le fichier. Souvent vide pour les imports d'achats repris.
+      - name: utilisateur_est_equipe
+        description: Vrai si l'utilisateur fait partie de l'équipe ma cantine (is_staff ou is_dev).
+      - name: canteen_id
+        description: Cantine concernée, le cas échéant.
+      - name: est_repris
+        description: >
+          Vrai si l'import a été reconstitué après coup ou migré depuis data_importfailure
+          (avant le 16/10/2026).
+      - name: type_import_incertain
+        description: >
+          Vrai si le type d'import a été déduit lors de la reprise : imports d'achats repris
+          (SIRET et ID indiscernables, tous nommés PURCHASE_SIRET) et une partie des imports de
+          bilans repris. Vide pour les échecs et les imports journalisés en direct.

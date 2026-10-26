@@ -1,0 +1,50 @@
+version: 2
+
+models:
+  - name: int_api_applications
+    description: >
+      Une ligne par application OAuth2 (logiciel client de l'API), avec son éditeur.
+      Éditeur = `company_name` saisi dans l'admin (fiche de l'application OAuth2), sinon
+      « À qualifier : <nom de l'application> ». Les applications de test sont repérées au nom,
+      `company_name` ne les distinguant pas. Mêmes règles que les cartes du dashboard 86.
+    columns:
+      - name: application_id
+        description: Identifiant de l'application OAuth2.
+        tests:
+          - unique
+          - not_null
+      - name: editeur
+        description: >
+          Éditeur du logiciel : `company_name` saisi dans l'admin, sinon
+          « À qualifier : <nom de l'application> ».
+      - name: est_a_qualifier
+        description: Vrai si `company_name` n'est pas renseigné dans l'admin.
+      - name: est_test
+        description: >
+          Vrai si le nom de l'application évoque un test (test, recette, demo, dev),
+          contient `<` ou `>`, ou est vide.
+      - name: proprietaire_domaine
+        description: Domaine de l'email du propriétaire de l'application.
+
+  - name: int_api_connexions
+    description: >
+      Une ligne par jeton obtenu ou renouvelé par un logiciel (= une connexion à l'API).
+      Union des jetons d'accès et des jetons de renouvellement sans jeton d'accès lié :
+      au renouvellement, django-oauth-toolkit supprime le jeton d'accès et garde le jeton de
+      renouvellement. Sans cette union, les logiciels qui renouvellent leurs jetons
+      (Salamandre surtout) sont sous-comptés. Pour un jeton de renouvellement, l'expiration est
+      reconstituée (création + 10 h, durée de vie par défaut d'un jeton d'accès).
+      Les jetons sans utilisateur sont gardés.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - type_jeton
+            - jeton_id
+    columns:
+      - name: type_jeton
+        description: acces (jeton d'accès) ou renouvellement (jeton de renouvellement révoqué).
+        tests:
+          - accepted_values:
+              values: ['acces', 'renouvellement']
+      - name: jeton_id
+        description: Identifiant du jeton, unique pour un type de jeton donné.

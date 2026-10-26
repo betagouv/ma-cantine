@@ -1,12 +1,7 @@
 import logging
-import time
 
-from django.conf import settings
 from django.core.management import call_command
-from django.utils import timezone
-from oauth2_provider.models import get_access_token_model, get_application_model, get_refresh_token_model
 
-import macantine.brevo as brevo
 from api.views.utils import update_change_reason
 from common.api.datagouv import (
     fetch_commune_pat_list,
@@ -19,14 +14,8 @@ from common.api.decoupage_administratif import (
     map_epcis_code_name,
 )
 from common.api.recherche_entreprises import fetch_geo_data_from_siret
-from data.models import Canteen, Diagnostic, EventLog, User, WasteMeasurement, Purchase, Oauth2ProviderApplicationExtra
 from data.models.geo import get_lib_department_from_code, get_lib_region_from_code
 
-from .etl.analysis import ETL_ANALYSIS_RAW
-from .etl.open_data import (
-    ETL_OPEN_DATA_CANTEEN,
-    ETL_OPEN_DATA_TELEDECLARATIONS,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -37,62 +26,16 @@ logger = logging.getLogger(__name__)
 
 def update_user_data():
     """
-    Update calculated fields in User.data JSONField
+    See the user_update_data command
     """
-    logger.info("Starting update_user_data task task")
-    start = time.time()
-
-    users_qs = User.objects.with_canteen_stats().with_canteen_diagnostic_stats()
-    for user in users_qs:
-        user.update_data()
-
-    end = time.time()
-    result = f"Updated {users_qs.count()} users in {end - start:.2f} seconds"
-    logger.info(result)
-    return result
-
-
-#########################################################
-# Taken from itertools recipes. Will be able to remove once we pass to
-# Python 3.12 since they added it as itertools.batched. Server is currently
-# on Python 3.11
-from itertools import islice  # noqa: E402
-
-
-def batched(iterable, n):
-    "Batch data into lists of length n. The last batch may be shorter."
-    it = iter(iterable)
-    while True:
-        batch = list(islice(it, n))
-        if not batch:
-            return
-        yield batch
-
-
-#########################################################
+    call_command("user_update_data")
 
 
 def update_brevo_contacts():
     """
-    Send custom information on Brevo contacts for automatisation
-    API rate limit is 10 req per second : https://developers.brevo.com/docs/api-limits
+    See the user_update_brevo_contacts command
     """
-    logger.info("Starting update_brevo_contacts task")
-    start = time.time()
-
-    logger.info("Create individually new Brevo users (allowing the update flag to be set)")
-    users_to_create_qs = User.objects.brevo_to_create()
-    brevo.create_new_brevo_contacts(users_to_create_qs, timezone.now())
-
-    logger.info("Update existing Brevo contacts by batch")
-    users_to_update_qs = User.objects.brevo_to_update()
-    chunks = batched(users_to_update_qs, brevo.CONTACT_BULK_UPDATE_SIZE)
-    brevo.update_existing_brevo_contacts(chunks, timezone.now())
-
-    end = time.time()
-    result = f"Created {users_to_create_qs.count()} and updated {users_to_update_qs.count()} contacts in {end - start:.2f} seconds"
-    logger.info(result)
-    return result
+    call_command("user_update_brevo_contacts")
 
 
 def update_canteen_geo_fields_from_siret(canteen):
@@ -207,14 +150,10 @@ def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
 
 
 def delete_old_historical_records():
-    logger.info("Starting delete_old_historical_records task")
-
-    if not settings.MAX_DAYS_HISTORICAL_RECORDS:
-        logger.info("Environment variable MAX_DAYS_HISTORICAL_RECORDS not set. Old history items will not be removed.")
-        return
-
-    logger.info(f"History items older than {settings.MAX_DAYS_HISTORICAL_RECORDS} days will be removed.")
-    call_command("clean_old_history", days=settings.MAX_DAYS_HISTORICAL_RECORDS, auto=True)
+    """
+    See the history_delete_old_records command
+    """
+    call_command("history_delete_old_records")
 
 
 def canteen_fill_declaration_donnees_year_field():
@@ -226,135 +165,33 @@ def canteen_fill_declaration_donnees_year_field():
     return result
 
 
-def export_datasets(datasets: dict):
-    start = time.time()
-
-    for key, etl in datasets.items():
-        logger.info(f"Starting {key} dataset extraction")
-        etl.extract_dataset()
-        etl.transform_dataset()
-        etl.load_dataset()
-
-    end = time.time()
-    result = f"Exported {len(datasets)} datasets in {end - start:.2f} seconds"
-    logger.info(result)
-    return result
-
-
-def get_raw_analysis_datasets():
-    return {
-        "diagnostics_raw_analysis": ETL_ANALYSIS_RAW("diagnostics_raw", Diagnostic.all_objects.all()),
-        "canteens_raw_analysis": ETL_ANALYSIS_RAW("canteens_raw", Canteen.all_objects.all()),
-        "purchases_raw_analysis": ETL_ANALYSIS_RAW("purchases_raw", Purchase.all_objects.all()),
-        "users_raw_analysis": ETL_ANALYSIS_RAW("users_raw", User.objects.all(), exclude_columns=["password"]),
-        "canteen_managers_raw_analysis": ETL_ANALYSIS_RAW(
-            "canteen_managers_raw", Canteen.managers.through.objects.all()
-        ),
-        "waste_measurements_raw_analysis": ETL_ANALYSIS_RAW("waste_measurements_raw", WasteMeasurement.objects.all()),
-        "event_logs_raw_analysis": ETL_ANALYSIS_RAW("event_logs_raw", EventLog.objects.all()),
-        # OAuth2 (API): never export secrets & tokens
-        "oauth2_applications_raw_analysis": ETL_ANALYSIS_RAW(
-            "oauth2_applications_raw", get_application_model().objects.all(), exclude_columns=["client_secret"]
-        ),
-        "oauth2_applications_extra_raw_analysis": ETL_ANALYSIS_RAW(
-            "oauth2_applications_extra_raw", Oauth2ProviderApplicationExtra.objects.all()
-        ),
-        "oauth2_access_tokens_raw_analysis": ETL_ANALYSIS_RAW(
-            "oauth2_access_tokens_raw",
-            get_access_token_model().objects.all(),
-            exclude_columns=["token", "token_checksum"],
-        ),
-        "oauth2_refresh_tokens_raw_analysis": ETL_ANALYSIS_RAW(
-            "oauth2_refresh_tokens_raw",
-            get_refresh_token_model().objects.all(),
-            exclude_columns=["token", "token_checksum"],
-        ),
-    }
-
-
 def export_dataset_raw_analysis():
     """
-    Export the raw datasets for analysis (Metabase, dbt sources)
+    See the export_dataset command
     """
-    logger.info("Starting export_dataset_raw_analysis task")
-
-    result = export_datasets(get_raw_analysis_datasets())
-
-    return result
+    call_command("export_dataset", model="Raw", destination="analysis")
 
 
 def export_dataset_td_opendata():
     """
-    Export the Teledeclaration datasets for opendata (data.gouv.fr) (1 per year)
-    This datasets are updated every year by adding a new campaign
+    See the export_dataset command
     """
-    logger.info("Starting export_dataset_td_opendata task")
-
-    datasets = {
-        "teledeclarations_2021_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2021),
-        "teledeclarations_2022_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2022),
-        "teledeclarations_2023_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2023),
-        "teledeclarations_2024_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2024),
-        # "teledeclarations_2025_opendata": ETL_OPEN_DATA_TELEDECLARATIONS(2025),  # wait for report to be published
-    }
-    result = export_datasets(datasets)
-
-    return result
+    call_command("export_dataset", model="Teledeclaration", destination="opendata")
 
 
 def export_dataset_canteen_opendata():
     """
-    Export the Canteen datasets for opendata (data.gouv.fr)
+    See the export_dataset command
     """
-    logger.info("Starting export_dataset_canteen_opendata task")
-
-    datasets = {
-        "canteens_opendata": ETL_OPEN_DATA_CANTEEN(),
-    }
-    result = export_datasets(datasets)
-
-    return result
+    call_command("export_dataset", model="Canteen", destination="opendata")
 
 
 #########################################################
 # DBT (Metabase)
 
 
-def _invoke_dbt(command: str, dbt_project_dir: str):
-    # imported here: dbt is heavy, and importing it at module level breaks the (lazy) imports of this module
-    from dbt.cli.main import dbtRunner
-
-    target = "prod" if settings.ENVIRONMENT == "prod" else "dev"
-    result = dbtRunner().invoke(
-        [
-            command,
-            "--target",
-            target,
-            "--project-dir",
-            dbt_project_dir,
-            "--profiles-dir",
-            dbt_project_dir,
-        ]
-    )
-    if not result.success:
-        raise result.exception or RuntimeError(f"dbt {command} failed")
-
-
 def dbt_run():
     """
-    Run dbt models against the analytics data warehouse (Metabase).
-    Depends on export_dataset_raw_analysis having populated the *_raw source tables.
+    See the dbt_run command
     """
-    logger.info("Starting dbt_run task")
-    start = time.time()
-
-    dbt_project_dir = str(settings.BASE_DIR / "dbt")
-    # dbt_packages/ isn't committed (see dbt/.gitignore), so packages must be
-    # (re)installed before every run.
-    _invoke_dbt("deps", dbt_project_dir)
-    _invoke_dbt("run", dbt_project_dir)
-
-    end = time.time()
-    message = f"dbt run completed in {end - start:.2f} seconds"
-    logger.info(message)
-    return message
+    call_command("dbt_run")

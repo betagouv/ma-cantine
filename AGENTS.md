@@ -80,7 +80,7 @@ cd 2024-frontend && npm run dev  # Port 5173
 **Python:**
 - Follow Django conventions (see existing `data/models/`, `api/serializers/`)
 - Ruff line length: 119 characters
-- Ruff auto-linting enforced via pre-commit — don't run `ruff`/lint tools manually after edits, pre-commit runs it at commit time
+- Ruff auto-linting enforced via pre-commit — don't run `ruff` manually after edits, pre-commit runs it at commit time
 - Use factory-boy for test data (see `data/factories/`)
 - Models in `data/models/`, serializers in `api/serializers/`, views in `api/views/`
 - Django views: use class-based views (CBVs), not function-based views. Don't introduce new function-based views, even to wrap a third-party function view (e.g. `django.contrib.sitemaps.views.sitemap`) — wrap it in a CBV's `get()` instead
@@ -88,6 +88,10 @@ cd 2024-frontend && npm run dev  # Port 5173
 **JavaScript/Vue:**
 - Vue 2 in `frontend/` uses Vuetify
 - Vue 3 in `2024-frontend/` uses `@gouvminint/vue-dsfr` (French design system)
+
+**dbt / SQL:**
+- Models in `dbt/models/` (staging, intermediate, marts), sqlfluff config in `dbt/.sqlfluff`
+- Run sqlfluff on the changed models before handing them over for commit, with the pre-commit hook (same version and config as at commit time): `pre-commit run sqlfluff-lint --files <changed .sql files>`. Fix what it reports instead of leaving it to the commit
 - Prettier + ESLint configured in package.json
 
 **Database:**

@@ -12,6 +12,7 @@ class EventLog(models.Model):
         IMPORT = "IMPORT", "Import de masse"
         API = "API", "Requête API (OAuth2)"
         TASK = "TASK", "Tâche asynchrone (Celery)"
+        COMMAND = "COMMAND", "Commande (manage.py)"
 
     class Status(models.TextChoices):
         SUCCESS = "SUCCESS", "Succès"

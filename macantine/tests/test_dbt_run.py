@@ -1,8 +1,9 @@
 from unittest import mock
 
-from django.test import SimpleTestCase, override_settings
+from django.core.management import call_command
+from django.test import TestCase, override_settings
 
-from macantine import tasks
+from common.models import CommandLog
 
 # dbt must be imported at collection time: importing it while freezegun is active (freeze_time) raises
 # "TypeError: metaclass conflict" (pydantic.v1 subclasses datetime.date, which freezegun replaces).
@@ -10,15 +11,15 @@ from macantine import tasks
 import dbt.cli.main  # noqa: E402, F401
 
 
-class DbtRunTest(SimpleTestCase):
+class DbtRunTest(TestCase):
     @override_settings(ENVIRONMENT="dev")
     @mock.patch("dbt.cli.main.dbtRunner")
     def test_dbt_run_targets_dev_outside_prod(self, dbt_runner_mock):
         dbt_runner_mock.return_value.invoke.return_value = mock.Mock(success=True, exception=None)
 
-        result = tasks.dbt_run()
+        call_command("dbt_run")
 
-        self.assertIn("dbt run completed", result)
+        self.assertEqual(CommandLog.objects.get(command_name="dbt_run").status, CommandLog.Status.SUCCESS)
         calls = dbt_runner_mock.return_value.invoke.call_args_list
         self.assertEqual(len(calls), 2)
         deps_args, run_args = calls[0].args[0], calls[1].args[0]
@@ -32,7 +33,7 @@ class DbtRunTest(SimpleTestCase):
     def test_dbt_run_targets_prod_in_prod(self, dbt_runner_mock):
         dbt_runner_mock.return_value.invoke.return_value = mock.Mock(success=True, exception=None)
 
-        tasks.dbt_run()
+        call_command("dbt_run")
 
         run_args = dbt_runner_mock.return_value.invoke.call_args_list[1].args[0]
         self.assertIn("prod", run_args)
@@ -43,7 +44,7 @@ class DbtRunTest(SimpleTestCase):
         dbt_runner_mock.return_value.invoke.return_value = mock.Mock(success=False, exception=dbt_error)
 
         with self.assertRaises(RuntimeError) as ctx:
-            tasks.dbt_run()
+            call_command("dbt_run")
         self.assertIs(ctx.exception, dbt_error)
 
         # "run" should never be attempted if "deps" already failed
@@ -54,4 +55,4 @@ class DbtRunTest(SimpleTestCase):
         dbt_runner_mock.return_value.invoke.return_value = mock.Mock(success=False, exception=None)
 
         with self.assertRaises(RuntimeError):
-            tasks.dbt_run()
+            call_command("dbt_run")

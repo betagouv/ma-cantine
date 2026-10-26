@@ -35,20 +35,20 @@ const cancelTeledeclaration = () => {
 <template>
   <DsfrModal
     :opened="opened"
-    title="Modifier ma déclaration"
+    title="Modifier ma télédéclaration"
     icon="fr-icon-edit-line"
     @close="emit('close')"
   >
-    <p class="fr-h6">Attention : toute modification nécessite une nouvelle déclaration.</p>
+    <p class="fr-h6">Attention : toute modification nécessite une nouvelle validation de télédéclaration.</p>
     <div class="fr-mb-3w">
-      Si vous modifiez les informations de votre déclaration, son statut repassera automatiquement à
+      Si vous modifiez les informations de votre télédéclaration, son statut repassera automatiquement à
       <DsfrBadge label="À télédéclarer" type="warning" no-icon small />.
       Une fois vos modifications terminées, pensez à cliquer de nouveau sur le bouton « Valider ma télédéclaration » afin que vos nouvelles données soient prises en compte.
     </div>
     <div class="fr-mb-3w">
       Votre cantine repassera alors au statut
       <DsfrBadge label="Télédéclaré" type="success" small />,
-      vous permettant d’être en conformité avec la réglementation et d’accéder à votre justificatif de déclaration.
+      vous permettant d’être en conformité avec la réglementation et d’accéder à votre justificatif de télédéclaration.
     </div>
     <p class="fr-text--bold">Souhaitez-vous poursuivre les modifications ?</p>
     <div class="ma-cantine--flex-end">

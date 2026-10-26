@@ -36,7 +36,7 @@ Fonctionnement :
 
 Les fichiers sont référencés depuis l'interface d'administration de data.gouv.fr (compte perso, affiliation nécessaire à l'organisme MASA). Voir aussi `opendata/README.md`.
 
-Lors d'une nouvelle campagne : ajouter l'année dans `export_dataset_td_opendata` (une fois le rapport publié), ainsi que la colonne `declaration_donnees_{année}` dans le serializer et le schéma des cantines.
+Lors d'une nouvelle campagne : ajouter l'année dans `get_teledeclaration_opendata_datasets()` (`macantine/etl/datasets.py`, une fois le rapport publié), ainsi que la colonne `declaration_donnees_{année}` dans le serializer et le schéma des cantines.
 
 ## Data Warehouse
 
@@ -47,6 +47,6 @@ Les tables sont copiées telles quelles (`ETL_ANALYSIS_RAW`), avec un `COPY` Pos
 * les données sensibles ne sont pas exportées (cf `exclude_columns` : mots de passe, secrets et tokens OAuth2)
 * à chaque export, la table est vidée puis rechargée, ce qui conserve les vues dbt qui en dépendent. Si une colonne a été supprimée ou a changé de type, la table est recréée (les vues dépendantes sont supprimées, `dbt run` les recrée)
 
-Pour exporter une nouvelle table : l'ajouter dans `get_raw_analysis_datasets()` (`macantine/tasks.py`), puis la déclarer comme source dans `dbt/models/staging/sources.yml`.
+Pour exporter une nouvelle table : l'ajouter dans `get_raw_analysis_datasets()` (`macantine/etl/datasets.py`), puis la déclarer comme source dans `dbt/models/staging/sources.yml`.
 
 Connexion : variables d'environnement `DATA_WARE_HOUSE_HOST`, `DATA_WARE_HOUSE_PORT`, `DATA_WARE_HOUSE_DB`, `DATA_WARE_HOUSE_USER` et `DATA_WARE_HOUSE_PASSWORD`.

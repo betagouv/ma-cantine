@@ -128,7 +128,7 @@ diff-cover==10.5.1
     # via sqlfluff
 distlib==0.4.3
     # via virtualenv
-django==5.2.17
+django==5.2.18
     # via
     #   django-anymail
     #   django-ckeditor
@@ -198,7 +198,7 @@ django-treebeard==4.8.0
     # via wagtail
 django-vite==3.2.0
     # via ma-cantine
-djangorestframework==3.18.1
+djangorestframework==3.18.2
     # via
     #   drf-base64
     #   drf-excel

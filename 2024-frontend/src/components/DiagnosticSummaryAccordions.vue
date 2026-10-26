@@ -33,7 +33,7 @@ const goToPage = (page) => router.push(page)
         Consulter le volet <AppLinkRouter :to="volet.page" :title="volet.title.toLowerCase()"/>
       </p>
       <div v-else class="ma-cantine--flex-end">
-        <DsfrButton @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
+        <DsfrButton v-if="volet.key !== 'appro'" @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
       </div>
       <DiagnosticSummaryAppro
         v-if="volet.key === 'appro' && isTeledeclared"
