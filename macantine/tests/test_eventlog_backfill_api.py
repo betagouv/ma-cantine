@@ -19,6 +19,11 @@ BEFORE = "2026-10-20T00:00"
 DATE = timezone.make_aware(datetime.datetime(2025, 3, 1, 10, 0))
 
 
+def event_logs():
+    """The EventLog created by the backfill (without the COMMAND one of the backfill command run itself)"""
+    return EventLog.objects.exclude(category=EventLog.Category.COMMAND)
+
+
 def run_command(apply=True, before=BEFORE):
     call_command("eventlog_backfill_api", before=before, apply=apply)
 
@@ -60,7 +65,7 @@ class EventLogBackfillApiTest(TestCase):
 
         run_command()
 
-        event_log = EventLog.objects.get()
+        event_log = event_logs().get()
         self.assertEqual(event_log.category, EventLog.Category.API)
         self.assertEqual(event_log.status, EventLog.Status.SUCCESS)
         self.assertEqual(event_log.name, "POST /api/v1/canteens/{canteen_pk}/diagnostics/")
@@ -90,7 +95,7 @@ class EventLogBackfillApiTest(TestCase):
         run_command()
 
         self.assertEqual(
-            sorted(EventLog.objects.values_list("name", flat=True)),
+            sorted(event_logs().values_list("name", flat=True)),
             [
                 "POST /api/v1/canteens/",
                 "POST /api/v1/canteens/{canteen_pk}/diagnostics/",
@@ -98,9 +103,9 @@ class EventLogBackfillApiTest(TestCase):
                 "POST /api/v1/canteens/{canteen_pk}/wasteMeasurements/",
             ],
         )
-        self.assertEqual(EventLog.objects.get(name="POST /api/v1/canteens/").canteen, self.canteen)
+        self.assertEqual(event_logs().get(name="POST /api/v1/canteens/").canteen, self.canteen)
         self.assertEqual(
-            EventLog.objects.get(name="POST /api/v1/canteens/{canteen_pk}/purchases/").data["source"], "creation"
+            event_logs().get(name="POST /api/v1/canteens/{canteen_pk}/purchases/").data["source"], "creation"
         )
 
     def test_ignores_object_creations_without_application(self):
@@ -110,7 +115,7 @@ class EventLogBackfillApiTest(TestCase):
 
         run_command()
 
-        self.assertFalse(EventLog.objects.exists())
+        self.assertFalse(event_logs().exists())
 
     def test_ignores_canteen_and_diagnostic_creation_source(self):
         # Canteen & Diagnostic creations only come from the history
@@ -121,7 +126,7 @@ class EventLogBackfillApiTest(TestCase):
 
         run_command()
 
-        self.assertFalse(EventLog.objects.exists())
+        self.assertFalse(event_logs().exists())
 
     def test_ignores_diagnostics_generated_from_a_groupe(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen)
@@ -132,7 +137,7 @@ class EventLogBackfillApiTest(TestCase):
 
         run_command()
 
-        self.assertFalse(EventLog.objects.exists())
+        self.assertFalse(event_logs().exists())
 
     def test_ignores_non_api_creations(self):
         purchase = PurchaseFactory(canteen=self.canteen)
@@ -143,7 +148,7 @@ class EventLogBackfillApiTest(TestCase):
 
         run_command()
 
-        self.assertFalse(EventLog.objects.exists())
+        self.assertFalse(event_logs().exists())
 
     def test_updates_from_history(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen)
@@ -154,22 +159,24 @@ class EventLogBackfillApiTest(TestCase):
 
         run_command()
 
-        event_logs = EventLog.objects.order_by("creation_date")
-        self.assertEqual(event_logs.count(), 2)
-        self.assertEqual(event_logs[0].name, "PATCH /api/v1/canteens/{canteen_pk}/diagnostics/{id}")
-        self.assertEqual(event_logs[0].data["path"], f"/api/v1/canteens/{self.canteen.id}/diagnostics/{diagnostic.id}")
-        self.assertEqual(event_logs[0].data["status_code"], 200)
-        self.assertEqual(event_logs[0].data["source"], "history")
-        self.assertEqual(event_logs[0].user, self.user)
-        self.assertIsNone(event_logs[0].api_oauth2_application)
-        self.assertEqual(event_logs[1].api_oauth2_application, self.application)
+        api_event_logs = event_logs().order_by("creation_date")
+        self.assertEqual(api_event_logs.count(), 2)
+        self.assertEqual(api_event_logs[0].name, "PATCH /api/v1/canteens/{canteen_pk}/diagnostics/{id}")
+        self.assertEqual(
+            api_event_logs[0].data["path"], f"/api/v1/canteens/{self.canteen.id}/diagnostics/{diagnostic.id}"
+        )
+        self.assertEqual(api_event_logs[0].data["status_code"], 200)
+        self.assertEqual(api_event_logs[0].data["source"], "history")
+        self.assertEqual(api_event_logs[0].user, self.user)
+        self.assertIsNone(api_event_logs[0].api_oauth2_application)
+        self.assertEqual(api_event_logs[1].api_oauth2_application, self.application)
 
     def test_canteen_update_from_history(self):
         create_api_update_history(self.canteen, self.user)
 
         run_command()
 
-        event_log = EventLog.objects.get()
+        event_log = event_logs().get()
         self.assertEqual(event_log.name, "PATCH /api/v1/canteens/{id}")
         self.assertEqual(event_log.data["path"], f"/api/v1/canteens/{self.canteen.id}")
         self.assertEqual(event_log.canteen, self.canteen)
@@ -180,7 +187,7 @@ class EventLogBackfillApiTest(TestCase):
 
         run_command()
 
-        self.assertFalse(EventLog.objects.exists())
+        self.assertFalse(event_logs().exists())
 
     def test_only_before_date(self):
         set_api_creation(PurchaseFactory(canteen=self.canteen), self.user, self.application)
@@ -188,14 +195,14 @@ class EventLogBackfillApiTest(TestCase):
 
         run_command(before="2025-01-01T00:00")
 
-        self.assertFalse(EventLog.objects.exists())
+        self.assertFalse(event_logs().exists())
 
     def test_dry_run_creates_nothing(self):
         set_api_creation(PurchaseFactory(canteen=self.canteen), self.user, self.application)
 
         run_command(apply=False)
 
-        self.assertFalse(EventLog.objects.exists())
+        self.assertFalse(event_logs().exists())
 
     def test_hard_deleted_canteen_is_not_linked(self):
         create_api_update_history(self.canteen, self.user)
@@ -203,4 +210,4 @@ class EventLogBackfillApiTest(TestCase):
 
         run_command()
 
-        self.assertIsNone(EventLog.objects.get().canteen)
+        self.assertIsNone(event_logs().get().canteen)
