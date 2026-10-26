@@ -1575,3 +1575,16 @@ def get_teledeclaration_fields_all(year, diagnostic_type=None, volet="APPROVISIO
 
 def get_teledeclaration_fields_required(year, diagnostic_type=None, volet="APPROVISIONNEMENT"):
     return _get_teledeclaration_fields(year, diagnostic_type, volet=volet, required=True)
+
+
+def get_teledeclaration_fields_all_years(volet):
+    """
+    Union of the volet's fields over all the years (& diagnostic_types for APPROVISIONNEMENT)
+    Order: the most recent year's fields first, then the fields that were removed since (legacy)
+    """
+    fields = {}
+    for year in sorted(TELEDECLARATION_FIELDS, reverse=True):
+        diagnostic_types = TELEDECLARATION_FIELDS[year][volet].keys() if volet == "APPROVISIONNEMENT" else [None]
+        for diagnostic_type in diagnostic_types:
+            fields.update(dict.fromkeys(get_teledeclaration_fields_all(year, diagnostic_type, volet=volet)))
+    return list(fields)

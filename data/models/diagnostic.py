@@ -36,6 +36,7 @@ from data.models.diagnostic_teledeclaration_dates import (
 )
 from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_all,
+    get_teledeclaration_fields_all_years,
     get_teledeclaration_fields_required,
 )
 from data.models.diagnostic_teledeclaration_field_groups import (
@@ -860,49 +861,11 @@ class Diagnostic(models.Model):
         "objectifs_egalim_atteints",
     ]
 
-    WASTE_FIELDS = [
-        "has_waste_diagnostic",
-        "has_waste_plan",
-        "waste_actions",
-        "other_waste_action",
-        "has_donation_agreement",
-        "has_waste_measures",
-        "total_leftovers",
-        "duration_leftovers_measurement",
-        "bread_leftovers",
-        "served_leftovers",
-        "unserved_leftovers",
-        "side_leftovers",
-        "donation_frequency",
-        "donation_quantity",
-        "donation_food_type",
-        "other_waste_comments",
-    ]
-
-    DIVERSIFICATION_FIELDS = [
-        "has_diversification_plan",
-        "diversification_plan_actions",
-        "service_type",
-        "vegetarian_weekly_recurrence",
-        "vegetarian_menu_type",
-        "vegetarian_menu_bases",
-    ]
-
-    PLASTIC_FIELDS = [
-        "cooking_plastic_substituted",
-        "serving_plastic_substituted",
-        "plastic_bottles_substituted",
-        "plastic_tableware_substituted",
-    ]
-
-    INFO_FIELDS = [
-        "communication_supports",
-        "other_communication_support",
-        "communication_support_url",
-        "communicates_on_food_plan",
-        "communicates_on_food_quality",
-        "communication_frequency",
-    ]
+    # all the fields of each volet (all years, see diagnostic_teledeclaration_fields.py)
+    WASTE_FIELDS = get_teledeclaration_fields_all_years("GASPILLAGE")
+    DIVERSIFICATION_FIELDS = get_teledeclaration_fields_all_years("DIVERSIFICATION")
+    PLASTIC_FIELDS = get_teledeclaration_fields_all_years("PLASTIQUE")
+    INFO_FIELDS = get_teledeclaration_fields_all_years("INFORMATION")
 
     APPRO_1TD1SITE_FIELDS = SIMPLE_APPRO_FIELDS + COMPLETE_APPRO_FIELDS + APPRO_AGGREGATED_FIELDS
 
