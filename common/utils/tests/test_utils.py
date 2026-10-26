@@ -53,7 +53,8 @@ class CommandsTest(TestCase):
         self.assertEqual(event_log.name, "canteen_delete")
         self.assertEqual(event_log.status, EventLog.Status.SUCCESS)
         self.assertIsNone(event_log.user)
-        self.assertEqual(set(event_log.data.keys()), {"args", "options", "seconds", "message"})
+        self.assertEqual(set(event_log.data.keys()), {"args", "options", "trigger", "seconds", "message"})
+        self.assertEqual(event_log.data["trigger"], "manual")  # default
         self.assertEqual(event_log.data["options"]["canteen_siret_list"], "92341284500011,23456789012345")
         self.assertIsNone(event_log.data["message"])
 
@@ -68,3 +69,13 @@ class CommandsTest(TestCase):
         self.assertEqual(event_log.status, EventLog.Status.FAILURE)
         self.assertIn("No dataset for Canteen (analysis)", event_log.data["message"])
         self.assertEqual(CommandLog.objects.get().status, CommandLog.Status.FAILURE)
+
+    def test_ma_cantine_base_command_trigger(self):
+        call_command("canteen_delete", "--canteen-siret-list", "92341284500011", "--trigger", "cron")
+
+        self.assertEqual(EventLog.objects.get().data["trigger"], "cron")
+        self.assertEqual(CommandLog.objects.get().input_data["options"]["trigger"], "cron")
+
+    def test_ma_cantine_base_command_trigger_choices(self):
+        with self.assertRaises(CommandError):
+            call_command("canteen_delete", "--canteen-siret-list", "92341284500011", "--trigger", "celery")
