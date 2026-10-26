@@ -6,6 +6,38 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.57.0](https://github.com/betagouv/ma-cantine/compare/v2026.56.1...v2026.57.0) (2026-10-26)
+
+
+### Nouveautés
+
+* **dbt:** marts API et imports à partir d'EventLog  ([#7383](https://github.com/betagouv/ma-cantine/issues/7383)) ([486efa8](https://github.com/betagouv/ma-cantine/commit/486efa844a46b0757cc5052c2de40d91eb74bb0c))
+* **dbt:** stg_event_logs: catégorie COMMAND et colonne command_trigger ([#7425](https://github.com/betagouv/ma-cantine/issues/7425)) ([540fcf8](https://github.com/betagouv/ma-cantine/commit/540fcf8faf9aaa761bbccad6f0fc154ece25ce66))
+* **EventLog:** MaCantineBaseCommand: créer un EventLog à chaque exécution ([#7422](https://github.com/betagouv/ma-cantine/issues/7422)) ([751a5b5](https://github.com/betagouv/ma-cantine/commit/751a5b591aec7a6cd8374b1aa238d9072d51c801))
+* **EventLog:** MaCantineBaseCommand: option --trigger (cron ou manual) ([#7423](https://github.com/betagouv/ma-cantine/issues/7423)) ([bf0b237](https://github.com/betagouv/ma-cantine/commit/bf0b2379cb126aec47ca1847d0838ba3eba59877))
+* **EventLog:** migration de données: copier les CommandLog existants dans EventLog ([#7424](https://github.com/betagouv/ma-cantine/issues/7424)) ([85f0e9c](https://github.com/betagouv/ma-cantine/commit/85f0e9c85fda7e253ff81dd4235aaab799bf48f6))
+* **EventLog:** nouvelle catégorie COMMAND ([#7421](https://github.com/betagouv/ma-cantine/issues/7421)) ([baba121](https://github.com/betagouv/ma-cantine/commit/baba121445f052050760a702a30154349d51aa94))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** affichage des informations: ne plus interpréter les valeurs comme du HTML (éviter une attaque stored-XSS) ([#7398](https://github.com/betagouv/ma-cantine/issues/7398)) ([36b9132](https://github.com/betagouv/ma-cantine/commit/36b9132b36200a0524f873d60b2cd63427e32849))
+* **Télédéclaration:** divers correctifs ([#7411](https://github.com/betagouv/ma-cantine/issues/7411)) ([3c69568](https://github.com/betagouv/ma-cantine/commit/3c6956828cbc58545ec0d8ad5220f42378c4b512))
+
+
+### Technique
+
+* ajout du SECURITY.md ([#7413](https://github.com/betagouv/ma-cantine/issues/7413)) ([a447762](https://github.com/betagouv/ma-cantine/commit/a447762bca2b0f37ad16d31356e83913725da105))
+* **CI:** release-please: màj de la GitHub Action (v5) ([#7427](https://github.com/betagouv/ma-cantine/issues/7427)) ([3f63738](https://github.com/betagouv/ma-cantine/commit/3f63738807924aadca720a1561f5759e7cb57185))
+* **deps-dev:** bump vite from 8.3.2 to 8.3.5 in /2024-frontend ([#7386](https://github.com/betagouv/ma-cantine/issues/7386)) ([f092d75](https://github.com/betagouv/ma-cantine/commit/f092d750f5f5ac5e8d5ee1203c3a93cd9221b1c7))
+* **deps:** bump djangorestframework from 3.18.1 to 3.18.2 ([#7410](https://github.com/betagouv/ma-cantine/issues/7410)) ([7f12b38](https://github.com/betagouv/ma-cantine/commit/7f12b3819355bb3f9e707a12e7d39286405f9bca))
+* **deps:** màj de sécurité de pillow (13.0.0), pillow-heif, pypdf et virtualenv ([#7428](https://github.com/betagouv/ma-cantine/issues/7428)) ([a41eea1](https://github.com/betagouv/ma-cantine/commit/a41eea131a77748f78507f2173325e12c7145545))
+* **Tâches asynchrones:** commande export_dataset autonome ([#7419](https://github.com/betagouv/ma-cantine/issues/7419)) ([8bcc57c](https://github.com/betagouv/ma-cantine/commit/8bcc57c2b87d573b4e79d2667830e02b6dbe596d))
+* **Tâches asynchrones:** nouvelle commande dbt_run ([#7417](https://github.com/betagouv/ma-cantine/issues/7417)) ([0534ce7](https://github.com/betagouv/ma-cantine/commit/0534ce74ffccc3b40779eed432470699f0161b5a))
+* **Tâches asynchrones:** nouvelle commande history_delete_old_records ([#7418](https://github.com/betagouv/ma-cantine/issues/7418)) ([437c422](https://github.com/betagouv/ma-cantine/commit/437c42288ec7ee363419fab5d5ecb289d63b7fee))
+* **Tâches asynchrones:** nouvelle commande user_update_brevo_contacts ([#7416](https://github.com/betagouv/ma-cantine/issues/7416)) ([3e4c583](https://github.com/betagouv/ma-cantine/commit/3e4c5839afe7283d2875aef8ea9b8296b1b97e29))
+* **Tâches asynchrones:** nouvelle commande user_update_data ([#7415](https://github.com/betagouv/ma-cantine/issues/7415)) ([99e7485](https://github.com/betagouv/ma-cantine/commit/99e748535db20a1200cf0b537df98026a26227c4))
+
 ## [2026.56.1](https://github.com/betagouv/ma-cantine/compare/v2026.56.0...v2026.56.1) (2026-10-22)
 
 
