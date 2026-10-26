@@ -53,7 +53,7 @@ INFORMATION_FIELDS = [
 
 TELEDECLARATION_FIELDS = {
     2021: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {"fields": ["valeur_totale", "valeur_bio", "valeur_siqo"], "fields_required": ["valeur_totale"]},
             "COMPLETE": {
                 "fields": [
@@ -180,7 +180,7 @@ TELEDECLARATION_FIELDS = {
         "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
     2022: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {
                 "fields": [
                     "valeur_totale",
@@ -324,7 +324,7 @@ TELEDECLARATION_FIELDS = {
         "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
     2023: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {
                 "fields": [
                     "valeur_totale",
@@ -468,7 +468,7 @@ TELEDECLARATION_FIELDS = {
         "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
     2024: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {
                 "fields": [
                     "valeur_totale",
@@ -616,7 +616,7 @@ TELEDECLARATION_FIELDS = {
         "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
     2025: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {
                 "fields": [
                     "valeur_totale",
@@ -906,7 +906,7 @@ TELEDECLARATION_FIELDS = {
         "INFORMATION": {"fields": INFORMATION_FIELDS, "fields_required": []},
     },
     2026: {
-        "APPRO": {
+        "APPROVISIONNEMENT": {
             "SIMPLE": {
                 "fields": [
                     "nombre_repas_an",
@@ -1318,9 +1318,9 @@ TELEDECLARATION_FIELDS = {
 }
 
 
-def _get_teledeclaration_fields(year, diagnostic_type=None, volet="APPRO", required=False):
+def _get_teledeclaration_fields(year, diagnostic_type=None, volet="APPROVISIONNEMENT", required=False):
     """
-    diagnostic_type (SIMPLE / COMPLETE) is only used by the APPRO volet
+    diagnostic_type (SIMPLE / COMPLETE) is only used by the APPROVISIONNEMENT volet
     """
     year = int(year) if year else None
     if year not in TELEDECLARATION_FIELDS:
@@ -1328,7 +1328,7 @@ def _get_teledeclaration_fields(year, diagnostic_type=None, volet="APPRO", requi
     if volet not in TELEDECLARATION_FIELDS[year]:
         raise ValueError(f"Volet expected one of {list(TELEDECLARATION_FIELDS[year].keys())} but got '{volet}'.")
     volet_fields = TELEDECLARATION_FIELDS[year][volet]
-    if volet == "APPRO":
+    if volet == "APPROVISIONNEMENT":
         if diagnostic_type not in volet_fields:
             valid_diagnostic_types = list(volet_fields.keys())
             raise ValueError(
@@ -1340,9 +1340,9 @@ def _get_teledeclaration_fields(year, diagnostic_type=None, volet="APPRO", requi
     return volet_fields["fields"]
 
 
-def get_teledeclaration_fields_all(year, diagnostic_type=None, volet="APPRO"):
+def get_teledeclaration_fields_all(year, diagnostic_type=None, volet="APPROVISIONNEMENT"):
     return _get_teledeclaration_fields(year, diagnostic_type, volet=volet, required=False)
 
 
-def get_teledeclaration_fields_required(year, diagnostic_type=None, volet="APPRO"):
+def get_teledeclaration_fields_required(year, diagnostic_type=None, volet="APPROVISIONNEMENT"):
     return _get_teledeclaration_fields(year, diagnostic_type, volet=volet, required=True)

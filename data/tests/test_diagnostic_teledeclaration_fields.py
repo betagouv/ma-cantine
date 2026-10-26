@@ -7,7 +7,7 @@ from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_required,
 )
 
-VOLETS = ["APPRO", "GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]
+VOLETS = ["APPROVISIONNEMENT", "GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]
 
 
 class TeledeclarationFieldsTest(SimpleTestCase):
@@ -19,24 +19,24 @@ class TeledeclarationFieldsTest(SimpleTestCase):
     def test_every_field_exists_on_the_model(self):
         model_fields = {field.name for field in Diagnostic._meta.get_fields()}
         for year in TELEDECLARATION_FIELDS:
-            for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPRO"]:
+            for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
                 with self.subTest(year=year, diagnostic_type=diagnostic_type):
                     self.assertEqual(set(get_teledeclaration_fields_all(year, diagnostic_type)) - model_fields, set())
             for volet in VOLETS[1:]:
                 with self.subTest(year=year, volet=volet):
                     self.assertEqual(set(get_teledeclaration_fields_all(year, volet=volet)) - model_fields, set())
 
-    def test_appro_is_the_default_volet(self):
+    def test_approvisionnement_is_the_default_volet(self):
         self.assertEqual(
             get_teledeclaration_fields_all(2025, "SIMPLE"),
-            get_teledeclaration_fields_all(2025, "SIMPLE", volet="APPRO"),
+            get_teledeclaration_fields_all(2025, "SIMPLE", volet="APPROVISIONNEMENT"),
         )
         self.assertEqual(
             get_teledeclaration_fields_required(2025, "COMPLETE"),
-            get_teledeclaration_fields_required(2025, "COMPLETE", volet="APPRO"),
+            get_teledeclaration_fields_required(2025, "COMPLETE", volet="APPROVISIONNEMENT"),
         )
 
-    def test_non_appro_volets_ignore_diagnostic_type(self):
+    def test_non_approvisionnement_volets_ignore_diagnostic_type(self):
         for volet in VOLETS[1:]:
             with self.subTest(volet=volet):
                 self.assertEqual(
@@ -67,4 +67,4 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         with self.assertRaises(ValueError):
             get_teledeclaration_fields_all(2025, volet="UNKNOWN")
         with self.assertRaises(ValueError):
-            get_teledeclaration_fields_all(2025)  # APPRO requires a diagnostic_type
+            get_teledeclaration_fields_all(2025)  # APPROVISIONNEMENT requires a diagnostic_type
