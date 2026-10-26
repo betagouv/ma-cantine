@@ -39,19 +39,9 @@ logger = logging.getLogger(__name__)
 @app.task()
 def update_user_data():
     """
-    Update calculated fields in User.data JSONField
+    See the user_update_data command
     """
-    logger.info("Starting update_user_data task task")
-    start = time.time()
-
-    users_qs = User.objects.with_canteen_stats().with_canteen_diagnostic_stats()
-    for user in users_qs:
-        user.update_data()
-
-    end = time.time()
-    result = f"Updated {users_qs.count()} users in {end - start:.2f} seconds"
-    logger.info(result)
-    return result
+    call_command("user_update_data")
 
 
 #########################################################
