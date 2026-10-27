@@ -638,6 +638,15 @@ class Diagnostic(models.Model):
         "valeur_autres_peche_durable",
     ]
 
+    # legacy amounts from before the teledeclaration registry (not in diagnostic_teledeclaration_fields.py)
+    APPRO_FIELDS_LEGACY = [
+        "valeur_label_rouge",
+        "valeur_label_aoc_igp",
+        "valeur_label_hve",
+        "valeur_fair_trade",
+        "valeur_pat",
+    ]
+
     COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS
     # COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS  # TODO when updating the imports
 

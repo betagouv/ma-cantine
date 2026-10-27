@@ -31,6 +31,38 @@ class TeledeclarationFieldsTest(SimpleTestCase):
                 with self.subTest(year=year, volet=volet):
                     self.assertEqual(set(get_teledeclaration_fields_all(year, volet)) - model_fields, set())
 
+    def test_every_model_field_is_classified(self):
+        """
+        Every Diagnostic field must be either in the registry (any year & volet),
+        or in one of the model's non-TD field lists (meta, computed, teledeclaration, legacy...)
+        """
+        registry_fields = {field for volet in VOLETS for field in get_teledeclaration_fields_all_years(volet)}
+        self.assertEqual(set(Diagnostic.APPRO_FIELDS_LEGACY) & registry_fields, set())
+        classified_fields = registry_fields | {
+            *Diagnostic.APPRO_FIELDS_LEGACY,
+            *Diagnostic.APPRO_AGGREGATED_FIELDS,
+            *Diagnostic.APPRO_STATS_FIELDS,
+            *Diagnostic.OTHER_COMPUTED_FIELDS,
+            *Diagnostic.META_FIELDS,
+            *Diagnostic.CREATION_META_FIELDS,
+            *Diagnostic.MATOMO_FIELDS,
+            *Diagnostic.TUNNEL_PROGRESS_FIELDS,
+            *Diagnostic.TELEDECLARATION_FIELDS,
+            *Diagnostic.TELEDECLARATION_SNAPSHOT_FIELDS,
+            *Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,
+            *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
+            # not in any list
+            "status",
+            "applicant",
+            "generated_from_purchases",
+        }
+        unclassified_fields = [
+            field.name
+            for field in Diagnostic._meta.concrete_fields
+            if field.name not in classified_fields and field.attname not in classified_fields
+        ]
+        self.assertEqual(unclassified_fields, [])
+
     def test_fields_added_and_removed_match_the_previous_year(self):
         years = sorted(TELEDECLARATION_FIELDS)
         for previous_year, year in zip(years, years[1:]):
