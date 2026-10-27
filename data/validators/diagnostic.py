@@ -121,7 +121,9 @@ def validate_appro_fields_required(instance):
     """
     errors = {}
     if instance.year:
-        required_fields = get_teledeclaration_fields_required(instance.year, instance.diagnostic_type)
+        required_fields = get_teledeclaration_fields_required(
+            instance.year, "APPROVISIONNEMENT", instance.diagnostic_type
+        )
         excluded_fields = ["nombre_repas_an"]
         for field in required_fields:
             if field not in excluded_fields and getattr(instance, field) is None:

@@ -158,7 +158,7 @@ class DiagnosticsSimpleImportView(DiagnosticsImportView):
         values_dict = {}
         diagnostic_year = row[1]
         offset_row = 2  # Two columns before value_fields in row
-        fields = get_teledeclaration_fields_all(diagnostic_year, "SIMPLE")
+        fields = get_teledeclaration_fields_all(diagnostic_year, "APPROVISIONNEMENT", "SIMPLE")
         for idx, value in enumerate(fields):
             value_idx = idx + offset_row
             values_dict[value] = None if not row[value_idx] else row[value_idx]
@@ -179,7 +179,7 @@ class DiagnosticsCompleteImportView(DiagnosticsImportView):
         values_dict = {}
         diagnostic_year = row[1]
         offset_row = 2  # Two columns before value_fields in row
-        fields = get_teledeclaration_fields_all(diagnostic_year, "COMPLETE")
+        fields = get_teledeclaration_fields_all(diagnostic_year, "APPROVISIONNEMENT", "COMPLETE")
         for idx, value in enumerate(fields):
             value_idx = idx + offset_row
             values_dict[value] = None if not row[value_idx] else row[value_idx]
