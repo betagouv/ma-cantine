@@ -4,6 +4,7 @@ from data.models import Diagnostic
 from data.models.diagnostic_teledeclaration_fields import (
     TELEDECLARATION_FIELDS,
     get_teledeclaration_fields_all,
+    get_teledeclaration_fields_all_volets,
     get_teledeclaration_fields_all_years,
     get_teledeclaration_fields_required,
 )
@@ -61,6 +62,21 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         self.assertIn("service_type", get_teledeclaration_fields_all(2024, "DIVERSIFICATION"))
         self.assertIn("service_type", get_teledeclaration_fields_all(2026, "DIVERSIFICATION"))
 
+    def test_get_teledeclaration_fields_all_volets(self):
+        for year in TELEDECLARATION_FIELDS:
+            for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
+                with self.subTest(year=year, diagnostic_type=diagnostic_type):
+                    expected_fields = get_teledeclaration_fields_all(year, "APPROVISIONNEMENT", diagnostic_type) + [
+                        field for volet in VOLETS[1:] for field in get_teledeclaration_fields_all(year, volet)
+                    ]
+                    self.assertEqual(get_teledeclaration_fields_all_volets(year, diagnostic_type), expected_fields)
+        # depends on the year & diagnostic_type
+        self.assertIn("valeur_bio", get_teledeclaration_fields_all_volets(2025, "SIMPLE"))
+        self.assertNotIn("valeur_bio", get_teledeclaration_fields_all_volets(2025, "COMPLETE"))
+        self.assertNotIn("service_type", get_teledeclaration_fields_all_volets(2023, "SIMPLE"))
+        self.assertIn("service_type", get_teledeclaration_fields_all_volets(2024, "SIMPLE"))
+        self.assertIn("has_waste_diagnostic", get_teledeclaration_fields_all_volets("2025", "SIMPLE"))
+
     def test_errors(self):
         with self.assertRaises(ValueError):
             get_teledeclaration_fields_all(2020, "APPROVISIONNEMENT", "SIMPLE")
@@ -68,3 +84,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
             get_teledeclaration_fields_all(2025, "UNKNOWN")
         with self.assertRaises(ValueError):
             get_teledeclaration_fields_all(2025, "APPROVISIONNEMENT")  # APPROVISIONNEMENT requires a diagnostic_type
+        with self.assertRaises(ValueError):
+            get_teledeclaration_fields_all_volets(2020, "SIMPLE")
+        with self.assertRaises(ValueError):
+            get_teledeclaration_fields_all_volets(2025, None)  # APPROVISIONNEMENT requires a diagnostic_type
