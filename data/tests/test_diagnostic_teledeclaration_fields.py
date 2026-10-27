@@ -21,29 +21,22 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         for year in TELEDECLARATION_FIELDS:
             for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
                 with self.subTest(year=year, diagnostic_type=diagnostic_type):
-                    self.assertEqual(set(get_teledeclaration_fields_all(year, diagnostic_type)) - model_fields, set())
+                    self.assertEqual(
+                        set(get_teledeclaration_fields_all(year, "APPROVISIONNEMENT", diagnostic_type)) - model_fields,
+                        set(),
+                    )
             for volet in VOLETS[1:]:
                 with self.subTest(year=year, volet=volet):
-                    self.assertEqual(set(get_teledeclaration_fields_all(year, volet=volet)) - model_fields, set())
-
-    def test_approvisionnement_is_the_default_volet(self):
-        self.assertEqual(
-            get_teledeclaration_fields_all(2025, "SIMPLE"),
-            get_teledeclaration_fields_all(2025, "SIMPLE", volet="APPROVISIONNEMENT"),
-        )
-        self.assertEqual(
-            get_teledeclaration_fields_required(2025, "COMPLETE"),
-            get_teledeclaration_fields_required(2025, "COMPLETE", volet="APPROVISIONNEMENT"),
-        )
+                    self.assertEqual(set(get_teledeclaration_fields_all(year, volet)) - model_fields, set())
 
     def test_non_approvisionnement_volets_ignore_diagnostic_type(self):
         for volet in VOLETS[1:]:
             with self.subTest(volet=volet):
                 self.assertEqual(
-                    get_teledeclaration_fields_all(2025, volet=volet),
-                    get_teledeclaration_fields_all(2025, "COMPLETE", volet=volet),
+                    get_teledeclaration_fields_all(2025, volet),
+                    get_teledeclaration_fields_all(2025, volet, "COMPLETE"),
                 )
-                self.assertEqual(get_teledeclaration_fields_required(2025, volet=volet), [])
+                self.assertEqual(get_teledeclaration_fields_required(2025, volet), [])
 
     def test_current_year_matches_the_model_volet_fields(self):
         latest_year = max(TELEDECLARATION_FIELDS)
@@ -54,17 +47,17 @@ class TeledeclarationFieldsTest(SimpleTestCase):
             ("INFORMATION", Diagnostic.INFO_FIELDS),
         ]:
             with self.subTest(volet=volet):
-                self.assertEqual(get_teledeclaration_fields_all(latest_year, volet=volet), model_volet_fields)
+                self.assertEqual(get_teledeclaration_fields_all(latest_year, volet), model_volet_fields)
 
     def test_service_type_only_from_2024(self):
-        self.assertNotIn("service_type", get_teledeclaration_fields_all(2023, volet="DIVERSIFICATION"))
-        self.assertIn("service_type", get_teledeclaration_fields_all(2024, volet="DIVERSIFICATION"))
-        self.assertIn("service_type", get_teledeclaration_fields_all(2026, volet="DIVERSIFICATION"))
+        self.assertNotIn("service_type", get_teledeclaration_fields_all(2023, "DIVERSIFICATION"))
+        self.assertIn("service_type", get_teledeclaration_fields_all(2024, "DIVERSIFICATION"))
+        self.assertIn("service_type", get_teledeclaration_fields_all(2026, "DIVERSIFICATION"))
 
     def test_errors(self):
         with self.assertRaises(ValueError):
-            get_teledeclaration_fields_all(2020, "SIMPLE")
+            get_teledeclaration_fields_all(2020, "APPROVISIONNEMENT", "SIMPLE")
         with self.assertRaises(ValueError):
-            get_teledeclaration_fields_all(2025, volet="UNKNOWN")
+            get_teledeclaration_fields_all(2025, "UNKNOWN")
         with self.assertRaises(ValueError):
-            get_teledeclaration_fields_all(2025)  # APPROVISIONNEMENT requires a diagnostic_type
+            get_teledeclaration_fields_all(2025, "APPROVISIONNEMENT")  # APPROVISIONNEMENT requires a diagnostic_type

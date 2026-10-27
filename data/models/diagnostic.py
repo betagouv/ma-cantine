@@ -2193,7 +2193,7 @@ class Diagnostic(models.Model):
         """
         if not (self.year and self.diagnostic_type):
             return
-        required_fields = get_teledeclaration_fields_required(self.year, self.diagnostic_type)
+        required_fields = get_teledeclaration_fields_required(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
         excluded_fields = ["valeur_totale", "nombre_repas_an"]
         for field_name in required_fields:
             if field_name not in excluded_fields and getattr(self, field_name) is None:
@@ -2440,7 +2440,7 @@ class Diagnostic(models.Model):
             and self.valeur_totale_is_filled
             and all(
                 getattr(self, field) is not None
-                for field in get_teledeclaration_fields_required(self.year, self.diagnostic_type)
+                for field in get_teledeclaration_fields_required(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
             )
         )
 
@@ -2452,7 +2452,7 @@ class Diagnostic(models.Model):
             and self.valeur_totale_is_filled
             and all(
                 getattr(self, field) is not None
-                for field in get_teledeclaration_fields_required(self.year, self.diagnostic_type)
+                for field in get_teledeclaration_fields_required(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
             )
         )
 
@@ -2624,9 +2624,9 @@ class Diagnostic(models.Model):
             return
         if not self.diagnostic_type or self.diagnostic_type not in Diagnostic.DiagnosticType.values:
             return
-        matching_fields = set(get_teledeclaration_fields_all(self.year, self.diagnostic_type)) | set(
-            Diagnostic.SIMPLIFIED_DIAGNOSTIC_FIELDS
-        )
+        matching_fields = set(
+            get_teledeclaration_fields_all(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
+        ) | set(Diagnostic.SIMPLIFIED_DIAGNOSTIC_FIELDS)
         for field_name in Diagnostic.APPRO_FIELDS:
             if field_name not in matching_fields:
                 setattr(self, field_name, None)

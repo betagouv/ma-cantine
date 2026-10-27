@@ -1547,7 +1547,7 @@ TELEDECLARATION_FIELDS = {
 }
 
 
-def _get_teledeclaration_fields(year, diagnostic_type=None, volet="APPROVISIONNEMENT", required=False):
+def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=False):
     """
     diagnostic_type (SIMPLE / COMPLETE) is only used by the APPROVISIONNEMENT volet
     """
@@ -1569,9 +1569,9 @@ def _get_teledeclaration_fields(year, diagnostic_type=None, volet="APPROVISIONNE
     return volet_fields["fields"]
 
 
-def get_teledeclaration_fields_all(year, diagnostic_type=None, volet="APPROVISIONNEMENT"):
-    return _get_teledeclaration_fields(year, diagnostic_type, volet=volet, required=False)
+def get_teledeclaration_fields_all(year, volet, diagnostic_type=None):
+    return _get_teledeclaration_fields(year, volet, diagnostic_type, required=False)
 
 
-def get_teledeclaration_fields_required(year, diagnostic_type=None, volet="APPROVISIONNEMENT"):
-    return _get_teledeclaration_fields(year, diagnostic_type, volet=volet, required=True)
+def get_teledeclaration_fields_required(year, volet, diagnostic_type=None):
+    return _get_teledeclaration_fields(year, volet, diagnostic_type, required=True)

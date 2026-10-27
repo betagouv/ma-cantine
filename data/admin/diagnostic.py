@@ -119,7 +119,9 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         The appro fields depend on the diagnostic's year & type (see diagnostic_teledeclaration_fields.py).
         """
         simple_or_complete_fields = (
-            get_teledeclaration_fields_all(obj.year, obj.diagnostic_type) if obj is not None else []
+            get_teledeclaration_fields_all(obj.year, "APPROVISIONNEMENT", obj.diagnostic_type)
+            if obj is not None
+            else []
         )
 
         return (

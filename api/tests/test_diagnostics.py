@@ -588,13 +588,13 @@ class DiagnosticTeledeclarationFieldsCoherenceTest(APITestCase):
         for year in TELEDECLARATION_FIELDS:
             for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
                 with self.subTest(year=year, diagnostic_type=diagnostic_type):
-                    fields = set(get_teledeclaration_fields_all(year, diagnostic_type))
+                    fields = set(get_teledeclaration_fields_all(year, "APPROVISIONNEMENT", diagnostic_type))
                     self.assertEqual(fields - serializer_fields, set())
             for volet in TELEDECLARATION_FIELDS[year]:
                 if volet == "APPROVISIONNEMENT":
                     continue
                 with self.subTest(year=year, volet=volet):
-                    fields = set(get_teledeclaration_fields_all(year, volet=volet))
+                    fields = set(get_teledeclaration_fields_all(year, volet))
                     self.assertEqual(fields - serializer_fields, set())
 
 

@@ -74,22 +74,28 @@ SCHEMA_SPECS = {
     "Diagnostic": {
         "simple_id": {
             "file_name": "bilans_simple_id.json",
-            "fields_ordered": ["cantine_id", "année_bilan"] + get_teledeclaration_fields_all(2025, "SIMPLE"),
-            "fields_required": ["cantine_id", "année_bilan"] + get_teledeclaration_fields_required(2025, "SIMPLE"),
+            "fields_ordered": ["cantine_id", "année_bilan"]
+            + get_teledeclaration_fields_all(2025, "APPROVISIONNEMENT", "SIMPLE"),
+            "fields_required": ["cantine_id", "année_bilan"]
+            + get_teledeclaration_fields_required(2025, "APPROVISIONNEMENT", "SIMPLE"),
             "schema_name": "import-bilans-simple-id",
             "schema_title": "Schema import des bilans (simple) par ID",
         },
         "simple_siret": {
             "file_name": "bilans_simple_siret.json",
-            "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_fields_all(2025, "SIMPLE"),
-            "fields_required": ["siret", "année_bilan"] + get_teledeclaration_fields_required(2025, "SIMPLE"),
+            "fields_ordered": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_all(2025, "APPROVISIONNEMENT", "SIMPLE"),
+            "fields_required": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_required(2025, "APPROVISIONNEMENT", "SIMPLE"),
             "schema_name": "import-bilans-simple-siret",
             "schema_title": "Schema import des bilans (simple) par SIRET",
         },
         "detaille": {
             "file_name": "bilans_detaille.json",
-            "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_fields_all(2025, "COMPLETE"),
-            "fields_required": ["siret", "année_bilan"] + get_teledeclaration_fields_required(2025, "COMPLETE"),
+            "fields_ordered": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_all(2025, "APPROVISIONNEMENT", "COMPLETE"),
+            "fields_required": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_required(2025, "APPROVISIONNEMENT", "COMPLETE"),
             "schema_name": "import-bilans-detaille",
             "schema_title": "Schema import des bilans (detaille)",
         },
