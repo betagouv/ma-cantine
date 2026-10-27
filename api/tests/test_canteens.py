@@ -239,7 +239,7 @@ class CanteenDetailApiTest(APITestCase):
             valeur_totale=1200,
             valeur_bio=600,
             valeur_siqo=300,
-            total_leftovers=Decimal("1.23456"),
+            dechets_total=Decimal("1.23456"),
         )
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
