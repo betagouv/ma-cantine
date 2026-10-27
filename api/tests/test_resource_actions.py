@@ -56,6 +56,17 @@ class ResourceActionsCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
+    def test_cannot_create_resource_action_if_resource_does_not_exist(self):
+        self.canteen.managers.add(authenticate.user)
+
+        url = reverse("resource_action_create_or_update", kwargs={"resource_pk": 9999})
+        payload = {"canteen_id": self.canteen.id, "is_done": True}
+        response = self.client.post(url, data=payload)
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(ResourceAction.objects.count(), 0)
+
+    @authenticate
     def test_can_create_resource_action(self):
         self.canteen.managers.add(authenticate.user)
 
@@ -84,8 +95,64 @@ class ResourceActionsUpdateApiTest(APITestCase):
         cls.canteen = CanteenFactory(managers=[cls.user_with_canteen])
         cls.url = reverse("resource_action_create_or_update", kwargs={"resource_pk": cls.waste_action.id})
 
+    def test_cannot_update_resource_action_if_unauthenticated(self):
+        resource_action = ResourceActionFactory(resource=self.waste_action, canteen=self.canteen, is_done=True)
+
+        payload = {"canteen_id": self.canteen.id, "is_done": False}
+        response = self.client.post(self.url, data=payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        resource_action.refresh_from_db()
+        self.assertTrue(resource_action.is_done)
+
     @authenticate
-    def test_update_resource_action(self):
+    def test_cannot_update_resource_action_if_user_not_canteen_manager(self):
+        resource_action = ResourceActionFactory(resource=self.waste_action, canteen=self.canteen, is_done=True)
+
+        payload = {"canteen_id": self.canteen.id, "is_done": False}
+        response = self.client.post(self.url, data=payload)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        resource_action.refresh_from_db()
+        self.assertTrue(resource_action.is_done)
+
+    @authenticate
+    def test_cannot_update_resource_action_with_invalid_value(self):
+        self.canteen.managers.add(authenticate.user)
+        resource_action = ResourceActionFactory(resource=self.waste_action, canteen=self.canteen, is_done=True)
+
+        payload = {"canteen_id": self.canteen.id, "is_done": "not-a-boolean"}
+        response = self.client.post(self.url, data=payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        resource_action.refresh_from_db()
+        self.assertTrue(resource_action.is_done)
+
+    @authenticate
+    def test_cannot_update_resource_action_of_other_canteen(self):
+        self.canteen.managers.add(authenticate.user)
+        ResourceActionFactory(resource=self.waste_action, canteen=self.canteen, is_done=True)
+        other_canteen = CanteenFactory()
+        other_resource_action = ResourceActionFactory(
+            resource=WasteActionFactory(), canteen=other_canteen, is_done=True
+        )
+
+        # try to hijack the other canteen's resource action by passing its id
+        payload = {
+            "canteen_id": self.canteen.id,
+            "id": other_resource_action.id,
+            "resource_id": other_resource_action.resource_id,
+            "is_done": False,
+        }
+        self.client.post(self.url, data=payload, format="json")
+
+        other_resource_action.refresh_from_db()
+        self.assertEqual(other_resource_action.canteen, other_canteen)
+        self.assertTrue(other_resource_action.is_done)
+        self.assertEqual(ResourceAction.objects.filter(canteen=self.canteen).count(), 1)
+
+    @authenticate
+    def test_can_update_resource_action(self):
         self.canteen.managers.add(authenticate.user)
         ResourceActionFactory(resource=self.waste_action, canteen=self.canteen, is_done=True)
 
@@ -125,7 +192,7 @@ class CanteenResourceActionGetApiTest(APITestCase):
         ResourceActionFactory(resource=cls.waste_action_2, canteen=cls.canteen_with_resource_action, is_favorite=True)
 
     @authenticate
-    def test_get_canteen_with_resource_actions(self):
+    def test_can_get_canteen_with_resource_actions(self):
         self.canteen_with_resource_action.managers.add(authenticate.user)
 
         url = reverse("single_canteen", kwargs={"pk": self.canteen_with_resource_action.id})
@@ -146,7 +213,7 @@ class CanteenResourceActionGetApiTest(APITestCase):
         self.assertEqual(body["resourceActions"][1]["canteen"]["id"], self.canteen_with_resource_action.id)
 
     @authenticate
-    def test_get_single_published_canteen_with_resource_actions(self):
+    def test_can_get_single_published_canteen_with_resource_actions(self):
         self.canteen.managers.add(authenticate.user)
         # canteen without resource_actions
         url = reverse("single_published_canteen", kwargs={"pk": self.canteen.id})
