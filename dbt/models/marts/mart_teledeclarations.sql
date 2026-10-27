@@ -312,12 +312,12 @@ select
     objectifs_egalim_atteints,
 
     -- diversification
-    has_diversification_plan                            as plan_diversification,
-    diversification_plan_actions                        as actions_plan_diversification,
+    plan_diversification_en_place                       as plan_diversification,
+    plan_diversification_actions                        as actions_plan_diversification,
     service_type                                        as type_service,
-    vegetarian_weekly_recurrence                        as recurrence_vege,
-    vegetarian_menu_type                                as type_menu_vege,
-    vegetarian_menu_bases                               as bases_menu_vege,
+    menu_vegetarien_frequence                           as recurrence_vege,
+    menu_vegetarien_type                                as type_menu_vege,
+    menu_vegetarien_bases                               as bases_menu_vege,
 
     -- dons
     convention_dons,
@@ -409,9 +409,9 @@ select
     end                                                                     as atteint_3_objectifs,
 
     -- SPE — objectif végétarien
-    (service_type != 'UNIQUE')                                             as choix_multiple,
-    (service_type != 'UNIQUE'
-        and vegetarian_weekly_recurrence = 'DAILY')                        as atteint_vege_quotidien,
+    (service_type != 'MENU_UNIQUE')                                         as choix_multiple,
+    (service_type != 'MENU_UNIQUE'
+        and menu_vegetarien_frequence = 'QUOTIDIEN')                        as atteint_vege_quotidien,
 
     -- SPE — volet diversification protéines / menu végé rempli
     (tunnel_diversification = 'complet')                                   as td_volet_diversification_complet,

@@ -11,14 +11,64 @@ from .teledeclaration import ShortTeledeclarationSerializer
 
 logger = logging.getLogger(__name__)
 
+# v1 keeps the English names of the fields renamed in French (used by the Vue 2 tunnel)
+# {v1 name: model field name}
+V1_FIELD_ALIASES = {
+    "has_diversification_plan": "plan_diversification_en_place",
+    "diversification_plan_actions": "plan_diversification_actions",
+    "vegetarian_weekly_recurrence": "menu_vegetarien_frequence",
+    "vegetarian_menu_type": "menu_vegetarien_type",
+    "vegetarian_menu_bases": "menu_vegetarien_bases",
+}
+V1_FIELD_NAMES = {model_field_name: v1_name for v1_name, model_field_name in V1_FIELD_ALIASES.items()}
+# same for the choice values renamed in French
+# {v1 field name: {v1 value: model value}}
+V1_CHOICE_VALUE_ALIASES = {
+    "service_type": {
+        "UNIQUE": Diagnostic.ServiceType.MENU_UNIQUE,
+        "MULTIPLE_SELF": Diagnostic.ServiceType.CHOIX_MULTIPLE_LIBRE_SERVICE,
+        "MULTIPLE_RESERVATION": Diagnostic.ServiceType.CHOIX_MULTIPLE_RESERVATION,
+    },
+    "vegetarian_weekly_recurrence": {
+        "NEVER": Diagnostic.MenuVegetarienFrequence.JAMAIS,
+        "LOW": Diagnostic.MenuVegetarienFrequence.MOINS_HEBDO,
+        "MID": Diagnostic.MenuVegetarienFrequence.HEBDO,
+        "HIGH": Diagnostic.MenuVegetarienFrequence.PLUS_HEBDO,
+        "DAILY": Diagnostic.MenuVegetarienFrequence.QUOTIDIEN,
+    },
+    "diversification_plan_actions": {
+        "PRODUCTS": Diagnostic.PlanDiversificationActions.PLATS_PRODUITS,
+        "TRAINING": Diagnostic.PlanDiversificationActions.FORMATION,
+    },
+    "vegetarian_menu_bases": {
+        "GRAIN": Diagnostic.MenuVegetarienBase.CEREALES_LEGUMINEUSES,
+        "SOY": Diagnostic.MenuVegetarienBase.SOJA,
+        "CHEESE": Diagnostic.MenuVegetarienBase.FROMAGE,
+        "EGG": Diagnostic.MenuVegetarienBase.OEUFS,
+        "READYMADE": Diagnostic.MenuVegetarienBase.PLATS_PRETS_A_L_EMPLOI,
+    },
+}
+NON_APPRO_FIELDS_V1 = [V1_FIELD_NAMES.get(field_name, field_name) for field_name in Diagnostic.NON_APPRO_FIELDS]
+
 FIELDS = (
     Diagnostic.META_FIELDS
     + Diagnostic.CANTEEN_FIELDS
     + Diagnostic.APPRO_FIELDS  # even the legacy ones
     + Diagnostic.APPRO_LOCAL_DEFINITION_FIELDS
-    + Diagnostic.NON_APPRO_FIELDS
+    + NON_APPRO_FIELDS_V1
 )
 REQUIRED_FIELDS = ("year",)
+
+
+def replace_choice_values(value, mapping):
+    """
+    Works for both simple choice fields & array (multiple choices) fields
+    """
+    if isinstance(value, list):
+        return [mapping.get(item, item) for item in value]
+    return mapping.get(value, value)
+
+
 CREATE_ONLY_FIELDS = ("creation_source", *Diagnostic.MATOMO_FIELDS)
 HIDDEN_FIELDS = CREATE_ONLY_FIELDS + ("generated_from_purchases", *Diagnostic.TUNNEL_PROGRESS_FIELDS)
 READ_ONLY_FIELDS = (
@@ -35,6 +85,17 @@ class DiagnosticSerializer(serializers.ModelSerializer):
     is_teledeclared = serializers.BooleanField(read_only=True)  # property
     is_filled = serializers.BooleanField(read_only=True)
 
+    v1_choice_value_aliases = V1_CHOICE_VALUE_ALIASES  # emptied in the v2 serializers
+
+    def build_field(self, field_name, info, model_class, nested_depth):
+        # v1 English names: build the field from the (French) model field
+        if field_name in V1_FIELD_ALIASES:
+            model_field_name = V1_FIELD_ALIASES[field_name]
+            field_class, field_kwargs = super().build_field(model_field_name, info, model_class, nested_depth)
+            field_kwargs["source"] = model_field_name
+            return field_class, field_kwargs
+        return super().build_field(field_name, info, model_class, nested_depth)
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         if (
@@ -43,9 +104,24 @@ class DiagnosticSerializer(serializers.ModelSerializer):
             and representation["total_leftovers"] != ""
         ):
             representation["total_leftovers"] = representation["total_leftovers"] * 1000
+        # v1 choice values: model value -> v1 value
+        for field_name, value_aliases in self.v1_choice_value_aliases.items():
+            if representation.get(field_name):
+                model_to_v1_values = {model_value: v1_value for v1_value, model_value in value_aliases.items()}
+                representation[field_name] = replace_choice_values(representation[field_name], model_to_v1_values)
         return representation
 
     def to_internal_value(self, data):
+        # v1 choice values: v1 value -> model value
+        if any(data.get(field_name) for field_name in self.v1_choice_value_aliases):
+            data = data.copy()
+            for field_name, value_aliases in self.v1_choice_value_aliases.items():
+                if not data.get(field_name):
+                    continue
+                if hasattr(data, "getlist"):  # QueryDict (form data): a list field has several values
+                    data.setlist(field_name, replace_choice_values(data.getlist(field_name), value_aliases))
+                else:
+                    data[field_name] = replace_choice_values(data[field_name], value_aliases)
         if "total_leftovers" in data and data["total_leftovers"] is not None and data["total_leftovers"] != "":
             try:
                 value = Decimal(repr(data["total_leftovers"]))
@@ -98,7 +174,7 @@ class CentralKitchenDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSeri
         """
         representation = super().to_representation(instance)
         if instance.central_kitchen_diagnostic_mode == Diagnostic.CentralKitchenDiagnosticMode.APPRO:
-            [representation.pop(field, "") for field in Diagnostic.NON_APPRO_FIELDS]
+            [representation.pop(field, "") for field in NON_APPRO_FIELDS_V1]
         if instance.diagnostic_type == Diagnostic.DiagnosticType.SIMPLE:
             [representation.pop(field, "") for field in Diagnostic.COMPLETE_APPRO_FIELDS]
         return representation
@@ -119,7 +195,7 @@ class PublicApproDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSeriali
 class PublicServiceDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + NON_APPRO_FIELDS_V1
 
 
 @set_help_text_from_verbose_name
@@ -185,7 +261,7 @@ class SimpleTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, Diagnos
             Diagnostic.META_FIELDS
             + Diagnostic.SIMPLE_APPRO_FIELDS
             + Diagnostic.APPRO_LOCAL_DEFINITION_FIELDS
-            + Diagnostic.NON_APPRO_FIELDS
+            + NON_APPRO_FIELDS_V1
         )
 
 
@@ -196,7 +272,7 @@ class CompleteTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, Diagn
             Diagnostic.META_FIELDS
             + Diagnostic.COMPLETE_APPRO_FIELDS
             + Diagnostic.APPRO_LOCAL_DEFINITION_FIELDS
-            + Diagnostic.NON_APPRO_FIELDS
+            + NON_APPRO_FIELDS_V1
         )
 
 
@@ -209,7 +285,7 @@ class ApproDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
 class ApproDeferredTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     class Meta:
         model = Diagnostic
-        fields = Diagnostic.META_FIELDS + Diagnostic.NON_APPRO_FIELDS
+        fields = Diagnostic.META_FIELDS + NON_APPRO_FIELDS_V1
 
 
 class SimpleApproOnlyTeledeclarationDiagnosticSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):

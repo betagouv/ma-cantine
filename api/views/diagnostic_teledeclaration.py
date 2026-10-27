@@ -244,24 +244,24 @@ class DiagnosticTeledeclarationPdfView(APIView):
 
         return {
             "waste_actions": combined_waste_actions,
-            "diversification_plan_actions": [
-                Diagnostic.DiversificationPlanActions(x).label for x in (diagnostic.diversification_plan_actions or [])
+            "plan_diversification_actions": [
+                Diagnostic.PlanDiversificationActions(x).label for x in (diagnostic.plan_diversification_actions or [])
             ],
-            "vegetarian_weekly_recurrence": (
-                Diagnostic.VegetarianMenuFrequency(diagnostic.vegetarian_weekly_recurrence).label
-                if diagnostic.vegetarian_weekly_recurrence
+            "menu_vegetarien_frequence": (
+                Diagnostic.MenuVegetarienFrequence(diagnostic.menu_vegetarien_frequence).label
+                if diagnostic.menu_vegetarien_frequence
                 else None
             ),
             "service_type": (
                 Diagnostic.ServiceType(diagnostic.service_type).label if diagnostic.service_type else None
             ),
-            "vegetarian_menu_type": (
-                Diagnostic.VegetarianMenuType(diagnostic.vegetarian_menu_type).label
-                if diagnostic.vegetarian_menu_type
+            "menu_vegetarien_type": (
+                Diagnostic.MenuVegetarienType(diagnostic.menu_vegetarien_type).label
+                if diagnostic.menu_vegetarien_type
                 else None
             ),
-            "vegetarian_menu_bases": [
-                Diagnostic.VegetarianMenuBase(x).label for x in (diagnostic.vegetarian_menu_bases or [])
+            "menu_vegetarien_bases": [
+                Diagnostic.MenuVegetarienBase(x).label for x in (diagnostic.menu_vegetarien_bases or [])
             ],
             "communication_frequency": (
                 Diagnostic.CommunicationFrequency(diagnostic.communication_frequency).label

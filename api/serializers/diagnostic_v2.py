@@ -38,6 +38,8 @@ class DiagnosticV2Serializer(DiagnosticSerializer):
     The diagnostic itself, without the volets (each volet has its own serializer)
     """
 
+    v1_choice_value_aliases = {}  # v2: the model (French) values
+
     class Meta:
         model = Diagnostic
         fields = (
@@ -82,6 +84,7 @@ class BaseDiagnosticVoletV2Serializer(DiagnosticSerializer):
 
     volet = None  # TELEDECLARATION_FIELDS key
     extra_read_only_fields = []  # volet fields that are not in TELEDECLARATION_FIELDS (ex: computed stats)
+    v1_choice_value_aliases = {}  # v2: the model (French) values
 
     def get_diagnostic_type(self):
         return None

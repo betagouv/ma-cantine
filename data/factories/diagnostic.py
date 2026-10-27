@@ -62,9 +62,9 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     waste_actions = factory.List(random.sample(list(Diagnostic.WasteActions), random.randint(0, 2)))
     has_donation_agreement = factory.Faker("boolean")
 
-    has_diversification_plan = factory.Faker("boolean")
-    vegetarian_weekly_recurrence = fuzzy.FuzzyChoice(list(Diagnostic.VegetarianMenuFrequency))
-    vegetarian_menu_type = fuzzy.FuzzyChoice(list(Diagnostic.VegetarianMenuType))
+    plan_diversification_en_place = factory.Faker("boolean")
+    menu_vegetarien_frequence = fuzzy.FuzzyChoice(list(Diagnostic.MenuVegetarienFrequence))
+    menu_vegetarien_type = fuzzy.FuzzyChoice(list(Diagnostic.MenuVegetarienType))
 
     cooking_plastic_substituted = factory.Faker("boolean")
     serving_plastic_substituted = factory.Faker("boolean")
@@ -112,9 +112,9 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     waste_actions = factory.List(random.sample(list(Diagnostic.WasteActions), random.randint(0, 2)))
     has_donation_agreement = factory.Faker("boolean")
 
-    has_diversification_plan = factory.Faker("boolean")
-    vegetarian_weekly_recurrence = fuzzy.FuzzyChoice(list(Diagnostic.VegetarianMenuFrequency))
-    vegetarian_menu_type = fuzzy.FuzzyChoice(list(Diagnostic.VegetarianMenuType))
+    plan_diversification_en_place = factory.Faker("boolean")
+    menu_vegetarien_frequence = fuzzy.FuzzyChoice(list(Diagnostic.MenuVegetarienFrequence))
+    menu_vegetarien_type = fuzzy.FuzzyChoice(list(Diagnostic.MenuVegetarienType))
 
     cooking_plastic_substituted = factory.Faker("boolean")
     serving_plastic_substituted = factory.Faker("boolean")

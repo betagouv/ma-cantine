@@ -144,11 +144,11 @@ TELEDECLARATION_FIELDS = {
         },
         "DIVERSIFICATION": {
             "fields": [
-                "has_diversification_plan",
-                "diversification_plan_actions",
-                "vegetarian_weekly_recurrence",
-                "vegetarian_menu_type",
-                "vegetarian_menu_bases",
+                "plan_diversification_en_place",
+                "plan_diversification_actions",
+                "menu_vegetarien_frequence",
+                "menu_vegetarien_type",
+                "menu_vegetarien_bases",
             ],
             "fields_required": [],
         },
@@ -348,11 +348,11 @@ TELEDECLARATION_FIELDS = {
         },
         "DIVERSIFICATION": {
             "fields": [
-                "has_diversification_plan",
-                "diversification_plan_actions",
-                "vegetarian_weekly_recurrence",
-                "vegetarian_menu_type",
-                "vegetarian_menu_bases",
+                "plan_diversification_en_place",
+                "plan_diversification_actions",
+                "menu_vegetarien_frequence",
+                "menu_vegetarien_type",
+                "menu_vegetarien_bases",
             ],
             "fields_required": [],
         },
@@ -539,11 +539,11 @@ TELEDECLARATION_FIELDS = {
         },
         "DIVERSIFICATION": {
             "fields": [
-                "has_diversification_plan",
-                "diversification_plan_actions",
-                "vegetarian_weekly_recurrence",
-                "vegetarian_menu_type",
-                "vegetarian_menu_bases",
+                "plan_diversification_en_place",
+                "plan_diversification_actions",
+                "menu_vegetarien_frequence",
+                "menu_vegetarien_type",
+                "menu_vegetarien_bases",
             ],
             "fields_required": [],
         },
@@ -730,15 +730,15 @@ TELEDECLARATION_FIELDS = {
         },
         "DIVERSIFICATION": {
             "fields": [
-                "has_diversification_plan",
-                "diversification_plan_actions",
+                "plan_diversification_en_place",
+                "plan_diversification_actions",
                 "service_type",
-                "vegetarian_weekly_recurrence",
-                "vegetarian_menu_bases",
+                "menu_vegetarien_frequence",
+                "menu_vegetarien_bases",
             ],
             "fields_required": [],
             "fields_added": ["service_type"],
-            "fields_removed": ["vegetarian_menu_type"],
+            "fields_removed": ["menu_vegetarien_type"],
         },
         "PLASTIQUE": {
             "fields": [
@@ -1076,11 +1076,11 @@ TELEDECLARATION_FIELDS = {
         },
         "DIVERSIFICATION": {
             "fields": [
-                "has_diversification_plan",
-                "diversification_plan_actions",
+                "plan_diversification_en_place",
+                "plan_diversification_actions",
                 "service_type",
-                "vegetarian_weekly_recurrence",
-                "vegetarian_menu_bases",
+                "menu_vegetarien_frequence",
+                "menu_vegetarien_bases",
             ],
             "fields_required": [],
         },
@@ -1531,11 +1531,11 @@ TELEDECLARATION_FIELDS = {
         },
         "DIVERSIFICATION": {
             "fields": [
-                "has_diversification_plan",
-                "diversification_plan_actions",
+                "plan_diversification_en_place",
+                "plan_diversification_actions",
                 "service_type",
-                "vegetarian_weekly_recurrence",
-                "vegetarian_menu_bases",
+                "menu_vegetarien_frequence",
+                "menu_vegetarien_bases",
             ],
             "fields_required": [],
         },

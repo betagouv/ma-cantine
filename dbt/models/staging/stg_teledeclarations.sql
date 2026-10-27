@@ -360,12 +360,12 @@ renamed as (
         objectifs_egalim_atteints,
 
         -- diversification
-        has_diversification_plan,
-        diversification_plan_actions,
+        plan_diversification_en_place,
+        plan_diversification_actions,
         service_type,
-        vegetarian_weekly_recurrence,
-        vegetarian_menu_type,
-        vegetarian_menu_bases,
+        menu_vegetarien_frequence,
+        menu_vegetarien_type,
+        menu_vegetarien_bases,
 
         -- dons
         has_donation_agreement                              as convention_dons,

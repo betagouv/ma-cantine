@@ -48,7 +48,8 @@ def set_help_text_from_verbose_name(serializer_class):
             # Set help_text for model fields
             for field_name, field in fields.items():
                 try:
-                    model_field = model._meta.get_field(field_name)
+                    # field.source: for fields exposed under another name (ex: v1 English names)
+                    model_field = model._meta.get_field(field.source or field_name)
                     if hasattr(model_field, "verbose_name") and model_field.verbose_name:
                         field.help_text = model_field.verbose_name
                 except Exception:
