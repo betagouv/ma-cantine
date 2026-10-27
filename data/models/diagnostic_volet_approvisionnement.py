@@ -2,11 +2,19 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from data.models.definitionlocal import DefinitionLocal
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all_years
+from data.models.diagnostic_teledeclaration_egalim_objectives import objectifs_egalim_atteints
+from data.models.diagnostic_teledeclaration_field_groups import get_teledeclaration_field_groups
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all_years,
+    get_teledeclaration_fields_required,
+)
 from data.utils import (
+    compute_percentage,
+    has_any_value_filled,
     make_optional_positive_decimal_field,
     make_optional_positive_integer_field,
     make_optional_positive_percentage_decimal_field,
+    sum_int_with_potential_null,
 )
 
 
@@ -14,6 +22,7 @@ class DiagnosticVoletApprovisionnementMixin(models.Model):
     """
     Volet "Approvisionnements"
     + the computed fields: *_agg & pourcentage_*
+    + the appro methods (populate_*, sums, percentages), which rely on Diagnostic's year, diagnostic_type & canteen_snapshot
     """
 
     SIMPLE_APPRO_FIELDS = [
@@ -179,6 +188,18 @@ class DiagnosticVoletApprovisionnementMixin(models.Model):
         "pourcentage_boissons_local",
         "pourcentage_autres_local",
         "objectifs_egalim_atteints",
+    ]
+
+    APPRO_PERCENTAGE_PROPERTY_FIELDS = [
+        "percentage_valeur_totale",
+        "percentage_valeur_bio",
+        "percentage_valeur_siqo",
+        "percentage_valeur_externalites_performance",
+        "percentage_valeur_egalim_autres",
+        "percentage_valeur_viandes_volailles_egalim",
+        "percentage_valeur_viandes_volailles_france",
+        "percentage_valeur_produits_de_la_mer_egalim",
+        "percentage_valeur_produits_de_la_mer_france",
     ]
 
     # Canteen info
@@ -941,3 +962,225 @@ class DiagnosticVoletApprovisionnementMixin(models.Model):
 
     class Meta:
         abstract = True
+
+    def populate_required_fields_with_zero(self):
+        """
+        Default any still-empty required appro field (for this diagnostic's year & diagnostic_type) to 0.
+        NOTE: valeur_totale is excluded, it must be > 0 (see validate_valeur_totale)
+        NOTE: nombre_repas_an is excluded
+        """
+        if not (self.year and self.diagnostic_type):
+            return
+        required_fields = get_teledeclaration_fields_required(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
+        excluded_fields = ["valeur_totale", "nombre_repas_an"]
+        for field_name in required_fields:
+            if field_name not in excluded_fields and getattr(self, field_name) is None:
+                setattr(self, field_name, 0)
+
+    def populate_simplified_diagnostic_values(self):
+        # NOTE: SIMPLIFIED_DIAGNOSTIC_FIELDS
+        self.valeur_bio = self.label_group_sum("bio")
+        self.valeur_bio_dont_commerce_equitable = self.label_sum("bio_dont_commerce_equitable")
+        self.valeur_siqo = self.label_group_sum("siqo")
+        self.valeur_externalites_performance = self.label_group_sum("externalites_performance")
+        self.valeur_egalim_autres = self.label_group_sum("egalim_autres")
+        self.valeur_egalim_autres_dont_commerce_equitable = self.label_sum("commerce_equitable")
+
+        total_meat_egalim = total_fish_egalim = 0
+        for label in get_teledeclaration_field_groups(self.year, "APPRO_LABELS_EGALIM"):
+            family = "viandes_volailles"
+            # need to do or 0 and not give a default value because the value can be explicitly set to None
+            total_meat_egalim = total_meat_egalim + (getattr(self, f"valeur_{family}_{label}") or 0)
+
+            family = "produits_de_la_mer"
+            total_fish_egalim = total_fish_egalim + (getattr(self, f"valeur_{family}_{label}") or 0)
+
+        # NOTE: stop populating france from ["france", "circuit_court", "local"]
+        # for label in ["france", "circuit_court", "local"]:
+        #     family = "viandes_volailles"
+        #     total_meat_france = total_meat_france + (getattr(self, f"valeur_{family}_{label}") or 0)
+
+        self.valeur_viandes_volailles_egalim = total_meat_egalim
+        # self.valeur_viandes_volailles_france = total_meat_france
+        self.valeur_produits_de_la_mer_egalim = total_fish_egalim
+
+    def populate_aggregated_values(self):
+        # NOTE: AGGREGATED_DIAGNOSTIC_FIELDS
+        self.valeur_bio_agg = self.label_group_sum("bio")
+        self.valeur_siqo_agg = self.label_group_sum("siqo")
+        self.valeur_externalites_performance_agg = self.label_group_sum("externalites_performance")
+        self.valeur_egalim_autres_agg = self.label_group_sum("egalim_autres")
+        # group_group
+        self.valeur_egalim_hors_bio_agg = self.label_group_group_sum("egalim_hors_bio")
+        self.valeur_egalim_agg = self.label_group_group_sum("egalim")
+
+    def populate_stats_values(self):
+        # NOTE: APPRO_STATS_FIELDS
+        self.pourcentage_bio = compute_percentage(self.valeur_bio_agg, self.valeur_totale)
+        self.pourcentage_siqo = compute_percentage(self.valeur_siqo_agg, self.valeur_totale)
+        self.pourcentage_externalites_performance = compute_percentage(
+            self.valeur_externalites_performance_agg, self.valeur_totale
+        )
+        self.pourcentage_egalim_autres = compute_percentage(self.valeur_egalim_autres_agg, self.valeur_totale)
+        self.pourcentage_egalim_hors_bio = compute_percentage(self.valeur_egalim_hors_bio_agg, self.valeur_totale)
+        self.pourcentage_egalim = compute_percentage(self.valeur_egalim_agg, self.valeur_totale)
+        self.pourcentage_viandes_volailles_egalim = compute_percentage(
+            self.valeur_viandes_volailles_egalim, self.valeur_viandes_volailles
+        )
+        self.pourcentage_produits_de_la_mer_egalim = compute_percentage(
+            self.valeur_produits_de_la_mer_egalim, self.valeur_produits_de_la_mer
+        )
+        # keep None (not 0) if neither viandes_volailles nor produits_de_la_mer are filled
+        valeur_viandes_volailles_produits_de_la_mer = (
+            None
+            if self.valeur_viandes_volailles is None and self.valeur_produits_de_la_mer is None
+            else sum_int_with_potential_null([self.valeur_viandes_volailles, self.valeur_produits_de_la_mer])
+        )
+        self.pourcentage_viandes_volailles_produits_de_la_mer_egalim = compute_percentage(
+            sum_int_with_potential_null([self.valeur_viandes_volailles_egalim, self.valeur_produits_de_la_mer_egalim]),
+            valeur_viandes_volailles_produits_de_la_mer,
+        )
+        self.pourcentage_europe = compute_percentage(self.valeur_europe, self.valeur_totale)
+        self.pourcentage_france = compute_percentage(self.valeur_france, self.valeur_totale)
+        self.pourcentage_circuit_court = compute_percentage(self.valeur_circuit_court, self.valeur_totale)
+        self.pourcentage_local = compute_percentage(self.valeur_local, self.valeur_totale)
+        # per family & origine/circuit_court/local: relative to the family total
+        for family_field in self.APPRO_FAMILY_FIELDS:
+            family = family_field.removeprefix("valeur_")
+            for label in ["europe", "france", "circuit_court", "local"]:
+                setattr(
+                    self,
+                    f"pourcentage_{family}_{label}",
+                    compute_percentage(getattr(self, f"valeur_{family}_{label}"), getattr(self, family_field)),
+                )
+        self.objectifs_egalim_atteints = self.compute_objectifs_egalim_atteints()
+
+    def label_sum(self, label: str):
+        sum = 0
+        is_null = True
+        for family in get_teledeclaration_field_groups(self.year, "APPRO_FAMILIES"):
+            value = getattr(self, f"valeur_{family}_{label}")
+            if value is not None:
+                is_null = False
+                sum = sum + value
+        if not is_null:
+            return sum
+
+    def label_group_sum(self, label_group: str):
+        if self.diagnostic_type == self.DiagnosticType.COMPLETE:
+            return sum_int_with_potential_null(
+                [
+                    self.label_sum(label)
+                    for label in get_teledeclaration_field_groups(self.year, "APPRO_LABELS_GROUPS_MAPPING")[
+                        label_group
+                    ]
+                ]
+            )
+        return getattr(self, f"valeur_{label_group}")
+
+    def label_group_group_sum(self, label_group_group: str):
+        return sum_int_with_potential_null(
+            [
+                self.label_group_sum(label_group)
+                for label_group in get_teledeclaration_field_groups(self.year, "APPRO_LABELS_GROUPS_GROUPS_MAPPING")[
+                    label_group_group
+                ]
+            ]
+        )
+
+    def label_has_any_family_filled(self, label):
+        """
+        Whether any valeur_<famille>_<label> field is filled (0 counts as filled), for any family
+        """
+        families = get_teledeclaration_field_groups(self.year, "APPRO_FAMILIES")
+        return has_any_value_filled(getattr(self, f"valeur_{family}_{label}", None) for family in families)
+
+    def family_sum(self, family: str):
+        """
+        NOTE: APPRO_LABELS does not include APPRO_LABELS_ORIGINE & circuit_court & local
+        """
+        sum = 0
+        for label in get_teledeclaration_field_groups(self.year, "APPRO_LABELS"):
+            value = getattr(self, f"valeur_{family}_{label}")
+            if value:
+                sum = sum + value
+        return sum
+
+    def egalim_sum(self):
+        # return self.label_group_group_sum("egalim")
+        return sum_int_with_potential_null(
+            [
+                getattr(self, f"valeur_{group}")
+                for group in get_teledeclaration_field_groups(self.year, "APPRO_LABELS_GROUPS_GROUPS_MAPPING")[
+                    "egalim"
+                ]
+            ]
+        )
+
+    def family_has_any_label_filled(self, family):
+        """
+        Whether any valeur_<famille>_<label> field is filled (0 counts as filled), for any label (including the
+        egalim aggregate, only defined for 2 families)
+        """
+        labels = get_teledeclaration_field_groups(self.year, "APPRO_LABELS_ALL") + ["egalim"]
+        return has_any_value_filled(getattr(self, f"valeur_{family}_{label}", None) for label in labels)
+
+    def compute_objectifs_egalim_atteints(self):
+        canteen_region = self.canteen_snapshot.get("region") if self.canteen_snapshot else None
+        return objectifs_egalim_atteints(self.year, canteen_region, self.pourcentage_bio, self.pourcentage_egalim)
+
+    @property
+    def percentage_valeur_totale(self) -> float:
+        return 1
+
+    @property
+    def percentage_valeur_bio(self) -> float | None:
+        if self.valeur_totale and self.valeur_bio is not None:
+            return self.valeur_bio / self.valeur_totale
+        return None
+
+    @property
+    def percentage_valeur_siqo(self) -> float | None:
+        if self.valeur_totale and self.valeur_siqo is not None:
+            return self.valeur_siqo / self.valeur_totale
+        return None
+
+    @property
+    def percentage_valeur_externalites_performance(self) -> float | None:
+        if self.valeur_totale and self.valeur_externalites_performance is not None:
+            return self.valeur_externalites_performance / self.valeur_totale
+        return None
+
+    @property
+    def percentage_valeur_egalim_autres(self) -> float | None:
+        if self.valeur_totale and self.valeur_egalim_autres is not None:
+            return self.valeur_egalim_autres / self.valeur_totale
+        return None
+
+    @property
+    def percentage_valeur_viandes_volailles_egalim(self) -> float | None:
+        if self.valeur_viandes_volailles and self.valeur_viandes_volailles_egalim is not None:
+            return self.valeur_viandes_volailles_egalim / self.valeur_viandes_volailles
+        return None
+
+    @property
+    def percentage_valeur_viandes_volailles_france(self) -> float | None:
+        if self.valeur_viandes_volailles and self.valeur_viandes_volailles_france is not None:
+            return self.valeur_viandes_volailles_france / self.valeur_viandes_volailles
+        return None
+
+    @property
+    def percentage_valeur_produits_de_la_mer_egalim(self) -> float | None:
+        if self.valeur_produits_de_la_mer and self.valeur_produits_de_la_mer_egalim is not None:
+            return self.valeur_produits_de_la_mer_egalim / self.valeur_produits_de_la_mer
+        return None
+
+    @property
+    def percentage_valeur_produits_de_la_mer_france(self) -> float | None:
+        if self.valeur_produits_de_la_mer and self.valeur_produits_de_la_mer_france is not None:
+            return self.valeur_produits_de_la_mer_france / self.valeur_produits_de_la_mer
+        return None
+
+    @property
+    def valeur_totale_is_filled(self):
+        return self.valeur_totale and self.valeur_totale > 0
