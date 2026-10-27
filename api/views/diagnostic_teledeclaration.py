@@ -83,6 +83,16 @@ class DiagnosticTeledeclarationPdfView(APIView):
     permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
     required_scopes = ["canteen"]
 
+    # templates in api/templates/teledeclaration_pdf/
+    TELEDECLARATION_PDF_VERSION_BY_YEAR = {
+        2021: "v1",
+        2022: "v1",
+        2023: "v2",
+        2024: "v2",
+        2025: "v2",
+        2026: "v2",
+    }
+
     def _get_canteen(self):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
         return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
@@ -100,11 +110,8 @@ class DiagnosticTeledeclarationPdfView(APIView):
         # if diagnostic.has_invalid_reason:
         #     raise ValidationError(f"Le diagnostic est télédéclaré mais invalide : {diagnostic.invalid_reason_list}")
 
-        template = (
-            get_template("teledeclaration_campaign_2024/index.html")
-            if diagnostic.year >= 2023
-            else get_template("teledeclaration_pdf.html")
-        )
+        template_version = self.TELEDECLARATION_PDF_VERSION_BY_YEAR[diagnostic.year]
+        template = get_template(f"teledeclaration_pdf/{template_version}.html")
         context = DiagnosticTeledeclarationPdfView.get_context(diagnostic)
         html = template.render(context)
 
