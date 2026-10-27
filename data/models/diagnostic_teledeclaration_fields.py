@@ -189,6 +189,15 @@ TELEDECLARATION_FIELDS = {
                     "valeur_produits_de_la_mer_egalim",
                 ],
                 "fields_required": ["valeur_totale"],
+                "fields_added": [
+                    "valeur_externalites_performance",
+                    "valeur_egalim_autres",
+                    "valeur_viandes_volailles",
+                    "valeur_viandes_volailles_egalim",
+                    "valeur_viandes_volailles_france",
+                    "valeur_produits_de_la_mer",
+                    "valeur_produits_de_la_mer_egalim",
+                ],
             },
             "COMPLETE": {
                 "fields": [
@@ -310,6 +319,10 @@ TELEDECLARATION_FIELDS = {
                     "valeur_autres_local",
                 ],
                 "fields_required": ["valeur_totale"],
+                "fields_added": [
+                    "valeur_viandes_volailles",
+                    "valeur_produits_de_la_mer",
+                ],
             },
         },
         "GASPILLAGE": {
@@ -721,11 +734,11 @@ TELEDECLARATION_FIELDS = {
                 "diversification_plan_actions",
                 "service_type",
                 "vegetarian_weekly_recurrence",
-                "vegetarian_menu_type",
                 "vegetarian_menu_bases",
             ],
             "fields_required": [],
             "fields_added": ["service_type"],
+            "fields_removed": ["vegetarian_menu_type"],
         },
         "PLASTIQUE": {
             "fields": [
@@ -783,6 +796,13 @@ TELEDECLARATION_FIELDS = {
                 "fields_added": [
                     "valeur_bio_dont_commerce_equitable",
                     "valeur_egalim_autres_dont_commerce_equitable",
+                    "valeur_produits_de_la_mer_france",
+                    "valeur_fruits_et_legumes_france",
+                    "valeur_charcuterie_france",
+                    "valeur_produits_laitiers_france",
+                    "valeur_boulangerie_france",
+                    "valeur_boissons_france",
+                    "valeur_autres_france",
                 ],
             },
             "COMPLETE": {
@@ -1060,7 +1080,6 @@ TELEDECLARATION_FIELDS = {
                 "diversification_plan_actions",
                 "service_type",
                 "vegetarian_weekly_recurrence",
-                "vegetarian_menu_type",
                 "vegetarian_menu_bases",
             ],
             "fields_required": [],
@@ -1159,6 +1178,7 @@ TELEDECLARATION_FIELDS = {
                 "fields_added": [
                     "nombre_repas_an",
                     # other valeur_famille
+                    "valeur_fruits_et_legumes",
                     "valeur_charcuterie",
                     "valeur_produits_laitiers",
                     "valeur_boulangerie",
@@ -1178,12 +1198,6 @@ TELEDECLARATION_FIELDS = {
                     "valeur_boulangerie_europe",
                     "valeur_boissons_europe",
                     "valeur_autres_europe",
-                    "valeur_fruits_et_legumes_france",
-                    "valeur_charcuterie_france",
-                    "valeur_produits_laitiers_france",
-                    "valeur_boulangerie_france",
-                    "valeur_boissons_france",
-                    "valeur_autres_france",
                     "valeur_viandes_volailles_circuit_court",
                     "valeur_produits_de_la_mer_circuit_court",
                     "valeur_fruits_et_legumes_circuit_court",
@@ -1451,14 +1465,6 @@ TELEDECLARATION_FIELDS = {
                     "valeur_boulangerie_stg",
                     "valeur_boissons_stg",
                     "valeur_autres_stg",
-                    # some valeur_famille_peche_durable re-added
-                    "valeur_produits_de_la_mer_peche_durable",
-                    # some valeur_famille_fermier re-added
-                    "valeur_produits_de_la_mer_fermier",
-                    "valeur_fruits_et_legumes_fermier",
-                    "valeur_boulangerie_fermier",
-                    "valeur_boissons_fermier",
-                    "valeur_autres_fermier",
                     # valeur_famille_europe
                     "valeur_viandes_volailles_europe",
                     "valeur_produits_de_la_mer_europe",
@@ -1472,6 +1478,8 @@ TELEDECLARATION_FIELDS = {
                     "definition_local_km",
                 ],
                 "fields_removed": [
+                    "valeur_boissons_label_rouge",
+                    # aopac_igp_stg replaced by aop, igp, stg
                     "valeur_viandes_volailles_aocaop_igp_stg",
                     "valeur_produits_de_la_mer_aocaop_igp_stg",
                     "valeur_fruits_et_legumes_aocaop_igp_stg",
@@ -1480,6 +1488,15 @@ TELEDECLARATION_FIELDS = {
                     "valeur_boulangerie_aocaop_igp_stg",
                     "valeur_boissons_aocaop_igp_stg",
                     "valeur_autres_aocaop_igp_stg",
+                    # valeur_famille_peche_durable (only kept for produits_de_la_mer)
+                    "valeur_viandes_volailles_peche_durable",
+                    "valeur_fruits_et_legumes_peche_durable",
+                    "valeur_charcuterie_peche_durable",
+                    "valeur_produits_laitiers_peche_durable",
+                    "valeur_boulangerie_peche_durable",
+                    "valeur_boissons_peche_durable",
+                    "valeur_autres_peche_durable",
+                    # valeur_famille_non_egalim
                     "valeur_viandes_volailles_non_egalim",
                     "valeur_produits_de_la_mer_non_egalim",
                     "valeur_fruits_et_legumes_non_egalim",
@@ -1518,7 +1535,6 @@ TELEDECLARATION_FIELDS = {
                 "diversification_plan_actions",
                 "service_type",
                 "vegetarian_weekly_recurrence",
-                "vegetarian_menu_type",
                 "vegetarian_menu_bases",
             ],
             "fields_required": [],
