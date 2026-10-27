@@ -154,3 +154,46 @@ models:
         tests:
           - unique
           - not_null
+
+  - name: stg_spe_corrections_perimetre
+    description: >
+      One row per SIRET: SPE scope corrections uploaded to Metabase by the DGAL. A SIRET is
+      either excluded from the State scope, or forced onto a line ministry. A correction applies
+      to every canteen sharing the SIRET.
+    columns:
+      - name: siret
+        description: >
+          SIRET, left-padded to 14 digits (typed as an integer on upload, leading zeros lost).
+        tests:
+          - unique
+          - not_null
+      - name: ministere_force
+        description: >
+          Line ministry forced onto the canteen, as a dbt `ministere_tutelle` code (Justice split
+          into justice_pjj / justice_hors_pjj). Null when not forced.
+      - name: exclure
+        description: True if the SIRET is excluded from the State scope.
+      - name: motif
+        description: Reason for the correction, entered by the DGAL.
+
+  - name: stg_spe_tutelles
+    description: >
+      One row per SPE line ministry, its most recent definition in the targets table uploaded to
+      Metabase by the DGAL (`niveau = 'tutelle'` rows). Only the label, ministerial group and
+      display order are read; target values are read directly by the Metabase questions.
+    columns:
+      - name: perimetre_key
+        description: >
+          Line ministry, as a dbt `ministere_tutelle` code (Justice split into justice_pjj /
+          justice_hors_pjj).
+        tests:
+          - unique
+          - not_null
+      - name: perimetre_lib
+        description: Line ministry label used in the SPE dashboards.
+      - name: pole_ministeriel
+        description: Ministerial group (Agriculture, Armées, MEF…).
+        tests:
+          - not_null
+      - name: ordre_affichage
+        description: Display order of the line ministry in the SPE dashboards.
