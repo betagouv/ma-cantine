@@ -650,3 +650,169 @@ models:
           Vrai si le type d'import a été déduit lors de la reprise : imports d'achats repris
           (SIRET et ID indiscernables, tous nommés PURCHASE_SIRET) et une partie des imports de
           bilans repris. Vide pour les échecs et les imports journalisés en direct.
+
+  - name: mart_spe_pilotage
+    description: >
+      Pilotage de la campagne de télédéclaration pour les RSPE (tableau de bord Metabase).
+      Une ligne par restaurant du périmètre État (int_spe_perimetre) et par année de données,
+      Armées incluses (`est_armees` sépare le tableau commun du tableau Armées). n-1 = la ligne de
+      l'année précédente. Restaurant, tutelle et gestionnaires : état du jour (mart_cantines), pas
+      celui figé dans la TD. Les chiffres diffèrent donc du bilan SPE (mart_spe_bilan, figé au
+      29/04 n+1). Indicateurs de la mesure 10 : repris de mart_teledeclarations, vides sans TD
+      retenue. Cibles et calendrier absents : les questions Metabase les lisent dans les tables
+      téléversées par la DGAL (le taux dépend des filtres du tableau).
+      Les tests de ce mart ne tournent qu'en dev : la tâche de nuit lance `dbt run`, pas `dbt test`.
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - canteen_id
+            - annee
+    columns:
+      - name: canteen_id
+        description: Identifiant de la cantine.
+        tests:
+          - not_null
+      - name: siret
+        description: SIRET de la cantine (état du jour).
+      - name: nom
+        description: Nom de la cantine (état du jour).
+      - name: groupe_id
+        description: Identifiant du groupe auquel la cantine est rattachée.
+      - name: groupe_nom
+        description: Nom du groupe auquel la cantine est rattachée.
+      - name: type_production
+        description: >
+          Type de production, en code (groupe, central, central_serving, site, site_cooked_elsewhere).
+      - name: type_gestion
+        description: Mode de gestion, en code (direct, conceded).
+      - name: nbre_repas_jour
+        description: Nombre de repas servis par jour.
+      - name: nbre_repas_an
+        description: Nombre de repas servis par an.
+      - name: date_inscription
+        description: >
+          Jour de création de la cantine sur ma cantine (UTC). Sert à recalculer le statut à une
+          date passée (filtre « État au » du tableau de bord).
+      - name: perimetre_key
+        description: >
+          Tutelle actuelle, en code dbt de `ministere_tutelle` (Justice éclatée en justice_pjj /
+          justice_hors_pjj), ou tutelle forcée par une correction de la DGAL.
+        tests:
+          - not_null
+      - name: perimetre_lib
+        description: Libellé de la tutelle (référentiel de la DGAL).
+      - name: pole_ministeriel
+        description: >
+          Pôle ministériel de la tutelle (référentiel de la DGAL). Un avertissement du test
+          signale une tutelle absente du référentiel.
+        tests:
+          - not_null:
+              config:
+                severity: warn
+      - name: ordre_affichage
+        description: Ordre d'affichage de la tutelle (référentiel de la DGAL).
+      - name: est_armees
+        description: Vrai pour les restaurants des Armées (tableau de bord séparé).
+      - name: secteurs
+        description: >
+          Libellés des secteurs d'activité, séparés par `,` sans espace (macro `libelles_secteurs`).
+      - name: secteur
+        description: Libellé du secteur si la cantine n'en a qu'un, « Secteurs multiples » sinon.
+      - name: code_insee_commune
+        description: Code INSEE de la commune.
+      - name: libelle_commune
+        description: Libellé de la commune.
+      - name: departement
+        description: Code département.
+      - name: departement_lib
+        description: Libellé du département.
+      - name: region
+        description: Code région.
+      - name: region_lib
+        description: Libellé de la région.
+      - name: adresses_gestionnaires
+        description: Emails des gestionnaires du restaurant, séparés par `, `.
+      - name: adresses_relance
+        description: >
+          Courriels à relancer : ceux des gestionnaires du groupe pour un satellite dont le groupe
+          en a, sinon ceux du restaurant. Séparés par `, `.
+      - name: annee
+        description: Année des données déclarées (année n, campagne en n+1).
+        tests:
+          - not_null
+      - name: statut_td
+        description: >
+          Télédéclaré (TD retenue dans mart_teledeclarations), En cours (diagnostic de l'année en
+          brouillon ou en correction, sur la cantine ou sur son groupe) ou À relancer.
+          Voir int_campagne_statut.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Télédéclaré', 'En cours', 'À relancer']
+      - name: teledeclaration_id
+        description: Identifiant de la TD retenue, vide sinon.
+      - name: date_teledeclaration
+        description: >
+          Jour de la télédéclaration retenue, à l'heure de Paris. Sert à recalculer le statut à
+          une date passée (filtre « État au » du tableau de bord).
+      - name: date_debut_saisie
+        description: >
+          Jour de création du premier diagnostic de l'année, sur la cantine ou sur son groupe, à
+          l'heure de Paris. Sert à recalculer le statut à une date passée (filtre « État au » du
+          tableau de bord).
+      - name: date_modification_saisie
+        description: >
+          Jour de dernière modification d'un diagnostic de l'année en brouillon ou en correction,
+          sur la cantine ou sur son groupe, à l'heure de Paris.
+      - name: td_complete
+        description: Vrai si la cantine était renseignée au moment de la TD retenue.
+      - name: td_generee_par_groupe
+        description: Vrai si la TD retenue a été générée depuis celle du groupe de la cantine.
+      - name: en_cours_via_groupe
+        description: >
+          Vrai si la cantine est En cours seulement grâce au diagnostic en brouillon ou en
+          correction de son groupe.
+      - name: td_deposee_non_retenue
+        description: >
+          Vrai si une TD a été déposée pour l'année mais écartée de mart_teledeclarations
+          (valeurs aberrantes, valeur totale vide…).
+      - name: valeur_totale
+        description: Valeur totale des achats alimentaires (€) de la TD retenue.
+      - name: valeur_bio_agg
+        description: Valeur des achats bio (€), agrégée. À réagréger par somme / somme dans Metabase.
+      - name: valeur_egalim_agg
+        description: Valeur des achats EGalim (€), agrégée. À réagréger par somme / somme dans Metabase.
+      - name: valeur_viandes_et_poissons
+        description: Somme viandes volailles + produits de la mer (€).
+      - name: valeur_viandes_et_poissons_egalim
+        description: Somme EGalim viandes volailles + produits de la mer (€).
+      - name: atteint_bio
+        description: Objectif bio atteint, seuil selon la zone (voir `seuil_applicable`).
+      - name: atteint_egalim
+        description: Objectif EGalim atteint, seuil selon la zone (voir `seuil_applicable`).
+      - name: atteint_viandes_et_poissons_egalim
+        description: >
+          Objectif viandes et poissons EGalim atteint (100 % pour une cantine avec une tutelle au
+          moment de la TD, 60 % sinon ; règle de mart_teledeclarations).
+      - name: seuil_applicable
+        description: >
+          Seuils EGalim / bio de la zone de la TD retenue (Métropole, DROM, Mayotte), même règle
+          que les `atteint_*` de mart_teledeclarations. Vide sans TD retenue.
+      - name: choix_multiple
+        description: Vrai si la cantine propose plusieurs menus (service autre qu'unique).
+      - name: atteint_vege_quotidien
+        description: Vrai si la cantine propose plusieurs menus et une option végétarienne quotidienne.
+      - name: td_volet_diversification_complet
+        description: Vrai si le volet diversification de la TD est complet.
+      - name: gaspi_total_mass_kg
+        description: >
+          Masse totale de gaspillage mesurée sur l'année (kg). Mesures hors plage 10 à 500 g par
+          couvert écartées dans mart_teledeclarations.
+      - name: gaspi_meal_count
+        description: Nombre de couverts des mesures de gaspillage de l'année.
+      - name: gaspi_g_par_couvert
+        description: Ratio gaspillage en g par couvert, arrondi à 0,1.
+      - name: niveau_ademe
+        description: >
+          Niveau ADEME de gaspillage (Niveau 3 ≤ 47 g, Niveau 2 ≤ 74 g, Niveau 1 ≤ 95 g, Non
+          atteint au-delà), calculé sur le ratio non arrondi comme int_spe_waste_by_canteen.

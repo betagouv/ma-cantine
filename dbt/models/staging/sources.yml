@@ -29,3 +29,16 @@ sources:
         description: Raw OAuth2 access tokens dumped from the production database (without token & token_checksum).
       - name: oauth2_refresh_tokens_raw
         description: Raw OAuth2 refresh tokens dumped from the production database (without token).
+      - name: spe_corrections_perimetre
+        identifier: import_import_spe_overrides_20260821171739
+        description: >
+          SPE scope corrections uploaded to Metabase by the DGAL (model 3739): SIRET excluded from
+          the State scope, or forced onto a line ministry. Maintained by the DGAL with "Replace
+          data"; a new upload would create a new table: update `identifier` then.
+      - name: spe_cibles
+        identifier: import_import_spe_cibles_20260821171725
+        description: >
+          SPE targets uploaded to Metabase by the DGAL (model 3737), one row per line ministry
+          (`niveau = 'tutelle'`) or ATE region and sector (`niveau = 'ate_region'`) and data year.
+          dbt only reads the label, ministerial group and display order of each line ministry;
+          target values are read directly by the Metabase questions.
