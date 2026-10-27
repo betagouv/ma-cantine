@@ -29,11 +29,12 @@ class ResourceActionView(CreateAPIView):
         # update or create resource action
         try:
             resource_action = ResourceAction.objects.get(resource=self.resource, canteen=self.canteen)
-            serializer = self.get_serializer(resource_action)
-            serializer.update(resource_action, request.data)
-            return Response(serializer.data, status=status.HTTP_200_OK)
         except ResourceAction.DoesNotExist:
             return super().create(request, *args, **kwargs)
+        serializer = self.get_serializer(resource_action, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(resource=self.resource, canteen=self.canteen)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def perform_create(self, serializer):
-        serializer.save(resource=self.resource)
+        serializer.save(resource=self.resource, canteen=self.canteen)
