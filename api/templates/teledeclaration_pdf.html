@@ -747,7 +747,7 @@
         <h3>Lutte contre le gaspillage et dons alimentaires</h3>
 
         <p>
-            {% if has_waste_diagnostic %}
+            {% if diagnostic_gaspillage_realise %}
             <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
             Diagnostic sur le gaspillage réalisé
             {% else %}
@@ -756,7 +756,7 @@
             {% endif %}
         </p>
         <p>
-            {% if has_waste_plan %}
+            {% if plan_gaspillage_en_place %}
             <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
             Plan d'action contre le gaspillage en place
             {% else %}
@@ -766,7 +766,7 @@
         </p>
 
         <div>
-            {% if waste_actions %}
+            {% if actions_gaspillage_realisees %}
             <p>
                 <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                 Actions de lutte contre le gaspillage :
@@ -788,7 +788,7 @@
             {% endif %}
         </div>
         <div>
-            {% if has_donation_agreement %}
+            {% if dons_convention %}
             <p>
                 <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                 Propose des dons alimentaires
@@ -861,9 +861,9 @@
         {% endif %}
 
         <div>
-            {% if other_waste_comments %}
+            {% if commentaires_gaspillage_autre %}
             Commentaires concernant la lutte contre le gaspillage et dons alimentaires : <br />
-            « {{ other_waste_comments }} »
+            « {{ commentaires_gaspillage_autre }} »
             {% endif %}
         </div>
 

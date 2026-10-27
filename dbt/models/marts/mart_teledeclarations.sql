@@ -326,8 +326,8 @@ select
     type_nourriture_dons,
 
     -- gaspillage — volet déclaratif (tunnel TD)
-    has_waste_diagnostic                                as diag_gaspi,
-    has_waste_plan                                      as plan_action_gaspi,
+    diagnostic_gaspillage_realise                       as diag_gaspi,
+    plan_gaspillage_en_place                            as plan_action_gaspi,
     action_gaspi_inscription,
     action_gaspi_sensibilisation,
     action_gaspi_formation,

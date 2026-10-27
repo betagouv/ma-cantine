@@ -64,7 +64,7 @@ class DiagnosticV2ListApiTest(APITestCase):
         self.assertIn("centralKitchenDiagnosticMode", results[0])
         self.assertNotIn("diagnosticType", results[0])
         self.assertNotIn("valeurTotale", results[0])
-        self.assertNotIn("hasWasteDiagnostic", results[0])
+        self.assertNotIn("diagnosticGaspillageRealise", results[0])
 
 
 class DiagnosticV2CreateApiTest(APITestCase):
@@ -114,7 +114,7 @@ class DiagnosticV2CreateApiTest(APITestCase):
             # volet fields are ignored
             "diagnosticType": Diagnostic.DiagnosticType.SIMPLE,
             "valeurTotale": 1000,
-            "hasWasteDiagnostic": True,
+            "diagnosticGaspillageRealise": True,
         }
         response = self.client.post(self.url, payload, format="json")
 
@@ -130,7 +130,7 @@ class DiagnosticV2CreateApiTest(APITestCase):
         self.assertEqual(diagnostic.creation_mtm_source, "mtm_source_value")
         self.assertIsNone(diagnostic.diagnostic_type)
         self.assertIsNone(diagnostic.valeur_totale)
-        self.assertIsNone(diagnostic.has_waste_diagnostic)
+        self.assertIsNone(diagnostic.diagnostic_gaspillage_realise)
 
     @authenticate
     def test_cannot_create_diagnostic_if_already_exists(self):
@@ -242,7 +242,7 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
             canteen=cls.canteen,
             year=2025,
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
-            has_waste_diagnostic=False,
+            diagnostic_gaspillage_realise=False,
         )
         cls.diagnostic_complete_2026 = DiagnosticFactory(
             canteen=cls.canteen, year=2026, diagnostic_type=Diagnostic.DiagnosticType.COMPLETE
@@ -301,7 +301,7 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
         self.assertIn("pourcentageBio", body)  # stats (read-only)
         self.assertNotIn("valeurViandesVolaillesBio", body)  # COMPLETE only
         self.assertNotIn("nombreRepasAn", body)  # since 2026
-        self.assertNotIn("hasWasteDiagnostic", body)  # other volet
+        self.assertNotIn("diagnosticGaspillageRealise", body)  # other volet
 
         response = self.client.get(self._url(self.diagnostic_complete_2026))
 
@@ -336,7 +336,7 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
             "year": 2024,
             "pourcentageBio": 0.99,
             "valeurViandesVolaillesBio": 50,
-            "hasWasteDiagnostic": True,
+            "diagnosticGaspillageRealise": True,
         }
         response = self.client.patch(self._url(self.diagnostic_simple_2025), payload, format="json")
 
@@ -348,7 +348,7 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
         self.assertEqual(self.diagnostic_simple_2025.year, 2025)
         self.assertNotEqual(self.diagnostic_simple_2025.pourcentage_bio, 0.99)  # computed on save
         self.assertNotEqual(self.diagnostic_simple_2025.valeur_viandes_volailles_bio, 50)
-        self.assertFalse(self.diagnostic_simple_2025.has_waste_diagnostic)
+        self.assertFalse(self.diagnostic_simple_2025.diagnostic_gaspillage_realise)
 
     @authenticate
     def test_update_approvisionnement_with_new_diagnostic_type(self):
@@ -434,7 +434,7 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
 
     VOLETS = [
         # (url name, a field of the volet, its model field, a value, tunnel model field)
-        ("gaspillage", "hasWastePlan", "has_waste_plan", True, "tunnel_waste"),
+        ("gaspillage", "planGaspillageEnPlace", "plan_gaspillage_en_place", True, "tunnel_waste"),
         (
             "diversification",
             "planDiversificationEnPlace",
@@ -453,7 +453,7 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
             canteen=cls.canteen,
             year=2025,
             valeur_totale=1000,
-            has_waste_plan=False,
+            plan_gaspillage_en_place=False,
             plan_diversification_en_place=False,
             cooking_plastic_substituted=False,
             communicates_on_food_plan=False,
@@ -542,12 +542,13 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
 
 
 class DiagnosticVoletGaspillageV2ApiTest(APITestCase):
+    @freeze_time("2024-03-01")  # during the 2023 campaign
     @authenticate
-    def test_total_leftovers_conversion(self):
+    def test_dechets_total_conversion(self):
         """
-        total_leftovers: in kg in the API, stored in tons
+        dechets_total (legacy, 2023 only): in kg in the API, stored in tons
         """
-        diagnostic = DiagnosticFactory(year=2025, total_leftovers=Decimal("1.23456"))
+        diagnostic = DiagnosticFactory(year=2023, dechets_total=Decimal("1.23456"))
         diagnostic.canteen.managers.add(authenticate.user)
         url = reverse(
             "diagnostic_v2_gaspillage_retrieve_update",
@@ -557,13 +558,52 @@ class DiagnosticVoletGaspillageV2ApiTest(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(Decimal(str(response.json()["totalLeftovers"])), Decimal("1234.56"))
+        self.assertEqual(Decimal(str(response.json()["dechetsTotal"])), Decimal("1234.56"))
 
-        response = self.client.patch(url, {"totalLeftovers": 6666.66}, format="json")
+        response = self.client.patch(url, {"dechetsTotal": 6666.66}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.total_leftovers, Decimal("6.66666"))
+        self.assertEqual(diagnostic.dechets_total, Decimal("6.66666"))
+
+    @authenticate
+    def test_dechets_fields_only_in_2023(self):
+        for year, has_dechets_fields in [(2022, False), (2023, True), (2024, False), (2025, False)]:
+            with self.subTest(year=year):
+                diagnostic = DiagnosticFactory(year=year)
+                diagnostic.canteen.managers.add(authenticate.user)
+
+                response = self.client.get(
+                    reverse(
+                        "diagnostic_v2_gaspillage_retrieve_update",
+                        kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                    )
+                )
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertEqual("dechetsTotal" in response.json(), has_dechets_fields)
+
+    @authenticate
+    def test_choice_values_in_french(self):
+        diagnostic = DiagnosticFactory(
+            year=2025, actions_gaspillage_realisees=[Diagnostic.ActionsGaspillage.SENSIBILISATION]
+        )
+        diagnostic.canteen.managers.add(authenticate.user)
+        url = reverse(
+            "diagnostic_v2_gaspillage_retrieve_update",
+            kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+        )
+
+        self.assertEqual(self.client.get(url).json()["actionsGaspillageRealisees"], ["SENSIBILISATION"])
+
+        response = self.client.patch(url, {"actionsGaspillageRealisees": ["FORMATION"]}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.actions_gaspillage_realisees, [Diagnostic.ActionsGaspillage.FORMATION])
+
+        # the v1 (English) values are not accepted
+        response = self.client.patch(url, {"actionsGaspillageRealisees": ["TRAINING"]}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class DiagnosticVoletDiversificationV2ApiTest(APITestCase):

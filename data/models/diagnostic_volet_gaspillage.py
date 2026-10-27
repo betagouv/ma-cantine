@@ -11,102 +11,102 @@ class DiagnosticVoletGaspillageMixin(models.Model):
     Volet "Lutte contre le gaspillage alimentaire"
     """
 
-    class WasteActions(models.TextChoices):
+    class ActionsGaspillage(models.TextChoices):
         INSCRIPTION = "INSCRIPTION", "Pré-inscription des convives obligatoire"
-        AWARENESS = "AWARENESS", "Sensibilisation par affichage ou autre média"
-        TRAINING = "TRAINING", "Formation / information du personnel de restauration"
+        SENSIBILISATION = "SENSIBILISATION", "Sensibilisation par affichage ou autre média"
+        FORMATION = "FORMATION", "Formation / information du personnel de restauration"
         DISTRIBUTION = (
             "DISTRIBUTION",
             "Réorganisation de la distribution des composantes du repas",
         )
         PORTIONS = "PORTIONS", "Choix des portions (grande faim, petite faim)"
-        REUSE = "REUSE", "Réutilisation des restes de préparation / surplus"
+        REUTILISATION = "REUTILISATION", "Réutilisation des restes de préparation / surplus"
 
     # all the fields of the volet (all years, see diagnostic_teledeclaration_fields.py)
     WASTE_FIELDS = get_teledeclaration_fields_all_years("GASPILLAGE")
 
-    has_waste_diagnostic = models.BooleanField(
+    diagnostic_gaspillage_realise = models.BooleanField(
         blank=True, null=True, verbose_name="diagnostic sur le gaspillage réalisé"
     )
-    has_waste_plan = models.BooleanField(
+    plan_gaspillage_en_place = models.BooleanField(
         blank=True,
         null=True,
         verbose_name="plan d'action contre le gaspillage en place",
     )
-    waste_actions = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=WasteActions.choices),
+    actions_gaspillage_realisees = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=ActionsGaspillage.choices),
         blank=True,
         null=True,
         size=None,
         verbose_name="actions contre le gaspillage en place",
     )
-    other_waste_action = models.TextField(
+    actions_gaspillage_autre = models.TextField(
         null=True,
         blank=True,
         verbose_name="autre action contre le gaspillage alimentaire",
     )
-    has_donation_agreement = models.BooleanField(blank=True, null=True, verbose_name="propose des dons alimentaires")
-    has_waste_measures = models.BooleanField(
+    dons_convention = models.BooleanField(blank=True, null=True, verbose_name="propose des dons alimentaires")
+    mesures_gaspillage_realisees = models.BooleanField(
         blank=True,
         null=True,
         verbose_name="réalise des mesures de gaspillage alimentaire",
     )
-    # _leftovers fields no longer in use since waste measurement feature
-    total_leftovers = models.DecimalField(
+    # legacy: dechets_* fields only filled for 2023 (replaced by the WasteMeasurement feature)
+    dechets_total = models.DecimalField(
         max_digits=20,
         decimal_places=5,
         blank=True,
         null=True,
         verbose_name="total des déchets alimentaires (t)",
     )
-    duration_leftovers_measurement = models.IntegerField(
+    dechets_mesure_duree = models.IntegerField(
         blank=True,
         null=True,
         validators=[MaxValueValidator(365)],
         verbose_name="période de mesure (jours)",
     )
-    bread_leftovers = models.DecimalField(
+    dechets_pain = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
         null=True,
         verbose_name="reste de pain kg/an",
     )
-    served_leftovers = models.DecimalField(
+    dechets_plateau = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
         null=True,
         verbose_name="reste plateau kg/an",
     )
-    unserved_leftovers = models.DecimalField(
+    dechets_non_servis = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
         null=True,
         verbose_name="reste en production (non servi) kg/an",
     )
-    side_leftovers = models.DecimalField(
+    dechets_composantes = models.DecimalField(
         max_digits=20,
         decimal_places=2,
         blank=True,
         null=True,
         verbose_name="reste de composantes kg/an",
     )
-    donation_frequency = models.IntegerField(
+    dons_frequence = models.IntegerField(
         blank=True,
         null=True,
         verbose_name="fréquence de dons dons/an",
     )
-    donation_quantity = make_optional_positive_decimal_field(
+    dons_quantite = make_optional_positive_decimal_field(
         verbose_name="quantité des denrées données kg/an",
     )
-    donation_food_type = models.TextField(
+    dons_type_denrees = models.TextField(
         null=True,
         blank=True,
         verbose_name="type de denrées données",
     )
-    other_waste_comments = models.TextField(
+    commentaires_gaspillage_autre = models.TextField(
         null=True,
         blank=True,
         verbose_name="autres commentaires (gaspillage)",
