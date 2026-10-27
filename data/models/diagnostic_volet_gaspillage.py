@@ -2,12 +2,13 @@ from django.core.validators import MaxValueValidator
 from django.db import models
 
 from data.fields import ChoiceArrayField
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all_years
 from data.utils import make_optional_positive_decimal_field
 
 
 class DiagnosticVoletGaspillageMixin(models.Model):
     """
-    Volet gaspillage alimentaire
+    Volet "Lutte contre le gaspillage alimentaire"
     """
 
     class WasteActions(models.TextChoices):
@@ -20,6 +21,9 @@ class DiagnosticVoletGaspillageMixin(models.Model):
         )
         PORTIONS = "PORTIONS", "Choix des portions (grande faim, petite faim)"
         REUSE = "REUSE", "Réutilisation des restes de préparation / surplus"
+
+    # all the fields of the volet (all years, see diagnostic_teledeclaration_fields.py)
+    WASTE_FIELDS = get_teledeclaration_fields_all_years("GASPILLAGE")
 
     has_waste_diagnostic = models.BooleanField(
         blank=True, null=True, verbose_name="diagnostic sur le gaspillage réalisé"

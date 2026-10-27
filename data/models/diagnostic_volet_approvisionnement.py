@@ -2,13 +2,184 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 from data.models.definitionlocal import DefinitionLocal
-from data.utils import make_optional_positive_decimal_field, make_optional_positive_integer_field
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all_years
+from data.utils import (
+    make_optional_positive_decimal_field,
+    make_optional_positive_integer_field,
+    make_optional_positive_percentage_decimal_field,
+)
 
 
 class DiagnosticVoletApprovisionnementMixin(models.Model):
     """
-    Volet approvisionnement (computed fields like *_agg & pourcentage_* stay in Diagnostic)
+    Volet "Approvisionnements"
+    + the computed fields: *_agg & pourcentage_*
     """
+
+    SIMPLE_APPRO_FIELDS = [
+        "valeur_totale",
+        "valeur_bio",
+        "valeur_bio_dont_commerce_equitable",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
+        "valeur_egalim_autres_dont_commerce_equitable",
+        "valeur_europe",
+        "valeur_france",
+        "valeur_circuit_court",
+        "valeur_local",
+        "valeur_viandes_volailles",
+        "valeur_viandes_volailles_egalim",
+        "valeur_viandes_volailles_france",
+        "valeur_produits_de_la_mer",
+        "valeur_produits_de_la_mer_egalim",
+        "valeur_produits_de_la_mer_france",
+        "valeur_fruits_et_legumes_france",
+        "valeur_charcuterie_france",
+        "valeur_produits_laitiers_france",
+        "valeur_boulangerie_france",
+        "valeur_boissons_france",
+        "valeur_autres_france",
+    ]
+
+    APPRO_AGGREGATED_FIELDS = [
+        "valeur_bio_agg",
+        "valeur_siqo_agg",
+        "valeur_externalites_performance_agg",
+        "valeur_egalim_autres_agg",
+        "valeur_egalim_hors_bio_agg",
+        "valeur_egalim_agg",
+    ]
+
+    SIMPLIFIED_DIAGNOSTIC_FIELDS = [
+        "valeur_bio",
+        "valeur_bio_dont_commerce_equitable",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
+        "valeur_egalim_autres_dont_commerce_equitable",
+        "valeur_viandes_volailles_egalim",
+        "valeur_produits_de_la_mer_egalim",
+    ]
+
+    APPRO_FAMILY_FIELDS = [
+        "valeur_viandes_volailles",
+        "valeur_produits_de_la_mer",
+        "valeur_fruits_et_legumes",
+        "valeur_charcuterie",
+        "valeur_produits_laitiers",
+        "valeur_boulangerie",
+        "valeur_boissons",
+        "valeur_autres",
+    ]
+
+    APPRO_LABEL_FIELDS = [
+        "valeur_bio",
+        "valeur_bio_dont_commerce_equitable",
+        "valeur_europe",
+        "valeur_france",
+        "valeur_circuit_court",
+        "valeur_local",
+    ]
+
+    # valeur_local (simple) + valeur_<famille>_local (complete), see validate_definition_local
+    APPRO_LOCAL_FIELDS = ["valeur_local"] + [f"{family_field}_local" for family_field in APPRO_FAMILY_FIELDS]
+
+    # kept out of APPRO_FIELDS/SIMPLE_APPRO_FIELDS/COMPLETE_APPRO_FIELDS since those are also used
+    # as numeric value fields (see validate_valeur_totale, macantine.utils.get_appro_fields_satellite)
+    APPRO_LOCAL_DEFINITION_FIELDS = ["definition_local", "definition_local_km"]
+
+    APPRO_LABEL_GROUPE_FIELDS = [
+        "valeur_bio",
+        "valeur_siqo",
+        "valeur_externalites_performance",
+        "valeur_egalim_autres",
+    ]
+
+    # all the appro amounts (all years & diagnostic_types, see diagnostic_teledeclaration_fields.py)
+    # only the valeur_* fields: APPRO_FIELDS is also used as the list of numeric value fields
+    # (nombre_repas_an & definition_local/definition_local_km are in the registry but not amounts)
+    APPRO_FIELDS = [
+        field_name
+        for field_name in get_teledeclaration_fields_all_years("APPROVISIONNEMENT")
+        if field_name.startswith("valeur_")
+    ]
+    # TODO: clean up when updating the imports
+    APPRO_FIELDS_FOR_IMPORT = [
+        field_name for field_name in APPRO_FIELDS if "bio_dont_commerce_equitable" not in field_name
+    ]
+
+    APPRO_FIELDS_NON_APPLICABLE = [
+        "valeur_boissons_label_rouge",
+        "valeur_viandes_volailles_peche_durable",
+        "valeur_fruits_et_legumes_peche_durable",
+        "valeur_charcuterie_peche_durable",
+        "valeur_produits_laitiers_peche_durable",
+        "valeur_boulangerie_peche_durable",
+        "valeur_boissons_peche_durable",
+        "valeur_autres_peche_durable",
+    ]
+
+    # legacy amounts from before the teledeclaration registry (not in diagnostic_teledeclaration_fields.py)
+    APPRO_FIELDS_LEGACY = [
+        "valeur_label_rouge",
+        "valeur_label_aoc_igp",
+        "valeur_label_hve",
+        "valeur_fair_trade",
+        "valeur_pat",
+    ]
+
+    COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS
+    # COMPLETE_APPRO_FIELDS = ["valeur_totale"] + APPRO_FAMILY_FIELDS + APPRO_FIELDS  # TODO when updating the imports
+
+    APPRO_STATS_FIELDS = [
+        "pourcentage_bio",
+        "pourcentage_siqo",
+        "pourcentage_externalites_performance",
+        "pourcentage_egalim_autres",
+        "pourcentage_egalim_hors_bio",
+        "pourcentage_egalim",
+        "pourcentage_viandes_volailles_egalim",
+        "pourcentage_produits_de_la_mer_egalim",
+        "pourcentage_viandes_volailles_produits_de_la_mer_egalim",
+        "pourcentage_europe",
+        "pourcentage_france",
+        "pourcentage_circuit_court",
+        "pourcentage_local",
+        "pourcentage_viandes_volailles_europe",
+        "pourcentage_produits_de_la_mer_europe",
+        "pourcentage_fruits_et_legumes_europe",
+        "pourcentage_charcuterie_europe",
+        "pourcentage_produits_laitiers_europe",
+        "pourcentage_boulangerie_europe",
+        "pourcentage_boissons_europe",
+        "pourcentage_autres_europe",
+        "pourcentage_viandes_volailles_france",
+        "pourcentage_produits_de_la_mer_france",
+        "pourcentage_fruits_et_legumes_france",
+        "pourcentage_charcuterie_france",
+        "pourcentage_produits_laitiers_france",
+        "pourcentage_boulangerie_france",
+        "pourcentage_boissons_france",
+        "pourcentage_autres_france",
+        "pourcentage_viandes_volailles_circuit_court",
+        "pourcentage_produits_de_la_mer_circuit_court",
+        "pourcentage_fruits_et_legumes_circuit_court",
+        "pourcentage_charcuterie_circuit_court",
+        "pourcentage_produits_laitiers_circuit_court",
+        "pourcentage_boulangerie_circuit_court",
+        "pourcentage_boissons_circuit_court",
+        "pourcentage_autres_circuit_court",
+        "pourcentage_viandes_volailles_local",
+        "pourcentage_produits_de_la_mer_local",
+        "pourcentage_fruits_et_legumes_local",
+        "pourcentage_charcuterie_local",
+        "pourcentage_produits_laitiers_local",
+        "pourcentage_boulangerie_local",
+        "pourcentage_boissons_local",
+        "pourcentage_autres_local",
+        "objectifs_egalim_atteints",
+    ]
 
     # Canteen info
     nombre_repas_an = make_optional_positive_integer_field(verbose_name="Nombre de repas par an")
@@ -569,6 +740,203 @@ class DiagnosticVoletApprovisionnementMixin(models.Model):
     )
     valeur_autres_non_egalim = make_optional_positive_decimal_field(
         verbose_name="Autres produits frais, surgelés et d'épicerie, non-EGalim",
+    )
+
+    # computed: aggregated values
+    valeur_bio_agg = make_optional_positive_decimal_field(
+        verbose_name="Bio - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
+    )
+    valeur_siqo_agg = make_optional_positive_decimal_field(
+        verbose_name="Produits SIQO (hors bio) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
+    )
+    valeur_externalites_performance_agg = make_optional_positive_decimal_field(
+        verbose_name="Externalité/performance - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)",
+    )
+    valeur_egalim_autres_agg = make_optional_positive_decimal_field(
+        verbose_name="Autres achats EGalim - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
+    )
+    valeur_egalim_hors_bio_agg = make_optional_positive_decimal_field(
+        verbose_name="EGalim (Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
+    )
+    valeur_egalim_agg = make_optional_positive_decimal_field(
+        verbose_name="EGalim (Bio + Produits SIQO (hors bio) + Externalité/performance + Autres achats EGalim) - Valeur annuelle HT (en cas de TD détaillée, ce champ est aggrégé)"
+    )
+
+    # computed: EGalim
+    pourcentage_bio = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage bio (champ calculé)",
+    )
+    pourcentage_siqo = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage SIQO (champ calculé)",
+    )
+    pourcentage_externalites_performance = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage externalités/performance (champ calculé)",
+    )
+    pourcentage_egalim_autres = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres EGalim (champ calculé)",
+    )
+    pourcentage_egalim_hors_bio = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage EGalim hors bio (champ calculé)",
+    )
+    pourcentage_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage EGalim (champ calculé)",
+    )
+    pourcentage_viandes_volailles_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles EGalim (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer EGalim (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_viandes_volailles_produits_de_la_mer_egalim = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes, volailles et produits de la mer EGalim (champ calculé)",
+        help_text="par rapport à la somme de valeur totale viandes et volailles + valeur totale produits de la mer",
+    )
+    pourcentage_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage origine UE (hors France) (champ calculé)",
+    )
+    pourcentage_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage origine France (champ calculé)",
+    )
+    pourcentage_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage circuit court (champ calculé)",
+    )
+    pourcentage_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage local (champ calculé)",
+    )
+    pourcentage_viandes_volailles_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_europe = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits origine UE (hors France) (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
+    pourcentage_viandes_volailles_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles origine France (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer origine France (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes origine France (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie origine France (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) origine France (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie origine France (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons origine France (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_france = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits origine France (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
+    pourcentage_viandes_volailles_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_circuit_court = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits circuit court (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
+    pourcentage_viandes_volailles_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage viandes et volailles local (champ calculé)",
+        help_text="par rapport à la valeur totale viandes et volailles",
+    )
+    pourcentage_produits_de_la_mer_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits de la mer local (champ calculé)",
+        help_text="par rapport à la valeur totale produits de la mer",
+    )
+    pourcentage_fruits_et_legumes_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage fruits et légumes local (champ calculé)",
+        help_text="par rapport à la valeur totale fruits et légumes",
+    )
+    pourcentage_charcuterie_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage charcuterie local (champ calculé)",
+        help_text="par rapport à la valeur totale charcuterie",
+    )
+    pourcentage_produits_laitiers_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage produits laitiers (BOF) local (champ calculé)",
+        help_text="par rapport à la valeur totale produits laitiers (BOF)",
+    )
+    pourcentage_boulangerie_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boulangerie / pâtisserie local (champ calculé)",
+        help_text="par rapport à la valeur totale boulangerie / pâtisserie",
+    )
+    pourcentage_boissons_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage boissons local (champ calculé)",
+        help_text="par rapport à la valeur totale boissons",
+    )
+    pourcentage_autres_local = make_optional_positive_percentage_decimal_field(
+        verbose_name="pourcentage autres produits local (champ calculé)",
+        help_text="par rapport à la valeur totale autres produits",
+    )
+    objectifs_egalim_atteints = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="objectifs EGalim atteints (champ calculé)",
     )
 
     class Meta:

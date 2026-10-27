@@ -1,11 +1,12 @@
 from django.db import models
 
 from data.fields import ChoiceArrayField
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all_years
 
 
 class DiagnosticVoletInformationMixin(models.Model):
     """
-    Volet information des convives
+    Volet "Information des convives"
     """
 
     class CommunicationType(models.TextChoices):
@@ -19,6 +20,9 @@ class DiagnosticVoletInformationMixin(models.Model):
         REGULARLY = "REGULARLY", "Régulièrement au cours de l’année"
         YEARLY = "YEARLY", "Une fois par an"
         LESS_THAN_YEARLY = "LESS_THAN_YEARLY", "Moins d'une fois par an"
+
+    # all the fields of the volet (all years, see diagnostic_teledeclaration_fields.py)
+    INFO_FIELDS = get_teledeclaration_fields_all_years("INFORMATION")
 
     communication_supports = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=CommunicationType.choices),

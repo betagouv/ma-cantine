@@ -1,11 +1,12 @@
 from django.db import models
 
 from data.fields import ChoiceArrayField
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all_years
 
 
 class DiagnosticVoletDiversificationMixin(models.Model):
     """
-    Volet diversification des sources de protéines (menus végétariens)
+    Volet "Diversification des sources de protéines et menus végétariens"
     """
 
     class ServiceType(models.TextChoices):
@@ -59,6 +60,9 @@ class DiagnosticVoletDiversificationMixin(models.Model):
         CHEESE = "CHEESE", "De fromage"
         EGG = "EGG", "D’œufs"
         READYMADE = "READYMADE", "Plats prêts à l'emploi"
+
+    # all the fields of the volet (all years, see diagnostic_teledeclaration_fields.py)
+    DIVERSIFICATION_FIELDS = get_teledeclaration_fields_all_years("DIVERSIFICATION")
 
     has_diversification_plan = models.BooleanField(
         blank=True, null=True, verbose_name="plan de diversification en place"

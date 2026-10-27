@@ -1,10 +1,15 @@
 from django.db import models
 
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all_years
+
 
 class DiagnosticVoletPlastiqueMixin(models.Model):
     """
-    Volet substitution des plastiques
+    Volet "Substitution des plastiques"
     """
+
+    # all the fields of the volet (all years, see diagnostic_teledeclaration_fields.py)
+    PLASTIC_FIELDS = get_teledeclaration_fields_all_years("PLASTIQUE")
 
     cooking_plastic_substituted = models.BooleanField(
         blank=True,
