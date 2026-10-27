@@ -17,6 +17,7 @@ CAMPAIGN_DATES = {
         "correction_end_date": None,
         "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2022-09-29",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2022.pdf",
+        "teledeclaration_pdf_version": "v1",
     },
     2022: {
         "teledeclaration_start_date": datetime(2023, 2, 12, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
@@ -27,6 +28,7 @@ CAMPAIGN_DATES = {
         "correction_end_date": None,
         "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2022-09-29",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2023.pdf",
+        "teledeclaration_pdf_version": "v1",
     },
     2023: {
         "teledeclaration_start_date": datetime(2024, 1, 8, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
@@ -37,6 +39,7 @@ CAMPAIGN_DATES = {
         "correction_end_date": datetime(2024, 6, 12, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2024-04-13",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2024.pdf",
+        "teledeclaration_pdf_version": "v2",
     },
     2024: {
         "teledeclaration_start_date": datetime(2025, 1, 7, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
@@ -45,6 +48,7 @@ CAMPAIGN_DATES = {
         "correction_end_date": datetime(2025, 4, 30, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2024-04-13",
         "rapport_parlement_url": "https://ma-cantine.agriculture.gouv.fr/static/documents/rapport-bilan-statistique-EGALIM_2025.pdf",
+        "teledeclaration_pdf_version": "v2",
     },
     2025: {
         "teledeclaration_start_date": datetime(2026, 1, 12, 0, 0, 0, 0, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
@@ -55,6 +59,7 @@ CAMPAIGN_DATES = {
         "correction_end_date": datetime(2026, 4, 29, 23, 59, 59, 999999, tzinfo=zoneinfo.ZoneInfo("Europe/Paris")),
         "legifrance_url": "https://www.legifrance.gouv.fr/loda/id/JORFTEXT000046335035/2025-12-04",
         "rapport_parlement_url": None,
+        "teledeclaration_pdf_version": "v2",
     },
     # NOTE: dates approximates ! on en a besoin pour les tests.
     2026: {
@@ -70,10 +75,12 @@ CAMPAIGN_DATES = {
         "correction_end_date": convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end") or None,
         "legifrance_url": None,
         "rapport_parlement_url": None,
+        "teledeclaration_pdf_version": "v2",
     },
     # Note: au moment d'ajouter une nouvelle année :
     # - penser à y ajouter les settings (pour override dans les environnements non-prod)
     # - et enlever les settings de l'année précédente
+    # - et choisir la version du template PDF de la télédéclaration (teledeclaration_pdf_version)
 }
 
 
