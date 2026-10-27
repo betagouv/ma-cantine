@@ -1588,3 +1588,17 @@ def get_teledeclaration_fields_all_years(volet):
         for diagnostic_type in diagnostic_types:
             fields.update(dict.fromkeys(get_teledeclaration_fields_all(year, volet, diagnostic_type)))
     return list(fields)
+
+
+def get_teledeclaration_fields_all_volets(year, diagnostic_type):
+    """
+    All the fields of all the volets for a given year (diagnostic_type is used by the APPROVISIONNEMENT volet)
+    """
+    year = int(year) if year else None
+    if year not in TELEDECLARATION_FIELDS:
+        raise ValueError(f"Field 'year' expected one of {list(TELEDECLARATION_FIELDS.keys())} but got '{year}'.")
+    return [
+        field
+        for volet in TELEDECLARATION_FIELDS[year]
+        for field in get_teledeclaration_fields_all(year, volet, diagnostic_type)
+    ]
