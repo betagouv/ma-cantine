@@ -435,7 +435,13 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
     VOLETS = [
         # (url name, a field of the volet, its model field, a value, tunnel model field)
         ("gaspillage", "hasWastePlan", "has_waste_plan", True, "tunnel_waste"),
-        ("diversification", "hasDiversificationPlan", "has_diversification_plan", True, "tunnel_diversification"),
+        (
+            "diversification",
+            "planDiversificationEnPlace",
+            "plan_diversification_en_place",
+            True,
+            "tunnel_diversification",
+        ),
         ("plastique", "cookingPlasticSubstituted", "cooking_plastic_substituted", True, "tunnel_plastic"),
         ("information", "communicatesOnFoodPlan", "communicates_on_food_plan", True, "tunnel_info"),
     ]
@@ -448,7 +454,7 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
             year=2025,
             valeur_totale=1000,
             has_waste_plan=False,
-            has_diversification_plan=False,
+            plan_diversification_en_place=False,
             cooking_plastic_substituted=False,
             communicates_on_food_plan=False,
         )
@@ -577,3 +583,36 @@ class DiagnosticVoletDiversificationV2ApiTest(APITestCase):
 
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 self.assertEqual("serviceType" in response.json(), has_service_type)
+
+    @authenticate
+    def test_choice_values_in_french(self):
+        """
+        v2 uses the model (French) choice values (v1 keeps the English ones, see V1_CHOICE_VALUE_ALIASES)
+        """
+        diagnostic = DiagnosticFactory(
+            year=2025,
+            service_type=Diagnostic.ServiceType.MENU_UNIQUE,
+            menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.HEBDO,
+        )
+        diagnostic.canteen.managers.add(authenticate.user)
+        url = reverse(
+            "diagnostic_v2_diversification_retrieve_update",
+            kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+        )
+
+        body = self.client.get(url).json()
+        self.assertEqual(body["serviceType"], "MENU_UNIQUE")
+        self.assertEqual(body["menuVegetarienFrequence"], "HEBDO")
+
+        payload = {"serviceType": "CHOIX_MULTIPLE_RESERVATION", "menuVegetarienBases": ["SOJA", "OEUFS"]}
+        response = self.client.patch(url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["serviceType"], "CHOIX_MULTIPLE_RESERVATION")
+        self.assertEqual(response.json()["menuVegetarienBases"], ["SOJA", "OEUFS"])
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.service_type, Diagnostic.ServiceType.CHOIX_MULTIPLE_RESERVATION)
+
+        # the v1 (English) values are not accepted
+        response = self.client.patch(url, {"serviceType": "MULTIPLE_SELF"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

@@ -340,7 +340,7 @@ class CanteenDetailApiTest(APITestCase):
             cooking_plastic_substituted=False,
             # test vege badge as null
             tunnel_diversification=None,
-            vegetarian_weekly_recurrence=None,
+            menu_vegetarien_frequence=None,
         )
 
         response = self.client.get(reverse("single_canteen", kwargs={"pk": user_canteen.id}))
@@ -360,24 +360,24 @@ class CanteenDetailApiTest(APITestCase):
         DiagnosticFactory(
             canteen=canteen_199_daily_meals,
             year=2023,
-            has_diversification_plan=True,
-            vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.NEVER,
+            plan_diversification_en_place=True,
+            menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.JAMAIS,
         )
 
         canteen_200_daily_meals = CanteenFactory(managers=[authenticate.user], daily_meal_count=200)
         DiagnosticFactory(
             canteen=canteen_200_daily_meals,
             year=2023,
-            has_diversification_plan=True,
-            vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.NEVER,
+            plan_diversification_en_place=True,
+            menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.JAMAIS,
         )
 
         canteen_201_daily_meals = CanteenFactory(managers=[authenticate.user], daily_meal_count=201)
         DiagnosticFactory(
             canteen=canteen_201_daily_meals,
             year=2023,
-            has_diversification_plan=True,
-            vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.NEVER,
+            plan_diversification_en_place=True,
+            menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.JAMAIS,
         )
 
         response_canteen_199 = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_199_daily_meals.id}))
