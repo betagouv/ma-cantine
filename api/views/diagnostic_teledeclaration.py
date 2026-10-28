@@ -4,6 +4,8 @@ import os
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.http import HttpResponse
+from django.db import models
+from django.template.defaultfilters import floatformat
 from django.template.loader import get_template
 from django.utils.text import slugify
 from django_filters import rest_framework as django_filters
@@ -21,7 +23,9 @@ from api.permissions import (
 )
 from api.serializers import DiagnosticTeledeclaredOpenDataSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
+from data.fields import ChoiceArrayField
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_fields_all
 
 logger = logging.getLogger(__name__)
 
@@ -131,6 +135,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
         processed_canteen_snapshot = DiagnosticTeledeclarationPdfView._get_canteen_override_data(diagnostic)
         processed_diagnostic_data = DiagnosticTeledeclarationPdfView._get_teledeclaration_override_data(diagnostic)
         additional_questions = DiagnosticTeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_snapshot)
+        volets = DiagnosticTeledeclarationPdfView._get_volets_fields(diagnostic)
 
         structure_complete_appro_data = {}
         if diagnostic.is_diagnostic_type_complete:
@@ -151,6 +156,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
                 "canteen": {**canteen_snapshot, **processed_canteen_snapshot},
                 "additional_questions": additional_questions,
                 "complete_appro": structure_complete_appro_data,
+                "volets": volets,
             },
         }
 
@@ -319,6 +325,45 @@ class DiagnosticTeledeclarationPdfView(APIView):
             for family, display_family in family_variable_to_display.items():
                 structured_data[display_label][display_family] = getattr(diagnostic, f"valeur_{family}_{label}")
         return structured_data
+
+    @staticmethod
+    def _get_volets_fields(diagnostic):
+        """
+        Returns the fields of the volet for the diagnostic year,
+        format the value and use verbose name
+        """
+        volets = {}
+        for volet in TELEDECLARATION_FIELDS[diagnostic.year]:
+            volets[volet] = []
+            for field_name in get_teledeclaration_fields_all(diagnostic.year, volet, diagnostic.diagnostic_type):
+                field = Diagnostic._meta.get_field(field_name)
+                volets[volet].append(
+                    {
+                        "label": field.verbose_name,
+                        "value": DiagnosticTeledeclarationPdfView._get_prettify_value(
+                            field, getattr(diagnostic, field_name)
+                        ),
+                    }
+                )
+        return volets
+
+    @staticmethod
+    def _get_prettify_value(field, value):
+        """
+        Returns the human-readable value of the field
+        """
+        if value is None or value == [] or value == "":
+            return None
+        if isinstance(field, ChoiceArrayField):
+            choices = dict(field.base_field.flatchoices)
+            return ", ".join(str(choices.get(item, item)) for item in value)
+        if field.choices:
+            return str(dict(field.flatchoices).get(value, value))
+        if isinstance(field, models.BooleanField):
+            return "Oui" if value else "Non"
+        if isinstance(field, models.DecimalField) and field.name.startswith("valeur_"):
+            return f"{floatformat(value, 2)} €"
+        return value
 
 
 class DiagnosticTeledeclaredOpenDataListView(ListAPIView):
