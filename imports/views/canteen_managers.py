@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -7,6 +6,7 @@ from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
 
 from api.serializers import FullCanteenSerializer
+from imports.schemas import ImportSchema
 from imports.views.base import BaseImportView
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType
@@ -15,9 +15,7 @@ from api.views.canteen_managers import AddManagerView
 from common.utils.camelize import camelize
 
 
-CANTEEN_MANAGERS_SCHEMA_FILE_NAME = "cantines_gestionnaires.json"
-CANTEEN_MANAGERS_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_MANAGERS_SCHEMA_FILE_NAME}"
-CANTEEN_MANAGERS_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{CANTEEN_MANAGERS_SCHEMA_FILE_PATH}"
+CANTEEN_MANAGERS_SCHEMA = ImportSchema("cantines_gestionnaires.json")
 
 
 class CanteensManagersImportView(BaseImportView):
@@ -35,13 +33,8 @@ class CanteensManagersImportView(BaseImportView):
         self.is_admin = request.user.is_staff
         return super().post(request)
 
-    def _get_schema_config(self):
-        """Return schema config based on user role"""
-        return {
-            "name": CANTEEN_MANAGERS_SCHEMA_FILE_NAME,
-            "path": CANTEEN_MANAGERS_SCHEMA_FILE_PATH,
-            "url": CANTEEN_MANAGERS_SCHEMA_URL,
-        }
+    def _get_schema(self):
+        return CANTEEN_MANAGERS_SCHEMA
 
     def _process_file(self, data):
         """Process file and add managers without sending invitation emails"""

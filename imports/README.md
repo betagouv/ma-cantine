@@ -24,6 +24,10 @@ Toutes les vues héritent de `BaseImportView` (`imports/views/base.py`) :
 3. traitement des lignes (permissions, création / mise à jour) dans une transaction
 4. log du résultat (`ImportFailure` en cas d'échec)
 
+## Schémas
+
+Chaque import déclare le schéma contre lequel valider le fichier (`_get_schema()`, qui renvoie un `ImportSchema`, dans `imports/schemas.py`). Le fichier du schéma est dans `data/schemas/imports/`.
+
 ## Ce qui reste ailleurs
 
 - schémas : `data/schemas/imports/` (Validata les lit depuis GitHub, sur la branche `GIT_BRANCH`)

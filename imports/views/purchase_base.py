@@ -22,7 +22,7 @@ class BasePurchasesImportView(BaseImportView):
     Shared logic for purchase CSV imports.
 
     Subclasses provide:
-    - `_get_schema_config()`: which JSON Table Schema to validate against
+    - `siret_schema` & `id_schema`: which JSON Table Schema to validate against (chosen with the `type` param)
     - `_get_caracteristiques(row)`: how to extract the characteristics list from a row
     - `_get_definition_local(row)`: how to extract the "definition local" string from a row
     """
@@ -55,9 +55,18 @@ class BasePurchasesImportView(BaseImportView):
 
         return super().post(request)
 
+    @property
     @abstractmethod
-    def _get_schema_config(self):
+    def siret_schema(self):
         pass
+
+    @property
+    @abstractmethod
+    def id_schema(self):
+        pass
+
+    def _get_schema(self):
+        return self.siret_schema if self.is_siret_import else self.id_schema
 
     @abstractmethod
     def _get_caracteristiques(self, row):

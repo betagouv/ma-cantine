@@ -32,7 +32,7 @@ class BaseImportView(ABC, APIView):
     Subclasses must implement:
     - import_type: ImportType enum for logging failures
     - model_class: Main Django model being imported
-    - _get_schema_config(): Return schema configuration dict
+    - _get_schema(): Return the schema (ImportSchema) to validate the file against
     - _save_data_from_row(row): Process and save a single row
     - _get_response_data(): Return success response data
     """
@@ -44,6 +44,7 @@ class BaseImportView(ABC, APIView):
         self.errors = []
         self.start_time = time.time()
         self.file = None
+        self.schema = None
         super().__init__(**kwargs)
 
     @property
@@ -59,16 +60,9 @@ class BaseImportView(ABC, APIView):
         pass
 
     @abstractmethod
-    def _get_schema_config(self):
+    def _get_schema(self):
         """
-        Return schema configuration dictionary.
-
-        Returns:
-            dict: Must contain 'name' and 'url' keys
-                {
-                    'name': 'schema_file.json',
-                    'url': 'https://...'
-                }
+        Return the schema (ImportSchema) to validate the file against.
         """
         pass
 
@@ -112,8 +106,8 @@ class BaseImportView(ABC, APIView):
                 return self._get_success_response()
 
             # Schema validation (Validata)
-            schema_config = self._get_schema_config()
-            validata_response = validata.validate_file_against_schema(self.file, schema_config["url"])
+            self.schema = self._get_schema()
+            validata_response = validata.validate_file_against_schema(self.file, self.schema.url)
 
             # Error generating the report
             if "error" in validata_response:
@@ -125,7 +119,7 @@ class BaseImportView(ABC, APIView):
                     }
                 ]
                 self._log_error(
-                    f"Echec lors de la demande de validation du fichier (schema {schema_config['name']} - Validata)"
+                    f"Echec lors de la demande de validation du fichier (schema {self.schema.name} - Validata)"
                 )
                 return self._get_success_response()
 
@@ -133,19 +127,18 @@ class BaseImportView(ABC, APIView):
             user_file_header = validata_response["resource_data"][0]
             # Custom header validation
             if not self._validate_file_header_custom(user_file_header):
-                self._log_error(f"Echec lors de la validation du header (schema {schema_config['name']} - Validata)")
+                self._log_error(f"Echec lors de la validation du header (schema {self.schema.name} - Validata)")
                 return self._get_success_response()
             # Generic header validation
-            import_expected_header = file_import.get_expected_header_from_schema(schema_config["path"])
-            self.errors = validata.process_header_errors(user_file_header, import_expected_header)
+            self.errors = validata.process_header_errors(user_file_header, self.schema.header)
             if len(self.errors):
-                self._log_error(f"Echec lors de la validation du header (schema {schema_config['name']} - Validata)")
+                self._log_error(f"Echec lors de la validation du header (schema {self.schema.name} - Validata)")
                 return self._get_success_response()
 
             # Rows validation
             self.errors = validata.process_errors(validata_response["report"])
             if len(self.errors):
-                self._log_error(f"Echec lors de la validation du fichier (schema {schema_config['name']} - Validata)")
+                self._log_error(f"Echec lors de la validation du fichier (schema {self.schema.name} - Validata)")
                 return self._get_success_response()
 
             # ma-cantine validation (permissions, last checks...) + import

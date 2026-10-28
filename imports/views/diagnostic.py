@@ -1,11 +1,11 @@
 from abc import abstractmethod
 
-from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
 
+from imports.schemas import ImportSchema
 from imports.views.base import BaseImportView
 from data.models import Canteen, Diagnostic, ImportType
 from data.models.creation_source import CreationSource
@@ -13,16 +13,10 @@ from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fi
 
 
 # simple
-DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_NAME = "bilans_simple_siret.json"
-DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_NAME}"
-DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_PATH}"
-DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_NAME = "bilans_simple_id.json"
-DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_NAME}"
-DIAGNOSTICS_SIMPLE_ID_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH}"
+DIAGNOSTICS_SIMPLE_SIRET_SCHEMA = ImportSchema("bilans_simple_siret.json")
+DIAGNOSTICS_SIMPLE_ID_SCHEMA = ImportSchema("bilans_simple_id.json")
 # complete
-DIAGNOSTICS_COMPLETE_SCHEMA_FILE_NAME = "bilans_detaille.json"
-DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH = f"data/schemas/imports/{DIAGNOSTICS_COMPLETE_SCHEMA_FILE_NAME}"
-DIAGNOSTICS_COMPLETE_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH}"
+DIAGNOSTICS_COMPLETE_SCHEMA = ImportSchema("bilans_detaille.json")
 
 
 class DiagnosticsImportView(BaseImportView):
@@ -143,16 +137,8 @@ class DiagnosticsSimpleImportView(DiagnosticsImportView):
         )
         return super().post(request)
 
-    def _get_schema_config(self):
-        return {
-            "name": DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_NAME
-            if self.is_siret_import
-            else DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_NAME,
-            "url": DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_URL if self.is_siret_import else DIAGNOSTICS_SIMPLE_ID_SCHEMA_URL,
-            "path": DIAGNOSTICS_SIMPLE_SIRET_SCHEMA_FILE_PATH
-            if self.is_siret_import
-            else DIAGNOSTICS_SIMPLE_ID_SCHEMA_FILE_PATH,
-        }
+    def _get_schema(self):
+        return DIAGNOSTICS_SIMPLE_SIRET_SCHEMA if self.is_siret_import else DIAGNOSTICS_SIMPLE_ID_SCHEMA
 
     def _validate_diagnostic(self, row):
         values_dict = {}
@@ -168,12 +154,8 @@ class DiagnosticsSimpleImportView(DiagnosticsImportView):
 class DiagnosticsCompleteImportView(DiagnosticsImportView):
     import_type = ImportType.DIAGNOSTIC_COMPLETE
 
-    def _get_schema_config(self):
-        return {
-            "name": DIAGNOSTICS_COMPLETE_SCHEMA_FILE_NAME,
-            "url": DIAGNOSTICS_COMPLETE_SCHEMA_URL,
-            "path": DIAGNOSTICS_COMPLETE_SCHEMA_FILE_PATH,
-        }
+    def _get_schema(self):
+        return DIAGNOSTICS_COMPLETE_SCHEMA
 
     def _validate_diagnostic(self, row):
         values_dict = {}

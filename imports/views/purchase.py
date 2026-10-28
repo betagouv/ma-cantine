@@ -1,30 +1,15 @@
-from django.conf import settings
-
 from data.models import Purchase
 
+from imports.schemas import ImportSchema
 from imports.views.purchase_base import BasePurchasesImportView
 
-PURCHASE_SIRET_SCHEMA_FILE_NAME = "achats_siret.json"
-PURCHASE_SIRET_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SIRET_SCHEMA_FILE_NAME}"
-PURCHASE_SIRET_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_SIRET_SCHEMA_FILE_PATH}"
-PURCHASE_ID_SCHEMA_FILE_NAME = "achats_id.json"
-PURCHASE_ID_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_ID_SCHEMA_FILE_NAME}"
-PURCHASE_ID_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{PURCHASE_ID_SCHEMA_FILE_PATH}"
+PURCHASE_SIRET_SCHEMA = ImportSchema("achats_siret.json")
+PURCHASE_ID_SCHEMA = ImportSchema("achats_id.json")
 
 
 class PurchasesImportView(BasePurchasesImportView):
-    def _get_schema_config(self):
-        if self.is_siret_import:
-            return {
-                "name": PURCHASE_SIRET_SCHEMA_FILE_NAME,
-                "url": PURCHASE_SIRET_SCHEMA_URL,
-                "path": PURCHASE_SIRET_SCHEMA_FILE_PATH,
-            }
-        return {
-            "name": PURCHASE_ID_SCHEMA_FILE_NAME,
-            "url": PURCHASE_ID_SCHEMA_URL,
-            "path": PURCHASE_ID_SCHEMA_FILE_PATH,
-        }
+    siret_schema = PURCHASE_SIRET_SCHEMA
+    id_schema = PURCHASE_ID_SCHEMA
 
     def _get_caracteristiques(self, row):
         categories_egalim = row[6].strip() if row[6] else ""
