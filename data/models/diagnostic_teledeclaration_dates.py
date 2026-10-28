@@ -75,7 +75,7 @@ CAMPAIGN_DATES = {
         "correction_end_date": convert_date_string_to_datetime(settings.CORRECTION_END_DATE_OVERRIDE, "end") or None,
         "legifrance_url": None,
         "rapport_parlement_url": None,
-        "teledeclaration_pdf_version": "v2",
+        "teledeclaration_pdf_version": "v3",
     },
     # Note: au moment d'ajouter une nouvelle année :
     # - penser à y ajouter les settings (pour override dans les environnements non-prod)
