@@ -14,6 +14,7 @@ from api.permissions import IsAuthenticated
 from common.api import validata
 from common.utils import file_import
 from data.models import EventLog, ImportFailure
+from imports.schemas import detect_schema
 
 logger = logging.getLogger(__name__)
 
@@ -25,14 +26,14 @@ class BaseImportView(ABC, APIView):
     Handles common workflow:
     1. File validation (size, format)
     2. Schema validation via Validata
-    3. Header validation
+    3. Header validation: detects which of the accepted schemas the file uses (self.schema)
     4. Row-by-row processing with transactions
     5. Error handling and logging
 
     Subclasses must implement:
     - import_type: ImportType enum for logging failures
     - model_class: Main Django model being imported
-    - _get_schema_config(): Return schema configuration dict
+    - _get_schemas(): Return the list of accepted schemas
     - _save_data_from_row(row): Process and save a single row
     - _get_response_data(): Return success response data
     """
@@ -44,6 +45,7 @@ class BaseImportView(ABC, APIView):
         self.errors = []
         self.start_time = time.time()
         self.file = None
+        self.schema = None
         super().__init__(**kwargs)
 
     @property
@@ -59,16 +61,12 @@ class BaseImportView(ABC, APIView):
         pass
 
     @abstractmethod
-    def _get_schema_config(self):
+    def _get_schemas(self):
         """
-        Return schema configuration dictionary.
+        Return the list of accepted schemas (ImportSchema).
 
-        Returns:
-            dict: Must contain 'name' and 'url' keys
-                {
-                    'name': 'schema_file.json',
-                    'url': 'https://...'
-                }
+        The file is validated against the schema whose header matches the file header.
+        If none matches, the header errors are computed against the first schema.
         """
         pass
 
@@ -111,41 +109,35 @@ class BaseImportView(ABC, APIView):
             if not self._validate_file_size():
                 return self._get_success_response()
 
-            # Schema validation (Validata)
-            schema_config = self._get_schema_config()
-            validata_response = validata.validate_file_against_schema(self.file, schema_config["url"])
-
-            # Error generating the report
-            if "error" in validata_response:
-                error = validata_response["error"]["message"]
-                self.errors = [
-                    {
-                        "message": f"Une erreur inconnue s'est produite en lisant votre fichier : « {error} ». Renouveler votre essai, et si l'erreur persiste contactez le support.",
-                        "status": 400,
-                    }
-                ]
-                self._log_error(
-                    f"Echec lors de la demande de validation du fichier (schema {schema_config['name']} - Validata)"
-                )
+            # Schema validation (Validata), first against the default schema
+            schemas = self._get_schemas()
+            default_schema = schemas[0]
+            validata_response = self._validate_file_against_schema(default_schema)
+            if validata_response is None:
                 return self._get_success_response()
 
             # Header validation
             user_file_header = validata_response["resource_data"][0]
             # Custom header validation
             if not self._validate_file_header_custom(user_file_header):
-                self._log_error(f"Echec lors de la validation du header (schema {schema_config['name']} - Validata)")
+                self._log_error(f"Echec lors de la validation du header (schema {default_schema.name} - Validata)")
                 return self._get_success_response()
-            # Generic header validation
-            import_expected_header = file_import.get_expected_header_from_schema(schema_config["path"])
-            self.errors = validata.process_header_errors(user_file_header, import_expected_header)
-            if len(self.errors):
-                self._log_error(f"Echec lors de la validation du header (schema {schema_config['name']} - Validata)")
+            # Generic header validation: detect the schema used by the file
+            self.schema = detect_schema(user_file_header, schemas)
+            if not self.schema:
+                self.errors = validata.process_header_errors(user_file_header, default_schema.header)
+                self._log_error(f"Echec lors de la validation du header (schema {default_schema.name} - Validata)")
                 return self._get_success_response()
+            # The file uses another accepted schema: validate it against this one
+            if self.schema != default_schema:
+                validata_response = self._validate_file_against_schema(self.schema)
+                if validata_response is None:
+                    return self._get_success_response()
 
             # Rows validation
             self.errors = validata.process_errors(validata_response["report"])
             if len(self.errors):
-                self._log_error(f"Echec lors de la validation du fichier (schema {schema_config['name']} - Validata)")
+                self._log_error(f"Echec lors de la validation du fichier (schema {self.schema.name} - Validata)")
                 return self._get_success_response()
 
             # ma-cantine validation (permissions, last checks...) + import
@@ -204,6 +196,26 @@ class BaseImportView(ABC, APIView):
         Default: first column (often SIRET)
         """
         return row[0] if row else None
+
+    def _validate_file_against_schema(self, schema):
+        """
+        Validate the file against the schema (Validata).
+
+        Returns:
+            dict: Validata response, or None if Validata could not generate the report
+        """
+        validata_response = validata.validate_file_against_schema(self.file, schema.url)
+        if "error" in validata_response:
+            error = validata_response["error"]["message"]
+            self.errors = [
+                {
+                    "message": f"Une erreur inconnue s'est produite en lisant votre fichier : « {error} ». Renouveler votre essai, et si l'erreur persiste contactez le support.",
+                    "status": 400,
+                }
+            ]
+            self._log_error(f"Echec lors de la demande de validation du fichier (schema {schema.name} - Validata)")
+            return None
+        return validata_response
 
     def _validate_file_size(self):
         """

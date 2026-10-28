@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
@@ -7,6 +6,7 @@ from django.utils import timezone
 from simple_history.utils import update_change_reason
 
 from api.serializers import FullCanteenSerializer
+from imports.schemas import ImportSchema
 from imports.views.base import BaseImportView
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType, Sector
@@ -17,9 +17,7 @@ from api.views.canteen_managers import AddManagerView
 from common.utils.camelize import camelize
 
 
-CANTEEN_SCHEMA_FILE_NAME = "cantines_creer.json"
-CANTEEN_SCHEMA_FILE_PATH = f"data/schemas/imports/{CANTEEN_SCHEMA_FILE_NAME}"
-CANTEEN_SCHEMA_URL = f"https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/{settings.GIT_BRANCH}/{CANTEEN_SCHEMA_FILE_PATH}"
+CANTEEN_CREATE_SCHEMA = ImportSchema("cantines_creer.json")
 
 
 class CanteensCreateImportView(BaseImportView):
@@ -32,13 +30,8 @@ class CanteensCreateImportView(BaseImportView):
         super().__init__(**kwargs)
         self.canteens_created = {}
 
-    def _get_schema_config(self):
-        """Return schema config"""
-        return {
-            "name": CANTEEN_SCHEMA_FILE_NAME,
-            "url": CANTEEN_SCHEMA_URL,
-            "path": CANTEEN_SCHEMA_FILE_PATH,
-        }
+    def _get_schemas(self):
+        return [CANTEEN_CREATE_SCHEMA]
 
     def _process_file(self, data):
         """Process file"""

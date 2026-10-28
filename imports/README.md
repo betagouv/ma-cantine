@@ -20,9 +20,23 @@ Le routage est délégué par `api/urls.py` vers `imports/urls.py`.
 Toutes les vues héritent de `BaseImportView` (`imports/views/base.py`) :
 
 1. validation de la taille du fichier
-2. validation du fichier contre son schéma via l'API [Validata](https://validata.fr) (en-tête puis lignes)
+2. validation du fichier via l'API [Validata](https://validata.fr) :
+   - en-tête : détection du schéma utilisé par le fichier, parmi les schémas acceptés par l'import (`_get_schemas()`)
+   - lignes : contre le schéma détecté
 3. traitement des lignes (permissions, création / mise à jour) dans une transaction
 4. log du résultat (`ImportFailure` en cas d'échec)
+
+## Schémas
+
+Chaque import déclare la liste des schémas qu'il accepte (`ImportSchema`, dans `imports/schemas.py`) :
+
+- le schéma utilisé est celui dont l'en-tête correspond **exactement** à l'en-tête du fichier
+- si aucun ne correspond, les erreurs d'en-tête sont calculées par rapport au premier schéma de la liste (celui par défaut)
+
+Ajouter un schéma :
+
+1. ajouter le fichier dans `data/schemas/imports/`
+2. l'ajouter dans la liste des schémas acceptés par l'import (`_get_schemas()`)
 
 ## Ce qui reste ailleurs
 
