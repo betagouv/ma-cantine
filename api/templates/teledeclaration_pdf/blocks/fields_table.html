@@ -1,0 +1,14 @@
+<table class="fields-table">
+    {% for field in fields %}
+    <tr>
+        <td class="fields-table-label">{{ field.label }}</td>
+        <td>
+            {% if field.value is None %}
+                Non renseigné
+            {% else %}
+                {{ field.value }}
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
