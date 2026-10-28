@@ -1,0 +1,89 @@
+{% load static %}
+<html>
+
+<head>{% include "./blocks/style.html" %}</head>
+
+<body>
+  <div>
+    <img src="{% static '../../../web/static/images/Marianne-Republique-Francaise.svg' %}"
+      alt="République Française" height="60" />
+    <img src="{% static '../../../web/static/images/ma-cantine-logo-light.jpg' %}" alt="ma cantine" height="60" />
+  </div>
+  <h1>Justificatif pour télédéclaration
+    {{ year }}
+  </h1>
+  <h2>Télédéclaration faite le
+    {{ date|date:"l j F Y" }} par
+    {{ applicant }}
+  </h2>
+  <h3>Informations de mon établissement</h3>
+  <ul>
+    {% if canteen.name %}
+    <li><span>Nom</span> : {{ canteen.name }}</li>
+    {% endif %}
+    {% if canteen.siret %}
+    <li><span>SIRET</span> : {{ canteen.siret }}</li>
+    {% endif %}
+    {% if canteen.siren_unite_legale %}
+    <li><span>SIREN</span> : {{ canteen.siren_unite_legale }}</li>
+    {% endif %}
+    {% if canteen.production_type %}
+    <li><span>Mode de production</span> : {{ canteen.production_type }}</li>
+    {% endif %}
+    {% if canteen.city_insee_code %}
+    <li><span>Code Insee</span> : {{ canteen.city_insee_code }}</li>
+    {% endif %}
+    {% if canteen.central_producer_siret %}
+    <li><span>SIRET de la cuisine centrale</span> : {{ canteen.central_producer_siret }}</li>
+    {% endif %}
+    {% if canteen.sectors %}
+    <li><span>Secteurs d'activité</span> : {{ canteen.sectors }}</li>
+    {% endif %}
+    {% if canteen.line_ministry %}
+    <li><span>Administration générale de tutelle (ministère ou ATE)</span> : {{ canteen.line_ministry }}</li>
+    {% endif %}
+    {% if canteen.management_type %}
+    <li><span>Mode de gestion</span> : {{ canteen.management_type }}</li>
+    {% endif %}
+    {% if canteen.economic_model %}
+    <li><span>Modèle économique</span> : {{ canteen.economic_model }}</li>
+    {% endif %}
+  </ul>
+
+  <h3>Vous avez choisi la télédéclaration
+    {{ diagnostic_type }}.
+  </h3>
+  <p>
+    L'arrêté du 14 septembre 2022 rend obligatoire la saisie et la transmission des données d'achat de l'année n-1 à
+    l'administration.
+  </p>
+  {% include "./blocks/satellites.html" %}
+  <p>
+    Pour l'année
+    {{ year }}, les données suivantes ont été télédéclarées le
+    {{ date|date:"l j F Y" }} via la plateforme numérique « ma cantine » :
+  </p>
+
+  <h3>Approvisionnements</h3>
+  {% include "./blocks/fields_table.html" with fields=volets.APPROVISIONNEMENT %}
+
+  <h3>Gaspillage alimentaire</h3>
+  {% include "./blocks/fields_table.html" with fields=volets.GASPILLAGE %}
+
+  <h3>Diversification des protéines et menus végétariens</h3>
+  {% include "./blocks/fields_table.html" with fields=volets.DIVERSIFICATION %}
+
+  <h3>Substitution des plastiques</h3>
+  {% include "./blocks/fields_table.html" with fields=volets.PLASTIQUE %}
+
+  <h3>Information des convives</h3>
+  {% include "./blocks/fields_table.html" with fields=volets.INFORMATION %}
+
+  <hr />
+  <p>
+    En savoir plus de la loi EGalim : <a
+      href="https://ma-cantine.agriculture.gouv.fr/">https://ma-cantine.agriculture.gouv.fr/</a>
+  </p>
+</body>
+
+</html>
