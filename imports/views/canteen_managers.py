@@ -21,9 +21,6 @@ CANTEEN_MANAGERS_SCHEMA = ImportSchema("cantines_gestionnaires.json")
 class CanteensManagersImportView(BaseImportView):
     import_type = ImportType.CANTEEN_MANAGERS
     model_class = Canteen
-    siret_idx = 0
-    silent_manager_idx = 1
-    source_idx = 2
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -51,18 +48,19 @@ class CanteensManagersImportView(BaseImportView):
                 self.canteens_updated[canteen.siret] = canteen
 
             except Exception as e:
-                identifier = row[self.siret_idx] if row else None
+                identifier = row[0] if row else None
                 for error in self._parse_errors(e, row, identifier):
                     self.errors.append(self._get_error(e, error["message"], error["code"], row_number))
 
     @transaction.atomic
     def _save_data_from_row(self, row):
         """Process and save canteen data from row"""
+        row_dict = self._get_row_dict(row)
         (
             import_source,
             silently_added_manager_emails,
-        ) = self._generate_canteen_meta_fields(row)
-        canteen = self._update_canteen(row, import_source, silently_added_manager_emails)
+        ) = self._generate_canteen_meta_fields(row_dict)
+        canteen = self._update_canteen(row_dict, import_source, silently_added_manager_emails)
 
         return canteen
 
@@ -97,11 +95,11 @@ class CanteensManagersImportView(BaseImportView):
 
     def _update_canteen(
         self,
-        row,
+        row_dict,
         import_source,
         silently_added_manager_emails,
     ):
-        siret = utils_utils.normalize_string(row[self.siret_idx])
+        siret = utils_utils.normalize_string(row_dict["siret"])
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
 
         if not canteen_exists:
@@ -114,15 +112,15 @@ class CanteensManagersImportView(BaseImportView):
         self._add_managers_to_canteen(silently_added_manager_emails, canteen)
         return canteen
 
-    def _generate_canteen_meta_fields(self, row):
+    def _generate_canteen_meta_fields(self, row_dict):
         silently_added_manager_emails = []
-        import_source = row[self.source_idx].strip()
+        import_source = row_dict["source_donnees"].strip()
         try:
-            silently_added_manager_emails = self._get_manager_emails(row[self.silent_manager_idx])
+            silently_added_manager_emails = self._get_manager_emails(row_dict["gestionnaires_additionnels"])
         except Exception:
             raise ValidationError(
                 {
-                    "email": f"Un adresse email des gestionnaires (pas notifiés) ({row[self.silent_manager_idx]}) n'est pas valide."
+                    "email": f"Un adresse email des gestionnaires (pas notifiés) ({row_dict['gestionnaires_additionnels']}) n'est pas valide."
                 }
             )
         return (import_source, silently_added_manager_emails)

@@ -28,6 +28,8 @@ Toutes les vues héritent de `BaseImportView` (`imports/views/base.py`) :
 
 Chaque import déclare le schéma contre lequel valider le fichier (`_get_schema()`, qui renvoie un `ImportSchema`, dans `imports/models/importschema.py`). Le fichier du schéma est dans `data/schemas/imports/`.
 
+Les valeurs d'une ligne sont lues par nom de colonne (`_get_row_dict()`, avec les colonnes du schéma), et non par position.
+
 ## Ce qui reste ailleurs
 
 - schémas : `data/schemas/imports/` (Validata les lit depuis GitHub, sur la branche `GIT_BRANCH`)

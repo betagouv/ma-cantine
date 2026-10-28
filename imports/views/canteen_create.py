@@ -24,8 +24,6 @@ class CanteensCreateImportView(BaseImportView):
     import_type = ImportType.CANTEEN_CREATE
     model_class = Canteen
 
-    manager_column_idx = 11  # gestionnaires_additionnels
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.canteens_created = {}
@@ -50,8 +48,9 @@ class CanteensCreateImportView(BaseImportView):
     @transaction.atomic
     def _save_data_from_row(self, row):
         """Process and save canteen data from row"""
-        manager_emails = self._get_manager_emails_to_notify(row)
-        canteen = self._create_canteen(row, manager_emails)
+        row_dict = self._get_row_dict(row)
+        manager_emails = self._get_manager_emails_to_notify(row_dict)
+        canteen = self._create_canteen(row_dict, manager_emails)
         return canteen
 
     @staticmethod
@@ -85,46 +84,74 @@ class CanteensCreateImportView(BaseImportView):
             "count": len(serialized_canteens),
         }
 
-    def _get_manager_emails_to_notify(self, row):
+    def _get_manager_emails_to_notify(self, row_dict):
         try:
             manager_emails = []
-            if len(row) > self.manager_column_idx and row[self.manager_column_idx]:
-                manager_emails = CanteensCreateImportView._get_manager_emails(row[self.manager_column_idx])
+            if row_dict.get("gestionnaires_additionnels"):
+                manager_emails = CanteensCreateImportView._get_manager_emails(row_dict["gestionnaires_additionnels"])
         except Exception:
             raise ValidationError(
-                {"email": f"Un adresse email des gestionnaires ({row[self.manager_column_idx]}) n'est pas valide."}
+                {
+                    "email": f"Un adresse email des gestionnaires ({row_dict['gestionnaires_additionnels']}) n'est pas valide."
+                }
             )
         return manager_emails
 
     def _create_canteen(
         self,
-        row,
+        row_dict,
         manager_emails,
     ):
         # Fields cleaning
-        siret = utils_utils.normalize_string(row[0])
-        name = row[1].strip()
-        central_producer_siret = utils_utils.normalize_string(row[2]) if row[2] else None
-        daily_meal_count = row[3]
-        yearly_meal_count = row[4]
+        siret = utils_utils.normalize_string(row_dict["siret"])
+        name = row_dict["nom"].strip()
+        central_producer_siret = (
+            utils_utils.normalize_string(row_dict["siret_cuisine_centrale"])
+            if row_dict["siret_cuisine_centrale"]
+            else None
+        )
+        daily_meal_count = row_dict["nombre_repas_jour"]
+        yearly_meal_count = row_dict["nombre_repas_an"]
         sector_list = [
             next(value for value, label in Sector.choices if label == sector.strip().replace("’", "'"))
-            for sector in row[5].strip().split(",")
+            for sector in row_dict["secteurs"].strip().split(",")
         ]
         production_type = next(
-            (value for value, label in Canteen.ProductionType.choices if row[6].strip() in [label, value]), None
+            (
+                value
+                for value, label in Canteen.ProductionType.choices
+                if row_dict["type_production"].strip() in [label, value]
+            ),
+            None,
         )
         management_type = next(
-            (value for value, label in Canteen.ManagementType.choices if row[7].strip() in [label, value]), None
+            (
+                value
+                for value, label in Canteen.ManagementType.choices
+                if row_dict["type_gestion"].strip() in [label, value]
+            ),
+            None,
         )
         economic_model = next(
-            (value for value, label in Canteen.EconomicModel.choices if row[8].strip() in [label, value]), None
+            (
+                value
+                for value, label in Canteen.EconomicModel.choices
+                if row_dict["modèle_économique"].strip() in [label, value]
+            ),
+            None,
         )
-        groupe_id = row[9]
+        groupe_id = row_dict["groupe_id"]
         groupe = None
         line_ministry = (
-            next((value for value, label in Canteen.Ministries.choices if label == row[10].strip()), None)
-            if row[10]
+            next(
+                (
+                    value
+                    for value, label in Canteen.Ministries.choices
+                    if label == row_dict["administration_tutelle"].strip()
+                ),
+                None,
+            )
+            if row_dict["administration_tutelle"]
             else None
         )
 

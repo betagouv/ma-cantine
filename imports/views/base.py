@@ -189,6 +189,12 @@ class BaseImportView(ABC, APIView):
         """
         pass
 
+    def _get_row_dict(self, row):
+        """
+        Row values by column name (the columns of the schema detected from the file header)
+        """
+        return dict(zip(self.schema.header, row))
+
     def _get_row_identifier(self, row):
         """
         Get identifier from row for error messages.
