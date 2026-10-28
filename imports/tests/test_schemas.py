@@ -21,3 +21,9 @@ class ImportSchemaTest(SimpleTestCase):
         self.assertIsNone(detect_schema(id_schema.header + ["extra"], [siret_schema, id_schema]))
         self.assertIsNone(detect_schema([column.upper() for column in id_schema.header], [siret_schema, id_schema]))
         self.assertIsNone(detect_schema([], [siret_schema, id_schema]))
+
+
+class DiagnosticsSimpleImportSchemasTest(SimpleTestCase):
+    def test_headers_are_unique(self):
+        # the siret & id schemas are accepted by the same import: their headers must differ
+        self.assertNotEqual(DIAGNOSTICS_SIMPLE_SIRET_SCHEMA.header, DIAGNOSTICS_SIMPLE_ID_SCHEMA.header)

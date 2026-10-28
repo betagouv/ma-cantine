@@ -683,3 +683,86 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.valeur_totale, 1000)
         self.assertEqual(diagnostic.valeur_bio, 500)
+
+
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
+class DiagnosticsSimpleImportSchemaDetectionApiTest(APITestCase):
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
+    def test_siret_file_with_id_type(self):
+        """
+        The schema is detected from the file header: a siret file is imported even if the "id" type is requested
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = (
+            "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+        )
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, 1, canteen=canteen)
+        diagnostic = Diagnostic.objects.get(canteen=canteen)
+        self.assertEqual(diagnostic.year, 2025)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertEqual(diagnostic.valeur_bio, 500)
+
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
+    def test_id_file_with_siret_type(self):
+        """
+        The schema is detected from the file header: an id file is imported even if the "siret" type is requested
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=949)
+
+        file_path = "./imports/tests/files/diagnostics/diagnostics_simple_good_id.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_ID, 1, canteen=canteen)
+        diagnostic = Diagnostic.objects.get(canteen=canteen)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
+    def test_siret_file_without_type(self):
+        """
+        The "type" param is optional (e.g. not sent by the Vue 2 frontend)
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = (
+            "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+        )
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 1)
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, 1, canteen=canteen)
+
+    @authenticate
+    def test_header_errors_against_requested_type(self):
+        """
+        If the header doesn't match any accepted schema, the errors are computed against the requested type
+        """
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_bad_wrong_header.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_ID, file_path)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertIn("colonne cantine_id", [error["field"] for error in body["errors"]])

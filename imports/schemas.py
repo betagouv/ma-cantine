@@ -10,10 +10,13 @@ SCHEMAS_FOLDER_PATH = "data/schemas/imports"
 class ImportSchema:
     """
     A JSON Table Schema accepted by an import (stored in data/schemas/imports/)
+
+    - import_type: ImportType to log (if the import accepts schemas of different types)
     """
 
-    def __init__(self, file_name):
+    def __init__(self, file_name, import_type=None):
         self.name = file_name
+        self.import_type = import_type
 
     def __repr__(self):
         return f"ImportSchema({self.name})"

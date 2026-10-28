@@ -128,6 +128,8 @@ class BaseImportView(ABC, APIView):
                 self.errors = validata.process_header_errors(user_file_header, default_schema.header)
                 self._log_error(f"Echec lors de la validation du header (schema {default_schema.name} - Validata)")
                 return self._get_success_response()
+            if self.schema.import_type:
+                self.import_type = self.schema.import_type
             # The file uses another accepted schema: validate it against this one
             if self.schema != default_schema:
                 validata_response = self._validate_file_against_schema(self.schema)

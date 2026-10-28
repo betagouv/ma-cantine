@@ -32,6 +32,9 @@ Chaque import déclare la liste des schémas qu'il accepte (`ImportSchema`, dans
 
 - le schéma utilisé est celui dont l'en-tête correspond **exactement** à l'en-tête du fichier
 - si aucun ne correspond, les erreurs d'en-tête sont calculées par rapport au premier schéma de la liste (celui par défaut)
+- un schéma peut préciser l'`ImportType` à logguer
+
+Exemple : les bilans simples acceptent les schémas SIRET & ID (le paramètre `type` ne fait que choisir celui par défaut).
 
 Ajouter un schéma :
 

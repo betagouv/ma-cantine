@@ -13,8 +13,10 @@ from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fi
 
 
 # simple
-DIAGNOSTICS_SIMPLE_SIRET_SCHEMA = ImportSchema("bilans_simple_siret.json")
-DIAGNOSTICS_SIMPLE_ID_SCHEMA = ImportSchema("bilans_simple_id.json")
+DIAGNOSTICS_SIMPLE_SIRET_SCHEMA = ImportSchema(
+    "bilans_simple_siret.json", import_type=ImportType.DIAGNOSTIC_SIMPLE_SIRET
+)
+DIAGNOSTICS_SIMPLE_ID_SCHEMA = ImportSchema("bilans_simple_id.json", import_type=ImportType.DIAGNOSTIC_SIMPLE_ID)
 # complete
 DIAGNOSTICS_COMPLETE_SCHEMA = ImportSchema("bilans_detaille.json")
 
@@ -26,7 +28,10 @@ class DiagnosticsImportView(BaseImportView):
         super().__init__(**kwargs)
         self.diagnostics_created_count = 0
         self.canteen_ids = set()
-        self.is_siret_import = True
+
+    @property
+    def is_siret_import(self):
+        return self.schema.header[0] == "siret"
 
     def _process_file(self, data):
         """Process all rows in the file."""
@@ -130,15 +135,18 @@ class DiagnosticsSimpleImportView(DiagnosticsImportView):
     import_type = ImportType.DIAGNOSTIC_SIMPLE_SIRET
 
     def post(self, request):
-        # Set import type based on request
-        self.is_siret_import = request.data.get("type") == "siret"
+        # The schema (siret or id) is detected from the file header.
+        # The "type" param only sets the default one (used for the header errors & logs before detection)
+        self.is_siret_type_requested = request.data.get("type") == "siret"
         self.import_type = (
-            ImportType.DIAGNOSTIC_SIMPLE_SIRET if self.is_siret_import else ImportType.DIAGNOSTIC_SIMPLE_ID
+            ImportType.DIAGNOSTIC_SIMPLE_SIRET if self.is_siret_type_requested else ImportType.DIAGNOSTIC_SIMPLE_ID
         )
         return super().post(request)
 
     def _get_schemas(self):
-        return [DIAGNOSTICS_SIMPLE_SIRET_SCHEMA if self.is_siret_import else DIAGNOSTICS_SIMPLE_ID_SCHEMA]
+        if self.is_siret_type_requested:
+            return [DIAGNOSTICS_SIMPLE_SIRET_SCHEMA, DIAGNOSTICS_SIMPLE_ID_SCHEMA]
+        return [DIAGNOSTICS_SIMPLE_ID_SCHEMA, DIAGNOSTICS_SIMPLE_SIRET_SCHEMA]
 
     def _validate_diagnostic(self, row):
         values_dict = {}
