@@ -1,8 +1,8 @@
 import json
 import re
 from django.test import TestCase
-from api.views.canteen_create_import import CANTEEN_SCHEMA_FILE_PATH
-from api.views.canteen_update_import import CANTEEN_UPDATE_SCHEMA_FILE_PATH
+from imports.views.canteen_create import CANTEEN_SCHEMA_FILE_PATH
+from imports.views.canteen_update import CANTEEN_UPDATE_SCHEMA_FILE_PATH
 
 
 class CanteensImportSchemaTest(TestCase):

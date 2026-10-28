@@ -99,7 +99,7 @@ THIRD_PARTY_APPS = [
     "django_otp.plugins.otp_totp",
     "django_otp.plugins.otp_static",
 ]
-LOCAL_APPS = ["macantine", "data", "api", "web", "common"]
+LOCAL_APPS = ["macantine", "data", "api", "imports", "web", "common"]
 INSTALLED_APPS = WAGTAIL_INSTALLED_APPS + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [

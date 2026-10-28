@@ -35,7 +35,7 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 0)
 
         # header missing
-        file_path = "./api/tests/files/canteens/canteens_bad_no_header.csv"
+        file_path = "./imports/tests/files/canteens/canteens_bad_no_header.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -60,7 +60,7 @@ class CanteensImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 0)
 
         # wrong header
-        file_path = "./api/tests/files/canteens/canteens_bad_wrong_header.csv"
+        file_path = "./imports/tests/files/canteens/canteens_bad_wrong_header.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -81,7 +81,7 @@ class CanteensImportApiErrorTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_bad_extra_header.csv"
+        file_path = "./imports/tests/files/canteens/canteens_bad_extra_header.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -105,7 +105,7 @@ class CanteensImportApiErrorTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_bad_empty_rows.csv"
+        file_path = "./imports/tests/files/canteens/canteens_bad_empty_rows.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -129,7 +129,7 @@ class CanteensImportApiErrorTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_bad_nearly_good.csv"
+        file_path = "./imports/tests/files/canteens/canteens_bad_nearly_good.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -159,7 +159,7 @@ class CanteensImportApiErrorTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_bad.csv"
+        file_path = "./imports/tests/files/canteens/canteens_bad.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -202,7 +202,7 @@ class CanteensImportApiErrorTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteen_bad_sectors.csv"
+        file_path = "./imports/tests/files/canteens/canteen_bad_sectors.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -224,7 +224,7 @@ class CanteensImportApiErrorTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_bad_line_ministry.csv"
+        file_path = "./imports/tests/files/canteens/canteens_bad_line_ministry.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -251,7 +251,7 @@ class CanteensImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21340172201787")
         self.assertEqual(Canteen.objects.count(), 1)
 
-        file_path = "./api/tests/files/canteens/canteens_bad_canteen_already_exists.csv"
+        file_path = "./imports/tests/files/canteens/canteens_bad_canteen_already_exists.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -270,7 +270,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
     @authenticate
     def test_when_errors_count_is_0(self):
-        file_path = "./api/tests/files/canteens/canteens_bad_one_error.csv"
+        file_path = "./imports/tests/files/canteens/canteens_bad_one_error.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -284,7 +284,7 @@ class CanteensImportApiErrorTest(APITestCase):
     def test_file_above_max_size(self):
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_good.csv"
+        file_path = "./imports/tests/files/canteens/canteens_good.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -319,7 +319,7 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
         self.teledeclaration.teledeclare(applicant=authenticate.user)
 
         # Import
-        file_path = "./api/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
+        file_path = "./imports/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -347,7 +347,7 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
 
         # Import
         with freeze_time("2025-07-20"):
-            file_path = "./api/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
+            file_path = "./imports/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
             with open(file_path) as canteen_file:
                 response = self.client.post(self.url, {"file": canteen_file})
 
@@ -372,7 +372,7 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
         self.teledeclaration.cancel()
 
         # Import
-        file_path = "./api/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
+        file_path = "./imports/tests/files/canteens/canteens_create_bad_groupe_teledeclared.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -397,7 +397,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_good.csv"
+        file_path = "./imports/tests/files/canteens/canteens_good.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -418,7 +418,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         manager = UserFactory(email="manager@example.com")
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_good_add_manager.csv"
+        file_path = "./imports/tests/files/canteens/canteens_good_add_manager.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -439,7 +439,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_sectors.csv"
+        file_path = "./imports/tests/files/canteens/canteens_sectors.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -462,7 +462,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_good_max_sectors.csv"
+        file_path = "./imports/tests/files/canteens/canteens_good_max_sectors.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -481,7 +481,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_good.xlsx"
+        file_path = "./imports/tests/files/canteens/canteens_good.xlsx"
         with open(file_path, "rb") as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -505,7 +505,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_good_choices_slug_values.csv"
+        file_path = "./imports/tests/files/canteens/canteens_good_choices_slug_values.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -528,7 +528,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         )
         self.assertEqual(Canteen.objects.count(), 1)
 
-        file_path = "./api/tests/files/canteens/canteens_good_groupe.csv"
+        file_path = "./imports/tests/files/canteens/canteens_good_groupe.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -550,7 +550,7 @@ class CanteensImportApiSuccessTest(APITestCase):
         """
         self.assertEqual(Canteen.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteens/canteens_good_line_ministry.csv"
+        file_path = "./imports/tests/files/canteens/canteens_good_line_ministry.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 

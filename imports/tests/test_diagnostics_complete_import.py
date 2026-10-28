@@ -31,7 +31,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         # header missing
-        file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_bad_no_header.csv"
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_bad_no_header.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 
@@ -53,7 +53,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         # wrong header
-        file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_bad_wrong_header.csv"
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_bad_wrong_header.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 
@@ -77,7 +77,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         """
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_bad_empty_rows.csv"
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_bad_empty_rows.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 
@@ -109,7 +109,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 8)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_bad_format.csv"
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_bad_format.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 
@@ -157,7 +157,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
     def test_file_above_max_size(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_good_different_canteens.csv"
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_good_different_canteens.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 
@@ -175,7 +175,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
     def test_file_bad_format(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_bad_file_format.ods"
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_bad_file_format.ods"
         with open(file_path, "rb") as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 
@@ -197,9 +197,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         with freeze_time("2026-03-30"):  # during the 2025 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
 
-            file_path = (
-                "./api/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
-            )
+            file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
             with open(file_path) as diag_file:
                 response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 
@@ -232,7 +230,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         file_path = (
-            "./api/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
+            "./imports/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
         )
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
@@ -252,7 +250,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         file_path = (
-            "./api/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
+            "./imports/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
         )
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
@@ -267,7 +265,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
     def test_when_errors_count_is_0(self):
         CanteenFactory(siret="21340172201787", managers=[authenticate.user])
 
-        file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_bad_one_error.csv"
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_bad_one_error.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file, "type": "siret"})
 
@@ -293,7 +291,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_good_different_canteens.csv"
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_good_different_canteens.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 
@@ -329,7 +327,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 1)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_complete/diagnostics_complete_good.xlsx"
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_good.xlsx"
         with open(file_path, "rb") as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 
@@ -359,7 +357,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1000, valeur_bio=200)
 
         file_path = (
-            "./api/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
+            "./imports/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
         )
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
@@ -390,9 +388,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         with freeze_time("2026-04-17"):  # during the 2025 correction campaign
             diagnostic.cancel()
 
-            file_path = (
-                "./api/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
-            )
+            file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
             with open(file_path) as diag_file:
                 response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 

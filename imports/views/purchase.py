@@ -2,7 +2,7 @@ from django.conf import settings
 
 from data.models import Purchase
 
-from api.views.purchase_import_base import BasePurchasesImportView
+from imports.views.purchase_base import BasePurchasesImportView
 
 PURCHASE_SIRET_SCHEMA_FILE_NAME = "achats_siret.json"
 PURCHASE_SIRET_SCHEMA_FILE_PATH = f"data/schemas/imports/{PURCHASE_SIRET_SCHEMA_FILE_NAME}"
