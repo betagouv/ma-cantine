@@ -1,5 +1,5 @@
 {
-  "fields": {
+  "approvisionnement": {
     "nombreRepasAn": {
       "label": "Nombre de couverts par an",
       "labelRecap": "Nombre de couverts par an",

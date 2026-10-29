@@ -20,8 +20,11 @@ const approGroups = {
 
 const groups = { ...canteenGroups, ...approGroups }
 
+/* Fields of all the volets, the field names are unique across volets */
+const fields = { ...teledeclaration.approvisionnement }
+
 const getField = (fieldName) => {
-  return teledeclaration.fields[fieldName]
+  return fields[fieldName]
 }
 
 const getFieldError = (fieldName, errors) => {
@@ -57,7 +60,7 @@ const getFieldsListFromGroup = (groupName) => {
 }
 
 const getFieldsWithAutofill = () => {
-  return Object.keys(teledeclaration.fields).filter((field) => teledeclaration.fields[field].autofill)
+  return Object.keys(fields).filter((field) => fields[field].autofill)
 }
 
 export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup, getFieldsWithAutofill }
