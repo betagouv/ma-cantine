@@ -6,6 +6,37 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.57.1](https://github.com/betagouv/ma-cantine/compare/v2026.57.0...v2026.57.1) (2026-10-29)
+
+
+### Corrections (bugs, typos...)
+
+* **CI:** ajout d'un timeout plus court (15 minutes) sur les jobs backend, frontend et dbt ([#7429](https://github.com/betagouv/ma-cantine/issues/7429)) ([2430cd1](https://github.com/betagouv/ma-cantine/commit/2430cd117d46f9af6a24110a2ca40fb86df680c7))
+* **deps:** resynchroniser requirements.txt avec uv.lock (yarl 1.25.1 pour aiohttp 3.14.4) ([#7460](https://github.com/betagouv/ma-cantine/issues/7460)) ([7fbc760](https://github.com/betagouv/ma-cantine/commit/7fbc76095689a8b11d2ab585a319b823cf360e32))
+* **Ressources:** Actions: empêcher la modification d'une action d'une autre cantine ([#7439](https://github.com/betagouv/ma-cantine/issues/7439)) ([68afb38](https://github.com/betagouv/ma-cantine/commit/68afb38ad1d3e5f8b7a05f5253f9a1a3de6745f5))
+
+
+### Technique
+
+* **Achats:** petit ménage dans les tests ([#6894](https://github.com/betagouv/ma-cantine/issues/6894)) ([f4e2151](https://github.com/betagouv/ma-cantine/commit/f4e215137230c162d86824b47a82082a0df916ab))
+* **deps:** bump aiohttp from 3.14.3 to 3.14.4 ([#7376](https://github.com/betagouv/ma-cantine/issues/7376)) ([a9b6c6c](https://github.com/betagouv/ma-cantine/commit/a9b6c6c488df800a7af60d582efcf9fb2503bb33))
+* **deps:** bump multidict from 6.7.1 to 6.9.1 ([#7308](https://github.com/betagouv/ma-cantine/issues/7308)) ([ffa6f34](https://github.com/betagouv/ma-cantine/commit/ffa6f3415ff2fc374aec7d4bdbccd380a110a619))
+* **deps:** bump opentelemetry-api from 1.44.0 to 1.45.1 ([#7408](https://github.com/betagouv/ma-cantine/issues/7408)) ([47b4ed0](https://github.com/betagouv/ma-cantine/commit/47b4ed0f6de8bd4eb551ce5be21e8179c37a3b6a))
+* **deps:** vérifier que requirements.txt et uv.lock sont synchronisés ([#7461](https://github.com/betagouv/ma-cantine/issues/7461)) ([f71c29e](https://github.com/betagouv/ma-cantine/commit/f71c29ed709b5d2b5fad718c5612a742a7626fed))
+* **Diagnostics:** dériver les listes de champs des volets depuis TELEDECLARATION_FIELDS (helper get_teledeclaration_fields_all_years) ([#7434](https://github.com/betagouv/ma-cantine/issues/7434)) ([39020b8](https://github.com/betagouv/ma-cantine/commit/39020b85799d11831fe27016be24d84581ec8972))
+* **Diagnostics:** Modèle: découper les champs par volet dans des mixins abstraits (fichiers diagnostic_volet_*) ([#7442](https://github.com/betagouv/ma-cantine/issues/7442)) ([d2e22c0](https://github.com/betagouv/ma-cantine/commit/d2e22c0378d72f22710a8964664c522ca5c247b3))
+* **Diagnostics:** Modèle: déplacer les constantes des volets & les champs calculés appro (agg, pourcentage) dans les mixins ([#7443](https://github.com/betagouv/ma-cantine/issues/7443)) ([021dc81](https://github.com/betagouv/ma-cantine/commit/021dc81a8e7b1dbedc60aa7df423db51d911d0e5))
+* **Diagnostics:** Modèle: déplacer les méthodes appro (populate_*, sommes, pourcentages) dans le mixin approvisionnement ([#7444](https://github.com/betagouv/ma-cantine/issues/7444)) ([3681839](https://github.com/betagouv/ma-cantine/commit/36818395550b22e77e5e61dc49840d81e4b801ab))
+* **Imports:** déplacer ImportType dans imports/models/importtype.py ([#7459](https://github.com/betagouv/ma-cantine/issues/7459)) ([eac484f](https://github.com/betagouv/ma-cantine/commit/eac484f5a1028b6fb15b8da1959aa26c32d1edfe))
+* **Imports:** déplacer le code des imports dans une app dédiée 'imports' ([#7450](https://github.com/betagouv/ma-cantine/issues/7450)) ([a4a418b](https://github.com/betagouv/ma-cantine/commit/a4a418b31fea3c4ba6149af1b4e1b08947ef3f3c))
+* **Imports:** lire les valeurs des lignes par nom de colonne (et non plus par position) ([#7453](https://github.com/betagouv/ma-cantine/issues/7453)) ([1be3793](https://github.com/betagouv/ma-cantine/commit/1be37938f0a3ff7d2537d577b2966c004596a669))
+* **Imports:** nouvelle classe ImportSchema pour décrire le schéma de chaque import (aucun changement de comportement) ([#7451](https://github.com/betagouv/ma-cantine/issues/7451)) ([c62098c](https://github.com/betagouv/ma-cantine/commit/c62098ced3a939b78d35159f0c68f56c80e11fcc))
+* **Migrations:** régénérer les 2 squash en 'CreateModel' (965 → 41 opérations) ([#7431](https://github.com/betagouv/ma-cantine/issues/7431)) ([ef27e0b](https://github.com/betagouv/ma-cantine/commit/ef27e0b3361eb1d4ffe5cc09d5da2d67c2930504))
+* **Télédéclaration:** Champs: ajout des volets gaspillage, diversification, plastique & information dans TELEDECLARATION_FIELDS ([#7433](https://github.com/betagouv/ma-cantine/issues/7433)) ([a299ce7](https://github.com/betagouv/ma-cantine/commit/a299ce75783422b760387729cb5fce0972721fe3))
+* **Télédéclaration:** Champs: ajout du niveau 'APPROVISIONNEMENT' dans TELEDECLARATION_FIELDS ([#7432](https://github.com/betagouv/ma-cantine/issues/7432)) ([50a946e](https://github.com/betagouv/ma-cantine/commit/50a946eb94a53911545a89a47ee4109f742663e9))
+* **Télédéclaration:** Champs: compléter fields_added & fields_removed (dont vegetarian_menu_type en 2024), regrouper les champs legacy & non applicables du modèle ([#7440](https://github.com/betagouv/ma-cantine/issues/7440)) ([da7ec1d](https://github.com/betagouv/ma-cantine/commit/da7ec1da3efd067c82e1cb18d660f41d626a4b57))
+* **Télédéclaration:** Champs: nouveau helper get_teledeclaration_fields_all_volets (tous les champs d'une année) ([#7437](https://github.com/betagouv/ma-cantine/issues/7437)) ([6ddd94c](https://github.com/betagouv/ma-cantine/commit/6ddd94cd2524df0495ee2aa52d42b1e95c59bcf5))
+
 ## [2026.57.0](https://github.com/betagouv/ma-cantine/compare/v2026.56.1...v2026.57.0) (2026-10-26)
 
 
