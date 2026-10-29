@@ -6,7 +6,8 @@ from django.test import TestCase
 from django.utils import timezone
 
 from data.factories import ImportFailureFactory, UserFactory
-from data.models import EventLog, ImportFailure, ImportType
+from data.models import EventLog, ImportFailure
+from imports.models import ImportType
 
 migration = importlib.import_module("data.migrations.0287_eventlog_from_importfailure")
 

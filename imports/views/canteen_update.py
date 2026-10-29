@@ -7,10 +7,10 @@ from simple_history.utils import update_change_reason
 from django.utils import timezone
 
 from api.serializers import FullCanteenSerializer
-from imports.models import ImportSchema
+from imports.models import ImportSchema, ImportType
 from imports.views.base import BaseImportView
 from common.utils import utils as utils_utils
-from data.models import Canteen, ImportType, Sector
+from data.models import Canteen, Sector
 from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
 
 from api.views.canteen_managers import AddManagerView

@@ -34,9 +34,9 @@ Les valeurs d'une ligne sont lues par nom de colonne (`_get_row_dict()`, avec le
 
 - schémas : `data/schemas/imports/` (Validata les lit depuis GitHub, sur la branche `GIT_BRANCH`)
 - génération des schémas de bilans : `macantine/management/commands/generate_import_schema.py`
-- `ImportType` & `ImportFailure` : `data/models/importtype.py` & `data/models/importfailure.py`
+- `ImportFailure` : `data/models/importfailure.py` (`ImportType` est dans `imports/models/importtype.py`)
 - utilitaires : `common/utils/file_import.py` & `common/api/validata.py` (aussi utilisés hors imports)
 
 ## À faire
 
-- déplacer `ImportType` & `ImportFailure` dans `imports/models/` (migration `SeparateDatabaseAndState` en gardant la table `data_importfailure`, renommer le content type, adapter le test de la migration 0287). À moins de supprimer `ImportFailure` au profit d'`EventLog`
+- déplacer `ImportFailure` dans `imports/models/` (migration `SeparateDatabaseAndState` en gardant la table `data_importfailure`, renommer le content type, adapter le test de la migration 0287). À moins de supprimer `ImportFailure` au profit d'`EventLog`

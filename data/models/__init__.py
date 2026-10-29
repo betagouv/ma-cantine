@@ -17,7 +17,6 @@ from .communityevent import CommunityEvent  # noqa: F401
 from .partner import Partner  # noqa: F401
 from .partnertype import PartnerType  # noqa: F401
 from .videotutorial import VideoTutorial  # noqa: F401
-from .importtype import ImportType  # noqa: F401
 from .importfailure import ImportFailure  # noqa: F401
 from .eventlog import EventLog  # noqa: F401
 from .wasteaction import WasteAction  # noqa: F401

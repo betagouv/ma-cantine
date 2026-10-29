@@ -8,7 +8,8 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
 from data.factories import CanteenFactory, DiagnosticFactory
-from data.models import Canteen, ImportType, Sector
+from data.models import Canteen, Sector
+from imports.models import ImportType
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")

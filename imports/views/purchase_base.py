@@ -11,7 +11,8 @@ from api.serializers import PurchaseSerializer
 from imports.views.base import BaseImportView
 from common.utils import file_import
 from common.utils import utils as utils_utils
-from data.models import Canteen, ImportType, Purchase
+from data.models import Canteen, Purchase
+from imports.models import ImportType
 from data.models.creation_source import CreationSource
 
 from common.utils.camelize import camelize

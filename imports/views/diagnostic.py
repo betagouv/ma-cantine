@@ -3,9 +3,9 @@ from django.db import transaction
 from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
 
-from imports.models import ImportSchema
+from imports.models import ImportSchema, ImportType
 from imports.views.base import BaseImportView
-from data.models import Canteen, Diagnostic, ImportType
+from data.models import Canteen, Diagnostic
 from data.models.creation_source import CreationSource
 
 
