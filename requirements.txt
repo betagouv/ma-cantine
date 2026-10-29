@@ -650,7 +650,7 @@ willow==1.11.0
     # via wagtail
 xhtml2pdf==0.2.21
     # via ma-cantine
-yarl==1.24.5
+yarl==1.25.1
     # via aiohttp
 zipp==4.1.0
     # via importlib-metadata
