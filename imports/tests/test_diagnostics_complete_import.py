@@ -321,6 +321,30 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_2.creation_user, authenticate.user)
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
 
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_diagnostics_created_with_fields_not_in_file(self):
+        """
+        The 2025 format has no nombre_repas_an & valeur_<famille> (fruits_et_legumes, charcuterie...) columns
+        (required for 2026 diagnostics): the diagnostic is created anyway, they will be filled in later
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_2026.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        self.assertEqual(body["count"], 1)
+
+        diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
+        self.assertEqual(diagnostic.year, 2026)
+        self.assertEqual(diagnostic.valeur_totale, 2000)
+        self.assertIsNone(diagnostic.nombre_repas_an)
+        self.assertEqual(diagnostic.valeur_fruits_et_legumes, 0)  # required since 2026: set to 0 by save()
+
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_diagnostics_created_excel_file(self):

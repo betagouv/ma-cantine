@@ -6,6 +6,7 @@ from simple_history.utils import update_change_reason
 from imports.views.base import BaseImportView
 from data.models import Canteen, Diagnostic
 from data.models.creation_source import CreationSource
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
 
 
 class BaseDiagnosticsImportView(BaseImportView):
@@ -78,11 +79,33 @@ class BaseDiagnosticsImportView(BaseImportView):
         diagnostic.diagnostic_type = diagnostic_type
         for key, value in values_dict.items():
             setattr(diagnostic, key, value)
-        diagnostic.full_clean()
+        self._full_clean(diagnostic)
         diagnostic.save()
         update_change_reason(diagnostic, f"Mass CSV import. {self.__class__.__name__[:100]}")
         self.diagnostics_created_count += 1
         self.canteen_ids.add(diagnostic.canteen_id)
+
+    def _full_clean(self, diagnostic):
+        """
+        Validate the diagnostic, ignoring the errors on the fields that are not in the file
+        (e.g. the 2025 format has no nombre_repas_an column, but it is required for 2026 diagnostics).
+        These fields can be filled in later in the UI, before the teledeclaration.
+        """
+        try:
+            diagnostic.full_clean()
+        except ValidationError as e:
+            fields_not_in_file = self._get_fields_not_in_file(diagnostic)
+            errors = {field: messages for field, messages in e.message_dict.items() if field not in fields_not_in_file}
+            if errors:
+                raise ValidationError(errors)
+
+    def _get_fields_not_in_file(self, diagnostic):
+        """Fields of the diagnostic (for its year & type) that have no column in the file's schema"""
+        try:
+            fields = get_teledeclaration_fields_all(diagnostic.year, "APPROVISIONNEMENT", diagnostic.diagnostic_type)
+        except ValueError:  # invalid year: the error is already raised by full_clean()
+            return set()
+        return set(fields) - set(self.schema.header)
 
     def _get_canteen_ids(self):
         return self.canteen_ids

@@ -277,6 +277,30 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             "Champ 'Valeur totale (HT) poissons et produits aquatiques' : La valeur totale (HT) poissons et produits aquatiques, Origine France, 60, est plus que la valeur totale (HT) poissons et produits aquatiques, 50",
         )
 
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_model_validation_error_with_fields_not_in_file(self):
+        """
+        Errors on the fields that are not in the file (here nombre_repas_an) are ignored, but not the others
+        """
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_bad_one_canteen_2026.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Champ 'Valeur totale annuelle HT' : La valeur totale (HT), 100, est moins que la valeur (HT) valeur_bio, 500",
+        )
+        nombre_repas_an_verbose_name = Diagnostic._meta.get_field("nombre_repas_an").verbose_name
+        for error in body["errors"]:
+            self.assertNotIn(nombre_repas_an_verbose_name, error["message"])
+
     @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     def test_file_above_max_size(self):
@@ -522,6 +546,29 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.valeur_autres_france, Decimal("1.6"))
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
+
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_diagnostics_created_with_fields_not_in_file(self):
+        """
+        The 2025 format has no nombre_repas_an column (required for 2026 diagnostics):
+        the diagnostic is created anyway, nombre_repas_an will be filled in later
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_2026.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        self.assertEqual(body["count"], 1)
+
+        diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
+        self.assertEqual(diagnostic.year, 2026)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertIsNone(diagnostic.nombre_repas_an)
 
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
