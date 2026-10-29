@@ -30,6 +30,8 @@ Chaque import déclare le schéma contre lequel valider le fichier (`_get_schema
 
 Les valeurs d'une ligne sont lues par nom de colonne (`_get_row_dict()`, avec les colonnes du schéma), et non par position.
 
+Bilans : les erreurs de validation sur les champs absents du fichier sont ignorées (`_full_clean()`). Par exemple, le format 2025 n'a pas de colonne `nombre_repas_an`, obligatoire pour les bilans 2026 : il sera à compléter dans l'interface avant la télédéclaration.
+
 ## Ce qui reste ailleurs
 
 - schémas : `data/schemas/imports/` (Validata les lit depuis GitHub, sur la branche `GIT_BRANCH`)
