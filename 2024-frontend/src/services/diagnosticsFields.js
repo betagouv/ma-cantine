@@ -1,12 +1,11 @@
 import teledeclaration from "@/data/teledeclaration.json"
 
-/* Canteen fields, not teledeclaration fields */
+/* Groups */
 const canteenGroups = {
   informationsCantine: ["name", "siret", "sirenUniteLegale", "postalCode", "city", "cityInseeCode", "departmentLib", "regionLib", "patListLib", "epciLib", "sectorList", "lineMinistry", "dailyMealCount", "yearlyMealCount", "economicModel", "productionType", "managementType", "centralProducerSiret", "publicationComments"],
   informationsGroupe: ["name", "sirenUniteLegale", "managementType", "dailyMealCount", "yearlyMealCount", "centralProducerSiret"],
 }
 
-/* Teledeclaration fields of the "approvisionnement" volet */
 const approGroups = {
   couverts: ["nombreRepasAn"],
   saisie: ["diagnosticType"],
@@ -20,7 +19,7 @@ const approGroups = {
 
 const groups = { ...canteenGroups, ...approGroups }
 
-/* Fields of all the volets, the field names are unique across volets */
+/* Fields */
 const fields = { ...teledeclaration.approvisionnement }
 
 const getField = (fieldName) => {
