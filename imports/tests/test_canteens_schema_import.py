@@ -1,15 +1,15 @@
 import json
 import re
 from django.test import TestCase
-from imports.views.canteen_create import CANTEEN_SCHEMA_FILE_PATH
-from imports.views.canteen_update import CANTEEN_UPDATE_SCHEMA_FILE_PATH
+from imports.views.canteen_create import CANTEEN_CREATE_SCHEMA
+from imports.views.canteen_update import CANTEEN_UPDATE_SCHEMA
 
 
 class CanteensImportSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.schema_create = json.load(open(CANTEEN_SCHEMA_FILE_PATH))
-        cls.schema_update = json.load(open(CANTEEN_UPDATE_SCHEMA_FILE_PATH))
+        cls.schema_create = json.load(open(CANTEEN_CREATE_SCHEMA.path))
+        cls.schema_update = json.load(open(CANTEEN_UPDATE_SCHEMA.path))
         cls.schemas = [cls.schema_create, cls.schema_update]
 
     def get_pattern(self, schema, field_name):

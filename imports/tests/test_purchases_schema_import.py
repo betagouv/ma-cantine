@@ -3,15 +3,15 @@ import re
 
 from django.test import TestCase
 
-from imports.views.purchase import PURCHASE_ID_SCHEMA_FILE_PATH, PURCHASE_SIRET_SCHEMA_FILE_PATH
+from imports.views.purchase import PURCHASE_ID_SCHEMA, PURCHASE_SIRET_SCHEMA
 
 
 class PurchasesImportSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.schemas = {
-            "siret": json.load(open(PURCHASE_SIRET_SCHEMA_FILE_PATH)),
-            "id": json.load(open(PURCHASE_ID_SCHEMA_FILE_PATH)),
+            "siret": json.load(open(PURCHASE_SIRET_SCHEMA.path)),
+            "id": json.load(open(PURCHASE_ID_SCHEMA.path)),
         }
 
     @staticmethod
