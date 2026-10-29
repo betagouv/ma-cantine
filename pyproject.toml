@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
-    "authlib==1.8.0",
+    "authlib==1.9.1",
     "celery==5.6.3",
     "chardet==5.2.0",
     "dbt-core>=1.9.0",
