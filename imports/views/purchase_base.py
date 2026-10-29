@@ -69,17 +69,17 @@ class BasePurchasesImportView(BaseImportView):
         return self.siret_schema if self.is_siret_import else self.id_schema
 
     @abstractmethod
-    def _get_caracteristiques(self, row):
+    def _get_caracteristiques(self, row_dict):
         """Return the list of `Purchase.Characteristic` values for this row."""
         pass
 
     @abstractmethod
-    def _get_definition_local(self, row):
+    def _get_definition_local(self, row_dict):
         """Return the `definition_local` string for this row (or empty string)."""
         pass
 
     @abstractmethod
-    def _get_definition_local_km(self, row):
+    def _get_definition_local_km(self, row_dict):
         """Return the `definition_local_km` string for this row (or empty string)."""
         pass
 
@@ -131,7 +131,7 @@ class BasePurchasesImportView(BaseImportView):
         for row_number, row in chunk:
             try:
                 siret = utils_utils.normalize_string(row[0])
-                purchase = self._create_purchase_for_canteen(siret, row)
+                purchase = self._create_purchase_for_canteen(siret, self._get_row_dict(row))
                 chunk_purchases.append(purchase)
 
             except Exception as e:
@@ -150,7 +150,7 @@ class BasePurchasesImportView(BaseImportView):
         """Not used in purchase import due to chunking, but required by base class"""
         pass
 
-    def _create_purchase_for_canteen(self, identifier, row):
+    def _create_purchase_for_canteen(self, identifier, row_dict):
         """Create a purchase object for a canteen from row data"""
         canteen_exists = (
             Canteen.objects.filter(siret=identifier).exists()
@@ -163,10 +163,10 @@ class BasePurchasesImportView(BaseImportView):
         if self.request.user not in canteen.managers.all():
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
-        description = row[1]
-        fournisseur = row[2]
-        date = row[3]
-        prix_ht = str(row[4]).replace(",", ".") if row[4] else None
+        description = row_dict["description"]
+        fournisseur = row_dict["fournisseur"]
+        date = row_dict["date"]
+        prix_ht = str(row_dict["prix_ht"]).replace(",", ".") if row_dict["prix_ht"] else None
 
         # We try to round the price. If we can't, we will let Django's field validation
         # manage the error - hence the `pass` in the exception handler
@@ -175,7 +175,7 @@ class BasePurchasesImportView(BaseImportView):
         except InvalidOperation:
             pass
 
-        famille_produits = row[5]
+        famille_produits = row_dict["famille_produits"]
 
         purchase = Purchase(
             canteen=canteen,
@@ -184,9 +184,9 @@ class BasePurchasesImportView(BaseImportView):
             date=date.strip(),
             prix_ht=prix_ht,
             famille_produits=famille_produits.strip(),
-            caracteristiques=self._get_caracteristiques(row),
-            definition_local=self._get_definition_local(row),
-            definition_local_km=self._get_definition_local_km(row),
+            caracteristiques=self._get_caracteristiques(row_dict),
+            definition_local=self._get_definition_local(row_dict),
+            definition_local_km=self._get_definition_local_km(row_dict),
             import_source=self.tmp_id,
             creation_user=self.request.user,
             creation_source=CreationSource.IMPORT,

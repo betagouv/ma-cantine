@@ -11,11 +11,11 @@ class PurchasesImportView(BasePurchasesImportView):
     siret_schema = PURCHASE_SIRET_SCHEMA
     id_schema = PURCHASE_ID_SCHEMA
 
-    def _get_caracteristiques(self, row):
-        categories_egalim = row[6].strip() if row[6] else ""
-        origine = row[7].strip() if row[7] else ""
-        est_circuit_court = row[8].strip().lower() if row[8] else ""
-        est_local = row[9].strip().lower() if row[9] else ""
+    def _get_caracteristiques(self, row_dict):
+        categories_egalim = row_dict["categories_egalim"].strip() if row_dict["categories_egalim"] else ""
+        origine = row_dict["origine"].strip() if row_dict["origine"] else ""
+        est_circuit_court = row_dict["est_circuit_court"].strip().lower() if row_dict["est_circuit_court"] else ""
+        est_local = row_dict["est_local"].strip().lower() if row_dict["est_local"] else ""
 
         egalim_caracteristics = categories_egalim.split(",") if categories_egalim else []
         origine_caracteristics = origine.split(",") if origine else []
@@ -25,8 +25,8 @@ class PurchasesImportView(BasePurchasesImportView):
         local_caracteristics = [Purchase.Characteristic.LOCAL] if self.is_true_value(est_local) else []
         return egalim_caracteristics + origine_caracteristics + circuit_court_caracteristics + local_caracteristics
 
-    def _get_definition_local(self, row):
-        return row[10].strip() if row[10] else ""
+    def _get_definition_local(self, row_dict):
+        return row_dict["definition_local"].strip() if row_dict["definition_local"] else ""
 
-    def _get_definition_local_km(self, row):
-        return row[11] or None
+    def _get_definition_local_km(self, row_dict):
+        return row_dict["definition_local_km"] or None

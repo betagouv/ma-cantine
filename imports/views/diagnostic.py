@@ -1,5 +1,3 @@
-from abc import abstractmethod
-
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework.exceptions import PermissionDenied
@@ -9,9 +7,9 @@ from imports.models import ImportSchema
 from imports.views.base import BaseImportView
 from data.models import Canteen, Diagnostic, ImportType
 from data.models.creation_source import CreationSource
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
 
 
+# Columns: identifier (siret or cantine_id), année_bilan, values
 # simple
 DIAGNOSTICS_SIMPLE_SIRET_SCHEMA = ImportSchema("bilans_simple_siret.json")
 DIAGNOSTICS_SIMPLE_ID_SCHEMA = ImportSchema("bilans_simple_id.json")
@@ -21,6 +19,7 @@ DIAGNOSTICS_COMPLETE_SCHEMA = ImportSchema("bilans_detaille.json")
 
 class DiagnosticsImportView(BaseImportView):
     model_class = Diagnostic
+    diagnostic_type = None
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -53,10 +52,12 @@ class DiagnosticsImportView(BaseImportView):
         diagnostic_year, values_dict, diagnostic_type = self._validate_diagnostic(row)
         self._update_or_create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
 
-    @abstractmethod
     def _validate_diagnostic(self, row):
-        """Parse row and return (year, values_dict, diagnostic_type)"""
-        pass
+        """Parse row (values read by column name) and return (year, values_dict, diagnostic_type)"""
+        _, year_column, *value_columns = self.schema.header
+        row_dict = self._get_row_dict(row)
+        values_dict = {column: row_dict[column] or None for column in value_columns}
+        return row_dict[year_column], values_dict, self.diagnostic_type
 
     def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
         diagnostic_exists = Diagnostic.objects.filter(canteen=canteen, year=diagnostic_year).exists()
@@ -128,6 +129,7 @@ class DiagnosticsImportView(BaseImportView):
 
 class DiagnosticsSimpleImportView(DiagnosticsImportView):
     import_type = ImportType.DIAGNOSTIC_SIMPLE_SIRET
+    diagnostic_type = Diagnostic.DiagnosticType.SIMPLE
 
     def post(self, request):
         # Set import type based on request
@@ -140,29 +142,10 @@ class DiagnosticsSimpleImportView(DiagnosticsImportView):
     def _get_schema(self):
         return DIAGNOSTICS_SIMPLE_SIRET_SCHEMA if self.is_siret_import else DIAGNOSTICS_SIMPLE_ID_SCHEMA
 
-    def _validate_diagnostic(self, row):
-        values_dict = {}
-        diagnostic_year = row[1]
-        offset_row = 2  # Two columns before value_fields in row
-        fields = get_teledeclaration_fields_all(diagnostic_year, "APPROVISIONNEMENT", "SIMPLE")
-        for idx, value in enumerate(fields):
-            value_idx = idx + offset_row
-            values_dict[value] = None if not row[value_idx] else row[value_idx]
-        return diagnostic_year, values_dict, Diagnostic.DiagnosticType.SIMPLE
-
 
 class DiagnosticsCompleteImportView(DiagnosticsImportView):
     import_type = ImportType.DIAGNOSTIC_COMPLETE
+    diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
     def _get_schema(self):
         return DIAGNOSTICS_COMPLETE_SCHEMA
-
-    def _validate_diagnostic(self, row):
-        values_dict = {}
-        diagnostic_year = row[1]
-        offset_row = 2  # Two columns before value_fields in row
-        fields = get_teledeclaration_fields_all(diagnostic_year, "APPROVISIONNEMENT", "COMPLETE")
-        for idx, value in enumerate(fields):
-            value_idx = idx + offset_row
-            values_dict[value] = None if not row[value_idx] else row[value_idx]
-        return diagnostic_year, values_dict, Diagnostic.DiagnosticType.COMPLETE

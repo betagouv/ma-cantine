@@ -24,8 +24,6 @@ class CanteensUpdateImportView(BaseImportView):
     import_type = ImportType.CANTEEN_UPDATE
     model_class = Canteen
 
-    manager_column_idx = 14  # gestionnaires_additionnels
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.canteens_updated = {}
@@ -50,8 +48,9 @@ class CanteensUpdateImportView(BaseImportView):
     @transaction.atomic
     def _save_data_from_row(self, row):
         """Process and save canteen data from row"""
-        manager_emails = self._get_manager_emails_to_notify(row)
-        canteen = self._update_canteen(row, manager_emails)
+        row_dict = self._get_row_dict(row)
+        manager_emails = self._get_manager_emails_to_notify(row_dict)
+        canteen = self._update_canteen(row_dict, manager_emails)
         return canteen
 
     @staticmethod
@@ -85,23 +84,25 @@ class CanteensUpdateImportView(BaseImportView):
             "count": len(serialized_canteens),
         }
 
-    def _get_manager_emails_to_notify(self, row):
+    def _get_manager_emails_to_notify(self, row_dict):
         try:
             manager_emails = []
-            if len(row) > self.manager_column_idx and row[self.manager_column_idx]:
-                manager_emails = CanteensUpdateImportView._get_manager_emails(row[self.manager_column_idx])
+            if row_dict.get("gestionnaires_additionnels"):
+                manager_emails = CanteensUpdateImportView._get_manager_emails(row_dict["gestionnaires_additionnels"])
         except Exception:
             raise ValidationError(
-                {"email": f"Un adresse email des gestionnaires ({row[self.manager_column_idx]}) n'est pas valide."}
+                {
+                    "email": f"Un adresse email des gestionnaires ({row_dict['gestionnaires_additionnels']}) n'est pas valide."
+                }
             )
         return manager_emails
 
     def _update_canteen(
         self,
-        row,
+        row_dict,
         manager_emails,
     ):
-        id = row[0]
+        id = row_dict["cantine_id"]
 
         # ID : check canteen exists
         canteen = Canteen.objects.get(id=id)
@@ -110,11 +111,13 @@ class CanteensUpdateImportView(BaseImportView):
                 {"id": f"Aucune cantine avec le numéro identifiant « {id} » trouvée sur la plateforme."}
             )
 
-        siret = utils_utils.normalize_string(row[1]) if row[1] else None
-        siren_unite_legale = utils_utils.normalize_string(row[2]) if row[2] else None
-        name = row[3].strip()
+        siret = utils_utils.normalize_string(row_dict["siret"]) if row_dict["siret"] else None
+        siren_unite_legale = (
+            utils_utils.normalize_string(row_dict["siren_unite_legale"]) if row_dict["siren_unite_legale"] else None
+        )
+        name = row_dict["nom"].strip()
 
-        city_insee_code = utils_utils.normalize_string(row[4]) if row[4] else None
+        city_insee_code = utils_utils.normalize_string(row_dict["code_insee"]) if row_dict["code_insee"] else None
         # Validate city_insee_code
         if siren_unite_legale:
             if not city_insee_code:
@@ -130,25 +133,44 @@ class CanteensUpdateImportView(BaseImportView):
                     }
                 )
 
-        central_producer_siret = utils_utils.normalize_string(row[5]) if row[5] else None
-        daily_meal_count = row[6]
-        yearly_meal_count = row[7]
+        central_producer_siret = (
+            utils_utils.normalize_string(row_dict["siret_cuisine_centrale"])
+            if row_dict["siret_cuisine_centrale"]
+            else None
+        )
+        daily_meal_count = row_dict["nombre_repas_jour"]
+        yearly_meal_count = row_dict["nombre_repas_an"]
         sector_list = [
             next(value for value, label in Sector.choices if label == sector.strip().replace("’", "'"))
-            for sector in row[8].strip().split(",")
+            for sector in row_dict["secteurs"].strip().split(",")
         ]
         production_type = next(
-            (value for value, label in Canteen.ProductionType.choices if row[9].strip() in [label, value]), None
+            (
+                value
+                for value, label in Canteen.ProductionType.choices
+                if row_dict["type_production"].strip() in [label, value]
+            ),
+            None,
         )
         management_type = next(
-            (value for value, label in Canteen.ManagementType.choices if row[10].strip() in [label, value]), None
+            (
+                value
+                for value, label in Canteen.ManagementType.choices
+                if row_dict["type_gestion"].strip() in [label, value]
+            ),
+            None,
         )
         economic_model = next(
-            (value for value, label in Canteen.EconomicModel.choices if row[11].strip() in [label, value]), None
+            (
+                value
+                for value, label in Canteen.EconomicModel.choices
+                if row_dict["modèle_économique"].strip() in [label, value]
+            ),
+            None,
         )
 
         # Group custom validation
-        groupe_id = row[12]
+        groupe_id = row_dict["groupe_id"]
         groupe = None
         # Group exists
         if groupe_id:
@@ -170,8 +192,15 @@ class CanteensUpdateImportView(BaseImportView):
                 )
 
         line_ministry = (
-            next((value for value, label in Canteen.Ministries.choices if label == row[13].strip()), None)
-            if row[13]
+            next(
+                (
+                    value
+                    for value, label in Canteen.Ministries.choices
+                    if label == row_dict["administration_tutelle"].strip()
+                ),
+                None,
+            )
+            if row_dict["administration_tutelle"]
             else None
         )
 
