@@ -30,7 +30,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         canteen = CanteenFactory()
         canteen.managers.add(authenticate.user)
 
-        file_path = "./api/tests/files/canteens/canteens_update_bad_no_header.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_no_header.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -51,7 +51,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         """
         User cannot update a canteen that doesn't exist
         """
-        file_path = "./api/tests/files/canteens/canteens_update_bad_canteen_not_found.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_canteen_not_found.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -72,7 +72,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         canteen = CanteenFactory(id=9999999999)
         self.assertNotIn(authenticate.user, canteen.managers.all())
 
-        file_path = "./api/tests/files/canteens/canteens_update_bad_permission_denied.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_permission_denied.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -93,7 +93,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         canteen = CanteenFactory(id=9999999997)
         canteen.managers.add(authenticate.user)
 
-        file_path = "./api/tests/files/canteens/canteens_update_bad_invalid_insee_code.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_invalid_insee_code.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -117,7 +117,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         canteen = CanteenFactory(id=9999999996)
         canteen.managers.add(authenticate.user)
 
-        file_path = "./api/tests/files/canteens/canteens_update_bad_invalid_email.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_invalid_email.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -141,7 +141,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         canteen = CanteenFactory(id=12345)
         canteen.managers.add(authenticate.user)
 
-        file_path = "./api/tests/files/canteens/canteens_update_bad_invalid_siret.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_invalid_siret.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -162,7 +162,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
         canteen = CanteenFactory(id=9999999997)
         canteen.managers.add(authenticate.user)
 
-        file_path = "./api/tests/files/canteens/canteens_update_bad_missing_insee_code.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_missing_insee_code.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -182,7 +182,7 @@ class CanteensUpdateImportApiErrorTest(APITestCase):
     def test_when_errors_count_is_0(self):
         CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=9999999993)
 
-        file_path = "./api/tests/files/canteens/canteens_update_bad_one_error.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_one_error.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file, "type": "siret"})
 
@@ -219,7 +219,7 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
         self.teledeclaration.teledeclare(applicant=authenticate.user)
 
         # Import
-        file_path = "./api/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -247,7 +247,7 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
         with freeze_time("2025-04-17"):  # during the 2024 correction campaign
             self.teledeclaration.cancel()
 
-            file_path = "./api/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
+            file_path = "./imports/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
             with open(file_path) as canteen_file:
                 response = self.client.post(self.url, {"file": canteen_file})
 
@@ -273,7 +273,7 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
 
         # Import
         with freeze_time("2025-07-20"):
-            file_path = "./api/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
+            file_path = "./imports/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
             with open(file_path) as canteen_file:
                 response = self.client.post(self.url, {"file": canteen_file})
 
@@ -299,7 +299,7 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
         self.teledeclaration.cancel()
 
         # Import
-        file_path = "./api/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -350,7 +350,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
         canteen1.managers.add(authenticate.user)
         canteen2.managers.add(authenticate.user)
 
-        file_path = "./api/tests/files/canteens/canteens_update_good_multiple.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_good_multiple.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -408,7 +408,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
         canteen.save(skip_validations=True)
         self.assertEqual(canteen.city_insee_code, "75020")
 
-        file_path = "./api/tests/files/canteens/canteens_update_good_insee.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_good_insee.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -438,7 +438,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
         user.is_staff = True
         user.save()
 
-        file_path = "./api/tests/files/canteens/canteens_update_good_one.csv"
+        file_path = "./imports/tests/files/canteens/canteens_update_good_one.csv"
         with open(file_path) as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 
@@ -465,7 +465,7 @@ class CanteensUpdateImportApiSuccessTest(APITestCase):
         )
         canteen.managers.add(authenticate.user)
 
-        file_path = "./api/tests/files/canteens/canteens_update_good_one.xlsx"
+        file_path = "./imports/tests/files/canteens/canteens_update_good_one.xlsx"
         with open(file_path, "rb") as canteen_file:
             response = self.client.post(self.url, {"file": canteen_file})
 

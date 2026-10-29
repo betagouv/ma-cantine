@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.exceptions import PermissionDenied
 
 from api.serializers import PurchaseSerializer
-from api.views.base_import import BaseImportView
+from imports.views.base import BaseImportView
 from common.utils import file_import
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType, Purchase

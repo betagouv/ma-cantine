@@ -32,7 +32,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         # header missing
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_no_header.csv"
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_bad_no_header.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -54,7 +54,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
         # wrong header
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_wrong_header.csv"
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_bad_wrong_header.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -78,7 +78,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         """
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_empty_rows.csv"
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_bad_empty_rows.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -110,7 +110,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 8)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_format.csv"
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_bad_format.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -173,7 +173,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 15)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad.csv"
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_bad.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -281,7 +281,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     def test_file_above_max_size(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_different_canteens.csv"
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -299,7 +299,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     def test_file_bad_format(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_file_format.ods"
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_bad_file_format.ods"
         with open(file_path, "rb") as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -322,7 +322,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             diagnostic.teledeclare(applicant=authenticate.user)
 
             file_path = (
-                "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+                "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
             )
             with open(file_path) as diag_file:
                 response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -355,7 +355,9 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     def test_canteen_not_found_with_siret(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+        file_path = (
+            "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+        )
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -373,7 +375,9 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21340172201787", managers=[])
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+        file_path = (
+            "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+        )
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -387,7 +391,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
     def test_when_errors_count_is_0(self):
         CanteenFactory(siret="21340172201787", managers=[authenticate.user])
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_bad_one_error.csv"
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_bad_one_error.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -413,7 +417,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 2)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_different_canteens.csv"
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_different_canteens.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -482,7 +486,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(Canteen.objects.count(), 1)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good.xlsx"
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_good.xlsx"
         with open(file_path, "rb") as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -528,7 +532,9 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1)
 
-        file_path = "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+        file_path = (
+            "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+        )
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
 
@@ -559,7 +565,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
             diagnostic.cancel()
 
             file_path = (
-                "./api/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+                "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
             )
             with open(file_path) as diag_file:
                 response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret"})
@@ -576,7 +582,7 @@ class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
     def test_canteen_not_found_with_id(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
+        file_path = "./imports/tests/files/diagnostics/diagnostics_simple_good_id.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
 
@@ -593,7 +599,7 @@ class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
         CanteenFactory(id=949, managers=[])
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
+        file_path = "./imports/tests/files/diagnostics/diagnostics_simple_good_id.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
 
@@ -617,7 +623,7 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
         CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=949)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
+        file_path = "./imports/tests/files/diagnostics/diagnostics_simple_good_id.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
 
@@ -663,7 +669,7 @@ class DiagnosticsSimpleImportIdApiSuccessTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user], id=949)
         diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1)
 
-        file_path = "./api/tests/files/diagnostics/diagnostics_simple_good_id.csv"
+        file_path = "./imports/tests/files/diagnostics/diagnostics_simple_good_id.csv"
         with open(file_path) as diag_file:
             response = self.client.post(reverse("diagnostics_simple_import"), {"file": diag_file, "type": "id"})
 

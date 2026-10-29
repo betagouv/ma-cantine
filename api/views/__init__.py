@@ -15,7 +15,6 @@ from .canteen import (  # noqa: F401
     UserCanteenSummaries,
     UserCanteensView,
 )
-from .canteen_create_import import CanteensCreateImportView  # noqa: F401
 from .canteen_export import UserCanteenListExportView  # noqa: F401
 from .canteen_groupe import (  # noqa: F401
     CanteenGroupeSatelliteLinkView,
@@ -36,8 +35,6 @@ from .canteen_managers import (  # noqa: F401
     UserCanteenManagersInvitationsView,
     UserCanteenManagersView,
 )
-from .canteen_managers_import import CanteensManagersImportView  # noqa: F401
-from .canteen_update_import import CanteensUpdateImportView  # noqa: F401
 from .communityevent import CommunityEventsView  # noqa: F401
 from .diagnostic import (  # noqa: F401
     DiagnosticListCreateView,
@@ -48,7 +45,6 @@ from .diagnostic import (  # noqa: F401
     DiagnosticsToTeledeclareListView,
     EmailDiagnosticImportFileView,
 )
-from .diagnostic_import import DiagnosticsCompleteImportView, DiagnosticsSimpleImportView  # noqa: F401
 from .diagnostic_teledeclaration import (  # noqa: F401
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
@@ -73,8 +69,6 @@ from .purchase import (  # noqa: F401
     PurchasesRestoreView,
 )
 from .purchase_export import PurchaseListExportView  # noqa: F401
-from .purchase_import import PurchasesImportView  # noqa: F401
-from .purchase_import_old import PurchasesImportOldView  # noqa: F401
 from .reservationexpe import ReservationExpeView  # noqa: F401
 from .resourceaction import ResourceActionView  # noqa: F401
 from .review import ReviewView  # noqa: F401

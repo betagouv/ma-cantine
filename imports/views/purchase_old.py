@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from api.views.purchase_import_base import BasePurchasesImportView
+from imports.views.purchase_base import BasePurchasesImportView
 
 
 PURCHASE_SIRET_SCHEMA_FILE_NAME = "achats_siret_old.json"

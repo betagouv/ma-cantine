@@ -6,7 +6,7 @@ from django.db import transaction
 from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
 
-from api.views.base_import import BaseImportView
+from imports.views.base import BaseImportView
 from data.models import Canteen, Diagnostic, ImportType
 from data.models.creation_source import CreationSource
 from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all

@@ -3,7 +3,7 @@ import re
 
 from django.test import TestCase
 
-from api.views.purchase_import_old import PURCHASE_ID_SCHEMA_FILE_PATH, PURCHASE_SIRET_SCHEMA_FILE_PATH
+from imports.views.purchase_old import PURCHASE_ID_SCHEMA_FILE_PATH, PURCHASE_SIRET_SCHEMA_FILE_PATH
 
 
 class PurchasesOldSchemaTest(TestCase):

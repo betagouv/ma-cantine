@@ -7,11 +7,11 @@ from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
 
 from api.serializers import FullCanteenSerializer
-from api.views.base_import import BaseImportView
+from imports.views.base import BaseImportView
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType
 
-from .canteen_managers import AddManagerView
+from api.views.canteen_managers import AddManagerView
 from common.utils.camelize import camelize
 
 

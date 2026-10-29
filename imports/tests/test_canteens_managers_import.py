@@ -32,7 +32,7 @@ class CanteensManagersImportApiNonAdminErrorTest(APITestCase):
         """
         CanteenFactory(siret="21340172201787")
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -64,7 +64,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
         # Hack : this test works because file has no header and has less columns than the expected header
         # TODO: remove this hack add fix it in other imports
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_no_header.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_bad_no_header.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -85,7 +85,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.is_staff = True
         user.save()
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_wrong_header.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_bad_wrong_header.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -107,7 +107,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.is_staff = True
         user.save()
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_extra_header.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_bad_extra_header.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -128,7 +128,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.is_staff = True
         user.save()
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_empty_rows.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_bad_empty_rows.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -148,7 +148,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.is_staff = True
         user.save()
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_siret_not_found.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_bad_siret_not_found.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -170,7 +170,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.save()
         CanteenFactory(siret="21340172201787")
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_invalid_email.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_bad_invalid_email.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -190,7 +190,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         CanteenFactory(siret="21340172201787")
         CanteenFactory(siret="40419443300078")
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_bad_one_error.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_bad_one_error.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -209,7 +209,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
         user.is_staff = True
         user.save()
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -241,7 +241,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         self.assertEqual(canteen.managers.count(), 0)
         self.assertEqual(ManagerInvitation.objects.count(), 0)
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -275,7 +275,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787")
         canteen.managers.add(existing_manager)
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -303,7 +303,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         canteen2 = CanteenFactory(siret="21380185500015")
         canteen2.managers.clear()
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_good_multiple.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_good_multiple.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -327,7 +327,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787")
         canteen.managers.clear()
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_good.xlsx"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_good.xlsx"
         with open(file_path, "rb") as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
@@ -354,7 +354,7 @@ class CanteensManagersImportApiSuccessTest(APITestCase):
 
         self.assertFalse(canteen.is_filled)
 
-        file_path = "./api/tests/files/canteen_managers/canteen_managers_good.csv"
+        file_path = "./imports/tests/files/canteen_managers/canteen_managers_good.csv"
         with open(file_path) as managers_file:
             response = self.client.post(self.url, {"file": managers_file})
 
