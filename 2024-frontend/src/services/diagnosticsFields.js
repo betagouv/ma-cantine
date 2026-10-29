@@ -1,11 +1,11 @@
-import teledeclaration from "@/data/teledeclaration.json"
+import teledeclarationFields from "@/data/teledeclarationFields.json"
 import teledeclarationGroups from "@/data/teledeclarationGroups.json"
 
 /* Groups */
 const groups = { ...teledeclarationGroups.cantine, ...teledeclarationGroups.approvisionnement }
 
 /* Fields */
-const fields = { ...teledeclaration.approvisionnement }
+const fields = { ...teledeclarationFields.approvisionnement }
 
 const getField = (fieldName) => {
   return fields[fieldName]
