@@ -1,6 +1,6 @@
 from django.test import SimpleTestCase
 
-from imports.schemas import ImportSchema
+from imports.models import ImportSchema
 
 
 class ImportSchemaTest(SimpleTestCase):

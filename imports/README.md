@@ -26,7 +26,7 @@ Toutes les vues héritent de `BaseImportView` (`imports/views/base.py`) :
 
 ## Schémas
 
-Chaque import déclare le schéma contre lequel valider le fichier (`_get_schema()`, qui renvoie un `ImportSchema`, dans `imports/schemas.py`). Le fichier du schéma est dans `data/schemas/imports/`.
+Chaque import déclare le schéma contre lequel valider le fichier (`_get_schema()`, qui renvoie un `ImportSchema`, dans `imports/models/importschema.py`). Le fichier du schéma est dans `data/schemas/imports/`.
 
 ## Ce qui reste ailleurs
 

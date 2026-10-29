@@ -1,4 +1,4 @@
-from imports.schemas import ImportSchema
+from imports.models import ImportSchema
 from imports.views.purchase_base import BasePurchasesImportView
 
 

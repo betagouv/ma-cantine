@@ -6,7 +6,7 @@ from django.utils import timezone
 from simple_history.utils import update_change_reason
 
 from api.serializers import FullCanteenSerializer
-from imports.schemas import ImportSchema
+from imports.models import ImportSchema
 from imports.views.base import BaseImportView
 from common.utils import utils as utils_utils
 from data.models import Canteen, ImportType, Sector

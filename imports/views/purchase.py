@@ -1,6 +1,6 @@
 from data.models import Purchase
 
-from imports.schemas import ImportSchema
+from imports.models import ImportSchema
 from imports.views.purchase_base import BasePurchasesImportView
 
 PURCHASE_SIRET_SCHEMA = ImportSchema("achats_siret.json")
