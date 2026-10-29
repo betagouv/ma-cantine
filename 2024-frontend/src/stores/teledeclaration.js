@@ -4,7 +4,7 @@ import { useRootStore } from "@/stores/root.js"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import diagnosticService from "@/services/diagnostics.js"
 import canteenService from "@/services/canteens.js"
-import diagnosticsFields from "@/services/diagnosticsFields.js"
+import teledeclarationFields from "@/services/teledeclarationFields.js"
 
 const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const diagnostic = ref(null)
@@ -105,8 +105,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   async function updateMealCount() {
     if (!diagnostic.value) return
     const canteenId = diagnostic.value.canteenId
-    const valeurTotalFieldName = diagnosticsFields.getFieldsListFromGroup("valeurTotale")[0]
-    const coutRepasFieldName = diagnosticsFields.getFieldsListFromGroup("coutRepas")[0]
+    const valeurTotalFieldName = teledeclarationFields.getFieldsListFromGroup("valeurTotale")[0]
+    const coutRepasFieldName = teledeclarationFields.getFieldsListFromGroup("coutRepas")[0]
     const response = await diagnosticService.updateDiagnostic(canteenId, diagnostic.value.id, { [valeurTotalFieldName]: diagnostic.value[valeurTotalFieldName] })
     if (response.status === "error") replaceErrors(response.list)
     else setValue(coutRepasFieldName, response[coutRepasFieldName])
@@ -117,7 +117,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   function autofillDiagnostic() {
     const autofillSteps = ["egalim", "origine", "localCircuitCourt"]
     const purchaseSummary = useStorePurchaseSummary().purchaseSummary
-    const fields = diagnosticsFields.getFieldsWithAutofill()
+    const fields = teledeclarationFields.getFieldsWithAutofill()
     for (const field of fields) setValue(field, purchaseSummary[field])
     setValue("generatedFromPurchases", true)
     autofillSteps.forEach((slug) => markPageAsVisited(slug))
@@ -237,13 +237,13 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Keep only the errors related to the fields displayed on the given page */
   function getErrorsPage(pageName, canteenIsGroupe) {
-    const fieldsList = diagnosticsFields.getFieldsListFromPage(pageName, canteenIsGroupe, isSimple.value)
+    const fieldsList = teledeclarationFields.getFieldsListFromPage(pageName, canteenIsGroupe, isSimple.value)
     return diagnosticErrors.value.filter((error) => fieldsList.includes(error.field))
   }
 
   /* Keep only the errors related to the fields displayed on the given page */
   function getErrorsGroup(fieldsGroupName) {
-    const fieldsList = diagnosticsFields.getFieldsListFromGroup(fieldsGroupName)
+    const fieldsList = teledeclarationFields.getFieldsListFromGroup(fieldsGroupName)
     return diagnosticErrors.value.filter((error) => fieldsList.includes(error.field))
   }
 
