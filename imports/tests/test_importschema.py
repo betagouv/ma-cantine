@@ -1,3 +1,6 @@
+from io import StringIO
+
+from django.core.management import call_command
 from django.test import SimpleTestCase
 
 from data.models import Diagnostic
@@ -28,8 +31,20 @@ class DiagnosticsImportSchemasTest(SimpleTestCase):
             (DIAGNOSTICS_SIMPLE_SIRET_SCHEMA, "siret"),
             (DIAGNOSTICS_SIMPLE_ID_SCHEMA, "cantine_id"),
             (DIAGNOSTICS_COMPLETE_SCHEMA, "siret"),
+            (ImportSchema("bilans_simple_siret_2026.json"), "siret"),
+            (ImportSchema("bilans_simple_id_2026.json"), "cantine_id"),
         ]:
-            with self.subTest(schema=schema):
+            with self.subTest(schema=schema.name):
                 self.assertEqual(schema.header[:2], [identifier, "année_bilan"])
                 for column in schema.header[2:]:
                     self.assertIn(column, diagnostic_field_names)
+
+    def test_schemas_are_up_to_date(self):
+        """
+        The schema files must match the output of the generate_import_schema command
+        """
+        for schema in ["simple_siret", "simple_id", "simple_siret_2026", "simple_id_2026"]:
+            with self.subTest(schema=schema):
+                out = StringIO()
+                call_command("generate_import_schema", model="Diagnostic", schema=schema, dry_run=True, stdout=out)
+                self.assertIn("No changes", out.getvalue())
