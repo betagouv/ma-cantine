@@ -1,3 +1,5 @@
+from abc import abstractmethod
+
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import transaction
 from rest_framework.exceptions import PermissionDenied
@@ -8,14 +10,19 @@ from data.models import Canteen, Diagnostic
 from data.models.creation_source import CreationSource
 
 
+DEFAULT_SCHEMA_VERSION = "2025"
+
+
 class BaseDiagnosticsImportView(BaseImportView):
     """
     Shared logic for diagnostic CSV imports.
 
     Subclasses provide:
     - `diagnostic_type`: the type of the diagnostics created or updated (simple or complete)
-    - `_get_schema()`: which JSON Table Schema to validate against
+    - `_get_schemas()`: the JSON Table Schemas to validate against, by schema version (file format)
       (columns: identifier (siret or cantine_id), année_bilan, values)
+
+    The schema version is chosen with the `schema_version` param (default: DEFAULT_SCHEMA_VERSION)
     """
 
     model_class = Diagnostic
@@ -26,6 +33,24 @@ class BaseDiagnosticsImportView(BaseImportView):
         self.diagnostics_created_count = 0
         self.canteen_ids = set()
         self.is_siret_import = True
+        self.schema_version = DEFAULT_SCHEMA_VERSION
+
+    def post(self, request):
+        self.schema_version = request.data.get("schema_version") or DEFAULT_SCHEMA_VERSION
+        return super().post(request)
+
+    @abstractmethod
+    def _get_schemas(self):
+        """Return the schemas by schema version, e.g. {"2025": ImportSchema(...), "2026": ImportSchema(...)}"""
+        pass
+
+    def _get_schema(self):
+        schemas = self._get_schemas()
+        if self.schema_version not in schemas:
+            raise ValidationError(
+                f"Version de schéma « {self.schema_version} » inconnue. Valeurs possibles : {', '.join(schemas)}."
+            )
+        return schemas[self.schema_version]
 
     def _process_file(self, data):
         """Process all rows in the file."""
