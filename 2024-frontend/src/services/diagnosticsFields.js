@@ -1,12 +1,11 @@
 import teledeclarationFields from "@/data/teledeclarationFields.json"
 import teledeclarationGroups from "@/data/teledeclarationGroups.json"
 
-/* Groups */
+/* Data */
 const groups = { ...teledeclarationGroups.approvisionnement }
-
-/* Fields */
 const fields = { ...teledeclarationFields.approvisionnement }
 
+/* Actions */
 const getField = (fieldName) => {
   return fields[fieldName]
 }
