@@ -2,7 +2,7 @@ import teledeclarationFields from "@/data/teledeclarationFields.json"
 import teledeclarationGroups from "@/data/teledeclarationGroups.json"
 
 /* Groups */
-const groups = { ...teledeclarationGroups.cantine, ...teledeclarationGroups.approvisionnement }
+const groups = { ...teledeclarationGroups.approvisionnement }
 
 /* Fields */
 const fields = { ...teledeclarationFields.approvisionnement }

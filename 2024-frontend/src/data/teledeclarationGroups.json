@@ -1,9 +1,7 @@
 {
-  "cantine": {
-    "informationsCantine": ["name", "siret", "sirenUniteLegale", "postalCode", "city", "cityInseeCode", "departmentLib", "regionLib", "patListLib", "epciLib", "sectorList", "lineMinistry", "dailyMealCount", "yearlyMealCount", "economicModel", "productionType", "managementType", "centralProducerSiret", "publicationComments"],
-    "informationsGroupe": ["name", "sirenUniteLegale", "managementType", "dailyMealCount", "yearlyMealCount", "centralProducerSiret"]
-  },
   "approvisionnement": {
+    "informationsCantine": ["name", "siret", "sirenUniteLegale", "postalCode", "city", "cityInseeCode", "departmentLib", "regionLib", "patListLib", "epciLib", "sectorList", "lineMinistry", "dailyMealCount", "yearlyMealCount", "economicModel", "productionType", "managementType", "centralProducerSiret", "publicationComments"],
+    "informationsGroupe": ["name", "sirenUniteLegale", "managementType", "dailyMealCount", "yearlyMealCount", "centralProducerSiret"],
     "couverts": ["nombreRepasAn"],
     "saisie": ["diagnosticType"],
     "valeurTotale": ["valeurTotale"],
