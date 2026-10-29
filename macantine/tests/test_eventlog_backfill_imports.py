@@ -5,7 +5,8 @@ from django.test import TestCase
 from django.utils import timezone
 
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
-from data.models import EventLog, ImportType, Purchase
+from data.models import EventLog, Purchase
+from imports.models import ImportType
 from data.models.creation_source import CreationSource
 
 BEFORE = "2026-10-20T00:00"

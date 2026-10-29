@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.urls import reverse
 from django.utils.html import format_html
 
-from data.models import EventLog, ImportType
+from data.models import EventLog
+from imports.models import ImportType
 from data.admin.utils import ReadOnlyAdminMixin, json_pretty
 
 

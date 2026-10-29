@@ -9,7 +9,8 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, ImportType, Sector
+from data.models import Canteen, Sector
+from imports.models import ImportType
 from data.models.creation_source import CreationSource
 
 

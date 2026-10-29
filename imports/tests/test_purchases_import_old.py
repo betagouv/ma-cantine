@@ -13,7 +13,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
 from data.factories import CanteenFactory
-from data.models import ImportType
+from imports.models import ImportType
 from data.models.creation_source import CreationSource
 from data.models.definitionlocal import DefinitionLocal
 from data.models.purchase import Purchase

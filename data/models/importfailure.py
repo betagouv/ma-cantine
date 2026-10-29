@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from .importtype import ImportType
+from imports.models import ImportType
 
 
 class ImportFailure(models.Model):

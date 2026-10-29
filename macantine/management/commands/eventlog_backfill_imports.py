@@ -5,7 +5,8 @@ from django.utils.dateparse import parse_datetime
 from django.utils.timezone import is_naive, make_aware
 
 from common.utils.commands import MaCantineBaseCommand
-from data.models import Canteen, Diagnostic, EventLog, ImportType, Purchase
+from data.models import Canteen, Diagnostic, EventLog, Purchase
+from imports.models import ImportType
 from data.models.creation_source import CreationSource
 
 logger = logging.getLogger(__name__)
