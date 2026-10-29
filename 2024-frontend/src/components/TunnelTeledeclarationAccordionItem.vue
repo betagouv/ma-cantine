@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
-import teledeclaration from '@/data/teledeclaration.json'
+import diagnosticsFieldsService from '@/services/diagnosticsFields'
 import CanteenDisplayInformations from '@/components/CanteenDisplayInformations.vue'
 import TunnelTeledeclarationIconCheck from '@/components/TunnelTeledeclarationIconCheck.vue'
 
@@ -36,17 +36,18 @@ const header = [
 ]
 
 const getPrettyDiagnosticValue = (field) => {
-  const hasOptions = teledeclaration.fields[field]?.options?.length > 0
+  const fieldData = diagnosticsFieldsService.getField(field)
+  const hasOptions = fieldData?.options?.length > 0
   const diagValue = diagnostic.value[field]
-  const prettyValue = hasOptions ? teledeclaration.fields[field].options.find(option => option.value === diagValue)?.valueDisplay : diagValue
+  const prettyValue = hasOptions ? fieldData.options.find(option => option.value === diagValue)?.valueDisplay : diagValue
   return prettyValue ?? "Non renseigné"
 }
 
 const rows = computed(() => {
-  const fields = teledeclaration.groups[props.accordion.fieldsGroupName]
+  const fields = diagnosticsFieldsService.getFieldsListFromGroup(props.accordion.fieldsGroupName)
   return fields.map(field => {
     const isCanteen = props.accordion.isCanteenFields
-    const name = isCanteen ? field : teledeclaration.fields[field].labelRecap
+    const name = isCanteen ? field : diagnosticsFieldsService.getField(field).labelRecap
     const value = isCanteen ? canteenInformations.value[field] : getPrettyDiagnosticValue(field)
     const hasError = teledeclarationStore.isFieldError(field)
     return {

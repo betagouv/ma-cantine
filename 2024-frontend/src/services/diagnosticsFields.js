@@ -36,4 +36,8 @@ const getFieldsListFromGroup = (groupName) => {
   return teledeclaration.groups[groupName]
 }
 
-export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup }
+const getFieldsWithAutofill = () => {
+  return Object.keys(teledeclaration.fields).filter((field) => teledeclaration.fields[field].autofill)
+}
+
+export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup, getFieldsWithAutofill }
