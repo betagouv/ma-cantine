@@ -7,6 +7,8 @@ from data.models import Diagnostic
 from imports.models import ImportSchema
 from imports.views.diagnostic import (
     DIAGNOSTICS_COMPLETE_SCHEMA,
+    DIAGNOSTICS_SIMPLE_2026_ID_SCHEMA,
+    DIAGNOSTICS_SIMPLE_2026_SIRET_SCHEMA,
     DIAGNOSTICS_SIMPLE_ID_SCHEMA,
     DIAGNOSTICS_SIMPLE_SIRET_SCHEMA,
 )
@@ -31,8 +33,8 @@ class DiagnosticsImportSchemasTest(SimpleTestCase):
             (DIAGNOSTICS_SIMPLE_SIRET_SCHEMA, "siret"),
             (DIAGNOSTICS_SIMPLE_ID_SCHEMA, "cantine_id"),
             (DIAGNOSTICS_COMPLETE_SCHEMA, "siret"),
-            (ImportSchema("bilans_simple_siret_2026.json"), "siret"),
-            (ImportSchema("bilans_simple_id_2026.json"), "cantine_id"),
+            (DIAGNOSTICS_SIMPLE_2026_SIRET_SCHEMA, "siret"),
+            (DIAGNOSTICS_SIMPLE_2026_ID_SCHEMA, "cantine_id"),
         ]:
             with self.subTest(schema=schema.name):
                 self.assertEqual(schema.header[:2], [identifier, "année_bilan"])
