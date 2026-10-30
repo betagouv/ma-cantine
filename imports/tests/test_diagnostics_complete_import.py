@@ -321,6 +321,31 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_2.creation_user, authenticate.user)
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
 
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_diagnostics_created_with_schema_version_2026(self):
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_2026_good_one_canteen.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_complete_import"), {"file": diag_file, "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        self.assertEqual(body["count"], 1)
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, 1, canteen=canteen)
+
+        diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
+        self.assertEqual(diagnostic.year, 2026)
+        self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        self.assertEqual(diagnostic.nombre_repas_an, 42000)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertEqual(diagnostic.valeur_fruits_et_legumes, 100)
+        self.assertEqual(diagnostic.valeur_fruits_et_legumes_bio, 20)
+
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_diagnostics_created_excel_file(self):

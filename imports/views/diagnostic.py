@@ -7,11 +7,11 @@ from imports.views.diagnostic_base import BaseDiagnosticsImportView
 # simple
 DIAGNOSTICS_SIMPLE_SIRET_SCHEMA = ImportSchema("bilans_simple_siret.json")
 DIAGNOSTICS_SIMPLE_ID_SCHEMA = ImportSchema("bilans_simple_id.json")
-DIAGNOSTICS_SIMPLE_SIRET_2026_SCHEMA = ImportSchema("bilans_simple_siret_2026.json")  # not used yet
-DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA = ImportSchema("bilans_simple_id_2026.json")  # not used yet
+DIAGNOSTICS_SIMPLE_SIRET_2026_SCHEMA = ImportSchema("bilans_simple_siret_2026.json")
+DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA = ImportSchema("bilans_simple_id_2026.json")
 # complete
 DIAGNOSTICS_COMPLETE_SCHEMA = ImportSchema("bilans_detaille.json")
-DIAGNOSTICS_COMPLETE_2026_SCHEMA = ImportSchema("bilans_detaille_2026.json")  # not used yet
+DIAGNOSTICS_COMPLETE_2026_SCHEMA = ImportSchema("bilans_detaille_2026.json")
 
 
 class DiagnosticsSimpleImportView(BaseDiagnosticsImportView):
@@ -26,13 +26,15 @@ class DiagnosticsSimpleImportView(BaseDiagnosticsImportView):
         )
         return super().post(request)
 
-    def _get_schema(self):
-        return DIAGNOSTICS_SIMPLE_SIRET_SCHEMA if self.is_siret_import else DIAGNOSTICS_SIMPLE_ID_SCHEMA
+    def _get_schemas(self):
+        if self.is_siret_import:
+            return {"2025": DIAGNOSTICS_SIMPLE_SIRET_SCHEMA, "2026": DIAGNOSTICS_SIMPLE_SIRET_2026_SCHEMA}
+        return {"2025": DIAGNOSTICS_SIMPLE_ID_SCHEMA, "2026": DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA}
 
 
 class DiagnosticsCompleteImportView(BaseDiagnosticsImportView):
     import_type = ImportType.DIAGNOSTIC_COMPLETE
     diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
-    def _get_schema(self):
-        return DIAGNOSTICS_COMPLETE_SCHEMA
+    def _get_schemas(self):
+        return {"2025": DIAGNOSTICS_COMPLETE_SCHEMA, "2026": DIAGNOSTICS_COMPLETE_2026_SCHEMA}
