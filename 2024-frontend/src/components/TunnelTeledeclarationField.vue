@@ -8,7 +8,7 @@ import IconLink from "@/components/IconLink.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import AppTooltipHover from "@/components/AppTooltipHover.vue"
 import TunnelTeledeclarationAutofill from "@/components/TunnelTeledeclarationAutofill.vue"
-import diagnosticsFieldsService from "@/services/diagnosticsFields"
+import teledeclarationFieldsService from "@/services/teledeclarationFields"
 
 /* Stores */
 const props = defineProps(["name"])
@@ -20,7 +20,7 @@ const route = useRoute()
 
 /* Informations */
 const field = ref()
-const data = computed(() => diagnosticsFieldsService.getField(props.name))
+const data = computed(() => teledeclarationFieldsService.getField(props.name))
 const isNumber = computed(() => data.value?.type === "number")
 const isSelect = computed(() => data.value?.type === "select")
 const diagnosticType = computed(() => storeTeledeclaration.diagnostic?.diagnosticType)
@@ -30,7 +30,7 @@ const tooltip = computed(() => data.value.tooltip)
 const isRelatedVertical = computed(() => data.value?.isRelatedField === "vertical")
 const isRelatedHorizontal = computed(() => data.value?.isRelatedField === "horizontal")
 const placeholder = computed(() => isRequired.value ? undefined : data.value?.placeholder)
-const errorMessage = computed(() => diagnosticsFieldsService.getFieldError(props.name, storeTeledeclaration.getDisplayedErrors(route.meta.slug)))
+const errorMessage = computed(() => teledeclarationFieldsService.getFieldError(props.name, storeTeledeclaration.getDisplayedErrors(route.meta.slug)))
 const selectErrorMessage = computed(() => errorMessage.value?.join(". "))
 const hint = computed(() => data.value.hint)
 const options = computed(() => data.value.options)

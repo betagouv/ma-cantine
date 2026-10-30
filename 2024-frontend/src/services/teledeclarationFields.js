@@ -1,7 +1,13 @@
-import teledeclaration from "@/data/teledeclaration.json"
+import teledeclarationFields from "@/data/teledeclarationFields.json"
+import teledeclarationGroups from "@/data/teledeclarationGroups.json"
 
+/* Data */
+const groups = { ...teledeclarationGroups.approvisionnement }
+const fields = { ...teledeclarationFields.approvisionnement }
+
+/* Actions */
 const getField = (fieldName) => {
-  return teledeclaration.fields[fieldName]
+  return fields[fieldName]
 }
 
 const getFieldError = (fieldName, errors) => {
@@ -12,28 +18,32 @@ const getFieldError = (fieldName, errors) => {
 const getFieldsListFromPage = (pageName, canteenIsGroupe, diagnosticIsSimple) => {
   switch (true) {
     case pageName === "GestionnaireTunnelApproInformations" && !canteenIsGroupe:
-      return teledeclaration.groups.informationsCantine
+      return groups.informationsCantine
     case pageName === "GestionnaireTunnelApproInformations" && canteenIsGroupe:
-      return teledeclaration.groups.informationsGroupe
+      return groups.informationsGroupe
     case pageName === "GestionnaireTunnelApproCouverts":
-      return teledeclaration.groups.couverts
+      return groups.couverts
     case pageName === "GestionnaireTunnelApproSaisie":
-      return teledeclaration.groups.saisie
+      return groups.saisie
     case pageName === "GestionnaireTunnelApproEgalim" && diagnosticIsSimple:
-      return teledeclaration.groups.egalimSimple
+      return groups.egalimSimple
     case pageName === "GestionnaireTunnelApproEgalim" && !diagnosticIsSimple:
-      return teledeclaration.groups.egalimComplete
+      return groups.egalimComplete
     case pageName === "GestionnaireTunnelApproOrigine":
-      return teledeclaration.groups.origine
+      return groups.origine
     case pageName === "GestionnaireTunnelApproLocalCircuitCourt":
-      return teledeclaration.groups.localCircuitCourt
+      return groups.localCircuitCourt
     default:
       return []
   }
 }
 
 const getFieldsListFromGroup = (groupName) => {
-  return teledeclaration.groups[groupName]
+  return groups[groupName]
 }
 
-export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup }
+const getFieldsWithAutofill = () => {
+  return Object.keys(fields).filter((field) => fields[field].autofill)
+}
+
+export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup, getFieldsWithAutofill }

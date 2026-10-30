@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue"
 import stringsService from "@/services/strings"
-import diagnosticsFieldsService from "@/services/diagnosticsFields"
+import teledeclarationFieldsService from "@/services/teledeclarationFields"
 import GraphEgalim from "@/components/GraphEgalim.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 
@@ -66,7 +66,7 @@ const hasValue = (statName) => {
 const displayedGroups = computed(() => groups.filter((group) => hasValue(group.total)))
 
 /* Get values */
-const getLabel = (statName) => diagnosticsFieldsService.getField(statName.replace("pourcentage", "valeur")).label
+const getLabel = (statName) => teledeclarationFieldsService.getField(statName.replace("pourcentage", "valeur")).label
 const getResult = (statName) => hasValue(statName) ? stringsService.prettyPercent(approStats.value[statName]) : "Non renseigné"
 </script>
 <template>
