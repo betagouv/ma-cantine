@@ -3,6 +3,10 @@ import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
+
+/* Documentation */
+const diversificationDocumentation = `${documentation.diversificationSourcesProteines}#2-1-la-diversification-des-sources-de-proteines-une-obligation-pour-tous-des-200-couverts-par-jour`
+const menuVegetarienDocumentation = `${documentation.diversificationSourcesProteines}#2-2-le-menu-vegetarien-une-obligation-ciblee-pour-certains-restaurants-collectifs`
 </script>
 
 <template>
@@ -45,12 +49,12 @@ import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="Diversification des sources de protéines" :documentation="documentation.diversificationSourcesProteinesObligation" />
+    <TunnelTeledeclarationGroupTitle title="Diversification des sources de protéines" :documentation="diversificationDocumentation" />
     <TunnelTeledeclarationField name="planDiversificationEnPlace" />
     <TunnelTeledeclarationField name="planDiversificationActions" />
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="Menu végétarien" :documentation="documentation.menuVegetarienObligation" />
+    <TunnelTeledeclarationGroupTitle title="Menu végétarien" :documentation="menuVegetarienDocumentation" />
     <TunnelTeledeclarationField name="serviceType" />
     <TunnelTeledeclarationField name="menuVegetarienFrequence" />
     <TunnelTeledeclarationField name="menuVegetarienBases" />
