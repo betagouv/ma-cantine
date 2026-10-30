@@ -23,6 +23,7 @@ const field = ref()
 const data = computed(() => teledeclarationFieldsService.getField(props.name))
 const isNumber = computed(() => data.value?.type === "number")
 const isSelect = computed(() => data.value?.type === "select")
+const isCheckboxes = computed(() => data.value?.type === "checkboxes")
 const diagnosticType = computed(() => storeTeledeclaration.diagnostic?.diagnosticType)
 const isRequired = computed(() => data.value.requiredByType ? data.value.requiredByType[diagnosticType.value] : data.value.required)
 const label = computed(() => data.value.label)
@@ -34,6 +35,7 @@ const errorMessage = computed(() => teledeclarationFieldsService.getFieldError(p
 const selectErrorMessage = computed(() => errorMessage.value?.join(". "))
 const hint = computed(() => data.value.hint)
 const options = computed(() => data.value.options)
+const checkboxesOptions = computed(() => options.value.map((option) => ({ id: `${props.name}-${option.value}`, name: props.name, label: option.label, value: option.value })))
 
 /* OSA */
 const isAutofill = computed(() => data.value?.autofill === true)
@@ -57,6 +59,7 @@ const fieldChange = () =>  {
 }
 const prefillField = () => {
   field.value = storeTeledeclaration.diagnostic[props.name]
+  if (isCheckboxes.value && !field.value) field.value = []
   valueBeforeAutofill.value = field.value
 }
 onMounted(prefillField)
@@ -87,6 +90,13 @@ const resetField = () => {
         </template>
       </DsfrInputGroup>
       <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint"/>
+      <DsfrCheckboxSet v-if="isCheckboxes" v-model="field" :legend="label" :required="isRequired" :options="checkboxesOptions" @update:modelValue="fieldChange" :error-message="selectErrorMessage">
+        <template #legend>
+          {{ label }}
+          <span v-if="isRequired">&nbsp;*</span>
+          <span v-if="hint" class="fr-hint-text">{{ hint }}</span>
+        </template>
+      </DsfrCheckboxSet>
     </div>
     <div v-if="tooltip" class="tunnel-teledeclaration-field__tooltip fr-pl-1w fr-pb-1v">
       <AppTooltipHover :content="tooltip" />
