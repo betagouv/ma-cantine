@@ -19,6 +19,22 @@ V1_FIELD_ALIASES = {
     "vegetarian_weekly_recurrence": "menu_vegetarien_frequence",
     "vegetarian_menu_type": "menu_vegetarien_type",
     "vegetarian_menu_bases": "menu_vegetarien_bases",
+    "has_waste_diagnostic": "diagnostic_gaspillage_realise",
+    "has_waste_plan": "plan_gaspillage_en_place",
+    "has_waste_measures": "mesures_gaspillage_realisees",
+    "waste_actions": "actions_gaspillage_realisees",
+    "other_waste_action": "actions_gaspillage_autre",
+    "has_donation_agreement": "dons_convention",
+    "donation_frequency": "dons_frequence",
+    "donation_quantity": "dons_quantite",
+    "donation_food_type": "dons_type_denrees",
+    "other_waste_comments": "commentaires_gaspillage_autre",
+    "total_leftovers": "dechets_total",
+    "duration_leftovers_measurement": "dechets_mesure_duree",
+    "bread_leftovers": "dechets_pain",
+    "served_leftovers": "dechets_plateau",
+    "unserved_leftovers": "dechets_non_servis",
+    "side_leftovers": "dechets_composantes",
 }
 V1_FIELD_NAMES = {model_field_name: v1_name for v1_name, model_field_name in V1_FIELD_ALIASES.items()}
 # same for the choice values renamed in French
@@ -47,7 +63,14 @@ V1_CHOICE_VALUE_ALIASES = {
         "EGG": Diagnostic.MenuVegetarienBase.OEUFS,
         "READYMADE": Diagnostic.MenuVegetarienBase.PLATS_PRETS_A_L_EMPLOI,
     },
+    "waste_actions": {
+        "AWARENESS": Diagnostic.ActionsGaspillage.SENSIBILISATION,
+        "TRAINING": Diagnostic.ActionsGaspillage.FORMATION,
+        "REUSE": Diagnostic.ActionsGaspillage.REUTILISATION,
+    },
 }
+# stored in tons, in kg in the API (v1 & v2 names)
+TOTAL_LEFTOVERS_FIELDS = ("total_leftovers", "dechets_total")
 NON_APPRO_FIELDS_V1 = [V1_FIELD_NAMES.get(field_name, field_name) for field_name in Diagnostic.NON_APPRO_FIELDS]
 
 FIELDS = (
@@ -98,12 +121,13 @@ class DiagnosticSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        if (
-            "total_leftovers" in representation
-            and representation["total_leftovers"] is not None
-            and representation["total_leftovers"] != ""
-        ):
-            representation["total_leftovers"] = representation["total_leftovers"] * 1000
+        for field_name in TOTAL_LEFTOVERS_FIELDS:
+            if (
+                field_name in representation
+                and representation[field_name] is not None
+                and representation[field_name] != ""
+            ):
+                representation[field_name] = representation[field_name] * 1000
         # v1 choice values: model value -> v1 value
         for field_name, value_aliases in self.v1_choice_value_aliases.items():
             if representation.get(field_name):
@@ -122,27 +146,28 @@ class DiagnosticSerializer(serializers.ModelSerializer):
                     data.setlist(field_name, replace_choice_values(data.getlist(field_name), value_aliases))
                 else:
                     data[field_name] = replace_choice_values(data[field_name], value_aliases)
-        if "total_leftovers" in data and data["total_leftovers"] is not None and data["total_leftovers"] != "":
-            try:
-                value = Decimal(repr(data["total_leftovers"]))
-                data["total_leftovers"] = value / 1000
-            except InvalidOperation:
-                raise serializers.ValidationError(
-                    {"total_leftovers": ["Assurez-vous que cette valeur est un chiffre décimal."]}
-                )
-            except Exception as e:
-                logger.exception(e)
-                raise serializers.ValidationError(
-                    {
-                        "total_leftovers": [
-                            "Une erreur est survenue. Assurez-vous que cette valeur est un chiffre décimal, et contactez-nous si l'erreur persiste."
-                        ]
-                    }
-                )
-            if data["total_leftovers"].as_tuple().exponent < -5:
-                raise serializers.ValidationError(
-                    {"total_leftovers": ["Assurez-vous qu'il n'y a pas plus de 2 chiffres après la virgule."]}
-                )
+        for field_name in TOTAL_LEFTOVERS_FIELDS:
+            if field_name in data and data[field_name] is not None and data[field_name] != "":
+                try:
+                    value = Decimal(repr(data[field_name]))
+                    data[field_name] = value / 1000
+                except InvalidOperation:
+                    raise serializers.ValidationError(
+                        {field_name: ["Assurez-vous que cette valeur est un chiffre décimal."]}
+                    )
+                except Exception as e:
+                    logger.exception(e)
+                    raise serializers.ValidationError(
+                        {
+                            field_name: [
+                                "Une erreur est survenue. Assurez-vous que cette valeur est un chiffre décimal, et contactez-nous si l'erreur persiste."
+                            ]
+                        }
+                    )
+                if data[field_name].as_tuple().exponent < -5:
+                    raise serializers.ValidationError(
+                        {field_name: ["Assurez-vous qu'il n'y a pas plus de 2 chiffres après la virgule."]}
+                    )
         validated_data = super().to_internal_value(data)
         return validated_data
 

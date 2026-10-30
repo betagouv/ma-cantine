@@ -11,9 +11,9 @@ from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fi
 class DiagnosticForm(forms.ModelForm):
     class Meta:
         widgets = {
-            "other_waste_action": forms.Textarea(attrs={"cols": 60, "rows": 2}),
-            "other_waste_comments": forms.Textarea(attrs={"cols": 60, "rows": 2}),
-            "donation_food_type": forms.Textarea(attrs={"cols": 60, "rows": 2}),
+            "actions_gaspillage_autre": forms.Textarea(attrs={"cols": 60, "rows": 2}),
+            "commentaires_gaspillage_autre": forms.Textarea(attrs={"cols": 60, "rows": 2}),
+            "dons_type_denrees": forms.Textarea(attrs={"cols": 60, "rows": 2}),
             "other_communication_support": forms.Textarea(attrs={"cols": 60, "rows": 2}),
             "creation_mtm_source": forms.Textarea(attrs={"cols": 55, "rows": 1}),
             "creation_mtm_campaign": forms.Textarea(attrs={"cols": 55, "rows": 1}),

@@ -942,8 +942,12 @@ class Diagnostic(
 
     @property
     def waste_badge(self) -> bool | None:
-        if self.has_waste_diagnostic and self.waste_actions and len(self.waste_actions) > 0:
-            if self.has_donation_agreement or (self.canteen.daily_meal_count and self.canteen.daily_meal_count < 3000):
+        if (
+            self.diagnostic_gaspillage_realise
+            and self.actions_gaspillage_realisees
+            and len(self.actions_gaspillage_realisees) > 0
+        ):
+            if self.dons_convention or (self.canteen.daily_meal_count and self.canteen.daily_meal_count < 3000):
                 return True
         if self.tunnel_waste:
             return False

@@ -57,10 +57,12 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
         lambda o: random.randint(0, o.valeur_viandes_volailles or 0)
     )
 
-    has_waste_diagnostic = factory.Faker("boolean")
-    has_waste_plan = factory.Faker("boolean")
-    waste_actions = factory.List(random.sample(list(Diagnostic.WasteActions), random.randint(0, 2)))
-    has_donation_agreement = factory.Faker("boolean")
+    diagnostic_gaspillage_realise = factory.Faker("boolean")
+    plan_gaspillage_en_place = factory.Faker("boolean")
+    actions_gaspillage_realisees = factory.List(
+        random.sample(list(Diagnostic.ActionsGaspillage), random.randint(0, 2))
+    )
+    dons_convention = factory.Faker("boolean")
 
     plan_diversification_en_place = factory.Faker("boolean")
     menu_vegetarien_frequence = fuzzy.FuzzyChoice(list(Diagnostic.MenuVegetarienFrequence))
@@ -107,10 +109,12 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
         lambda o: random.randint(0, o.valeur_produits_de_la_mer or 0)
     )
 
-    has_waste_diagnostic = factory.Faker("boolean")
-    has_waste_plan = factory.Faker("boolean")
-    waste_actions = factory.List(random.sample(list(Diagnostic.WasteActions), random.randint(0, 2)))
-    has_donation_agreement = factory.Faker("boolean")
+    diagnostic_gaspillage_realise = factory.Faker("boolean")
+    plan_gaspillage_en_place = factory.Faker("boolean")
+    actions_gaspillage_realisees = factory.List(
+        random.sample(list(Diagnostic.ActionsGaspillage), random.randint(0, 2))
+    )
+    dons_convention = factory.Faker("boolean")
 
     plan_diversification_en_place = factory.Faker("boolean")
     menu_vegetarien_frequence = fuzzy.FuzzyChoice(list(Diagnostic.MenuVegetarienFrequence))

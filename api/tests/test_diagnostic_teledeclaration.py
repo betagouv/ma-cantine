@@ -833,7 +833,7 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     @freeze_time("2025-03-30")  # during the 2024 campaign
-    def test_pdf_templates_display_the_diversification_answers(self):
+    def test_pdf_templates_display_the_volet_answers(self):
         """
         The PDF templates read the diagnostic fields by name (diagnostic.__dict__ + overrides):
         a renamed field must be renamed in the templates (& overrides) too
@@ -843,6 +843,8 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=canteen,
             year=2024,
+            diagnostic_gaspillage_realise=True,
+            actions_gaspillage_realisees=[Diagnostic.ActionsGaspillage.SENSIBILISATION],
             plan_diversification_en_place=True,
             plan_diversification_actions=[Diagnostic.PlanDiversificationActions.PLATS_PRODUITS],
             menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.QUOTIDIEN,
@@ -855,6 +857,11 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
         for template_name in ["teledeclaration_campaign_2024/index.html", "teledeclaration_pdf.html"]:
             with self.subTest(template_name=template_name):
                 html = get_template(template_name).render(context)
+                # gaspillage
+                self.assertIn("Diagnostic sur le gaspillage réalisé", html)
+                if template_name == "teledeclaration_campaign_2024/index.html":
+                    self.assertIn(Diagnostic.ActionsGaspillage.SENSIBILISATION.label, html)
+                # diversification
                 # only displayed if plan_diversification_en_place
                 self.assertIn(Diagnostic.PlanDiversificationActions.PLATS_PRODUITS.label, html)
                 self.assertIn(Diagnostic.MenuVegetarienFrequence.QUOTIDIEN.label, html)
