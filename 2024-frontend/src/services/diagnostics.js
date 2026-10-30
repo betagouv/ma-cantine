@@ -1,6 +1,6 @@
 import { verifyResponse } from "@/services/api.js"
 
-const voletsThematiquesApiUrl = {
+const voletsApiUrl = {
   diversification: "menus-vegetariens",
 }
 
@@ -33,8 +33,8 @@ const updateDiagnostic = (canteenId, diagnosticId, payload) => {
     .catch((e) => e)
 }
 
-const fetchVoletThematique = (canteenId, diagnosticId, volet) => {
-  return fetch(`/api/v2/canteens/${canteenId}/diagnostics/${diagnosticId}/${voletsThematiquesApiUrl[volet]}`, {
+const fetchVolet = (canteenId, diagnosticId, volet) => {
+  return fetch(`/api/v2/canteens/${canteenId}/diagnostics/${diagnosticId}/${voletsApiUrl[volet]}`, {
     method: "GET",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -45,8 +45,8 @@ const fetchVoletThematique = (canteenId, diagnosticId, volet) => {
     .catch((e) => e)
 }
 
-const updateVoletThematique = (canteenId, diagnosticId, volet, payload) => {
-  return fetch(`/api/v2/canteens/${canteenId}/diagnostics/${diagnosticId}/${voletsThematiquesApiUrl[volet]}`, {
+const updateVolet = (canteenId, diagnosticId, volet, payload) => {
+  return fetch(`/api/v2/canteens/${canteenId}/diagnostics/${diagnosticId}/${voletsApiUrl[volet]}`, {
     method: "PATCH",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -147,8 +147,8 @@ const cancelTeledeclaration = (canteenId, diagnosticId) => {
 export default {
   createDiagnostic,
   updateDiagnostic,
-  fetchVoletThematique,
-  updateVoletThematique,
+  fetchVolet,
+  updateVolet,
   checkDiagnostic,
   fetchDiagnostic,
   fetchDiagnostics,
