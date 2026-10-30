@@ -34,16 +34,16 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     else {
       setDiagnostic(diagnosticYear)
       setCanteenId(canteenId)
-      await setVoletThematiqueValues("diversification")
+      await setVoletValues("diversification")
       await setCanteenAction()
       await checkDiagnosticSteps()
       await setDiagnosticRecap()
     }
   }
 
-  /* Add the values of a volet thematique */
-  async function setVoletThematiqueValues(volet) {
-    const response = await diagnosticService.fetchVoletThematique(diagnostic.value.canteenId, diagnostic.value.id, volet)
+  /* Add the values of a volet */
+  async function setVoletValues(volet) {
+    const response = await diagnosticService.fetchVolet(diagnostic.value.canteenId, diagnostic.value.id, volet)
     if (response?.status === "error") useRootStore().notifyServerError(response)
     else setDiagnostic({ ...diagnostic.value, ...response })
   }
@@ -100,7 +100,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   async function saveDiagnostic(volet) {
     if (!diagnostic.value) return
     const canteenId = diagnostic.value.canteenId
-    const response = volet ? await saveVoletThematique(canteenId, volet) : await saveAppro(canteenId)
+    const response = volet ? await saveVolet(canteenId, volet) : await saveAppro(canteenId)
     if (response.status === "error") replaceErrors(response.list)
     else setDiagnostic({ ...diagnostic.value, ...response })
     await setCanteenAction()
@@ -114,11 +114,11 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
   }
 
-  /* Save the fields of a volet thematique */
-  async function saveVoletThematique(canteenId, volet) {
+  /* Save the fields of a volet */
+  async function saveVolet(canteenId, volet) {
     const fields = teledeclarationFields.getFieldsListFromGroup(volet)
     const voletValues = Object.fromEntries(fields.map((field) => [field, diagnostic.value[field]]))
-    return await diagnosticService.updateVoletThematique(canteenId, diagnostic.value.id, volet, voletValues)
+    return await diagnosticService.updateVolet(canteenId, diagnostic.value.id, volet, voletValues)
   }
 
   /* Save only the given fields of the diagnostic */
