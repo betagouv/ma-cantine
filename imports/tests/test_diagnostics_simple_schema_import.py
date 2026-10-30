@@ -3,8 +3,8 @@ import re
 
 from django.test import TestCase
 from imports.views.diagnostic import (
-    DIAGNOSTICS_SIMPLE_2026_ID_SCHEMA,
-    DIAGNOSTICS_SIMPLE_2026_SIRET_SCHEMA,
+    DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA,
+    DIAGNOSTICS_SIMPLE_SIRET_2026_SCHEMA,
     DIAGNOSTICS_SIMPLE_ID_SCHEMA,
 )
 
@@ -26,8 +26,8 @@ class DiagnosticsSimple2026SchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.schemas = {
-            "siret": json.load(open(DIAGNOSTICS_SIMPLE_2026_SIRET_SCHEMA.path)),
-            "id": json.load(open(DIAGNOSTICS_SIMPLE_2026_ID_SCHEMA.path)),
+            "siret": json.load(open(DIAGNOSTICS_SIMPLE_SIRET_2026_SCHEMA.path)),
+            "id": json.load(open(DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA.path)),
         }
 
     @staticmethod
