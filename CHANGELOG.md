@@ -6,6 +6,18 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.57.2](https://github.com/betagouv/ma-cantine/compare/v2026.57.1...v2026.57.2) (2026-10-30)
+
+
+### Améliorations
+
+* **Télédéclaration:** ré-organise le fichier de configuration frontend ([#7468](https://github.com/betagouv/ma-cantine/issues/7468)) ([69b5d89](https://github.com/betagouv/ma-cantine/commit/69b5d8986bc1eabc6abc792f4f6db6e76221aee3))
+
+
+### Technique
+
+* **Imports:** extraire la classe BaseDiagnosticsImportView dans imports/views/diagnostic_base.py (comme pour les achats) ([#7464](https://github.com/betagouv/ma-cantine/issues/7464)) ([6db73ce](https://github.com/betagouv/ma-cantine/commit/6db73ceb461740e2196adc21e8584e687bce5d7c))
+
 ## [2026.57.1](https://github.com/betagouv/ma-cantine/compare/v2026.57.0...v2026.57.1) (2026-10-29)
 
 
