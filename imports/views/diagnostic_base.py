@@ -85,7 +85,7 @@ class BaseDiagnosticsImportView(BaseImportView):
         values_dict = {column: row_dict[column] or None for column in value_columns}
         return row_dict[year_column], values_dict, self.diagnostic_type
 
-    def _validate_campaign(self, diagnostic_year):
+    def _validate_year(self, diagnostic_year):
         """
         Diagnostics can only be imported during their campaign (teledeclaration or correction),
         e.g. 2026 diagnostics in the first months of 2027 (see CAMPAIGN_DATES & its settings overrides).
@@ -100,7 +100,7 @@ class BaseDiagnosticsImportView(BaseImportView):
                 )
 
     def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
-        self._validate_campaign(diagnostic_year)
+        self._validate_year(diagnostic_year)
         diagnostic_exists = Diagnostic.objects.filter(canteen=canteen, year=diagnostic_year).exists()
         diagnostic = (
             Diagnostic.objects.get(canteen=canteen, year=diagnostic_year)
