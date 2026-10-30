@@ -1363,5 +1363,148 @@
       "placeholder": "Je ne sais pas",
       "required": false
     }
+  },
+  "diversification": {
+    "planDiversificationEnPlace": {
+      "label": "Un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales a été mis en place dans l’établissement",
+      "labelRecap": "Un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales a été mis en place dans l’établissement",
+      "type": "radio",
+      "required": true,
+      "options": [
+        {
+          "label": "Oui",
+          "valueDisplay": "Oui",
+          "value": true
+        },
+        {
+          "label": "Non",
+          "valueDisplay": "Non",
+          "value": false
+        }
+      ]
+    },
+    "planDiversificationActions": {
+      "label": "Ce plan comporte, par exemple, les actions suivantes",
+      "labelRecap": "Le plan pluriannuel de diversification des protéines mis en place comporte les actions :",
+      "hint": "Laissez vide si la réponse à la question précédente est \"Non\"",
+      "type": "checkboxes",
+      "required": false,
+      "options": [
+        {
+          "label": "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
+          "valueDisplay": "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
+          "value": "PLATS_PRODUITS"
+        },
+        {
+          "label": "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
+          "valueDisplay": "Agir sur la manière dont les aliments sont présentés aux convives (visuellement attrayants)",
+          "value": "PRESENTATION"
+        },
+        {
+          "label": "Agir sur la manière dont les menus sont conçus en soulignant les attributs positifs des plats",
+          "valueDisplay": "Agir sur la manière dont les menus sont conçus en soulignant les attributs positifs des plats",
+          "value": "MENU"
+        },
+        {
+          "label": "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
+          "valueDisplay": "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
+          "value": "PROMOTION"
+        },
+        {
+          "label": "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
+          "valueDisplay": "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
+          "value": "FORMATION"
+        }
+      ]
+    },
+    "serviceType": {
+      "label": "Le service est en",
+      "labelRecap": "Le service est en",
+      "type": "radio",
+      "required": true,
+      "options": [
+        {
+          "label": "Menu unique",
+          "valueDisplay": "Menu unique",
+          "value": "MENU_UNIQUE"
+        },
+        {
+          "label": "Choix multiple en libre-service",
+          "valueDisplay": "Choix multiple en libre-service",
+          "value": "CHOIX_MULTIPLE_LIBRE_SERVICE"
+        },
+        {
+          "label": "Choix multiple avec réservation à l’avance au jour le jour",
+          "valueDisplay": "Choix multiple avec réservation à l’avance au jour le jour",
+          "value": "CHOIX_MULTIPLE_RESERVATION"
+        }
+      ]
+    },
+    "menuVegetarienFrequence": {
+      "label": "Un menu végétarien est proposé",
+      "labelRecap": "Un menu végétarien est proposé",
+      "type": "radio",
+      "required": true,
+      "options": [
+        {
+          "label": "De façon quotidienne",
+          "valueDisplay": "De façon quotidienne",
+          "value": "QUOTIDIEN"
+        },
+        {
+          "label": "Plus d'une fois par semaine",
+          "valueDisplay": "Plus d'une fois par semaine",
+          "value": "PLUS_HEBDO"
+        },
+        {
+          "label": "Une fois par semaine",
+          "valueDisplay": "Une fois par semaine",
+          "value": "HEBDO"
+        },
+        {
+          "label": "Moins d'une fois par semaine",
+          "valueDisplay": "Moins d'une fois par semaine",
+          "value": "MOINS_HEBDO"
+        },
+        {
+          "label": "Je ne propose pas de menu végétarien",
+          "valueDisplay": "Je ne propose pas de menu végétarien",
+          "value": "JAMAIS"
+        }
+      ]
+    },
+    "menuVegetarienBases": {
+      "label": "Les plats principaux des menus végétariens servis sont majoritairement à base de",
+      "labelRecap": "Les plats principaux des menus végétariens servis sont majoritairement à base de",
+      "type": "checkboxes",
+      "required": false,
+      "options": [
+        {
+          "label": "De céréales et/ou les légumes secs (hors soja)",
+          "valueDisplay": "De céréales et/ou les légumes secs (hors soja)",
+          "value": "CEREALES_LEGUMINEUSES"
+        },
+        {
+          "label": "De soja",
+          "valueDisplay": "De soja",
+          "value": "SOJA"
+        },
+        {
+          "label": "De fromage",
+          "valueDisplay": "De fromage",
+          "value": "FROMAGE"
+        },
+        {
+          "label": "D’œufs",
+          "valueDisplay": "D’œufs",
+          "value": "OEUFS"
+        },
+        {
+          "label": "De plats transformés prêts à l'emploi",
+          "valueDisplay": "De plats transformés prêts à l'emploi",
+          "value": "PLATS_PRETS_A_L_EMPLOI"
+        }
+      ]
+    }
   }
 }
