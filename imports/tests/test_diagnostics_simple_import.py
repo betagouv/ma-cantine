@@ -318,6 +318,46 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         )
 
     @authenticate
+    def test_diagnostic_year_outside_campaign(self):
+        """
+        Diagnostics can only be imported during their campaign (teledeclaration or correction)
+        """
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        for date, file_path, schema_version, year in [
+            # 2026 diagnostics: not before the 2026 campaign (in 2027)
+            (
+                "2026-10-30",
+                "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_good_one_canteen.csv",
+                "2026",
+                2026,
+            ),
+            # 2025 diagnostics: not after the 2025 correction campaign
+            (
+                "2026-06-01",
+                "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv",
+                "2025",
+                2025,
+            ),
+        ]:
+            with self.subTest(year=year), freeze_time(date):
+                with open(file_path) as diag_file:
+                    response = self.client.post(
+                        reverse("diagnostics_simple_import"),
+                        {"file": diag_file, "type": "siret", "schema_version": schema_version},
+                    )
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertEqual(Diagnostic.objects.count(), 0)
+                body = response.json()
+                self.assertEqual(body["count"], 0)
+                self.assertEqual(len(body["errors"]), 1)
+                self.assertEqual(
+                    body["errors"][0]["message"],
+                    f"Champ 'année' : Les bilans {year} ne peuvent être importés que pendant la campagne de télédéclaration (ou de correction) {year}.",
+                )
+
+    @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     def test_file_above_max_size(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
