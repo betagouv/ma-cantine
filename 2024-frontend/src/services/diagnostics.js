@@ -29,6 +29,24 @@ const updateDiagnostic = (canteenId, diagnosticId, payload) => {
     .catch((e) => e)
 }
 
+const voletsUrl = {
+  diversification: "menus-vegetariens",
+}
+
+const updateVolet = (canteenId, diagnosticId, volet, payload) => {
+  return fetch(`/api/v2/canteens/${canteenId}/diagnostics/${diagnosticId}/${voletsUrl[volet]}`, {
+    method: "PATCH",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 const fetchDiagnostic = (canteenId, diagnosticId) => {
   return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}`, {
     method: "GET",
@@ -117,6 +135,7 @@ const cancelTeledeclaration = (canteenId, diagnosticId) => {
 export default {
   createDiagnostic,
   updateDiagnostic,
+  updateVolet,
   checkDiagnostic,
   fetchDiagnostic,
   fetchDiagnostics,
