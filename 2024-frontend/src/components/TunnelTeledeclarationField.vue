@@ -24,6 +24,7 @@ const data = computed(() => teledeclarationFieldsService.getField(props.name))
 const isNumber = computed(() => data.value?.type === "number")
 const isSelect = computed(() => data.value?.type === "select")
 const isCheckboxes = computed(() => data.value?.type === "checkboxes")
+const isRadio = computed(() => data.value?.type === "radio")
 const diagnosticType = computed(() => storeTeledeclaration.diagnostic?.diagnosticType)
 const isRequired = computed(() => data.value.requiredByType ? data.value.requiredByType[diagnosticType.value] : data.value.required)
 const label = computed(() => data.value.label)
@@ -35,6 +36,7 @@ const errorMessage = computed(() => teledeclarationFieldsService.getFieldError(p
 const selectErrorMessage = computed(() => errorMessage.value?.join(". "))
 const hint = computed(() => data.value.hint)
 const options = computed(() => data.value.options)
+const radioOptions = computed(() => options.value.map((option) => ({ label: option.label, value: option.value })))
 const checkboxesOptions = computed(() => options.value.map((option) => ({ id: `${props.name}-${option.value}`, name: props.name, label: option.label, value: option.value })))
 
 /* OSA */
@@ -90,6 +92,7 @@ const resetField = () => {
         </template>
       </DsfrInputGroup>
       <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint"/>
+      <DsfrRadioButtonSet v-if="isRadio" v-model="field" :legend="label" :name="props.name" :required="isRequired" :options="radioOptions" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint" />
       <DsfrCheckboxSet v-if="isCheckboxes" v-model="field" :legend="label" :required="isRequired" :options="checkboxesOptions" @update:modelValue="fieldChange" :error-message="selectErrorMessage">
         <template #legend>
           {{ label }}
