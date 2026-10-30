@@ -1386,7 +1386,6 @@
     "planDiversificationActions": {
       "label": "Ce plan comporte, par exemple, les actions suivantes :",
       "labelRecap": "Le plan pluriannuel de diversification des protéines mis en place comporte les actions :",
-      "hint": "Laissez vide si la réponse à la question précédente est \"Non\"",
       "type": "checkboxes",
       "required": false,
       "options": [

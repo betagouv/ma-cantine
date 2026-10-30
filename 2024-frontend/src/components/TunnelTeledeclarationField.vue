@@ -93,13 +93,7 @@ const resetField = () => {
       </DsfrInputGroup>
       <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint"/>
       <DsfrRadioButtonSet v-if="isRadio" v-model="field" :legend="label" :name="props.name" :required="isRequired" :options="radioOptions" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint" />
-      <DsfrCheckboxSet v-if="isCheckboxes" v-model="field" :legend="label" :required="isRequired" :options="checkboxesOptions" @update:modelValue="fieldChange" :error-message="selectErrorMessage">
-        <template #legend>
-          {{ label }}
-          <span v-if="isRequired">&nbsp;*</span>
-          <span v-if="hint" class="fr-hint-text">{{ hint }}</span>
-        </template>
-      </DsfrCheckboxSet>
+      <DsfrCheckboxSet v-if="isCheckboxes" v-model="field" :legend="label" :required="isRequired" :options="checkboxesOptions" @update:modelValue="fieldChange" :error-message="selectErrorMessage" />
     </div>
     <div v-if="tooltip" class="tunnel-teledeclaration-field__tooltip fr-pl-1w fr-pb-1v">
       <AppTooltipHover :content="tooltip" />
