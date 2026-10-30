@@ -88,17 +88,29 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return response
   }
 
-  /* Save diagnostic */
-  async function saveDiagnostic() {
+  /* Save diagnostic, or only the fields of the given volet */
+  async function saveDiagnostic(volet) {
     if (!diagnostic.value) return
     const canteenId = diagnostic.value.canteenId
-    if (hasSelectAutofill.value && !diagnostic.value.generatedFromPurchases) autofillDiagnostic()
-    const diagnosticValues = diagnostic.value
-    const response = await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
+    const response = volet ? await saveVolet(canteenId, volet) : await saveAppro(canteenId)
     if (response.status === "error") replaceErrors(response.list)
     else setDiagnostic({ ...diagnostic.value, ...response })
     await setCanteenAction()
     return response
+  }
+
+  /* Save the approvisionnement fields with the v1 API */
+  async function saveAppro(canteenId) {
+    if (hasSelectAutofill.value && !diagnostic.value.generatedFromPurchases) autofillDiagnostic()
+    const diagnosticValues = diagnostic.value
+    return await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
+  }
+
+  /* Save the fields of a volet with the v2 API */
+  async function saveVolet(canteenId, volet) {
+    const fields = teledeclarationFields.getFieldsListFromGroup(volet)
+    const voletValues = Object.fromEntries(fields.map((field) => [field, diagnostic.value[field]]))
+    return await diagnosticService.updateVolet(canteenId, diagnostic.value.id, volet, voletValues)
   }
 
   /* Save only the given fields of the diagnostic */
