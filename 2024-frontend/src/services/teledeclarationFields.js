@@ -3,7 +3,7 @@ import teledeclarationGroups from "@/data/teledeclarationGroups.json"
 
 /* Data */
 const groups = { ...teledeclarationGroups.approvisionnement }
-const fields = { ...teledeclarationFields.approvisionnement }
+const fields = { ...teledeclarationFields.approvisionnement, ...teledeclarationFields.diversification }
 
 /* Actions */
 const getField = (fieldName) => {
