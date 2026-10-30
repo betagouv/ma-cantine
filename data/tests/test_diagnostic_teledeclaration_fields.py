@@ -100,19 +100,19 @@ class TeledeclarationFieldsTest(SimpleTestCase):
             approvisionnement_fields.index("valeur_viandes_volailles_aocaop"),
             approvisionnement_fields.index("valeur_viandes_volailles_aocaop_igp_stg"),
         )
-        # service_type (since 2024) keeps its position of the most recent year, vegetarian_menu_type (until 2023) at the end
+        # service_type (since 2024) keeps its position of the most recent year, menu_vegetarien_type (until 2023) at the end
         self.assertEqual(
             get_teledeclaration_fields_all_years("DIVERSIFICATION"),
-            get_teledeclaration_fields_all(max(TELEDECLARATION_FIELDS), "DIVERSIFICATION") + ["vegetarian_menu_type"],
+            get_teledeclaration_fields_all(max(TELEDECLARATION_FIELDS), "DIVERSIFICATION") + ["menu_vegetarien_type"],
         )
 
     def test_service_type_replaces_vegetarian_menu_type_from_2024(self):
         self.assertNotIn("service_type", get_teledeclaration_fields_all(2023, "DIVERSIFICATION"))
-        self.assertIn("vegetarian_menu_type", get_teledeclaration_fields_all(2023, "DIVERSIFICATION"))
+        self.assertIn("menu_vegetarien_type", get_teledeclaration_fields_all(2023, "DIVERSIFICATION"))
         for year in [2024, 2026]:
             with self.subTest(year=year):
                 self.assertIn("service_type", get_teledeclaration_fields_all(year, "DIVERSIFICATION"))
-                self.assertNotIn("vegetarian_menu_type", get_teledeclaration_fields_all(year, "DIVERSIFICATION"))
+                self.assertNotIn("menu_vegetarien_type", get_teledeclaration_fields_all(year, "DIVERSIFICATION"))
 
     def test_get_teledeclaration_fields_all_volets(self):
         for year in TELEDECLARATION_FIELDS:

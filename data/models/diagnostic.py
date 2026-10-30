@@ -950,14 +950,18 @@ class Diagnostic(
 
     @property
     def diversification_badge(self) -> bool | None:
-        has_daily_frequency = self.vegetarian_weekly_recurrence == Diagnostic.VegetarianMenuFrequency.DAILY
-        has_weekly_or_more_frequency = self.vegetarian_weekly_recurrence in [
-            Diagnostic.VegetarianMenuFrequency.DAILY,
-            Diagnostic.VegetarianMenuFrequency.MID,
-            Diagnostic.VegetarianMenuFrequency.HIGH,
+        has_daily_frequency = self.menu_vegetarien_frequence == Diagnostic.MenuVegetarienFrequence.QUOTIDIEN
+        has_weekly_or_more_frequency = self.menu_vegetarien_frequence in [
+            Diagnostic.MenuVegetarienFrequence.QUOTIDIEN,
+            Diagnostic.MenuVegetarienFrequence.HEBDO,
+            Diagnostic.MenuVegetarienFrequence.PLUS_HEBDO,
         ]
         # Only the canteens with more than 200 daily meals with a diversification plan
-        if self.canteen.daily_meal_count and self.canteen.daily_meal_count >= 200 and self.has_diversification_plan:
+        if (
+            self.canteen.daily_meal_count
+            and self.canteen.daily_meal_count >= 200
+            and self.plan_diversification_en_place
+        ):
             return True
         # Only the canteens in the administration sector must have a daily frequency
         if self.canteen.in_administration and has_daily_frequency:

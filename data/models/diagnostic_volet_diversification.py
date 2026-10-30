@@ -10,18 +10,21 @@ class DiagnosticVoletDiversificationMixin(models.Model):
     """
 
     class ServiceType(models.TextChoices):
-        UNIQUE = "UNIQUE", "Menu unique"
-        MULTIPLE_SELF = "MULTIPLE_SELF", "Choix multiple en libre-service"
-        MULTIPLE_RESERVATION = "MULTIPLE_RESERVATION", "Choix multiple avec réservation à l’avance au jour le jour"
+        MENU_UNIQUE = "MENU_UNIQUE", "Menu unique"
+        CHOIX_MULTIPLE_LIBRE_SERVICE = "CHOIX_MULTIPLE_LIBRE_SERVICE", "Choix multiple en libre-service"
+        CHOIX_MULTIPLE_RESERVATION = (
+            "CHOIX_MULTIPLE_RESERVATION",
+            "Choix multiple avec réservation à l’avance au jour le jour",
+        )
 
-    class VegetarianMenuFrequency(models.TextChoices):
-        NEVER = "NEVER", "Jamais"
-        LOW = "LOW", "Moins d'une fois par semaine"
-        MID = "MID", "Une fois par semaine"
-        HIGH = "HIGH", "Plus d'une fois par semaine"
-        DAILY = "DAILY", "De façon quotidienne"
+    class MenuVegetarienFrequence(models.TextChoices):
+        JAMAIS = "JAMAIS", "Jamais"
+        MOINS_HEBDO = "MOINS_HEBDO", "Moins d'une fois par semaine"
+        HEBDO = "HEBDO", "Une fois par semaine"
+        PLUS_HEBDO = "PLUS_HEBDO", "Plus d'une fois par semaine"
+        QUOTIDIEN = "QUOTIDIEN", "De façon quotidienne"
 
-    class VegetarianMenuType(models.TextChoices):
+    class MenuVegetarienType(models.TextChoices):  # legacy
         UNIQUE = "UNIQUE", "Un menu végétarien en plat unique, sans choix"
         SEVERAL = (
             "SEVERAL",
@@ -32,9 +35,9 @@ class DiagnosticVoletDiversificationMixin(models.Model):
             "Un menu végétarien au choix, en plus d'autres plats non végétariens",
         )
 
-    class DiversificationPlanActions(models.TextChoices):
-        PRODUCTS = (
-            "PRODUCTS",
+    class PlanDiversificationActions(models.TextChoices):
+        PLATS_PRODUITS = (
+            "PLATS_PRODUITS",
             "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
         )
         PRESENTATION = (
@@ -49,26 +52,26 @@ class DiagnosticVoletDiversificationMixin(models.Model):
             "PROMOTION",
             "Agir sur la mise en avant des produits (plats recommandés, dégustation, mode de production...)",
         )
-        TRAINING = (
-            "TRAINING",
+        FORMATION = (
+            "FORMATION",
             "Agir sur la formation du personnel, la sensibilisation des convives, l’investissement dans de nouveaux équipements de cuisine...",
         )
 
-    class VegetarianMenuBase(models.TextChoices):
-        GRAIN = "GRAIN", "De céréales et/ou les légumes secs (hors soja)"
-        SOY = "SOY", "De soja"
-        CHEESE = "CHEESE", "De fromage"
-        EGG = "EGG", "D’œufs"
-        READYMADE = "READYMADE", "Plats prêts à l'emploi"
+    class MenuVegetarienBase(models.TextChoices):
+        CEREALES_LEGUMINEUSES = "CEREALES_LEGUMINEUSES", "De céréales et/ou les légumes secs (hors soja)"
+        SOJA = "SOJA", "De soja"
+        FROMAGE = "FROMAGE", "De fromage"
+        OEUFS = "OEUFS", "D’œufs"
+        PLATS_PRETS_A_L_EMPLOI = "PLATS_PRETS_A_L_EMPLOI", "Plats prêts à l'emploi"
 
     # all the fields of the volet (all years, see diagnostic_teledeclaration_fields.py)
     DIVERSIFICATION_FIELDS = get_teledeclaration_fields_all_years("DIVERSIFICATION")
 
-    has_diversification_plan = models.BooleanField(
+    plan_diversification_en_place = models.BooleanField(
         blank=True, null=True, verbose_name="plan de diversification en place"
     )
-    diversification_plan_actions = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=DiversificationPlanActions.choices),
+    plan_diversification_actions = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=PlanDiversificationActions.choices),
         blank=True,
         null=True,
         size=None,
@@ -81,22 +84,22 @@ class DiagnosticVoletDiversificationMixin(models.Model):
         blank=True,
         verbose_name="type de service",
     )
-    vegetarian_weekly_recurrence = models.CharField(
+    menu_vegetarien_frequence = models.CharField(
         max_length=255,
-        choices=VegetarianMenuFrequency.choices,
+        choices=MenuVegetarienFrequence.choices,
         null=True,
         blank=True,
         verbose_name="Menus végétariens par semaine",
     )
-    vegetarian_menu_type = models.CharField(  # legacy
+    menu_vegetarien_type = models.CharField(  # legacy
         max_length=255,
-        choices=VegetarianMenuType.choices,
+        choices=MenuVegetarienType.choices,
         blank=True,
         null=True,
         verbose_name="Menu végétarien proposé",
     )
-    vegetarian_menu_bases = ChoiceArrayField(
-        base_field=models.CharField(max_length=255, choices=VegetarianMenuBase.choices),
+    menu_vegetarien_bases = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=MenuVegetarienBase.choices),
         blank=True,
         null=True,
         size=None,

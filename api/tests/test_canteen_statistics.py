@@ -48,7 +48,7 @@ class CanteenStatsApiTest(APITestCase):
                 valeur_egalim_autres=None,
                 has_waste_diagnostic=False,
                 waste_actions=[],
-                vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.DAILY,
+                menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.QUOTIDIEN,
                 plastic_tableware_substituted=False,
                 communicates_on_food_quality=False,
             )
@@ -79,7 +79,7 @@ class CanteenStatsApiTest(APITestCase):
                 has_waste_diagnostic=True,
                 waste_actions=[Diagnostic.WasteActions.INSCRIPTION, Diagnostic.WasteActions.AWARENESS],
                 has_donation_agreement=True,
-                vegetarian_weekly_recurrence=Diagnostic.VegetarianMenuFrequency.LOW,
+                menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.MOINS_HEBDO,
                 cooking_plastic_substituted=True,
                 serving_plastic_substituted=True,
                 plastic_bottles_substituted=True,

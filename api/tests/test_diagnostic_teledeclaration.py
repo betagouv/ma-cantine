@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 from django.core.management import call_command
+from django.template.loader import get_template
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -8,6 +9,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
+from api.views.diagnostic_teledeclaration import DiagnosticTeledeclarationPdfView
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
 
 
@@ -829,3 +831,31 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_pdf_templates_display_the_diversification_answers(self):
+        """
+        The PDF templates read the diagnostic fields by name (diagnostic.__dict__ + overrides):
+        a renamed field must be renamed in the templates (& overrides) too
+        """
+        user = UserFactory()
+        canteen = CanteenFactory(daily_meal_count=200)  # the diversification plan question applies
+        diagnostic = DiagnosticFactory(
+            canteen=canteen,
+            year=2024,
+            plan_diversification_en_place=True,
+            plan_diversification_actions=[Diagnostic.PlanDiversificationActions.PLATS_PRODUITS],
+            menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.QUOTIDIEN,
+            menu_vegetarien_bases=[Diagnostic.MenuVegetarienBase.SOJA],
+        )
+        diagnostic.canteen.managers.add(user)
+        diagnostic.teledeclare(user)
+        context = DiagnosticTeledeclarationPdfView.get_context(diagnostic)
+
+        for template_name in ["teledeclaration_campaign_2024/index.html", "teledeclaration_pdf.html"]:
+            with self.subTest(template_name=template_name):
+                html = get_template(template_name).render(context)
+                # only displayed if plan_diversification_en_place
+                self.assertIn(Diagnostic.PlanDiversificationActions.PLATS_PRODUITS.label, html)
+                self.assertIn(Diagnostic.MenuVegetarienFrequence.QUOTIDIEN.label, html)
+                self.assertIn(Diagnostic.MenuVegetarienBase.SOJA.label, html)
