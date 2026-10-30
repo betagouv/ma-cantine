@@ -1,0 +1,455 @@
+{
+  "$schema": "https://frictionlessdata.io/schemas/table-schema.json",
+  "encoding": "utf-8",
+  "fields": [
+    {
+      "constraints": {
+        "required": true,
+        "unique": true
+      },
+      "description": "",
+      "example": "949",
+      "format": "default",
+      "name": "cantine_id",
+      "title": "Numéro ID de l'établissement pour lequel créer ou modifier le bilan",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "Réfère à l'année des données et non l'année de déclaration",
+      "example": "2021",
+      "name": "année_bilan",
+      "title": "Année du bilan",
+      "type": "any"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "1234",
+      "name": "nombre_repas_an",
+      "title": "Nombre de repas par an",
+      "type": "integer"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_totale",
+      "title": "Valeur totale annuelle HT",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_bio",
+      "title": "Bio - Valeur annuelle HT",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_bio_dont_commerce_equitable",
+      "title": "Bio dont commerce équitable - Valeur annuelle HT",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_siqo",
+      "title": "Produits SIQO (hors bio) - Valeur annuelle HT",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_externalites_performance",
+      "title": "Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_egalim_autres",
+      "title": "Valeur totale (HT) des autres achats EGalim",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_egalim_autres_dont_commerce_equitable",
+      "title": "Valeur totale (HT) des achats commerce équitable (hors bio)",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_viandes_volailles",
+      "title": "Valeur totale (HT) viandes et volailles fraiches ou surgelées",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "required": true
+      },
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_viandes_volailles_egalim",
+      "title": "Valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_de_la_mer",
+      "title": "Valeur totale (HT) poissons et produits aquatiques",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_de_la_mer_egalim",
+      "title": "Valeur totale (HT) poissons et produits aquatiques, EGalim",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_fruits_et_legumes",
+      "title": "Valeur totale (HT) fruits et légumes frais ou surgelés",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_charcuterie",
+      "title": "Valeur totale (HT) charcuterie",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_laitiers",
+      "title": "Valeur totale (HT) BOF (Produits laitiers, beurre et œufs)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boulangerie",
+      "title": "Valeur totale (HT) boulangerie / pâtisserie fraîches",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boissons",
+      "title": "Valeur totale (HT) boissons",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_autres",
+      "title": "Valeur totale (HT) autres produits frais, surgelés et d'épicerie",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_europe",
+      "title": "Origine UE (hors France) - Valeur annuelle HT",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_france",
+      "title": "Origine France - Valeur annuelle HT",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_circuit_court",
+      "title": "Circuit court - Valeur annuelle HT",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_local",
+      "title": "Local - Valeur annuelle HT",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_viandes_volailles_europe",
+      "title": "Viandes et volailles fraîches et surgelées, Origine UE (hors France)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_de_la_mer_europe",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Origine UE (hors France)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_fruits_et_legumes_europe",
+      "title": "Fruits et légumes frais et surgelés, Origine UE (hors France)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_charcuterie_europe",
+      "title": "Charcuterie, Origine UE (hors France)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_laitiers_europe",
+      "title": "BOF (Produits laitiers, beurre et œufs), Origine UE (hors France)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boulangerie_europe",
+      "title": "Boulangerie / Pâtisserie fraîches, Origine UE (hors France)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boissons_europe",
+      "title": "Boissons, Origine UE (hors France)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_autres_europe",
+      "title": "Autres produits frais, surgelés et d'épicerie, Origine UE (hors France)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_viandes_volailles_france",
+      "title": "Viandes et volailles fraîches et surgelées, Origine France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_de_la_mer_france",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_fruits_et_legumes_france",
+      "title": "Fruits et légumes frais et surgelés, Origine France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_charcuterie_france",
+      "title": "Charcuterie, Origine France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_laitiers_france",
+      "title": "BOF (Produits laitiers, beurre et œufs), Origine France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boulangerie_france",
+      "title": "Boulangerie / Pâtisserie fraîches, Origine France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boissons_france",
+      "title": "Boissons, Origine France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_autres_france",
+      "title": "Autres produits frais, surgelés et d'épicerie, Origine France",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_viandes_volailles_circuit_court",
+      "title": "Viandes et volailles fraîches et surgelées, Origine France (dont circuit-court)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_de_la_mer_circuit_court",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France (dont circuit-court)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_fruits_et_legumes_circuit_court",
+      "title": "Fruits et légumes frais et surgelés, Origine France (dont circuit-court)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_charcuterie_circuit_court",
+      "title": "Charcuterie, Origine France (dont circuit-court)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_laitiers_circuit_court",
+      "title": "BOF (Produits laitiers, beurre et œufs), Origine France (dont circuit-court)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boulangerie_circuit_court",
+      "title": "Boulangerie / Pâtisserie fraîches, Origine France (dont circuit-court)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boissons_circuit_court",
+      "title": "Boissons, Origine France (dont circuit-court)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_autres_circuit_court",
+      "title": "Autres produits frais, surgelés et d'épicerie, Origine France (dont circuit-court)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_viandes_volailles_local",
+      "title": "Viandes et volailles fraîches et surgelées, Origine France (dont local)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_de_la_mer_local",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France (dont local)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_fruits_et_legumes_local",
+      "title": "Fruits et légumes frais et surgelés, Origine France (dont local)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_charcuterie_local",
+      "title": "Charcuterie, Origine France (dont local)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_produits_laitiers_local",
+      "title": "BOF (Produits laitiers, beurre et œufs), Origine France (dont local)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boulangerie_local",
+      "title": "Boulangerie / Pâtisserie fraîches, Origine France (dont local)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_boissons_local",
+      "title": "Boissons, Origine France (dont local)",
+      "type": "number"
+    },
+    {
+      "description": "",
+      "example": "1234.99",
+      "name": "valeur_autres_local",
+      "title": "Autres produits frais, surgelés et d'épicerie, Origine France (dont local)",
+      "type": "number"
+    },
+    {
+      "constraints": {
+        "pattern": "^(PAT|COMMUNE|DEPARTEMENT|REGION|KM)$"
+      },
+      "description": "",
+      "doc_enum": [
+        "PAT",
+        "COMMUNE",
+        "DEPARTEMENT",
+        "REGION",
+        "KM"
+      ],
+      "example": "PAT",
+      "name": "definition_local",
+      "title": "définition de local",
+      "type": "string"
+    },
+    {
+      "description": "",
+      "example": "1234",
+      "name": "definition_local_km",
+      "title": "définition de local (distance en km)",
+      "type": "integer"
+    }
+  ],
+  "homepage": "https://github.com/betagouv/ma-cantine",
+  "name": "import-bilans-simple-id-2026",
+  "path": "https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/main/data/schemas/imports/bilans_simple_id_2026.json",
+  "title": "Schema import des bilans (simple) par ID (format 2026)"
+}
