@@ -1366,7 +1366,7 @@
   },
   "diversification": {
     "planDiversificationEnPlace": {
-      "label": "Un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales a été mis en place dans l’établissement",
+      "label": "Un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales a été mis en place dans l’établissement :",
       "labelRecap": "Un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales a été mis en place dans l’établissement",
       "type": "radio",
       "required": true,
@@ -1384,7 +1384,7 @@
       ]
     },
     "planDiversificationActions": {
-      "label": "Ce plan comporte, par exemple, les actions suivantes",
+      "label": "Ce plan comporte, par exemple, les actions suivantes :",
       "labelRecap": "Le plan pluriannuel de diversification des protéines mis en place comporte les actions :",
       "hint": "Laissez vide si la réponse à la question précédente est \"Non\"",
       "type": "checkboxes",
@@ -1418,7 +1418,7 @@
       ]
     },
     "serviceType": {
-      "label": "Le service est en",
+      "label": "Le service est en :",
       "labelRecap": "Le service est en",
       "type": "radio",
       "required": true,
@@ -1441,7 +1441,7 @@
       ]
     },
     "menuVegetarienFrequence": {
-      "label": "Un menu végétarien est proposé",
+      "label": "Un menu végétarien est proposé :",
       "labelRecap": "Un menu végétarien est proposé",
       "type": "radio",
       "required": true,
@@ -1474,7 +1474,7 @@
       ]
     },
     "menuVegetarienBases": {
-      "label": "Les plats principaux des menus végétariens servis sont majoritairement à base de",
+      "label": "Les plats principaux des menus végétariens servis sont majoritairement à base de :",
       "labelRecap": "Les plats principaux des menus végétariens servis sont majoritairement à base de",
       "type": "checkboxes",
       "required": false,
