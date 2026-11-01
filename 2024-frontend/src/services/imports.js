@@ -4,8 +4,10 @@ const importFile = (payload) => {
   const file = payload.file[0]
   const form = new FormData()
   const importType = payload.importType || "siret"
+  const schemaVersion = payload.schemaVersion || ""
   form.append("file", file)
   form.append("type", importType)
+  form.append("schema_version", schemaVersion)
   return fetch(`/api/v1/${payload.apiUrl}/`, {
     method: "POST",
     headers: {

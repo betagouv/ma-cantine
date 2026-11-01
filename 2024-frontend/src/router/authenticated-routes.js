@@ -18,6 +18,9 @@ import GestionnaireImportAchatsSIRETOld from "@/views/GestionnaireImportAchatsSI
 import GestionnaireImportBilansSimplesOld from "@/views/GestionnaireImportBilansSimplesOld.vue"
 import GestionnaireImportBilansDetaillesOld from "@/views/GestionnaireImportBilansDetaillesOld.vue"
 import GestionnaireImportBilansSimplesSIRETOld from "@/views/GestionnaireImportBilansSimplesSIRETOld.vue"
+import GestionnaireImportBilansSimples from "@/views/GestionnaireImportBilansSimples.vue"
+import GestionnaireImportBilansDetailles from "@/views/GestionnaireImportBilansDetailles.vue"
+import GestionnaireImportBilansSimplesSIRET from "@/views/GestionnaireImportBilansSimplesSIRET.vue"
 import GestionnaireImportCantinesCreer from "@/views/GestionnaireImportCantinesCreer.vue"
 import GestionnaireImportCantinesModifier from "@/views/GestionnaireImportCantinesModifier.vue"
 import GestionnaireImportCantinesGestionnaires from "@/views/GestionnaireImportCantinesGestionnaires.vue"
@@ -154,6 +157,42 @@ const routes = [
         component: GestionnaireImportBilansDetaillesOld,
         meta: {
           title: "Créer ou modifier des bilans détaillés (ancien format)",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "bilans-simples",
+        name: "GestionnaireImportBilansSimples",
+        component: GestionnaireImportBilansSimples,
+        meta: {
+          title: "Créer ou modifier des bilans simples via l'ID de la cantine",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "bilans-simples-siret",
+        name: "GestionnaireImportBilansSimplesSIRET",
+        component: GestionnaireImportBilansSimplesSIRET,
+        meta: {
+          title: "Créer ou modifier des bilans simples via le SIRET de la cantine",
+          breadcrumbs: [
+            { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+            { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+          ],
+        },
+      },
+      {
+        path: "bilans-detailles",
+        name: "GestionnaireImportBilansDetailles",
+        component: GestionnaireImportBilansDetailles,
+        meta: {
+          title: "Créer ou modifier des bilans détaillés",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireImport" }, title: "Importer des données" },
