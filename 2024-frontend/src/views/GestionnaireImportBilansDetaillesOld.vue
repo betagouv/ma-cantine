@@ -7,6 +7,7 @@ import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
+import ImportDiagnosticsDeprecatedWarning from "@/components/ImportDiagnosticsDeprecatedWarning.vue"
 
 /* Router */
 const route = useRoute()
@@ -37,6 +38,7 @@ const success = (count) => {
 </script>
 
 <template>
+  <ImportDiagnosticsDeprecatedWarning :redirectTo="{ name: 'GestionnaireImportBilansDetailles' }" />
   <h1>{{ route.meta.title }}</h1>
   <p class="fr-col-12 fr-col-md-7">
     Notre outil d’import de masse vous permet d’ajouter les bilans détaillés de toutes vos cantines d’un coup.
