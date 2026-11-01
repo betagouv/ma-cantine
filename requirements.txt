@@ -242,7 +242,7 @@ drf-spectacular-sidecar==2026.10.1
     # via ma-cantine
 et-xmlfile==2.0.0
     # via openpyxl
-executing==2.2.1
+executing==2.3.0
     # via stack-data
 factory-boy==3.3.3
 faker==27.0.0
