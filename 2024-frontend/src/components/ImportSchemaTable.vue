@@ -14,7 +14,10 @@ schemaService.getFields(props.schemaFile).then((fields) => {
 })
 
 const indexToLetter = (index) => {
-  return String.fromCharCode(65 + index) // 65 is the ASCII code for 'A'
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  const lastLetter = alphabet[index % 26]
+  if (index < 26) return lastLetter
+  return indexToLetter(Math.floor(index / 26) - 1) + lastLetter
 }
 
 const formatFields = (fields) => {
