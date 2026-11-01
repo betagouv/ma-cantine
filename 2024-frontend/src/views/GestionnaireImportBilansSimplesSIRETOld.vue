@@ -6,7 +6,7 @@ import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
-import ImportDiagnosticsDeprecatedWarning from "@/components/ImportDiagnosticsDeprecatedWarning.vue"
+import ImportDeprecatedWarningDiagnostics from "@/components/ImportDeprecatedWarningDiagnostics.vue"
 import ImportFilesExample from "@/components/ImportFilesExample.vue"
 
 /* Router */
@@ -38,7 +38,7 @@ const success = (count) => {
 </script>
 
 <template>
-  <ImportDiagnosticsDeprecatedWarning :redirectTo="{ name: 'GestionnaireImportBilansSimplesSIRET' }" />
+  <ImportDeprecatedWarningDiagnostics :redirectTo="{ name: 'GestionnaireImportBilansSimplesSIRET' }" />
   <h1>{{ route.meta.title }}</h1>
   <p class="fr-col-12 fr-col-md-7">
     Notre outil d'import de masse vous permet d'ajouter les bilans simplifiés de vos cantines avec numéro SIRET d'un coup.
