@@ -48,7 +48,7 @@ billiard==4.2.4
     # via celery
 boolean-py==5.0
     # via license-expression
-boto3==1.43.88
+boto3==1.43.121
     # via django-storages
 botocore==1.43.88
     # via
