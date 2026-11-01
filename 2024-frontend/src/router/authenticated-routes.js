@@ -76,6 +76,7 @@ const routes = [
         meta: {
           title: "Importer des données",
           siteMap: diag,
+          storesRequired: ["campaignDates"],
           breadcrumbs: [{ to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" }],
         },
       },
