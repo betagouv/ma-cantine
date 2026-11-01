@@ -1,7 +1,9 @@
 <script setup>
 import { computed } from "vue"
 import { useRoute } from "vue-router"
+import { storeToRefs } from "pinia"
 import { useRootStore } from "@/stores/root"
+import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import ImportCard from "@/components/ImportCard.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
@@ -13,6 +15,10 @@ const diagnosticsPicto = "/static/images/picto-dsfr/money.svg"
 /* Data */
 const route = useRoute()
 const store = useRootStore()
+
+/* Campaign dates */
+const campaignDatesStore = useStoreCampaignDates()
+const { currentCampaignIsOpen } = storeToRefs(campaignDatesStore)
 
 /* Links */
 const canteenLinks = computed(() => {
@@ -103,8 +109,14 @@ const diagnosticsLinks = [
       </template>
     </ImportCard>
 
-    <ImportCard title="Bilans" :icon="diagnosticsPicto" :buttons="diagnosticsLinks">
-      <template #callout>
+    <ImportCard title="Bilans" :icon="diagnosticsPicto" :buttons="currentCampaignIsOpen ? diagnosticsLinks : []">
+      <template v-if="!currentCampaignIsOpen" #disabled>
+        <p>
+          L'import de bilans est possible uniquement lors des campagnes de télédéclaration EGalim. <br/>
+          Les bilans de l'année n ne peuvent être importés qu'en début d'année n+1.
+        </p>
+      </template>
+      <template v-else #callout>
         <p class="fr-mb-1w fr-text--sm">Le format de données des imports bilans a été modifié en 2026. L'import avec l'ancien format reste disponible sur les pages suivantes : </p>
         <ul>
           <li>
