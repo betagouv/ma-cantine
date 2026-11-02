@@ -2130,12 +2130,6 @@
     }
   },
   "GASPILLAGE": {
-    "bread_leftovers": {
-      "description_tunnel": "",
-      "libelle_court": "Reste de pain",
-      "libelle_long": "Reste de pain",
-      "obligatoire": false
-    },
     "donation_food_type": {
       "description_tunnel": "",
       "libelle_court": "Type de denrées données",
@@ -2152,12 +2146,6 @@
       "description_tunnel": "",
       "libelle_court": "Quantité des denrées données",
       "libelle_long": "Quantité des denrées données",
-      "obligatoire": false
-    },
-    "duration_leftovers_measurement": {
-      "description_tunnel": "",
-      "libelle_court": "Période de mesure",
-      "libelle_long": "Période de mesure",
       "obligatoire": false
     },
     "has_donation_agreement": {
@@ -2194,30 +2182,6 @@
       "description_tunnel": "",
       "libelle_court": "Commentaires concernant la lutte contre le gaspillage et dons alimentaires",
       "libelle_long": "Commentaires concernant la lutte contre le gaspillage et dons alimentaires",
-      "obligatoire": false
-    },
-    "served_leftovers": {
-      "description_tunnel": "",
-      "libelle_court": "Reste plateau",
-      "libelle_long": "Reste plateau",
-      "obligatoire": false
-    },
-    "side_leftovers": {
-      "description_tunnel": "",
-      "libelle_court": "Reste de composantes (entrée, plat dessert...)",
-      "libelle_long": "Reste de composantes (entrée, plat dessert...)",
-      "obligatoire": false
-    },
-    "total_leftovers": {
-      "description_tunnel": "",
-      "libelle_court": "Total des déchets alimentaires",
-      "libelle_long": "Total des déchets alimentaires",
-      "obligatoire": false
-    },
-    "unserved_leftovers": {
-      "description_tunnel": "",
-      "libelle_court": "Reste en production (non servi)",
-      "libelle_long": "Reste en production (non servi)",
       "obligatoire": false
     },
     "waste_actions": {
