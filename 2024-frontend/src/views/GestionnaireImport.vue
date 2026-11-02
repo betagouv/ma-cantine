@@ -1,7 +1,9 @@
 <script setup>
 import { computed } from "vue"
 import { useRoute } from "vue-router"
+import { storeToRefs } from "pinia"
 import { useRootStore } from "@/stores/root"
+import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import ImportCard from "@/components/ImportCard.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 
@@ -13,6 +15,10 @@ const diagnosticsPicto = "/static/images/picto-dsfr/money.svg"
 /* Data */
 const route = useRoute()
 const store = useRootStore()
+
+/* Campaign dates */
+const campaignDatesStore = useStoreCampaignDates()
+const { currentCampaignIsOpen } = storeToRefs(campaignDatesStore)
 
 /* Links */
 const canteenLinks = computed(() => {
@@ -52,6 +58,24 @@ const purchasesLinks = [
     route: "GestionnaireImportAchatsID",
   },
 ]
+
+const diagnosticsLinks = [
+  {
+    label: "Créer ou modifier des bilans simples pour des cantines avec SIRET",
+    icon: "fr-icon-edit-box-line",
+    route: "GestionnaireImportBilansSimplesSIRET",
+  },
+  {
+    label: "Créer ou modifier des bilans simples pour des groupes ou cantines sans SIRET",
+    icon: "fr-icon-edit-box-line",
+    route: "GestionnaireImportBilansSimples",
+  },
+  {
+    label: "Créer ou modifier des bilans détaillés pour des cantines avec SIRET",
+    icon: "fr-icon-edit-box-line",
+    route: "GestionnaireImportBilansDetailles",
+  },
+]
 </script>
 
 <template>
@@ -85,15 +109,27 @@ const purchasesLinks = [
       </template>
     </ImportCard>
 
-    <ImportCard
-      title="Bilans"
-      :icon="diagnosticsPicto"
-    >
-      <template #disabled>
+    <ImportCard title="Bilans" :icon="diagnosticsPicto" :buttons="currentCampaignIsOpen ? diagnosticsLinks : []">
+      <template v-if="!currentCampaignIsOpen" #disabled>
         <p>
           L'import de bilans est possible uniquement lors des campagnes de télédéclaration EGalim. <br/>
           Les bilans de l'année n ne peuvent être importés qu'en début d'année n+1.
         </p>
+      </template>
+      <template v-else #callout>
+        <p class="fr-mb-1w fr-text--sm">Le format de données des imports bilans a été modifié en 2026. L'import avec l'ancien format reste disponible sur les pages suivantes : </p>
+        <ul>
+          <li>
+            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportBilansSimplesSIRETOld'}" title="Créer ou modifier des bilans simples pour des cantines avec SIRET (ancien format)" />
+          </li>
+          <li>
+            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportBilansSimplesOld'}" title="Créer ou modifier des bilans simples pour des groupes ou cantines sans SIRET (ancien format)" />
+          </li>
+          <li>
+            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportBilansDetaillesOld'}" title="Créer ou modifier des bilans détaillés pour des cantines avec SIRET (ancien format)" />
+          </li>
+        </ul>
+        <p class="fr-mt-2w fr-text--sm">À la fin de la campagne de télédéclaration 2027 ces pages seront supprimées.</p>
       </template>
     </ImportCard>
   </section>
