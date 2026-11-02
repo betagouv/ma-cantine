@@ -13,7 +13,7 @@ import ImportDeprecatedWarningDiagnostics from "@/components/ImportDeprecatedWar
 const route = useRoute()
 
 /* Data */
-const schemaFile = "bilans_detaille.json"
+const schemaFile = "bilans_detaille_siret.json"
 const exampleFile = {
   name: "importer_des_bilans_detailles_exemple.xlsx",
   size: "9 ko",

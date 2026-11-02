@@ -24,12 +24,12 @@ HISTORY_VIEWS = {
     "CanteensUpdateImportView": (ImportType.CANTEEN_UPDATE, False, False),
     "CanteensManagersImportView": (ImportType.CANTEEN_MANAGERS, False, False),
     "DiagnosticsSimpleImportView": (ImportType.DIAGNOSTIC_SIMPLE_SIRET, True, True),  # SIRET or ID
-    "DiagnosticsCompleteImportView": (ImportType.DIAGNOSTIC_COMPLETE, True, False),
+    "DiagnosticsCompleteImportView": (ImportType.DIAGNOSTIC_COMPLETE_SIRET, True, False),
     # old views
     "CanteensImportView": (ImportType.CANTEEN_ONLY, False, False),
     "ImportCanteensView": (ImportType.CANTEEN_ONLY, False, False),
     "ImportSimpleDiagnosticsView": (ImportType.DIAGNOSTIC_SIMPLE_SIRET, True, False),
-    "ImportCompleteDiagnosticsView": (ImportType.DIAGNOSTIC_COMPLETE, True, False),
+    "ImportCompleteDiagnosticsView": (ImportType.DIAGNOSTIC_COMPLETE_SIRET, True, False),
     "ImportSimpleCentralKitchenView": (ImportType.CC_SIMPLE, True, False),
     "ImportCompleteCentralKitchenView": (ImportType.CC_COMPLETE, True, False),
 }

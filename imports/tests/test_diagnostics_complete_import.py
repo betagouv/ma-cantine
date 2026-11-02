@@ -38,7 +38,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -60,7 +60,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -84,7 +84,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -116,7 +116,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -164,7 +164,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 0)
-        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, file_path)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_SIRET, file_path)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
@@ -298,7 +298,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 2)
-        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, 2, canteen=None)
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_SIRET, 2, canteen=None)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 2)
@@ -336,7 +336,9 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         body = response.json()
         self.assertEqual(len(body["errors"]), 0, body["errors"])
         self.assertEqual(body["count"], 1)
-        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, 1, canteen=canteen)
+        assert_import_success_created(
+            self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_SIRET, 1, canteen=canteen
+        )
 
         diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
         self.assertEqual(diagnostic.year, 2026)
@@ -359,7 +361,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Diagnostic.objects.count(), 1)
-        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, 1)
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_SIRET, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
@@ -389,7 +391,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
             response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE, 1)
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_SIRET, 1)
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 1)
