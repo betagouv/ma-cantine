@@ -11,6 +11,7 @@ DIAGNOSTICS_SIMPLE_SIRET_2026_SCHEMA = ImportSchema("bilans_simple_siret_2026.js
 DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA = ImportSchema("bilans_simple_id_2026.json")  # not used yet
 # complete
 DIAGNOSTICS_COMPLETE_SCHEMA = ImportSchema("bilans_detaille.json")
+DIAGNOSTICS_COMPLETE_2026_SCHEMA = ImportSchema("bilans_detaille_2026.json")  # not used yet
 
 
 class DiagnosticsSimpleImportView(BaseDiagnosticsImportView):
