@@ -23,7 +23,12 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
   const visitedPagesSeparator = ","
   const tunnelApproVisitedPages = computed(() => diagnostic.value?.tunnelAppro?.split(visitedPagesSeparator) || [])
-  const voletTunnelProgressionFields = { diversification: "tunnelDiversification" }
+  const voletTunnelProgressionFields = {
+    gaspillage: "tunnelWaste",
+    diversification: "tunnelDiversification",
+    plastique: "tunnelPlastic",
+    information: "tunnelInfo",
+  }
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
