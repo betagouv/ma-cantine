@@ -278,6 +278,46 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         )
 
     @authenticate
+    def test_schema_version_2026_with_2025_file(self):
+        """
+        A file in the 2025 format is not valid with schema_version=2026 (header error)
+        """
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = (
+            "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv"
+        )
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, file_path)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(body["errors"][0]["field"], "Première ligne du fichier incorrecte")
+
+    @authenticate
+    def test_schema_version_unknown(self):
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_different_canteens.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret", "schema_version": "2024"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"], "Version de schéma « 2024 » inconnue. Valeurs possibles : 2025, 2026."
+        )
+
+    @authenticate
     @override_settings(CSV_IMPORT_MAX_SIZE=1)
     def test_file_above_max_size(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -522,6 +562,30 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.valeur_autres_france, Decimal("1.6"))
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
+
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_diagnostics_created_with_schema_version_2026(self):
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_good_one_canteen.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        self.assertEqual(body["count"], 1)
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, 1)
+
+        diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
+        self.assertEqual(diagnostic.year, 2026)
+        self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
+        self.assertEqual(diagnostic.nombre_repas_an, 42000)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertEqual(diagnostic.valeur_fruits_et_legumes, 250)
 
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
