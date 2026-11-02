@@ -2435,35 +2435,30 @@
   },
   "DIVERSIFICATION": {
     "diversification_plan_actions": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "actions inclus dans le plan de diversification des protéines",
       "libelle_long": "actions inclus dans le plan de diversification des protéines",
       "obligatoire": false
     },
     "has_diversification_plan": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "plan de diversification en place",
       "libelle_long": "plan de diversification en place",
       "obligatoire": false
     },
     "service_type": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "type de service",
       "libelle_long": "type de service",
       "obligatoire": false
     },
     "vegetarian_menu_bases": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "bases de menu végétarien",
       "libelle_long": "bases de menu végétarien",
       "obligatoire": false
     },
     "vegetarian_weekly_recurrence": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "Menus végétariens par semaine",
       "libelle_long": "Menus végétariens par semaine",
@@ -2472,112 +2467,96 @@
   },
   "GASPILLAGE": {
     "bread_leftovers": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "reste de pain kg/an",
       "libelle_long": "reste de pain kg/an",
       "obligatoire": false
     },
     "donation_food_type": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "type de denrées données",
       "libelle_long": "type de denrées données",
       "obligatoire": false
     },
     "donation_frequency": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "fréquence de dons dons/an",
       "libelle_long": "fréquence de dons dons/an",
       "obligatoire": false
     },
     "donation_quantity": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "quantité des denrées données kg/an",
       "libelle_long": "quantité des denrées données kg/an",
       "obligatoire": false
     },
     "duration_leftovers_measurement": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "période de mesure (jours)",
       "libelle_long": "période de mesure (jours)",
       "obligatoire": false
     },
     "has_donation_agreement": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "propose des dons alimentaires",
       "libelle_long": "propose des dons alimentaires",
       "obligatoire": false
     },
     "has_waste_diagnostic": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "diagnostic sur le gaspillage réalisé",
       "libelle_long": "diagnostic sur le gaspillage réalisé",
       "obligatoire": false
     },
     "has_waste_measures": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "réalise des mesures de gaspillage alimentaire",
       "libelle_long": "réalise des mesures de gaspillage alimentaire",
       "obligatoire": false
     },
     "has_waste_plan": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "plan d'action contre le gaspillage en place",
       "libelle_long": "plan d'action contre le gaspillage en place",
       "obligatoire": false
     },
     "other_waste_action": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "autre action contre le gaspillage alimentaire",
       "libelle_long": "autre action contre le gaspillage alimentaire",
       "obligatoire": false
     },
     "other_waste_comments": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "autres commentaires (gaspillage)",
       "libelle_long": "autres commentaires (gaspillage)",
       "obligatoire": false
     },
     "served_leftovers": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "reste plateau kg/an",
       "libelle_long": "reste plateau kg/an",
       "obligatoire": false
     },
     "side_leftovers": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "reste de composantes kg/an",
       "libelle_long": "reste de composantes kg/an",
       "obligatoire": false
     },
     "total_leftovers": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "total des déchets alimentaires (t)",
       "libelle_long": "total des déchets alimentaires (t)",
       "obligatoire": false
     },
     "unserved_leftovers": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "reste en production (non servi) kg/an",
       "libelle_long": "reste en production (non servi) kg/an",
       "obligatoire": false
     },
     "waste_actions": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "actions contre le gaspillage en place",
       "libelle_long": "actions contre le gaspillage en place",
@@ -2586,42 +2565,36 @@
   },
   "INFORMATION": {
     "communicates_on_food_plan": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "Communique sur le plan alimentaire",
       "libelle_long": "Communique sur le plan alimentaire",
       "obligatoire": false
     },
     "communicates_on_food_quality": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "Communique sur les démarches qualité/durables/équitables",
       "libelle_long": "Communique sur les démarches qualité/durables/équitables",
       "obligatoire": false
     },
     "communication_frequency": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "fréquence de communication",
       "libelle_long": "fréquence de communication",
       "obligatoire": false
     },
     "communication_support_url": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "Lien de communication",
       "libelle_long": "Lien de communication",
       "obligatoire": false
     },
     "communication_supports": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "Communication utilisée",
       "libelle_long": "Communication utilisée",
       "obligatoire": false
     },
     "other_communication_support": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "autre communication utilisée",
       "libelle_long": "autre communication utilisée",
@@ -2630,28 +2603,24 @@
   },
   "PLASTIQUE": {
     "cooking_plastic_substituted": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "contenants de cuisson en plastique remplacés",
       "libelle_long": "contenants de cuisson en plastique remplacés",
       "obligatoire": false
     },
     "plastic_bottles_substituted": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "bouteilles en plastique remplacées",
       "libelle_long": "bouteilles en plastique remplacées",
       "obligatoire": false
     },
     "plastic_tableware_substituted": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "ustensils en plastique remplacés",
       "libelle_long": "ustensils en plastique remplacés",
       "obligatoire": false
     },
     "serving_plastic_substituted": {
-      "description_imports": "",
       "description_tunnel": "",
       "libelle_court": "contenants de service en plastique remplacés",
       "libelle_long": "contenants de service en plastique remplacés",
