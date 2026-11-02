@@ -75,6 +75,11 @@ const diagnosticsLinks = [
     icon: "fr-icon-edit-box-line",
     route: "GestionnaireImportBilansDetailles",
   },
+  {
+    label: "Créer ou modifier des bilans détaillés pour des groupes ou cantines sans SIRET",
+    icon: "fr-icon-edit-box-line",
+    route: "GestionnaireImportBilansDetaillesID",
+  },
 ]
 </script>
 
