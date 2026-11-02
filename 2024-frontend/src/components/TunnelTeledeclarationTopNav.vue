@@ -13,7 +13,7 @@ const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
 
 const saveAndQuit = async () => {
-  teledeclarationStore.markPageAsVisited(route.meta.slug)
+  teledeclarationStore.markPageAsVisited(route.meta)
   const response = await teledeclarationStore.saveDiagnostic(route.meta.volet)
   if (response.status === "error") rootStore.notifyServerError(response)
   else {

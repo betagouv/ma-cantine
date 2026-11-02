@@ -43,7 +43,7 @@ const checkRedirect = (page) => {
 /* Save */
 const save = async (page) => {
   const pageToGo = checkRedirect(page)
-  teledeclarationStore.markPageAsVisited(route.meta.slug)
+  teledeclarationStore.markPageAsVisited(route.meta)
   const response = await teledeclarationStore.saveDiagnostic(route.meta.volet)
   if (response.status === "error") displayErrors(pageToGo)
   else checkDiagnostic(pageToGo)
