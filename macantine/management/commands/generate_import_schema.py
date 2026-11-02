@@ -4,6 +4,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db import models
 
 from common.api import validata
 from data.models import Diagnostic
@@ -89,6 +90,24 @@ SCHEMA_SPECS = {
             + get_teledeclaration_fields_required(2025, "APPROVISIONNEMENT", "SIMPLE"),
             "schema_name": "import-bilans-simple-siret",
             "schema_title": "Schema import des bilans (simple) par SIRET",
+        },
+        "simple_id_2026": {
+            "file_name": "bilans_simple_id_2026.json",
+            "fields_ordered": ["cantine_id", "année_bilan"]
+            + get_teledeclaration_fields_all(2026, "APPROVISIONNEMENT", "SIMPLE"),
+            "fields_required": ["cantine_id", "année_bilan"]
+            + get_teledeclaration_fields_required(2026, "APPROVISIONNEMENT", "SIMPLE"),
+            "schema_name": "import-bilans-simple-id-2026",
+            "schema_title": "Schema import des bilans (simple) par ID (format 2026)",
+        },
+        "simple_siret_2026": {
+            "file_name": "bilans_simple_siret_2026.json",
+            "fields_ordered": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_all(2026, "APPROVISIONNEMENT", "SIMPLE"),
+            "fields_required": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_required(2026, "APPROVISIONNEMENT", "SIMPLE"),
+            "schema_name": "import-bilans-simple-siret-2026",
+            "schema_title": "Schema import des bilans (simple) par SIRET (format 2026)",
         },
         "detaille": {
             "file_name": "bilans_detaille.json",
@@ -189,6 +208,7 @@ class Command(BaseCommand):
             return COMMON_FIELDS[name]
 
         title = name
+        model_field = None
         try:
             model_field = Diagnostic._meta.get_field(name)
             title = str(model_field.verbose_name)
@@ -203,8 +223,20 @@ class Command(BaseCommand):
             "type": "number",
         }
 
+        # e.g. definition_local
+        if model_field and model_field.choices:
+            values = [value for value, _ in model_field.choices]
+            field_definition["type"] = "string"
+            field_definition["example"] = values[0]
+            field_definition["doc_enum"] = values
+            field_definition["constraints"] = {"pattern": f"^({'|'.join(values)})$"}
+        # e.g. nombre_repas_an, definition_local_km
+        elif isinstance(model_field, models.IntegerField):
+            field_definition["type"] = "integer"
+            field_definition["example"] = "1234"
+
         if is_required:
-            field_definition["constraints"] = {"required": True}
+            field_definition.setdefault("constraints", {})["required"] = True
 
         return field_definition
 
