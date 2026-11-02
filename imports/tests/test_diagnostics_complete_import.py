@@ -424,3 +424,80 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
             diagnostic.refresh_from_db()
             self.assertEqual(diagnostic.valeur_totale, 2000)
             self.assertEqual(diagnostic.valeur_bio, 400)
+
+
+@skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
+class DiagnosticsCompleteImportIdApiTest(APITestCase):
+    @authenticate
+    def test_schema_version_2025_with_id(self):
+        """
+        There is no ID import in the 2025 format
+        """
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_2026_good_one_canteen_id.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(reverse("diagnostics_complete_import"), {"file": diag_file, "type": "id"})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(
+            body["errors"][0]["message"], "Version de schéma « 2025 » inconnue. Valeurs possibles : 2026."
+        )
+
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_canteen_not_found_with_id(self):
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_2026_good_one_canteen_id.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_complete_import"), {"file": diag_file, "type": "id", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1)
+        self.assertEqual(body["errors"][0]["message"], "Une cantine avec l'id « 949 » n'existe pas sur la plateforme.")
+        assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_ID, file_path)
+
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_user_not_canteen_manager_with_id(self):
+        CanteenFactory(id=949, managers=[])
+
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_2026_good_one_canteen_id.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_complete_import"), {"file": diag_file, "type": "id", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(body["errors"][0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
+
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_diagnostics_created_with_id(self):
+        canteen = CanteenFactory(id=949, managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_2026_good_one_canteen_id.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_complete_import"), {"file": diag_file, "type": "id", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        self.assertEqual(body["count"], 1)
+        assert_import_success_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_ID, 1, canteen=canteen)
+
+        diagnostic = Diagnostic.objects.get(canteen_id=949)
+        self.assertEqual(diagnostic.year, 2026)
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertEqual(diagnostic.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
+        self.assertEqual(diagnostic.creation_source, CreationSource.IMPORT)

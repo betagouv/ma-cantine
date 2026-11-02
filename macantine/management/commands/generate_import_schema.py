@@ -118,6 +118,15 @@ SCHEMA_SPECS = {
             "schema_name": "import-bilans-detaille-siret",
             "schema_title": "Schema import des bilans (detaille) par SIRET",
         },
+        "detaille_id_2026": {
+            "file_name": "bilans_detaille_id_2026.json",
+            "fields_ordered": ["cantine_id", "année_bilan"]
+            + get_teledeclaration_fields_all(2026, "APPROVISIONNEMENT", "COMPLETE"),
+            "fields_required": ["cantine_id", "année_bilan"]
+            + get_teledeclaration_fields_required(2026, "APPROVISIONNEMENT", "COMPLETE"),
+            "schema_name": "import-bilans-detaille-id-2026",
+            "schema_title": "Schema import des bilans (detaille) par ID (format 2026)",
+        },
         "detaille_siret_2026": {
             "file_name": "bilans_detaille_siret_2026.json",
             "fields_ordered": ["siret", "année_bilan"]
