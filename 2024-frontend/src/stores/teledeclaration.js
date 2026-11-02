@@ -23,7 +23,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
   const visitedPagesSeparator = ","
   const tunnelApproVisitedPages = computed(() => diagnostic.value?.tunnelAppro?.split(visitedPagesSeparator) || [])
-  const voletTunnelFields = { diversification: "tunnelDiversification" }
+  const voletTunnelProgressionFields = { diversification: "tunnelDiversification" }
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
@@ -117,7 +117,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Save the fields of a volet */
   async function saveVolet(canteenId, volet) {
-    const fields = [...teledeclarationFields.getFieldsListFromGroup(volet), voletTunnelFields[volet]]
+    const fields = [...teledeclarationFields.getFieldsListFromGroup(volet), voletTunnelProgressionFields[volet]]
     const voletValues = Object.fromEntries(fields.map((field) => [field, diagnostic.value[field]]))
     return await diagnosticService.updateVolet(canteenId, diagnostic.value.id, volet, voletValues)
   }
@@ -152,7 +152,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Save the visit of the page : "complet" for a volet, the page slug in the list of the visited pages for the appro */
   function markPageAsVisited({ slug, volet }) {
     if (!diagnostic.value) return
-    if (volet) diagnostic.value[voletTunnelFields[volet]] = "complet"
+    if (volet) diagnostic.value[voletTunnelProgressionFields[volet]] = "complet"
     else if (slug && !tunnelApproVisitedPages.value.includes(slug)) {
       diagnostic.value.tunnelAppro = [...tunnelApproVisitedPages.value, slug].join(visitedPagesSeparator)
     }
