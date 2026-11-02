@@ -8,6 +8,7 @@ from simple_history.utils import update_change_reason
 from imports.views.base import BaseImportView
 from data.models import Canteen, Diagnostic
 from data.models.creation_source import CreationSource
+from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES, is_in_teledeclaration_or_correction
 
 
 DEFAULT_SCHEMA_VERSION = "2025"
@@ -84,7 +85,22 @@ class BaseDiagnosticsImportView(BaseImportView):
         values_dict = {column: row_dict[column] or None for column in value_columns}
         return row_dict[year_column], values_dict, self.diagnostic_type
 
+    def _validate_year(self, diagnostic_year):
+        """
+        Diagnostics can only be imported during their campaign (teledeclaration or correction),
+        e.g. 2026 diagnostics in the first months of 2027 (see CAMPAIGN_DATES & its settings overrides).
+        Years without a campaign are left to the model validation.
+        """
+        if str(diagnostic_year).isdigit() and int(diagnostic_year) in CAMPAIGN_DATES:
+            if not is_in_teledeclaration_or_correction(int(diagnostic_year)):
+                raise ValidationError(
+                    {
+                        "year": f"Les bilans {diagnostic_year} ne peuvent être importés que pendant la campagne de télédéclaration (ou de correction) {diagnostic_year}."
+                    }
+                )
+
     def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
+        self._validate_year(diagnostic_year)
         diagnostic_exists = Diagnostic.objects.filter(canteen=canteen, year=diagnostic_year).exists()
         diagnostic = (
             Diagnostic.objects.get(canteen=canteen, year=diagnostic_year)

@@ -30,6 +30,8 @@ Chaque import déclare le schéma contre lequel valider le fichier (`_get_schema
 
 Les valeurs d'une ligne sont lues par nom de colonne (`_get_row_dict()`, avec les colonnes du schéma), et non par position.
 
+Bilans : les bilans d'une année ne peuvent être importés que pendant la campagne (télédéclaration ou correction) de cette année, par exemple les bilans 2026 au début de 2027 (`CAMPAIGN_DATES`, avec les settings `TELEDECLARATION_*_OVERRIDE` pour tester dans les environnements non-prod).
+
 ## Ce qui reste ailleurs
 
 - schémas : `data/schemas/imports/` (Validata les lit depuis GitHub, sur la branche `GIT_BRANCH`)
