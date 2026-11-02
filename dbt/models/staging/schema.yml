@@ -197,3 +197,26 @@ models:
           - not_null
       - name: ordre_affichage
         description: Display order of the line ministry in the SPE dashboards.
+
+  - name: stg_spe_campagnes
+    description: >
+      One row per data year: teledeclaration campaign calendar uploaded to Metabase by the DGAL
+      (the campaign for data year n takes place in n+1).
+    columns:
+      - name: annee
+        description: Data year.
+        tests:
+          - unique
+          - not_null
+      - name: annee_campagne
+        description: Year of the campaign (data year + 1).
+      - name: date_ouverture
+        description: Campaign opening date.
+        tests:
+          - not_null
+      - name: date_cloture
+        description: Campaign closing date (empty for past campaigns in the upload).
+      - name: date_fin_correction
+        description: End date of the correction period.
+      - name: statut_dates
+        description: observe (dates observed) or previsionnel (planned dates).

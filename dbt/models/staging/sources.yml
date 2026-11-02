@@ -42,3 +42,9 @@ sources:
           (`niveau = 'tutelle'`) or ATE region and sector (`niveau = 'ate_region'`) and data year.
           dbt only reads the label, ministerial group and display order of each line ministry;
           target values are read directly by the Metabase questions.
+      - name: spe_campagnes
+        identifier: import_import_spe_campagnes_20260821171738
+        description: >
+          SPE campaign calendar uploaded to Metabase by the DGAL (model 3738): one row per data
+          year with opening, closing and correction end dates. Maintained by the DGAL with
+          "Replace data"; a new upload would create a new table: update `identifier` then.
