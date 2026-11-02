@@ -1,0 +1,2038 @@
+{
+  "APPROVISIONNEMENT": {
+    "valeur_autres_aocaop_igp_stg": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, AOC / AOP / IGP / STG",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, AOC / AOP / IGP / STG",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_bio": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Bio",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Bio",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_circuit_court": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Circuit-court",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Circuit-court",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_commerce_equitable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Commerce équitable",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Commerce équitable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_externalites": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_fermier": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Fermier",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Fermier",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_france": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Provenance France",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Provenance France",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_hve": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Haute valeur environnementale",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Haute valeur environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_label_rouge": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Label rouge",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Label rouge",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_local": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Produit local",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Produit local",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_non_egalim": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, non-EGAlim.",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, non-EGAlim.",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_peche_durable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Pêche durable",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Pêche durable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_performance": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_autres_rup": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique",
+      "libelle_long": "Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_bio": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Bio - Valeur annuelle HT",
+      "libelle_long": "Bio - Valeur annuelle HT",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": false
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": true
+        }
+      }
+    },
+    "valeur_boissons_aocaop_igp_stg": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, AOC / AOP / IGP / STG",
+      "libelle_long": "Boissons, AOC / AOP / IGP / STG",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_bio": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Bio",
+      "libelle_long": "Boissons, Bio",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_circuit_court": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Circuit-court",
+      "libelle_long": "Boissons, Circuit-court",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_commerce_equitable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Commerce équitable",
+      "libelle_long": "Boissons, Commerce équitable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_externalites": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "libelle_long": "Boissons, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_fermier": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Fermier",
+      "libelle_long": "Boissons, Fermier",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_france": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Provenance France",
+      "libelle_long": "Boissons, Provenance France",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_hve": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Haute valeur environnementale",
+      "libelle_long": "Boissons, Haute valeur environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_label_rouge": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Label rouge",
+      "libelle_long": "Boissons, Label rouge",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_local": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Produit local",
+      "libelle_long": "Boissons, Produit local",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_non_egalim": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, non-EGAlim.",
+      "libelle_long": "Boissons, non-EGAlim.",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_peche_durable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Pêche durable",
+      "libelle_long": "Boissons, Pêche durable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_performance": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Produits acquis sur la base de leurs performances en matière environnementale",
+      "libelle_long": "Boissons, Produits acquis sur la base de leurs performances en matière environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boissons_rup": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boissons, Région ultrapériphérique",
+      "libelle_long": "Boissons, Région ultrapériphérique",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_aocaop_igp_stg": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, AOC / AOP / IGP / STG",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, AOC / AOP / IGP / STG",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_bio": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Bio",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Bio",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_circuit_court": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Circuit-court",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Circuit-court",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_commerce_equitable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Commerce équitable",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Commerce équitable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_externalites": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_fermier": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Fermier",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Fermier",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_france": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Provenance France",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Provenance France",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_hve": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Haute valeur environnementale",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Haute valeur environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_label_rouge": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Label rouge",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Label rouge",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_local": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Produit local",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Produit local",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_non_egalim": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, non-EGAlim.",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, non-EGAlim.",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_peche_durable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Pêche durable",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Pêche durable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_performance": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Produits acquis sur la base de leurs performances en matière environnementale",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Produits acquis sur la base de leurs performances en matière environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_boulangerie_rup": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Boulangerie/Pâtisserie fraîches, Région ultrapériphérique",
+      "libelle_long": "Boulangerie/Pâtisserie fraîches, Région ultrapériphérique",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_aocaop_igp_stg": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, AOC / AOP / IGP / STG",
+      "libelle_long": "Charcuterie, AOC / AOP / IGP / STG",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_bio": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Bio",
+      "libelle_long": "Charcuterie, Bio",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_circuit_court": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Circuit-court",
+      "libelle_long": "Charcuterie, Circuit-court",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_commerce_equitable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Commerce équitable",
+      "libelle_long": "Charcuterie, Commerce équitable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_externalites": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "libelle_long": "Charcuterie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_fermier": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Fermier",
+      "libelle_long": "Charcuterie, Fermier",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_france": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Provenance France",
+      "libelle_long": "Charcuterie, Provenance France",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_hve": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Haute valeur environnementale",
+      "libelle_long": "Charcuterie, Haute valeur environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_label_rouge": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Label rouge",
+      "libelle_long": "Charcuterie, Label rouge",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_local": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Produit local",
+      "libelle_long": "Charcuterie, Produit local",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_non_egalim": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, non-EGAlim.",
+      "libelle_long": "Charcuterie, non-EGAlim.",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_peche_durable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Pêche durable",
+      "libelle_long": "Charcuterie, Pêche durable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_performance": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Produits acquis sur la base de leurs performances en matière environnementale",
+      "libelle_long": "Charcuterie, Produits acquis sur la base de leurs performances en matière environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_charcuterie_rup": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Charcuterie, Région ultrapériphérique",
+      "libelle_long": "Charcuterie, Région ultrapériphérique",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_aocaop_igp_stg": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG",
+      "libelle_long": "Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_bio": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Bio",
+      "libelle_long": "Fruits et légumes frais et surgelés, Bio",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_circuit_court": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Circuit-court",
+      "libelle_long": "Fruits et légumes frais et surgelés, Circuit-court",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_commerce_equitable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Commerce équitable",
+      "libelle_long": "Fruits et légumes frais et surgelés, Commerce équitable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_externalites": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "libelle_long": "Fruits et légumes frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_fermier": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Fermier",
+      "libelle_long": "Fruits et légumes frais et surgelés, Fermier",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_france": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Provenance France",
+      "libelle_long": "Fruits et légumes frais et surgelés, Provenance France",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_hve": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Haute valeur environnementale",
+      "libelle_long": "Fruits et légumes frais et surgelés, Haute valeur environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_label_rouge": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Label rouge",
+      "libelle_long": "Fruits et légumes frais et surgelés, Label rouge",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_local": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Produit local",
+      "libelle_long": "Fruits et légumes frais et surgelés, Produit local",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_non_egalim": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, non-EGAlim.",
+      "libelle_long": "Fruits et légumes frais et surgelés, non-EGAlim.",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_peche_durable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Pêche durable",
+      "libelle_long": "Fruits et légumes frais et surgelés, Pêche durable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_performance": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
+      "libelle_long": "Fruits et légumes frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_fruits_et_legumes_rup": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Fruits et légumes frais et surgelés, Région ultrapériphérique",
+      "libelle_long": "Fruits et légumes frais et surgelés, Région ultrapériphérique",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_aocaop_igp_stg": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, AOC / AOP / IGP / STG",
+      "libelle_long": "Produits aquatiques frais et surgelés, AOC / AOP / IGP / STG",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_bio": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Bio",
+      "libelle_long": "Produits aquatiques frais et surgelés, Bio",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_circuit_court": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Circuit-court",
+      "libelle_long": "Produits aquatiques frais et surgelés, Circuit-court",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_commerce_equitable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Commerce équitable",
+      "libelle_long": "Produits aquatiques frais et surgelés, Commerce équitable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_externalites": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "libelle_long": "Produits aquatiques frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_fermier": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Fermier",
+      "libelle_long": "Produits aquatiques frais et surgelés, Fermier",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_france": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Provenance France",
+      "libelle_long": "Produits aquatiques frais et surgelés, Provenance France",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_hve": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Haute valeur environnementale",
+      "libelle_long": "Produits aquatiques frais et surgelés, Haute valeur environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_label_rouge": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Label rouge",
+      "libelle_long": "Produits aquatiques frais et surgelés, Label rouge",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_local": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Produit local",
+      "libelle_long": "Produits aquatiques frais et surgelés, Produit local",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_non_egalim": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, non-EGAlim.",
+      "libelle_long": "Produits aquatiques frais et surgelés, non-EGAlim.",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_peche_durable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Pêche durable",
+      "libelle_long": "Produits aquatiques frais et surgelés, Pêche durable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_performance": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
+      "libelle_long": "Produits aquatiques frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_de_la_mer_rup": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits aquatiques frais et surgelés, Région ultrapériphérique",
+      "libelle_long": "Produits aquatiques frais et surgelés, Région ultrapériphérique",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_aocaop_igp_stg": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), AOC / AOP / IGP / STG",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), AOC / AOP / IGP / STG",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_bio": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Bio",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Bio",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_circuit_court": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Circuit-court",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Circuit-court",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_commerce_equitable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Commerce équitable",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Commerce équitable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_externalites": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_fermier": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Fermier",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Fermier",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_france": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Provenance France",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Provenance France",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_hve": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Haute valeur environnementale",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Haute valeur environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_label_rouge": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Label rouge",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Label rouge",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_local": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Produit local",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Produit local",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_non_egalim": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), non-EGAlim.",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), non-EGAlim.",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_peche_durable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Pêche durable",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Pêche durable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_performance": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Produits acquis sur la base de leurs performances en matière environnementale",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Produits acquis sur la base de leurs performances en matière environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_produits_laitiers_rup": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "BOF (Produits laitiers, beurre et œufs), Région ultrapériphérique",
+      "libelle_long": "BOF (Produits laitiers, beurre et œufs), Région ultrapériphérique",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_siqo": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Produits SIQO (hors bio) - Valeur annuelle HT",
+      "libelle_long": "Produits SIQO (hors bio) - Valeur annuelle HT",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": false
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": true
+        }
+      }
+    },
+    "valeur_totale": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Valeur totale annuelle HT",
+      "libelle_long": "Valeur totale annuelle HT",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": true,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": true,
+          "present": true
+        }
+      }
+    },
+    "valeur_viandes_volailles_aocaop_igp_stg": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_bio": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Bio",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Bio",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_circuit_court": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Circuit-court",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Circuit-court",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_commerce_equitable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Commerce équitable",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Commerce équitable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_externalites": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_fermier": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Fermier",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Fermier",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_france": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Provenance France",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Provenance France",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_hve": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Haute valeur environnementale",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Haute valeur environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_label_rouge": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Label rouge",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Label rouge",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_local": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Produit local",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Produit local",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_non_egalim": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, non-EGAlim.",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, non-EGAlim.",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_peche_durable": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Pêche durable",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Pêche durable",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_performance": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    },
+    "valeur_viandes_volailles_rup": {
+      "description_imports": "",
+      "description_tunnel": "",
+      "libelle_court": "Viandes et volailles fraîches et surgelées, Région ultrapériphérique",
+      "libelle_long": "Viandes et volailles fraîches et surgelées, Région ultrapériphérique",
+      "mode_saisie": {
+        "COMPLETE": {
+          "obligatoire": false,
+          "present": true
+        },
+        "SIMPLE": {
+          "obligatoire": false,
+          "present": false
+        }
+      }
+    }
+  },
+  "DIVERSIFICATION": {
+    "diversification_plan_actions": {
+      "description_tunnel": "",
+      "libelle_court": "Ce plan comporte les actions suivantes",
+      "libelle_long": "Ce plan comporte les actions suivantes",
+      "obligatoire": false
+    },
+    "has_diversification_plan": {
+      "description_tunnel": "",
+      "libelle_court": "Plan de diversification en place",
+      "libelle_long": "Plan de diversification en place",
+      "obligatoire": false
+    },
+    "vegetarian_menu_bases": {
+      "description_tunnel": "",
+      "libelle_court": "Le plat principal du menu végétarien est majoritairement à base de",
+      "libelle_long": "Le plat principal du menu végétarien est majoritairement à base de",
+      "obligatoire": false
+    },
+    "vegetarian_menu_type": {
+      "description_tunnel": "",
+      "libelle_court": "Type de menu végétarien",
+      "libelle_long": "Type de menu végétarien",
+      "obligatoire": false
+    },
+    "vegetarian_weekly_recurrence": {
+      "description_tunnel": "",
+      "libelle_court": "Fréquence hebdomadaire des menus végétariens",
+      "libelle_long": "Fréquence hebdomadaire des menus végétariens",
+      "obligatoire": false
+    }
+  },
+  "GASPILLAGE": {
+    "bread_leftovers": {
+      "description_tunnel": "",
+      "libelle_court": "Reste de pain",
+      "libelle_long": "Reste de pain",
+      "obligatoire": false
+    },
+    "donation_food_type": {
+      "description_tunnel": "",
+      "libelle_court": "Type de denrées données",
+      "libelle_long": "Type de denrées données",
+      "obligatoire": false
+    },
+    "donation_frequency": {
+      "description_tunnel": "",
+      "libelle_court": "Fréquence de dons",
+      "libelle_long": "Fréquence de dons",
+      "obligatoire": false
+    },
+    "donation_quantity": {
+      "description_tunnel": "",
+      "libelle_court": "Quantité des denrées données",
+      "libelle_long": "Quantité des denrées données",
+      "obligatoire": false
+    },
+    "duration_leftovers_measurement": {
+      "description_tunnel": "",
+      "libelle_court": "Période de mesure",
+      "libelle_long": "Période de mesure",
+      "obligatoire": false
+    },
+    "has_donation_agreement": {
+      "description_tunnel": "",
+      "libelle_court": "Propose des dons alimentaires",
+      "libelle_long": "Propose des dons alimentaires",
+      "obligatoire": false
+    },
+    "has_waste_diagnostic": {
+      "description_tunnel": "",
+      "libelle_court": "Diagnostic sur le gaspillage réalisé",
+      "libelle_long": "Diagnostic sur le gaspillage réalisé",
+      "obligatoire": false
+    },
+    "has_waste_measures": {
+      "description_tunnel": "",
+      "libelle_court": "Réalisé des mesures contre le gaspillage alimentaire",
+      "libelle_long": "Réalisé des mesures contre le gaspillage alimentaire",
+      "obligatoire": false
+    },
+    "has_waste_plan": {
+      "description_tunnel": "",
+      "libelle_court": "Plan d'action contre le gaspillage en place",
+      "libelle_long": "Plan d'action contre le gaspillage en place",
+      "obligatoire": false
+    },
+    "other_waste_action": {
+      "description_tunnel": "",
+      "libelle_court": "autre action contre le gaspillage alimentaire",
+      "libelle_long": "autre action contre le gaspillage alimentaire",
+      "obligatoire": false
+    },
+    "other_waste_comments": {
+      "description_tunnel": "",
+      "libelle_court": "Commentaires concernant la lutte contre le gaspillage et dons alimentaires",
+      "libelle_long": "Commentaires concernant la lutte contre le gaspillage et dons alimentaires",
+      "obligatoire": false
+    },
+    "served_leftovers": {
+      "description_tunnel": "",
+      "libelle_court": "Reste plateau",
+      "libelle_long": "Reste plateau",
+      "obligatoire": false
+    },
+    "side_leftovers": {
+      "description_tunnel": "",
+      "libelle_court": "Reste de composantes (entrée, plat dessert...)",
+      "libelle_long": "Reste de composantes (entrée, plat dessert...)",
+      "obligatoire": false
+    },
+    "total_leftovers": {
+      "description_tunnel": "",
+      "libelle_court": "Total des déchets alimentaires",
+      "libelle_long": "Total des déchets alimentaires",
+      "obligatoire": false
+    },
+    "unserved_leftovers": {
+      "description_tunnel": "",
+      "libelle_court": "Reste en production (non servi)",
+      "libelle_long": "Reste en production (non servi)",
+      "obligatoire": false
+    },
+    "waste_actions": {
+      "description_tunnel": "",
+      "libelle_court": "Actions de lutte contre le gaspillage",
+      "libelle_long": "Actions de lutte contre le gaspillage",
+      "obligatoire": false
+    }
+  },
+  "INFORMATION": {
+    "communicates_on_food_plan": {
+      "description_tunnel": "",
+      "libelle_court": "Communique sur le plan alimentaire",
+      "libelle_long": "Communique sur le plan alimentaire",
+      "obligatoire": false
+    },
+    "communicates_on_food_quality": {
+      "description_tunnel": "",
+      "libelle_court": "Communique sur les démarches qualité/durables/équitables",
+      "libelle_long": "Communique sur les démarches qualité/durables/équitables",
+      "obligatoire": false
+    },
+    "communication_frequency": {
+      "description_tunnel": "",
+      "libelle_court": "Fréquence de cette communication",
+      "libelle_long": "Fréquence de cette communication",
+      "obligatoire": false
+    },
+    "communication_support_url": {
+      "description_tunnel": "",
+      "libelle_court": "Lien vers le support de communication",
+      "libelle_long": "Lien vers le support de communication",
+      "obligatoire": false
+    },
+    "communication_supports": {
+      "description_tunnel": "",
+      "libelle_court": "L'information sur la qualité des approvisionnements se fait",
+      "libelle_long": "L'information sur la qualité des approvisionnements se fait",
+      "obligatoire": false
+    },
+    "other_communication_support": {
+      "description_tunnel": "",
+      "libelle_court": "autre communication utilisée",
+      "libelle_long": "autre communication utilisée",
+      "obligatoire": false
+    }
+  },
+  "PLASTIQUE": {
+    "cooking_plastic_substituted": {
+      "description_tunnel": "",
+      "libelle_court": "Contenants de cuisson en plastique remplacés",
+      "libelle_long": "Contenants de cuisson en plastique remplacés",
+      "obligatoire": false
+    },
+    "plastic_bottles_substituted": {
+      "description_tunnel": "",
+      "libelle_court": "Bouteilles en plastique remplacées",
+      "libelle_long": "Bouteilles en plastique remplacées",
+      "obligatoire": false
+    },
+    "plastic_tableware_substituted": {
+      "description_tunnel": "",
+      "libelle_court": "Ustensils en plastique remplacés",
+      "libelle_long": "Ustensils en plastique remplacés",
+      "obligatoire": false
+    },
+    "serving_plastic_substituted": {
+      "description_tunnel": "",
+      "libelle_court": "Contenants de service en plastique remplacés",
+      "libelle_long": "Contenants de service en plastique remplacés",
+      "obligatoire": false
+    }
+  }
+}
