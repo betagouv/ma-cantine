@@ -32,7 +32,7 @@ defineProps(["exampleFile", "links"])
           Pour modifier les informations d’une cantine existante, vous devez avoir un compte utilisateur par cantine inscrite
         </li>
       </ul>
-      <p>
+      <p class="fr-mb-0">
         <strong>En cas d’erreurs, le fichier est automatiquement rejeté.</strong>
       </p>
     </div>

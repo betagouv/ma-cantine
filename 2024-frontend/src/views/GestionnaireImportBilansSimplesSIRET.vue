@@ -12,15 +12,15 @@ import ImportFilesExample from "@/components/ImportFilesExample.vue"
 const route = useRoute()
 
 /* Data */
-const schemaFile = "bilans_simple_siret.json"
+const schemaFile = "bilans_simple_siret_2026.json"
 const exampleFile = {
-  name: "importer_des_bilans_simples_siret_exemple.xlsx",
-  size: "6 ko",
+  name: "importer_des_bilans_simples_siret_2026_exemple.xlsx",
+  size: "7 ko",
 }
 const filePreviews = {
-  success: "importer_des_bilans_simples_exemple_fichier_accepte.jpg?v=1",
+  success: "importer_des_bilans_simples_siret_2026_exemple_fichier_accepte.jpg?v=1",
   altSuccess: "Exemple de fichier accepté pour importer des bilans simples, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "importer_des_bilans_simples_exemple_fichier_rejete.jpg?v=1",
+  error: "importer_des_bilans_simples_siret_2026_exemple_fichier_rejete.jpg?v=1",
   altError: "Exemple de fichier rejeté pour importer des bilans simples, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 
@@ -48,6 +48,7 @@ const success = (count) => {
     @success="success"
     apiUrl="importDiagnostics/simple"
     apiImportType="siret"
+    schemaVersion="2026"
     eventMatomo="import-diagnostics-simple-siret-success"
   />
   <ImportSuccessModal

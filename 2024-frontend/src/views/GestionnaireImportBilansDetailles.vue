@@ -7,15 +7,22 @@ import ImportHelp from "@/components/ImportHelp.vue"
 import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
 import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
 import ImportFileUpload from "@/components/ImportFileUpload.vue"
+import ImportFilesExample from "@/components/ImportFilesExample.vue"
 
 /* Router */
 const route = useRoute()
 
 /* Data */
-const schemaFile = "bilans_detaille.json"
+const schemaFile = "bilans_detaille_2026.json"
 const exampleFile = {
-  name: "importer_des_bilans_detailles_exemple.xlsx",
+  name: "importer_des_bilans_detailles_2026_exemple.xlsx",
   size: "9 ko",
+}
+const filePreviews = {
+  success: "importer_des_bilans_detailles_2026_exemple_fichier_accepte.jpg?v=1",
+  altSuccess: "Exemple de fichier accepté pour importer des bilans détaillés, qui contient le bon nom de colonnes et les bonnes valeurs",
+  error: "importer_des_bilans_detailles_2026_exemple_fichier_rejete.jpg?v=2",
+  altError: "Exemple de fichier rejeté pour importer des bilans détaillés, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 const links = [
   {
@@ -42,8 +49,14 @@ const success = (count) => {
     Notre outil d’import de masse vous permet d’ajouter les bilans détaillés de toutes vos cantines d’un coup.
   </p>
   <ImportExplanation :exampleFile :links />
+  <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
-  <ImportFileUpload @success="success" apiUrl="importDiagnostics/complete" eventMatomo="import-diagnostics-complete-success"/>
+  <ImportFileUpload
+    @success="success"
+    apiUrl="importDiagnostics/complete"
+    schemaVersion="2026"
+    eventMatomo="import-diagnostics-complete-success"
+  />
   <ImportSuccessModal
     :opened="showModal"
     :message="successMessage"
