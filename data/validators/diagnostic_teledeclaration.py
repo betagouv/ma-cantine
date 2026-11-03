@@ -1,9 +1,11 @@
 from django.core.exceptions import ValidationError
 
 from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
+from data.models.diagnostic_teledeclaration_fields import get_fields_editable_even_if_is_teledeclared
 
 
 OUT_OF_CAMPAIGN_ERROR_MESSAGES = {
+    "edit": "Ce n'est pas possible de modifier un bilan télédéclaré hors de la période de la campagne",
     "teledeclare": "Ce n'est pas possible de télédéclarer hors de la période de la campagne",
     "cancel": "Ce n'est pas possible d'annuler une télédéclaration hors de la période de la campagne",
 }
@@ -12,7 +14,7 @@ OUT_OF_CAMPAIGN_ERROR_MESSAGE_DEFAULT = "Cette action n'est pas possible hors de
 
 def validate_is_in_teledeclaration_or_correction_period(action=None):
     """
-    action: "teledeclare" or "cancel" for a specific error message, else a generic error message
+    action: "edit", "teledeclare" or "cancel" for a specific error message, else a generic error message
     """
     if not is_in_teledeclaration_or_correction():
         raise ValidationError(OUT_OF_CAMPAIGN_ERROR_MESSAGES.get(action, OUT_OF_CAMPAIGN_ERROR_MESSAGE_DEFAULT))
@@ -57,3 +59,28 @@ def validate_canteen_groupe_satellites(instance):
 def validate_applicant_is_canteen_manager(instance, applicant):
     if applicant not in instance.canteen.managers.all():
         raise ValidationError("Le déclarant n'est pas un gestionnaire de la cantine associée à ce diagnostic")
+
+
+def validate_submitted_diagnostic_update(instance):
+    """
+    Rules when updating an already teledeclared diagnostic (see Diagnostic.is_already_teledeclared)
+    - only the fields of some volets can be edited (opt-in, see get_fields_editable_even_if_is_teledeclared)
+    - only during the campaign (teledeclaration or correction) of the diagnostic's year
+    The changes are detected with django-dirtyfields.
+    """
+    changed_fields = instance.get_dirty_fields(check_relationship=True)  # {field_name: value_in_db}
+    if not changed_fields:
+        return
+
+    editable_fields = get_fields_editable_even_if_is_teledeclared(instance.year)
+    locked_fields_changed = [field_name for field_name in changed_fields if field_name not in editable_fields]
+    if locked_fields_changed:
+        raise ValidationError(
+            {
+                field_name: "Ce champ n'est pas modifiable sur un bilan télédéclaré."
+                for field_name in locked_fields_changed
+            }
+        )
+
+    validate_is_in_teledeclaration_or_correction_period("edit")
+    validate_diagnostic_year_in_teledeclaration_period(instance)

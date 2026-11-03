@@ -515,9 +515,6 @@ class Diagnostic(
 
     TUNNEL_PROGRESS_FIELDS = list(TUNNEL_PROGRESS_FIELD_BY_VOLET.values())
 
-    # django-dirtyfields: only track the fields we need (see is_already_teledeclared)
-    FIELDS_TO_CHECK = ["status"]
-
     TELEDECLARATION_FIELDS = [
         "teledeclaration_date",
         "teledeclaration_mode",
@@ -793,10 +790,15 @@ class Diagnostic(
         """
         - populate the computed fields (see populate_computed_fields)
             - except if the diagnostic is already teledeclared: the computed fields are frozen at teledeclaration
+        - if the diagnostic is already teledeclared: only some volets can be edited, during the campaign
+            (see validate_submitted_diagnostic_update)
         - skip_validations: if True, skip validation checks (USE WITH CAUTION) (only for scripts & tests)
         """
         # NOTE: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
-        if not self.is_already_teledeclared:
+        if self.is_already_teledeclared:
+            if not skip_validations:
+                diagnostic_teledeclaration_validators.validate_submitted_diagnostic_update(self)
+        else:
             self.populate_computed_fields()
         return super().save(**kwargs)
 
