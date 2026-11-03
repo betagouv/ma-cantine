@@ -35,7 +35,9 @@ VOLET_META_FIELDS = [
 @extend_schema_serializer(exclude_fields=CREATE_ONLY_FIELDS)
 class DiagnosticV2Serializer(DiagnosticSerializer):
     """
-    The diagnostic itself, without the volets (each volet has its own serializer)
+    The diagnostic itself
+    - write: only the diagnostic's own fields (each volet is edited via its own serializer)
+    - read: also all the volets' fields (flat, filtered by year & diagnostic_type, see VOLET_V2_SERIALIZERS)
     """
 
     v1_choice_value_aliases = {}  # v2: the model (French) values
@@ -73,6 +75,12 @@ class DiagnosticV2Serializer(DiagnosticSerializer):
         for field in READ_ONLY_FIELDS:
             fields[field].read_only = True
         return fields
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        for volet_serializer_class in VOLET_V2_SERIALIZERS:
+            representation.update(volet_serializer_class(instance, context=self.context).data)
+        return representation
 
 
 class BaseDiagnosticVoletV2Serializer(DiagnosticSerializer):
@@ -169,3 +177,12 @@ class DiagnosticVoletInformationV2Serializer(BaseDiagnosticVoletV2Serializer):
     class Meta:
         model = Diagnostic
         fields = VOLET_META_FIELDS + get_teledeclaration_fields_all_years("INFORMATION") + ["tunnel_info"]
+
+
+VOLET_V2_SERIALIZERS = [
+    DiagnosticVoletApprovisionnementV2Serializer,
+    DiagnosticVoletGaspillageV2Serializer,
+    DiagnosticVoletDiversificationV2Serializer,
+    DiagnosticVoletPlastiqueV2Serializer,
+    DiagnosticVoletInformationV2Serializer,
+]

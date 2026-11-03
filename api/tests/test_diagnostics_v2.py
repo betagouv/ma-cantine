@@ -60,11 +60,17 @@ class DiagnosticV2ListApiTest(APITestCase):
         # ordered by year ascending
         self.assertEqual(results[0]["id"], self.diagnostic_2024.id)
         self.assertEqual(results[1]["id"], self.diagnostic_2025.id)
-        # no volet fields
+        # all the volet fields (of the diagnostic's year)
         self.assertIn("centralKitchenDiagnosticMode", results[0])
-        self.assertNotIn("diagnosticType", results[0])
-        self.assertNotIn("valeurTotale", results[0])
-        self.assertNotIn("diagnosticGaspillageRealise", results[0])
+        self.assertIn("diagnosticType", results[0])
+        self.assertIn("valeurTotale", results[0])
+        self.assertIn("pourcentageBio", results[0])
+        self.assertIn("diagnosticGaspillageRealise", results[0])
+        self.assertIn("menuVegetarienFrequence", results[0])
+        self.assertIn("cookingPlasticSubstituted", results[0])
+        self.assertIn("communicationSupports", results[0])
+        self.assertNotIn("menuVegetarienType", results[0])  # not in 2024
+        self.assertNotIn("dechetsTotal", results[0])  # only in 2023
 
 
 class DiagnosticV2CreateApiTest(APITestCase):
@@ -121,6 +127,10 @@ class DiagnosticV2CreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
         self.assertNotIn("creationSource", body)  # write-only
+        # the response contains all the volet fields (empty)
+        self.assertIsNone(body["diagnosticType"])
+        self.assertIsNone(body["diagnosticGaspillageRealise"])
+        self.assertIn("communicationSupports", body)
         diagnostic = Diagnostic.objects.get(id=body["id"])
         self.assertEqual(diagnostic.canteen, self.canteen)
         self.assertEqual(diagnostic.year, 2025)
@@ -184,7 +194,12 @@ class DiagnosticV2RetrieveUpdateApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["id"], self.diagnostic.id)
         self.assertEqual(body["year"], 2025)
-        self.assertNotIn("valeurTotale", body)
+        # all the volet fields (of the diagnostic's year & diagnostic_type)
+        for volet in ["APPROVISIONNEMENT", "GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]:
+            for field in get_teledeclaration_fields_all(2025, volet, self.diagnostic.diagnostic_type):
+                self.assertIn(camelize(field), body)
+        self.assertIn("pourcentageBio", body)
+        self.assertNotIn("dechetsTotal", body)  # only in 2023
 
     @authenticate
     def test_cannot_update_diagnostic_with_put(self):
