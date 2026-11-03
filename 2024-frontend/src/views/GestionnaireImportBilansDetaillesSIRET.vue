@@ -13,26 +13,22 @@ import ImportFilesExample from "@/components/ImportFilesExample.vue"
 const route = useRoute()
 
 /* Data */
-const schemaFile = "bilans_detaille_id_2026.json"
+const schemaFile = "bilans_detaille_siret_2026.json"
 const exampleFile = {
-  name: "importer_des_bilans_detailles_id_2026_exemple.xlsx",
-  size: "8 ko",
+  name: "importer_des_bilans_detailles_2026_exemple.xlsx",
+  size: "9 ko",
 }
 const filePreviews = {
-  success: "importer_des_bilans_detailles_id_2026_exemple_fichier_accepte.jpg?v=1",
-  altSuccess: "Exemple de fichier accepté pour importer des bilans détaillés avec identification de la cantine via son ID, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "importer_des_bilans_detailles_id_2026_exemple_fichier_rejete.jpg?v=1",
-  altError: "Exemple de fichier rejeté pour importer des bilans détaillés avec identification de la cantine via son ID, qui contient des erreurs dans les colonnes ou les valeurs",
+  success: "importer_des_bilans_detailles_2026_exemple_fichier_accepte.jpg?v=1",
+  altSuccess: "Exemple de fichier accepté pour importer des bilans détaillés, qui contient le bon nom de colonnes et les bonnes valeurs",
+  error: "importer_des_bilans_detailles_2026_exemple_fichier_rejete.jpg?v=2",
+  altError: "Exemple de fichier rejeté pour importer des bilans détaillés, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 const links = [
   {
     title: "Liste des champs à renseigner pour importer un bilan détaillé",
     href: documentation.importBilanDetaille,
-  },
-  {
-    title: "Où trouver l'ID de ma cantine ou de mon groupe ?",
-    href: documentation.trouverIdCantine,
-  },
+  }
 ]
 
 /* Sucess */
@@ -58,9 +54,8 @@ const success = (count) => {
   <ImportFileUpload
     @success="success"
     apiUrl="importDiagnostics/complete"
-    apiImportType="id"
     schemaVersion="2026"
-    eventMatomo="import-diagnostics-complete-id-success"
+    eventMatomo="import-diagnostics-complete-success"
   />
   <ImportSuccessModal
     :opened="showModal"

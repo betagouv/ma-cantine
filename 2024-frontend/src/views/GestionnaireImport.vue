@@ -73,12 +73,12 @@ const diagnosticsLinks = [
   {
     label: "Créer ou modifier des bilans détaillés pour des cantines avec SIRET",
     icon: "fr-icon-edit-box-line",
-    route: "GestionnaireImportBilansDetailles",
+    route: "GestionnaireImportBilansDetaillesSIRET",
   },
   {
     label: "Créer ou modifier des bilans détaillés pour des groupes ou cantines sans SIRET",
     icon: "fr-icon-edit-box-line",
-    route: "GestionnaireImportBilansDetaillesID",
+    route: "GestionnaireImportBilansDetailles",
   },
 ]
 </script>
@@ -131,7 +131,7 @@ const diagnosticsLinks = [
             <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportBilansSimplesOld'}" title="Créer ou modifier des bilans simples pour des groupes ou cantines sans SIRET (ancien format)" />
           </li>
           <li>
-            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportBilansDetaillesOld'}" title="Créer ou modifier des bilans détaillés pour des cantines avec SIRET (ancien format)" />
+            <AppLinkRouter class="fr-text--sm" :to="{name: 'GestionnaireImportBilansDetaillesSIRETOld'}" title="Créer ou modifier des bilans détaillés pour des cantines avec SIRET (ancien format)" />
           </li>
         </ul>
         <p class="fr-mt-2w fr-text--sm">À la fin de la campagne de télédéclaration 2027 ces pages seront supprimées.</p>
