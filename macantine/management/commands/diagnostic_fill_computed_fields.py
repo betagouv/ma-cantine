@@ -54,10 +54,8 @@ class Command(MaCantineBaseCommand):
 
         logger.info("Step 3: fill the fields (and save)")
         for index, diagnostic in enumerate(qs):
-            # called in save()
-            # diagnostic.populate_aggregated_values()
-            # diagnostic.populate_stats_values()
-            # diagnostic.populate_cout_repas()
+            # explicit call: save() doesn't populate the computed fields of teledeclared diagnostics (frozen)
+            diagnostic.populate_computed_fields()
             # computed fields only: no need for a historical record
             diagnostic.save_without_historical_record(update_fields=field_list)
             if index % 5000 == 0:
