@@ -38,7 +38,7 @@ const success = (count) => {
 </script>
 
 <template>
-  <ImportDeprecatedWarningDiagnostics :redirectTo="{ name: 'GestionnaireImportBilansDetailles' }" />
+  <ImportDeprecatedWarningDiagnostics :redirectTo="{ name: 'GestionnaireImportBilansDetaillesSIRET' }" />
   <h1>{{ route.meta.title }}</h1>
   <p class="fr-col-12 fr-col-md-7">
     Notre outil d’import de masse vous permet d’ajouter les bilans détaillés de toutes vos cantines d’un coup.

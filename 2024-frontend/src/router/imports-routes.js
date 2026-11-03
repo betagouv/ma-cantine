@@ -7,9 +7,10 @@ import GestionnaireImport from "@/views/GestionnaireImport.vue"
 import GestionnaireImportAchatsIDOld from "@/views/GestionnaireImportAchatsIDOld.vue"
 import GestionnaireImportAchatsSIRETOld from "@/views/GestionnaireImportAchatsSIRETOld.vue"
 import GestionnaireImportBilansSimplesOld from "@/views/GestionnaireImportBilansSimplesOld.vue"
-import GestionnaireImportBilansDetaillesOld from "@/views/GestionnaireImportBilansDetaillesOld.vue"
+import GestionnaireImportBilansDetaillesSIRETOld from "@/views/GestionnaireImportBilansDetaillesSIRETOld.vue"
 import GestionnaireImportBilansSimplesSIRETOld from "@/views/GestionnaireImportBilansSimplesSIRETOld.vue"
 import GestionnaireImportBilansSimples from "@/views/GestionnaireImportBilansSimples.vue"
+import GestionnaireImportBilansDetaillesSIRET from "@/views/GestionnaireImportBilansDetaillesSIRET.vue"
 import GestionnaireImportBilansDetailles from "@/views/GestionnaireImportBilansDetailles.vue"
 import GestionnaireImportBilansSimplesSIRET from "@/views/GestionnaireImportBilansSimplesSIRET.vue"
 import GestionnaireImportCantinesCreer from "@/views/GestionnaireImportCantinesCreer.vue"
@@ -119,9 +120,9 @@ const importsRoutes = [
     },
   },
   {
-    path: "bilans-detailles-ancien-format",
-    name: "GestionnaireImportBilansDetaillesOld",
-    component: GestionnaireImportBilansDetaillesOld,
+    path: "bilans-detailles-siret-ancien-format",
+    name: "GestionnaireImportBilansDetaillesSIRETOld",
+    component: GestionnaireImportBilansDetaillesSIRETOld,
     beforeEnter: redirectIfCampaignIsClosed,
     meta: {
       storesRequired: ["campaignDates"],
@@ -161,13 +162,27 @@ const importsRoutes = [
     },
   },
   {
+    path: "bilans-detailles-siret",
+    name: "GestionnaireImportBilansDetaillesSIRET",
+    component: GestionnaireImportBilansDetaillesSIRET,
+    beforeEnter: redirectIfCampaignIsClosed,
+    meta: {
+      storesRequired: ["campaignDates"],
+      title: "Créer ou modifier des bilans détaillés via le SIRET de la cantine",
+      breadcrumbs: [
+        { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
+        { to: { name: "GestionnaireImport" }, title: "Importer des données" },
+      ],
+    },
+  },
+  {
     path: "bilans-detailles",
     name: "GestionnaireImportBilansDetailles",
     component: GestionnaireImportBilansDetailles,
     beforeEnter: redirectIfCampaignIsClosed,
     meta: {
       storesRequired: ["campaignDates"],
-      title: "Créer ou modifier des bilans détaillés",
+      title: "Créer ou modifier des bilans détaillés via l'ID de la cantine",
       breadcrumbs: [
         { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
         { to: { name: "GestionnaireImport" }, title: "Importer des données" },
