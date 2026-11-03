@@ -1581,6 +1581,13 @@ TELEDECLARATION_FIELDS = {
 }
 
 
+TELEDECLARATION_YEARS = sorted(
+    int(path.parent.name) for path in (Path(settings.BASE_DIR) / "teledeclaration").glob("*/champs.json")
+)
+VOLETS = ["APPROVISIONNEMENT", "GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]
+DIAGNOSTIC_TYPES = ["SIMPLE", "COMPLETE"]
+
+
 @cache
 def get_teledeclaration_config(year):
     """
@@ -1590,26 +1597,6 @@ def get_teledeclaration_config(year):
     return json.loads(config_path.read_text(encoding="utf-8"))
 
 
-def get_teledeclaration_import_fields(year, diagnostic_type):
-    """
-    The appro fields of an import, in the order of its columns
-    """
-    fields = get_teledeclaration_config(year)["APPROVISIONNEMENT"]
-    present_fields = [
-        name for name, field in fields.items() if field["diagnostic_type"][diagnostic_type]["is_present"]
-    ]
-    return sorted(present_fields, key=lambda name: fields[name]["diagnostic_type"][diagnostic_type]["import_order"])
-
-
-def get_teledeclaration_import_fields_required(year, diagnostic_type):
-    fields = get_teledeclaration_config(year)["APPROVISIONNEMENT"]
-    return [
-        name
-        for name in get_teledeclaration_import_fields(year, diagnostic_type)
-        if fields[name]["diagnostic_type"][diagnostic_type]["is_required"]
-    ]
-
-
 def get_teledeclaration_verbose_name(year, volet, field_name):
     return get_teledeclaration_config(year)[volet][field_name]["verbose_name"]
 
@@ -1617,23 +1604,26 @@ def get_teledeclaration_verbose_name(year, volet, field_name):
 def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=False):
     """
     diagnostic_type (SIMPLE / COMPLETE) is only used by the APPROVISIONNEMENT volet
+    The APPROVISIONNEMENT fields follow import_order when the year has one (the order of the import columns)
     """
     year = int(year) if year else None
-    if year not in TELEDECLARATION_FIELDS:
-        raise ValueError(f"Field 'year' expected one of {list(TELEDECLARATION_FIELDS.keys())} but got '{year}'.")
-    if volet not in TELEDECLARATION_FIELDS[year]:
-        raise ValueError(f"Volet expected one of {list(TELEDECLARATION_FIELDS[year].keys())} but got '{volet}'.")
-    volet_fields = TELEDECLARATION_FIELDS[year][volet]
+    if year not in TELEDECLARATION_YEARS:
+        raise ValueError(f"Field 'year' expected one of {TELEDECLARATION_YEARS} but got '{year}'.")
+    if volet not in VOLETS:
+        raise ValueError(f"Volet expected one of {VOLETS} but got '{volet}'.")
+    volet_fields = get_teledeclaration_config(year)[volet]
     if volet == "APPROVISIONNEMENT":
-        if diagnostic_type not in volet_fields:
-            valid_diagnostic_types = list(volet_fields.keys())
+        if diagnostic_type not in DIAGNOSTIC_TYPES:
             raise ValueError(
-                f"Field 'diagnostic_type' expected one of {valid_diagnostic_types} but got '{diagnostic_type}'."
+                f"Field 'diagnostic_type' expected one of {DIAGNOSTIC_TYPES} but got '{diagnostic_type}'."
             )
-        volet_fields = volet_fields[diagnostic_type]
-    if required:
-        return volet_fields["fields_required"]
-    return volet_fields["fields"]
+        volet_fields = {
+            name: field["diagnostic_type"][diagnostic_type]
+            for name, field in volet_fields.items()
+            if field["diagnostic_type"][diagnostic_type]["is_present"]
+        }
+        volet_fields = dict(sorted(volet_fields.items(), key=lambda item: item[1].get("import_order", 0)))
+    return [name for name, field in volet_fields.items() if field["is_required"] or not required]
 
 
 def get_teledeclaration_fields_all(year, volet, diagnostic_type=None):
@@ -1650,8 +1640,8 @@ def get_teledeclaration_fields_all_years(volet):
     Order: the most recent year's fields first, then the fields that were removed since (legacy)
     """
     fields = {}
-    for year in sorted(TELEDECLARATION_FIELDS, reverse=True):
-        diagnostic_types = TELEDECLARATION_FIELDS[year][volet].keys() if volet == "APPROVISIONNEMENT" else [None]
+    for year in sorted(TELEDECLARATION_YEARS, reverse=True):
+        diagnostic_types = DIAGNOSTIC_TYPES if volet == "APPROVISIONNEMENT" else [None]
         for diagnostic_type in diagnostic_types:
             fields.update(dict.fromkeys(get_teledeclaration_fields_all(year, volet, diagnostic_type)))
     return list(fields)
@@ -1662,13 +1652,9 @@ def get_teledeclaration_fields_all_volets(year, diagnostic_type):
     All the fields of all the volets for a given year (diagnostic_type is used by the APPROVISIONNEMENT volet)
     """
     year = int(year) if year else None
-    if year not in TELEDECLARATION_FIELDS:
-        raise ValueError(f"Field 'year' expected one of {list(TELEDECLARATION_FIELDS.keys())} but got '{year}'.")
-    return [
-        field
-        for volet in TELEDECLARATION_FIELDS[year]
-        for field in get_teledeclaration_fields_all(year, volet, diagnostic_type)
-    ]
+    if year not in TELEDECLARATION_YEARS:
+        raise ValueError(f"Field 'year' expected one of {TELEDECLARATION_YEARS} but got '{year}'.")
+    return [field for volet in VOLETS for field in get_teledeclaration_fields_all(year, volet, diagnostic_type)]
 
 
 TUNNEL_PROGRESS_FIELD_BY_VOLET = {
