@@ -12,6 +12,7 @@ DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA = ImportSchema("bilans_simple_id_2026.json")
 # complete
 DIAGNOSTICS_COMPLETE_SIRET_SCHEMA = ImportSchema("bilans_detaille_siret.json")
 DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA = ImportSchema("bilans_detaille_siret_2026.json")
+DIAGNOSTICS_COMPLETE_ID_2026_SCHEMA = ImportSchema("bilans_detaille_id_2026.json")
 
 
 class DiagnosticsSimpleImportView(BaseDiagnosticsImportView):
@@ -36,5 +37,16 @@ class DiagnosticsCompleteImportView(BaseDiagnosticsImportView):
     import_type = ImportType.DIAGNOSTIC_COMPLETE_SIRET
     diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
+    def post(self, request):
+        # Set import type based on request (SIRET by default)
+        self.is_siret_import = request.data.get("type") != "id"
+        self.import_type = (
+            ImportType.DIAGNOSTIC_COMPLETE_SIRET if self.is_siret_import else ImportType.DIAGNOSTIC_COMPLETE_ID
+        )
+        return super().post(request)
+
     def _get_schemas(self):
-        return {"2025": DIAGNOSTICS_COMPLETE_SIRET_SCHEMA, "2026": DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA}
+        if self.is_siret_import:
+            return {"2025": DIAGNOSTICS_COMPLETE_SIRET_SCHEMA, "2026": DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA}
+        # no ID import in the 2025 format
+        return {"2026": DIAGNOSTICS_COMPLETE_ID_2026_SCHEMA}

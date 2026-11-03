@@ -6,6 +6,7 @@ from django.test import SimpleTestCase
 from data.models import Diagnostic
 from imports.models import ImportSchema
 from imports.views.diagnostic import (
+    DIAGNOSTICS_COMPLETE_ID_2026_SCHEMA,
     DIAGNOSTICS_COMPLETE_SIRET_SCHEMA,
     DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA,
     DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA,
@@ -37,6 +38,7 @@ class DiagnosticsImportSchemasTest(SimpleTestCase):
             (DIAGNOSTICS_SIMPLE_SIRET_2026_SCHEMA, "siret"),
             (DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA, "cantine_id"),
             (DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA, "siret"),
+            (DIAGNOSTICS_COMPLETE_ID_2026_SCHEMA, "cantine_id"),
         ]:
             with self.subTest(schema=schema.name):
                 self.assertEqual(schema.header[:2], [identifier, "année_bilan"])
@@ -48,7 +50,14 @@ class DiagnosticsImportSchemasTest(SimpleTestCase):
         The schema files must match the output of the generate_import_schema command
         NOTE: detaille_siret (2025) is not tested, it was edited by hand ("non applicable" fields)
         """
-        for schema in ["simple_siret", "simple_id", "simple_siret_2026", "simple_id_2026", "detaille_siret_2026"]:
+        for schema in [
+            "simple_siret",
+            "simple_id",
+            "simple_siret_2026",
+            "simple_id_2026",
+            "detaille_siret_2026",
+            "detaille_id_2026",
+        ]:
             with self.subTest(schema=schema):
                 out = StringIO()
                 call_command("generate_import_schema", model="Diagnostic", schema=schema, dry_run=True, stdout=out)

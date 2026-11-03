@@ -2,7 +2,11 @@ import json
 import re
 
 from django.test import TestCase
-from imports.views.diagnostic import DIAGNOSTICS_COMPLETE_SIRET_SCHEMA, DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA
+from imports.views.diagnostic import (
+    DIAGNOSTICS_COMPLETE_ID_2026_SCHEMA,
+    DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA,
+    DIAGNOSTICS_COMPLETE_SIRET_SCHEMA,
+)
 
 
 class DiagnosticsCompleteSchemaTest(TestCase):
@@ -21,7 +25,10 @@ class DiagnosticsCompleteSchemaTest(TestCase):
 class DiagnosticsComplete2026SchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.schema = json.load(open(DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA.path))
+        cls.schemas = [
+            json.load(open(DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA.path)),
+            json.load(open(DIAGNOSTICS_COMPLETE_ID_2026_SCHEMA.path)),
+        ]
 
     @staticmethod
     def _pattern_for(schema, field_name):
@@ -29,10 +36,11 @@ class DiagnosticsComplete2026SchemaTest(TestCase):
         return field["constraints"]["pattern"]
 
     def test_definition_local_regex(self):
-        pattern = self._pattern_for(self.schema, "definition_local")
-        for VALUE_OK in ["PAT", "COMMUNE", "DEPARTEMENT", "REGION", "KM"]:
-            with self.subTest(VALUE=VALUE_OK):
-                self.assertTrue(re.match(pattern, VALUE_OK))
-        for VALUE_NOT_OK in ["", "TEST", "pat", "PAT,KM", " PAT", "AUTOUR_SERVICE"]:
-            with self.subTest(VALUE=VALUE_NOT_OK):
-                self.assertFalse(re.match(pattern, VALUE_NOT_OK))
+        for schema in self.schemas:
+            pattern = self._pattern_for(schema, "definition_local")
+            for VALUE_OK in ["PAT", "COMMUNE", "DEPARTEMENT", "REGION", "KM"]:
+                with self.subTest(schema=schema["name"], VALUE=VALUE_OK):
+                    self.assertTrue(re.match(pattern, VALUE_OK))
+            for VALUE_NOT_OK in ["", "TEST", "pat", "PAT,KM", " PAT", "AUTOUR_SERVICE"]:
+                with self.subTest(schema=schema["name"], VALUE=VALUE_NOT_OK):
+                    self.assertFalse(re.match(pattern, VALUE_NOT_OK))
