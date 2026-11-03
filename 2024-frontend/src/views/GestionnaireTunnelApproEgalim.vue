@@ -9,11 +9,11 @@ import DiagnosticEgalimSimple from "@/components/DiagnosticEgalimSimple.vue"
 import DiagnosticEgalimComplete from "@/components/DiagnosticEgalimComplete.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import TunnelTeledeclarationUPSABanner from "@/components/TunnelTeledeclarationUPSABanner.vue"
-import teledeclarationFieldsService from "@/services/teledeclarationFields.js"
+import tunnelTeledeclarationService from "@/services/tunnelTeledeclaration.js"
 
 /* Fields names */
-const valeurTotalFieldName = teledeclarationFieldsService.getFieldsListFromGroup("valeurTotale")[0]
-const coutRepasFieldName = teledeclarationFieldsService.getFieldsListFromGroup("coutRepas")[0]
+const valeurTotalFieldName = tunnelTeledeclarationService.getFieldsListFromGroup("valeurTotale")[0]
+const coutRepasFieldName = tunnelTeledeclarationService.getFieldsListFromGroup("coutRepas")[0]
 
 /* Teledeclaration */
 const storeTeledeclaration = useStoreTeledeclaration()
