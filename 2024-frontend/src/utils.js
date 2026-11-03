@@ -67,3 +67,6 @@ export const formatSiretOrSiren = (number) => {
   const rest = digits.slice(9)
   return rest ? `${formatted} ${rest}` : formatted
 }
+
+// Transform snake_case to camelCase
+export const toCamelCase = (name) => name.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase())
