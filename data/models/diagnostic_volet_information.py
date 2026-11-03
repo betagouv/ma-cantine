@@ -52,6 +52,32 @@ class DiagnosticVoletInformationMixin(models.Model):
         null=True,
         verbose_name="fréquence de communication",
     )
+    # new in 2026 (replace the fields above, see diagnostic_teledeclaration_fields.py)
+    information_affichage_permanent = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="La cantine dispose d’un affichage permanent à l’entrée du restaurant, actualisé au moins une fois par an et lisible par tous les usagers",
+    )
+    information_electronique_annuelle = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="Une communication électronique (réalisée au moins une fois par an) permet aux usagers d’être informés",
+    )
+    information_part_egalim = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="Part de produits EGalim (dont bio) entrant dans la composition des repas servis",
+    )
+    information_part_pat = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="Part des produits issus de Projets alimentaires territoriaux (PAT)",
+    )
+    information_consultation_qualite = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="L’établissement informe et consulte régulièrement, par tous moyens utiles, les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis",
+    )
 
     class Meta:
         abstract = True

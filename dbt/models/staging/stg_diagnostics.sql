@@ -243,6 +243,11 @@ renamed as (
         information_qualite_nutritionnelle,
         information_qualite_durable,
         information_frequence,
+        information_affichage_permanent,
+        information_electronique_annuelle,
+        information_part_egalim,
+        information_part_pat,
+        information_consultation_qualite,
 
         -- campaign tracking
         creation_mtm_source,

@@ -740,3 +740,32 @@ class DiagnosticVoletInformationV2ApiTest(APITestCase):
             with self.subTest(payload=payload):
                 response = self.client.patch(url, payload, format="json")
                 self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_fields_depend_on_year(self):
+        for year, expected_field, unexpected_field in [
+            (2025, "informationQualiteDurable", "informationPartEgalim"),
+            (2026, "informationPartEgalim", "informationQualiteDurable"),
+        ]:
+            with self.subTest(year=year):
+                diagnostic = DiagnosticFactory(year=year)
+                diagnostic.canteen.managers.add(authenticate.user)
+                url = reverse(
+                    "diagnostic_v2_information_retrieve_update",
+                    kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                )
+
+                body = self.client.get(url).json()
+                self.assertIn(expected_field, body)
+                self.assertNotIn(unexpected_field, body)
+
+                # the fields of the other years are ignored
+                response = self.client.patch(url, {expected_field: True, unexpected_field: True}, format="json")
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                diagnostic.refresh_from_db()
+                if year == 2026:
+                    self.assertTrue(diagnostic.information_part_egalim)
+                    self.assertNotEqual(diagnostic.information_qualite_durable, True)
+                else:
+                    self.assertTrue(diagnostic.information_qualite_durable)
+                    self.assertNotEqual(diagnostic.information_part_egalim, True)

@@ -118,6 +118,23 @@ class TeledeclarationFieldsTest(SimpleTestCase):
                 self.assertIn("service_type", get_teledeclaration_fields_all(year, "DIVERSIFICATION"))
                 self.assertNotIn("menu_vegetarien_type", get_teledeclaration_fields_all(year, "DIVERSIFICATION"))
 
+    def test_information_fields_replaced_in_2026(self):
+        information_fields_2025 = get_teledeclaration_fields_all(2025, "INFORMATION")
+        information_fields_2026 = get_teledeclaration_fields_all(2026, "INFORMATION")
+        self.assertIn("information_qualite_durable", information_fields_2025)
+        self.assertNotIn("information_part_egalim", information_fields_2025)
+        self.assertEqual(
+            information_fields_2026,
+            [
+                "information_affichage_permanent",
+                "information_electronique_annuelle",
+                "information_part_egalim",
+                "information_part_pat",
+                "information_consultation_qualite",
+            ],
+        )
+        self.assertEqual(set(information_fields_2025) & set(information_fields_2026), set())
+
     def test_get_teledeclaration_fields_all_volets(self):
         for year in TELEDECLARATION_FIELDS:
             for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:

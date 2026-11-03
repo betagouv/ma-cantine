@@ -1536,6 +1536,21 @@ TELEDECLARATION_FIELDS = {
         },
         "INFORMATION": {
             "fields": [
+                "information_affichage_permanent",
+                "information_electronique_annuelle",
+                "information_part_egalim",
+                "information_part_pat",
+                "information_consultation_qualite",
+            ],
+            "fields_required": [],
+            "fields_added": [
+                "information_affichage_permanent",
+                "information_electronique_annuelle",
+                "information_part_egalim",
+                "information_part_pat",
+                "information_consultation_qualite",
+            ],
+            "fields_removed": [
                 "information_supports",
                 "information_supports_autre",
                 "information_support_url",
@@ -1543,7 +1558,6 @@ TELEDECLARATION_FIELDS = {
                 "information_qualite_durable",
                 "information_frequence",
             ],
-            "fields_required": [],
         },
     },
 }
