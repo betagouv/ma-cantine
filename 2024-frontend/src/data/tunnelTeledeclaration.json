@@ -164,7 +164,7 @@
       "valeurBoulangerieCommerceEquitable": {"shortName": "Boulangerie/Pâtisseries fraîches"},
       "valeurAutresCommerceEquitable": {"shortName": "Autres produits frais, surgelés et d'épicerie"},
       "valeurBoissonsCommerceEquitable": {"shortName": "Boissons"},
-      "valeurViandesVolaillesFermier": {"shortName": "Viandes et volailles fraîches ou surgelées non bio"},
+      "valeurViandesVolaillesFermier": {"shortName": "Viandes et volailles fraîches ou surgelées"},
       "valeurProduitsDeLaMerFermier": {"shortName": "Poissons, produits de la mer et de l'aquaculture frais et surgelés"},
       "valeurCharcuterieFermier": {"shortName": "Charcuteries"},
       "valeurFruitsEtLegumesFermier": {"shortName": "Fruits et légumes frais et surgelés"},
