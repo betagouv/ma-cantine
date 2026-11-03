@@ -68,6 +68,23 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         ]
         self.assertEqual(unclassified_fields, [])
 
+    def test_fields_added_and_removed_match_the_previous_year(self):
+        # fields_added and fields_removed are not in the configuration for now: they will be re-added after
+        return
+        years = TELEDECLARATION_YEARS
+        for previous_year, year in zip(years, years[1:]):
+            for volet in VOLETS:
+                diagnostic_types = DIAGNOSTIC_TYPES if volet == "APPROVISIONNEMENT" else [None]
+                for diagnostic_type in diagnostic_types:
+                    with self.subTest(year=year, volet=volet, diagnostic_type=diagnostic_type):
+                        volet_fields = get_teledeclaration_config(year)[volet]
+                        if diagnostic_type:
+                            volet_fields = volet_fields[diagnostic_type]
+                        fields = set(get_teledeclaration_fields_all(year, volet, diagnostic_type))
+                        previous_fields = set(get_teledeclaration_fields_all(previous_year, volet, diagnostic_type))
+                        self.assertEqual(set(volet_fields.get("fields_added", [])), fields - previous_fields)
+                        self.assertEqual(set(volet_fields.get("fields_removed", [])), previous_fields - fields)
+
     def test_non_approvisionnement_volets_ignore_diagnostic_type(self):
         for volet in VOLETS[1:]:
             with self.subTest(volet=volet):
