@@ -5,7 +5,7 @@ from simple_history.admin import SimpleHistoryAdmin
 from data.admin.utils import ReadOnlyAdminMixin, json_pretty
 from data.models import Diagnostic
 from data.models.creation_source import CreationSource
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all, get_tunnel_progress_field
 
 
 class DiagnosticForm(forms.ModelForm):
@@ -146,7 +146,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "Plus de produits de qualité et durables dans nos assiettes",
                 {
                     "fields": (
-                        "tunnel_appro",
+                        get_tunnel_progress_field("APPROVISIONNEMENT"),
                         *simple_or_complete_fields,
                     )
                 },
@@ -155,7 +155,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "Lutte contre le gaspillage alimentaire et dons alimentaires",
                 {
                     "fields": (
-                        "tunnel_waste",
+                        get_tunnel_progress_field("GASPILLAGE"),
                         *Diagnostic.WASTE_FIELDS,
                     )
                 },
@@ -164,7 +164,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "Diversification des sources de protéines et menus végétariens",
                 {
                     "fields": (
-                        "tunnel_diversification",
+                        get_tunnel_progress_field("DIVERSIFICATION"),
                         *Diagnostic.DIVERSIFICATION_FIELDS,
                     )
                 },
@@ -173,7 +173,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "Substitution des plastiques",
                 {
                     "fields": (
-                        "tunnel_plastic",
+                        get_tunnel_progress_field("PLASTIQUE"),
                         *Diagnostic.PLASTIC_FIELDS,
                     )
                 },
@@ -182,7 +182,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                 "Information des usagers et convives",
                 {
                     "fields": (
-                        "tunnel_info",
+                        get_tunnel_progress_field("INFORMATION"),
                         *Diagnostic.INFO_FIELDS,
                     )
                 },

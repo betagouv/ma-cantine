@@ -34,6 +34,7 @@ from data.models.diagnostic_teledeclaration_dates import (
     is_in_correction,
 )
 from data.models.diagnostic_teledeclaration_fields import (
+    TUNNEL_PROGRESS_FIELD_BY_VOLET,
     get_teledeclaration_fields_all,
     get_teledeclaration_fields_required,
 )
@@ -512,13 +513,7 @@ class Diagnostic(
         "creation_mtm_medium",
     ]
 
-    TUNNEL_PROGRESS_FIELDS = [
-        "tunnel_appro",
-        "tunnel_waste",
-        "tunnel_diversification",
-        "tunnel_plastic",
-        "tunnel_info",
-    ]
+    TUNNEL_PROGRESS_FIELDS = list(TUNNEL_PROGRESS_FIELD_BY_VOLET.values())
 
     # django-dirtyfields: only track the fields we need (see is_already_teledeclared)
     FIELDS_TO_CHECK = ["status"]

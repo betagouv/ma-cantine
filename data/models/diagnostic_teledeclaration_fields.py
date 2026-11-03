@@ -1618,3 +1618,21 @@ def get_teledeclaration_fields_all_volets(year, diagnostic_type):
         for volet in TELEDECLARATION_FIELDS[year]
         for field in get_teledeclaration_fields_all(year, volet, diagnostic_type)
     ]
+
+
+TUNNEL_PROGRESS_FIELD_BY_VOLET = {
+    "APPROVISIONNEMENT": "tunnel_appro",
+    "GASPILLAGE": "tunnel_waste",
+    "DIVERSIFICATION": "tunnel_diversification",
+    "PLASTIQUE": "tunnel_plastic",
+    "INFORMATION": "tunnel_info",
+}
+
+
+def get_tunnel_progress_field(volet):
+    """
+    The tunnel_* field of the volet (used by the frontend to store the progress in the volet's tunnel)
+    """
+    if volet not in TUNNEL_PROGRESS_FIELD_BY_VOLET:
+        raise ValueError(f"Volet expected one of {list(TUNNEL_PROGRESS_FIELD_BY_VOLET.keys())} but got '{volet}'.")
+    return TUNNEL_PROGRESS_FIELD_BY_VOLET[volet]

@@ -3,10 +3,12 @@ from django.test import SimpleTestCase
 from data.models import Diagnostic
 from data.models.diagnostic_teledeclaration_fields import (
     TELEDECLARATION_FIELDS,
+    TUNNEL_PROGRESS_FIELD_BY_VOLET,
     get_teledeclaration_fields_all,
     get_teledeclaration_fields_all_volets,
     get_teledeclaration_fields_all_years,
     get_teledeclaration_fields_required,
+    get_tunnel_progress_field,
 )
 
 VOLETS = ["APPROVISIONNEMENT", "GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]
@@ -128,6 +130,17 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         self.assertNotIn("service_type", get_teledeclaration_fields_all_volets(2023, "SIMPLE"))
         self.assertIn("service_type", get_teledeclaration_fields_all_volets(2024, "SIMPLE"))
         self.assertIn("has_waste_diagnostic", get_teledeclaration_fields_all_volets("2025", "SIMPLE"))
+
+    def test_get_tunnel_progress_field(self):
+        self.assertEqual(list(TUNNEL_PROGRESS_FIELD_BY_VOLET.keys()), VOLETS)
+        for volet in VOLETS:
+            with self.subTest(volet=volet):
+                tunnel_progress_field = get_tunnel_progress_field(volet)
+                Diagnostic._meta.get_field(tunnel_progress_field)  # exists on the model
+                self.assertIn(tunnel_progress_field, Diagnostic.TUNNEL_PROGRESS_FIELDS)
+        self.assertEqual(get_tunnel_progress_field("GASPILLAGE"), "tunnel_waste")
+        with self.assertRaises(ValueError):
+            get_tunnel_progress_field("UNKNOWN")
 
     def test_errors(self):
         with self.assertRaises(ValueError):
