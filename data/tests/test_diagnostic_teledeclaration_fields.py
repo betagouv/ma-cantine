@@ -4,6 +4,8 @@ from data.models import Diagnostic
 from data.models.diagnostic_teledeclaration_fields import (
     TELEDECLARATION_FIELDS,
     TUNNEL_PROGRESS_FIELD_BY_VOLET,
+    VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED,
+    get_fields_editable_even_if_is_teledeclared,
     get_teledeclaration_fields_all,
     get_teledeclaration_fields_all_volets,
     get_teledeclaration_fields_all_years,
@@ -141,6 +143,27 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         self.assertEqual(get_tunnel_progress_field("GASPILLAGE"), "tunnel_waste")
         with self.assertRaises(ValueError):
             get_tunnel_progress_field("UNKNOWN")
+
+    def test_get_fields_editable_even_if_is_teledeclared(self):
+        self.assertNotIn("APPROVISIONNEMENT", VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED)
+        for year in TELEDECLARATION_FIELDS:
+            with self.subTest(year=year):
+                fields = get_fields_editable_even_if_is_teledeclared(year)
+                for volet in VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED:
+                    for field in get_teledeclaration_fields_all(year, volet):
+                        self.assertIn(field, fields)
+                    self.assertIn(get_tunnel_progress_field(volet), fields)
+                # never the appro fields, nor the diagnostic's main fields
+                for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
+                    for field in get_teledeclaration_fields_all(year, "APPROVISIONNEMENT", diagnostic_type):
+                        self.assertNotIn(field, fields)
+                for field in ["year", "diagnostic_type", "central_kitchen_diagnostic_mode", "status", "tunnel_appro"]:
+                    self.assertNotIn(field, fields)
+        # depends on the year
+        self.assertNotIn("service_type", get_fields_editable_even_if_is_teledeclared(2023))
+        self.assertIn("service_type", get_fields_editable_even_if_is_teledeclared(2024))
+        with self.assertRaises(ValueError):
+            get_fields_editable_even_if_is_teledeclared(2020)
 
     def test_errors(self):
         with self.assertRaises(ValueError):
