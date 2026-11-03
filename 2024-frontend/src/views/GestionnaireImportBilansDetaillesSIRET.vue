@@ -15,13 +15,13 @@ const route = useRoute()
 /* Data */
 const schemaFile = "bilans_detaille_siret_2026.json"
 const exampleFile = {
-  name: "importer_des_bilans_detailles_2026_exemple.xlsx",
+  name: "importer_des_bilans_detailles_siret_2026_exemple.xlsx",
   size: "9 ko",
 }
 const filePreviews = {
-  success: "importer_des_bilans_detailles_2026_exemple_fichier_accepte.jpg?v=1",
+  success: "importer_des_bilans_detailles_siret_2026_exemple_fichier_accepte.jpg?v=1",
   altSuccess: "Exemple de fichier accepté pour importer des bilans détaillés, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "importer_des_bilans_detailles_2026_exemple_fichier_rejete.jpg?v=2",
+  error: "importer_des_bilans_detailles_siret_2026_exemple_fichier_rejete.jpg?v=2",
   altError: "Exemple de fichier rejeté pour importer des bilans détaillés, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 const links = [
