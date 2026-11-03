@@ -20,6 +20,26 @@ def get_teledeclaration_config(year):
     return json.loads(config_path.read_text(encoding="utf-8"))
 
 
+def get_teledeclaration_import_fields(year, diagnostic_type):
+    """
+    The appro fields of an import, in the order of its columns
+    """
+    fields = get_teledeclaration_config(year)["APPROVISIONNEMENT"]
+    present_fields = [
+        name for name, field in fields.items() if field["diagnostic_type"][diagnostic_type]["is_present"]
+    ]
+    return sorted(present_fields, key=lambda name: fields[name]["diagnostic_type"][diagnostic_type]["import_order"])
+
+
+def get_teledeclaration_import_fields_required(year, diagnostic_type):
+    fields = get_teledeclaration_config(year)["APPROVISIONNEMENT"]
+    return [
+        name
+        for name in get_teledeclaration_import_fields(year, diagnostic_type)
+        if fields[name]["diagnostic_type"][diagnostic_type]["is_required"]
+    ]
+
+
 def get_teledeclaration_verbose_name(year, volet, field_name):
     return get_teledeclaration_config(year)[volet][field_name]["verbose_name"]
 
@@ -27,7 +47,7 @@ def get_teledeclaration_verbose_name(year, volet, field_name):
 def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=False):
     """
     diagnostic_type (SIMPLE / COMPLETE) is only used by the APPROVISIONNEMENT volet
-    The APPROVISIONNEMENT fields follow import_order when the year has one (the order of the import columns)
+    The fields follow the order of the configuration file
     """
     year = int(year) if year else None
     if year not in TELEDECLARATION_YEARS:
@@ -45,7 +65,6 @@ def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=Fals
             for name, field in volet_fields.items()
             if field["diagnostic_type"][diagnostic_type]["is_present"]
         }
-        volet_fields = dict(sorted(volet_fields.items(), key=lambda item: item[1].get("import_order", 0)))
     return [name for name, field in volet_fields.items() if field["is_required"] or not required]
 
 
