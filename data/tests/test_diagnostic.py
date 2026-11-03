@@ -764,6 +764,65 @@ class DiagnosticModelSavePopulateTest(TransactionTestCase):
         self.assertFalse(diagnostic.objectifs_egalim_atteints)
 
 
+class DiagnosticModelSaveTeledeclaredTest(TransactionTestCase):
+    def test_computed_fields_populated_on_teledeclared_diagnostic_creation(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025, status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.pourcentage_bio, 20)
+        self.assertTrue(diagnostic.is_filled)
+
+    def test_computed_fields_frozen_on_teledeclared_diagnostic_update(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025, status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        diagnostic.refresh_from_db()
+        self.assertTrue(diagnostic.is_already_teledeclared)
+
+        diagnostic.valeur_bio = 500
+        diagnostic.valeur_totale = None
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.valeur_bio, 500)  # saved
+        self.assertEqual(diagnostic.pourcentage_bio, 20)  # not recomputed
+        self.assertTrue(diagnostic.objectifs_egalim_atteints)  # not recomputed
+        self.assertTrue(diagnostic.is_filled)  # not recomputed
+
+    def test_computed_fields_populated_on_teledeclare(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025, status=Diagnostic.DiagnosticStatus.DRAFT)
+        diagnostic.refresh_from_db()
+        self.assertFalse(diagnostic.is_already_teledeclared)
+
+        diagnostic.valeur_bio = 500
+        diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+        diagnostic.refresh_from_db()
+        self.assertTrue(diagnostic.is_already_teledeclared)
+        self.assertEqual(diagnostic.pourcentage_bio, 50)  # recomputed
+
+    def test_computed_fields_populated_when_status_changes_from_submitted(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025, status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        diagnostic.refresh_from_db()
+
+        # e.g. cancel()
+        diagnostic.status = Diagnostic.DiagnosticStatus.DRAFT
+        diagnostic.valeur_bio = 500
+        self.assertFalse(diagnostic.is_already_teledeclared)
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.pourcentage_bio, 50)  # recomputed
+
+    def test_computed_fields_populated_on_teledeclared_diagnostic_copy(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025, status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        diagnostic.refresh_from_db()
+
+        # e.g. teledeclaration_generate_1td1site
+        diagnostic_copy = deepcopy(diagnostic)
+        diagnostic_copy.pk = None
+        diagnostic_copy.canteen = CanteenFactory()
+        diagnostic_copy.valeur_bio = 500
+        self.assertFalse(diagnostic_copy.is_already_teledeclared)
+        diagnostic_copy.save()
+        diagnostic_copy.refresh_from_db()
+        self.assertEqual(diagnostic_copy.pourcentage_bio, 50)  # recomputed
+
+
 @freeze_time("2024-02-10")  # during the 2023 campaign
 class Diagnostic2024ModelSaveTest(TransactionTestCase):
     def test_diagnostic_simple_2024_valid(self):

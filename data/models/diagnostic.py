@@ -797,16 +797,19 @@ class Diagnostic(
     def save(self, skip_validations=False, **kwargs):
         """
         - populate the computed fields (see populate_computed_fields)
+            - except if the diagnostic is already teledeclared: the computed fields are frozen at teledeclaration
         - skip_validations: if True, skip validation checks (USE WITH CAUTION) (only for scripts & tests)
         """
         # NOTE: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
-        self.populate_computed_fields()
+        if not self.is_already_teledeclared:
+            self.populate_computed_fields()
         return super().save(**kwargs)
 
     def populate_computed_fields(self):
         """
         Populate the computed fields (simplified, aggregated, stats & cout_repas values) & is_filled
-        - called in save()
+        - called in save() (except if the diagnostic is already teledeclared)
+        - can also be called explicitly (e.g. diagnostic_fill_computed_fields command)
         """
         validation_errors = utils_utils.merge_validation_errors(diagnostic_validators.validate_year(self))
         if not validation_errors:
