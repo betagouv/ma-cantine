@@ -55,5 +55,9 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     origin: "http://localhost:5173",
+    fs: {
+      // Load thee teledeclaration fields outside of the Vite root
+      allow: [rootDir, path.resolve(rootDir, "../teledeclaration")],
+    },
   },
 })
