@@ -791,10 +791,18 @@ class Diagnostic(
 
     def save(self, skip_validations=False, **kwargs):
         """
-        - populate the computed fields (simplified, aggregated, stats & cout_repas values) & is_filled
+        - populate the computed fields (see populate_computed_fields)
         - skip_validations: if True, skip validation checks (USE WITH CAUTION) (only for scripts & tests)
         """
         # NOTE: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
+        self.populate_computed_fields()
+        return super().save(**kwargs)
+
+    def populate_computed_fields(self):
+        """
+        Populate the computed fields (simplified, aggregated, stats & cout_repas values) & is_filled
+        - called in save()
+        """
         validation_errors = utils_utils.merge_validation_errors(diagnostic_validators.validate_year(self))
         if not validation_errors:
             # these methods only work if there is a valid year
@@ -808,7 +816,6 @@ class Diagnostic(
             self.populate_stats_values()
             self.populate_cout_repas()
         self.set_is_filled()
-        return super().save(**kwargs)
 
     def set_is_filled(self):
         self.is_filled = self._is_filled()
