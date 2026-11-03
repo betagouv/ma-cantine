@@ -1,9 +1,41 @@
-import teledeclarationFields from "@/data/teledeclarationFields.json"
-import teledeclarationGroups from "@/data/teledeclarationGroups.json"
+import { APPROVISIONNEMENT as configFields } from "../../../teledeclaration/2026/champs.json"
+import tunnelTeledeclaration from "@/data/tunnelTeledeclaration.json"
+import { toCamelCase } from "@/utils.js"
+
+/* Fields */
+const tunnelApproCustomisation = tunnelTeledeclaration.approvisionnement.fields
+
+const formatFieldData = (name, config) => {
+  const apiKey = toCamelCase(name)
+  const { SIMPLE, COMPLETE } = config.diagnostic_type
+  const isSameRequired = SIMPLE.is_required === COMPLETE.is_required
+  const isAlwaysRequired = SIMPLE.is_required && COMPLETE.is_required
+  return {
+    apiKey,
+    labelRecap: config.verbose_name,
+    hint: config.index ? `${config.index} : ${config.verbose_name}` : undefined,
+    type: "number",
+    autofill: name.startsWith("valeur_"),
+    placeholder: isAlwaysRequired ? undefined : "Je ne sais pas",
+    ...(isSameRequired
+      ? { required: SIMPLE.is_required }
+      : { requiredByType: { SIMPLE: SIMPLE.is_required, COMPLETE: COMPLETE.is_required } }),
+    ...tunnelApproCustomisation[apiKey],
+  }
+}
+
+const generateTeledeclarationFields = () => {
+  const fields = { diagnosticType: { apiKey: "diagnosticType", ...tunnelApproCustomisation.diagnosticType } }
+  for (const [name, config] of Object.entries(configFields)) {
+    fields[toCamelCase(name)] = formatFieldData(name, config)
+  }
+    console.log("fields", fields)
+  return fields
+}
 
 /* Data */
-const groups = { ...teledeclarationGroups.approvisionnement }
-const fields = { ...teledeclarationFields.approvisionnement }
+const groups = { ...tunnelTeledeclaration.approvisionnement.groups }
+const fields = generateTeledeclarationFields()
 
 /* Actions */
 const getField = (fieldName) => {
