@@ -10,8 +10,8 @@ DIAGNOSTICS_SIMPLE_ID_SCHEMA = ImportSchema("bilans_simple_id.json")
 DIAGNOSTICS_SIMPLE_SIRET_2026_SCHEMA = ImportSchema("bilans_simple_siret_2026.json")
 DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA = ImportSchema("bilans_simple_id_2026.json")
 # complete
-DIAGNOSTICS_COMPLETE_SCHEMA = ImportSchema("bilans_detaille.json")
-DIAGNOSTICS_COMPLETE_2026_SCHEMA = ImportSchema("bilans_detaille_2026.json")
+DIAGNOSTICS_COMPLETE_SIRET_SCHEMA = ImportSchema("bilans_detaille_siret.json")
+DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA = ImportSchema("bilans_detaille_siret_2026.json")
 
 
 class DiagnosticsSimpleImportView(BaseDiagnosticsImportView):
@@ -33,8 +33,8 @@ class DiagnosticsSimpleImportView(BaseDiagnosticsImportView):
 
 
 class DiagnosticsCompleteImportView(BaseDiagnosticsImportView):
-    import_type = ImportType.DIAGNOSTIC_COMPLETE
+    import_type = ImportType.DIAGNOSTIC_COMPLETE_SIRET
     diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
     def _get_schemas(self):
-        return {"2025": DIAGNOSTICS_COMPLETE_SCHEMA, "2026": DIAGNOSTICS_COMPLETE_2026_SCHEMA}
+        return {"2025": DIAGNOSTICS_COMPLETE_SIRET_SCHEMA, "2026": DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA}

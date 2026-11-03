@@ -109,23 +109,23 @@ SCHEMA_SPECS = {
             "schema_name": "import-bilans-simple-siret-2026",
             "schema_title": "Schema import des bilans (simple) par SIRET (format 2026)",
         },
-        "detaille": {
-            "file_name": "bilans_detaille.json",
+        "detaille_siret": {
+            "file_name": "bilans_detaille_siret.json",
             "fields_ordered": ["siret", "année_bilan"]
             + get_teledeclaration_fields_all(2025, "APPROVISIONNEMENT", "COMPLETE"),
             "fields_required": ["siret", "année_bilan"]
             + get_teledeclaration_fields_required(2025, "APPROVISIONNEMENT", "COMPLETE"),
-            "schema_name": "import-bilans-detaille",
-            "schema_title": "Schema import des bilans (detaille)",
+            "schema_name": "import-bilans-detaille-siret",
+            "schema_title": "Schema import des bilans (detaille) par SIRET",
         },
-        "detaille_2026": {
-            "file_name": "bilans_detaille_2026.json",
+        "detaille_siret_2026": {
+            "file_name": "bilans_detaille_siret_2026.json",
             "fields_ordered": ["siret", "année_bilan"]
             + get_teledeclaration_fields_all(2026, "APPROVISIONNEMENT", "COMPLETE"),
             "fields_required": ["siret", "année_bilan"]
             + get_teledeclaration_fields_required(2026, "APPROVISIONNEMENT", "COMPLETE"),
-            "schema_name": "import-bilans-detaille-2026",
-            "schema_title": "Schema import des bilans (detaille) (format 2026)",
+            "schema_name": "import-bilans-detaille-siret-2026",
+            "schema_title": "Schema import des bilans (detaille) par SIRET (format 2026)",
         },
     },
 }
@@ -135,8 +135,8 @@ class Command(BaseCommand):
     """
     Exemples:
     - python manage.py generate_import_schema --model Canteen --schema gestionnaires --dry-run
-    - python manage.py generate_import_schema --model Diagnostic --schema detaille --show-diff
-    - python manage.py generate_import_schema --model Diagnostic --schema detaille
+    - python manage.py generate_import_schema --model Diagnostic --schema detaille_siret --show-diff
+    - python manage.py generate_import_schema --model Diagnostic --schema detaille_siret
     """
 
     help = "Regenerate import schema JSON files from model fields."

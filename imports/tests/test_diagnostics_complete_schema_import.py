@@ -2,13 +2,13 @@ import json
 import re
 
 from django.test import TestCase
-from imports.views.diagnostic import DIAGNOSTICS_COMPLETE_2026_SCHEMA, DIAGNOSTICS_COMPLETE_SCHEMA
+from imports.views.diagnostic import DIAGNOSTICS_COMPLETE_SIRET_SCHEMA, DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA
 
 
 class DiagnosticsCompleteSchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.schema = json.load(open(DIAGNOSTICS_COMPLETE_SCHEMA.path))
+        cls.schema = json.load(open(DIAGNOSTICS_COMPLETE_SIRET_SCHEMA.path))
 
     def get_pattern(self, schema, field_name):
         field_index = next((i for i, f in enumerate(schema["fields"]) if f["name"] == field_name), None)
@@ -21,7 +21,7 @@ class DiagnosticsCompleteSchemaTest(TestCase):
 class DiagnosticsComplete2026SchemaTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.schema = json.load(open(DIAGNOSTICS_COMPLETE_2026_SCHEMA.path))
+        cls.schema = json.load(open(DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA.path))
 
     @staticmethod
     def _pattern_for(schema, field_name):
