@@ -4,9 +4,7 @@ from pathlib import Path
 
 from django.conf import settings
 
-TELEDECLARATION_YEARS = sorted(
-    int(path.parent.name) for path in (Path(settings.BASE_DIR) / "teledeclaration").glob("*/champs.json")
-)
+TELEDECLARATION_YEARS = [2021, 2022, 2023, 2024, 2025, 2026]
 VOLETS = ["APPROVISIONNEMENT", "GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]
 DIAGNOSTIC_TYPES = ["SIMPLE", "COMPLETE"]
 
@@ -47,7 +45,6 @@ def get_teledeclaration_verbose_name(year, volet, field_name):
 def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=False):
     """
     diagnostic_type (SIMPLE / COMPLETE) is only used by the APPROVISIONNEMENT volet
-    The fields follow the order of the configuration file
     """
     year = int(year) if year else None
     if year not in TELEDECLARATION_YEARS:

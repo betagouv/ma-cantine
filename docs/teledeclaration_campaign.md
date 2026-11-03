@@ -4,6 +4,7 @@
 
 * ajouter les dates dans [models/diagnostic_teledeclaration_dates.py](../data/models/diagnostic_teledeclaration_dates.py)
 * créer le dossier et les fichiers pour l'année dans `teledeclaration/<année>`
+* ajouter l'année dans `TELEDECLARATION_YEARS` dans [models/diagnostic_teledeclaration_fields.py](../data/models/diagnostic_teledeclaration_fields.py)
 * ajouter les groupes de champs dans [models/diagnostic_teledeclaration_field_groups.py](../data/models/diagnostic_teledeclaration_field_groups.py)
 * ajouter le nouveau champ `Canteen.declaration_donnees_YEAR`
 * modifier les endroits avec `# TODO teledeclaration_campaign`
