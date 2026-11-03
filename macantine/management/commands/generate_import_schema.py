@@ -9,8 +9,8 @@ from django.db import models
 from common.api import validata
 from data.models import Diagnostic
 from data.models.diagnostic_teledeclaration_fields import (
-    get_teledeclaration_import_fields,
-    get_teledeclaration_import_fields_required,
+    get_teledeclaration_fields_all,
+    get_teledeclaration_fields_required,
     get_teledeclaration_verbose_name,
 )
 
@@ -78,9 +78,10 @@ SCHEMA_SPECS = {
             "file_name": "bilans_simple_id.json",
             "year": 2025,
             "custom_verbose_name": True,
-            "fields_ordered": ["cantine_id", "année_bilan"] + get_teledeclaration_import_fields(2025, "SIMPLE"),
+            "fields_ordered": ["cantine_id", "année_bilan"]
+            + get_teledeclaration_fields_all(2025, "APPROVISIONNEMENT", "SIMPLE"),
             "fields_required": ["cantine_id", "année_bilan"]
-            + get_teledeclaration_import_fields_required(2025, "SIMPLE"),
+            + get_teledeclaration_fields_required(2025, "APPROVISIONNEMENT", "SIMPLE"),
             "schema_name": "import-bilans-simple-id",
             "schema_title": "Schema import des bilans (simple) par ID",
         },
@@ -88,8 +89,10 @@ SCHEMA_SPECS = {
             "file_name": "bilans_simple_siret.json",
             "year": 2025,
             "custom_verbose_name": True,
-            "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_import_fields(2025, "SIMPLE"),
-            "fields_required": ["siret", "année_bilan"] + get_teledeclaration_import_fields_required(2025, "SIMPLE"),
+            "fields_ordered": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_all(2025, "APPROVISIONNEMENT", "SIMPLE"),
+            "fields_required": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_required(2025, "APPROVISIONNEMENT", "SIMPLE"),
             "schema_name": "import-bilans-simple-siret",
             "schema_title": "Schema import des bilans (simple) par SIRET",
         },
@@ -97,9 +100,10 @@ SCHEMA_SPECS = {
             "file_name": "bilans_simple_id_2026.json",
             "year": 2026,
             "custom_verbose_name": True,
-            "fields_ordered": ["cantine_id", "année_bilan"] + get_teledeclaration_import_fields(2026, "SIMPLE"),
+            "fields_ordered": ["cantine_id", "année_bilan"]
+            + get_teledeclaration_fields_all(2026, "APPROVISIONNEMENT", "SIMPLE"),
             "fields_required": ["cantine_id", "année_bilan"]
-            + get_teledeclaration_import_fields_required(2026, "SIMPLE"),
+            + get_teledeclaration_fields_required(2026, "APPROVISIONNEMENT", "SIMPLE"),
             "schema_name": "import-bilans-simple-id-2026",
             "schema_title": "Schema import des bilans (simple) par ID (format 2026)",
         },
@@ -107,8 +111,10 @@ SCHEMA_SPECS = {
             "file_name": "bilans_simple_siret_2026.json",
             "year": 2026,
             "custom_verbose_name": True,
-            "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_import_fields(2026, "SIMPLE"),
-            "fields_required": ["siret", "année_bilan"] + get_teledeclaration_import_fields_required(2026, "SIMPLE"),
+            "fields_ordered": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_all(2026, "APPROVISIONNEMENT", "SIMPLE"),
+            "fields_required": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_required(2026, "APPROVISIONNEMENT", "SIMPLE"),
             "schema_name": "import-bilans-simple-siret-2026",
             "schema_title": "Schema import des bilans (simple) par SIRET (format 2026)",
         },
@@ -116,8 +122,10 @@ SCHEMA_SPECS = {
             "file_name": "bilans_detaille_siret.json",
             "year": 2025,
             "custom_verbose_name": True,
-            "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_import_fields(2025, "COMPLETE"),
-            "fields_required": ["siret", "année_bilan"] + get_teledeclaration_import_fields_required(2025, "COMPLETE"),
+            "fields_ordered": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_all(2025, "APPROVISIONNEMENT", "COMPLETE"),
+            "fields_required": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_required(2025, "APPROVISIONNEMENT", "COMPLETE"),
             "schema_name": "import-bilans-detaille-siret",
             "schema_title": "Schema import des bilans (detaille) par SIRET",
         },
@@ -125,9 +133,10 @@ SCHEMA_SPECS = {
             "file_name": "bilans_detaille_id_2026.json",
             "year": 2026,
             "custom_verbose_name": True,
-            "fields_ordered": ["cantine_id", "année_bilan"] + get_teledeclaration_import_fields(2026, "COMPLETE"),
+            "fields_ordered": ["cantine_id", "année_bilan"]
+            + get_teledeclaration_fields_all(2026, "APPROVISIONNEMENT", "COMPLETE"),
             "fields_required": ["cantine_id", "année_bilan"]
-            + get_teledeclaration_import_fields_required(2026, "COMPLETE"),
+            + get_teledeclaration_fields_required(2026, "APPROVISIONNEMENT", "COMPLETE"),
             "schema_name": "import-bilans-detaille-id-2026",
             "schema_title": "Schema import des bilans (detaille) par ID (format 2026)",
         },
@@ -135,8 +144,10 @@ SCHEMA_SPECS = {
             "file_name": "bilans_detaille_siret_2026.json",
             "year": 2026,
             "custom_verbose_name": True,
-            "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_import_fields(2026, "COMPLETE"),
-            "fields_required": ["siret", "année_bilan"] + get_teledeclaration_import_fields_required(2026, "COMPLETE"),
+            "fields_ordered": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_all(2026, "APPROVISIONNEMENT", "COMPLETE"),
+            "fields_required": ["siret", "année_bilan"]
+            + get_teledeclaration_fields_required(2026, "APPROVISIONNEMENT", "COMPLETE"),
             "schema_name": "import-bilans-detaille-siret-2026",
             "schema_title": "Schema import des bilans (detaille) par SIRET (format 2026)",
         },
