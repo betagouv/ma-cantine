@@ -204,7 +204,7 @@ def create_diagnostic_teledeclared_for_satellite(diagnostic, satellite_dict, app
 
     if apply:
         try:
-            diagnostic_satellite.save()
+            diagnostic_satellite.save(skip_validations=True)
         except IntegrityError:
             logger.error(
                 f"Task error: Cannot save generated diagnostic as it would create a duplicate. Diagnostic: {diagnostic.id} / Canteen: {satellite_dict['id']}"
