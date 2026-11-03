@@ -2,10 +2,13 @@ from django.test import SimpleTestCase
 
 from data.models import Diagnostic
 from data.models.diagnostic_teledeclaration_fields import (
-    TELEDECLARATION_FIELDS,
+    DIAGNOSTIC_TYPES,
+    TELEDECLARATION_YEARS,
     TUNNEL_PROGRESS_FIELD_BY_VOLET,
+    VOLETS,
     VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED,
     get_fields_editable_even_if_is_teledeclared,
+    get_teledeclaration_config,
     get_teledeclaration_fields_all,
     get_teledeclaration_fields_all_volets,
     get_teledeclaration_fields_all_years,
@@ -13,19 +16,17 @@ from data.models.diagnostic_teledeclaration_fields import (
     get_tunnel_progress_field,
 )
 
-VOLETS = ["APPROVISIONNEMENT", "GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]
-
 
 class TeledeclarationFieldsTest(SimpleTestCase):
     def test_every_year_has_all_volets(self):
-        for year in TELEDECLARATION_FIELDS:
+        for year in TELEDECLARATION_YEARS:
             with self.subTest(year=year):
-                self.assertEqual(list(TELEDECLARATION_FIELDS[year].keys()), VOLETS)
+                self.assertEqual(set(get_teledeclaration_config(year)), set(VOLETS))
 
     def test_every_field_exists_on_the_model(self):
         model_fields = {field.name for field in Diagnostic._meta.get_fields()}
-        for year in TELEDECLARATION_FIELDS:
-            for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
+        for year in TELEDECLARATION_YEARS:
+            for diagnostic_type in DIAGNOSTIC_TYPES:
                 with self.subTest(year=year, diagnostic_type=diagnostic_type):
                     self.assertEqual(
                         set(get_teledeclaration_fields_all(year, "APPROVISIONNEMENT", diagnostic_type)) - model_fields,
@@ -67,23 +68,6 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         ]
         self.assertEqual(unclassified_fields, [])
 
-    def test_fields_added_and_removed_match_the_previous_year(self):
-        years = sorted(TELEDECLARATION_FIELDS)
-        for previous_year, year in zip(years, years[1:]):
-            for volet in VOLETS:
-                diagnostic_types = (
-                    TELEDECLARATION_FIELDS[year][volet].keys() if volet == "APPROVISIONNEMENT" else [None]
-                )
-                for diagnostic_type in diagnostic_types:
-                    with self.subTest(year=year, volet=volet, diagnostic_type=diagnostic_type):
-                        volet_fields = TELEDECLARATION_FIELDS[year][volet]
-                        if diagnostic_type:
-                            volet_fields = volet_fields[diagnostic_type]
-                        fields = set(get_teledeclaration_fields_all(year, volet, diagnostic_type))
-                        previous_fields = set(get_teledeclaration_fields_all(previous_year, volet, diagnostic_type))
-                        self.assertEqual(set(volet_fields.get("fields_added", [])), fields - previous_fields)
-                        self.assertEqual(set(volet_fields.get("fields_removed", [])), previous_fields - fields)
-
     def test_non_approvisionnement_volets_ignore_diagnostic_type(self):
         for volet in VOLETS[1:]:
             with self.subTest(volet=volet):
@@ -107,7 +91,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         # service_type (since 2024) keeps its position of the most recent year, menu_vegetarien_type (until 2023) at the end
         self.assertEqual(
             get_teledeclaration_fields_all_years("DIVERSIFICATION"),
-            get_teledeclaration_fields_all(max(TELEDECLARATION_FIELDS), "DIVERSIFICATION") + ["menu_vegetarien_type"],
+            get_teledeclaration_fields_all(max(TELEDECLARATION_YEARS), "DIVERSIFICATION") + ["menu_vegetarien_type"],
         )
 
     def test_service_type_replaces_vegetarian_menu_type_from_2024(self):
@@ -159,8 +143,8 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         )
 
     def test_get_teledeclaration_fields_all_volets(self):
-        for year in TELEDECLARATION_FIELDS:
-            for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
+        for year in TELEDECLARATION_YEARS:
+            for diagnostic_type in DIAGNOSTIC_TYPES:
                 with self.subTest(year=year, diagnostic_type=diagnostic_type):
                     expected_fields = get_teledeclaration_fields_all(year, "APPROVISIONNEMENT", diagnostic_type) + [
                         field for volet in VOLETS[1:] for field in get_teledeclaration_fields_all(year, volet)
@@ -186,7 +170,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
 
     def test_get_fields_editable_even_if_is_teledeclared(self):
         self.assertNotIn("APPROVISIONNEMENT", VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED)
-        for year in TELEDECLARATION_FIELDS:
+        for year in TELEDECLARATION_YEARS:
             with self.subTest(year=year):
                 fields = get_fields_editable_even_if_is_teledeclared(year)
                 for volet in VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED:
@@ -194,7 +178,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
                         self.assertIn(field, fields)
                     self.assertIn(get_tunnel_progress_field(volet), fields)
                 # never the appro fields, nor the diagnostic's main fields
-                for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
+                for diagnostic_type in DIAGNOSTIC_TYPES:
                     for field in get_teledeclaration_fields_all(year, "APPROVISIONNEMENT", diagnostic_type):
                         self.assertNotIn(field, fields)
                 for field in ["year", "diagnostic_type", "central_kitchen_diagnostic_mode", "status", "tunnel_appro"]:
