@@ -1613,10 +1613,6 @@
       "is_required": false,
       "verbose_name": "Quantité des denrées données"
     },
-    "duration_leftovers_measurement": {
-      "is_required": false,
-      "verbose_name": "Période de mesure"
-    },
     "has_donation_agreement": {
       "is_required": false,
       "verbose_name": "Propose des dons alimentaires"
@@ -1648,10 +1644,6 @@
     "side_leftovers": {
       "is_required": false,
       "verbose_name": "Reste de composantes (entrée, plat dessert...)"
-    },
-    "total_leftovers": {
-      "is_required": false,
-      "verbose_name": "Total des déchets alimentaires"
     },
     "unserved_leftovers": {
       "is_required": false,
