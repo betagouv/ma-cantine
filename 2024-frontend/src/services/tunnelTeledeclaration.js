@@ -29,7 +29,6 @@ const generateTeledeclarationFields = () => {
   for (const [name, config] of Object.entries(configFields)) {
     fields[toCamelCase(name)] = formatFieldData(name, config)
   }
-    console.log("fields", fields)
   return fields
 }
 
