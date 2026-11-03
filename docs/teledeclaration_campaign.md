@@ -3,7 +3,7 @@
 ## Avant la campagne
 
 * ajouter les dates dans [models/diagnostic_teledeclaration_dates.py](../data/models/diagnostic_teledeclaration_dates.py)
-* ajouter les champs dans `teledeclaration/<année>/champs.json`, avec `import_order` pour fixer l'ordre des colonnes d'import des champs d'approvisionnement
+* créer le dossier et les fichiers pour l'année dans `teledeclaration/<année>`
 * ajouter les groupes de champs dans [models/diagnostic_teledeclaration_field_groups.py](../data/models/diagnostic_teledeclaration_field_groups.py)
 * ajouter le nouveau champ `Canteen.declaration_donnees_YEAR`
 * modifier les endroits avec `# TODO teledeclaration_campaign`
