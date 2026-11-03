@@ -5,7 +5,7 @@ import { useRoute } from "vue-router"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { formatNumber } from "@/utils.js"
-import teledeclarationFieldsService from "@/services/teledeclarationFields.js"
+import tunnelTeledeclarationService from "@/services/tunnelTeledeclaration.js"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
@@ -19,11 +19,11 @@ const route = useRoute()
 const select = ref()
 const diagnosticTypeFieldName = "diagnosticType"
 const generatedFromPurchasesFieldName = "generatedFromPurchases"
-const field = computed(() => teledeclarationFieldsService.getField(diagnosticTypeFieldName))
+const field = computed(() => tunnelTeledeclarationService.getField(diagnosticTypeFieldName))
 const isRequired = computed(() => field.value.required)
-const label = computed(() => field.value.label)
+const label = computed(() => field.value.shortName)
 const errorMessage = computed(() => {
-  const errors = teledeclarationFieldsService.getFieldError(diagnosticTypeFieldName, storeTeledeclaration.getDisplayedErrors(route.meta.slug))
+  const errors = tunnelTeledeclarationService.getFieldError(diagnosticTypeFieldName, storeTeledeclaration.getDisplayedErrors(route.meta.slug))
   return errors ? errors.join('. ') : ''
 })
 const options = computed(() => {

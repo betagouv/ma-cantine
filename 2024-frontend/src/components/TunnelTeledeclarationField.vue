@@ -8,7 +8,7 @@ import IconLink from "@/components/IconLink.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import AppTooltipHover from "@/components/AppTooltipHover.vue"
 import TunnelTeledeclarationAutofill from "@/components/TunnelTeledeclarationAutofill.vue"
-import teledeclarationFieldsService from "@/services/teledeclarationFields"
+import tunnelTeledeclarationService from "@/services/tunnelTeledeclaration"
 
 /* Stores */
 const props = defineProps(["name"])
@@ -20,19 +20,19 @@ const route = useRoute()
 
 /* Informations */
 const field = ref()
-const data = computed(() => teledeclarationFieldsService.getField(props.name))
+const data = computed(() => tunnelTeledeclarationService.getField(props.name))
 const isNumber = computed(() => data.value?.type === "number")
 const isSelect = computed(() => data.value?.type === "select")
 const isCheckboxes = computed(() => data.value?.type === "checkboxes")
 const isRadio = computed(() => data.value?.type === "radio")
 const diagnosticType = computed(() => storeTeledeclaration.diagnostic?.diagnosticType)
 const isRequired = computed(() => data.value.requiredByType ? data.value.requiredByType[diagnosticType.value] : data.value.required)
-const label = computed(() => data.value.label)
+const label = computed(() => data.value.shortName)
 const tooltip = computed(() => data.value.tooltip)
 const isRelatedVertical = computed(() => data.value?.isRelatedField === "vertical")
 const isRelatedHorizontal = computed(() => data.value?.isRelatedField === "horizontal")
 const placeholder = computed(() => isRequired.value ? undefined : data.value?.placeholder)
-const errorMessage = computed(() => teledeclarationFieldsService.getFieldError(props.name, storeTeledeclaration.getDisplayedErrors(route.meta.slug)))
+const errorMessage = computed(() => tunnelTeledeclarationService.getFieldError(props.name, storeTeledeclaration.getDisplayedErrors(route.meta.slug)))
 const selectErrorMessage = computed(() => errorMessage.value?.join(". "))
 const hint = computed(() => data.value.hint)
 const options = computed(() => data.value.options)
