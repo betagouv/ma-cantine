@@ -2352,10 +2352,6 @@
     }
   },
   "GASPILLAGE": {
-    "bread_leftovers": {
-      "is_required": false,
-      "verbose_name": "reste de pain kg/an"
-    },
     "donation_food_type": {
       "is_required": false,
       "verbose_name": "type de denrées données"
@@ -2367,10 +2363,6 @@
     "donation_quantity": {
       "is_required": false,
       "verbose_name": "quantité des denrées données kg/an"
-    },
-    "duration_leftovers_measurement": {
-      "is_required": false,
-      "verbose_name": "période de mesure (jours)"
     },
     "has_donation_agreement": {
       "is_required": false,
@@ -2395,22 +2387,6 @@
     "other_waste_comments": {
       "is_required": false,
       "verbose_name": "autres commentaires (gaspillage)"
-    },
-    "served_leftovers": {
-      "is_required": false,
-      "verbose_name": "reste plateau kg/an"
-    },
-    "side_leftovers": {
-      "is_required": false,
-      "verbose_name": "reste de composantes kg/an"
-    },
-    "total_leftovers": {
-      "is_required": false,
-      "verbose_name": "total des déchets alimentaires (t)"
-    },
-    "unserved_leftovers": {
-      "is_required": false,
-      "verbose_name": "reste en production (non servi) kg/an"
     },
     "waste_actions": {
       "is_required": false,
