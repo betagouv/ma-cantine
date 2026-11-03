@@ -977,7 +977,7 @@
 
         <h3>Information des usagers et convives</h3>
         <div>
-            {% if communicates_on_food_plan %}
+            {% if information_qualite_nutritionnelle %}
             <p>
                 <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                 Communique sur le plan alimentaire
@@ -990,23 +990,23 @@
             {% endif %}
         </div>
 
-        {% if communication_frequency %}
+        {% if information_frequence %}
         <div>
             <p>
                 <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
-                Fréquence de cette communication : {{ communication_frequency }}
+                Fréquence de cette communication : {{ information_frequence }}
             </p>
         </div>
         {% endif %}
 
-        {% if communication_supports %}
+        {% if information_supports %}
         <div>
             <p>
                 <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                 L'information sur la qualité des approvisionnements se fait :
             </p>
             <ul>
-                {% for support in communication_supports %}
+                {% for support in information_supports %}
                 <li>{{ support }}</li>
                 {% endfor %}
             </ul>
@@ -1014,7 +1014,7 @@
         {% endif %}
 
         <p>
-            {% if communicates_on_food_quality %}
+            {% if information_qualite_durable %}
             <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
             Communique sur les démarches qualité/durables/équitables
             {% else %}
@@ -1023,12 +1023,12 @@
             {% endif %}
         </p>
 
-        {% if communication_support_url %}
+        {% if information_support_url %}
         <p>
             <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
             Lien vers le support de communication :
-            <a href="{{ communication_support_url }}">
-                {{ communication_support_url }}
+            <a href="{{ information_support_url }}">
+                {{ information_support_url }}
             </a>
         </p>
         {% endif %}

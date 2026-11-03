@@ -1014,7 +1014,7 @@ class Diagnostic(
 
     @property
     def info_badge(self) -> bool | None:
-        if self.communicates_on_food_quality:
+        if self.information_qualite_durable:
             return True
         if self.tunnel_info:
             return False

@@ -238,10 +238,10 @@ class DiagnosticTeledeclarationPdfView(APIView):
             [diagnostic.actions_gaspillage_autre] if diagnostic.actions_gaspillage_autre else []
         )
         processed_communication_supports = [
-            Diagnostic.CommunicationType(x).label for x in (diagnostic.communication_supports or [])
+            Diagnostic.InformationSupport(x).label for x in (diagnostic.information_supports or [])
         ]
         combined_communication_supports = processed_communication_supports + (
-            [diagnostic.other_communication_support] if diagnostic.other_communication_support else []
+            [diagnostic.information_supports_autre] if diagnostic.information_supports_autre else []
         )
 
         return {
@@ -265,12 +265,12 @@ class DiagnosticTeledeclarationPdfView(APIView):
             "menu_vegetarien_bases": [
                 Diagnostic.MenuVegetarienBase(x).label for x in (diagnostic.menu_vegetarien_bases or [])
             ],
-            "communication_frequency": (
-                Diagnostic.CommunicationFrequency(diagnostic.communication_frequency).label
-                if diagnostic.communication_frequency
+            "information_frequence": (
+                Diagnostic.InformationFrequence(diagnostic.information_frequence).label
+                if diagnostic.information_frequence
                 else None
             ),
-            "communication_supports": combined_communication_supports,
+            "information_supports": combined_communication_supports,
         }
 
     # this method should correspond to the rules in frontend utils : applicableDiagnosticRules

@@ -83,9 +83,9 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     plastic_bottles_substituted = factory.Faker("boolean")
     plastic_tableware_substituted = factory.Faker("boolean")
 
-    communication_supports = factory.List(random.sample(list(Diagnostic.CommunicationType), random.randint(0, 2)))
-    communication_support_url = factory.Faker("uri")
-    communicates_on_food_plan = factory.Faker("boolean")
+    information_supports = factory.List(random.sample(list(Diagnostic.InformationSupport), random.randint(0, 2)))
+    information_support_url = factory.Faker("uri")
+    information_qualite_nutritionnelle = factory.Faker("boolean")
 
     # NOTE: here because we want to ensure a valid Diagnostic is created (if teledeclared/full_clean)
     @factory.post_generation
@@ -139,9 +139,9 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     plastic_bottles_substituted = factory.Faker("boolean")
     plastic_tableware_substituted = factory.Faker("boolean")
 
-    communication_supports = factory.List(random.sample(list(Diagnostic.CommunicationType), random.randint(0, 2)))
-    communication_support_url = factory.Faker("uri")
-    communicates_on_food_plan = factory.Faker("boolean")
+    information_supports = factory.List(random.sample(list(Diagnostic.InformationSupport), random.randint(0, 2)))
+    information_support_url = factory.Faker("uri")
+    information_qualite_nutritionnelle = factory.Faker("boolean")
 
     # NOTE: here because we want to ensure a valid Diagnostic is created (if teledeclared/full_clean)
     @factory.post_generation

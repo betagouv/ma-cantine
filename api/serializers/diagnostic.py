@@ -35,6 +35,12 @@ V1_FIELD_ALIASES = {
     "served_leftovers": "dechets_plateau",
     "unserved_leftovers": "dechets_non_servis",
     "side_leftovers": "dechets_composantes",
+    "communication_supports": "information_supports",
+    "other_communication_support": "information_supports_autre",
+    "communication_support_url": "information_support_url",
+    "communicates_on_food_plan": "information_qualite_nutritionnelle",
+    "communicates_on_food_quality": "information_qualite_durable",
+    "communication_frequency": "information_frequence",
 }
 V1_FIELD_NAMES = {model_field_name: v1_name for v1_name, model_field_name in V1_FIELD_ALIASES.items()}
 # same for the choice values renamed in French
@@ -67,6 +73,17 @@ V1_CHOICE_VALUE_ALIASES = {
         "AWARENESS": Diagnostic.ActionsGaspillage.SENSIBILISATION,
         "TRAINING": Diagnostic.ActionsGaspillage.FORMATION,
         "REUSE": Diagnostic.ActionsGaspillage.REUTILISATION,
+    },
+    "communication_supports": {
+        "DISPLAY": Diagnostic.InformationSupport.AFFICHAGE,
+        "WEBSITE": Diagnostic.InformationSupport.SITE_INTERNET,
+        "OTHER": Diagnostic.InformationSupport.AUTRE,
+        "DIGITAL": Diagnostic.InformationSupport.ELECTRONIQUE,
+    },
+    "communication_frequency": {
+        "REGULARLY": Diagnostic.InformationFrequence.REGULIEREMENT,
+        "YEARLY": Diagnostic.InformationFrequence.ANNUELLE,
+        "LESS_THAN_YEARLY": Diagnostic.InformationFrequence.MOINS_QUE_ANNUELLE,
     },
 }
 # stored in tons, in kg in the API (v1 & v2 names)

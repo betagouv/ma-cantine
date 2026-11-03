@@ -14,7 +14,7 @@ class DiagnosticForm(forms.ModelForm):
             "actions_gaspillage_autre": forms.Textarea(attrs={"cols": 60, "rows": 2}),
             "commentaires_gaspillage_autre": forms.Textarea(attrs={"cols": 60, "rows": 2}),
             "dons_type_denrees": forms.Textarea(attrs={"cols": 60, "rows": 2}),
-            "other_communication_support": forms.Textarea(attrs={"cols": 60, "rows": 2}),
+            "information_supports_autre": forms.Textarea(attrs={"cols": 60, "rows": 2}),
             "creation_mtm_source": forms.Textarea(attrs={"cols": 55, "rows": 1}),
             "creation_mtm_campaign": forms.Textarea(attrs={"cols": 55, "rows": 1}),
             "creation_mtm_medium": forms.Textarea(attrs={"cols": 55, "rows": 1}),

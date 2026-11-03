@@ -835,14 +835,14 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
         self.diagnostic.plan_gaspillage_en_place = True  # GASPILLAGE
         self.diagnostic.menu_vegetarien_frequence = Diagnostic.MenuVegetarienFrequence.QUOTIDIEN  # DIVERSIFICATION
         self.diagnostic.cooking_plastic_substituted = True  # PLASTIQUE
-        self.diagnostic.communicates_on_food_plan = True  # INFORMATION
+        self.diagnostic.information_qualite_nutritionnelle = True  # INFORMATION
         self.diagnostic.tunnel_waste = "complet"
         self.diagnostic.save()
         self.diagnostic.refresh_from_db()
         self.assertTrue(self.diagnostic.plan_gaspillage_en_place)
         self.assertEqual(self.diagnostic.menu_vegetarien_frequence, Diagnostic.MenuVegetarienFrequence.QUOTIDIEN)
         self.assertTrue(self.diagnostic.cooking_plastic_substituted)
-        self.assertTrue(self.diagnostic.communicates_on_food_plan)
+        self.assertTrue(self.diagnostic.information_qualite_nutritionnelle)
         self.assertEqual(self.diagnostic.tunnel_waste, "complet")
         self.assertTrue(self.diagnostic.is_teledeclared)  # unchanged
 
