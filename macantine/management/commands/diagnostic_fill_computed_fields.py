@@ -57,7 +57,7 @@ class Command(MaCantineBaseCommand):
             # explicit call: save() doesn't populate the computed fields of teledeclared diagnostics (frozen)
             diagnostic.populate_computed_fields()
             # computed fields only: no need for a historical record
-            diagnostic.save_without_historical_record(update_fields=field_list)
+            diagnostic.save_without_historical_record(update_fields=field_list, skip_validations=True)
             if index % 5000 == 0:
                 logger.info(f"Updated {index} diagnostics")
 

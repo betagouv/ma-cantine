@@ -457,7 +457,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
         diagnostic.valeur_viandes_volailles_bio = 30  # simulate a stray field again
-        diagnostic.save()
+        diagnostic.save(skip_validations=True)  # appro fields shouldn't be edited once teledeclared
         with self.assertRaises(ValidationError):
             # is_teledeclared check raises before reaching the clear() call
             diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first())
@@ -778,7 +778,7 @@ class DiagnosticModelSaveTeledeclaredTest(TransactionTestCase):
 
         diagnostic.valeur_bio = 500
         diagnostic.valeur_totale = None
-        diagnostic.save()
+        diagnostic.save(skip_validations=True)  # appro fields shouldn't be edited once teledeclared
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.valeur_bio, 500)  # saved
         self.assertEqual(diagnostic.pourcentage_bio, 20)  # not recomputed

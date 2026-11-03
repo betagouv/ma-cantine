@@ -26,6 +26,16 @@ def _fill_required_fields(obj):
                 setattr(obj, field_name, 0)
 
 
+def _save_after_postgeneration(instance, create, results):
+    """
+    Same as DjangoModelFactory._after_postgeneration, with skip_validations=True:
+    the diagnostic can be already teledeclared (status=SUBMITTED), and its fields changed by fill_required_fields
+    (see Diagnostic.save())
+    """
+    if create and results:
+        instance.save(skip_validations=True)
+
+
 class DiagnosticFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = Diagnostic
@@ -80,6 +90,10 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     def fill_required_fields(obj, create, extracted, **kwargs):
         _fill_required_fields(obj)
 
+    @classmethod
+    def _after_postgeneration(cls, instance, create, results=None):
+        _save_after_postgeneration(instance, create, results)
+
 
 class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     class Meta:
@@ -129,3 +143,7 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     @factory.post_generation
     def fill_required_fields(obj, create, extracted, **kwargs):
         _fill_required_fields(obj)
+
+    @classmethod
+    def _after_postgeneration(cls, instance, create, results=None):
+        _save_after_postgeneration(instance, create, results)
