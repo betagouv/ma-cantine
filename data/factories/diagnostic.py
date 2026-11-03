@@ -5,7 +5,7 @@ import factory
 from factory import fuzzy
 
 from data.models import Diagnostic
-from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_YEARS
 
 from .canteen import CanteenFactory
 
@@ -100,7 +100,7 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
         model = Diagnostic
 
     canteen = factory.SubFactory(CanteenFactory)
-    year = fuzzy.FuzzyChoice(TELEDECLARATION_FIELDS.keys())
+    year = fuzzy.FuzzyChoice(TELEDECLARATION_YEARS)
     diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
 
     valeur_totale = factory.Faker("random_int", min=6000, max=10000)
