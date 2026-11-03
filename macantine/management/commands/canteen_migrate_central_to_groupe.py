@@ -144,7 +144,7 @@ class Command(MaCantineBaseCommand):
                         SatelliteTeledeclarationSerializer(new_satellite).data
                     )
                     diagnostic_teledeclared.satellites_snapshot = diagnostic_teledeclared_satellites_snapshot
-                    diagnostic_teledeclared.save()
+                    diagnostic_teledeclared.save(skip_validations=True)
                     update_change_reason(
                         diagnostic_teledeclared,
                         "Script: canteen_migrate_central_to_groupe - added new satellite to satellites_snapshot",

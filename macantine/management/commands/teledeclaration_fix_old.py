@@ -125,7 +125,7 @@ class Command(MaCantineBaseCommand):
                         if apply:
                             canteen_snapshot_temp["id"] = diagnostic.canteen.id
                             diagnostic.canteen_snapshot = canteen_snapshot_temp
-                            diagnostic.save(update_fields=["canteen_snapshot"])
+                            diagnostic.save(update_fields=["canteen_snapshot"], skip_validations=True)
                             update_change_reason(diagnostic, "Script: set missing canteen_id in canteen_snapshot")
                             # TODO?? also update the Teledeclaration object
                         diagnostic_updated_count += 1
@@ -221,7 +221,7 @@ class Command(MaCantineBaseCommand):
                 if apply:
                     canteen_snapshot_temp["sector_list"] = sector_list_new
                     diagnostic.canteen_snapshot = canteen_snapshot_temp
-                    diagnostic.save(update_fields=["canteen_snapshot"])
+                    diagnostic.save(update_fields=["canteen_snapshot"], skip_validations=True)
                     update_change_reason(diagnostic, "Script: set sector_list from sectors M2M")
                 diagnostics_updated_count += 1
             if index % 5000 == 0:
@@ -247,7 +247,7 @@ class Command(MaCantineBaseCommand):
                     if apply:
                         satellite["sector_list"] = sector_list_new
                         diagnostic.satellites_snapshot = satellites_snapshot_temp
-                        diagnostic.save(update_fields=["satellites_snapshot"])
+                        diagnostic.save(update_fields=["satellites_snapshot"], skip_validations=True)
                         update_change_reason(diagnostic, "Script: set satellite sector_list from sectors M2M")
                     diagnostics_updated_count += 1
             if index % 5000 == 0:
@@ -282,7 +282,7 @@ class Command(MaCantineBaseCommand):
                         canteen_snapshot_temp["department"] = department
                         canteen_snapshot_temp["region"] = region
                         diagnostic.canteen_snapshot = canteen_snapshot_temp
-                        diagnostic.save(update_fields=["canteen_snapshot"])
+                        diagnostic.save(update_fields=["canteen_snapshot"], skip_validations=True)
                         update_change_reason(diagnostic, "Script: set department and region from city_insee_code")
                     diagnostics_updated_count += 1
             if index % 5000 == 0:
@@ -310,7 +310,7 @@ class Command(MaCantineBaseCommand):
                         canteen_snapshot_temp["epci"] = epci
                         canteen_snapshot_temp["pat_list"] = [pat["pat"] for pat in pat_list]
                         diagnostic.canteen_snapshot = canteen_snapshot_temp
-                        diagnostic.save(update_fields=["canteen_snapshot"])
+                        diagnostic.save(update_fields=["canteen_snapshot"], skip_validations=True)
                         update_change_reason(diagnostic, "Script: set epci and pat_list from city_insee_code")
                     diagnostics_updated_count += 1
             if index % 5000 == 0:
@@ -339,7 +339,7 @@ class Command(MaCantineBaseCommand):
                             satellite["epci"] = epci
                             satellite["pat_list"] = [pat["pat"] for pat in pat_list]
                             diagnostic.satellites_snapshot = satellites_snapshot_temp
-                            diagnostic.save(update_fields=["satellites_snapshot"])
+                            diagnostic.save(update_fields=["satellites_snapshot"], skip_validations=True)
                             update_change_reason(
                                 diagnostic, "Script: set satellite epci and pat_list from city_insee_code"
                             )
