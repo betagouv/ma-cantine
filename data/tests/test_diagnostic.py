@@ -1,3 +1,4 @@
+from copy import deepcopy
 from datetime import datetime
 from decimal import Decimal
 
@@ -1304,6 +1305,44 @@ class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
         self.diagnostic_2025_simple_filled.save()
         self.diagnostic_2025_simple_filled.refresh_from_db()
         self.assertFalse(self.diagnostic_2025_simple_filled.is_filled)
+
+
+class DiagnosticIsAlreadyTeledeclaredPropertyTest(TestCase):
+    def test_false_on_creation(self):
+        diagnostic = Diagnostic(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.assertFalse(diagnostic.is_already_teledeclared)
+
+    def test_false_if_not_teledeclared(self):
+        diagnostic = DiagnosticFactory(status=Diagnostic.DiagnosticStatus.DRAFT)
+        diagnostic.refresh_from_db()
+        self.assertFalse(diagnostic.is_already_teledeclared)
+
+    def test_true_if_teledeclared(self):
+        diagnostic = DiagnosticFactory(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.assertTrue(diagnostic.is_already_teledeclared)
+        diagnostic = Diagnostic.objects.get(pk=diagnostic.pk)
+        self.assertTrue(diagnostic.is_already_teledeclared)
+
+    def test_false_when_status_changes_to_submitted(self):
+        # e.g. teledeclare()
+        diagnostic = DiagnosticFactory(status=Diagnostic.DiagnosticStatus.DRAFT)
+        diagnostic.status = Diagnostic.DiagnosticStatus.SUBMITTED
+        self.assertFalse(diagnostic.is_already_teledeclared)
+        diagnostic.save()
+        self.assertTrue(diagnostic.is_already_teledeclared)  # once saved
+
+    def test_false_when_status_changes_from_submitted(self):
+        # e.g. cancel()
+        diagnostic = DiagnosticFactory(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        diagnostic.status = Diagnostic.DiagnosticStatus.DRAFT
+        self.assertFalse(diagnostic.is_already_teledeclared)
+
+    def test_false_on_teledeclared_diagnostic_copy(self):
+        # e.g. teledeclaration_generate_1td1site
+        diagnostic = DiagnosticFactory(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        diagnostic_copy = deepcopy(diagnostic)
+        diagnostic_copy.pk = None
+        self.assertFalse(diagnostic_copy.is_already_teledeclared)
 
 
 class DiagnosticIsCleanMethodTest(TestCase):

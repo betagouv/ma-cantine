@@ -9,6 +9,7 @@ from django.db.models import Case, DecimalField, F, Func, IntegerField, Q, Sum, 
 from django.db.models.expressions import RawSQL
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+from dirtyfields import DirtyFieldsMixin
 from simple_history.models import HistoricalRecords
 
 from common.utils import utils as utils_utils
@@ -401,6 +402,7 @@ class DiagnosticManager(models.Manager):
 
 
 class Diagnostic(
+    DirtyFieldsMixin,
     DiagnosticVoletApprovisionnementMixin,
     DiagnosticVoletGaspillageMixin,
     DiagnosticVoletDiversificationMixin,
@@ -517,6 +519,9 @@ class Diagnostic(
         "tunnel_plastic",
         "tunnel_info",
     ]
+
+    # django-dirtyfields: only track the fields we need (see is_already_teledeclared)
+    FIELDS_TO_CHECK = ["status"]
 
     TELEDECLARATION_FIELDS = [
         "teledeclaration_date",
@@ -888,6 +893,15 @@ class Diagnostic(
     @property
     def is_teledeclared(self) -> bool:
         return self.status == Diagnostic.DiagnosticStatus.SUBMITTED
+
+    @property
+    def is_already_teledeclared(self) -> bool:
+        """
+        Teledeclared in DB, and stays teledeclared
+        - False on creation (pk is None, also when copying an existing diagnostic, see teledeclaration_generate_1td1site)
+        - False on teledeclare() & cancel(): the status changes
+        """
+        return bool(self.pk) and self.is_teledeclared and "status" not in self.get_dirty_fields()
 
     @property
     def is_teledeclared_by_cc(self) -> bool:
