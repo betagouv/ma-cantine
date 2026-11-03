@@ -3,16 +3,19 @@ from django.core.exceptions import ValidationError
 from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
 
 
-def validate_is_in_teledeclaration_or_correction_period(action):
+OUT_OF_CAMPAIGN_ERROR_MESSAGES = {
+    "teledeclare": "Ce n'est pas possible de télédéclarer hors de la période de la campagne",
+    "cancel": "Ce n'est pas possible d'annuler une télédéclaration hors de la période de la campagne",
+}
+OUT_OF_CAMPAIGN_ERROR_MESSAGE_DEFAULT = "Cette action n'est pas possible hors de la période de la campagne"
+
+
+def validate_is_in_teledeclaration_or_correction_period(action=None):
     """
-    action: "teledeclare" or "cancel"
+    action: "teledeclare" or "cancel" for a specific error message, else a generic error message
     """
-    if is_in_teledeclaration_or_correction():
-        return
-    if action == "teledeclare":
-        raise ValidationError("Ce n'est pas possible de télédéclarer hors de la période de la campagne")
-    elif action == "cancel":
-        raise ValidationError("Ce n'est pas possible d'annuler une télédéclaration hors de la période de la campagne")
+    if not is_in_teledeclaration_or_correction():
+        raise ValidationError(OUT_OF_CAMPAIGN_ERROR_MESSAGES.get(action, OUT_OF_CAMPAIGN_ERROR_MESSAGE_DEFAULT))
 
 
 def validate_diagnostic_year_in_teledeclaration_period(instance):
