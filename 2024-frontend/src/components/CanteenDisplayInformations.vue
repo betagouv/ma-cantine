@@ -57,7 +57,7 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
 
 <template>
   <div>
-    <div v-if="showGroupeInformations" class="fr-card fr-px-4w fr-pt-4w fr-pb-2w fr-my-3w">
+    <div v-if="showGroupeInformations" class="fr-card fr-px-4w fr-pt-4w fr-pb-2w fr-my-6w">
       <DsfrBadge label="Réservé au gestionnaire de groupe" type="none" class="ma-cantine--pos-top-center fr-badge--green-tilleul-verveine fr-badge--icon-left fr-icon-lock-fill" />
       <p class="fr-mb-4w">
         Le gestionnaire du groupe peut réaliser la télédéclaration de la cantine, de manière groupée (avec l’ensemble
@@ -71,14 +71,14 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.groupe?.id" />
       <AppFieldDisplay :label="`${cantines.sirenUniteLegaleName} du groupe`" :value="formatSiretOrSiren(canteenInformation.groupe?.sirenUniteLegale)" />
     </div>
-    <div class="fr-my-3w">
+    <div class="fr-my-6w">
       <h3 class="fr-h5">1. Caractéristiques</h3>
       <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" :error="canteenErrors?.economicModel" :tooltip="tooltips.economicModel"/>
       <AppFieldDisplay :label="cantines.managementTypeName" :value="getPrettyValue(canteenInformation.managementType, 'managementType')" :error="canteenErrors?.managementType" />
       <AppFieldDisplay :label="cantines.productionTypeName" :value="getPrettyValue(canteenInformation.productionType, 'productionType')" :error="canteenErrors?.productionType" />
       <AppFieldDisplay v-if="showCentralProducerSiret" :label="cantines.centralProducerSiret" :value="formatSiretOrSiren(canteenInformation.centralProducerSiret)" :error="canteenErrors?.centralProducerSiret" />
     </div>
-    <div class="fr-my-3w">
+    <div class="fr-my-6w">
       <h3 class="fr-h5">2. Identification {{ canteenIsGroupe ? 'du groupe' : 'de la cantine' }}</h3>
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.id" tooltip="Identifiant unique de l'établissement, ce champ ne peut pas être modifié."/>
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatSiretOrSiren(canteenInformation.siret)" :error="canteenErrors?.siret" />
@@ -90,16 +90,16 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.postalCode" :value="canteenInformation.postalCode" />
     </div>
-    <div v-if="!canteenIsGroupe" class="fr-my-3w">
+    <div v-if="!canteenIsGroupe" class="fr-my-6w">
       <h3 class="fr-h5">3. Secteurs</h3>
       <AppFieldDisplay :label="cantines.sectorList" :value="getPrettySectors(canteenInformation.sectorList)" :error="canteenErrors?.sectorList" />
       <AppFieldDisplay v-if="showLineMinistry" :label="cantines.lineMinistry" :value="getPrettyLineMinistry(canteenInformation.lineMinistry)" :error="canteenErrors?.lineMinistry" />
     </div>
-    <div v-if="!canteenIsGroupe" class="fr-my-3w">
+    <div v-if="!canteenIsGroupe" class="fr-my-6w">
       <h3 class="fr-h5">4. Description</h3>
       <p>{{ canteenInformation.publicationComments || 'Aucune description enregistrée'}}</p>
     </div>
-    <div v-if="!canteenIsGroupe" class="fr-card fr-px-4w fr-pt-4w fr-pb-2w fr-my-3w">
+    <div v-if="!canteenIsGroupe" class="fr-card fr-px-4w fr-pt-4w fr-pb-2w fr-mt-8w">
       <DsfrBadge label="Informations générées" type="none" class="ma-cantine--pos-top-center fr-badge--blue-cumulus fr-badge--icon-left fr-icon-lock-fill" />
       <p class="fr-mb-4w">
         Informations générées à partir du SIRET ou du SIREN de la cantine, via les référentiels

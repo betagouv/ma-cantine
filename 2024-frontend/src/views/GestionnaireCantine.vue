@@ -32,7 +32,7 @@ const goToEdit = () => {
     :canteen-is-groupe="canteenInformations.isGroupe"
     :canteen-information="canteenInformations"
   />
-  <div class="fr-container fr-background-alt--red-marianne fr-p-4w fr-mt-3w">
+  <div class="fr-container fr-background-alt--red-marianne fr-p-4w fr-mt-6w">
     <h3 class="fr-h6 fr-text-default--error fr-mb-2w">
       <span class="mdi mdi-archive"></span>
       Archiver {{ canteenInformations.isGroupe ? "ce groupe" : "cette cantine" }}
