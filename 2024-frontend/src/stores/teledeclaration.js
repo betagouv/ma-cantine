@@ -23,6 +23,12 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
   const visitedPagesSeparator = ","
   const tunnelApproVisitedPages = computed(() => diagnostic.value?.tunnelAppro?.split(visitedPagesSeparator) || [])
+  const voletTunnelProgressionFields = {
+    gaspillage: "tunnelWaste",
+    diversification: "tunnelDiversification",
+    plastique: "tunnelPlastic",
+    information: "tunnelInfo",
+  }
 
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
@@ -116,7 +122,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Save the fields of a volet */
   async function saveVolet(canteenId, volet) {
-    const fields = teledeclarationFields.getFieldsListFromGroup(volet)
+    const fields = [...teledeclarationFields.getFieldsListFromGroup(volet), voletTunnelProgressionFields[volet]]
     const voletValues = Object.fromEntries(fields.map((field) => [field, diagnostic.value[field]]))
     return await diagnosticService.updateVolet(canteenId, diagnostic.value.id, volet, voletValues)
   }
@@ -140,7 +146,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const fields = teledeclarationFields.getFieldsWithAutofill()
     for (const field of fields) setValue(field, purchaseSummary[field])
     setValue("generatedFromPurchases", true)
-    autofillSteps.forEach((slug) => markPageAsVisited(slug))
+    autofillSteps.forEach((slug) => markPageAsVisited({ slug }))
   }
 
   /* Set if the diagnostic must be filled from purchases on next save */
@@ -148,10 +154,13 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     hasSelectAutofill.value = value
   }
 
-  /* Save the page slug in the list of the visited pages */
-  function markPageAsVisited(slug) {
-    if (!diagnostic.value || !slug || tunnelApproVisitedPages.value.includes(slug)) return
-    diagnostic.value.tunnelAppro = [...tunnelApproVisitedPages.value, slug].join(visitedPagesSeparator)
+  /* Save the visit of the page : "complet" for a volet, the page slug in the list of the visited pages for the appro */
+  function markPageAsVisited({ slug, volet }) {
+    if (!diagnostic.value) return
+    if (volet) diagnostic.value[voletTunnelProgressionFields[volet]] = "complet"
+    else if (slug && !tunnelApproVisitedPages.value.includes(slug)) {
+      diagnostic.value.tunnelAppro = [...tunnelApproVisitedPages.value, slug].join(visitedPagesSeparator)
+    }
   }
 
   /* Check if the step has been visited */
