@@ -6,6 +6,41 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.58.0](https://github.com/betagouv/ma-cantine/compare/v2026.57.1...v2026.58.0) (2026-11-04)
+
+
+### Nouveautés
+
+* **Import:** Bilans: ajoute les pages (cachées) des imports 2026 ([#7489](https://github.com/betagouv/ma-cantine/issues/7489)) ([d32ebf3](https://github.com/betagouv/ma-cantine/commit/d32ebf3d5db2901435411b214e59b8ed38cb2e49))
+* **Imports:** Bilans détaillés: nouvel import par ID (format 2026 uniquement) ([#7493](https://github.com/betagouv/ma-cantine/issues/7493)) ([8d8a35b](https://github.com/betagouv/ma-cantine/commit/8d8a35ba1fcd7db46961bd9270db1d2267cd5c3b))
+* **Imports:** Bilans détaillés: nouvelle page d'import par ID (format 2026) ([#7494](https://github.com/betagouv/ma-cantine/issues/7494)) ([ea9b174](https://github.com/betagouv/ma-cantine/commit/ea9b174cd12f55e5e236fec692ffa6fe40963935))
+* **Imports:** Bilans: n'autoriser l'import que pendant la campagne de l'année du bilan (télédéclaration ou correction) ([#7472](https://github.com/betagouv/ma-cantine/issues/7472)) ([76cc306](https://github.com/betagouv/ma-cantine/commit/76cc306f3f490a076d2219e407832e0171900ed7))
+* **Imports:** Bilans: nouveau paramètre schema_version (2025 par défaut, ou 2026) pour choisir le format du fichier ([#7471](https://github.com/betagouv/ma-cantine/issues/7471)) ([1fa6af8](https://github.com/betagouv/ma-cantine/commit/1fa6af849eb4b788b406a97f18ffae3737658540))
+* **Imports:** Bilans: nouveau schéma détaillé 2026 ([#7469](https://github.com/betagouv/ma-cantine/issues/7469)) ([96f2b53](https://github.com/betagouv/ma-cantine/commit/96f2b535fc438169a6f5c4d2afefd66d8c4644cc))
+* **Imports:** Bilans: nouveaux schémas simple 2026 (par SIRET & par ID) ([#7467](https://github.com/betagouv/ma-cantine/issues/7467)) ([52b2c7a](https://github.com/betagouv/ma-cantine/commit/52b2c7adc9f8c8895a7d0f3c8dc16d49f3403a00))
+
+
+### Améliorations
+
+* **Diagnostics:** ajoute DirtyFieldsMixin & la propriété is_already_teledeclared ([#7503](https://github.com/betagouv/ma-cantine/issues/7503)) ([d133b77](https://github.com/betagouv/ma-cantine/commit/d133b77e5aa292b1af74d8aa20f038aedc0d027e))
+* **Diagnostics:** bilan télédéclaré: les volets additionnels deviennent modifiables même si les appro sont télédéclarés (uniquement pendant la campagne) ([#7506](https://github.com/betagouv/ma-cantine/issues/7506)) ([415eab9](https://github.com/betagouv/ma-cantine/commit/415eab923716f4b755d8dcb2a99db4cfc3352394))
+* **Diagnostics:** ne plus recalculer les champs calculés d'un bilan déjà télédéclaré (figés à la télédéclaration) ([#7502](https://github.com/betagouv/ma-cantine/issues/7502)) ([4bfbea9](https://github.com/betagouv/ma-cantine/commit/4bfbea9c2eb8016bb620a682ce521726cf2741a4))
+* **Imports:** Bilans: ignorer les erreurs de validation sur les champs absents du fichier (ex : nombre_repas_an pour les bilans 2026 au format 2025) ([#7466](https://github.com/betagouv/ma-cantine/issues/7466)) ([cb9e2e9](https://github.com/betagouv/ma-cantine/commit/cb9e2e9b264c7e686e42df42e852659330806274))
+* **Imports:** Bilans: permet d'accéder aux pages d'imports bilans uniquement quand la campagne est ouverte ([#7490](https://github.com/betagouv/ma-cantine/issues/7490)) ([50de579](https://github.com/betagouv/ma-cantine/commit/50de57954843b89ec05d9ca8fdaca1de7790885f))
+* **Page établissement:** améliore la visibilité du groupe rattaché et les informations modifiables ou non ([#7522](https://github.com/betagouv/ma-cantine/issues/7522)) ([f442aab](https://github.com/betagouv/ma-cantine/commit/f442aaba3cab9d3dcb66873e9e16109f892f3bd3))
+* **Télédéclaration:** ré-organise le fichier de configuration frontend ([#7468](https://github.com/betagouv/ma-cantine/issues/7468)) ([69b5d89](https://github.com/betagouv/ma-cantine/commit/69b5d8986bc1eabc6abc792f4f6db6e76221aee3))
+
+
+### Technique
+
+* **deps:** bump @intlify/shared and vue-i18n in /2024-frontend ([#7516](https://github.com/betagouv/ma-cantine/issues/7516)) ([7efc120](https://github.com/betagouv/ma-cantine/commit/7efc12086cadb8ef9b3904e0f665588f7461d001))
+* **Diagnostics:** ajoute le paramètre skip_validations à save() (utilisé dans les scripts sur les bilans télédéclarés) ([#7500](https://github.com/betagouv/ma-cantine/issues/7500)) ([f84fbbf](https://github.com/betagouv/ma-cantine/commit/f84fbbff1a65a656d6fd20adde16d908faf97f13))
+* **Diagnostics:** champs tunnel_*: TUNNEL_PROGRESS_FIELD_BY_VOLET & get_tunnel_progress_field(volet) dans le registre des champs ([#7507](https://github.com/betagouv/ma-cantine/issues/7507)) ([e055e8a](https://github.com/betagouv/ma-cantine/commit/e055e8abb79ec9f938c4863992ab270061d01c2c))
+* **Diagnostics:** extraire le calcul des champs calculés de save() dans populate_computed_fields() ([#7501](https://github.com/betagouv/ma-cantine/issues/7501)) ([5ffce19](https://github.com/betagouv/ma-cantine/commit/5ffce1958e933b7e9e1a1810054217905fdf97b6))
+* **Diagnostics:** factories & commande diagnostic_fill_computed_fields: sauvegarder avec skip_validations=True ([#7505](https://github.com/betagouv/ma-cantine/issues/7505)) ([d4359ee](https://github.com/betagouv/ma-cantine/commit/d4359ee3d2e42dd2d09edf78eb2a4e1db3d781e6))
+* **Imports:** Bilans détaillés: renomme les schémas existants (préparer l'arrivée de l'import par id) ([#7492](https://github.com/betagouv/ma-cantine/issues/7492)) ([433aff8](https://github.com/betagouv/ma-cantine/commit/433aff85eb4004cbf4bd2bf4d28479d6bce76bec))
+* **Imports:** extraire la classe BaseDiagnosticsImportView dans imports/views/diagnostic_base.py (comme pour les achats) ([#7464](https://github.com/betagouv/ma-cantine/issues/7464)) ([6db73ce](https://github.com/betagouv/ma-cantine/commit/6db73ceb461740e2196adc21e8584e687bce5d7c))
+
 ## [2026.57.1](https://github.com/betagouv/ma-cantine/compare/v2026.57.0...v2026.57.1) (2026-10-29)
 
 
