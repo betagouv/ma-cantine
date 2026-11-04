@@ -769,3 +769,35 @@ class DiagnosticVoletInformationV2ApiTest(APITestCase):
                 else:
                     self.assertTrue(diagnostic.information_qualite_durable)
                     self.assertNotEqual(diagnostic.information_part_egalim, True)
+
+
+class DiagnosticVoletPlastiqueV2ApiTest(APITestCase):
+    @authenticate
+    def test_fields_depend_on_year(self):
+        for year, expected_field, unexpected_field in [
+            (2025, "plastiqueContenantCuissonRemplace", "plastiqueContenantRemplace"),
+            (2026, "plastiqueContenantRemplace", "plastiqueContenantCuissonRemplace"),
+        ]:
+            with self.subTest(year=year):
+                # empty: the factory fills plastique_contenant_cuisson_remplace randomly
+                diagnostic = DiagnosticFactory(year=year, plastique_contenant_cuisson_remplace=None)
+                diagnostic.canteen.managers.add(authenticate.user)
+                url = reverse(
+                    "diagnostic_v2_plastique_retrieve_update",
+                    kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+                )
+
+                body = self.client.get(url).json()
+                self.assertIn(expected_field, body)
+                self.assertNotIn(unexpected_field, body)
+
+                # the fields of the other years are ignored
+                response = self.client.patch(url, {expected_field: True, unexpected_field: True}, format="json")
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                diagnostic.refresh_from_db()
+                if year == 2026:
+                    self.assertTrue(diagnostic.plastique_contenant_remplace)
+                    self.assertNotEqual(diagnostic.plastique_contenant_cuisson_remplace, True)
+                else:
+                    self.assertTrue(diagnostic.plastique_contenant_cuisson_remplace)
+                    self.assertNotEqual(diagnostic.plastique_contenant_remplace, True)

@@ -135,6 +135,29 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         )
         self.assertEqual(set(information_fields_2025) & set(information_fields_2026), set())
 
+    def test_plastique_fields_in_2026(self):
+        self.assertEqual(
+            get_teledeclaration_fields_all(2025, "PLASTIQUE"),
+            [
+                "plastique_contenant_cuisson_remplace",
+                "plastique_contenant_service_remplace",
+                "plastique_bouteille_remplace",
+                "plastique_ustensile_remplace",
+            ],
+        )
+        # bouteille & ustensile: same question, kept
+        self.assertEqual(
+            get_teledeclaration_fields_all(2026, "PLASTIQUE"),
+            [
+                "plastique_bouteille_boisson_remplace",
+                "plastique_bouteille_remplace",
+                "plastique_ustensile_remplace",
+                "plastique_vaisselle_jetable_remplace",
+                "plastique_contenant_remplace",
+                "plastique_contenant_emporter_remplace",
+            ],
+        )
+
     def test_get_teledeclaration_fields_all_volets(self):
         for year in TELEDECLARATION_FIELDS:
             for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:

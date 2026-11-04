@@ -28,5 +28,27 @@ class DiagnosticVoletPlastiqueMixin(models.Model):
         blank=True, null=True, verbose_name="ustensils en plastique remplacés"
     )
 
+    # new in 2026 (see diagnostic_teledeclaration_fields.py)
+    plastique_bouteille_boisson_remplace = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="La cantine est équipée d’au moins une fontaine d'eau potable accessible au public et n’assure aucune distribution gratuite de bouteilles en plastique contenant des boissons",
+    )
+    plastique_vaisselle_jetable_remplace = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="Aucune vaisselle jetable n’est utilisée pour les repas consommés sur place (gobelets, assiette et récipients, couverts)",
+    )
+    plastique_contenant_remplace = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="Aucun contenant alimentaire de cuisson, de réchauffage et de service en plastique sont utilisés au sein de l’établissement",
+    )
+    plastique_contenant_emporter_remplace = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="Des contenants réutilisables ou composés de matières recyclables sont proposés pour l’ensemble des repas à emporter",
+    )
+
     class Meta:
         abstract = True

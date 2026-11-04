@@ -914,3 +914,37 @@ class DiagnosticTeledeclarationPdfInformation2026Test(SimpleTestCase):
         html = template.render({"year": 2025, **context})
         self.assertIn("Communique sur le plan alimentaire", html)
         self.assertNotIn("affichage permanent", html)
+
+
+class DiagnosticTeledeclarationPdfPlastique2026Test(SimpleTestCase):
+    def test_measure_plastic_template_since_2026(self):
+        template = get_template("teledeclaration_campaign_2024/measure_plastic.html")
+        context = {
+            "plastique_bouteille_boisson_remplace": True,
+            "plastique_bouteille_remplace": None,
+            "plastique_ustensile_remplace": True,
+            "plastique_vaisselle_jetable_remplace": False,
+            "plastique_contenant_remplace": True,
+            "plastique_contenant_emporter_remplace": True,
+            # removed in 2026
+            "plastique_contenant_cuisson_remplace": True,
+        }
+
+        html = template.render({"year": 2026, **context})
+        for field_name in NEW_PLASTIQUE_FIELDS_2026:
+            self.assertIn(Diagnostic._meta.get_field(field_name).verbose_name, html)
+        self.assertIn("Aucune bouteilles d’eau plate en plastique", html)
+        self.assertIn("Aucun ustensiles à usage unique en matière plastique", html)
+        self.assertNotIn("Contenants de cuisson en plastique remplacés", html)
+
+        html = template.render({"year": 2025, **context})
+        self.assertIn("Contenants de cuisson en plastique remplacés", html)
+        self.assertNotIn("fontaine d'eau potable", html)
+
+
+NEW_PLASTIQUE_FIELDS_2026 = [
+    "plastique_bouteille_boisson_remplace",
+    "plastique_vaisselle_jetable_remplace",
+    "plastique_contenant_remplace",
+    "plastique_contenant_emporter_remplace",
+]
