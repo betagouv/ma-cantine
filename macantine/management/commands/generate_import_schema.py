@@ -77,6 +77,7 @@ SCHEMA_SPECS = {
         "simple_id": {
             "file_name": "bilans_simple_id.json",
             "year": 2025,
+            "custom_verbose_name": True,
             "fields_ordered": ["cantine_id", "année_bilan"] + get_teledeclaration_import_fields(2025, "SIMPLE"),
             "fields_required": ["cantine_id", "année_bilan"]
             + get_teledeclaration_import_fields_required(2025, "SIMPLE"),
@@ -86,6 +87,7 @@ SCHEMA_SPECS = {
         "simple_siret": {
             "file_name": "bilans_simple_siret.json",
             "year": 2025,
+            "custom_verbose_name": True,
             "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_import_fields(2025, "SIMPLE"),
             "fields_required": ["siret", "année_bilan"] + get_teledeclaration_import_fields_required(2025, "SIMPLE"),
             "schema_name": "import-bilans-simple-siret",
@@ -113,6 +115,7 @@ SCHEMA_SPECS = {
         "detaille_siret": {
             "file_name": "bilans_detaille_siret.json",
             "year": 2025,
+            "custom_verbose_name": True,
             "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_import_fields(2025, "COMPLETE"),
             "fields_required": ["siret", "année_bilan"] + get_teledeclaration_import_fields_required(2025, "COMPLETE"),
             "schema_name": "import-bilans-detaille-siret",
