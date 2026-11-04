@@ -252,7 +252,6 @@ address {
 .ma-cantine--pos-top-center {
     position: absolute;
     top: 0;
-    width: max-content;
 }
 
 .ma-cantine--pos-top-left {
