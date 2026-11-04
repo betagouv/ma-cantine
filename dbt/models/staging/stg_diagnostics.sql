@@ -235,6 +235,10 @@ renamed as (
         plastique_contenant_service_remplace,
         plastique_bouteille_remplace,
         plastique_ustensile_remplace,
+        plastique_bouteille_boisson_remplace,
+        plastique_vaisselle_jetable_remplace,
+        plastique_contenant_remplace,
+        plastique_contenant_emporter_remplace,
 
         -- ── INFORMATION ───────────────────────────────────────────────────────
         information_supports,

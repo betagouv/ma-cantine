@@ -1527,12 +1527,24 @@ TELEDECLARATION_FIELDS = {
         },
         "PLASTIQUE": {
             "fields": [
-                "plastique_contenant_cuisson_remplace",
-                "plastique_contenant_service_remplace",
+                "plastique_bouteille_boisson_remplace",
                 "plastique_bouteille_remplace",
                 "plastique_ustensile_remplace",
+                "plastique_vaisselle_jetable_remplace",
+                "plastique_contenant_remplace",
+                "plastique_contenant_emporter_remplace",
             ],
             "fields_required": [],
+            "fields_added": [
+                "plastique_bouteille_boisson_remplace",
+                "plastique_vaisselle_jetable_remplace",
+                "plastique_contenant_remplace",
+                "plastique_contenant_emporter_remplace",
+            ],
+            "fields_removed": [
+                "plastique_contenant_cuisson_remplace",
+                "plastique_contenant_service_remplace",
+            ],
         },
         "INFORMATION": {
             "fields": [
