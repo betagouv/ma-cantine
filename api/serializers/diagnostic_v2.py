@@ -120,7 +120,7 @@ class BaseDiagnosticVoletV2Serializer(DiagnosticSerializer):
 @extend_schema_serializer(exclude_fields=("tunnel_appro", "generated_from_purchases"))
 class DiagnosticVoletApprovisionnementV2Serializer(BaseDiagnosticVoletV2Serializer):
     volet = "APPROVISIONNEMENT"
-    extra_read_only_fields = Diagnostic.APPRO_STATS_FIELDS
+    extra_read_only_fields = Diagnostic.APPRO_STATS_FIELDS + ["cout_repas"]
 
     class Meta:
         model = Diagnostic
@@ -129,6 +129,7 @@ class DiagnosticVoletApprovisionnementV2Serializer(BaseDiagnosticVoletV2Serializ
             + ["diagnostic_type"]
             + get_teledeclaration_fields_all_years("APPROVISIONNEMENT")
             + Diagnostic.APPRO_STATS_FIELDS
+            + ["cout_repas"]
             + ["tunnel_appro", "generated_from_purchases"]
         )
 

@@ -366,6 +366,31 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
         self.assertFalse(self.diagnostic_simple_2025.diagnostic_gaspillage_realise)
 
     @authenticate
+    def test_update_approvisionnement_returns_cout_repas(self):
+        self.canteen.managers.add(authenticate.user)
+
+        payload = {
+            "nombreRepasAn": 400,
+            "valeurTotale": 1000,
+            "coutRepas": 99,  # ignored: read-only (computed on save)
+        }
+        response = self.client.patch(self._url(self.diagnostic_complete_2026), payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Decimal(response.json()["coutRepas"]), Decimal("2.50"))
+        self.diagnostic_complete_2026.refresh_from_db()
+        self.assertEqual(self.diagnostic_complete_2026.cout_repas, Decimal("2.50"))
+
+        # also returned by the diagnostic endpoint
+        response = self.client.get(
+            reverse(
+                "diagnostic_v2_retrieve_update",
+                kwargs={"canteen_pk": self.canteen.id, "pk": self.diagnostic_complete_2026.id},
+            )
+        )
+        self.assertEqual(Decimal(response.json()["coutRepas"]), Decimal("2.50"))
+
+    @authenticate
     def test_update_approvisionnement_with_new_diagnostic_type(self):
         """
         The fields of the new diagnostic_type are accepted in the same request
