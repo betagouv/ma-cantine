@@ -833,14 +833,14 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
     @freeze_time(date_in_teledeclaration_campaign)
     def test_editable_volet_fields_can_be_updated_during_the_teledeclaration_campaign(self):
         self.diagnostic.has_waste_plan = True  # GASPILLAGE
-        self.diagnostic.vegetarian_weekly_recurrence = Diagnostic.VegetarianMenuFrequency.DAILY  # DIVERSIFICATION
+        self.diagnostic.menu_vegetarien_frequence = Diagnostic.MenuVegetarienFrequence.QUOTIDIEN  # DIVERSIFICATION
         self.diagnostic.cooking_plastic_substituted = True  # PLASTIQUE
         self.diagnostic.communicates_on_food_plan = True  # INFORMATION
         self.diagnostic.tunnel_waste = "complet"
         self.diagnostic.save()
         self.diagnostic.refresh_from_db()
         self.assertTrue(self.diagnostic.has_waste_plan)
-        self.assertEqual(self.diagnostic.vegetarian_weekly_recurrence, Diagnostic.VegetarianMenuFrequency.DAILY)
+        self.assertEqual(self.diagnostic.menu_vegetarien_frequence, Diagnostic.MenuVegetarienFrequence.QUOTIDIEN)
         self.assertTrue(self.diagnostic.cooking_plastic_substituted)
         self.assertTrue(self.diagnostic.communicates_on_food_plan)
         self.assertEqual(self.diagnostic.tunnel_waste, "complet")

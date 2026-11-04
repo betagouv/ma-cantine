@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from common.utils.camelize import camelize
-from api.serializers.diagnostic import ManagerDiagnosticSerializer
+from api.serializers.diagnostic import V1_FIELD_ALIASES, ManagerDiagnosticSerializer
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Diagnostic, Canteen
@@ -387,11 +387,12 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertFalse(diagnostic.has_donation_agreement)
         self.assertIn("AWARENESS", diagnostic.waste_actions)
         self.assertEqual(diagnostic.duration_leftovers_measurement, 30)
-        self.assertIn("TRAINING", diagnostic.diversification_plan_actions)
-        self.assertEqual(diagnostic.service_type, "MULTIPLE_SELF")
-        self.assertEqual(diagnostic.vegetarian_weekly_recurrence, "DAILY")
-        self.assertIn("GRAIN", diagnostic.vegetarian_menu_bases)
-        self.assertIn("CHEESE", diagnostic.vegetarian_menu_bases)
+        # v1 English values are stored with their French value
+        self.assertIn("FORMATION", diagnostic.plan_diversification_actions)
+        self.assertEqual(diagnostic.service_type, "CHOIX_MULTIPLE_LIBRE_SERVICE")
+        self.assertEqual(diagnostic.menu_vegetarien_frequence, "QUOTIDIEN")
+        self.assertIn("CEREALES_LEGUMINEUSES", diagnostic.menu_vegetarien_bases)
+        self.assertIn("FROMAGE", diagnostic.menu_vegetarien_bases)
         self.assertEqual(diagnostic.donation_quantity, Decimal("60.6"))
         self.assertEqual(diagnostic.communication_frequency, "YEARLY")
         self.assertTrue(diagnostic.communicates_on_food_quality)
@@ -584,7 +585,10 @@ class DiagnosticTeledeclarationFieldsCoherenceTest(APITestCase):
         for a given year & diagnostic_type must have a matching field on ManagerDiagnosticSerializer,
         otherwise it can be saved via import/teledeclaration but not via the manager-facing API.
         """
-        serializer_fields = set(ManagerDiagnosticSerializer().get_fields().keys())
+        # v1 English names are mapped back to their model field (see V1_FIELD_ALIASES)
+        serializer_fields = {
+            V1_FIELD_ALIASES.get(field_name, field_name) for field_name in ManagerDiagnosticSerializer().get_fields()
+        }
         for year in TELEDECLARATION_FIELDS:
             for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
                 with self.subTest(year=year, diagnostic_type=diagnostic_type):
@@ -796,6 +800,35 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(body["generatedFromPurchases"], True)
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.generated_from_purchases, True)
+
+    @authenticate
+    def test_can_update_diagnostic_with_v1_field_names(self):
+        """
+        v1 keeps the English names (& choice values) of the fields renamed in French (used by the Vue 2 tunnel)
+        """
+        self.diagnostic.canteen.managers.add(authenticate.user)
+
+        payload = {
+            "has_diversification_plan": True,
+            "vegetarian_weekly_recurrence": "DAILY",
+            "vegetarian_menu_bases": ["GRAIN", "SOY"],
+        }
+        response = self.client.patch(self.url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["hasDiversificationPlan"], True)
+        self.assertEqual(body["vegetarianWeeklyRecurrence"], "DAILY")
+        self.assertEqual(body["vegetarianMenuBases"], ["GRAIN", "SOY"])
+        self.assertNotIn("planDiversificationEnPlace", body)
+        self.assertNotIn("menuVegetarienFrequence", body)
+        self.diagnostic.refresh_from_db()
+        self.assertEqual(self.diagnostic.plan_diversification_en_place, True)
+        self.assertEqual(self.diagnostic.menu_vegetarien_frequence, Diagnostic.MenuVegetarienFrequence.QUOTIDIEN)
+        self.assertEqual(
+            self.diagnostic.menu_vegetarien_bases,
+            [Diagnostic.MenuVegetarienBase.CEREALES_LEGUMINEUSES, Diagnostic.MenuVegetarienBase.SOJA],
+        )
 
     def test_can_update_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
@@ -1026,7 +1059,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         """
         A diagnostic can be edited during the correction campaign if its teledeclaration has been cancelled
         """
-        diagnostic = DiagnosticFactory(year=2024, service_type=Diagnostic.ServiceType.UNIQUE)
+        diagnostic = DiagnosticFactory(year=2024, service_type=Diagnostic.ServiceType.MENU_UNIQUE)
         diagnostic.canteen.managers.add(authenticate.user)
         with freeze_time("2025-01-20"):  # during the 2024 campaign
             diagnostic.teledeclare(applicant=authenticate.user)
@@ -1035,7 +1068,7 @@ class DiagnosticUpdateApiTest(APITestCase):
             diagnostic.cancel()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
 
-            payload = {"service_type": Diagnostic.ServiceType.MULTIPLE_SELF}
+            payload = {"service_type": "MULTIPLE_SELF"}  # v1 value
             response = self.client.patch(
                 reverse(
                     "diagnostic_retrieve_update",
@@ -1046,7 +1079,7 @@ class DiagnosticUpdateApiTest(APITestCase):
 
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             diagnostic.refresh_from_db()
-            self.assertEqual(diagnostic.service_type, Diagnostic.ServiceType.MULTIPLE_SELF)
+            self.assertEqual(diagnostic.service_type, Diagnostic.ServiceType.CHOIX_MULTIPLE_LIBRE_SERVICE)
 
 
 class DiagnosticDeleteApiTest(APITestCase):
