@@ -8,6 +8,7 @@ import AppLinkMailto from "@/components/AppLinkMailto.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
 import AppBadgeSiretSiren from "@/components/AppBadgeSiretSiren.vue"
+import IconLink from "@/components/IconLink.vue"
 import GestionnaireTeledeclarationNav from "@/components/GestionnaireTeledeclarationNav.vue"
 
 /* Route */
@@ -87,6 +88,10 @@ const menuItems = computed(() =>  {
       <DsfrBadge :label="`ID : ${canteenInformations.id}`" type="neutral" />
       <AppBadgeSiretSiren :canteen="canteenInformations" />
     </div>
+    <div v-if="canteenInformations.groupe" class="layout-sidebar-canteen__groupe fr-mb-4w fr-ml-1w fr-mt-n4w">
+      <IconLink bottom="50%" class="layout-sidebar-canteen__icon-link" />
+      <p class="fr-mb-0 fr-py-1w">Nom du groupe : <span class="fr-text--bold">{{ canteenInformations.groupe.name }}</span></p>
+    </div>
     <div class="fr-grid-row ma-cantine--sticky__container">
       <div class="layout-sidebar-canteen__sidebar-container fr-col-12 fr-col-md-3 fr-background-default--grey">
         <div class="ma-cantine--sticky__top">
@@ -103,6 +108,13 @@ const menuItems = computed(() =>  {
 
 <style lang="scss">
 .layout-sidebar-canteen {
+  &__groupe {
+    display: flex;
+    gap: 0.25rem;
+  }
+  &__icon-link {
+    width: 1.25rem
+  }
   &__sidebar-container {
     .fr-sidemenu__title {
       display: none !important;

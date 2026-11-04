@@ -8,7 +8,7 @@ defineProps(["badge", "title", "align"])
     <div class="fr-col-12 fr-col-lg-8">
       <div class="app-need-help__separator fr-mb-5w">
         <AppSeparator />
-        <DsfrBadge class="app-need-help__badge" type="none" :label="badge" />
+        <DsfrBadge class="ma-cantine--pos-top-left" type="none" :label="badge" />
       </div>
       <div class="fr-pr-0 fr-pr-lg-8w">
         <h2>{{ title }}</h2>
@@ -22,12 +22,6 @@ defineProps(["badge", "title", "align"])
 .app-need-help {
   &__separator {
     position: relative;
-  }
-
-  &__badge {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
   }
 }
 </style>
