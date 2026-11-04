@@ -94,6 +94,7 @@ SCHEMA_SPECS = {
         "simple_id_2026": {
             "file_name": "bilans_simple_id_2026.json",
             "year": 2026,
+            "custom_verbose_name": True,
             "fields_ordered": ["cantine_id", "année_bilan"] + get_teledeclaration_import_fields(2026, "SIMPLE"),
             "fields_required": ["cantine_id", "année_bilan"]
             + get_teledeclaration_import_fields_required(2026, "SIMPLE"),
@@ -103,6 +104,7 @@ SCHEMA_SPECS = {
         "simple_siret_2026": {
             "file_name": "bilans_simple_siret_2026.json",
             "year": 2026,
+            "custom_verbose_name": True,
             "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_import_fields(2026, "SIMPLE"),
             "fields_required": ["siret", "année_bilan"] + get_teledeclaration_import_fields_required(2026, "SIMPLE"),
             "schema_name": "import-bilans-simple-siret-2026",
@@ -119,6 +121,7 @@ SCHEMA_SPECS = {
         "detaille_id_2026": {
             "file_name": "bilans_detaille_id_2026.json",
             "year": 2026,
+            "custom_verbose_name": True,
             "fields_ordered": ["cantine_id", "année_bilan"] + get_teledeclaration_import_fields(2026, "COMPLETE"),
             "fields_required": ["cantine_id", "année_bilan"]
             + get_teledeclaration_import_fields_required(2026, "COMPLETE"),
@@ -128,6 +131,7 @@ SCHEMA_SPECS = {
         "detaille_siret_2026": {
             "file_name": "bilans_detaille_siret_2026.json",
             "year": 2026,
+            "custom_verbose_name": True,
             "fields_ordered": ["siret", "année_bilan"] + get_teledeclaration_import_fields(2026, "COMPLETE"),
             "fields_required": ["siret", "année_bilan"] + get_teledeclaration_import_fields_required(2026, "COMPLETE"),
             "schema_name": "import-bilans-detaille-siret-2026",
@@ -214,23 +218,30 @@ class Command(BaseCommand):
 
         for name in schema_spec["fields_ordered"]:
             field = self._build_field_definition(
-                name, is_required=name in schema_spec["fields_required"], year=schema_spec.get("year")
+                name,
+                is_required=name in schema_spec["fields_required"],
+                year=schema_spec.get("year"),
+                custom_verbose_name=schema_spec.get("custom_verbose_name", False),
             )
             schema["fields"].append(field)
 
         return schema
 
-    def _build_field_definition(self, name: str, is_required=False, year=None) -> dict:
+    def _build_field_definition(self, name: str, is_required=False, year=None, custom_verbose_name=False) -> dict:
         if name in COMMON_FIELDS.keys():
             return COMMON_FIELDS[name]
 
+        title = name
         model_field = None
         try:
             model_field = Diagnostic._meta.get_field(name)
+            title = (
+                get_teledeclaration_verbose_name(year, "APPROVISIONNEMENT", name)
+                if custom_verbose_name
+                else str(model_field.verbose_name)
+            )
         except Exception:
             pass
-
-        title = get_teledeclaration_verbose_name(year, "APPROVISIONNEMENT", name)
 
         field_definition = {
             "description": "",
