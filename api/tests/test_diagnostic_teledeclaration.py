@@ -855,6 +855,10 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
             information_supports_autre="Journal de l'école",
             information_frequence=Diagnostic.InformationFrequence.ANNUELLE,
             information_support_url="https://example.com/menus",
+            plastique_contenant_cuisson_remplace=True,
+            plastique_contenant_service_remplace=True,
+            plastique_bouteille_remplace=False,
+            plastique_ustensile_remplace=False,
         )
         diagnostic.canteen.managers.add(user)
         diagnostic.teledeclare(user)
@@ -880,3 +884,7 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
                 self.assertIn("Journal de l&#x27;école", html)
                 self.assertIn(Diagnostic.InformationFrequence.ANNUELLE.label, html)
                 self.assertIn("https://example.com/menus", html)
+                # plastique
+                self.assertIn("Contenants de cuisson en plastique remplacés", html)
+                self.assertIn("Contenants de service en plastique remplacés", html)
+                self.assertIn("Bouteilles en plastique non remplacées", html)

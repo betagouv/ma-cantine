@@ -231,10 +231,10 @@ renamed as (
         menu_vegetarien_bases,
 
         -- ── PLASTIQUES ────────────────────────────────────────────────────────
-        cooking_plastic_substituted,
-        serving_plastic_substituted,
-        plastic_bottles_substituted,
-        plastic_tableware_substituted,
+        plastique_contenant_cuisson_remplace,
+        plastique_contenant_service_remplace,
+        plastique_bouteille_remplace,
+        plastique_ustensile_remplace,
 
         -- ── INFORMATION ───────────────────────────────────────────────────────
         information_supports,

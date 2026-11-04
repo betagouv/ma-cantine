@@ -1003,10 +1003,10 @@ class Diagnostic(
     @property
     def plastic_badge(self) -> bool | None:
         if (
-            self.cooking_plastic_substituted
-            and self.serving_plastic_substituted
-            and self.plastic_bottles_substituted
-            and self.plastic_tableware_substituted
+            self.plastique_contenant_cuisson_remplace
+            and self.plastique_contenant_service_remplace
+            and self.plastique_bouteille_remplace
+            and self.plastique_ustensile_remplace
         ):
             return True
         if self.tunnel_plastic:

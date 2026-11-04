@@ -49,7 +49,7 @@ class CanteenStatsApiTest(APITestCase):
                 diagnostic_gaspillage_realise=False,
                 actions_gaspillage_realisees=[],
                 menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.QUOTIDIEN,
-                plastic_tableware_substituted=False,
+                plastique_ustensile_remplace=False,
                 information_qualite_durable=False,
             )
             canteen_diagnostic_1.teledeclare(applicant=user)
@@ -83,10 +83,10 @@ class CanteenStatsApiTest(APITestCase):
                 ],
                 dons_convention=True,
                 menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.MOINS_HEBDO,
-                cooking_plastic_substituted=True,
-                serving_plastic_substituted=True,
-                plastic_bottles_substituted=True,
-                plastic_tableware_substituted=True,
+                plastique_contenant_cuisson_remplace=True,
+                plastique_contenant_service_remplace=True,
+                plastique_bouteille_remplace=True,
+                plastique_ustensile_remplace=True,
                 information_qualite_durable=True,
             )
             canteen_diagnostic_2.teledeclare(applicant=user)
@@ -112,10 +112,10 @@ class CanteenStatsApiTest(APITestCase):
                 valeur_siqo=0,
                 valeur_externalites_performance=0,
                 valeur_egalim_autres=0,
-                cooking_plastic_substituted=True,
-                serving_plastic_substituted=True,
-                plastic_bottles_substituted=True,
-                plastic_tableware_substituted=True,
+                plastique_contenant_cuisson_remplace=True,
+                plastique_contenant_service_remplace=True,
+                plastique_bouteille_remplace=True,
+                plastique_ustensile_remplace=True,
                 information_qualite_durable=True,
             )
             canteen_diagnostic_3.teledeclare(applicant=user)

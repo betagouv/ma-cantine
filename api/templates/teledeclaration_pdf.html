@@ -920,7 +920,7 @@
 
         <h3>Substitution des plastiques</h3>
         <div>
-            {% if cooking_plastic_substituted %}
+            {% if plastique_contenant_cuisson_remplace %}
             <p>
                 <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                 Contenants de cuisson en plastique remplacés
@@ -934,7 +934,7 @@
 
         </div>
         <div>
-            {% if serving_plastic_substituted %}
+            {% if plastique_contenant_service_remplace %}
             <p>
                 <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                 Contenants de service en plastique remplacés
@@ -948,7 +948,7 @@
         </div>
 
         <div>
-            {% if plastic_bottles_substituted %}
+            {% if plastique_bouteille_remplace %}
             <p>
                 <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                 Bouteilles en plastique remplacées
@@ -962,7 +962,7 @@
         </div>
 
         <div>
-            {% if plastic_tableware_substituted %}
+            {% if plastique_ustensile_remplace %}
             <p>
                 <img src="{% static '../../web/static/images/checkmark-outline.png' %}" height="14" width="14" />
                 Ustensils en plastique remplacés

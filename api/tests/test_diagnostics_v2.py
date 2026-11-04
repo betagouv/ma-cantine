@@ -67,7 +67,7 @@ class DiagnosticV2ListApiTest(APITestCase):
         self.assertIn("pourcentageBio", results[0])
         self.assertIn("diagnosticGaspillageRealise", results[0])
         self.assertIn("menuVegetarienFrequence", results[0])
-        self.assertIn("cookingPlasticSubstituted", results[0])
+        self.assertIn("plastiqueContenantCuissonRemplace", results[0])
         self.assertIn("informationSupports", results[0])
         self.assertNotIn("menuVegetarienType", results[0])  # not in 2024
         self.assertNotIn("dechetsTotal", results[0])  # only in 2023
@@ -482,7 +482,13 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
             True,
             "tunnel_diversification",
         ),
-        ("plastique", "cookingPlasticSubstituted", "cooking_plastic_substituted", True, "tunnel_plastic"),
+        (
+            "plastique",
+            "plastiqueContenantCuissonRemplace",
+            "plastique_contenant_cuisson_remplace",
+            True,
+            "tunnel_plastic",
+        ),
         ("information", "informationQualiteNutritionnelle", "information_qualite_nutritionnelle", True, "tunnel_info"),
     ]
 
@@ -495,7 +501,7 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
             valeur_totale=1000,
             plan_gaspillage_en_place=False,
             plan_diversification_en_place=False,
-            cooking_plastic_substituted=False,
+            plastique_contenant_cuisson_remplace=False,
             information_qualite_nutritionnelle=False,
         )
 
