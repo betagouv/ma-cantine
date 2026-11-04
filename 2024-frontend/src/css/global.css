@@ -247,6 +247,24 @@ address {
     height: 60vh;
 }
 
+/* POSITION */
+.ma-cantine--pos-top-left,
+.ma-cantine--pos-top-center {
+    position: absolute;
+    top: 0;
+    width: max-content;
+}
+
+.ma-cantine--pos-top-left {
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.ma-cantine--pos-top-center {
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 /* WIDTH */
 .ma-cantine--width-100 {
     width: 100%;
