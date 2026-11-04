@@ -2,6 +2,7 @@ from unittest.mock import patch
 
 from django.core.management import call_command
 from django.template.loader import get_template
+from django.test import SimpleTestCase
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework import status
@@ -888,3 +889,28 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
                 self.assertIn("Contenants de cuisson en plastique remplacés", html)
                 self.assertIn("Contenants de service en plastique remplacés", html)
                 self.assertIn("Bouteilles en plastique non remplacées", html)
+
+
+class DiagnosticTeledeclarationPdfInformation2026Test(SimpleTestCase):
+    def test_measure_info_template_since_2026(self):
+        template = get_template("teledeclaration_campaign_2024/measure_info.html")
+        context = {
+            "information_affichage_permanent": True,
+            "information_electronique_annuelle": False,
+            "information_part_egalim": True,
+            "information_part_pat": None,
+            "information_consultation_qualite": True,
+            # previous fields (ignored since 2026)
+            "information_qualite_nutritionnelle": True,
+        }
+
+        html = template.render({"year": 2026, **context})
+        for field_name in context:
+            if field_name.startswith("information_qualite"):
+                continue
+            self.assertIn(Diagnostic._meta.get_field(field_name).verbose_name, html)
+        self.assertNotIn("Communique sur le plan alimentaire", html)
+
+        html = template.render({"year": 2025, **context})
+        self.assertIn("Communique sur le plan alimentaire", html)
+        self.assertNotIn("affichage permanent", html)
