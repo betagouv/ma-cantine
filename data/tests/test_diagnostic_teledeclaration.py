@@ -227,8 +227,8 @@ class DiagnosticModelTeledeclareMethodTest(TestCase):
             canteen=self.canteen_satellite,
             year=year_data,
             diagnostic_type=None,  # Groupe appro teledeclaration
-            has_waste_diagnostic=True,
-            has_waste_plan=False,
+            diagnostic_gaspillage_realise=True,
+            plan_gaspillage_en_place=False,
         )
         # teledeclare
         diagnostic_satellite.teledeclare(applicant=self.user)

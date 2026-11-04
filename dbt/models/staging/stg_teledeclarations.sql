@@ -368,21 +368,21 @@ renamed as (
         menu_vegetarien_bases,
 
         -- dons
-        has_donation_agreement                              as convention_dons,
-        donation_frequency                                  as frequence_dons,
-        donation_quantity::numeric                         as quantite_dons,
-        donation_food_type                                  as type_nourriture_dons,
+        dons_convention                                     as convention_dons,
+        dons_frequence                                      as frequence_dons,
+        dons_quantite::numeric                             as quantite_dons,
+        dons_type_denrees                                   as type_nourriture_dons,
 
         -- gaspillage
-        has_waste_diagnostic,
-        has_waste_plan,
-        -- waste_actions est un array → extraction des actions individuelles par matching
-        waste_actions::text ilike '%inscription%'                       as action_gaspi_inscription,
-        waste_actions::text ilike '%awareness%'                   as action_gaspi_sensibilisation,
-        waste_actions::text ilike '%training%'                         as action_gaspi_formation,
-        waste_actions::text ilike '%distribution%'                      as action_gaspi_distribution,
-        waste_actions::text ilike '%portions%'                          as action_gaspi_portions,
-        waste_actions::text ilike '%reuse%'                     as action_gaspi_reutilisation,
+        diagnostic_gaspillage_realise,
+        plan_gaspillage_en_place,
+        -- actions_gaspillage_realisees est un array → extraction des actions individuelles par matching
+        actions_gaspillage_realisees::text ilike '%inscription%'     as action_gaspi_inscription,
+        actions_gaspillage_realisees::text ilike '%sensibilisation%' as action_gaspi_sensibilisation,
+        actions_gaspillage_realisees::text ilike '%formation%'       as action_gaspi_formation,
+        actions_gaspillage_realisees::text ilike '%distribution%'    as action_gaspi_distribution,
+        actions_gaspillage_realisees::text ilike '%portions%'        as action_gaspi_portions,
+        actions_gaspillage_realisees::text ilike '%reutilisation%'   as action_gaspi_reutilisation,
 
         -- tunnels de complétion
         tunnel_appro,

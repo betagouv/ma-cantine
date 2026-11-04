@@ -827,19 +827,19 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.diagnostic = DiagnosticFactory(
-            **VALID_DIAGNOSTIC_SIMPLE_2024, has_waste_plan=False, status=Diagnostic.DiagnosticStatus.SUBMITTED
+            **VALID_DIAGNOSTIC_SIMPLE_2024, plan_gaspillage_en_place=False, status=Diagnostic.DiagnosticStatus.SUBMITTED
         )
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_editable_volet_fields_can_be_updated_during_the_teledeclaration_campaign(self):
-        self.diagnostic.has_waste_plan = True  # GASPILLAGE
+        self.diagnostic.plan_gaspillage_en_place = True  # GASPILLAGE
         self.diagnostic.menu_vegetarien_frequence = Diagnostic.MenuVegetarienFrequence.QUOTIDIEN  # DIVERSIFICATION
         self.diagnostic.cooking_plastic_substituted = True  # PLASTIQUE
         self.diagnostic.communicates_on_food_plan = True  # INFORMATION
         self.diagnostic.tunnel_waste = "complet"
         self.diagnostic.save()
         self.diagnostic.refresh_from_db()
-        self.assertTrue(self.diagnostic.has_waste_plan)
+        self.assertTrue(self.diagnostic.plan_gaspillage_en_place)
         self.assertEqual(self.diagnostic.menu_vegetarien_frequence, Diagnostic.MenuVegetarienFrequence.QUOTIDIEN)
         self.assertTrue(self.diagnostic.cooking_plastic_substituted)
         self.assertTrue(self.diagnostic.communicates_on_food_plan)
@@ -848,10 +848,10 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
 
     @freeze_time(date_in_correction_campaign)
     def test_editable_volet_fields_can_be_updated_during_the_correction_campaign(self):
-        self.diagnostic.has_waste_plan = True
+        self.diagnostic.plan_gaspillage_en_place = True
         self.diagnostic.save()
         self.diagnostic.refresh_from_db()
-        self.assertTrue(self.diagnostic.has_waste_plan)
+        self.assertTrue(self.diagnostic.plan_gaspillage_en_place)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_locked_fields_cannot_be_updated(self):
@@ -865,25 +865,25 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
             with self.subTest(field_name=field_name):
                 diagnostic = Diagnostic.objects.get(pk=self.diagnostic.pk)
                 setattr(diagnostic, field_name, value)
-                diagnostic.has_waste_plan = True  # editable field changed in the same save: rejected too
+                diagnostic.plan_gaspillage_en_place = True  # editable field changed in the same save: rejected too
                 with self.assertRaises(ValidationError) as context:
                     diagnostic.save()
                 self.assertEqual(list(context.exception.message_dict.keys()), [field_name])
                 diagnostic.refresh_from_db()
                 self.assertNotEqual(getattr(diagnostic, field_name), value)
-                self.assertFalse(diagnostic.has_waste_plan)
+                self.assertFalse(diagnostic.plan_gaspillage_en_place)
 
     @freeze_time("2025-06-01")  # outside of the campaign
     def test_editable_volet_fields_cannot_be_updated_outside_of_the_campaign(self):
-        self.diagnostic.has_waste_plan = True
+        self.diagnostic.plan_gaspillage_en_place = True
         with self.assertRaisesMessage(ValidationError, "hors de la période de la campagne"):
             self.diagnostic.save()
         self.diagnostic.refresh_from_db()
-        self.assertFalse(self.diagnostic.has_waste_plan)
+        self.assertFalse(self.diagnostic.plan_gaspillage_en_place)
 
     @freeze_time(date_in_last_teledeclaration_campaign)  # campaign of another year
     def test_editable_volet_fields_cannot_be_updated_during_another_year_campaign(self):
-        self.diagnostic.has_waste_plan = True
+        self.diagnostic.plan_gaspillage_en_place = True
         with self.assertRaisesMessage(ValidationError, "pas dans la bonne année de télédéclaration"):
             self.diagnostic.save()
 
@@ -894,11 +894,11 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
     @freeze_time("2025-06-01")  # outside of the campaign
     def test_skip_validations(self):
         self.diagnostic.valeur_bio = 500
-        self.diagnostic.has_waste_plan = True
+        self.diagnostic.plan_gaspillage_en_place = True
         self.diagnostic.save(skip_validations=True)
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.valeur_bio, 500)
-        self.assertTrue(self.diagnostic.has_waste_plan)
+        self.assertTrue(self.diagnostic.plan_gaspillage_en_place)
 
     @freeze_time(date_in_teledeclaration_campaign)
     def test_cancel_is_not_impacted(self):

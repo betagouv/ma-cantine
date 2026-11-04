@@ -231,9 +231,11 @@ class DiagnosticTeledeclarationPdfView(APIView):
         them to be human-readable (e.g., replacing keys with labels and merging multiple choice with
         "other" editable choices)
         """
-        processed_waste_actions = [Diagnostic.WasteActions(x).label for x in (diagnostic.waste_actions or [])]
+        processed_waste_actions = [
+            Diagnostic.ActionsGaspillage(x).label for x in (diagnostic.actions_gaspillage_realisees or [])
+        ]
         combined_waste_actions = processed_waste_actions + (
-            [diagnostic.other_waste_action] if diagnostic.other_waste_action else []
+            [diagnostic.actions_gaspillage_autre] if diagnostic.actions_gaspillage_autre else []
         )
         processed_communication_supports = [
             Diagnostic.CommunicationType(x).label for x in (diagnostic.communication_supports or [])
@@ -243,7 +245,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
         )
 
         return {
-            "waste_actions": combined_waste_actions,
+            "actions_gaspillage_realisees": combined_waste_actions,
             "plan_diversification_actions": [
                 Diagnostic.PlanDiversificationActions(x).label for x in (diagnostic.plan_diversification_actions or [])
             ],

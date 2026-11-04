@@ -131,7 +131,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         self.assertNotIn("valeur_bio", get_teledeclaration_fields_all_volets(2025, "COMPLETE"))
         self.assertNotIn("service_type", get_teledeclaration_fields_all_volets(2023, "SIMPLE"))
         self.assertIn("service_type", get_teledeclaration_fields_all_volets(2024, "SIMPLE"))
-        self.assertIn("has_waste_diagnostic", get_teledeclaration_fields_all_volets("2025", "SIMPLE"))
+        self.assertIn("diagnostic_gaspillage_realise", get_teledeclaration_fields_all_volets("2025", "SIMPLE"))
 
     def test_get_tunnel_progress_field(self):
         self.assertEqual(list(TUNNEL_PROGRESS_FIELD_BY_VOLET.keys()), VOLETS)
