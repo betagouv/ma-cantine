@@ -293,7 +293,7 @@ jmespath==1.1.0
     # via
     #   boto3
     #   botocore
-joserfc==1.7.5
+joserfc==1.7.6
     # via authlib
 jsonschema==4.26.0
     # via
