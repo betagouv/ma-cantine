@@ -59,8 +59,9 @@ const updateVolet = (canteenId, diagnosticId, volet, payload) => {
     .catch((e) => e)
 }
 
-const fetchDiagnostic = (canteenId, diagnosticId) => {
-  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}`, {
+const fetchDiagnostic = (canteenId, diagnosticId, version) => {
+  const apiVersion = version || "v1"
+  return fetch(`/api/${apiVersion}/canteens/${canteenId}/diagnostics/${diagnosticId}`, {
     method: "GET",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
