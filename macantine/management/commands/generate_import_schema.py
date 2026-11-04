@@ -224,15 +224,13 @@ class Command(BaseCommand):
         if name in COMMON_FIELDS.keys():
             return COMMON_FIELDS[name]
 
-        title = name
         model_field = None
         try:
             model_field = Diagnostic._meta.get_field(name)
-            title = str(model_field.verbose_name)
         except Exception:
             pass
-        if year:
-            title = get_teledeclaration_verbose_name(year, "APPROVISIONNEMENT", name)
+
+        title = get_teledeclaration_verbose_name(year, "APPROVISIONNEMENT", name)
 
         field_definition = {
             "description": "",
