@@ -8,7 +8,7 @@ import documentation from "@/data/documentation.json"
     <div class="fr-col-12 fr-col-md-8">
       <div class="import-help__separator fr-mb-5w">
         <AppSeparator />
-        <DsfrBadge class="import-help__badge" type="none" label="Besoin d'aide ?" />
+        <DsfrBadge class="ma-cantine--pos-top-left" type="none" label="Besoin d'aide ?" />
       </div>
       <h2>Vous n’arrivez pas à importer votre fichier</h2>
       <p class="fr-pr-0 fr-pr-md-8w">
@@ -28,12 +28,6 @@ import documentation from "@/data/documentation.json"
 .import-help {
   &__separator {
     position: relative;
-  }
-
-  &__badge {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
   }
 }
 </style>
