@@ -18,12 +18,12 @@ const errorMessage = computed(() => hasError.value ? props.error?.join(' ') : ""
 </script>
 
 <template>
-  <div class="app-field-display fr-grid-row fr-grid-row--gutters fr-mb-1w">
+  <div class="app-field-display fr-grid-row fr-grid-row--gutters fr-mb-1v">
     <div class="fr-col-12 fr-col-md-5">
       <p class="fr-mb-0 fr-text--bold">{{ label }} :</p>
     </div>
     <div class="fr-col-12 fr-col-md-7">
-      <div class="ma-cantine--flex-start ma-cantine--flex-top fr-mb-1w">
+      <div class="ma-cantine--flex-start ma-cantine--flex-top">
         <p class="fr-mb-0">
           <template v-for="(value, index) in valuesList" :key="index">
             {{ value }}<br v-if="index >= 0" />
@@ -31,7 +31,7 @@ const errorMessage = computed(() => hasError.value ? props.error?.join(' ') : ""
         </p>
         <AppTooltipHover v-if="tooltip" :content="tooltip" class="fr-ml-1w fr-mt-n1v" />
       </div>
-      <p v-if="hasError" class="fr-message fr-message--error">{{ errorMessage }}</p>
+      <p v-if="hasError" class="fr-message fr-message--error fr-mt-1v">{{ errorMessage }}</p>
     </div>
   </div>
 </template>
