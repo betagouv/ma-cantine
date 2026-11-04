@@ -41,6 +41,10 @@ V1_FIELD_ALIASES = {
     "communicates_on_food_plan": "information_qualite_nutritionnelle",
     "communicates_on_food_quality": "information_qualite_durable",
     "communication_frequency": "information_frequence",
+    "cooking_plastic_substituted": "plastique_contenant_cuisson_remplace",
+    "serving_plastic_substituted": "plastique_contenant_service_remplace",
+    "plastic_bottles_substituted": "plastique_bouteille_remplace",
+    "plastic_tableware_substituted": "plastique_ustensile_remplace",
 }
 V1_FIELD_NAMES = {model_field_name: v1_name for v1_name, model_field_name in V1_FIELD_ALIASES.items()}
 # same for the choice values renamed in French

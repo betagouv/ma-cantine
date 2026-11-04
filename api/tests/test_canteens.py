@@ -337,7 +337,7 @@ class CanteenDetailApiTest(APITestCase):
             valeur_siqo=30,
             # test plastic badge as false
             tunnel_plastic="something",
-            cooking_plastic_substituted=False,
+            plastique_contenant_cuisson_remplace=False,
             # test vege badge as null
             tunnel_diversification=None,
             menu_vegetarien_frequence=None,

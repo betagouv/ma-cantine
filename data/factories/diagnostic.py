@@ -78,10 +78,10 @@ class DiagnosticFactory(factory.django.DjangoModelFactory):
     menu_vegetarien_frequence = fuzzy.FuzzyChoice(list(Diagnostic.MenuVegetarienFrequence))
     menu_vegetarien_type = fuzzy.FuzzyChoice(list(Diagnostic.MenuVegetarienType))
 
-    cooking_plastic_substituted = factory.Faker("boolean")
-    serving_plastic_substituted = factory.Faker("boolean")
-    plastic_bottles_substituted = factory.Faker("boolean")
-    plastic_tableware_substituted = factory.Faker("boolean")
+    plastique_contenant_cuisson_remplace = factory.Faker("boolean")
+    plastique_contenant_service_remplace = factory.Faker("boolean")
+    plastique_bouteille_remplace = factory.Faker("boolean")
+    plastique_ustensile_remplace = factory.Faker("boolean")
 
     information_supports = factory.List(random.sample(list(Diagnostic.InformationSupport), random.randint(0, 2)))
     information_support_url = factory.Faker("uri")
@@ -134,10 +134,10 @@ class CompleteDiagnosticFactory(factory.django.DjangoModelFactory):
     menu_vegetarien_frequence = fuzzy.FuzzyChoice(list(Diagnostic.MenuVegetarienFrequence))
     menu_vegetarien_type = fuzzy.FuzzyChoice(list(Diagnostic.MenuVegetarienType))
 
-    cooking_plastic_substituted = factory.Faker("boolean")
-    serving_plastic_substituted = factory.Faker("boolean")
-    plastic_bottles_substituted = factory.Faker("boolean")
-    plastic_tableware_substituted = factory.Faker("boolean")
+    plastique_contenant_cuisson_remplace = factory.Faker("boolean")
+    plastique_contenant_service_remplace = factory.Faker("boolean")
+    plastique_bouteille_remplace = factory.Faker("boolean")
+    plastique_ustensile_remplace = factory.Faker("boolean")
 
     information_supports = factory.List(random.sample(list(Diagnostic.InformationSupport), random.randint(0, 2)))
     information_support_url = factory.Faker("uri")

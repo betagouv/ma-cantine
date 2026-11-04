@@ -383,7 +383,8 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         diagnostic = Diagnostic.objects.get(canteen__id=self.canteen.id)
         self.assertEqual(diagnostic.year, 2021)
-        self.assertTrue(diagnostic.cooking_plastic_substituted)
+        self.assertTrue(diagnostic.plastique_contenant_cuisson_remplace)
+        self.assertFalse(diagnostic.plastique_ustensile_remplace)
         self.assertFalse(diagnostic.dons_convention)
         self.assertIn("SENSIBILISATION", diagnostic.actions_gaspillage_realisees)
         self.assertEqual(diagnostic.dechets_mesure_duree, 30)
@@ -816,6 +817,7 @@ class DiagnosticUpdateApiTest(APITestCase):
             "communication_supports": ["DISPLAY", "WEBSITE"],
             "communication_frequency": "LESS_THAN_YEARLY",
             "communicates_on_food_quality": True,
+            "plastic_bottles_substituted": True,
         }
         response = self.client.patch(self.url, payload, format="json")
 
@@ -830,6 +832,8 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(body["communicationFrequency"], "LESS_THAN_YEARLY")
         self.assertEqual(body["communicatesOnFoodQuality"], True)
         self.assertNotIn("informationSupports", body)
+        self.assertEqual(body["plasticBottlesSubstituted"], True)
+        self.assertNotIn("plastiqueBouteilleRemplace", body)
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.plan_diversification_en_place, True)
         self.assertEqual(self.diagnostic.menu_vegetarien_frequence, Diagnostic.MenuVegetarienFrequence.QUOTIDIEN)
@@ -843,6 +847,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         )
         self.assertEqual(self.diagnostic.information_frequence, Diagnostic.InformationFrequence.MOINS_QUE_ANNUELLE)
         self.assertEqual(self.diagnostic.information_qualite_durable, True)
+        self.assertEqual(self.diagnostic.plastique_bouteille_remplace, True)
 
     def test_can_update_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
