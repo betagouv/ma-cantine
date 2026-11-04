@@ -59,8 +59,9 @@ const updateVolet = (canteenId, diagnosticId, volet, payload) => {
     .catch((e) => e)
 }
 
-const fetchDiagnostic = (canteenId, diagnosticId) => {
-  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}`, {
+const fetchDiagnostic = (canteenId, diagnosticId, version) => {
+  const apiVersion = version || "v1"
+  return fetch(`/api/${apiVersion}/canteens/${canteenId}/diagnostics/${diagnosticId}`, {
     method: "GET",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",
@@ -71,9 +72,10 @@ const fetchDiagnostic = (canteenId, diagnosticId) => {
     .catch((e) => e)
 }
 
-const fetchDiagnostics = (canteenId, limit) => {
+const fetchDiagnostics = (canteenId, version, limit) => {
+  const apiVersion = version || "v1"
   const query = limit ? `?limit=${limit}` : ""
-  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${query}`, {
+  return fetch(`/api/${apiVersion}/canteens/${canteenId}/diagnostics/${query}`, {
     method: "GET",
     headers: {
       "X-CSRFToken": window.CSRF_TOKEN || "",

@@ -33,25 +33,17 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Init store with diagnostic of the current campaign */
   async function initStore(canteenId) {
     if (canteenSavedId.value === Number(canteenId)) return
-    const diagnosticsResponse = await diagnosticService.fetchDiagnostics(canteenId)
+    const diagnosticsResponse = await diagnosticService.fetchDiagnostics(canteenId, "v2")
     if (diagnosticsResponse?.status === "error") useRootStore().notifyServerError(diagnosticsResponse)
     const diagnosticYear = diagnosticsResponse?.results?.find((result) => result.year === year) || null
     if (!diagnosticYear) deleteStore()
     else {
       setDiagnostic(diagnosticYear)
       setCanteenId(canteenId)
-      await setVoletValues("diversification")
       await setCanteenAction()
       await checkDiagnosticSteps()
       await setDiagnosticRecap()
     }
-  }
-
-  /* Add the values of a volet */
-  async function setVoletValues(volet) {
-    const response = await diagnosticService.fetchVolet(diagnostic.value.canteenId, diagnostic.value.id, volet)
-    if (response?.status === "error") useRootStore().notifyServerError(response)
-    else setDiagnostic({ ...diagnostic.value, ...response })
   }
 
   /* Check diagnostic and canteen for the "volets" */
