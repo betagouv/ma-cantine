@@ -57,16 +57,16 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
 
 <template>
   <div>
-    <div v-if="showGroupeInformations" class="fr-my-3w">
-      <h3 class="fr-h5">Informations de mon groupe</h3>
-      <DsfrAlert :small="true" type="info" class="fr-mb-2w" titleTag="h4">
+    <div v-if="showGroupeInformations" class="fr-card fr-px-4w fr-pt-4w fr-pb-2w fr-my-3w">
+      <DsfrBadge label="Réservé au gestionnaire de groupe" type="none" class="ma-cantine--pos-top-center fr-badge--green-tilleul-verveine fr-badge--icon-left fr-icon-lock-fill" />
+      <p class="fr-mb-4w">
         Le gestionnaire du groupe peut réaliser la télédéclaration de la cantine, de manière groupée (avec l’ensemble
         des cantines du groupe). Le montant total des achats est réparti automatiquement au prorata du nombre de
         couverts annuels de chaque cantine (le nombre de couvert annuel est une donnée renseignée par le gestionnaire du
         groupe lors de la télédéclaration). Attention : seul le gestionnaire du groupe peut ajouter ou retirer une
         cantine du groupe. Si vous remarquez une erreur ou souhaitez ne plus être associer au groupe, merci de
         <AppLinkRouter title="nous contacter" :to="{ name: 'Contact' }" />.
-      </DsfrAlert>
+      </p>
       <AppFieldDisplay :label="cantines.nameGroupe" :value="canteenInformation.groupe?.name" />
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.groupe?.id" />
       <AppFieldDisplay :label="`${cantines.sirenUniteLegaleName} du groupe`" :value="formatSiretOrSiren(canteenInformation.groupe?.sirenUniteLegale)" />
