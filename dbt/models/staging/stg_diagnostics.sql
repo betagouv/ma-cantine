@@ -237,12 +237,12 @@ renamed as (
         plastic_tableware_substituted,
 
         -- ── INFORMATION ───────────────────────────────────────────────────────
-        communication_supports,
-        other_communication_support,
-        communication_support_url,
-        communicates_on_food_plan,
-        communicates_on_food_quality,
-        communication_frequency,
+        information_supports,
+        information_supports_autre,
+        information_support_url,
+        information_qualite_nutritionnelle,
+        information_qualite_durable,
+        information_frequence,
 
         -- campaign tracking
         creation_mtm_source,

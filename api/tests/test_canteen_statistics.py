@@ -50,7 +50,7 @@ class CanteenStatsApiTest(APITestCase):
                 actions_gaspillage_realisees=[],
                 menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.QUOTIDIEN,
                 plastic_tableware_substituted=False,
-                communicates_on_food_quality=False,
+                information_qualite_durable=False,
             )
             canteen_diagnostic_1.teledeclare(applicant=user)
             cls.canteen_2 = CanteenFactory(
@@ -87,7 +87,7 @@ class CanteenStatsApiTest(APITestCase):
                 serving_plastic_substituted=True,
                 plastic_bottles_substituted=True,
                 plastic_tableware_substituted=True,
-                communicates_on_food_quality=True,
+                information_qualite_durable=True,
             )
             canteen_diagnostic_2.teledeclare(applicant=user)
             cls.canteen_3 = CanteenFactory(
@@ -116,7 +116,7 @@ class CanteenStatsApiTest(APITestCase):
                 serving_plastic_substituted=True,
                 plastic_bottles_substituted=True,
                 plastic_tableware_substituted=True,
-                communicates_on_food_quality=True,
+                information_qualite_durable=True,
             )
             canteen_diagnostic_3.teledeclare(applicant=user)
             cls.canteen_4 = CanteenFactory(

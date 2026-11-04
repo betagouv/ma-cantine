@@ -68,7 +68,7 @@ class DiagnosticV2ListApiTest(APITestCase):
         self.assertIn("diagnosticGaspillageRealise", results[0])
         self.assertIn("menuVegetarienFrequence", results[0])
         self.assertIn("cookingPlasticSubstituted", results[0])
-        self.assertIn("communicationSupports", results[0])
+        self.assertIn("informationSupports", results[0])
         self.assertNotIn("menuVegetarienType", results[0])  # not in 2024
         self.assertNotIn("dechetsTotal", results[0])  # only in 2023
 
@@ -130,7 +130,7 @@ class DiagnosticV2CreateApiTest(APITestCase):
         # the response contains all the volet fields (empty)
         self.assertIsNone(body["diagnosticType"])
         self.assertIsNone(body["diagnosticGaspillageRealise"])
-        self.assertIn("communicationSupports", body)
+        self.assertIn("informationSupports", body)
         diagnostic = Diagnostic.objects.get(id=body["id"])
         self.assertEqual(diagnostic.canteen, self.canteen)
         self.assertEqual(diagnostic.year, 2025)
@@ -483,7 +483,7 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
             "tunnel_diversification",
         ),
         ("plastique", "cookingPlasticSubstituted", "cooking_plastic_substituted", True, "tunnel_plastic"),
-        ("information", "communicatesOnFoodPlan", "communicates_on_food_plan", True, "tunnel_info"),
+        ("information", "informationQualiteNutritionnelle", "information_qualite_nutritionnelle", True, "tunnel_info"),
     ]
 
     @classmethod
@@ -496,7 +496,7 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
             plan_gaspillage_en_place=False,
             plan_diversification_en_place=False,
             cooking_plastic_substituted=False,
-            communicates_on_food_plan=False,
+            information_qualite_nutritionnelle=False,
         )
 
     def _url(self, volet, diagnostic):
@@ -696,3 +696,41 @@ class DiagnosticVoletDiversificationV2ApiTest(APITestCase):
         # the v1 (English) values are not accepted
         response = self.client.patch(url, {"serviceType": "MULTIPLE_SELF"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class DiagnosticVoletInformationV2ApiTest(APITestCase):
+    @authenticate
+    def test_choice_values_in_french(self):
+        """
+        v2 uses the model (French) choice values (v1 keeps the English ones, see V1_CHOICE_VALUE_ALIASES)
+        """
+        diagnostic = DiagnosticFactory(
+            year=2025,
+            information_supports=[Diagnostic.InformationSupport.AFFICHAGE],
+            information_frequence=Diagnostic.InformationFrequence.ANNUELLE,
+        )
+        diagnostic.canteen.managers.add(authenticate.user)
+        url = reverse(
+            "diagnostic_v2_information_retrieve_update",
+            kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
+        )
+
+        body = self.client.get(url).json()
+        self.assertEqual(body["informationSupports"], ["AFFICHAGE"])
+        self.assertEqual(body["informationFrequence"], "ANNUELLE")
+
+        payload = {"informationSupports": ["SITE_INTERNET", "ELECTRONIQUE"], "informationFrequence": "REGULIEREMENT"}
+        response = self.client.patch(url, payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
+        self.assertEqual(
+            diagnostic.information_supports,
+            [Diagnostic.InformationSupport.SITE_INTERNET, Diagnostic.InformationSupport.ELECTRONIQUE],
+        )
+        self.assertEqual(diagnostic.information_frequence, Diagnostic.InformationFrequence.REGULIEREMENT)
+
+        # the v1 (English) values are not accepted
+        for payload in [{"informationSupports": ["DISPLAY"]}, {"informationFrequence": "YEARLY"}]:
+            with self.subTest(payload=payload):
+                response = self.client.patch(url, payload, format="json")
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

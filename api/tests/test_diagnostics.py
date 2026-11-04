@@ -394,8 +394,9 @@ class DiagnosticCreateApiTest(APITestCase):
         self.assertIn("CEREALES_LEGUMINEUSES", diagnostic.menu_vegetarien_bases)
         self.assertIn("FROMAGE", diagnostic.menu_vegetarien_bases)
         self.assertEqual(diagnostic.dons_quantite, Decimal("60.6"))
-        self.assertEqual(diagnostic.communication_frequency, "YEARLY")
-        self.assertTrue(diagnostic.communicates_on_food_quality)
+        self.assertEqual(diagnostic.information_frequence, "ANNUELLE")
+        self.assertEqual(diagnostic.information_supports, ["AFFICHAGE", "ELECTRONIQUE"])
+        self.assertTrue(diagnostic.information_qualite_durable)
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
         self.assertEqual(diagnostic.label_sum("bio"), 80)
         self.assertEqual(diagnostic.label_sum("label_rouge"), 80)
@@ -812,6 +813,9 @@ class DiagnosticUpdateApiTest(APITestCase):
             "has_diversification_plan": True,
             "vegetarian_weekly_recurrence": "DAILY",
             "vegetarian_menu_bases": ["GRAIN", "SOY"],
+            "communication_supports": ["DISPLAY", "WEBSITE"],
+            "communication_frequency": "LESS_THAN_YEARLY",
+            "communicates_on_food_quality": True,
         }
         response = self.client.patch(self.url, payload, format="json")
 
@@ -822,6 +826,10 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(body["vegetarianMenuBases"], ["GRAIN", "SOY"])
         self.assertNotIn("planDiversificationEnPlace", body)
         self.assertNotIn("menuVegetarienFrequence", body)
+        self.assertEqual(body["communicationSupports"], ["DISPLAY", "WEBSITE"])
+        self.assertEqual(body["communicationFrequency"], "LESS_THAN_YEARLY")
+        self.assertEqual(body["communicatesOnFoodQuality"], True)
+        self.assertNotIn("informationSupports", body)
         self.diagnostic.refresh_from_db()
         self.assertEqual(self.diagnostic.plan_diversification_en_place, True)
         self.assertEqual(self.diagnostic.menu_vegetarien_frequence, Diagnostic.MenuVegetarienFrequence.QUOTIDIEN)
@@ -829,6 +837,12 @@ class DiagnosticUpdateApiTest(APITestCase):
             self.diagnostic.menu_vegetarien_bases,
             [Diagnostic.MenuVegetarienBase.CEREALES_LEGUMINEUSES, Diagnostic.MenuVegetarienBase.SOJA],
         )
+        self.assertEqual(
+            self.diagnostic.information_supports,
+            [Diagnostic.InformationSupport.AFFICHAGE, Diagnostic.InformationSupport.SITE_INTERNET],
+        )
+        self.assertEqual(self.diagnostic.information_frequence, Diagnostic.InformationFrequence.MOINS_QUE_ANNUELLE)
+        self.assertEqual(self.diagnostic.information_qualite_durable, True)
 
     def test_can_update_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")

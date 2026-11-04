@@ -849,6 +849,12 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
             plan_diversification_actions=[Diagnostic.PlanDiversificationActions.PLATS_PRODUITS],
             menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.QUOTIDIEN,
             menu_vegetarien_bases=[Diagnostic.MenuVegetarienBase.SOJA],
+            information_qualite_nutritionnelle=True,
+            information_qualite_durable=True,
+            information_supports=[Diagnostic.InformationSupport.AFFICHAGE],
+            information_supports_autre="Journal de l'école",
+            information_frequence=Diagnostic.InformationFrequence.ANNUELLE,
+            information_support_url="https://example.com/menus",
         )
         diagnostic.canteen.managers.add(user)
         diagnostic.teledeclare(user)
@@ -866,3 +872,11 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
                 self.assertIn(Diagnostic.PlanDiversificationActions.PLATS_PRODUITS.label, html)
                 self.assertIn(Diagnostic.MenuVegetarienFrequence.QUOTIDIEN.label, html)
                 self.assertIn(Diagnostic.MenuVegetarienBase.SOJA.label, html)
+                # information
+                self.assertIn("Communique sur le plan alimentaire", html)
+                self.assertIn("Communique sur les démarches qualité/durables/équitables", html)
+                self.assertNotIn("Ne communique pas", html)
+                self.assertIn(Diagnostic.InformationSupport.AFFICHAGE.label, html)
+                self.assertIn("Journal de l&#x27;école", html)
+                self.assertIn(Diagnostic.InformationFrequence.ANNUELLE.label, html)
+                self.assertIn("https://example.com/menus", html)
