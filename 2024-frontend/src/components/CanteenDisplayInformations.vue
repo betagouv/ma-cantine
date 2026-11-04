@@ -99,16 +99,16 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <h3 class="fr-h5">4. Description</h3>
       <p>{{ canteenInformation.publicationComments || 'Aucune description enregistrée'}}</p>
     </div>
-    <div v-if="!canteenIsGroupe" class="fr-my-3w">
-      <h3 class="fr-h5">Informations générées</h3>
-      <DsfrAlert :small="true" type="info" class="fr-mb-2w" titleTag="h4">
-        Informations générées à partir à partir du SIRET ou du SIREN de la cantine, via les référentiels
+    <div v-if="!canteenIsGroupe" class="fr-card fr-px-4w fr-pt-4w fr-pb-2w fr-my-3w">
+      <DsfrBadge label="Informations générées" type="none" class="ma-cantine--pos-top-center fr-badge--blue-cumulus fr-badge--icon-left fr-icon-lock-fill" />
+      <p class="fr-mb-4w">
+        Informations générées à partir du SIRET ou du SIREN de la cantine, via les référentiels
         <a href="https://annuaire-entreprises.data.gouv.fr" target="_blank">l'annuaire des entreprises</a>
         et
         <a href="https://france-pat.fr" target="_blank">France PAT</a>.
-        Si vous remarquez une erreur sur les données géographiques, rendez-vous sur <a href="https://www.insee.fr/fr/information/1401387" target="_blank">Immatriculation, cessation ou modification des données au répertoire Sirene | Insee</a>.<br/>
-        Concernant les Projets alimentaires territoriaux, la base est actualisée deux fois par ans, à partir des données actualisées sur France PAT.
-      </DsfrAlert>
+        Si vous remarquez une erreur sur les données géographiques, rendez-vous sur <a href="https://www.insee.fr/fr/information/1401387" target="_blank">Immatriculation, cessation ou modification des données au répertoire Sirene | Insee</a>.
+        Concernant les Projets alimentaires territoriaux, la base est actualisée deux fois par an, à partir des données actualisées sur France PAT.
+      </p>
       <AppFieldDisplay v-if="!canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
       <AppFieldDisplay v-if="!canteenInformation.sirenUniteLegale" :label="cantines.postalCode" :value="canteenInformation.postalCode" />
       <AppFieldDisplay :label="cantines.cityInseeCode" :value="canteenInformation.cityInseeCode" />
