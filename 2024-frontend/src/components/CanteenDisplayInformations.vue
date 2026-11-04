@@ -91,6 +91,15 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.postalCode" :value="canteenInformation.postalCode" />
     </div>
     <div v-if="!canteenIsGroupe" class="fr-my-3w">
+      <h3 class="fr-h5">3. Secteurs</h3>
+      <AppFieldDisplay :label="cantines.sectorList" :value="getPrettySectors(canteenInformation.sectorList)" :error="canteenErrors?.sectorList" />
+      <AppFieldDisplay v-if="showLineMinistry" :label="cantines.lineMinistry" :value="getPrettyLineMinistry(canteenInformation.lineMinistry)" :error="canteenErrors?.lineMinistry" />
+    </div>
+    <div v-if="!canteenIsGroupe" class="fr-my-3w">
+      <h3 class="fr-h5">4. Description</h3>
+      <p>{{ canteenInformation.publicationComments || 'Aucune description enregistrée'}}</p>
+    </div>
+    <div v-if="!canteenIsGroupe" class="fr-my-3w">
       <h3 class="fr-h5">Informations générées</h3>
       <DsfrAlert :small="true" type="info" class="fr-mb-2w" titleTag="h4">
         Informations générées à partir à partir du SIRET ou du SIREN de la cantine, via les référentiels
@@ -107,15 +116,6 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay :label="cantines.regionLib" :value="canteenInformation.regionLib" />
       <AppFieldDisplay :label="cantines.patLibList" :value="canteenInformation.patLibList" />
       <AppFieldDisplay :label="cantines.epciLib" :value="canteenInformation.epciLib" />
-    </div>
-    <div v-if="!canteenIsGroupe" class="fr-my-3w">
-      <h3 class="fr-h5">3. Secteurs</h3>
-      <AppFieldDisplay :label="cantines.sectorList" :value="getPrettySectors(canteenInformation.sectorList)" :error="canteenErrors?.sectorList" />
-      <AppFieldDisplay v-if="showLineMinistry" :label="cantines.lineMinistry" :value="getPrettyLineMinistry(canteenInformation.lineMinistry)" :error="canteenErrors?.lineMinistry" />
-    </div>
-    <div v-if="!canteenIsGroupe" class="fr-my-3w">
-      <h3 class="fr-h5">4. Description</h3>
-      <p>{{ canteenInformation.publicationComments || 'Aucune description enregistrée'}}</p>
     </div>
   </div>
 </template>
