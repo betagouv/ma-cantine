@@ -56,8 +56,8 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
 </script>
 
 <template>
-  <ol class="ma-cantine--ordered-list ma-cantine--unstyled-list">
-    <li v-if="showGroupeInformations" class="fr-my-3w">
+  <div>
+    <div v-if="showGroupeInformations" class="fr-my-3w">
       <h3 class="fr-h5">Informations de mon groupe</h3>
       <DsfrAlert :small="true" type="info" class="fr-mb-2w" titleTag="h4">
         Le gestionnaire du groupe peut réaliser la télédéclaration de la cantine, de manière groupée (avec l’ensemble
@@ -70,16 +70,16 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay :label="cantines.nameGroupe" :value="canteenInformation.groupe?.name" />
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.groupe?.id" />
       <AppFieldDisplay :label="`${cantines.sirenUniteLegaleName} du groupe`" :value="formatSiretOrSiren(canteenInformation.groupe?.sirenUniteLegale)" />
-    </li>
-    <li class="fr-my-3w">
-      <h3 class="fr-h5">Caractéristiques</h3>
+    </div>
+    <div class="fr-my-3w">
+      <h3 class="fr-h5">1. Caractéristiques</h3>
       <AppFieldDisplay v-if="!canteenIsGroupe" :label="cantines.economicModelName" :value="getPrettyValue(canteenInformation.economicModel, 'economicModel')" :error="canteenErrors?.economicModel" :tooltip="tooltips.economicModel"/>
       <AppFieldDisplay :label="cantines.managementTypeName" :value="getPrettyValue(canteenInformation.managementType, 'managementType')" :error="canteenErrors?.managementType" />
       <AppFieldDisplay :label="cantines.productionTypeName" :value="getPrettyValue(canteenInformation.productionType, 'productionType')" :error="canteenErrors?.productionType" />
       <AppFieldDisplay v-if="showCentralProducerSiret" :label="cantines.centralProducerSiret" :value="formatSiretOrSiren(canteenInformation.centralProducerSiret)" :error="canteenErrors?.centralProducerSiret" />
-    </li>
-    <li class="fr-my-3w">
-      <h3 class="fr-h5">Identification {{ canteenIsGroupe ? 'du groupe' : 'de la cantine' }}</h3>
+    </div>
+    <div class="fr-my-3w">
+      <h3 class="fr-h5">2. Identification {{ canteenIsGroupe ? 'du groupe' : 'de la cantine' }}</h3>
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.id" tooltip="Identifiant unique de l'établissement, ce champ ne peut pas être modifié."/>
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.siret" :label="cantines.siretName" :value="formatSiretOrSiren(canteenInformation.siret)" :error="canteenErrors?.siret" />
       <AppFieldDisplay v-else-if="canteenInformation.sirenUniteLegale" :label="cantines.sirenUniteLegaleName" :value="formatSiretOrSiren(canteenInformation.sirenUniteLegale)" :error="canteenErrors?.sirenUniteLegale" />
@@ -89,8 +89,8 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay :label="cantines.dailyMealCountName" :value="canteenInformation.dailyMealCount" :error="canteenErrors?.dailyMealCount" :tooltip="tooltips.dailyMealCount" />
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.city" :value="canteenInformation.city" />
       <AppFieldDisplay v-if="!canteenIsGroupe && canteenInformation.sirenUniteLegale" :label="cantines.postalCode" :value="canteenInformation.postalCode" />
-    </li>
-    <li v-if="!canteenIsGroupe" class="fr-my-3w">
+    </div>
+    <div v-if="!canteenIsGroupe" class="fr-my-3w">
       <h3 class="fr-h5">Informations générées</h3>
       <DsfrAlert :small="true" type="info" class="fr-mb-2w" titleTag="h4">
         Informations générées à partir à partir du SIRET ou du SIREN de la cantine, via les référentiels
@@ -107,15 +107,15 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay :label="cantines.regionLib" :value="canteenInformation.regionLib" />
       <AppFieldDisplay :label="cantines.patLibList" :value="canteenInformation.patLibList" />
       <AppFieldDisplay :label="cantines.epciLib" :value="canteenInformation.epciLib" />
-    </li>
-    <li v-if="!canteenIsGroupe" class="fr-my-3w">
-      <h3 class="fr-h5">Secteurs</h3>
+    </div>
+    <div v-if="!canteenIsGroupe" class="fr-my-3w">
+      <h3 class="fr-h5">3. Secteurs</h3>
       <AppFieldDisplay :label="cantines.sectorList" :value="getPrettySectors(canteenInformation.sectorList)" :error="canteenErrors?.sectorList" />
       <AppFieldDisplay v-if="showLineMinistry" :label="cantines.lineMinistry" :value="getPrettyLineMinistry(canteenInformation.lineMinistry)" :error="canteenErrors?.lineMinistry" />
-    </li>
-    <li v-if="!canteenIsGroupe" class="fr-my-3w">
-      <h3 class="fr-h5">Description</h3>
+    </div>
+    <div v-if="!canteenIsGroupe" class="fr-my-3w">
+      <h3 class="fr-h5">4. Description</h3>
       <p>{{ canteenInformation.publicationComments || 'Aucune description enregistrée'}}</p>
-    </li>
-  </ol>
+    </div>
+  </div>
 </template>
