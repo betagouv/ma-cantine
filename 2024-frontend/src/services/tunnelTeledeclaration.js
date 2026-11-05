@@ -1,4 +1,7 @@
-import { APPROVISIONNEMENT as configFields } from "../../../teledeclaration/2026/champs.json"
+import {
+    APPROVISIONNEMENT as configFields,
+    DIVERSIFICATION as configDiversificationFields
+} from "../../../teledeclaration/2026/champs.json"
 import tunnelTeledeclaration from "@/data/tunnelTeledeclaration.json"
 import { toCamelCase } from "@/utils.js"
 
@@ -32,9 +35,21 @@ const generateTeledeclarationFields = () => {
   return fields
 }
 
+const generateVoletFields = (voletConfig, voletCustomisation) => {
+  const fields = {}
+  for (const [name, config] of Object.entries(voletConfig)) {
+    const apiKey = toCamelCase(name)
+    fields[apiKey] = { apiKey, labelRecap: config.verbose_name, ...voletCustomisation[apiKey] }
+  }
+  return fields
+}
+
 /* Data */
 const groups = { ...tunnelTeledeclaration.approvisionnement.groups, ...tunnelTeledeclaration.diversification.groups }
-const fields = { ...generateTeledeclarationFields(), ...tunnelTeledeclaration.diversification.fields }
+const fields = {
+  ...generateTeledeclarationFields(),
+  ...generateVoletFields(configDiversificationFields, tunnelTeledeclaration.diversification.fields),
+}
 
 /* Actions */
 const getField = (fieldName) => {
