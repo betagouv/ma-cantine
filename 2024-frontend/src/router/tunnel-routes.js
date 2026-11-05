@@ -176,6 +176,7 @@ const tunnelRoutes = {
           component: GestionnaireTunnelGaspillage,
           meta: {
             title: "Lutte contre le gaspillage alimentaire",
+            volet: "gaspillage",
             previous: "GestionnaireTunnelConvives",
             next: "GestionnaireTunnelVegetarien",
           },
