@@ -11,6 +11,7 @@
           "is_required": false
         }
       },
+      "index_code": 33,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, AOC / AOP / IGP / STG"
     },
     "valeur_autres_bio": {
@@ -24,6 +25,7 @@
           "is_required": false
         }
       },
+      "index_code": 17,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Bio"
     },
     "valeur_autres_circuit_court": {
@@ -37,6 +39,7 @@
           "is_required": false
         }
       },
+      "index_code": 113,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Circuit-court"
     },
     "valeur_autres_commerce_equitable": {
@@ -50,6 +53,7 @@
           "is_required": false
         }
       },
+      "index_code": 65,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Commerce équitable"
     },
     "valeur_autres_externalites": {
@@ -63,6 +67,7 @@
           "is_required": false
         }
       },
+      "index_code": 81,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
     },
     "valeur_autres_fermier": {
@@ -76,6 +81,7 @@
           "is_required": false
         }
       },
+      "index_code": 73,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Fermier"
     },
     "valeur_autres_france": {
@@ -89,6 +95,7 @@
           "is_required": false
         }
       },
+      "index_code": 105,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Provenance France"
     },
     "valeur_autres_hve": {
@@ -102,6 +109,7 @@
           "is_required": false
         }
       },
+      "index_code": 41,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Haute valeur environnementale"
     },
     "valeur_autres_label_rouge": {
@@ -115,6 +123,7 @@
           "is_required": false
         }
       },
+      "index_code": 25,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Label rouge"
     },
     "valeur_autres_local": {
@@ -128,6 +137,7 @@
           "is_required": false
         }
       },
+      "index_code": 121,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Produit local"
     },
     "valeur_autres_non_egalim": {
@@ -141,6 +151,7 @@
           "is_required": false
         }
       },
+      "index_code": 97,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, non-EGAlim."
     },
     "valeur_autres_peche_durable": {
@@ -154,6 +165,7 @@
           "is_required": false
         }
       },
+      "index_code": 49,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Pêche durable"
     },
     "valeur_autres_performance": {
@@ -167,6 +179,7 @@
           "is_required": false
         }
       },
+      "index_code": 89,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale"
     },
     "valeur_autres_rup": {
@@ -180,6 +193,7 @@
           "is_required": false
         }
       },
+      "index_code": 57,
       "verbose_name": "Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique"
     },
     "valeur_bio": {
@@ -193,6 +207,7 @@
           "is_required": false
         }
       },
+      "index_code": 2,
       "verbose_name": "Bio - Valeur annuelle HT"
     },
     "valeur_boissons_aocaop_igp_stg": {
@@ -206,6 +221,7 @@
           "is_required": false
         }
       },
+      "index_code": 32,
       "verbose_name": "Boissons, AOC / AOP / IGP / STG"
     },
     "valeur_boissons_bio": {
@@ -219,6 +235,7 @@
           "is_required": false
         }
       },
+      "index_code": 16,
       "verbose_name": "Boissons, Bio"
     },
     "valeur_boissons_circuit_court": {
@@ -232,6 +249,7 @@
           "is_required": false
         }
       },
+      "index_code": 112,
       "verbose_name": "Boissons, Circuit-court"
     },
     "valeur_boissons_commerce_equitable": {
@@ -245,6 +263,7 @@
           "is_required": false
         }
       },
+      "index_code": 64,
       "verbose_name": "Boissons, Commerce équitable"
     },
     "valeur_boissons_externalites": {
@@ -258,6 +277,7 @@
           "is_required": false
         }
       },
+      "index_code": 80,
       "verbose_name": "Boissons, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
     },
     "valeur_boissons_fermier": {
@@ -271,6 +291,7 @@
           "is_required": false
         }
       },
+      "index_code": 72,
       "verbose_name": "Boissons, Fermier"
     },
     "valeur_boissons_france": {
@@ -284,6 +305,7 @@
           "is_required": false
         }
       },
+      "index_code": 104,
       "verbose_name": "Boissons, Provenance France"
     },
     "valeur_boissons_hve": {
@@ -297,6 +319,7 @@
           "is_required": false
         }
       },
+      "index_code": 40,
       "verbose_name": "Boissons, Haute valeur environnementale"
     },
     "valeur_boissons_label_rouge": {
@@ -310,6 +333,7 @@
           "is_required": false
         }
       },
+      "index_code": 24,
       "verbose_name": "Boissons, Label rouge"
     },
     "valeur_boissons_local": {
@@ -323,6 +347,7 @@
           "is_required": false
         }
       },
+      "index_code": 120,
       "verbose_name": "Boissons, Produit local"
     },
     "valeur_boissons_non_egalim": {
@@ -336,6 +361,7 @@
           "is_required": false
         }
       },
+      "index_code": 96,
       "verbose_name": "Boissons, non-EGAlim."
     },
     "valeur_boissons_peche_durable": {
@@ -349,6 +375,7 @@
           "is_required": false
         }
       },
+      "index_code": 48,
       "verbose_name": "Boissons, Pêche durable"
     },
     "valeur_boissons_performance": {
@@ -362,6 +389,7 @@
           "is_required": false
         }
       },
+      "index_code": 88,
       "verbose_name": "Boissons, Produits acquis sur la base de leurs performances en matière environnementale"
     },
     "valeur_boissons_rup": {
@@ -375,6 +403,7 @@
           "is_required": false
         }
       },
+      "index_code": 56,
       "verbose_name": "Boissons, Région ultrapériphérique"
     },
     "valeur_boulangerie_aocaop_igp_stg": {
@@ -388,6 +417,7 @@
           "is_required": false
         }
       },
+      "index_code": 31,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, AOC / AOP / IGP / STG"
     },
     "valeur_boulangerie_bio": {
@@ -401,6 +431,7 @@
           "is_required": false
         }
       },
+      "index_code": 15,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Bio"
     },
     "valeur_boulangerie_circuit_court": {
@@ -414,6 +445,7 @@
           "is_required": false
         }
       },
+      "index_code": 111,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Circuit-court"
     },
     "valeur_boulangerie_commerce_equitable": {
@@ -427,6 +459,7 @@
           "is_required": false
         }
       },
+      "index_code": 63,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Commerce équitable"
     },
     "valeur_boulangerie_externalites": {
@@ -440,6 +473,7 @@
           "is_required": false
         }
       },
+      "index_code": 79,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
     },
     "valeur_boulangerie_fermier": {
@@ -453,6 +487,7 @@
           "is_required": false
         }
       },
+      "index_code": 71,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Fermier"
     },
     "valeur_boulangerie_france": {
@@ -466,6 +501,7 @@
           "is_required": false
         }
       },
+      "index_code": 103,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Provenance France"
     },
     "valeur_boulangerie_hve": {
@@ -479,6 +515,7 @@
           "is_required": false
         }
       },
+      "index_code": 39,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Haute valeur environnementale"
     },
     "valeur_boulangerie_label_rouge": {
@@ -492,6 +529,7 @@
           "is_required": false
         }
       },
+      "index_code": 23,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Label rouge"
     },
     "valeur_boulangerie_local": {
@@ -505,6 +543,7 @@
           "is_required": false
         }
       },
+      "index_code": 119,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Produit local"
     },
     "valeur_boulangerie_non_egalim": {
@@ -518,6 +557,7 @@
           "is_required": false
         }
       },
+      "index_code": 95,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, non-EGAlim."
     },
     "valeur_boulangerie_peche_durable": {
@@ -531,6 +571,7 @@
           "is_required": false
         }
       },
+      "index_code": 47,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Pêche durable"
     },
     "valeur_boulangerie_performance": {
@@ -544,6 +585,7 @@
           "is_required": false
         }
       },
+      "index_code": 87,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Produits acquis sur la base de leurs performances en matière environnementale"
     },
     "valeur_boulangerie_rup": {
@@ -557,6 +599,7 @@
           "is_required": false
         }
       },
+      "index_code": 55,
       "verbose_name": "Boulangerie/Pâtisserie fraîches, Région ultrapériphérique"
     },
     "valeur_charcuterie_aocaop_igp_stg": {
@@ -570,6 +613,7 @@
           "is_required": false
         }
       },
+      "index_code": 29,
       "verbose_name": "Charcuterie, AOC / AOP / IGP / STG"
     },
     "valeur_charcuterie_bio": {
@@ -583,6 +627,7 @@
           "is_required": false
         }
       },
+      "index_code": 13,
       "verbose_name": "Charcuterie, Bio"
     },
     "valeur_charcuterie_circuit_court": {
@@ -596,6 +641,7 @@
           "is_required": false
         }
       },
+      "index_code": 109,
       "verbose_name": "Charcuterie, Circuit-court"
     },
     "valeur_charcuterie_commerce_equitable": {
@@ -609,6 +655,7 @@
           "is_required": false
         }
       },
+      "index_code": 61,
       "verbose_name": "Charcuterie, Commerce équitable"
     },
     "valeur_charcuterie_externalites": {
@@ -622,6 +669,7 @@
           "is_required": false
         }
       },
+      "index_code": 77,
       "verbose_name": "Charcuterie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
     },
     "valeur_charcuterie_fermier": {
@@ -635,6 +683,7 @@
           "is_required": false
         }
       },
+      "index_code": 69,
       "verbose_name": "Charcuterie, Fermier"
     },
     "valeur_charcuterie_france": {
@@ -648,6 +697,7 @@
           "is_required": false
         }
       },
+      "index_code": 101,
       "verbose_name": "Charcuterie, Provenance France"
     },
     "valeur_charcuterie_hve": {
@@ -661,6 +711,7 @@
           "is_required": false
         }
       },
+      "index_code": 37,
       "verbose_name": "Charcuterie, Haute valeur environnementale"
     },
     "valeur_charcuterie_label_rouge": {
@@ -674,6 +725,7 @@
           "is_required": false
         }
       },
+      "index_code": 21,
       "verbose_name": "Charcuterie, Label rouge"
     },
     "valeur_charcuterie_local": {
@@ -687,6 +739,7 @@
           "is_required": false
         }
       },
+      "index_code": 117,
       "verbose_name": "Charcuterie, Produit local"
     },
     "valeur_charcuterie_non_egalim": {
@@ -700,6 +753,7 @@
           "is_required": false
         }
       },
+      "index_code": 93,
       "verbose_name": "Charcuterie, non-EGAlim."
     },
     "valeur_charcuterie_peche_durable": {
@@ -713,6 +767,7 @@
           "is_required": false
         }
       },
+      "index_code": 45,
       "verbose_name": "Charcuterie, Pêche durable"
     },
     "valeur_charcuterie_performance": {
@@ -726,6 +781,7 @@
           "is_required": false
         }
       },
+      "index_code": 85,
       "verbose_name": "Charcuterie, Produits acquis sur la base de leurs performances en matière environnementale"
     },
     "valeur_charcuterie_rup": {
@@ -739,6 +795,7 @@
           "is_required": false
         }
       },
+      "index_code": 53,
       "verbose_name": "Charcuterie, Région ultrapériphérique"
     },
     "valeur_egalim_autres": {
@@ -752,6 +809,7 @@
           "is_required": false
         }
       },
+      "index_code": 5,
       "verbose_name": "Valeur totale (HT) des autres achats EGAlim"
     },
     "valeur_externalites_performance": {
@@ -765,6 +823,7 @@
           "is_required": false
         }
       },
+      "index_code": 4,
       "verbose_name": "Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale"
     },
     "valeur_fruits_et_legumes_aocaop_igp_stg": {
@@ -778,6 +837,7 @@
           "is_required": false
         }
       },
+      "index_code": 28,
       "verbose_name": "Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG"
     },
     "valeur_fruits_et_legumes_bio": {
@@ -791,6 +851,7 @@
           "is_required": false
         }
       },
+      "index_code": 12,
       "verbose_name": "Fruits et légumes frais et surgelés, Bio"
     },
     "valeur_fruits_et_legumes_circuit_court": {
@@ -804,6 +865,7 @@
           "is_required": false
         }
       },
+      "index_code": 108,
       "verbose_name": "Fruits et légumes frais et surgelés, Circuit-court"
     },
     "valeur_fruits_et_legumes_commerce_equitable": {
@@ -817,6 +879,7 @@
           "is_required": false
         }
       },
+      "index_code": 60,
       "verbose_name": "Fruits et légumes frais et surgelés, Commerce équitable"
     },
     "valeur_fruits_et_legumes_externalites": {
@@ -830,6 +893,7 @@
           "is_required": false
         }
       },
+      "index_code": 76,
       "verbose_name": "Fruits et légumes frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
     },
     "valeur_fruits_et_legumes_fermier": {
@@ -843,6 +907,7 @@
           "is_required": false
         }
       },
+      "index_code": 68,
       "verbose_name": "Fruits et légumes frais et surgelés, Fermier"
     },
     "valeur_fruits_et_legumes_france": {
@@ -856,6 +921,7 @@
           "is_required": false
         }
       },
+      "index_code": 100,
       "verbose_name": "Fruits et légumes frais et surgelés, Provenance France"
     },
     "valeur_fruits_et_legumes_hve": {
@@ -869,6 +935,7 @@
           "is_required": false
         }
       },
+      "index_code": 36,
       "verbose_name": "Fruits et légumes frais et surgelés, Haute valeur environnementale"
     },
     "valeur_fruits_et_legumes_label_rouge": {
@@ -882,6 +949,7 @@
           "is_required": false
         }
       },
+      "index_code": 20,
       "verbose_name": "Fruits et légumes frais et surgelés, Label rouge"
     },
     "valeur_fruits_et_legumes_local": {
@@ -895,6 +963,7 @@
           "is_required": false
         }
       },
+      "index_code": 116,
       "verbose_name": "Fruits et légumes frais et surgelés, Produit local"
     },
     "valeur_fruits_et_legumes_non_egalim": {
@@ -908,6 +977,7 @@
           "is_required": false
         }
       },
+      "index_code": 92,
       "verbose_name": "Fruits et légumes frais et surgelés, non-EGAlim."
     },
     "valeur_fruits_et_legumes_peche_durable": {
@@ -921,6 +991,7 @@
           "is_required": false
         }
       },
+      "index_code": 44,
       "verbose_name": "Fruits et légumes frais et surgelés, Pêche durable"
     },
     "valeur_fruits_et_legumes_performance": {
@@ -934,6 +1005,7 @@
           "is_required": false
         }
       },
+      "index_code": 84,
       "verbose_name": "Fruits et légumes frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale"
     },
     "valeur_fruits_et_legumes_rup": {
@@ -947,6 +1019,7 @@
           "is_required": false
         }
       },
+      "index_code": 52,
       "verbose_name": "Fruits et légumes frais et surgelés, Région ultrapériphérique"
     },
     "valeur_produits_de_la_mer": {
@@ -960,6 +1033,7 @@
           "is_required": false
         }
       },
+      "index_code": 8,
       "verbose_name": "Valeur totale (HT) poissons et produits aquatiques"
     },
     "valeur_produits_de_la_mer_aocaop_igp_stg": {
@@ -973,6 +1047,7 @@
           "is_required": false
         }
       },
+      "index_code": 27,
       "verbose_name": "Produits aquatiques frais et surgelés, AOC / AOP / IGP / STG"
     },
     "valeur_produits_de_la_mer_bio": {
@@ -986,6 +1061,7 @@
           "is_required": false
         }
       },
+      "index_code": 11,
       "verbose_name": "Produits aquatiques frais et surgelés, Bio"
     },
     "valeur_produits_de_la_mer_circuit_court": {
@@ -999,6 +1075,7 @@
           "is_required": false
         }
       },
+      "index_code": 107,
       "verbose_name": "Produits aquatiques frais et surgelés, Circuit-court"
     },
     "valeur_produits_de_la_mer_commerce_equitable": {
@@ -1012,6 +1089,7 @@
           "is_required": false
         }
       },
+      "index_code": 59,
       "verbose_name": "Produits aquatiques frais et surgelés, Commerce équitable"
     },
     "valeur_produits_de_la_mer_egalim": {
@@ -1025,6 +1103,7 @@
           "is_required": false
         }
       },
+      "index_code": 9,
       "verbose_name": "Valeur totale (HT) poissons et produits aquatiques EGAlim"
     },
     "valeur_produits_de_la_mer_externalites": {
@@ -1038,6 +1117,7 @@
           "is_required": false
         }
       },
+      "index_code": 75,
       "verbose_name": "Produits aquatiques frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
     },
     "valeur_produits_de_la_mer_fermier": {
@@ -1051,6 +1131,7 @@
           "is_required": false
         }
       },
+      "index_code": 67,
       "verbose_name": "Produits aquatiques frais et surgelés, Fermier"
     },
     "valeur_produits_de_la_mer_france": {
@@ -1064,6 +1145,7 @@
           "is_required": false
         }
       },
+      "index_code": 99,
       "verbose_name": "Produits aquatiques frais et surgelés, Provenance France"
     },
     "valeur_produits_de_la_mer_hve": {
@@ -1077,6 +1159,7 @@
           "is_required": false
         }
       },
+      "index_code": 35,
       "verbose_name": "Produits aquatiques frais et surgelés, Haute valeur environnementale"
     },
     "valeur_produits_de_la_mer_label_rouge": {
@@ -1090,6 +1173,7 @@
           "is_required": false
         }
       },
+      "index_code": 19,
       "verbose_name": "Produits aquatiques frais et surgelés, Label rouge"
     },
     "valeur_produits_de_la_mer_local": {
@@ -1103,6 +1187,7 @@
           "is_required": false
         }
       },
+      "index_code": 115,
       "verbose_name": "Produits aquatiques frais et surgelés, Produit local"
     },
     "valeur_produits_de_la_mer_non_egalim": {
@@ -1116,6 +1201,7 @@
           "is_required": false
         }
       },
+      "index_code": 91,
       "verbose_name": "Produits aquatiques frais et surgelés, non-EGAlim."
     },
     "valeur_produits_de_la_mer_peche_durable": {
@@ -1129,6 +1215,7 @@
           "is_required": false
         }
       },
+      "index_code": 43,
       "verbose_name": "Produits aquatiques frais et surgelés, Pêche durable"
     },
     "valeur_produits_de_la_mer_performance": {
@@ -1142,6 +1229,7 @@
           "is_required": false
         }
       },
+      "index_code": 83,
       "verbose_name": "Produits aquatiques frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale"
     },
     "valeur_produits_de_la_mer_rup": {
@@ -1155,6 +1243,7 @@
           "is_required": false
         }
       },
+      "index_code": 51,
       "verbose_name": "Produits aquatiques frais et surgelés, Région ultrapériphérique"
     },
     "valeur_produits_laitiers_aocaop_igp_stg": {
@@ -1168,6 +1257,7 @@
           "is_required": false
         }
       },
+      "index_code": 30,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), AOC / AOP / IGP / STG"
     },
     "valeur_produits_laitiers_bio": {
@@ -1181,6 +1271,7 @@
           "is_required": false
         }
       },
+      "index_code": 14,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Bio"
     },
     "valeur_produits_laitiers_circuit_court": {
@@ -1194,6 +1285,7 @@
           "is_required": false
         }
       },
+      "index_code": 110,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Circuit-court"
     },
     "valeur_produits_laitiers_commerce_equitable": {
@@ -1207,6 +1299,7 @@
           "is_required": false
         }
       },
+      "index_code": 62,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Commerce équitable"
     },
     "valeur_produits_laitiers_externalites": {
@@ -1220,6 +1313,7 @@
           "is_required": false
         }
       },
+      "index_code": 78,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
     },
     "valeur_produits_laitiers_fermier": {
@@ -1233,6 +1327,7 @@
           "is_required": false
         }
       },
+      "index_code": 70,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Fermier"
     },
     "valeur_produits_laitiers_france": {
@@ -1246,6 +1341,7 @@
           "is_required": false
         }
       },
+      "index_code": 102,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Provenance France"
     },
     "valeur_produits_laitiers_hve": {
@@ -1259,6 +1355,7 @@
           "is_required": false
         }
       },
+      "index_code": 38,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Haute valeur environnementale"
     },
     "valeur_produits_laitiers_label_rouge": {
@@ -1272,6 +1369,7 @@
           "is_required": false
         }
       },
+      "index_code": 22,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Label rouge"
     },
     "valeur_produits_laitiers_local": {
@@ -1285,6 +1383,7 @@
           "is_required": false
         }
       },
+      "index_code": 118,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Produit local"
     },
     "valeur_produits_laitiers_non_egalim": {
@@ -1298,6 +1397,7 @@
           "is_required": false
         }
       },
+      "index_code": 94,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), non-EGAlim."
     },
     "valeur_produits_laitiers_peche_durable": {
@@ -1311,6 +1411,7 @@
           "is_required": false
         }
       },
+      "index_code": 46,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Pêche durable"
     },
     "valeur_produits_laitiers_performance": {
@@ -1324,6 +1425,7 @@
           "is_required": false
         }
       },
+      "index_code": 86,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Produits acquis sur la base de leurs performances en matière environnementale"
     },
     "valeur_produits_laitiers_rup": {
@@ -1337,6 +1439,7 @@
           "is_required": false
         }
       },
+      "index_code": 54,
       "verbose_name": "BOF (Produits laitiers, beurre et œufs), Région ultrapériphérique"
     },
     "valeur_siqo": {
@@ -1350,6 +1453,7 @@
           "is_required": false
         }
       },
+      "index_code": 3,
       "verbose_name": "Produits SIQO (hors bio) - Valeur annuelle HT"
     },
     "valeur_totale": {
@@ -1363,6 +1467,7 @@
           "is_required": true
         }
       },
+      "index_code": 1,
       "verbose_name": "Valeur totale annuelle HT"
     },
     "valeur_viandes_volailles": {
@@ -1376,6 +1481,7 @@
           "is_required": false
         }
       },
+      "index_code": 6,
       "verbose_name": "Valeur totale (HT) viandes et volailles fraiches ou surgelées"
     },
     "valeur_viandes_volailles_aocaop_igp_stg": {
@@ -1389,6 +1495,7 @@
           "is_required": false
         }
       },
+      "index_code": 26,
       "verbose_name": "Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG"
     },
     "valeur_viandes_volailles_bio": {
@@ -1402,6 +1509,7 @@
           "is_required": false
         }
       },
+      "index_code": 10,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Bio"
     },
     "valeur_viandes_volailles_circuit_court": {
@@ -1415,6 +1523,7 @@
           "is_required": false
         }
       },
+      "index_code": 106,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Circuit-court"
     },
     "valeur_viandes_volailles_commerce_equitable": {
@@ -1428,6 +1537,7 @@
           "is_required": false
         }
       },
+      "index_code": 58,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Commerce équitable"
     },
     "valeur_viandes_volailles_egalim": {
@@ -1441,6 +1551,7 @@
           "is_required": false
         }
       },
+      "index_code": 7,
       "verbose_name": "Valeur totale (HT) viandes et volailles fraiches ou surgelées EGAlim"
     },
     "valeur_viandes_volailles_externalites": {
@@ -1454,6 +1565,7 @@
           "is_required": false
         }
       },
+      "index_code": 74,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
     },
     "valeur_viandes_volailles_fermier": {
@@ -1467,6 +1579,7 @@
           "is_required": false
         }
       },
+      "index_code": 66,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Fermier"
     },
     "valeur_viandes_volailles_france": {
@@ -1480,6 +1593,7 @@
           "is_required": false
         }
       },
+      "index_code": 98,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Provenance France"
     },
     "valeur_viandes_volailles_hve": {
@@ -1493,6 +1607,7 @@
           "is_required": false
         }
       },
+      "index_code": 34,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Haute valeur environnementale"
     },
     "valeur_viandes_volailles_label_rouge": {
@@ -1506,6 +1621,7 @@
           "is_required": false
         }
       },
+      "index_code": 18,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Label rouge"
     },
     "valeur_viandes_volailles_local": {
@@ -1519,6 +1635,7 @@
           "is_required": false
         }
       },
+      "index_code": 114,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Produit local"
     },
     "valeur_viandes_volailles_non_egalim": {
@@ -1532,6 +1649,7 @@
           "is_required": false
         }
       },
+      "index_code": 90,
       "verbose_name": "Viandes et volailles fraîches et surgelées, non-EGAlim."
     },
     "valeur_viandes_volailles_peche_durable": {
@@ -1545,6 +1663,7 @@
           "is_required": false
         }
       },
+      "index_code": 42,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Pêche durable"
     },
     "valeur_viandes_volailles_performance": {
@@ -1558,6 +1677,7 @@
           "is_required": false
         }
       },
+      "index_code": 82,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale"
     },
     "valeur_viandes_volailles_rup": {
@@ -1571,137 +1691,169 @@
           "is_required": false
         }
       },
+      "index_code": 50,
       "verbose_name": "Viandes et volailles fraîches et surgelées, Région ultrapériphérique"
     }
   },
   "DIVERSIFICATION": {
     "menu_vegetarien_bases": {
+      "index_code": 5,
       "is_required": false,
       "verbose_name": "Le plat principal du menu végétarien est majoritairement à base de"
     },
     "menu_vegetarien_frequence": {
+      "index_code": 3,
       "is_required": false,
       "verbose_name": "Fréquence hebdomadaire des menus végétariens"
     },
     "menu_vegetarien_type": {
+      "index_code": 4,
       "is_required": false,
       "verbose_name": "Type de menu végétarien"
     },
     "plan_diversification_actions": {
+      "index_code": 2,
       "is_required": false,
       "verbose_name": "Ce plan comporte les actions suivantes"
     },
     "plan_diversification_en_place": {
+      "index_code": 1,
       "is_required": false,
       "verbose_name": "Plan de diversification en place"
     }
   },
   "GASPILLAGE": {
     "actions_gaspillage_autre": {
+      "index_code": 4,
       "is_required": false,
       "verbose_name": "Autre action contre le gaspillage alimentaire"
     },
     "actions_gaspillage_realisees": {
+      "index_code": 3,
       "is_required": false,
       "verbose_name": "Actions de lutte contre le gaspillage"
     },
     "commentaires_gaspillage_autre": {
+      "index_code": 16,
       "is_required": false,
       "verbose_name": "Commentaires concernant la lutte contre le gaspillage et dons alimentaires"
     },
     "dechets_composantes": {
+      "index_code": 12,
       "is_required": false,
       "verbose_name": "Reste de composantes (entrée, plat dessert...)"
     },
     "dechets_mesure_duree": {
+      "index_code": 8,
       "is_required": false,
       "verbose_name": "Période de mesure"
     },
     "dechets_non_servis": {
+      "index_code": 11,
       "is_required": false,
       "verbose_name": "Reste en production (non servi)"
     },
     "dechets_pain": {
+      "index_code": 9,
       "is_required": false,
       "verbose_name": "Reste de pain"
     },
     "dechets_plateau": {
+      "index_code": 10,
       "is_required": false,
       "verbose_name": "Reste plateau"
     },
     "dechets_total": {
+      "index_code": 7,
       "is_required": false,
       "verbose_name": "Total des déchets alimentaires"
     },
     "diagnostic_gaspillage_realise": {
+      "index_code": 1,
       "is_required": false,
       "verbose_name": "Diagnostic sur le gaspillage réalisé"
     },
     "dons_convention": {
+      "index_code": 5,
       "is_required": false,
       "verbose_name": "Propose des dons alimentaires"
     },
     "dons_frequence": {
+      "index_code": 13,
       "is_required": false,
       "verbose_name": "Fréquence de dons"
     },
     "dons_quantite": {
+      "index_code": 14,
       "is_required": false,
       "verbose_name": "Quantité des denrées données"
     },
     "dons_type_denrees": {
+      "index_code": 15,
       "is_required": false,
       "verbose_name": "Type de denrées données"
     },
     "mesures_gaspillage_realisees": {
+      "index_code": 6,
       "is_required": false,
       "verbose_name": "Réalisé des mesures contre le gaspillage alimentaire"
     },
     "plan_gaspillage_en_place": {
+      "index_code": 2,
       "is_required": false,
       "verbose_name": "Plan d'action contre le gaspillage en place"
     }
   },
   "INFORMATION": {
     "information_frequence": {
+      "index_code": 6,
       "is_required": false,
       "verbose_name": "Fréquence de cette communication"
     },
     "information_qualite_durable": {
+      "index_code": 5,
       "is_required": false,
       "verbose_name": "Communique sur les démarches qualité/durables/équitables"
     },
     "information_qualite_nutritionnelle": {
+      "index_code": 4,
       "is_required": false,
       "verbose_name": "Communique sur le plan alimentaire"
     },
     "information_support_url": {
+      "index_code": 3,
       "is_required": false,
       "verbose_name": "Lien vers le support de communication"
     },
     "information_supports": {
+      "index_code": 1,
       "is_required": false,
       "verbose_name": "L'information sur la qualité des approvisionnements se fait"
     },
     "information_supports_autre": {
+      "index_code": 2,
       "is_required": false,
       "verbose_name": "Autre communication utilisée"
     }
   },
   "PLASTIQUE": {
     "plastique_bouteille_remplace": {
+      "index_code": 3,
       "is_required": false,
       "verbose_name": "Bouteilles en plastique remplacées"
     },
     "plastique_contenant_cuisson_remplace": {
+      "index_code": 1,
       "is_required": false,
       "verbose_name": "Contenants de cuisson en plastique remplacés"
     },
     "plastique_contenant_service_remplace": {
+      "index_code": 2,
       "is_required": false,
       "verbose_name": "Contenants de service en plastique remplacés"
     },
     "plastique_ustensile_remplace": {
+      "index_code": 4,
       "is_required": false,
       "verbose_name": "Ustensils en plastique remplacées"
     }

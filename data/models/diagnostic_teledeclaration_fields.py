@@ -30,7 +30,7 @@ def get_teledeclaration_import_fields(year, diagnostic_type):
     def get_position(name):
         # 2025: its SIMPLE and COMPLETE column orders are different a specific order is needed
         field = fields[name]
-        return field.get("index_code") or field["diagnostic_type"][diagnostic_type]["legacy_import_order"]
+        return field["diagnostic_type"][diagnostic_type].get("legacy_import_order") or field["index_code"]
 
     return sorted(present_fields, key=get_position)
 
@@ -49,11 +49,8 @@ def get_teledeclaration_verbose_name(year, volet, field_name):
 
 
 def _sort_by_index_code(year, volet, field_names):
-    """
-    The years without index_code keep the order of their config file (the sort is stable)
-    """
     volet_fields = get_teledeclaration_config(year)[volet]
-    return sorted(field_names, key=lambda name: volet_fields[name].get("index_code", 0))
+    return sorted(field_names, key=lambda name: volet_fields[name]["index_code"])
 
 
 def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=False):
