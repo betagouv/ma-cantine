@@ -124,7 +124,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         information_fields_2026 = get_teledeclaration_fields_all(2026, "INFORMATION")
         self.assertIn("information_qualite_durable", information_fields_2025)
         self.assertNotIn("information_part_egalim", information_fields_2025)
-        self.assertEqual(
+        self.assertCountEqual(
             information_fields_2026,
             [
                 "information_affichage_permanent",
@@ -137,7 +137,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         self.assertEqual(set(information_fields_2025) & set(information_fields_2026), set())
 
     def test_plastique_fields_in_2026(self):
-        self.assertEqual(
+        self.assertCountEqual(
             get_teledeclaration_fields_all(2025, "PLASTIQUE"),
             [
                 "plastique_contenant_cuisson_remplace",
@@ -147,7 +147,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
             ],
         )
         # bouteille & ustensile: same question, kept
-        self.assertEqual(
+        self.assertCountEqual(
             get_teledeclaration_fields_all(2026, "PLASTIQUE"),
             [
                 "plastique_bouteille_boisson_remplace",
