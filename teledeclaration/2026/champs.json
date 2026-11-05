@@ -2130,135 +2130,115 @@
     }
   },
   "DIVERSIFICATION": {
-    "diversification_plan_actions": {
+    "menu_vegetarien_bases": {
+      "is_required": false,
+      "verbose_name": "bases de menu végétarien"
+    },
+    "menu_vegetarien_frequence": {
+      "is_required": false,
+      "verbose_name": "Menus végétariens par semaine"
+    },
+    "plan_diversification_actions": {
       "is_required": false,
       "verbose_name": "actions inclus dans le plan de diversification des protéines"
     },
-    "has_diversification_plan": {
+    "plan_diversification_en_place": {
       "is_required": false,
       "verbose_name": "plan de diversification en place"
     },
     "service_type": {
       "is_required": false,
       "verbose_name": "type de service"
-    },
-    "vegetarian_menu_bases": {
-      "is_required": false,
-      "verbose_name": "bases de menu végétarien"
-    },
-    "vegetarian_weekly_recurrence": {
-      "is_required": false,
-      "verbose_name": "Menus végétariens par semaine"
     }
   },
   "GASPILLAGE": {
-    "bread_leftovers": {
-      "is_required": false,
-      "verbose_name": "reste de pain kg/an"
-    },
-    "donation_food_type": {
-      "is_required": false,
-      "verbose_name": "type de denrées données"
-    },
-    "donation_frequency": {
-      "is_required": false,
-      "verbose_name": "fréquence de dons dons/an"
-    },
-    "donation_quantity": {
-      "is_required": false,
-      "verbose_name": "quantité des denrées données kg/an"
-    },
-    "duration_leftovers_measurement": {
-      "is_required": false,
-      "verbose_name": "période de mesure (jours)"
-    },
-    "has_donation_agreement": {
-      "is_required": false,
-      "verbose_name": "propose des dons alimentaires"
-    },
-    "has_waste_diagnostic": {
-      "is_required": false,
-      "verbose_name": "diagnostic sur le gaspillage réalisé"
-    },
-    "has_waste_measures": {
-      "is_required": false,
-      "verbose_name": "réalise des mesures de gaspillage alimentaire"
-    },
-    "has_waste_plan": {
-      "is_required": false,
-      "verbose_name": "plan d'action contre le gaspillage en place"
-    },
-    "other_waste_action": {
+    "actions_gaspillage_autre": {
       "is_required": false,
       "verbose_name": "autre action contre le gaspillage alimentaire"
     },
-    "other_waste_comments": {
+    "actions_gaspillage_realisees": {
+      "is_required": false,
+      "verbose_name": "actions contre le gaspillage en place"
+    },
+    "commentaires_gaspillage_autre": {
       "is_required": false,
       "verbose_name": "autres commentaires (gaspillage)"
     },
-    "served_leftovers": {
+    "diagnostic_gaspillage_realise": {
       "is_required": false,
-      "verbose_name": "reste plateau kg/an"
+      "verbose_name": "diagnostic sur le gaspillage réalisé"
     },
-    "side_leftovers": {
+    "dons_convention": {
       "is_required": false,
-      "verbose_name": "reste de composantes kg/an"
+      "verbose_name": "propose des dons alimentaires"
     },
-    "total_leftovers": {
+    "dons_frequence": {
       "is_required": false,
-      "verbose_name": "total des déchets alimentaires (t)"
+      "verbose_name": "fréquence de dons dons/an"
     },
-    "unserved_leftovers": {
+    "dons_quantite": {
       "is_required": false,
-      "verbose_name": "reste en production (non servi) kg/an"
+      "verbose_name": "quantité des denrées données kg/an"
     },
-    "waste_actions": {
+    "dons_type_denrees": {
       "is_required": false,
-      "verbose_name": "actions contre le gaspillage en place"
+      "verbose_name": "type de denrées données"
+    },
+    "mesures_gaspillage_realisees": {
+      "is_required": false,
+      "verbose_name": "réalise des mesures de gaspillage alimentaire"
+    },
+    "plan_gaspillage_en_place": {
+      "is_required": false,
+      "verbose_name": "plan d'action contre le gaspillage en place"
     }
   },
   "INFORMATION": {
-    "communicates_on_food_plan": {
+    "information_affichage_permanent": {
       "is_required": false,
-      "verbose_name": "Communique sur le plan alimentaire"
+      "verbose_name": "La cantine dispose d’un affichage permanent à l’entrée du restaurant, actualisé au moins une fois par an et lisible par tous les usagers"
     },
-    "communicates_on_food_quality": {
+    "information_consultation_qualite": {
       "is_required": false,
-      "verbose_name": "Communique sur les démarches qualité/durables/équitables"
+      "verbose_name": "L’établissement informe et consulte régulièrement, par tous moyens utiles, les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis"
     },
-    "communication_frequency": {
+    "information_electronique_annuelle": {
       "is_required": false,
-      "verbose_name": "fréquence de communication"
+      "verbose_name": "Une communication électronique (réalisée au moins une fois par an) permet aux usagers d’être informés"
     },
-    "communication_support_url": {
+    "information_part_egalim": {
       "is_required": false,
-      "verbose_name": "Lien de communication"
+      "verbose_name": "Part de produits EGalim (dont bio) entrant dans la composition des repas servis"
     },
-    "communication_supports": {
+    "information_part_pat": {
       "is_required": false,
-      "verbose_name": "Communication utilisée"
-    },
-    "other_communication_support": {
-      "is_required": false,
-      "verbose_name": "autre communication utilisée"
+      "verbose_name": "Part des produits issus de Projets alimentaires territoriaux (PAT)"
     }
   },
   "PLASTIQUE": {
-    "cooking_plastic_substituted": {
+    "plastique_bouteille_boisson_remplace": {
       "is_required": false,
-      "verbose_name": "contenants de cuisson en plastique remplacés"
+      "verbose_name": "La cantine est équipée d’au moins une fontaine d'eau potable accessible au public et n’assure aucune distribution gratuite de bouteilles en plastique contenant des boissons"
     },
-    "plastic_bottles_substituted": {
+    "plastique_bouteille_remplace": {
       "is_required": false,
       "verbose_name": "bouteilles en plastique remplacées"
     },
-    "plastic_tableware_substituted": {
+    "plastique_contenant_emporter_remplace": {
+      "is_required": false,
+      "verbose_name": "Des contenants réutilisables ou composés de matières recyclables sont proposés pour l’ensemble des repas à emporter"
+    },
+    "plastique_contenant_remplace": {
+      "is_required": false,
+      "verbose_name": "Aucun contenant alimentaire de cuisson, de réchauffage et de service en plastique sont utilisés au sein de l’établissement"
+    },
+    "plastique_ustensile_remplace": {
       "is_required": false,
       "verbose_name": "ustensils en plastique remplacés"
     },
-    "serving_plastic_substituted": {
+    "plastique_vaisselle_jetable_remplace": {
       "is_required": false,
-      "verbose_name": "contenants de service en plastique remplacés"
+      "verbose_name": "Aucune vaisselle jetable n’est utilisée pour les repas consommés sur place (gobelets, assiette et récipients, couverts)"
     }
   }
 }

@@ -1705,111 +1705,111 @@
     }
   },
   "DIVERSIFICATION": {
-    "diversification_plan_actions": {
+    "menu_vegetarien_bases": {
+      "is_required": false,
+      "verbose_name": "Le plat principal du menu végétarien est majoritairement à base de"
+    },
+    "menu_vegetarien_frequence": {
+      "is_required": false,
+      "verbose_name": "Fréquence hebdomadaire des menus végétariens"
+    },
+    "plan_diversification_actions": {
       "is_required": false,
       "verbose_name": "Ce plan comporte les actions suivantes"
     },
-    "has_diversification_plan": {
+    "plan_diversification_en_place": {
       "is_required": false,
       "verbose_name": "Plan de diversification en place"
     },
     "service_type": {
       "is_required": false,
       "verbose_name": "Service proposé"
-    },
-    "vegetarian_menu_bases": {
-      "is_required": false,
-      "verbose_name": "Le plat principal du menu végétarien est majoritairement à base de"
-    },
-    "vegetarian_weekly_recurrence": {
-      "is_required": false,
-      "verbose_name": "Fréquence hebdomadaire des menus végétariens"
     }
   },
   "GASPILLAGE": {
-    "donation_food_type": {
-      "is_required": false,
-      "verbose_name": "Type de denrées données"
-    },
-    "donation_frequency": {
-      "is_required": false,
-      "verbose_name": "Fréquence de dons"
-    },
-    "donation_quantity": {
-      "is_required": false,
-      "verbose_name": "Quantité des denrées données"
-    },
-    "has_donation_agreement": {
-      "is_required": false,
-      "verbose_name": "Propose des dons alimentaires"
-    },
-    "has_waste_diagnostic": {
-      "is_required": false,
-      "verbose_name": "Diagnostic sur le gaspillage réalisé"
-    },
-    "has_waste_measures": {
-      "is_required": false,
-      "verbose_name": "Réalisé des mesures contre le gaspillage alimentaire"
-    },
-    "has_waste_plan": {
-      "is_required": false,
-      "verbose_name": "Plan d'action contre le gaspillage en place"
-    },
-    "other_waste_action": {
+    "actions_gaspillage_autre": {
       "is_required": false,
       "verbose_name": "autre action contre le gaspillage alimentaire"
     },
-    "other_waste_comments": {
+    "actions_gaspillage_realisees": {
+      "is_required": false,
+      "verbose_name": "Actions de lutte contre le gaspillage"
+    },
+    "commentaires_gaspillage_autre": {
       "is_required": false,
       "verbose_name": "Commentaires concernant la lutte contre le gaspillage et dons alimentaires"
     },
-    "waste_actions": {
+    "diagnostic_gaspillage_realise": {
       "is_required": false,
-      "verbose_name": "Actions de lutte contre le gaspillage"
+      "verbose_name": "Diagnostic sur le gaspillage réalisé"
+    },
+    "dons_convention": {
+      "is_required": false,
+      "verbose_name": "Propose des dons alimentaires"
+    },
+    "dons_frequence": {
+      "is_required": false,
+      "verbose_name": "Fréquence de dons"
+    },
+    "dons_quantite": {
+      "is_required": false,
+      "verbose_name": "Quantité des denrées données"
+    },
+    "dons_type_denrees": {
+      "is_required": false,
+      "verbose_name": "Type de denrées données"
+    },
+    "mesures_gaspillage_realisees": {
+      "is_required": false,
+      "verbose_name": "Réalisé des mesures contre le gaspillage alimentaire"
+    },
+    "plan_gaspillage_en_place": {
+      "is_required": false,
+      "verbose_name": "Plan d'action contre le gaspillage en place"
     }
   },
   "INFORMATION": {
-    "communicates_on_food_plan": {
-      "is_required": false,
-      "verbose_name": "Communique sur le plan alimentaire"
-    },
-    "communicates_on_food_quality": {
-      "is_required": false,
-      "verbose_name": "Communique sur les démarches qualité/durables/équitables"
-    },
-    "communication_frequency": {
+    "information_frequence": {
       "is_required": false,
       "verbose_name": "Fréquence de cette communication"
     },
-    "communication_support_url": {
+    "information_qualite_durable": {
+      "is_required": false,
+      "verbose_name": "Communique sur les démarches qualité/durables/équitables"
+    },
+    "information_qualite_nutritionnelle": {
+      "is_required": false,
+      "verbose_name": "Communique sur le plan alimentaire"
+    },
+    "information_support_url": {
       "is_required": false,
       "verbose_name": "Lien vers le support de communication"
     },
-    "communication_supports": {
+    "information_supports": {
       "is_required": false,
       "verbose_name": "L'information sur la qualité des approvisionnements se fait"
     },
-    "other_communication_support": {
+    "information_supports_autre": {
       "is_required": false,
       "verbose_name": "autre communication utilisée"
     }
   },
   "PLASTIQUE": {
-    "cooking_plastic_substituted": {
-      "is_required": false,
-      "verbose_name": "Contenants de cuisson en plastique remplacés"
-    },
-    "plastic_bottles_substituted": {
+    "plastique_bouteille_remplace": {
       "is_required": false,
       "verbose_name": "Bouteilles en plastique remplacées"
     },
-    "plastic_tableware_substituted": {
+    "plastique_contenant_cuisson_remplace": {
       "is_required": false,
-      "verbose_name": "Ustensils en plastique remplacées"
+      "verbose_name": "Contenants de cuisson en plastique remplacés"
     },
-    "serving_plastic_substituted": {
+    "plastique_contenant_service_remplace": {
       "is_required": false,
       "verbose_name": "Contenants de service en plastique remplacés"
+    },
+    "plastique_ustensile_remplace": {
+      "is_required": false,
+      "verbose_name": "Ustensils en plastique remplacées"
     }
   }
 }
