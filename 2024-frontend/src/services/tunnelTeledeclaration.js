@@ -8,29 +8,35 @@ import { toCamelCase } from "@/utils.js"
 /* Fields */
 const tunnelApproCustomisation = tunnelTeledeclaration.approvisionnement.fields
 
-const formatFieldData = (name, config) => {
-  const apiKey = toCamelCase(name)
-  const { SIMPLE, COMPLETE } = config.diagnostic_type
+const getRequiredApproProps = ({ SIMPLE, COMPLETE }) => {
   const isSameRequired = SIMPLE.is_required === COMPLETE.is_required
-  const isAlwaysRequired = SIMPLE.is_required && COMPLETE.is_required
-  return {
-    apiKey,
-    labelRecap: config.verbose_name,
-    hint: config.index ? `${config.index} : ${config.verbose_name}` : undefined,
-    type: "number",
-    autofill: name.startsWith("valeur_"),
-    placeholder: isAlwaysRequired ? undefined : "Je ne sais pas",
-    ...(isSameRequired
-      ? { required: SIMPLE.is_required }
-      : { requiredByType: { SIMPLE: SIMPLE.is_required, COMPLETE: COMPLETE.is_required } }),
-    ...tunnelApproCustomisation[apiKey],
-  }
+  if (isSameRequired) return { required: SIMPLE.is_required }
+  return { requiredByType: { SIMPLE: SIMPLE.is_required, COMPLETE: COMPLETE.is_required } }
 }
 
-const generateTeledeclarationFields = () => {
+const getHintApproProps = (customisation, config) => {
+  if (customisation.hint) return customisation.hint
+  return config.index ? `${config.index} : ${config.verbose_name}` : undefined
+}
+
+const generateApproFields = () => {
   const fields = { diagnosticType: { apiKey: "diagnosticType", ...tunnelApproCustomisation.diagnosticType } }
   for (const [name, config] of Object.entries(configFields)) {
-    fields[toCamelCase(name)] = formatFieldData(name, config)
+    const apiKey = toCamelCase(name)
+    const requiredProps = getRequiredApproProps(config.diagnostic_type)
+    const customisation = tunnelApproCustomisation[apiKey] ?? {}
+    fields[apiKey] = {
+      apiKey,
+      shortName: customisation.shortName,
+      labelRecap: config.verbose_name,
+      hint: getHintApproProps(customisation, config),
+      tooltip: customisation.tooltip,
+      isRelatedField: customisation.isRelatedField,
+      type: customisation.type ?? "number",
+      options: customisation.options,
+      autofill: name.startsWith("valeur_"),
+      ...requiredProps,
+    }
   }
   return fields
 }
@@ -47,7 +53,7 @@ const generateVoletFields = (voletConfig, voletCustomisation) => {
 /* Data */
 const groups = { ...tunnelTeledeclaration.approvisionnement.groups, ...tunnelTeledeclaration.diversification.groups }
 const fields = {
-  ...generateTeledeclarationFields(),
+  ...generateApproFields(),
   ...generateVoletFields(configDiversificationFields, tunnelTeledeclaration.diversification.fields),
 }
 
