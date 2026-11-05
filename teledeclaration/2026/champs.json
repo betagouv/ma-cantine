@@ -2289,7 +2289,7 @@
     },
     "menu_vegetarien_frequence": {
       "index_code": 4,
-      "is_required": false,
+      "is_required": true,
       "verbose_name": "Un menu végétarien est proposé"
     },
     "plan_diversification_actions": {
@@ -2299,12 +2299,12 @@
     },
     "plan_diversification_en_place": {
       "index_code": 1,
-      "is_required": false,
+      "is_required": true,
       "verbose_name": "Un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales a été mis en place dans l’établissement"
     },
     "service_type": {
       "index_code": 3,
-      "is_required": false,
+      "is_required": true,
       "verbose_name": "Le service est en"
     }
   },
@@ -2321,12 +2321,12 @@
     },
     "diagnostic_gaspillage_realise": {
       "index_code": 1,
-      "is_required": false,
+      "is_required": true,
       "verbose_name": "J’ai réalisé un diagnostic sur les causes probables de mes déchets alimentaires"
     },
     "dons_convention": {
       "index_code": 5,
-      "is_required": false,
+      "is_required": true,
       "verbose_name": "Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire"
     },
     "dons_frequence": {
@@ -2346,7 +2346,7 @@
     },
     "plan_gaspillage_en_place": {
       "index_code": 2,
-      "is_required": false,
+      "is_required": true,
       "verbose_name": "J’ai mis en place un plan d’action pour la réduction de mes déchets alimentaires"
     }
   },
