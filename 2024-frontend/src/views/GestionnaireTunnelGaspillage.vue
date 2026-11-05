@@ -1,3 +1,65 @@
+<script setup>
+import { computed, ref, watch } from "vue"
+import { storeToRefs } from "pinia"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration"
+import documentation from "@/data/documentation.json"
+import AppHelpCard from "@/components/AppHelpCard.vue"
+import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
+import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
+
+const storeTeledeclaration = useStoreTeledeclaration()
+const { diagnostic } = storeToRefs(storeTeledeclaration)
+
+/* La case "Autre" n'existe que dans le frontend : seul le détail saisi est enregistré */
+const hasActionAutre = ref(!!diagnostic.value.actionsGaspillageAutre)
+watch(hasActionAutre, (isChecked) => {
+  if (!isChecked) storeTeledeclaration.setValue("actionsGaspillageAutre", null)
+})
+
+/* Le détail des dons n'est attendu que si une convention est proposée */
+const hasDonsConvention = computed(() => diagnostic.value.donsConvention === true)
+const updateDonsConvention = (value) => {
+  if (value === true) return
+  storeTeledeclaration.setValue("donsFrequence", null)
+  storeTeledeclaration.setValue("donsQuantite", null)
+  storeTeledeclaration.setValue("donsTypeDenrees", null)
+}
+</script>
+
 <template>
-  <h2>Tunnel Gaspillage</h2>
+  <h2>Lutte contre le gaspillage alimentaire et dons alimentaires</h2>
+  <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
+    <div class="fr-col-12 fr-col-md-7">
+      <p class="fr-mb-0">
+        La lutte contre le gaspillage alimentaire est un levier essentiel pour l’atteinte des objectifs de la loi EGalim.
+      </p>
+    </div>
+    <div class="fr-col-12 fr-col-md-5">
+      <AppHelpCard title="Comment lutter contre le gaspillage ?">
+        <a :href="documentation.lutteGaspillageDonsAlimentaires" target="_blank">Consultez la documentation</a>
+      </AppHelpCard>
+    </div>
+  </div>
+  <div class="fr-mb-6w">
+    <TunnelTeledeclarationGroupTitle title="1. Diagnostic et plan d’actions" />
+    <TunnelTeledeclarationField name="diagnosticGaspillageRealise" />
+    <TunnelTeledeclarationField name="planGaspillageEnPlace" />
+    <TunnelTeledeclarationField name="actionsGaspillageRealisees" />
+    <DsfrCheckbox v-model="hasActionAutre" name="hasActionAutre" label="Autre : donnez plus d’information" />
+    <TunnelTeledeclarationField v-if="hasActionAutre" name="actionsGaspillageAutre" />
+  </div>
+  <div class="fr-mb-6w">
+    <TunnelTeledeclarationGroupTitle title="2. Dons alimentaires" />
+    <p>
+      L’obligation de proposer une convention de don à une association d’aide alimentaire habilitée s’applique
+      uniquement aux opérateurs servant plus de 3000 repas par jour (loi EGalim). Vous pouvez en proposer une même si
+      vous n’êtes pas soumis à l’obligation.
+    </p>
+    <TunnelTeledeclarationField name="donsConvention" @change="updateDonsConvention" />
+    <template v-if="hasDonsConvention">
+      <TunnelTeledeclarationField name="donsFrequence" />
+      <TunnelTeledeclarationField name="donsQuantite" />
+      <TunnelTeledeclarationField name="donsTypeDenrees" />
+    </template>
+  </div>
 </template>
