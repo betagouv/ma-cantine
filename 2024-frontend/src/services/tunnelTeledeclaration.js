@@ -45,7 +45,12 @@ const generateVoletFields = (voletConfig, voletCustomisation) => {
   const fields = {}
   for (const [name, config] of Object.entries(voletConfig)) {
     const apiKey = toCamelCase(name)
-    fields[apiKey] = { apiKey, labelRecap: config.verbose_name, ...voletCustomisation[apiKey] }
+    fields[apiKey] = {
+        apiKey,
+        shortName: `${config.verbose_name} :`,
+        labelRecap: config.verbose_name,
+        ...voletCustomisation[apiKey]
+    }
   }
   return fields
 }

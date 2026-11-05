@@ -2332,113 +2332,113 @@
   "DIVERSIFICATION": {
     "menu_vegetarien_bases": {
       "is_required": false,
-      "verbose_name": "bases de menu végétarien"
+      "verbose_name": "Les plats principaux des menus végétariens servis sont majoritairement à base de"
     },
     "menu_vegetarien_frequence": {
       "is_required": false,
-      "verbose_name": "Menus végétariens par semaine"
+      "verbose_name": "Un menu végétarien est proposé"
     },
     "plan_diversification_actions": {
       "is_required": false,
-      "verbose_name": "actions inclus dans le plan de diversification des protéines"
+      "verbose_name": "Ce plan comporte, par exemple, les actions suivantes"
     },
     "plan_diversification_en_place": {
       "is_required": false,
-      "verbose_name": "plan de diversification en place"
+      "verbose_name": "Un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales a été mis en place dans l’établissement"
     },
     "service_type": {
       "is_required": false,
-      "verbose_name": "type de service"
+      "verbose_name": "Le service est en"
     }
   },
   "GASPILLAGE": {
     "actions_gaspillage_autre": {
       "is_required": false,
-      "verbose_name": "autre action contre le gaspillage alimentaire"
+      "verbose_name": ""
     },
     "actions_gaspillage_realisees": {
       "is_required": false,
-      "verbose_name": "actions contre le gaspillage en place"
+      "verbose_name": ""
     },
     "commentaires_gaspillage_autre": {
       "is_required": false,
-      "verbose_name": "autres commentaires (gaspillage)"
+      "verbose_name": ""
     },
     "diagnostic_gaspillage_realise": {
       "is_required": false,
-      "verbose_name": "diagnostic sur le gaspillage réalisé"
+      "verbose_name": ""
     },
     "dons_convention": {
       "is_required": false,
-      "verbose_name": "propose des dons alimentaires"
+      "verbose_name": ""
     },
     "dons_frequence": {
       "is_required": false,
-      "verbose_name": "fréquence de dons dons/an"
+      "verbose_name": ""
     },
     "dons_quantite": {
       "is_required": false,
-      "verbose_name": "quantité des denrées données kg/an"
+      "verbose_name": ""
     },
     "dons_type_denrees": {
       "is_required": false,
-      "verbose_name": "type de denrées données"
+      "verbose_name": ""
     },
     "mesures_gaspillage_realisees": {
       "is_required": false,
-      "verbose_name": "réalise des mesures de gaspillage alimentaire"
+      "verbose_name": ""
     },
     "plan_gaspillage_en_place": {
       "is_required": false,
-      "verbose_name": "plan d'action contre le gaspillage en place"
+      "verbose_name": ""
     }
   },
   "INFORMATION": {
     "information_affichage_permanent": {
       "is_required": false,
-      "verbose_name": "La cantine dispose d’un affichage permanent à l’entrée du restaurant, actualisé au moins une fois par an et lisible par tous les usagers"
+      "verbose_name": ""
     },
     "information_consultation_qualite": {
       "is_required": false,
-      "verbose_name": "L’établissement informe et consulte régulièrement, par tous moyens utiles, les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis"
+      "verbose_name": ""
     },
     "information_electronique_annuelle": {
       "is_required": false,
-      "verbose_name": "Une communication électronique (réalisée au moins une fois par an) permet aux usagers d’être informés"
+      "verbose_name": ""
     },
     "information_part_egalim": {
       "is_required": false,
-      "verbose_name": "Part de produits EGalim (dont bio) entrant dans la composition des repas servis"
+      "verbose_name": ""
     },
     "information_part_pat": {
       "is_required": false,
-      "verbose_name": "Part des produits issus de Projets alimentaires territoriaux (PAT)"
+      "verbose_name": ""
     }
   },
   "PLASTIQUE": {
     "plastique_bouteille_boisson_remplace": {
       "is_required": false,
-      "verbose_name": "La cantine est équipée d’au moins une fontaine d'eau potable accessible au public et n’assure aucune distribution gratuite de bouteilles en plastique contenant des boissons"
+      "verbose_name": ""
     },
     "plastique_bouteille_remplace": {
       "is_required": false,
-      "verbose_name": "bouteilles en plastique remplacées"
+      "verbose_name": ""
     },
     "plastique_contenant_emporter_remplace": {
       "is_required": false,
-      "verbose_name": "Des contenants réutilisables ou composés de matières recyclables sont proposés pour l’ensemble des repas à emporter"
+      "verbose_name": ""
     },
     "plastique_contenant_remplace": {
       "is_required": false,
-      "verbose_name": "Aucun contenant alimentaire de cuisson, de réchauffage et de service en plastique sont utilisés au sein de l’établissement"
+      "verbose_name": ""
     },
     "plastique_ustensile_remplace": {
       "is_required": false,
-      "verbose_name": "ustensils en plastique remplacés"
+      "verbose_name": ""
     },
     "plastique_vaisselle_jetable_remplace": {
       "is_required": false,
-      "verbose_name": "Aucune vaisselle jetable n’est utilisée pour les repas consommés sur place (gobelets, assiette et récipients, couverts)"
+      "verbose_name": ""
     }
   }
 }

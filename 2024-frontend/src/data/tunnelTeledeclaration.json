@@ -202,7 +202,6 @@
     },
     "fields": {
       "planDiversificationEnPlace": {
-        "shortName": "Un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales a été mis en place dans l’établissement :",
         "type": "radio",
         "required": true,
         "options": [
@@ -219,7 +218,6 @@
         ]
       },
       "planDiversificationActions": {
-        "shortName": "Ce plan comporte, par exemple, les actions suivantes :",
         "type": "checkboxes",
         "required": false,
         "options": [
@@ -251,7 +249,6 @@
         ]
       },
       "serviceType": {
-        "shortName": "Le service est en :",
         "type": "radio",
         "required": true,
         "options": [
@@ -273,7 +270,6 @@
         ]
       },
       "menuVegetarienFrequence": {
-        "shortName": "Un menu végétarien est proposé :",
         "type": "radio",
         "required": true,
         "options": [
@@ -305,7 +301,6 @@
         ]
       },
       "menuVegetarienBases": {
-        "shortName": "Les plats principaux des menus végétariens servis sont majoritairement à base de :",
         "type": "checkboxes",
         "required": false,
         "options": [
