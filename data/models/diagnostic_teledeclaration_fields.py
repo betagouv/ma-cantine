@@ -42,6 +42,14 @@ def get_teledeclaration_verbose_name(year, volet, field_name):
     return get_teledeclaration_config(year)[volet][field_name]["verbose_name"]
 
 
+def _sort_by_index_code(year, volet, field_names):
+    """
+    The years without index_code keep the order of their config file (the sort is stable)
+    """
+    volet_fields = get_teledeclaration_config(year)[volet]
+    return sorted(field_names, key=lambda name: volet_fields[name].get("index_code", 0))
+
+
 def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=False):
     """
     diagnostic_type (SIMPLE / COMPLETE) is only used by the APPROVISIONNEMENT volet
@@ -62,7 +70,8 @@ def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=Fals
             for name, field in volet_fields.items()
             if field["diagnostic_type"][diagnostic_type]["is_present"]
         }
-    return [name for name, field in volet_fields.items() if field["is_required"] or not required]
+    field_names = [name for name, field in volet_fields.items() if field["is_required"] or not required]
+    return _sort_by_index_code(year, volet, field_names)
 
 
 def get_teledeclaration_fields_all(year, volet, diagnostic_type=None):
@@ -81,8 +90,10 @@ def get_teledeclaration_fields_all_years(volet):
     fields = {}
     for year in sorted(TELEDECLARATION_YEARS, reverse=True):
         diagnostic_types = DIAGNOSTIC_TYPES if volet == "APPROVISIONNEMENT" else [None]
+        year_fields = {}
         for diagnostic_type in diagnostic_types:
-            fields.update(dict.fromkeys(get_teledeclaration_fields_all(year, volet, diagnostic_type)))
+            year_fields.update(dict.fromkeys(get_teledeclaration_fields_all(year, volet, diagnostic_type)))
+        fields.update(dict.fromkeys(_sort_by_index_code(year, volet, year_fields)))
     return list(fields)
 
 

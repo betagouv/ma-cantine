@@ -13,6 +13,7 @@
           "is_required": false
         }
       },
+      "index_code": 151,
       "index_metier": "17bis",
       "verbose_name": "Définition du « local » : périmètre administratif"
     },
@@ -29,6 +30,7 @@
           "is_required": false
         }
       },
+      "index_code": 152,
       "index_metier": "17ter",
       "verbose_name": "Définition du « local » : distance (en km)"
     },
@@ -45,6 +47,7 @@
           "is_required": true
         }
       },
+      "index_code": 1,
       "index_metier": null,
       "verbose_name": "Nombre de couverts par an"
     },
@@ -61,6 +64,7 @@
           "is_required": false
         }
       },
+      "index_code": 18,
       "index_metier": "1.7",
       "verbose_name": "Total des achats pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -76,6 +80,7 @@
           "is_required": false
         }
       },
+      "index_code": 53,
       "index_metier": "4.7",
       "verbose_name": "Total des achats AOC / AOP pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -91,6 +96,7 @@
           "is_required": false
         }
       },
+      "index_code": 37,
       "index_metier": "2.7.1",
       "verbose_name": "Total des achats bio ou en conversion pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -106,6 +112,7 @@
           "is_required": false
         }
       },
+      "index_code": 38,
       "index_metier": "2.7.2",
       "verbose_name": "Dont total des achats bio issus du commerce équitable pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -122,6 +129,7 @@
           "is_required": false
         }
       },
+      "index_code": 142,
       "index_metier": "16.7",
       "verbose_name": "Total des achats circuit court pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -137,6 +145,7 @@
           "is_required": false
         }
       },
+      "index_code": 94,
       "index_metier": "10.7",
       "verbose_name": "Total des achats non bio issus du commerce équitable pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -153,6 +162,7 @@
           "is_required": false
         }
       },
+      "index_code": 126,
       "index_metier": "15.7",
       "verbose_name": "Total des achats origine Europe (hors France) pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -168,6 +178,7 @@
           "is_required": false
         }
       },
+      "index_code": 110,
       "index_metier": "12.7",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -183,6 +194,7 @@
           "is_required": false
         }
       },
+      "index_code": 102,
       "index_metier": "11.7",
       "verbose_name": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -199,6 +211,7 @@
           "is_required": false
         }
       },
+      "index_code": 134,
       "index_metier": "14.7",
       "verbose_name": "Total des achats origine France pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -214,6 +227,7 @@
           "is_required": false
         }
       },
+      "index_code": 77,
       "index_metier": "7.7",
       "verbose_name": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -229,6 +243,7 @@
           "is_required": false
         }
       },
+      "index_code": 61,
       "index_metier": "5.7",
       "verbose_name": "Total des achats IGP pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -244,6 +259,7 @@
           "is_required": false
         }
       },
+      "index_code": 45,
       "index_metier": "3.7",
       "verbose_name": "Total des achats Label Rouge pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -260,6 +276,7 @@
           "is_required": false
         }
       },
+      "index_code": 150,
       "index_metier": "17.7",
       "verbose_name": "Total des achats locaux pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -275,6 +292,7 @@
           "is_required": false
         }
       },
+      "index_code": 118,
       "index_metier": "13.7",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -290,6 +308,7 @@
           "is_required": false
         }
       },
+      "index_code": 86,
       "index_metier": "9.7",
       "verbose_name": "Total des achats RUP pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -305,6 +324,7 @@
           "is_required": false
         }
       },
+      "index_code": 69,
       "index_metier": "6.7",
       "verbose_name": "Total des achats STG pour la famille Autres produits frais, surgelés et d'épicerie"
     },
@@ -320,6 +340,7 @@
           "is_required": true
         }
       },
+      "index_code": 3,
       "index_metier": "2.0.1",
       "verbose_name": "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »"
     },
@@ -335,6 +356,7 @@
           "is_required": false
         }
       },
+      "index_code": 4,
       "index_metier": "2.0.2",
       "verbose_name": "Dont total des achats bio issus du commerce équitable"
     },
@@ -351,6 +373,7 @@
           "is_required": false
         }
       },
+      "index_code": 17,
       "index_metier": "1.8",
       "verbose_name": "Total des achats pour la famille Boissons"
     },
@@ -366,6 +389,7 @@
           "is_required": false
         }
       },
+      "index_code": 52,
       "index_metier": "4.8",
       "verbose_name": "Total des achats AOC / AOP pour la famille Boissons"
     },
@@ -381,6 +405,7 @@
           "is_required": false
         }
       },
+      "index_code": 35,
       "index_metier": "2.8.1",
       "verbose_name": "Total des achats bio ou en conversion pour la famille Boissons"
     },
@@ -396,6 +421,7 @@
           "is_required": false
         }
       },
+      "index_code": 36,
       "index_metier": "2.8.2",
       "verbose_name": "Dont total des achats bio issus du commerce équitable pour la famille Boissons"
     },
@@ -412,6 +438,7 @@
           "is_required": false
         }
       },
+      "index_code": 141,
       "index_metier": "16.8",
       "verbose_name": "Total des achats circuit court pour la famille Boissons"
     },
@@ -427,6 +454,7 @@
           "is_required": false
         }
       },
+      "index_code": 93,
       "index_metier": "10.8",
       "verbose_name": "Total des achats non bio issus du commerce équitable pour la famille Boissons"
     },
@@ -443,6 +471,7 @@
           "is_required": false
         }
       },
+      "index_code": 125,
       "index_metier": "15.8",
       "verbose_name": "Total des achats origine Europe (hors France) pour la famille Boissons"
     },
@@ -458,6 +487,7 @@
           "is_required": false
         }
       },
+      "index_code": 109,
       "index_metier": "12.8",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Boissons"
     },
@@ -473,6 +503,7 @@
           "is_required": false
         }
       },
+      "index_code": 101,
       "index_metier": "11.8",
       "verbose_name": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Boissons"
     },
@@ -489,6 +520,7 @@
           "is_required": false
         }
       },
+      "index_code": 133,
       "index_metier": "14.8",
       "verbose_name": "Total des achats origine France pour la famille Boissons"
     },
@@ -504,6 +536,7 @@
           "is_required": false
         }
       },
+      "index_code": 76,
       "index_metier": "7.8",
       "verbose_name": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Boissons"
     },
@@ -519,6 +552,7 @@
           "is_required": false
         }
       },
+      "index_code": 60,
       "index_metier": "5.8",
       "verbose_name": "Total des achats IGP pour la famille Boissons"
     },
@@ -535,6 +569,7 @@
           "is_required": false
         }
       },
+      "index_code": 149,
       "index_metier": "17.8",
       "verbose_name": "Total des achats locaux pour la famille Boissons"
     },
@@ -550,6 +585,7 @@
           "is_required": false
         }
       },
+      "index_code": 117,
       "index_metier": "13.8",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Boissons"
     },
@@ -565,6 +601,7 @@
           "is_required": false
         }
       },
+      "index_code": 85,
       "index_metier": "9.8",
       "verbose_name": "Total des achats RUP pour la famille Boissons"
     },
@@ -580,6 +617,7 @@
           "is_required": false
         }
       },
+      "index_code": 68,
       "index_metier": "6.8",
       "verbose_name": "Total des achats STG pour la famille Boissons"
     },
@@ -596,6 +634,7 @@
           "is_required": false
         }
       },
+      "index_code": 16,
       "index_metier": "1.6",
       "verbose_name": "Total des achats pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -611,6 +650,7 @@
           "is_required": false
         }
       },
+      "index_code": 51,
       "index_metier": "4.6",
       "verbose_name": "Total des achats AOC / AOP pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -626,6 +666,7 @@
           "is_required": false
         }
       },
+      "index_code": 33,
       "index_metier": "2.6.1",
       "verbose_name": "Total des achats bio ou en conversion pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -641,6 +682,7 @@
           "is_required": false
         }
       },
+      "index_code": 34,
       "index_metier": "2.6.2",
       "verbose_name": "Dont total des achats bio issus du commerce équitable pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -657,6 +699,7 @@
           "is_required": false
         }
       },
+      "index_code": 140,
       "index_metier": "16.6",
       "verbose_name": "Total des achats circuit court pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -672,6 +715,7 @@
           "is_required": false
         }
       },
+      "index_code": 92,
       "index_metier": "10.6",
       "verbose_name": "Total des achats non bio issus du commerce équitable pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -688,6 +732,7 @@
           "is_required": false
         }
       },
+      "index_code": 124,
       "index_metier": "15.6",
       "verbose_name": "Total des achats origine Europe (hors France) pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -703,6 +748,7 @@
           "is_required": false
         }
       },
+      "index_code": 108,
       "index_metier": "12.6",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -718,6 +764,7 @@
           "is_required": false
         }
       },
+      "index_code": 100,
       "index_metier": "11.6",
       "verbose_name": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -734,6 +781,7 @@
           "is_required": false
         }
       },
+      "index_code": 132,
       "index_metier": "14.6",
       "verbose_name": "Total des achats origine France pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -749,6 +797,7 @@
           "is_required": false
         }
       },
+      "index_code": 75,
       "index_metier": "7.6",
       "verbose_name": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -764,6 +813,7 @@
           "is_required": false
         }
       },
+      "index_code": 59,
       "index_metier": "5.6",
       "verbose_name": "Total des achats IGP pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -779,6 +829,7 @@
           "is_required": false
         }
       },
+      "index_code": 44,
       "index_metier": "3.6",
       "verbose_name": "Total des achats Label Rouge pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -795,6 +846,7 @@
           "is_required": false
         }
       },
+      "index_code": 148,
       "index_metier": "17.6",
       "verbose_name": "Total des achats locaux pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -810,6 +862,7 @@
           "is_required": false
         }
       },
+      "index_code": 116,
       "index_metier": "13.6",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -825,6 +878,7 @@
           "is_required": false
         }
       },
+      "index_code": 84,
       "index_metier": "9.6",
       "verbose_name": "Total des achats RUP pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -840,6 +894,7 @@
           "is_required": false
         }
       },
+      "index_code": 67,
       "index_metier": "6.6",
       "verbose_name": "Total des achats STG pour la famille Boulangerie/Pâtisseries fraîches"
     },
@@ -856,6 +911,7 @@
           "is_required": false
         }
       },
+      "index_code": 14,
       "index_metier": "1.3",
       "verbose_name": "Total des achats pour la famille Charcuteries"
     },
@@ -871,6 +927,7 @@
           "is_required": false
         }
       },
+      "index_code": 49,
       "index_metier": "4.3",
       "verbose_name": "Total des achats AOC / AOP pour la famille Charcuteries"
     },
@@ -886,6 +943,7 @@
           "is_required": false
         }
       },
+      "index_code": 29,
       "index_metier": "2.3.1",
       "verbose_name": "Total des achats bio ou en conversion pour la famille Charcuteries"
     },
@@ -901,6 +959,7 @@
           "is_required": false
         }
       },
+      "index_code": 30,
       "index_metier": "2.3.2",
       "verbose_name": "Dont total des achats bio issus du commerce équitable pour la famille Charcuteries"
     },
@@ -917,6 +976,7 @@
           "is_required": false
         }
       },
+      "index_code": 138,
       "index_metier": "16.3",
       "verbose_name": "Total des achats circuit court pour la famille Charcuteries"
     },
@@ -932,6 +992,7 @@
           "is_required": false
         }
       },
+      "index_code": 90,
       "index_metier": "10.3",
       "verbose_name": "Total des achats non bio issus du commerce équitable pour la famille Charcuteries"
     },
@@ -948,6 +1009,7 @@
           "is_required": false
         }
       },
+      "index_code": 122,
       "index_metier": "15.3",
       "verbose_name": "Total des achats origine Europe (hors France) pour la famille Charcuteries"
     },
@@ -963,6 +1025,7 @@
           "is_required": false
         }
       },
+      "index_code": 106,
       "index_metier": "12.3",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Charcuteries"
     },
@@ -978,6 +1041,7 @@
           "is_required": false
         }
       },
+      "index_code": 98,
       "index_metier": "11.3",
       "verbose_name": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Charcuteries"
     },
@@ -994,6 +1058,7 @@
           "is_required": false
         }
       },
+      "index_code": 130,
       "index_metier": "14.3",
       "verbose_name": "Total des achats origine France pour la famille Charcuteries"
     },
@@ -1009,6 +1074,7 @@
           "is_required": false
         }
       },
+      "index_code": 73,
       "index_metier": "7.3",
       "verbose_name": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Charcuteries"
     },
@@ -1024,6 +1090,7 @@
           "is_required": false
         }
       },
+      "index_code": 57,
       "index_metier": "5.3",
       "verbose_name": "Total des achats IGP pour la famille Charcuteries"
     },
@@ -1039,6 +1106,7 @@
           "is_required": false
         }
       },
+      "index_code": 42,
       "index_metier": "3.3",
       "verbose_name": "Total des achats Label Rouge pour la famille Charcuteries"
     },
@@ -1055,6 +1123,7 @@
           "is_required": false
         }
       },
+      "index_code": 146,
       "index_metier": "17.3",
       "verbose_name": "Total des achats locaux pour la famille Charcuteries"
     },
@@ -1070,6 +1139,7 @@
           "is_required": false
         }
       },
+      "index_code": 114,
       "index_metier": "13.3",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Charcuteries"
     },
@@ -1085,6 +1155,7 @@
           "is_required": false
         }
       },
+      "index_code": 82,
       "index_metier": "9.3",
       "verbose_name": "Total des achats RUP pour la famille Charcuteries"
     },
@@ -1100,6 +1171,7 @@
           "is_required": false
         }
       },
+      "index_code": 65,
       "index_metier": "6.3",
       "verbose_name": "Total des achats STG pour la famille Charcuteries"
     },
@@ -1116,6 +1188,7 @@
           "is_required": false
         }
       },
+      "index_code": 21,
       "index_metier": "16.0",
       "verbose_name": "Total des achats en circuit court toutes familles de produits confondues"
     },
@@ -1131,6 +1204,7 @@
           "is_required": true
         }
       },
+      "index_code": 7,
       "index_metier": "4.0.1",
       "verbose_name": "Total des autres achats EGalim"
     },
@@ -1146,6 +1220,7 @@
           "is_required": false
         }
       },
+      "index_code": 8,
       "index_metier": "4.0.2",
       "verbose_name": "Dont total des achats non bio issus du commerce équitable"
     },
@@ -1162,6 +1237,7 @@
           "is_required": false
         }
       },
+      "index_code": 19,
       "index_metier": "15.0",
       "verbose_name": "Total des achats origine Europe (hors France) toutes familles de produits confondues"
     },
@@ -1177,6 +1253,7 @@
           "is_required": false
         }
       },
+      "index_code": 6,
       "index_metier": "5.0",
       "verbose_name": "Total des achats prenant en compte les externalités environnementales"
     },
@@ -1193,6 +1270,7 @@
           "is_required": false
         }
       },
+      "index_code": 20,
       "index_metier": "14.0",
       "verbose_name": "Total des achats origine France toutes familles de produits confondues"
     },
@@ -1209,6 +1287,7 @@
           "is_required": false
         }
       },
+      "index_code": 13,
       "index_metier": "1.4",
       "verbose_name": "Total des achats pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1224,6 +1303,7 @@
           "is_required": false
         }
       },
+      "index_code": 48,
       "index_metier": "4.4",
       "verbose_name": "Total des achats AOC / AOP pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1239,6 +1319,7 @@
           "is_required": false
         }
       },
+      "index_code": 27,
       "index_metier": "2.4.1",
       "verbose_name": "Total des achats bio ou en conversion pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1254,6 +1335,7 @@
           "is_required": false
         }
       },
+      "index_code": 28,
       "index_metier": "2.4.2",
       "verbose_name": "Dont total des achats bio issus du commerce équitable pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1270,6 +1352,7 @@
           "is_required": false
         }
       },
+      "index_code": 137,
       "index_metier": "16.4",
       "verbose_name": "Total des achats circuit court pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1285,6 +1368,7 @@
           "is_required": false
         }
       },
+      "index_code": 89,
       "index_metier": "10.4",
       "verbose_name": "Total des achats non bio issus du commerce équitable pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1301,6 +1385,7 @@
           "is_required": false
         }
       },
+      "index_code": 121,
       "index_metier": "15.4",
       "verbose_name": "Total des achats origine Europe (hors France) pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1316,6 +1401,7 @@
           "is_required": false
         }
       },
+      "index_code": 105,
       "index_metier": "12.4",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1331,6 +1417,7 @@
           "is_required": false
         }
       },
+      "index_code": 97,
       "index_metier": "11.4",
       "verbose_name": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1347,6 +1434,7 @@
           "is_required": false
         }
       },
+      "index_code": 129,
       "index_metier": "14.4",
       "verbose_name": "Total des achats origine France pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1362,6 +1450,7 @@
           "is_required": false
         }
       },
+      "index_code": 72,
       "index_metier": "7.4",
       "verbose_name": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1377,6 +1466,7 @@
           "is_required": false
         }
       },
+      "index_code": 56,
       "index_metier": "5.4",
       "verbose_name": "Total des achats IGP pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1392,6 +1482,7 @@
           "is_required": false
         }
       },
+      "index_code": 41,
       "index_metier": "3.4",
       "verbose_name": "Total des achats Label Rouge pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1408,6 +1499,7 @@
           "is_required": false
         }
       },
+      "index_code": 145,
       "index_metier": "17.4",
       "verbose_name": "Total des achats locaux pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1423,6 +1515,7 @@
           "is_required": false
         }
       },
+      "index_code": 113,
       "index_metier": "13.4",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1438,6 +1531,7 @@
           "is_required": false
         }
       },
+      "index_code": 81,
       "index_metier": "9.4",
       "verbose_name": "Total des achats RUP pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1453,6 +1547,7 @@
           "is_required": false
         }
       },
+      "index_code": 64,
       "index_metier": "6.4",
       "verbose_name": "Total des achats STG pour la famille Fruits et légumes frais et surgelés"
     },
@@ -1469,6 +1564,7 @@
           "is_required": false
         }
       },
+      "index_code": 22,
       "index_metier": "17.0",
       "verbose_name": "Total des achats en produits « locaux » toutes familles de produits confondues"
     },
@@ -1485,6 +1581,7 @@
           "is_required": false
         }
       },
+      "index_code": 11,
       "index_metier": "1.2",
       "verbose_name": "Total des achats pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1500,6 +1597,7 @@
           "is_required": false
         }
       },
+      "index_code": 47,
       "index_metier": "4.2",
       "verbose_name": "Total des achats AOC / AOP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1515,6 +1613,7 @@
           "is_required": false
         }
       },
+      "index_code": 25,
       "index_metier": "2.2.1",
       "verbose_name": "Total des achats bio ou en conversion pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1530,6 +1629,7 @@
           "is_required": false
         }
       },
+      "index_code": 26,
       "index_metier": "2.2.2",
       "verbose_name": "Dont total des achats bio issus du commerce équitable pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1546,6 +1646,7 @@
           "is_required": false
         }
       },
+      "index_code": 136,
       "index_metier": "16.2",
       "verbose_name": "Total des achats circuit court pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1561,6 +1662,7 @@
           "is_required": false
         }
       },
+      "index_code": 88,
       "index_metier": "10.2",
       "verbose_name": "Total des achats non bio issus du commerce équitable pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1576,6 +1678,7 @@
           "is_required": false
         }
       },
+      "index_code": 12,
       "index_metier": "1.2bis",
       "verbose_name": "Total des achats EGalim en poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1592,6 +1695,7 @@
           "is_required": false
         }
       },
+      "index_code": 120,
       "index_metier": "15.2",
       "verbose_name": "Total des achats origine Europe (hors France) pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1607,6 +1711,7 @@
           "is_required": false
         }
       },
+      "index_code": 104,
       "index_metier": "12.2",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1622,6 +1727,7 @@
           "is_required": false
         }
       },
+      "index_code": 96,
       "index_metier": "11.2",
       "verbose_name": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1638,6 +1744,7 @@
           "is_required": false
         }
       },
+      "index_code": 128,
       "index_metier": "14.2",
       "verbose_name": "Total des achats origine France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1653,6 +1760,7 @@
           "is_required": false
         }
       },
+      "index_code": 71,
       "index_metier": "7.2",
       "verbose_name": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1668,6 +1776,7 @@
           "is_required": false
         }
       },
+      "index_code": 55,
       "index_metier": "5.2",
       "verbose_name": "Total des achats IGP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1683,6 +1792,7 @@
           "is_required": false
         }
       },
+      "index_code": 40,
       "index_metier": "3.2",
       "verbose_name": "Total des achats Label Rouge pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1699,6 +1809,7 @@
           "is_required": false
         }
       },
+      "index_code": 144,
       "index_metier": "17.2",
       "verbose_name": "Total des achats locaux pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1714,6 +1825,7 @@
           "is_required": false
         }
       },
+      "index_code": 78,
       "index_metier": "8",
       "verbose_name": "Total des achats Écolabel pêche durable, 7°bis ou 7°ter pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1729,6 +1841,7 @@
           "is_required": false
         }
       },
+      "index_code": 112,
       "index_metier": "13.2",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1744,6 +1857,7 @@
           "is_required": false
         }
       },
+      "index_code": 80,
       "index_metier": "9.2",
       "verbose_name": "Total des achats RUP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1759,6 +1873,7 @@
           "is_required": false
         }
       },
+      "index_code": 63,
       "index_metier": "6.2",
       "verbose_name": "Total des achats STG pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés"
     },
@@ -1775,6 +1890,7 @@
           "is_required": false
         }
       },
+      "index_code": 15,
       "index_metier": "1.5",
       "verbose_name": "Total des achats pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1790,6 +1906,7 @@
           "is_required": false
         }
       },
+      "index_code": 50,
       "index_metier": "4.5",
       "verbose_name": "Total des achats AOC / AOP pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1805,6 +1922,7 @@
           "is_required": false
         }
       },
+      "index_code": 31,
       "index_metier": "2.5.1",
       "verbose_name": "Total des achats bio ou en conversion pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1820,6 +1938,7 @@
           "is_required": false
         }
       },
+      "index_code": 32,
       "index_metier": "2.5.2",
       "verbose_name": "Dont total des achats bio issus du commerce équitable pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1836,6 +1955,7 @@
           "is_required": false
         }
       },
+      "index_code": 139,
       "index_metier": "16.5",
       "verbose_name": "Total des achats circuit court pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1851,6 +1971,7 @@
           "is_required": false
         }
       },
+      "index_code": 91,
       "index_metier": "10.5",
       "verbose_name": "Total des achats non bio issus du commerce équitable pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1867,6 +1988,7 @@
           "is_required": false
         }
       },
+      "index_code": 123,
       "index_metier": "15.5",
       "verbose_name": "Total des achats origine Europe (hors France) pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1882,6 +2004,7 @@
           "is_required": false
         }
       },
+      "index_code": 107,
       "index_metier": "12.5",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1897,6 +2020,7 @@
           "is_required": false
         }
       },
+      "index_code": 99,
       "index_metier": "11.5",
       "verbose_name": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1913,6 +2037,7 @@
           "is_required": false
         }
       },
+      "index_code": 131,
       "index_metier": "14.5",
       "verbose_name": "Total des achats origine France pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1928,6 +2053,7 @@
           "is_required": false
         }
       },
+      "index_code": 74,
       "index_metier": "7.5",
       "verbose_name": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1943,6 +2069,7 @@
           "is_required": false
         }
       },
+      "index_code": 58,
       "index_metier": "5.5",
       "verbose_name": "Total des achats IGP pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1958,6 +2085,7 @@
           "is_required": false
         }
       },
+      "index_code": 43,
       "index_metier": "3.5",
       "verbose_name": "Total des achats Label Rouge pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1974,6 +2102,7 @@
           "is_required": false
         }
       },
+      "index_code": 147,
       "index_metier": "17.5",
       "verbose_name": "Total des achats locaux pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -1989,6 +2118,7 @@
           "is_required": false
         }
       },
+      "index_code": 115,
       "index_metier": "13.5",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -2004,6 +2134,7 @@
           "is_required": false
         }
       },
+      "index_code": 83,
       "index_metier": "9.5",
       "verbose_name": "Total des achats RUP pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -2019,6 +2150,7 @@
           "is_required": false
         }
       },
+      "index_code": 66,
       "index_metier": "6.5",
       "verbose_name": "Total des achats STG pour la famille BOF (Produits laitiers, beurre et œufs)"
     },
@@ -2034,6 +2166,7 @@
           "is_required": true
         }
       },
+      "index_code": 5,
       "index_metier": "3.0",
       "verbose_name": "Total des achats SIQO (hors bio) : Label Rouge, AOC / AOP, IGP, STG"
     },
@@ -2050,6 +2183,7 @@
           "is_required": true
         }
       },
+      "index_code": 2,
       "index_metier": "1.0",
       "verbose_name": "Total des achats alimentaires toutes familles de produits confondues"
     },
@@ -2066,6 +2200,7 @@
           "is_required": true
         }
       },
+      "index_code": 9,
       "index_metier": "1.1",
       "verbose_name": "Total des achats pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2081,6 +2216,7 @@
           "is_required": false
         }
       },
+      "index_code": 46,
       "index_metier": "4.1",
       "verbose_name": "Total des achats AOC / AOP pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2096,6 +2232,7 @@
           "is_required": false
         }
       },
+      "index_code": 23,
       "index_metier": "2.1.1",
       "verbose_name": "Total des achats bio ou en conversion pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2111,6 +2248,7 @@
           "is_required": false
         }
       },
+      "index_code": 24,
       "index_metier": "2.1.2",
       "verbose_name": "Dont total des achats bio issus du commerce équitable pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2127,6 +2265,7 @@
           "is_required": false
         }
       },
+      "index_code": 135,
       "index_metier": "16.1",
       "verbose_name": "Total des achats circuit court pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2142,6 +2281,7 @@
           "is_required": false
         }
       },
+      "index_code": 87,
       "index_metier": "10.1",
       "verbose_name": "Total des achats non bio issus du commerce équitable pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2157,6 +2297,7 @@
           "is_required": true
         }
       },
+      "index_code": 10,
       "index_metier": "1.1bis",
       "verbose_name": "Total des achats EGalim en viandes et volailles fraîches ou surgelées"
     },
@@ -2173,6 +2314,7 @@
           "is_required": false
         }
       },
+      "index_code": 119,
       "index_metier": "15.1",
       "verbose_name": "Total des achats origine Europe (hors France) pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2188,6 +2330,7 @@
           "is_required": false
         }
       },
+      "index_code": 103,
       "index_metier": "12.1",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2203,6 +2346,7 @@
           "is_required": false
         }
       },
+      "index_code": 95,
       "index_metier": "11.1",
       "verbose_name": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2219,6 +2363,7 @@
           "is_required": false
         }
       },
+      "index_code": 127,
       "index_metier": "14.1",
       "verbose_name": "Total des achats origine France pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2234,6 +2379,7 @@
           "is_required": false
         }
       },
+      "index_code": 70,
       "index_metier": "7.1",
       "verbose_name": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2249,6 +2395,7 @@
           "is_required": false
         }
       },
+      "index_code": 54,
       "index_metier": "5.1",
       "verbose_name": "Total des achats IGP pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2264,6 +2411,7 @@
           "is_required": false
         }
       },
+      "index_code": 39,
       "index_metier": "3.1",
       "verbose_name": "Total des achats Label Rouge pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2280,6 +2428,7 @@
           "is_required": false
         }
       },
+      "index_code": 143,
       "index_metier": "17.1",
       "verbose_name": "Total des achats locaux pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2295,6 +2444,7 @@
           "is_required": false
         }
       },
+      "index_code": 111,
       "index_metier": "13.1",
       "verbose_name": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2310,6 +2460,7 @@
           "is_required": false
         }
       },
+      "index_code": 79,
       "index_metier": "9.1",
       "verbose_name": "Total des achats RUP pour la famille Viandes et volailles fraîches ou surgelées"
     },
@@ -2325,118 +2476,145 @@
           "is_required": false
         }
       },
+      "index_code": 62,
       "index_metier": "6.1",
       "verbose_name": "Total des achats STG pour la famille Viandes et volailles fraîches ou surgelées"
     }
   },
   "DIVERSIFICATION": {
     "menu_vegetarien_bases": {
+      "index_code": 5,
       "is_required": false,
       "verbose_name": "Les plats principaux des menus végétariens servis sont majoritairement à base de"
     },
     "menu_vegetarien_frequence": {
+      "index_code": 4,
       "is_required": false,
       "verbose_name": "Un menu végétarien est proposé"
     },
     "plan_diversification_actions": {
+      "index_code": 2,
       "is_required": false,
       "verbose_name": "Ce plan comporte, par exemple, les actions suivantes"
     },
     "plan_diversification_en_place": {
+      "index_code": 1,
       "is_required": false,
       "verbose_name": "Un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales a été mis en place dans l’établissement"
     },
     "service_type": {
+      "index_code": 3,
       "is_required": false,
       "verbose_name": "Le service est en"
     }
   },
   "GASPILLAGE": {
     "actions_gaspillage_autre": {
+      "index_code": 4,
       "is_required": false,
       "verbose_name": ""
     },
     "actions_gaspillage_realisees": {
+      "index_code": 3,
       "is_required": false,
       "verbose_name": ""
     },
     "commentaires_gaspillage_autre": {
+      "index_code": 10,
       "is_required": false,
       "verbose_name": ""
     },
     "diagnostic_gaspillage_realise": {
+      "index_code": 1,
       "is_required": false,
       "verbose_name": ""
     },
     "dons_convention": {
+      "index_code": 5,
       "is_required": false,
       "verbose_name": ""
     },
     "dons_frequence": {
+      "index_code": 7,
       "is_required": false,
       "verbose_name": ""
     },
     "dons_quantite": {
+      "index_code": 8,
       "is_required": false,
       "verbose_name": ""
     },
     "dons_type_denrees": {
+      "index_code": 9,
       "is_required": false,
       "verbose_name": ""
     },
     "mesures_gaspillage_realisees": {
+      "index_code": 6,
       "is_required": false,
       "verbose_name": ""
     },
     "plan_gaspillage_en_place": {
+      "index_code": 2,
       "is_required": false,
       "verbose_name": ""
     }
   },
   "INFORMATION": {
     "information_affichage_permanent": {
+      "index_code": 1,
       "is_required": false,
       "verbose_name": ""
     },
     "information_consultation_qualite": {
+      "index_code": 5,
       "is_required": false,
       "verbose_name": ""
     },
     "information_electronique_annuelle": {
+      "index_code": 2,
       "is_required": false,
       "verbose_name": ""
     },
     "information_part_egalim": {
+      "index_code": 3,
       "is_required": false,
       "verbose_name": ""
     },
     "information_part_pat": {
+      "index_code": 4,
       "is_required": false,
       "verbose_name": ""
     }
   },
   "PLASTIQUE": {
     "plastique_bouteille_boisson_remplace": {
+      "index_code": 1,
       "is_required": false,
       "verbose_name": ""
     },
     "plastique_bouteille_remplace": {
+      "index_code": 2,
       "is_required": false,
       "verbose_name": ""
     },
     "plastique_contenant_emporter_remplace": {
+      "index_code": 6,
       "is_required": false,
       "verbose_name": ""
     },
     "plastique_contenant_remplace": {
+      "index_code": 5,
       "is_required": false,
       "verbose_name": ""
     },
     "plastique_ustensile_remplace": {
+      "index_code": 3,
       "is_required": false,
       "verbose_name": ""
     },
     "plastique_vaisselle_jetable_remplace": {
+      "index_code": 4,
       "is_required": false,
       "verbose_name": ""
     }
