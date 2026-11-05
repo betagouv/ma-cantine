@@ -2312,12 +2312,12 @@
     "actions_gaspillage_autre": {
       "index_code": 4,
       "is_required": false,
-      "verbose_name": ""
+      "verbose_name": "Autre(s) action(s) réalisé(es) de lutte contre les déchets alimentaires"
     },
     "actions_gaspillage_realisees": {
       "index_code": 3,
       "is_required": false,
-      "verbose_name": ""
+      "verbose_name": "J’ai réalisé les actions suivantes de lutte contre les déchets alimentaires"
     },
     "commentaires_gaspillage_autre": {
       "index_code": 10,
@@ -2327,37 +2327,37 @@
     "diagnostic_gaspillage_realise": {
       "index_code": 1,
       "is_required": false,
-      "verbose_name": ""
+      "verbose_name": "J’ai réalisé un diagnostic sur les causes probables de mes déchets alimentaires"
     },
     "dons_convention": {
       "index_code": 5,
       "is_required": false,
-      "verbose_name": ""
+      "verbose_name": "Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire"
     },
     "dons_frequence": {
-      "index_code": 7,
+      "index_code": 6,
       "is_required": false,
-      "verbose_name": ""
+      "verbose_name": "Fréquence de dons, en dons/an"
     },
     "dons_quantite": {
-      "index_code": 8,
+      "index_code": 7,
       "is_required": false,
-      "verbose_name": ""
+      "verbose_name": "Quantité de denrées données, en kg/an"
     },
     "dons_type_denrees": {
-      "index_code": 9,
+      "index_code": 8,
       "is_required": false,
-      "verbose_name": ""
+      "verbose_name": "Type de denrées données"
     },
     "mesures_gaspillage_realisees": {
-      "index_code": 6,
+      "index_code": 9,
       "is_required": false,
       "verbose_name": ""
     },
     "plan_gaspillage_en_place": {
       "index_code": 2,
       "is_required": false,
-      "verbose_name": ""
+      "verbose_name": "J’ai mis en place un plan d’action pour la réduction de mes déchets alimentaires"
     }
   },
   "INFORMATION": {
