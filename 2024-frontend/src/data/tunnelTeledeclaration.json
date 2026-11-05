@@ -207,7 +207,7 @@
       "diagnosticGaspillageRealise": {
         "type": "radio",
         "inline": true,
-        "required": false,
+        "required": true,
         "options": [
           {
             "label": "Oui",
@@ -224,7 +224,7 @@
       "planGaspillageEnPlace": {
         "type": "radio",
         "inline": true,
-        "required": false,
+        "required": true,
         "options": [
           {
             "label": "Oui",
@@ -282,7 +282,7 @@
       "donsConvention": {
         "type": "radio",
         "inline": true,
-        "required": false,
+        "required": true,
         "options": [
           {
             "label": "Oui",
