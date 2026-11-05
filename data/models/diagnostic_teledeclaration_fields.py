@@ -27,12 +27,12 @@ def get_teledeclaration_import_fields(year, diagnostic_type):
         name for name, field in fields.items() if field["diagnostic_type"][diagnostic_type]["is_present"]
     ]
 
-    def get_position(name):
+    def get_import_position(name):
         # 2025: its SIMPLE and COMPLETE column orders are different a specific order is needed
         field = fields[name]
         return field["diagnostic_type"][diagnostic_type].get("legacy_import_order") or field["index_code"]
 
-    return sorted(present_fields, key=get_position)
+    return sorted(present_fields, key=get_import_position)
 
 
 def get_teledeclaration_import_fields_required(year, diagnostic_type):
