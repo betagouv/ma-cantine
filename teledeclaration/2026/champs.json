@@ -2312,7 +2312,7 @@
     "actions_gaspillage_autre": {
       "index_code": 4,
       "is_required": false,
-      "verbose_name": "Autre(s) action(s) réalisé(es) de lutte contre les déchets alimentaires"
+      "verbose_name": "Autre action de lutte contre les déchets alimentaires réalisé"
     },
     "actions_gaspillage_realisees": {
       "index_code": 3,

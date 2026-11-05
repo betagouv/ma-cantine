@@ -23,6 +23,7 @@ const field = ref()
 const data = computed(() => tunnelTeledeclarationService.getField(props.name))
 const isNumber = computed(() => data.value?.type === "number")
 const isText = computed(() => data.value?.type === "text")
+const isTextarea = computed(() => data.value?.type === "textarea")
 const isSelect = computed(() => data.value?.type === "select")
 const isCheckboxes = computed(() => data.value?.type === "checkboxes")
 const isRadio = computed(() => data.value?.type === "radio")
@@ -93,6 +94,7 @@ const resetField = () => {
         </template>
       </DsfrInputGroup>
       <DsfrInputGroup v-if="isText" v-model="field" :label="displayedLabel" :label-visible="true" :name="props.name" type="text" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" />
+      <DsfrInputGroup v-if="isTextarea" v-model="field" :label="displayedLabel" :label-visible="true" :name="props.name" is-textarea rows="4" class="ma-cantine--textarea" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" />
       <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint"/>
       <DsfrRadioButtonSet v-if="isRadio" v-model="field" :legend="label" :name="props.name" :required="isRequired" :options="radioOptions" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint" />
       <DsfrCheckboxSet v-if="isCheckboxes" v-model="field" :legend="label" :required="isRequired" :options="checkboxesOptions" @update:modelValue="fieldChange" :error-message="selectErrorMessage" />

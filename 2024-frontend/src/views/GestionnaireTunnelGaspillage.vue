@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, watch } from "vue"
+import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import documentation from "@/data/documentation.json"
@@ -10,13 +10,6 @@ import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.
 const storeTeledeclaration = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(storeTeledeclaration)
 
-/* La case "Autre" n'existe que dans le frontend : seul le détail saisi est enregistré */
-const hasActionAutre = ref(!!diagnostic.value.actionsGaspillageAutre)
-watch(hasActionAutre, (isChecked) => {
-  if (!isChecked) storeTeledeclaration.setValue("actionsGaspillageAutre", null)
-})
-
-/* Le détail des dons n'est attendu que si une convention est proposée */
 const hasDonsConvention = computed(() => diagnostic.value.donsConvention === true)
 const updateDonsConvention = (value) => {
   if (value === true) return
@@ -45,8 +38,7 @@ const updateDonsConvention = (value) => {
     <TunnelTeledeclarationField name="diagnosticGaspillageRealise" />
     <TunnelTeledeclarationField name="planGaspillageEnPlace" />
     <TunnelTeledeclarationField name="actionsGaspillageRealisees" />
-    <DsfrCheckbox v-model="hasActionAutre" name="hasActionAutre" label="Autre : donnez plus d’information" />
-    <TunnelTeledeclarationField v-if="hasActionAutre" name="actionsGaspillageAutre" />
+    <TunnelTeledeclarationField name="actionsGaspillageAutre" />
   </div>
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle title="2. Dons alimentaires" />

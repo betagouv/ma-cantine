@@ -273,7 +273,8 @@
         ]
       },
       "actionsGaspillageAutre": {
-        "type": "text",
+        "shortName": "Si vous avez réalisé d'autres actions vous pouvez les renseigner ici :",
+        "type": "textarea",
         "required": false
       },
       "donsConvention": {
