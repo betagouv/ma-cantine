@@ -206,6 +206,7 @@
     "fields": {
       "diagnosticGaspillageRealise": {
         "type": "radio",
+        "inline": true,
         "required": false,
         "options": [
           {
@@ -222,6 +223,7 @@
       },
       "planGaspillageEnPlace": {
         "type": "radio",
+        "inline": true,
         "required": false,
         "options": [
           {
@@ -279,6 +281,7 @@
       },
       "donsConvention": {
         "type": "radio",
+        "inline": true,
         "required": false,
         "options": [
           {
@@ -320,6 +323,7 @@
     "fields": {
       "planDiversificationEnPlace": {
         "type": "radio",
+        "inline": true,
         "required": true,
         "options": [
           {
