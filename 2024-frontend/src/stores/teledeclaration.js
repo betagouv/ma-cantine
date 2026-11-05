@@ -114,7 +114,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Save the fields of a volet */
   async function saveVolet(canteenId, volet) {
-    const fields = [...teledeclarationFields.getFieldsListFromGroup(volet), voletTunnelProgressionFields[volet]]
+    const fields = [...tunnelTeledeclaration.getFieldsListFromGroup(volet), voletTunnelProgressionFields[volet]]
     const voletValues = Object.fromEntries(fields.map((field) => [field, diagnostic.value[field]]))
     return await diagnosticService.updateVolet(canteenId, diagnostic.value.id, volet, voletValues)
   }
