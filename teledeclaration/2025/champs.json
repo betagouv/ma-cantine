@@ -1871,7 +1871,7 @@
   "GASPILLAGE": {
     "actions_gaspillage_autre": {
       "is_required": false,
-      "verbose_name": "autre action contre le gaspillage alimentaire"
+      "verbose_name": "Autre action contre le gaspillage alimentaire"
     },
     "actions_gaspillage_realisees": {
       "is_required": false,
@@ -1933,7 +1933,7 @@
     },
     "information_supports_autre": {
       "is_required": false,
-      "verbose_name": "autre communication utilisée"
+      "verbose_name": "Autre communication utilisée"
     }
   },
   "PLASTIQUE": {
