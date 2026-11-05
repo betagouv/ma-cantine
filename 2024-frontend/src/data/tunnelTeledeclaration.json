@@ -297,15 +297,17 @@
         ]
       },
       "donsFrequence": {
+        "hint": "En dons/an",
         "type": "number",
         "required": false
       },
       "donsQuantite": {
+        "hint": "En kg/an",
         "type": "number",
         "required": false
       },
       "donsTypeDenrees": {
-        "type": "text",
+        "type": "textarea",
         "required": false
       }
     }

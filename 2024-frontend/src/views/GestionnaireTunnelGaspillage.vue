@@ -48,10 +48,16 @@ const updateDonsConvention = (value) => {
       vous n’êtes pas soumis à l’obligation.
     </p>
     <TunnelTeledeclarationField name="donsConvention" @change="updateDonsConvention" />
-    <template v-if="hasDonsConvention">
-      <TunnelTeledeclarationField name="donsFrequence" />
-      <TunnelTeledeclarationField name="donsQuantite" />
-      <TunnelTeledeclarationField name="donsTypeDenrees" />
-    </template>
+    <div v-if="hasDonsConvention" class="fr-grid-row fr-grid-row--gutters">
+      <div class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField name="donsFrequence" />
+      </div>
+      <div class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField name="donsQuantite" />
+      </div>
+      <div class="fr-col-12">
+        <TunnelTeledeclarationField name="donsTypeDenrees" />
+      </div>
+    </div>
   </div>
 </template>

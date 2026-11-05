@@ -2337,12 +2337,12 @@
     "dons_frequence": {
       "index_code": 6,
       "is_required": false,
-      "verbose_name": "Fréquence de dons, en dons/an"
+      "verbose_name": "Fréquence de dons"
     },
     "dons_quantite": {
       "index_code": 7,
       "is_required": false,
-      "verbose_name": "Quantité de denrées données, en kg/an"
+      "verbose_name": "Quantité de denrées données"
     },
     "dons_type_denrees": {
       "index_code": 8,
