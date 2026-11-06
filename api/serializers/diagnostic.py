@@ -128,6 +128,11 @@ READ_ONLY_FIELDS = (
 class DiagnosticSerializer(serializers.ModelSerializer):
     is_teledeclared = serializers.BooleanField(read_only=True)  # property
     is_filled = serializers.BooleanField(read_only=True)
+    is_filled_approvisionnement = serializers.BooleanField(read_only=True)  # property
+    is_filled_gaspillage = serializers.BooleanField(read_only=True)  # property
+    is_filled_diversification = serializers.BooleanField(read_only=True)  # property
+    is_filled_plastique = serializers.BooleanField(read_only=True)  # property
+    is_filled_information = serializers.BooleanField(read_only=True)  # property
 
     v1_choice_value_aliases = V1_CHOICE_VALUE_ALIASES  # emptied in the v2 serializers
 
@@ -257,6 +262,7 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
             + Diagnostic.TELEDECLARATION_FIELDS
             + Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS
             + Diagnostic.OTHER_COMPUTED_FIELDS
+            + Diagnostic.IS_FILLED_VOLET_FIELDS
             + [
                 "generated_from_purchases",
                 "status",

@@ -963,6 +963,32 @@ class DiagnosticVoletApprovisionnementMixin(models.Model):
     class Meta:
         abstract = True
 
+    @property
+    def is_filled_approvisionnement(self) -> bool:
+        return bool(self.is_filled_simple or self.is_filled_complete)
+
+    @property
+    def is_filled_simple(self) -> bool:
+        return (
+            self.is_diagnostic_type_simple
+            and self.valeur_totale_is_filled
+            and all(
+                getattr(self, field) is not None
+                for field in get_teledeclaration_fields_required(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
+            )
+        )
+
+    @property
+    def is_filled_complete(self) -> bool:
+        return (
+            self.is_diagnostic_type_complete
+            and self.valeur_totale_is_filled
+            and all(
+                getattr(self, field) is not None
+                for field in get_teledeclaration_fields_required(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
+            )
+        )
+
     def populate_required_fields_with_zero(self):
         """
         Default any still-empty required appro field (for this diagnostic's year & diagnostic_type) to 0.

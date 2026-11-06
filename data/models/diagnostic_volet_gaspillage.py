@@ -2,7 +2,10 @@ from django.core.validators import MaxValueValidator
 from django.db import models
 
 from data.fields import ChoiceArrayField
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all_years
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all_years,
+    get_teledeclaration_fields_required,
+)
 from data.utils import make_optional_positive_decimal_field
 
 
@@ -114,3 +117,9 @@ class DiagnosticVoletGaspillageMixin(models.Model):
 
     class Meta:
         abstract = True
+
+    @property
+    def is_filled_gaspillage(self) -> bool:
+        return all(
+            getattr(self, field) is not None for field in get_teledeclaration_fields_required(self.year, "GASPILLAGE")
+        )

@@ -200,6 +200,9 @@ class DiagnosticV2RetrieveUpdateApiTest(APITestCase):
                 self.assertIn(camelize(field), body)
         self.assertIn("pourcentageBio", body)
         self.assertNotIn("dechetsTotal", body)  # only in 2023
+        self.assertEqual(body["isFilledApprovisionnement"], body["isFilled"])
+        for field in Diagnostic.IS_FILLED_VOLET_FIELDS[1:]:  # non-appro volets: no required fields yet (champs.json)
+            self.assertTrue(body[camelize(field)])
 
     @authenticate
     def test_cannot_update_diagnostic_with_put(self):
