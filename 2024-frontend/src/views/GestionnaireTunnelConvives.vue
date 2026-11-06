@@ -34,13 +34,13 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">
         <ul class="ma-cantine--unstyled-list fr-mb-0">
-          <li class="fr-mb-1w">Référence juridique : article L. 230-5-1 du Code rural et de la pêche maritime.</li>
           <li class="fr-mb-1w">
             <a :href="documentation.informationsConvivesObligations" target="_blank">Consultez la documentation</a>
           </li>
-          <li>
+          <li class="fr-mb-1w">
             <a href="https://france-pat.fr/carte-des-pats/" target="_blank">Carte des PAT - France PAT</a>
           </li>
+          <li>Référence juridique : article L. 230-5-1 du Code rural et de la pêche maritime.</li>
         </ul>
       </AppHelpCard>
     </div>
