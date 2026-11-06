@@ -284,6 +284,116 @@
       }
     }
   },
+  "plastique": {
+    "groups": {
+      "plastique": [
+        "plastiqueBouteilleBoissonRemplace",
+        "plastiqueBouteilleRemplace",
+        "plastiqueUstensileRemplace",
+        "plastiqueVaisselleJetableRemplace",
+        "plastiqueContenantRemplace",
+        "plastiqueContenantEmporterRemplace"
+      ]
+    },
+    "fields": {
+      "plastiqueBouteilleBoissonRemplace": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "plastiqueBouteilleRemplace": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "plastiqueUstensileRemplace": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "plastiqueVaisselleJetableRemplace": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "plastiqueContenantRemplace": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "plastiqueContenantEmporterRemplace": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      }
+    }
+  },
   "gaspillage": {
     "groups": {
       "gaspillage": [

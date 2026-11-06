@@ -2380,33 +2380,33 @@
   "PLASTIQUE": {
     "plastique_bouteille_boisson_remplace": {
       "index_code": 1,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "La cantine est équipée d’au moins une fontaine d'eau potable accessible au public et n’assure aucune distribution gratuite de bouteilles en plastique contenant des boissons"
     },
     "plastique_bouteille_remplace": {
       "index_code": 2,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "Aucune bouteilles d’eau plate en plastique n’est commercialisée/distribuée au sein de la cantine"
     },
     "plastique_contenant_emporter_remplace": {
       "index_code": 6,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "Des contenants réutilisables ou composés de matières recyclables sont proposés pour l’ensemble des repas à emporter"
     },
     "plastique_contenant_remplace": {
       "index_code": 5,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "Aucun contenant alimentaire de cuisson, de réchauffage et de service en plastique sont utilisés au sein de l’établissement"
     },
     "plastique_ustensile_remplace": {
       "index_code": 3,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "Aucun ustensiles à usage unique en matière plastique est utilisé/distribué au sein de l’établissement"
     },
     "plastique_vaisselle_jetable_remplace": {
       "index_code": 4,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "Aucune vaisselle jetable n’est utilisée pour les repas consommés sur place (gobelets, assiette et récipients, couverts)"
     }
   }
 }
