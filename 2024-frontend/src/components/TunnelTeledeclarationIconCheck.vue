@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 
-const props = defineProps(["fieldsGroupName", "fieldsPageName", "slug"])
+const props = defineProps(["fieldsGroupName", "fieldsPageName", "slug", "volet"])
 const teledeclarationStore = useStoreTeledeclaration()
 const errors = computed(() => {
   if (props.fieldsGroupName) return teledeclarationStore.getErrorsGroup(props.fieldsGroupName)
@@ -10,8 +10,12 @@ const errors = computed(() => {
   return []
 })
 const hasErrors = computed(() => errors.value && errors.value?.length > 0)
-const isVisited = computed(() => !props.slug || teledeclarationStore.isPageVisited(props.slug))
-const isValid = computed(() => isVisited.value && !hasErrors.value)
+const isVisited = computed(() => {
+  if (props.volet) return teledeclarationStore.isVoletVisited(props.volet)
+  return !props.slug || teledeclarationStore.isPageVisited(props.slug)
+})
+const isClean = computed(() => !props.volet || teledeclarationStore.isVoletClean(props.volet))
+const isValid = computed(() => isVisited.value && isClean.value && !hasErrors.value)
 
 const iconClasses = computed(() => {
   const color = isValid.value ? "default--success" : "mention--grey"
