@@ -18,27 +18,25 @@ const emporterDocumentation = `${documentation.interdictionPlastique}#1-5-vente-
     <div class="fr-col-12 fr-col-md-7">
       <p class="fr-mb-1w">
         La mise à disposition de gobelets, de verres et d’assiettes jetables et de nombreux ustensiles en plastique à
-        usage unique est interdite pour tout type de restauration (y compris commerciale). Des mesures spécifiques
-        concernent tout ou partie des secteurs de restauration collective :
+        usage unique est interdite pour tout type de restauration (y compris commerciale). Des mesures spécifiques concernent tout ou partie des secteurs de restauration collective :
       </p>
       <ul class="fr-mb-0">
         <li>
-          <span class="fr-text--bold">l’ensemble des établissements recevant du public :</span> l'obligation de mise à
-          disposition d’une fontaine à eau potable et l’interdiction de distribution gratuite de bouteilles en plastique
+          <span class="fr-text--bold">pour l’ensemble des établissements recevant du public :</span> l'obligation de mettre à
+          disposition une fontaine à eau potable et l'interdiction de distribuer gratuitement des bouteilles en plastique
         </li>
         <li>
-          <span class="fr-text--bold">cantines scolaires :</span> fin de l'utilisation des bouteilles d'eau plate en
+          <span class="fr-text--bold">pour les cantines scolaires :</span> la fin de l'utilisation des bouteilles d'eau plate en
           plastique
         </li>
         <li>
-          <span class="fr-text--bold">toute cantine pouvant restaurer simultanément au moins 20 personnes :</span>
-          obligation d'utiliser de la vaisselle réemployable
+          <span class="fr-text--bold">pour toute cantine pouvant restaurer simultanément au moins 20 personnes :</span>
+          l'obligation d'utiliser de la vaisselle réemployable
         </li>
         <li>
-          <span class="fr-text--bold">Fin de l’utilisation de contenants de cuisson, réchauffe et service :</span> tous
-          les établissements scolaires et universitaires, accueil d’enfants de moins de six ans, services de pédiatrie,
-          d'obstétrique et de maternité, centres périnataux de proximité, services de protection maternelle et
-          infantile.
+          <span class="fr-text--bold">pour tous les établissements scolaires et universitaires, accueil d’enfants de moins de six ans, services de pédiatrie,
+          d'obstétrique et de maternité, centres périnataux de proximité, services de protection maternelle et infantile :</span>
+          la fin de l’utilisation de contenants de cuisson, réchauffe et service.
         </li>
       </ul>
     </div>
