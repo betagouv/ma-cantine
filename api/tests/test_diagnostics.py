@@ -666,6 +666,11 @@ class DiagnosticDetailApiTest(APITestCase):
         self.assertEqual(body["id"], self.diagnostic.id)
         self.assertEqual(body["year"], 2025)
         self.assertEqual(body["canteenId"], self.canteen.id)
+        self.assertEqual(body["isFilledApprovisionnement"], body["isFilled"])
+        self.assertTrue(body["isFilledGaspillage"])
+        self.assertTrue(body["isFilledDiversification"])
+        self.assertTrue(body["isFilledPlastique"])
+        self.assertTrue(body["isFilledInformation"])
 
     def test_retrieve_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")

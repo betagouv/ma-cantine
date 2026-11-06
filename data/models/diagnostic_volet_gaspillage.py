@@ -114,3 +114,8 @@ class DiagnosticVoletGaspillageMixin(models.Model):
 
     class Meta:
         abstract = True
+
+    @property
+    def is_filled_gaspillage(self) -> bool:
+        # TODO: define the volet's filled rule (no required fields in teledeclaration/<year>/champs.json yet)
+        return True
