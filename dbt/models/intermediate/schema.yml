@@ -48,3 +48,88 @@ models:
               values: ['acces', 'renouvellement']
       - name: jeton_id
         description: Identifiant du jeton, unique pour un type de jeton donné.
+
+  - name: int_campagne_statut
+    description: >
+      Une ligne par cantine active et par année de données, toutes cantines : statut de
+      télédéclaration de l'année. Sert au pilotage SPE (mart_spe_pilotage) et servira au pilotage
+      général de la campagne. Années : toutes celles des diagnostics, aucune écrite en dur ; une
+      nouvelle année apparaît dès son premier brouillon. Population : cantines actives aujourd'hui
+      (mart_cantines), pour toutes les années. Statut, dans cet ordre : Télédéclaré si une TD est
+      retenue dans mart_teledeclarations (mêmes règles que l'observatoire ; couvre les satellites
+      dont la TD a été générée par leur groupe ou leur cuisine centrale) ; En cours si un
+      diagnostic de l'année est en brouillon ou rouvert en correction, sur la cantine ou sur son
+      groupe ; À relancer sinon. Les dates sont à l'heure de Paris et permettent de recalculer le
+      statut à une date passée dans Metabase (filtre « État au »).
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - canteen_id
+            - annee
+    columns:
+      - name: canteen_id
+        description: Identifiant de la cantine.
+      - name: annee
+        description: Année des données déclarées (année n, campagne en n+1).
+      - name: statut_td
+        description: Télédéclaré, En cours ou À relancer (voir la description du modèle).
+      - name: teledeclaration_id
+        description: Identifiant de la TD retenue dans mart_teledeclarations, vide sinon.
+      - name: date_teledeclaration
+        description: Jour de la télédéclaration retenue, à l'heure de Paris.
+      - name: teledeclaration_mode
+        description: Mode de télédéclaration de la TD retenue.
+      - name: td_complete
+        description: >
+          Vrai si la cantine était renseignée au moment de la TD retenue
+          (`cantine_is_filled` de mart_teledeclarations).
+      - name: td_generee_par_groupe
+        description: Vrai si la TD retenue a été générée depuis celle du groupe de la cantine.
+      - name: en_cours_via_groupe
+        description: >
+          Vrai si la cantine est En cours seulement grâce au diagnostic en brouillon ou en
+          correction de son groupe.
+      - name: td_deposee_non_retenue
+        description: >
+          Vrai si une TD a été déposée pour l'année (statut SUBMITTED) mais écartée de
+          mart_teledeclarations (valeurs aberrantes, valeur totale vide…).
+      - name: date_debut_saisie
+        description: >
+          Jour de création du premier diagnostic de l'année, sur la cantine ou sur son groupe,
+          à l'heure de Paris.
+      - name: date_modification_saisie
+        description: >
+          Jour de dernière modification d'un diagnostic de l'année en brouillon ou en correction,
+          sur la cantine ou sur son groupe, à l'heure de Paris.
+
+  - name: int_spe_perimetre
+    description: >
+      Une ligne par restaurant du périmètre État (cantine active). Périmètre = cantines avec une
+      administration de tutelle (tutelle actuelle de mart_cantines, Justice éclatée en
+      justice_pjj / justice_hors_pjj), corrigé par les corrections téléversées par la DGAL dans
+      Metabase (SIRET exclus, ou forcés sur une tutelle ; une correction s'applique à toutes les
+      cantines qui partagent le SIRET). Règle de la vue 3 du rapport SPE 2026 : les
+      établissements publics (EPA, EPIC) de tutelle ATE sont exclus. Libellé, pôle ministériel et
+      ordre d'affichage : référentiel des tutelles téléversé par la DGAL (stg_spe_tutelles).
+    columns:
+      - name: canteen_id
+        description: Identifiant de la cantine.
+        tests:
+          - unique
+          - not_null
+      - name: perimetre_key
+        description: >
+          Tutelle, en code dbt de `ministere_tutelle` : celle forcée par une correction de la
+          DGAL, sinon celle de la cantine.
+      - name: perimetre_lib
+        description: Libellé de la tutelle (référentiel de la DGAL).
+      - name: pole_ministeriel
+        description: >
+          Pôle ministériel de la tutelle (référentiel de la DGAL) ; vide si la tutelle en est
+          absente.
+      - name: ordre_affichage
+        description: Ordre d'affichage de la tutelle (référentiel de la DGAL).
+      - name: est_armees
+        description: Vrai pour les restaurants des Armées (tableau de bord séparé).
+      - name: est_corrige
+        description: Vrai si le SIRET de la cantine figure dans les corrections de la DGAL.
