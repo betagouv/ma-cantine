@@ -317,9 +317,11 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
         self.assertEqual(body["diagnosticType"], Diagnostic.DiagnosticType.SIMPLE)
         self.assertIn("valeurBio", body)
         self.assertIn("pourcentageBio", body)  # stats (read-only)
+        self.assertEqual(body["isFilledApprovisionnement"], body["isFilled"])
         self.assertNotIn("valeurViandesVolaillesBio", body)  # COMPLETE only
         self.assertNotIn("nombreRepasAn", body)  # since 2026
         self.assertNotIn("diagnosticGaspillageRealise", body)  # other volet
+        self.assertNotIn("isFilledGaspillage", body)  # other volet
 
         response = self.client.get(self._url(self.diagnostic_complete_2026))
 
@@ -548,11 +550,14 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
                 self.assertEqual(body["id"], self.diagnostic.id)
                 self.assertEqual(body["year"], 2025)
                 self.assertIn(field, body)
+                self.assertTrue(body[camelize(f"is_filled_{volet}")])  # no required fields yet
                 # other volets
                 self.assertNotIn("valeurTotale", body)
+                self.assertNotIn("isFilledApprovisionnement", body)
                 for other_volet, other_field, *_ in self.VOLETS:
                     if other_volet != volet:
                         self.assertNotIn(other_field, body)
+                        self.assertNotIn(camelize(f"is_filled_{other_volet}"), body)
 
     @authenticate
     def test_update_volet(self):
