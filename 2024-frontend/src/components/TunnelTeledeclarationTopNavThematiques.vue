@@ -2,14 +2,13 @@
 import { computed } from "vue"
 import { useRouter, useRoute } from "vue-router"
 
-const emit = defineEmits(["save"])
+const emit = defineEmits(["save", "quit"])
 const router = useRouter()
 const route = useRoute()
 const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
 const isLast = computed(() => route.meta.isLast)
 
-const quit = () => router.push({ name: "GestionnaireCantineTeledeclarationEnCours" })
 const goToPrevious = () => router.push({ name: previousStep.value })
 const saveAndGoNext = () => {
   if (isLast.value) emit("save", "GestionnaireCantineTeledeclarationEnCours")
@@ -22,8 +21,8 @@ const saveAndGoNext = () => {
     <DsfrButton
       tertiary
       icon="fr-icon-close-line"
-      label="Quitter la télédéclaration"
-      @click="quit()"
+      label="Quitter sans enregistrer"
+      @click="emit('quit', 'GestionnaireCantineTeledeclarationEnCours')"
     />
     <DsfrButton
       v-if="previousStep"
