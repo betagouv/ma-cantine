@@ -48,12 +48,12 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
       </AppHelpCard>
     </div>
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Diversification des sources de protéines" :documentation="diversificationDocumentation" />
     <TunnelTeledeclarationField name="planDiversificationEnPlace" />
     <TunnelTeledeclarationField name="planDiversificationActions" />
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Menu végétarien" :documentation="menuVegetarienDocumentation" />
     <TunnelTeledeclarationField name="serviceType" />
     <TunnelTeledeclarationField name="menuVegetarienFrequence" />

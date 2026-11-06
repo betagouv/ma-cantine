@@ -236,6 +236,12 @@ address {
     resize: vertical !important;
 }
 
+.ma-cantine--fields-group > :last-child .fr-fieldset,
+.ma-cantine--fields-group > :last-child .fr-fieldset__element:last-child,
+.ma-cantine--fields-group > :last-child .fr-fieldset__element--inline {
+    margin-bottom: 0;
+}
+
 /* DISPLAY */
 .ma-cantine--z-index-1 {
     position: relative;

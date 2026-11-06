@@ -33,14 +33,14 @@ const updateDonsConvention = (value) => {
       </AppHelpCard>
     </div>
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="1. Diagnostic et plan d’actions" />
     <TunnelTeledeclarationField name="diagnosticGaspillageRealise" />
     <TunnelTeledeclarationField name="planGaspillageEnPlace" />
     <TunnelTeledeclarationField name="actionsGaspillageRealisees" />
     <TunnelTeledeclarationField name="actionsGaspillageAutre" />
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="2. Dons alimentaires" />
     <p>
       L’obligation de proposer une convention de don à une association d’aide alimentaire habilitée s’applique

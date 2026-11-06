@@ -45,7 +45,7 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
       </AppHelpCard>
     </div>
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle
       title="Information des usagers sur la part des produits EGalim (dont bio) et/ou issus de Projets alimentaires territoriaux"
       :documentation="informationEgalimDocumentation"
@@ -55,7 +55,7 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
     <TunnelTeledeclarationField name="informationPartEgalim" />
     <TunnelTeledeclarationField name="informationPartPat" />
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Information nutritionnelle" :documentation="informationNutritionnelleDocumentation" />
     <TunnelTeledeclarationField name="informationConsultationQualite" />
   </div>
