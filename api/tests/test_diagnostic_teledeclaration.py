@@ -12,6 +12,7 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclarationPdfView
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
 
 
 class DiagnosticToTeledeclareApiTest(APITestCase):
@@ -381,6 +382,30 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
     def test_can_teledeclare_during_campaign(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
         self.canteen_site.managers.add(authenticate.user)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_create",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
+        self.assertTrue(diagnostic.is_teledeclared)
+
+    @authenticate
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_can_teledeclare_without_volet_thematique(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_site, year=2026, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        self.canteen_site.managers.add(authenticate.user)
+        # empty the required fields of the volets thématiques
+        for volet in ["GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]:
+            for field in get_teledeclaration_fields_required(2026, volet):
+                setattr(diagnostic, field, None)
+        diagnostic.save()
 
         response = self.client.post(
             reverse(
