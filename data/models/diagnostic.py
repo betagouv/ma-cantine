@@ -1071,7 +1071,7 @@ class Diagnostic(
         self.clear_appro_fields_not_matching_diagnostic_type()
         if not skip_validations:
             # field validations
-            self.is_clean(raise_errors=True)
+            self.is_clean(raise_errors=True, skip_thematiques=True)
 
         from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 
