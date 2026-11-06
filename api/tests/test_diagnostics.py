@@ -1581,6 +1581,11 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["isEmpty"], False)
         self.assertEqual(body["isFilled"], True)
+        self.assertEqual(body["isFilledApprovisionnement"], True)
+        self.assertEqual(body["isFilledGaspillage"], True)  # no required fields yet
+        self.assertEqual(body["isFilledDiversification"], True)  # no required fields yet
+        self.assertEqual(body["isFilledPlastique"], True)  # no required fields yet
+        self.assertEqual(body["isFilledInformation"], True)  # no required fields yet
         self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
         self.assertEqual(body["isTeledeclared"], False)
@@ -1613,6 +1618,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["isEmpty"], True)
         self.assertEqual(body["isFilled"], False)
+        self.assertEqual(body["isFilledApprovisionnement"], False)
         self.assertEqual(body["isClean"], False)
         self.assertNotEqual(body["errors"], {})
         self.assertEqual(body["errors"]["valeurTotale"], ["Ce champ est obligatoire pour l'année 2025."])

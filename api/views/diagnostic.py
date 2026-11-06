@@ -225,6 +225,7 @@ class DiagnosticCheckView(APIView):
         response = {
             "is_empty": is_empty,
             "is_filled": is_filled,
+            **{field: getattr(diagnostic, field) for field in Diagnostic.IS_FILLED_VOLET_FIELDS},
             "is_clean": is_clean,
             "errors": errors,
             "is_teledeclared": is_teledeclared,
