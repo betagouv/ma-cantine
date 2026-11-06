@@ -190,6 +190,100 @@
       "valeurBoissonsPerformance": {"shortName": "Boissons"}
     }
   },
+  "information": {
+    "groups": {
+      "information": [
+        "informationAffichagePermanent",
+        "informationElectroniqueAnnuelle",
+        "informationPartEgalim",
+        "informationPartPat",
+        "informationConsultationQualite"
+      ]
+    },
+    "fields": {
+      "informationAffichagePermanent": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "informationElectroniqueAnnuelle": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "informationPartEgalim": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "informationPartPat": {
+        "type": "radio",
+        "inline": true,
+        "tooltip": "Pour en savoir plus sur le (ou les) PAT de votre territoire, retrouvez le lien vers la carte des PAT en haut de la page.",
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "informationConsultationQualite": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      }
+    }
+  },
   "gaspillage": {
     "groups": {
       "gaspillage": [

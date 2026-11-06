@@ -167,6 +167,7 @@ const tunnelRoutes = {
           component: GestionnaireTunnelConvives,
           meta: {
             title: "Information des convives",
+            volet: "information",
             next: "GestionnaireTunnelGaspillage",
           },
         },

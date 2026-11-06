@@ -2353,28 +2353,28 @@
   "INFORMATION": {
     "information_affichage_permanent": {
       "index_code": 1,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "La cantine dispose d’un affichage permanent à l’entrée du restaurant, actualisé au moins une fois par an et lisible par tous les usagers"
     },
     "information_consultation_qualite": {
       "index_code": 5,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "L’établissement informe et consulte régulièrement, par tous moyens utiles, les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis"
     },
     "information_electronique_annuelle": {
       "index_code": 2,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "Une communication électronique (réalisée au moins une fois par an) permet aux usagers d’être informés"
     },
     "information_part_egalim": {
       "index_code": 3,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "Vous communiquez sur la part de produits EGalim (dont bio) entrant dans la composition des repas servis"
     },
     "information_part_pat": {
       "index_code": 4,
-      "is_required": false,
-      "verbose_name": ""
+      "is_required": true,
+      "verbose_name": "Vous communiquez sur la part des produits issus de Projets alimentaires territoriaux (PAT)"
     }
   },
   "PLASTIQUE": {

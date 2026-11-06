@@ -1,7 +1,8 @@
 import {
     APPROVISIONNEMENT as configFields,
     DIVERSIFICATION as configDiversificationFields,
-    GASPILLAGE as configGaspillageFields
+    GASPILLAGE as configGaspillageFields,
+    INFORMATION as configInformationFields
 } from "../../../teledeclaration/2026/champs.json"
 import tunnelTeledeclaration from "@/data/tunnelTeledeclaration.json"
 import { toCamelCase } from "@/utils.js"
@@ -62,11 +63,13 @@ const groups = {
   ...tunnelTeledeclaration.approvisionnement.groups,
   ...tunnelTeledeclaration.diversification.groups,
   ...tunnelTeledeclaration.gaspillage.groups,
+  ...tunnelTeledeclaration.information.groups,
 }
 const fields = {
   ...generateApproFields(),
   ...generateVoletFields(configDiversificationFields, tunnelTeledeclaration.diversification.fields),
   ...generateVoletFields(configGaspillageFields, tunnelTeledeclaration.gaspillage.fields),
+  ...generateVoletFields(configInformationFields, tunnelTeledeclaration.information.fields),
 }
 
 /* Actions */
@@ -99,6 +102,8 @@ const getFieldsListFromPage = (pageName, canteenIsGroupe, diagnosticIsSimple) =>
       return groups.localCircuitCourt
     case pageName === "GestionnaireTunnelGaspillage":
       return groups.gaspillage
+    case pageName === "GestionnaireTunnelConvives":
+      return groups.information
     default:
       return []
   }

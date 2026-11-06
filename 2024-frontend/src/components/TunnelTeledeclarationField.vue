@@ -100,7 +100,7 @@ const resetField = () => {
       <DsfrRadioButtonSet v-if="isRadio" v-model="field" :legend="label" :name="props.name" :required="isRequired" :options="radioOptions" :inline="isInline" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint" />
       <DsfrCheckboxSet v-if="isCheckboxes" v-model="field" :legend="label" :required="isRequired" :options="checkboxesOptions" :inline="isInline" @update:modelValue="fieldChange" :error-message="selectErrorMessage" />
     </div>
-    <div v-if="tooltip" class="tunnel-teledeclaration-field__tooltip fr-pl-1w fr-pb-1v">
+    <div v-if="tooltip" class="tunnel-teledeclaration-field__tooltip fr-pl-1w fr-pb-1v" :class="{ 'tunnel-teledeclaration-field__tooltip--bottom': isNumber || isText }">
       <AppTooltipHover :content="tooltip" />
     </div>
   </div>
@@ -110,7 +110,11 @@ const resetField = () => {
 .tunnel-teledeclaration-field {
 
   &__tooltip {
-    align-self: flex-end;
+    align-self: flex-start;
+
+    &--bottom {
+      align-self: flex-end;
+    }
   }
 
   &__autofill-group {

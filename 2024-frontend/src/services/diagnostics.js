@@ -1,6 +1,7 @@
 import { verifyResponse } from "@/services/api.js"
 
 const voletsApiUrl = {
+  information: "information-convives",
   gaspillage: "gaspillage-alimentaire",
   diversification: "menus-vegetariens",
 }
