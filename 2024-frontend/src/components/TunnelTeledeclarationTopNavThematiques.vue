@@ -1,15 +1,12 @@
 <script setup>
 import { computed } from "vue"
-import { useRouter, useRoute } from "vue-router"
+import { useRoute } from "vue-router"
 
 const emit = defineEmits(["save", "quit"])
-const router = useRouter()
 const route = useRoute()
-const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
 const isLast = computed(() => route.meta.isLast)
 
-const goToPrevious = () => router.push({ name: previousStep.value })
 const saveAndGoNext = () => {
   if (isLast.value) emit("save", "GestionnaireCantineTeledeclarationEnCours")
   else emit("save", nextStep.value)
@@ -23,13 +20,6 @@ const saveAndGoNext = () => {
       icon="fr-icon-close-line"
       label="Quitter sans enregistrer"
       @click="emit('quit', 'GestionnaireCantineTeledeclarationEnCours')"
-    />
-    <DsfrButton
-      v-if="previousStep"
-      secondary
-      icon="fr-icon-arrow-left-s-first-line"
-      label="Revenir au volet précédent"
-      @click="goToPrevious()"
     />
     <DsfrButton
       icon="fr-icon-arrow-right-line"
