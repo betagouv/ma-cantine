@@ -128,6 +128,7 @@ class DiagnosticVoletApprovisionnementV2Serializer(BaseDiagnosticVoletV2Serializ
         model = Diagnostic
         fields = (
             VOLET_META_FIELDS
+            + ["is_filled_approvisionnement"]
             + ["diagnostic_type"]
             + get_teledeclaration_fields_all_years("APPROVISIONNEMENT")
             + Diagnostic.APPRO_STATS_FIELDS
@@ -147,7 +148,12 @@ class DiagnosticVoletGaspillageV2Serializer(BaseDiagnosticVoletV2Serializer):
 
     class Meta:
         model = Diagnostic
-        fields = VOLET_META_FIELDS + get_teledeclaration_fields_all_years("GASPILLAGE") + ["tunnel_waste"]
+        fields = (
+            VOLET_META_FIELDS
+            + ["is_filled_gaspillage"]
+            + get_teledeclaration_fields_all_years("GASPILLAGE")
+            + ["tunnel_waste"]
+        )
 
 
 @set_help_text_from_verbose_name
@@ -158,7 +164,10 @@ class DiagnosticVoletDiversificationV2Serializer(BaseDiagnosticVoletV2Serializer
     class Meta:
         model = Diagnostic
         fields = (
-            VOLET_META_FIELDS + get_teledeclaration_fields_all_years("DIVERSIFICATION") + ["tunnel_diversification"]
+            VOLET_META_FIELDS
+            + ["is_filled_diversification"]
+            + get_teledeclaration_fields_all_years("DIVERSIFICATION")
+            + ["tunnel_diversification"]
         )
 
 
@@ -169,7 +178,12 @@ class DiagnosticVoletPlastiqueV2Serializer(BaseDiagnosticVoletV2Serializer):
 
     class Meta:
         model = Diagnostic
-        fields = VOLET_META_FIELDS + get_teledeclaration_fields_all_years("PLASTIQUE") + ["tunnel_plastic"]
+        fields = (
+            VOLET_META_FIELDS
+            + ["is_filled_plastique"]
+            + get_teledeclaration_fields_all_years("PLASTIQUE")
+            + ["tunnel_plastic"]
+        )
 
 
 @set_help_text_from_verbose_name
@@ -179,7 +193,12 @@ class DiagnosticVoletInformationV2Serializer(BaseDiagnosticVoletV2Serializer):
 
     class Meta:
         model = Diagnostic
-        fields = VOLET_META_FIELDS + get_teledeclaration_fields_all_years("INFORMATION") + ["tunnel_info"]
+        fields = (
+            VOLET_META_FIELDS
+            + ["is_filled_information"]
+            + get_teledeclaration_fields_all_years("INFORMATION")
+            + ["tunnel_info"]
+        )
 
 
 VOLET_V2_SERIALIZERS = [
