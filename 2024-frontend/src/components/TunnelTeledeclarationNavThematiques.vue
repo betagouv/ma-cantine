@@ -14,7 +14,7 @@ const saveAndGoNext = () => {
 </script>
 
 <template>
-  <nav class="tunnel-teledeclaration-top-nav-thematiques ma-cantine--sticky__top fr-background-default--grey fr-py-2w">
+  <nav class="tunnel-teledeclaration-nav-thematiques ma-cantine--sticky__top fr-background-default--grey fr-py-2w">
     <DsfrButton
       tertiary
       no-outline
@@ -32,7 +32,7 @@ const saveAndGoNext = () => {
 </template>
 
 <style lang="scss" scoped>
-.tunnel-teledeclaration-top-nav-thematiques {
+.tunnel-teledeclaration-nav-thematiques {
   display: flex;
   justify-content: flex-end;
   align-items: center;

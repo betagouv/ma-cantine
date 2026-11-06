@@ -5,9 +5,9 @@ import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
-import TunnelTeledeclarationTopNavApprovisionnements from "@/components/TunnelTeledeclarationTopNavApprovisionnements.vue"
-import TunnelTeledeclarationTopNavThematiques from "@/components/TunnelTeledeclarationTopNavThematiques.vue"
-import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
+import TunnelTeledeclarationNavApprovisionnements from "@/components/TunnelTeledeclarationNavApprovisionnements.vue"
+import TunnelTeledeclarationNavThematiques from "@/components/TunnelTeledeclarationNavThematiques.vue"
+import TunnelTeledeclarationNavSidebar from "@/components/TunnelTeledeclarationNavSidebar.vue"
 import TunnelTeledeclarationModalErrors from "@/components/TunnelTeledeclarationModalErrors.vue"
 import TunnelTeledeclarationModalQuit from "@/components/TunnelTeledeclarationModalQuit.vue"
 
@@ -123,11 +123,11 @@ const goTo = (page) => {
   <div v-if="canteenInformations" class="ma-cantine--sticky__container ma-cantine--stick-to-footer">
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
-        <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" @save="save" :displayTeledeclaredBadge="isTeledeclared" />
+        <TunnelTeledeclarationNavSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" @save="save" :displayTeledeclaredBadge="isTeledeclared" />
       </div>
       <div class="fr-col-12 fr-col-md-9">
-        <TunnelTeledeclarationTopNavThematiques v-if="isThematiques" @save="save" />
-        <TunnelTeledeclarationTopNavApprovisionnements v-else-if="!hideTopNav" @save="save" />
+        <TunnelTeledeclarationNavThematiques v-if="isThematiques" @save="save" />
+        <TunnelTeledeclarationNavApprovisionnements v-else-if="!hideTopNav" @save="save" />
         <div class="fr-mt-2w fr-pl-0 fr-pl-md-4w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
           <RouterView :key="forceRender" />
