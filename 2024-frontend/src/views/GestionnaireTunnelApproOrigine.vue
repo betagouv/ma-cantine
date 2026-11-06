@@ -68,7 +68,7 @@ const europeFields = [
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="1. Achats origine France" />
+    <TunnelTeledeclarationGroupTitle title="Achats origine France" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12">
         <TunnelTeledeclarationField name="valeurFrance" />
@@ -81,7 +81,7 @@ const europeFields = [
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="2. Achats origine Europe (hors France)" />
+    <TunnelTeledeclarationGroupTitle title="Achats origine Europe (hors France)" />
     <p>
       Achats issus de l'Union Européenne (UE), de l'Espace économique européen (EEE) ou des pays et territoires
       d'outre-mer (PTOM)
@@ -98,7 +98,7 @@ const europeFields = [
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="3. Total des achats par famille de produits" />
+    <TunnelTeledeclarationGroupTitle title="Total des achats par famille de produits" />
     <p>
       Pour chaque famille de produits renseignée dans les achats origine France ou origine Europe (hors France), vous
       devez déclarer le total des achats de cette famille.
