@@ -3,6 +3,7 @@
     "valeur_autres_aocaop_igp_stg": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 35,
           "is_present": true,
           "is_required": true
         },
@@ -16,6 +17,7 @@
     "valeur_autres_bio": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 18,
           "is_present": true,
           "is_required": true
         },
@@ -29,6 +31,7 @@
     "valeur_autres_bio_dont_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 19,
           "is_present": true,
           "is_required": false
         },
@@ -42,6 +45,7 @@
     "valeur_autres_circuit_court": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 115,
           "is_present": true,
           "is_required": true
         },
@@ -55,6 +59,7 @@
     "valeur_autres_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 67,
           "is_present": true,
           "is_required": true
         },
@@ -68,6 +73,7 @@
     "valeur_autres_externalites": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 83,
           "is_present": true,
           "is_required": true
         },
@@ -81,6 +87,7 @@
     "valeur_autres_fermier": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 75,
           "is_present": true,
           "is_required": true
         },
@@ -94,10 +101,12 @@
     "valeur_autres_france": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 107,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 19,
           "is_present": true,
           "is_required": false
         }
@@ -107,6 +116,7 @@
     "valeur_autres_hve": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 43,
           "is_present": true,
           "is_required": true
         },
@@ -120,6 +130,7 @@
     "valeur_autres_label_rouge": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 27,
           "is_present": true,
           "is_required": true
         },
@@ -133,6 +144,7 @@
     "valeur_autres_local": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 123,
           "is_present": true,
           "is_required": true
         },
@@ -146,6 +158,7 @@
     "valeur_autres_non_egalim": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 99,
           "is_present": true,
           "is_required": true
         },
@@ -159,6 +172,7 @@
     "valeur_autres_peche_durable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 51,
           "is_present": true,
           "is_required": false
         },
@@ -172,6 +186,7 @@
     "valeur_autres_performance": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 91,
           "is_present": true,
           "is_required": true
         },
@@ -185,6 +200,7 @@
     "valeur_autres_rup": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 59,
           "is_present": true,
           "is_required": true
         },
@@ -202,6 +218,7 @@
           "is_required": false
         },
         "SIMPLE": {
+          "import_order": 2,
           "is_present": true,
           "is_required": true
         }
@@ -215,6 +232,7 @@
           "is_required": false
         },
         "SIMPLE": {
+          "import_order": 3,
           "is_present": true,
           "is_required": false
         }
@@ -224,6 +242,7 @@
     "valeur_boissons_aocaop_igp_stg": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 34,
           "is_present": true,
           "is_required": true
         },
@@ -237,6 +256,7 @@
     "valeur_boissons_bio": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 16,
           "is_present": true,
           "is_required": true
         },
@@ -250,6 +270,7 @@
     "valeur_boissons_bio_dont_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 17,
           "is_present": true,
           "is_required": false
         },
@@ -263,6 +284,7 @@
     "valeur_boissons_circuit_court": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 114,
           "is_present": true,
           "is_required": true
         },
@@ -276,6 +298,7 @@
     "valeur_boissons_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 66,
           "is_present": true,
           "is_required": true
         },
@@ -289,6 +312,7 @@
     "valeur_boissons_externalites": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 82,
           "is_present": true,
           "is_required": true
         },
@@ -302,6 +326,7 @@
     "valeur_boissons_fermier": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 74,
           "is_present": true,
           "is_required": true
         },
@@ -315,10 +340,12 @@
     "valeur_boissons_france": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 106,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 18,
           "is_present": true,
           "is_required": false
         }
@@ -328,6 +355,7 @@
     "valeur_boissons_hve": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 42,
           "is_present": true,
           "is_required": true
         },
@@ -341,6 +369,7 @@
     "valeur_boissons_label_rouge": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 26,
           "is_present": true,
           "is_required": false
         },
@@ -354,6 +383,7 @@
     "valeur_boissons_local": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 122,
           "is_present": true,
           "is_required": true
         },
@@ -367,6 +397,7 @@
     "valeur_boissons_non_egalim": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 98,
           "is_present": true,
           "is_required": true
         },
@@ -380,6 +411,7 @@
     "valeur_boissons_peche_durable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 50,
           "is_present": true,
           "is_required": false
         },
@@ -393,6 +425,7 @@
     "valeur_boissons_performance": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 90,
           "is_present": true,
           "is_required": true
         },
@@ -406,6 +439,7 @@
     "valeur_boissons_rup": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 58,
           "is_present": true,
           "is_required": true
         },
@@ -419,6 +453,7 @@
     "valeur_boulangerie_aocaop_igp_stg": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 33,
           "is_present": true,
           "is_required": true
         },
@@ -432,6 +467,7 @@
     "valeur_boulangerie_bio": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 14,
           "is_present": true,
           "is_required": true
         },
@@ -445,6 +481,7 @@
     "valeur_boulangerie_bio_dont_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 15,
           "is_present": true,
           "is_required": false
         },
@@ -458,6 +495,7 @@
     "valeur_boulangerie_circuit_court": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 113,
           "is_present": true,
           "is_required": true
         },
@@ -471,6 +509,7 @@
     "valeur_boulangerie_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 65,
           "is_present": true,
           "is_required": true
         },
@@ -484,6 +523,7 @@
     "valeur_boulangerie_externalites": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 81,
           "is_present": true,
           "is_required": true
         },
@@ -497,6 +537,7 @@
     "valeur_boulangerie_fermier": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 73,
           "is_present": true,
           "is_required": true
         },
@@ -510,10 +551,12 @@
     "valeur_boulangerie_france": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 105,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 17,
           "is_present": true,
           "is_required": false
         }
@@ -523,6 +566,7 @@
     "valeur_boulangerie_hve": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 41,
           "is_present": true,
           "is_required": true
         },
@@ -536,6 +580,7 @@
     "valeur_boulangerie_label_rouge": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 25,
           "is_present": true,
           "is_required": true
         },
@@ -549,6 +594,7 @@
     "valeur_boulangerie_local": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 121,
           "is_present": true,
           "is_required": true
         },
@@ -562,6 +608,7 @@
     "valeur_boulangerie_non_egalim": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 97,
           "is_present": true,
           "is_required": true
         },
@@ -575,6 +622,7 @@
     "valeur_boulangerie_peche_durable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 49,
           "is_present": true,
           "is_required": false
         },
@@ -588,6 +636,7 @@
     "valeur_boulangerie_performance": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 89,
           "is_present": true,
           "is_required": true
         },
@@ -601,6 +650,7 @@
     "valeur_boulangerie_rup": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 57,
           "is_present": true,
           "is_required": true
         },
@@ -614,6 +664,7 @@
     "valeur_charcuterie_aocaop_igp_stg": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 31,
           "is_present": true,
           "is_required": true
         },
@@ -627,6 +678,7 @@
     "valeur_charcuterie_bio": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 10,
           "is_present": true,
           "is_required": true
         },
@@ -640,6 +692,7 @@
     "valeur_charcuterie_bio_dont_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 11,
           "is_present": true,
           "is_required": false
         },
@@ -653,6 +706,7 @@
     "valeur_charcuterie_circuit_court": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 111,
           "is_present": true,
           "is_required": true
         },
@@ -666,6 +720,7 @@
     "valeur_charcuterie_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 63,
           "is_present": true,
           "is_required": true
         },
@@ -679,6 +734,7 @@
     "valeur_charcuterie_externalites": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 79,
           "is_present": true,
           "is_required": true
         },
@@ -692,6 +748,7 @@
     "valeur_charcuterie_fermier": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 71,
           "is_present": true,
           "is_required": true
         },
@@ -705,10 +762,12 @@
     "valeur_charcuterie_france": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 103,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 15,
           "is_present": true,
           "is_required": false
         }
@@ -718,6 +777,7 @@
     "valeur_charcuterie_hve": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 39,
           "is_present": true,
           "is_required": true
         },
@@ -731,6 +791,7 @@
     "valeur_charcuterie_label_rouge": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 23,
           "is_present": true,
           "is_required": true
         },
@@ -744,6 +805,7 @@
     "valeur_charcuterie_local": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 119,
           "is_present": true,
           "is_required": true
         },
@@ -757,6 +819,7 @@
     "valeur_charcuterie_non_egalim": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 95,
           "is_present": true,
           "is_required": true
         },
@@ -770,6 +833,7 @@
     "valeur_charcuterie_peche_durable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 47,
           "is_present": true,
           "is_required": false
         },
@@ -783,6 +847,7 @@
     "valeur_charcuterie_performance": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 87,
           "is_present": true,
           "is_required": true
         },
@@ -796,6 +861,7 @@
     "valeur_charcuterie_rup": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 55,
           "is_present": true,
           "is_required": true
         },
@@ -813,6 +879,7 @@
           "is_required": false
         },
         "SIMPLE": {
+          "import_order": 6,
           "is_present": true,
           "is_required": true
         }
@@ -826,6 +893,7 @@
           "is_required": false
         },
         "SIMPLE": {
+          "import_order": 7,
           "is_present": true,
           "is_required": false
         }
@@ -839,6 +907,7 @@
           "is_required": false
         },
         "SIMPLE": {
+          "import_order": 5,
           "is_present": true,
           "is_required": false
         }
@@ -848,6 +917,7 @@
     "valeur_fruits_et_legumes_aocaop_igp_stg": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 30,
           "is_present": true,
           "is_required": true
         },
@@ -861,6 +931,7 @@
     "valeur_fruits_et_legumes_bio": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 8,
           "is_present": true,
           "is_required": true
         },
@@ -874,6 +945,7 @@
     "valeur_fruits_et_legumes_bio_dont_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 9,
           "is_present": true,
           "is_required": false
         },
@@ -887,6 +959,7 @@
     "valeur_fruits_et_legumes_circuit_court": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 110,
           "is_present": true,
           "is_required": true
         },
@@ -900,6 +973,7 @@
     "valeur_fruits_et_legumes_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 62,
           "is_present": true,
           "is_required": true
         },
@@ -913,6 +987,7 @@
     "valeur_fruits_et_legumes_externalites": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 78,
           "is_present": true,
           "is_required": true
         },
@@ -926,6 +1001,7 @@
     "valeur_fruits_et_legumes_fermier": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 70,
           "is_present": true,
           "is_required": true
         },
@@ -939,10 +1015,12 @@
     "valeur_fruits_et_legumes_france": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 102,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 14,
           "is_present": true,
           "is_required": false
         }
@@ -952,6 +1030,7 @@
     "valeur_fruits_et_legumes_hve": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 38,
           "is_present": true,
           "is_required": true
         },
@@ -965,6 +1044,7 @@
     "valeur_fruits_et_legumes_label_rouge": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 22,
           "is_present": true,
           "is_required": true
         },
@@ -978,6 +1058,7 @@
     "valeur_fruits_et_legumes_local": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 118,
           "is_present": true,
           "is_required": true
         },
@@ -991,6 +1072,7 @@
     "valeur_fruits_et_legumes_non_egalim": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 94,
           "is_present": true,
           "is_required": true
         },
@@ -1004,6 +1086,7 @@
     "valeur_fruits_et_legumes_peche_durable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 46,
           "is_present": true,
           "is_required": false
         },
@@ -1017,6 +1100,7 @@
     "valeur_fruits_et_legumes_performance": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 86,
           "is_present": true,
           "is_required": true
         },
@@ -1030,6 +1114,7 @@
     "valeur_fruits_et_legumes_rup": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 54,
           "is_present": true,
           "is_required": true
         },
@@ -1043,10 +1128,12 @@
     "valeur_produits_de_la_mer": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 3,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 11,
           "is_present": true,
           "is_required": false
         }
@@ -1056,6 +1143,7 @@
     "valeur_produits_de_la_mer_aocaop_igp_stg": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 29,
           "is_present": true,
           "is_required": true
         },
@@ -1069,6 +1157,7 @@
     "valeur_produits_de_la_mer_bio": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 6,
           "is_present": true,
           "is_required": true
         },
@@ -1082,6 +1171,7 @@
     "valeur_produits_de_la_mer_bio_dont_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 7,
           "is_present": true,
           "is_required": false
         },
@@ -1095,6 +1185,7 @@
     "valeur_produits_de_la_mer_circuit_court": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 109,
           "is_present": true,
           "is_required": true
         },
@@ -1108,6 +1199,7 @@
     "valeur_produits_de_la_mer_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 61,
           "is_present": true,
           "is_required": true
         },
@@ -1125,6 +1217,7 @@
           "is_required": false
         },
         "SIMPLE": {
+          "import_order": 12,
           "is_present": true,
           "is_required": false
         }
@@ -1134,6 +1227,7 @@
     "valeur_produits_de_la_mer_externalites": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 77,
           "is_present": true,
           "is_required": true
         },
@@ -1147,6 +1241,7 @@
     "valeur_produits_de_la_mer_fermier": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 69,
           "is_present": true,
           "is_required": true
         },
@@ -1160,10 +1255,12 @@
     "valeur_produits_de_la_mer_france": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 101,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 13,
           "is_present": true,
           "is_required": false
         }
@@ -1173,6 +1270,7 @@
     "valeur_produits_de_la_mer_hve": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 37,
           "is_present": true,
           "is_required": true
         },
@@ -1186,6 +1284,7 @@
     "valeur_produits_de_la_mer_label_rouge": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 21,
           "is_present": true,
           "is_required": true
         },
@@ -1199,6 +1298,7 @@
     "valeur_produits_de_la_mer_local": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 117,
           "is_present": true,
           "is_required": true
         },
@@ -1212,6 +1312,7 @@
     "valeur_produits_de_la_mer_non_egalim": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 93,
           "is_present": true,
           "is_required": true
         },
@@ -1225,6 +1326,7 @@
     "valeur_produits_de_la_mer_peche_durable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 45,
           "is_present": true,
           "is_required": false
         },
@@ -1238,6 +1340,7 @@
     "valeur_produits_de_la_mer_performance": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 85,
           "is_present": true,
           "is_required": true
         },
@@ -1251,6 +1354,7 @@
     "valeur_produits_de_la_mer_rup": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 53,
           "is_present": true,
           "is_required": true
         },
@@ -1264,6 +1368,7 @@
     "valeur_produits_laitiers_aocaop_igp_stg": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 32,
           "is_present": true,
           "is_required": true
         },
@@ -1277,6 +1382,7 @@
     "valeur_produits_laitiers_bio": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 12,
           "is_present": true,
           "is_required": true
         },
@@ -1290,6 +1396,7 @@
     "valeur_produits_laitiers_bio_dont_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 13,
           "is_present": true,
           "is_required": false
         },
@@ -1303,6 +1410,7 @@
     "valeur_produits_laitiers_circuit_court": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 112,
           "is_present": true,
           "is_required": true
         },
@@ -1316,6 +1424,7 @@
     "valeur_produits_laitiers_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 64,
           "is_present": true,
           "is_required": true
         },
@@ -1329,6 +1438,7 @@
     "valeur_produits_laitiers_externalites": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 80,
           "is_present": true,
           "is_required": true
         },
@@ -1342,6 +1452,7 @@
     "valeur_produits_laitiers_fermier": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 72,
           "is_present": true,
           "is_required": true
         },
@@ -1355,10 +1466,12 @@
     "valeur_produits_laitiers_france": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 104,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 16,
           "is_present": true,
           "is_required": false
         }
@@ -1368,6 +1481,7 @@
     "valeur_produits_laitiers_hve": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 40,
           "is_present": true,
           "is_required": true
         },
@@ -1381,6 +1495,7 @@
     "valeur_produits_laitiers_label_rouge": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 24,
           "is_present": true,
           "is_required": true
         },
@@ -1394,6 +1509,7 @@
     "valeur_produits_laitiers_local": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 120,
           "is_present": true,
           "is_required": true
         },
@@ -1407,6 +1523,7 @@
     "valeur_produits_laitiers_non_egalim": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 96,
           "is_present": true,
           "is_required": true
         },
@@ -1420,6 +1537,7 @@
     "valeur_produits_laitiers_peche_durable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 48,
           "is_present": true,
           "is_required": false
         },
@@ -1433,6 +1551,7 @@
     "valeur_produits_laitiers_performance": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 88,
           "is_present": true,
           "is_required": true
         },
@@ -1446,6 +1565,7 @@
     "valeur_produits_laitiers_rup": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 56,
           "is_present": true,
           "is_required": true
         },
@@ -1463,6 +1583,7 @@
           "is_required": false
         },
         "SIMPLE": {
+          "import_order": 4,
           "is_present": true,
           "is_required": true
         }
@@ -1472,10 +1593,12 @@
     "valeur_totale": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 1,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 1,
           "is_present": true,
           "is_required": true
         }
@@ -1485,10 +1608,12 @@
     "valeur_viandes_volailles": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 2,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 8,
           "is_present": true,
           "is_required": true
         }
@@ -1498,6 +1623,7 @@
     "valeur_viandes_volailles_aocaop_igp_stg": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 28,
           "is_present": true,
           "is_required": true
         },
@@ -1511,6 +1637,7 @@
     "valeur_viandes_volailles_bio": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 4,
           "is_present": true,
           "is_required": true
         },
@@ -1524,6 +1651,7 @@
     "valeur_viandes_volailles_bio_dont_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 5,
           "is_present": true,
           "is_required": false
         },
@@ -1537,6 +1665,7 @@
     "valeur_viandes_volailles_circuit_court": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 108,
           "is_present": true,
           "is_required": true
         },
@@ -1550,6 +1679,7 @@
     "valeur_viandes_volailles_commerce_equitable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 60,
           "is_present": true,
           "is_required": true
         },
@@ -1567,6 +1697,7 @@
           "is_required": false
         },
         "SIMPLE": {
+          "import_order": 9,
           "is_present": true,
           "is_required": true
         }
@@ -1576,6 +1707,7 @@
     "valeur_viandes_volailles_externalites": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 76,
           "is_present": true,
           "is_required": true
         },
@@ -1589,6 +1721,7 @@
     "valeur_viandes_volailles_fermier": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 68,
           "is_present": true,
           "is_required": true
         },
@@ -1602,10 +1735,12 @@
     "valeur_viandes_volailles_france": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 100,
           "is_present": true,
           "is_required": true
         },
         "SIMPLE": {
+          "import_order": 10,
           "is_present": true,
           "is_required": false
         }
@@ -1615,6 +1750,7 @@
     "valeur_viandes_volailles_hve": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 36,
           "is_present": true,
           "is_required": true
         },
@@ -1628,6 +1764,7 @@
     "valeur_viandes_volailles_label_rouge": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 20,
           "is_present": true,
           "is_required": true
         },
@@ -1641,6 +1778,7 @@
     "valeur_viandes_volailles_local": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 116,
           "is_present": true,
           "is_required": true
         },
@@ -1654,6 +1792,7 @@
     "valeur_viandes_volailles_non_egalim": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 92,
           "is_present": true,
           "is_required": true
         },
@@ -1667,6 +1806,7 @@
     "valeur_viandes_volailles_peche_durable": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 44,
           "is_present": true,
           "is_required": false
         },
@@ -1680,6 +1820,7 @@
     "valeur_viandes_volailles_performance": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 84,
           "is_present": true,
           "is_required": true
         },
@@ -1693,6 +1834,7 @@
     "valeur_viandes_volailles_rup": {
       "diagnostic_type": {
         "COMPLETE": {
+          "import_order": 52,
           "is_present": true,
           "is_required": true
         },

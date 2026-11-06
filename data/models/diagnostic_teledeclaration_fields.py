@@ -1,3 +1,9 @@
+import json
+from functools import cache
+from pathlib import Path
+
+from django.conf import settings
+
 TELEDECLARATION_FIELDS = {
     2021: {
         "APPROVISIONNEMENT": {
@@ -1573,6 +1579,39 @@ TELEDECLARATION_FIELDS = {
         },
     },
 }
+
+
+@cache
+def get_teledeclaration_config(year):
+    """
+    The fields configuration of a bilan year: teledeclaration/<year>/champs.json
+    """
+    config_path = Path(settings.BASE_DIR) / "teledeclaration" / str(year) / "champs.json"
+    return json.loads(config_path.read_text(encoding="utf-8"))
+
+
+def get_teledeclaration_import_fields(year, diagnostic_type):
+    """
+    The appro fields of an import, in the order of its columns
+    """
+    fields = get_teledeclaration_config(year)["APPROVISIONNEMENT"]
+    present_fields = [
+        name for name, field in fields.items() if field["diagnostic_type"][diagnostic_type]["is_present"]
+    ]
+    return sorted(present_fields, key=lambda name: fields[name]["diagnostic_type"][diagnostic_type]["import_order"])
+
+
+def get_teledeclaration_import_fields_required(year, diagnostic_type):
+    fields = get_teledeclaration_config(year)["APPROVISIONNEMENT"]
+    return [
+        name
+        for name in get_teledeclaration_import_fields(year, diagnostic_type)
+        if fields[name]["diagnostic_type"][diagnostic_type]["is_required"]
+    ]
+
+
+def get_teledeclaration_verbose_name(year, volet, field_name):
+    return get_teledeclaration_config(year)[volet][field_name]["verbose_name"]
 
 
 def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=False):

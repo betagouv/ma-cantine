@@ -31,7 +31,7 @@
       "description": "",
       "example": "1234",
       "name": "nombre_repas_an",
-      "title": "Nombre de repas par an",
+      "title": "Nombre de couverts par an",
       "type": "integer"
     },
     {
@@ -41,7 +41,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_totale",
-      "title": "Valeur totale annuelle HT",
+      "title": "Total des achats alimentaires toutes familles de produits confondues",
       "type": "number"
     },
     {
@@ -51,7 +51,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles",
-      "title": "Valeur totale (HT) viandes et volailles fraiches ou surgelées",
+      "title": "Total des achats pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
@@ -61,7 +61,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer",
-      "title": "Valeur totale (HT) poissons et produits aquatiques",
+      "title": "Total des achats pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
@@ -71,7 +71,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes",
-      "title": "Valeur totale (HT) fruits et légumes frais ou surgelés",
+      "title": "Total des achats pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
@@ -81,7 +81,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie",
-      "title": "Valeur totale (HT) charcuterie",
+      "title": "Total des achats pour la famille Charcuteries",
       "type": "number"
     },
     {
@@ -91,7 +91,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers",
-      "title": "Valeur totale (HT) BOF (Produits laitiers, beurre et œufs)",
+      "title": "Total des achats pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
@@ -101,7 +101,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie",
-      "title": "Valeur totale (HT) boulangerie / pâtisserie fraîches",
+      "title": "Total des achats pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
@@ -111,7 +111,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons",
-      "title": "Valeur totale (HT) boissons",
+      "title": "Total des achats pour la famille Boissons",
       "type": "number"
     },
     {
@@ -121,35 +121,35 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres",
-      "title": "Valeur totale (HT) autres produits frais, surgelés et d'épicerie",
+      "title": "Total des achats pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_europe",
-      "title": "Origine UE (hors France) - Valeur annuelle HT",
+      "title": "Total des achats origine Europe (hors France) toutes familles de produits confondues",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_france",
-      "title": "Origine France - Valeur annuelle HT",
+      "title": "Total des achats origine France toutes familles de produits confondues",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_circuit_court",
-      "title": "Circuit court - Valeur annuelle HT",
+      "title": "Total des achats en circuit court toutes familles de produits confondues",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_local",
-      "title": "Local - Valeur annuelle HT",
+      "title": "Total des achats en produits « locaux » toutes familles de produits confondues",
       "type": "number"
     },
     {
@@ -159,14 +159,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_bio",
-      "title": "Viandes et volailles fraîches et surgelées, Bio",
+      "title": "Total des achats bio ou en conversion pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_bio_dont_commerce_equitable",
-      "title": "Viandes et volailles fraîches et surgelées, Bio dont commerce équitable",
+      "title": "Dont total des achats bio issus du commerce équitable pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
@@ -176,14 +176,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_bio",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Bio",
+      "title": "Total des achats bio ou en conversion pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_bio_dont_commerce_equitable",
-      "title": "Produits aquatiques frais et surgelés, Bio dont commerce équitable",
+      "title": "Dont total des achats bio issus du commerce équitable pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
@@ -193,14 +193,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_bio",
-      "title": "Fruits et légumes frais et surgelés, Bio",
+      "title": "Total des achats bio ou en conversion pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_bio_dont_commerce_equitable",
-      "title": "Fruits et légumes frais et surgelés, Bio dont commerce équitable",
+      "title": "Dont total des achats bio issus du commerce équitable pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
@@ -210,14 +210,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_bio",
-      "title": "Charcuterie, Bio",
+      "title": "Total des achats bio ou en conversion pour la famille Charcuteries",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_bio_dont_commerce_equitable",
-      "title": "Charcuterie, Bio dont commerce équitable",
+      "title": "Dont total des achats bio issus du commerce équitable pour la famille Charcuteries",
       "type": "number"
     },
     {
@@ -227,14 +227,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_bio",
-      "title": "BOF (Produits laitiers, beurre et œufs), Bio",
+      "title": "Total des achats bio ou en conversion pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_bio_dont_commerce_equitable",
-      "title": "BOF (Produits laitiers, beurre et œufs), Bio dont commerce équitable",
+      "title": "Dont total des achats bio issus du commerce équitable pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
@@ -244,14 +244,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_bio",
-      "title": "Boulangerie / Pâtisserie fraîches, Bio",
+      "title": "Total des achats bio ou en conversion pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_bio_dont_commerce_equitable",
-      "title": "Boulangerie / Pâtisserie fraîches, Bio dont commerce équitable",
+      "title": "Dont total des achats bio issus du commerce équitable pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
@@ -261,14 +261,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_bio",
-      "title": "Boissons, Bio",
+      "title": "Total des achats bio ou en conversion pour la famille Boissons",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_bio_dont_commerce_equitable",
-      "title": "Boissons, Bio dont commerce équitable",
+      "title": "Dont total des achats bio issus du commerce équitable pour la famille Boissons",
       "type": "number"
     },
     {
@@ -278,14 +278,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_bio",
-      "title": "Autres produits frais, surgelés et d'épicerie, Bio",
+      "title": "Total des achats bio ou en conversion pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_bio_dont_commerce_equitable",
-      "title": "Autres produits frais, surgelés et d'épicerie, Bio dont commerce équitable",
+      "title": "Dont total des achats bio issus du commerce équitable pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
@@ -295,7 +295,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_label_rouge",
-      "title": "Viandes et volailles fraîches et surgelées, Label rouge",
+      "title": "Total des achats Label Rouge pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
@@ -305,7 +305,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_label_rouge",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Label rouge",
+      "title": "Total des achats Label Rouge pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
@@ -315,7 +315,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_label_rouge",
-      "title": "Fruits et légumes frais et surgelés, Label rouge",
+      "title": "Total des achats Label Rouge pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
@@ -325,7 +325,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_label_rouge",
-      "title": "Charcuterie, Label rouge",
+      "title": "Total des achats Label Rouge pour la famille Charcuteries",
       "type": "number"
     },
     {
@@ -335,7 +335,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_label_rouge",
-      "title": "BOF (Produits laitiers, beurre et œufs), Label rouge",
+      "title": "Total des achats Label Rouge pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
@@ -345,7 +345,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_label_rouge",
-      "title": "Boulangerie / Pâtisserie fraîches, Label rouge",
+      "title": "Total des achats Label Rouge pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
@@ -355,175 +355,175 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_label_rouge",
-      "title": "Autres produits frais, surgelés et d'épicerie, Label rouge",
+      "title": "Total des achats Label Rouge pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_aocaop",
-      "title": "Viandes et volailles fraîches et surgelées, AOC / AOP",
+      "title": "Total des achats AOC / AOP pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_aocaop",
-      "title": "Poissons, produits de la mer et de l'aquaculture, AOC / AOP",
+      "title": "Total des achats AOC / AOP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_aocaop",
-      "title": "Fruits et légumes frais et surgelés, AOC / AOP",
+      "title": "Total des achats AOC / AOP pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_aocaop",
-      "title": "Charcuterie, AOC / AOP",
+      "title": "Total des achats AOC / AOP pour la famille Charcuteries",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_aocaop",
-      "title": "BOF (Produits laitiers, beurre et œufs), AOC / AOP",
+      "title": "Total des achats AOC / AOP pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_aocaop",
-      "title": "Boulangerie / Pâtisserie fraîches, AOC / AOP",
+      "title": "Total des achats AOC / AOP pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_aocaop",
-      "title": "Boissons, AOC / AOP",
+      "title": "Total des achats AOC / AOP pour la famille Boissons",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_aocaop",
-      "title": "Autres produits frais, surgelés et d'épicerie, AOC / AOP",
+      "title": "Total des achats AOC / AOP pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_igp",
-      "title": "Viandes et volailles fraîches et surgelées, IGP",
+      "title": "Total des achats IGP pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_igp",
-      "title": "Poissons, produits de la mer et de l'aquaculture, IGP",
+      "title": "Total des achats IGP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_igp",
-      "title": "Fruits et légumes frais et surgelés, IGP",
+      "title": "Total des achats IGP pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_igp",
-      "title": "Charcuterie, IGP",
+      "title": "Total des achats IGP pour la famille Charcuteries",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_igp",
-      "title": "BOF (Produits laitiers, beurre et œufs), IGP",
+      "title": "Total des achats IGP pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_igp",
-      "title": "Boulangerie / Pâtisserie fraîches, IGP",
+      "title": "Total des achats IGP pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_igp",
-      "title": "Boissons, IGP",
+      "title": "Total des achats IGP pour la famille Boissons",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_igp",
-      "title": "Autres produits frais, surgelés et d'épicerie, IGP",
+      "title": "Total des achats IGP pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_stg",
-      "title": "Viandes et volailles fraîches et surgelées, STG",
+      "title": "Total des achats STG pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_stg",
-      "title": "Poissons, produits de la mer et de l'aquaculture, STG",
+      "title": "Total des achats STG pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_stg",
-      "title": "Fruits et légumes frais et surgelés, STG",
+      "title": "Total des achats STG pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_stg",
-      "title": "Charcuterie, STG",
+      "title": "Total des achats STG pour la famille Charcuteries",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_stg",
-      "title": "BOF (Produits laitiers, beurre et œufs), STG",
+      "title": "Total des achats STG pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_stg",
-      "title": "Boulangerie / Pâtisserie fraîches, STG",
+      "title": "Total des achats STG pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_stg",
-      "title": "Boissons, STG",
+      "title": "Total des achats STG pour la famille Boissons",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_stg",
-      "title": "Autres produits frais, surgelés et d'épicerie, STG",
+      "title": "Total des achats STG pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
@@ -533,7 +533,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_hve",
-      "title": "Viandes et volailles fraîches et surgelées, Haute valeur environnementale",
+      "title": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
@@ -543,7 +543,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_hve",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Haute valeur environnementale",
+      "title": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
@@ -553,7 +553,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_hve",
-      "title": "Fruits et légumes frais et surgelés, Haute valeur environnementale",
+      "title": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
@@ -563,7 +563,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_hve",
-      "title": "Charcuterie, Haute valeur environnementale",
+      "title": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Charcuteries",
       "type": "number"
     },
     {
@@ -573,7 +573,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_hve",
-      "title": "BOF (Produits laitiers, beurre et œufs), Haute valeur environnementale",
+      "title": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
@@ -583,7 +583,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_hve",
-      "title": "Boulangerie / Pâtisserie fraîches, Haute valeur environnementale",
+      "title": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
@@ -593,7 +593,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_hve",
-      "title": "Boissons, Haute valeur environnementale",
+      "title": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Boissons",
       "type": "number"
     },
     {
@@ -603,14 +603,14 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_hve",
-      "title": "Autres produits frais, surgelés et d'épicerie, Haute valeur environnementale",
+      "title": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_peche_durable",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Pêche durable",
+      "title": "Total des achats Écolabel pêche durable, 7°bis ou 7°ter pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
@@ -620,7 +620,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_rup",
-      "title": "Viandes et volailles fraîches et surgelées, Région ultrapériphérique",
+      "title": "Total des achats RUP pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
@@ -630,7 +630,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_rup",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Région ultrapériphérique",
+      "title": "Total des achats RUP pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
@@ -640,7 +640,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_rup",
-      "title": "Fruits et légumes frais et surgelés, Région ultrapériphérique",
+      "title": "Total des achats RUP pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
@@ -650,7 +650,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_rup",
-      "title": "Charcuterie, Région ultrapériphérique",
+      "title": "Total des achats RUP pour la famille Charcuteries",
       "type": "number"
     },
     {
@@ -660,7 +660,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_rup",
-      "title": "BOF (Produits laitiers, beurre et œufs), Région ultrapériphérique",
+      "title": "Total des achats RUP pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
@@ -670,7 +670,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_rup",
-      "title": "Boulangerie / Pâtisserie fraîches, Région ultrapériphérique",
+      "title": "Total des achats RUP pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
@@ -680,7 +680,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_rup",
-      "title": "Boissons, Région ultrapériphérique",
+      "title": "Total des achats RUP pour la famille Boissons",
       "type": "number"
     },
     {
@@ -690,7 +690,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_rup",
-      "title": "Autres produits frais, surgelés et d'épicerie, Région ultrapériphérique",
+      "title": "Total des achats RUP pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
@@ -700,7 +700,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_commerce_equitable",
-      "title": "Viandes et volailles fraîches et surgelées, Commerce équitable",
+      "title": "Total des achats non bio issus du commerce équitable pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
@@ -710,7 +710,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_commerce_equitable",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Commerce équitable",
+      "title": "Total des achats non bio issus du commerce équitable pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
@@ -720,7 +720,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_commerce_equitable",
-      "title": "Fruits et légumes frais et surgelés, Commerce équitable",
+      "title": "Total des achats non bio issus du commerce équitable pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
@@ -730,7 +730,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_commerce_equitable",
-      "title": "Charcuterie, Commerce équitable",
+      "title": "Total des achats non bio issus du commerce équitable pour la famille Charcuteries",
       "type": "number"
     },
     {
@@ -740,7 +740,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_commerce_equitable",
-      "title": "BOF (Produits laitiers, beurre et œufs), Commerce équitable",
+      "title": "Total des achats non bio issus du commerce équitable pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
@@ -750,7 +750,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_commerce_equitable",
-      "title": "Boulangerie / Pâtisserie fraîches, Commerce équitable",
+      "title": "Total des achats non bio issus du commerce équitable pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
@@ -760,7 +760,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_commerce_equitable",
-      "title": "Boissons, Commerce équitable",
+      "title": "Total des achats non bio issus du commerce équitable pour la famille Boissons",
       "type": "number"
     },
     {
@@ -770,7 +770,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_commerce_equitable",
-      "title": "Autres produits frais, surgelés et d'épicerie, Commerce équitable",
+      "title": "Total des achats non bio issus du commerce équitable pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
@@ -780,7 +780,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_fermier",
-      "title": "Viandes et volailles fraîches et surgelées, Fermier",
+      "title": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
@@ -790,7 +790,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_fermier",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Fermier",
+      "title": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
@@ -800,7 +800,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_fermier",
-      "title": "Fruits et légumes frais et surgelés, Fermier",
+      "title": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
@@ -810,7 +810,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_fermier",
-      "title": "Charcuterie, Fermier",
+      "title": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Charcuteries",
       "type": "number"
     },
     {
@@ -820,7 +820,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_fermier",
-      "title": "BOF (Produits laitiers, beurre et œufs), Fermier",
+      "title": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
@@ -830,7 +830,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_fermier",
-      "title": "Boulangerie / Pâtisserie fraîches, Fermier",
+      "title": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
@@ -840,7 +840,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_fermier",
-      "title": "Boissons, Fermier",
+      "title": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Boissons",
       "type": "number"
     },
     {
@@ -850,343 +850,343 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_fermier",
-      "title": "Autres produits frais, surgelés et d'épicerie, Fermier",
+      "title": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_externalites",
-      "title": "Viandes et volailles fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_externalites",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_externalites",
-      "title": "Fruits et légumes frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_externalites",
-      "title": "Charcuterie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Charcuteries",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_externalites",
-      "title": "BOF (Produits laitiers, beurre et œufs), Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_externalites",
-      "title": "Boulangerie / Pâtisserie fraîches, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_externalites",
-      "title": "Boissons, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Boissons",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_externalites",
-      "title": "Autres produits frais, surgelés et d'épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie",
+      "title": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_performance",
-      "title": "Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_performance",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_performance",
-      "title": "Fruits et légumes frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_performance",
-      "title": "Charcuterie, Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Charcuteries",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_performance",
-      "title": "BOF (Produits laitiers, beurre et œufs), Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_performance",
-      "title": "Boulangerie / Pâtisserie fraîches, Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_performance",
-      "title": "Boissons, Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Boissons",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_performance",
-      "title": "Autres produits frais, surgelés et d'épicerie, Produits acquis sur la base de leurs performances en matière environnementale",
+      "title": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_europe",
-      "title": "Viandes et volailles fraîches et surgelées, Origine UE (hors France)",
+      "title": "Total des achats origine Europe (hors France) pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_europe",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Origine UE (hors France)",
+      "title": "Total des achats origine Europe (hors France) pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_europe",
-      "title": "Fruits et légumes frais et surgelés, Origine UE (hors France)",
+      "title": "Total des achats origine Europe (hors France) pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_europe",
-      "title": "Charcuterie, Origine UE (hors France)",
+      "title": "Total des achats origine Europe (hors France) pour la famille Charcuteries",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_europe",
-      "title": "BOF (Produits laitiers, beurre et œufs), Origine UE (hors France)",
+      "title": "Total des achats origine Europe (hors France) pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_europe",
-      "title": "Boulangerie / Pâtisserie fraîches, Origine UE (hors France)",
+      "title": "Total des achats origine Europe (hors France) pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_europe",
-      "title": "Boissons, Origine UE (hors France)",
+      "title": "Total des achats origine Europe (hors France) pour la famille Boissons",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_europe",
-      "title": "Autres produits frais, surgelés et d'épicerie, Origine UE (hors France)",
+      "title": "Total des achats origine Europe (hors France) pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_france",
-      "title": "Viandes et volailles fraîches et surgelées, Origine France",
+      "title": "Total des achats origine France pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_france",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France",
+      "title": "Total des achats origine France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_france",
-      "title": "Fruits et légumes frais et surgelés, Origine France",
+      "title": "Total des achats origine France pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_france",
-      "title": "Charcuterie, Origine France",
+      "title": "Total des achats origine France pour la famille Charcuteries",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_france",
-      "title": "BOF (Produits laitiers, beurre et œufs), Origine France",
+      "title": "Total des achats origine France pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_france",
-      "title": "Boulangerie / Pâtisserie fraîches, Origine France",
+      "title": "Total des achats origine France pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_france",
-      "title": "Boissons, Origine France",
+      "title": "Total des achats origine France pour la famille Boissons",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_france",
-      "title": "Autres produits frais, surgelés et d'épicerie, Origine France",
+      "title": "Total des achats origine France pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_circuit_court",
-      "title": "Viandes et volailles fraîches et surgelées, Origine France (dont circuit-court)",
+      "title": "Total des achats circuit court pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_circuit_court",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France (dont circuit-court)",
+      "title": "Total des achats circuit court pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_circuit_court",
-      "title": "Fruits et légumes frais et surgelés, Origine France (dont circuit-court)",
+      "title": "Total des achats circuit court pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_circuit_court",
-      "title": "Charcuterie, Origine France (dont circuit-court)",
+      "title": "Total des achats circuit court pour la famille Charcuteries",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_circuit_court",
-      "title": "BOF (Produits laitiers, beurre et œufs), Origine France (dont circuit-court)",
+      "title": "Total des achats circuit court pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_circuit_court",
-      "title": "Boulangerie / Pâtisserie fraîches, Origine France (dont circuit-court)",
+      "title": "Total des achats circuit court pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_circuit_court",
-      "title": "Boissons, Origine France (dont circuit-court)",
+      "title": "Total des achats circuit court pour la famille Boissons",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_circuit_court",
-      "title": "Autres produits frais, surgelés et d'épicerie, Origine France (dont circuit-court)",
+      "title": "Total des achats circuit court pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_viandes_volailles_local",
-      "title": "Viandes et volailles fraîches et surgelées, Origine France (dont local)",
+      "title": "Total des achats locaux pour la famille Viandes et volailles fraîches ou surgelées",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_local",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Origine France (dont local)",
+      "title": "Total des achats locaux pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_fruits_et_legumes_local",
-      "title": "Fruits et légumes frais et surgelés, Origine France (dont local)",
+      "title": "Total des achats locaux pour la famille Fruits et légumes frais et surgelés",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_charcuterie_local",
-      "title": "Charcuterie, Origine France (dont local)",
+      "title": "Total des achats locaux pour la famille Charcuteries",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_laitiers_local",
-      "title": "BOF (Produits laitiers, beurre et œufs), Origine France (dont local)",
+      "title": "Total des achats locaux pour la famille BOF (Produits laitiers, beurre et œufs)",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boulangerie_local",
-      "title": "Boulangerie / Pâtisserie fraîches, Origine France (dont local)",
+      "title": "Total des achats locaux pour la famille Boulangerie/Pâtisseries fraîches",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_boissons_local",
-      "title": "Boissons, Origine France (dont local)",
+      "title": "Total des achats locaux pour la famille Boissons",
       "type": "number"
     },
     {
       "description": "",
       "example": "1234.99",
       "name": "valeur_autres_local",
-      "title": "Autres produits frais, surgelés et d'épicerie, Origine France (dont local)",
+      "title": "Total des achats locaux pour la famille Autres produits frais, surgelés et d'épicerie",
       "type": "number"
     },
     {
@@ -1203,14 +1203,14 @@
       ],
       "example": "PAT",
       "name": "definition_local",
-      "title": "définition de local",
+      "title": "Définition du « local » : périmètre administratif",
       "type": "string"
     },
     {
       "description": "",
       "example": "1234",
       "name": "definition_local_km",
-      "title": "définition de local (distance en km)",
+      "title": "Définition du « local » : distance (en km)",
       "type": "integer"
     }
   ],
