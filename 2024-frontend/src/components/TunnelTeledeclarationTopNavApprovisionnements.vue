@@ -24,7 +24,7 @@ const saveAndQuit = async () => {
 </script>
 
 <template>
-  <nav class="tunnel-teledeclaration-top-nav ma-cantine--sticky__top fr-background-default--grey fr-py-2w">
+  <nav class="tunnel-teledeclaration-top-nav-approvisionnements ma-cantine--sticky__top fr-background-default--grey fr-py-2w">
     <DsfrButton
       tertiary
       icon="fr-icon-save-line"
@@ -51,7 +51,7 @@ const saveAndQuit = async () => {
 </template>
 
 <style lang="scss" scoped>
-.tunnel-teledeclaration-top-nav {
+.tunnel-teledeclaration-top-nav-approvisionnements {
   display: flex;
   justify-content: flex-end;
   align-items: center;
