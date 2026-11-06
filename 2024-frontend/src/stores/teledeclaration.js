@@ -161,11 +161,6 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return tunnelApproVisitedPages.value.includes(slug)
   }
 
-  /* Check if the volet has been visited */
-  function isVoletVisited(volet) {
-    return diagnostic.value?.[voletTunnelProgressionFields[volet]] === "complet"
-  }
-
   /* Check if the volet has no errors according to the last check */
   function isVoletClean(volet) {
     const isCleanVolets = {
@@ -338,7 +333,6 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setSelectAutofill,
     markPageAsVisited,
     isPageVisited,
-    isVoletVisited,
     isVoletClean,
     getDisplayedErrors,
     addErrorsFromCheck,

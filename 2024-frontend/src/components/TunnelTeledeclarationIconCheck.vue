@@ -10,10 +10,7 @@ const errors = computed(() => {
   return []
 })
 const hasErrors = computed(() => errors.value && errors.value?.length > 0)
-const isVisited = computed(() => {
-  if (props.volet) return teledeclarationStore.isVoletVisited(props.volet)
-  return !props.slug || teledeclarationStore.isPageVisited(props.slug)
-})
+const isVisited = computed(() => !props.slug || teledeclarationStore.isPageVisited(props.slug))
 const isClean = computed(() => !props.volet || teledeclarationStore.isVoletClean(props.volet))
 const isValid = computed(() => isVisited.value && isClean.value && !hasErrors.value)
 
