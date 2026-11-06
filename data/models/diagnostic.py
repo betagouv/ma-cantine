@@ -36,7 +36,6 @@ from data.models.diagnostic_teledeclaration_dates import (
 from data.models.diagnostic_teledeclaration_fields import (
     TUNNEL_PROGRESS_FIELD_BY_VOLET,
     get_teledeclaration_fields_all,
-    get_teledeclaration_fields_required,
 )
 from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
@@ -850,32 +849,8 @@ class Diagnostic(
             or not self.valeur_totale
         )
 
-    @property
-    def is_filled_simple(self) -> bool:
-        return (
-            not diagnostic_validators.validate_year(self)
-            and self.is_diagnostic_type_simple
-            and self.valeur_totale_is_filled
-            and all(
-                getattr(self, field) is not None
-                for field in get_teledeclaration_fields_required(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
-            )
-        )
-
-    @property
-    def is_filled_complete(self) -> bool:
-        return (
-            not diagnostic_validators.validate_year(self)
-            and self.is_diagnostic_type_complete
-            and self.valeur_totale_is_filled
-            and all(
-                getattr(self, field) is not None
-                for field in get_teledeclaration_fields_required(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
-            )
-        )
-
     def _is_filled(self) -> bool:
-        return bool(self.is_filled_simple or self.is_filled_complete)
+        return bool(not diagnostic_validators.validate_year(self) and self.is_filled_approvisionnement)
 
     def is_clean(self, raise_errors=False) -> tuple[bool, dict]:
         try:
