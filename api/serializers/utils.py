@@ -1,5 +1,8 @@
 from rest_framework import serializers
 
+from data.models import Diagnostic
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_latest_verbose_names
+
 
 class PurchaseField(serializers.DecimalField):
     def __init__(self):
@@ -35,6 +38,8 @@ def choice_list_to_choices(choice_list):
 def set_help_text_from_verbose_name(serializer_class):
     """
     Set help_text for serializer fields based on model field verbose_name
+    Diagnostic: the teledeclaration configuration's verbose_name comes first (the most recent one, see
+    teledeclaration/<year>/champs.json)
     """
     if hasattr(serializer_class, "Meta") and hasattr(serializer_class.Meta, "model"):
         model = serializer_class.Meta.model
@@ -44,14 +49,19 @@ def set_help_text_from_verbose_name(serializer_class):
 
         def get_fields(self):
             fields = original_get_fields(self)  # Call original method
+            teledeclaration_verbose_names = get_teledeclaration_latest_verbose_names() if model is Diagnostic else {}
 
             # Set help_text for model fields
             for field_name, field in fields.items():
                 try:
                     # field.source: for fields exposed under another name (ex: v1 English names)
-                    model_field = model._meta.get_field(field.source or field_name)
-                    if hasattr(model_field, "verbose_name") and model_field.verbose_name:
-                        field.help_text = model_field.verbose_name
+                    model_field_name = field.source or field_name
+                    model_field = model._meta.get_field(model_field_name)
+                    verbose_name = teledeclaration_verbose_names.get(model_field_name) or getattr(
+                        model_field, "verbose_name", None
+                    )
+                    if verbose_name:
+                        field.help_text = verbose_name
                 except Exception:
                     # Field might not exist in model (computed properties, etc.)
                     pass

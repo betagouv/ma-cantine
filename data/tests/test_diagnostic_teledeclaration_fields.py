@@ -13,6 +13,7 @@ from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_all_volets,
     get_teledeclaration_fields_all_years,
     get_teledeclaration_fields_required,
+    get_teledeclaration_latest_verbose_names,
     get_teledeclaration_verbose_names,
     get_tunnel_progress_field,
 )
@@ -188,6 +189,21 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         self.assertEqual(verbose_names_2025["plan_gaspillage_en_place"], "Plan d'action contre le gaspillage en place")
         # empty verbose_name are skipped
         self.assertNotIn("plan_gaspillage_en_place", verbose_names_2026)
+
+    def test_get_teledeclaration_latest_verbose_names(self):
+        latest_verbose_names = get_teledeclaration_latest_verbose_names()
+        # the most recent year
+        self.assertEqual(latest_verbose_names["valeur_bio"], get_teledeclaration_verbose_names(2026)["valeur_bio"])
+        # field removed since: its last year
+        self.assertNotIn("valeur_autres_aocaop_igp_stg", get_teledeclaration_config(2026)["APPROVISIONNEMENT"])
+        self.assertEqual(
+            latest_verbose_names["valeur_autres_aocaop_igp_stg"],
+            get_teledeclaration_verbose_names(2025)["valeur_autres_aocaop_igp_stg"],
+        )
+        # empty verbose_name in the most recent year: the previous year
+        self.assertEqual(
+            latest_verbose_names["plan_gaspillage_en_place"], "Plan d'action contre le gaspillage en place"
+        )
 
     def test_get_tunnel_progress_field(self):
         self.assertEqual(list(TUNNEL_PROGRESS_FIELD_BY_VOLET.keys()), VOLETS)
