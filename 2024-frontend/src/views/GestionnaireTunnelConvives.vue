@@ -6,7 +6,7 @@ import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.
 
 /* Documentation */
 const informationEgalimDocumentation = `${documentation.informationsConvives}#3-1-information-obligatoire-des-usagers`
-const informationNutritionnelleDocumentation = `${documentation.informationsConvives}#3-information-nutritionnelle`
+const informationNutritionnelleDocumentation = `${documentation.informationsConvives}#3-2-informations-nutritionnelles`
 </script>
 
 <template>
@@ -50,10 +50,8 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
       title="Information des usagers sur la part des produits EGalim (dont bio) et/ou issus de Projets alimentaires territoriaux"
       :documentation="informationEgalimDocumentation"
     />
-    <h4 class="fr-text--md fr-text--bold fr-mb-2w">Mode d’information des usagers</h4>
     <TunnelTeledeclarationField name="informationAffichagePermanent" />
     <TunnelTeledeclarationField name="informationElectroniqueAnnuelle" />
-    <h4 class="fr-text--md fr-text--bold fr-mb-2w">Information communiquée</h4>
     <TunnelTeledeclarationField name="informationPartEgalim" />
     <TunnelTeledeclarationField name="informationPartPat" />
   </div>
