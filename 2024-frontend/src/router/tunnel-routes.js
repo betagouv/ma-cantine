@@ -199,7 +199,8 @@ const tunnelRoutes = {
           component: GestionnaireTunnelPlastique,
           meta: {
             title: "Substitution du plastique",
-            previous: "GestionnaireTunnelVegetarien"
+            volet: "plastique",
+            previous: "GestionnaireTunnelVegetarien",
           },
         },
       ]

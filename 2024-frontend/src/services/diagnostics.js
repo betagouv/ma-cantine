@@ -4,6 +4,7 @@ const voletsApiUrl = {
   information: "information-convives",
   gaspillage: "gaspillage-alimentaire",
   diversification: "menus-vegetariens",
+  plastique: "substitution-plastique",
 }
 
 const createDiagnostic = (canteenId, payload) => {
