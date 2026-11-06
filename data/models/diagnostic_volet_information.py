@@ -81,3 +81,8 @@ class DiagnosticVoletInformationMixin(models.Model):
 
     class Meta:
         abstract = True
+
+    @property
+    def is_filled_information(self) -> bool:
+        # TODO: define the volet's filled rule (no required fields in teledeclaration/<year>/champs.json yet)
+        return True

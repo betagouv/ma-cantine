@@ -483,6 +483,15 @@ class Diagnostic(
         "is_filled",
     ]
 
+    # properties (not stored in DB), see each volet's mixin
+    IS_FILLED_VOLET_FIELDS = [
+        "is_filled_approvisionnement",
+        "is_filled_gaspillage",
+        "is_filled_diversification",
+        "is_filled_plastique",
+        "is_filled_information",
+    ]
+
     CANTEEN_FIELDS = [
         # new in 2026
         "nombre_repas_an",
