@@ -184,7 +184,6 @@ const tunnelRoutes = {
           meta: {
             title: "Lutte contre le gaspillage alimentaire",
             volet: "gaspillage",
-            previous: "GestionnaireTunnelConvives",
             next: "GestionnaireTunnelVegetarien",
           },
         },
@@ -195,7 +194,6 @@ const tunnelRoutes = {
           meta: {
             title: "Menus végétariens",
             volet: "diversification",
-            previous: "GestionnaireTunnelGaspillage",
             next: "GestionnaireTunnelPlastique",
           },
         },
@@ -206,7 +204,6 @@ const tunnelRoutes = {
           meta: {
             title: "Substitution du plastique",
             volet: "plastique",
-            previous: "GestionnaireTunnelVegetarien",
             isLast: true,
           },
         },
