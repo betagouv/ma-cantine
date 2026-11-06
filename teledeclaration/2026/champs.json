@@ -2369,12 +2369,12 @@
     "information_part_egalim": {
       "index_code": 3,
       "is_required": true,
-      "verbose_name": "Part de produits EGalim (dont bio) entrant dans la composition des repas servis"
+      "verbose_name": "Vous communiquez sur la part de produits EGalim (dont bio) entrant dans la composition des repas servis"
     },
     "information_part_pat": {
       "index_code": 4,
       "is_required": true,
-      "verbose_name": "Part des produits issus de Projets alimentaires territoriaux (PAT)"
+      "verbose_name": "Vous communiquez sur la part des produits issus de Projets alimentaires territoriaux (PAT)"
     }
   },
   "PLASTIQUE": {
