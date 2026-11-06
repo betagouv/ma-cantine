@@ -31,6 +31,7 @@ from data.models.creation_source import CreationSource
 from data.models.diagnostic import Diagnostic
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES, is_in_correction
 from data.models.diagnostic_teledeclaration_egalim_objectives import get_egalim_group, get_egalim_objectives_notes
+from data.models.diagnostic_teledeclaration_fields import VOLETS, get_teledeclaration_fields_all_years
 
 logger = logging.getLogger(__name__)
 
@@ -227,6 +228,13 @@ class DiagnosticCheckView(APIView):
             "is_filled": is_filled,
             **{field: getattr(diagnostic, field) for field in Diagnostic.IS_FILLED_VOLET_FIELDS},
             "is_clean": is_clean,
+            # split the errors per volet (the errors outside of the volets, ex: year, only impact is_clean)
+            **{
+                f"is_clean_{volet.lower()}": not any(
+                    field in errors for field in get_teledeclaration_fields_all_years(volet)
+                )
+                for volet in VOLETS
+            },
             "errors": errors,
             "is_teledeclared": is_teledeclared,
         }
