@@ -1,7 +1,10 @@
 from django.db import models
 
 from data.fields import ChoiceArrayField
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all_years
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all_years,
+    get_teledeclaration_fields_required,
+)
 
 
 class DiagnosticVoletDiversificationMixin(models.Model):
@@ -111,5 +114,7 @@ class DiagnosticVoletDiversificationMixin(models.Model):
 
     @property
     def is_filled_diversification(self) -> bool:
-        # TODO: define the volet's filled rule (no required fields in teledeclaration/<year>/champs.json yet)
-        return True
+        return all(
+            getattr(self, field) is not None
+            for field in get_teledeclaration_fields_required(self.year, "DIVERSIFICATION")
+        )
