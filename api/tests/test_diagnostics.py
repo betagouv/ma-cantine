@@ -15,7 +15,12 @@ from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Diagnostic, Canteen
 from data.models.creation_source import CreationSource
 from data.models.definitionlocal import DefinitionLocal
-from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_fields_all
+from data.models.diagnostic_teledeclaration_fields import (
+    DIAGNOSTIC_TYPES,
+    TELEDECLARATION_YEARS,
+    VOLETS,
+    get_teledeclaration_fields_all,
+)
 from data.models.geo import Region
 
 
@@ -591,12 +596,12 @@ class DiagnosticTeledeclarationFieldsCoherenceTest(APITestCase):
         serializer_fields = {
             V1_FIELD_ALIASES.get(field_name, field_name) for field_name in ManagerDiagnosticSerializer().get_fields()
         }
-        for year in TELEDECLARATION_FIELDS:
-            for diagnostic_type in TELEDECLARATION_FIELDS[year]["APPROVISIONNEMENT"]:
+        for year in TELEDECLARATION_YEARS:
+            for diagnostic_type in DIAGNOSTIC_TYPES:
                 with self.subTest(year=year, diagnostic_type=diagnostic_type):
                     fields = set(get_teledeclaration_fields_all(year, "APPROVISIONNEMENT", diagnostic_type))
                     self.assertEqual(fields - serializer_fields, set())
-            for volet in TELEDECLARATION_FIELDS[year]:
+            for volet in VOLETS:
                 if volet == "APPROVISIONNEMENT":
                     continue
                 with self.subTest(year=year, volet=volet):
