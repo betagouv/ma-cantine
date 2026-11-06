@@ -26,7 +26,13 @@ def get_teledeclaration_import_fields(year, diagnostic_type):
     present_fields = [
         name for name, field in fields.items() if field["diagnostic_type"][diagnostic_type]["is_present"]
     ]
-    return sorted(present_fields, key=lambda name: fields[name]["diagnostic_type"][diagnostic_type]["import_order"])
+
+    def get_import_position(name):
+        # 2025: its SIMPLE and COMPLETE column orders are different a specific order is needed
+        field = fields[name]
+        return field["diagnostic_type"][diagnostic_type].get("legacy_import_order") or field["index_code"]
+
+    return sorted(present_fields, key=get_import_position)
 
 
 def get_teledeclaration_import_fields_required(year, diagnostic_type):
@@ -40,6 +46,11 @@ def get_teledeclaration_import_fields_required(year, diagnostic_type):
 
 def get_teledeclaration_verbose_name(year, volet, field_name):
     return get_teledeclaration_config(year)[volet][field_name]["verbose_name"]
+
+
+def _sort_by_index_code(year, volet, field_names):
+    volet_fields = get_teledeclaration_config(year)[volet]
+    return sorted(field_names, key=lambda name: volet_fields[name]["index_code"])
 
 
 def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=False):
@@ -62,7 +73,8 @@ def _get_teledeclaration_fields(year, volet, diagnostic_type=None, required=Fals
             for name, field in volet_fields.items()
             if field["diagnostic_type"][diagnostic_type]["is_present"]
         }
-    return [name for name, field in volet_fields.items() if field["is_required"] or not required]
+    field_names = [name for name, field in volet_fields.items() if field["is_required"] or not required]
+    return _sort_by_index_code(year, volet, field_names)
 
 
 def get_teledeclaration_fields_all(year, volet, diagnostic_type=None):
@@ -81,8 +93,10 @@ def get_teledeclaration_fields_all_years(volet):
     fields = {}
     for year in sorted(TELEDECLARATION_YEARS, reverse=True):
         diagnostic_types = DIAGNOSTIC_TYPES if volet == "APPROVISIONNEMENT" else [None]
+        year_fields = {}
         for diagnostic_type in diagnostic_types:
-            fields.update(dict.fromkeys(get_teledeclaration_fields_all(year, volet, diagnostic_type)))
+            year_fields.update(dict.fromkeys(get_teledeclaration_fields_all(year, volet, diagnostic_type)))
+        fields.update(dict.fromkeys(_sort_by_index_code(year, volet, year_fields)))
     return list(fields)
 
 
