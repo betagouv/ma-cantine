@@ -41,7 +41,7 @@ const emporterDocumentation = `${documentation.interdictionPlastique}#1-5-vente-
       </ul>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="En savoir plus sur ce volet thématique">
+      <AppHelpCard title="En savoir plus sur vos obligations">
         <a :href="documentation.interdictionPlastique" target="_blank">Consultez la documentation</a>
       </AppHelpCard>
     </div>

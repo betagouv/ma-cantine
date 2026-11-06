@@ -32,7 +32,7 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
       </ul>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="Pour en savoir plus sur vos obligations">
+      <AppHelpCard title="En savoir plus sur vos obligations">
         <ul class="ma-cantine--unstyled-list fr-mb-0">
           <li class="fr-mb-1w">Référence juridique : article L. 230-5-1 du Code rural et de la pêche maritime.</li>
           <li class="fr-mb-1w">

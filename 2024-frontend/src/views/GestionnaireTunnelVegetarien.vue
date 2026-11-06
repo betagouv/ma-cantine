@@ -33,7 +33,7 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
       </p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="En savoir plus sur ce volet thématique">
+      <AppHelpCard title="En savoir plus sur vos obligations">
         <ul class="ma-cantine--unstyled-list fr-mb-0">
           <li class="fr-mb-1w">
             <a :href="documentation.diversificationSourcesProteinesMenusVegetariens" target="_blank">Consultez la documentation</a>
