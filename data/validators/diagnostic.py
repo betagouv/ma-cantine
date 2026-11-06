@@ -136,6 +136,23 @@ def validate_appro_fields_required(instance):
     return errors
 
 
+def validate_thematiques_fields_required(instance):
+    """
+    - extra validation: depending on the year of the diagnostic
+        - [NEW in 2026] the volets thématiques have required fields
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    """
+    errors = {}
+    if instance.year:
+        for volet in ["GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]:
+            for field in get_teledeclaration_fields_required(instance.year, volet):
+                if getattr(instance, field) is None:
+                    utils_utils.add_validation_error(
+                        errors, field, f"Ce champ est obligatoire pour l'année {instance.year}."
+                    )
+    return errors
+
+
 def validate_valeur_totale(instance):
     """
     - clean_fields() (called by full_clean()) already does some checks
