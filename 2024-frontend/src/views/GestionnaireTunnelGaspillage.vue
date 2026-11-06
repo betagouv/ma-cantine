@@ -28,20 +28,20 @@ const updateDonsConvention = (value) => {
       </p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="Comment lutter contre le gaspillage ?">
+      <AppHelpCard title="En savoir plus sur vos obligations">
         <a :href="documentation.lutteGaspillageDonsAlimentaires" target="_blank">Consultez la documentation</a>
       </AppHelpCard>
     </div>
   </div>
-  <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="1. Diagnostic et plan d’actions" />
+  <div class="fr-mb-6w ma-cantine--fields-group">
+    <TunnelTeledeclarationGroupTitle title="Diagnostic et plan d’actions" />
     <TunnelTeledeclarationField name="diagnosticGaspillageRealise" />
     <TunnelTeledeclarationField name="planGaspillageEnPlace" />
     <TunnelTeledeclarationField name="actionsGaspillageRealisees" />
     <TunnelTeledeclarationField name="actionsGaspillageAutre" />
   </div>
-  <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="2. Dons alimentaires" />
+  <div class="fr-mb-6w ma-cantine--fields-group">
+    <TunnelTeledeclarationGroupTitle title="Dons alimentaires" />
     <p>
       L’obligation de proposer une convention de don à une association d’aide alimentaire habilitée s’applique
       uniquement aux opérateurs servant plus de 3000 repas par jour (loi EGalim). Vous pouvez en proposer une même si

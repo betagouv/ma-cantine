@@ -136,7 +136,7 @@ const rupImage = `${logosFolder}/rup.png`
 </script>
 <template>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="1. Total des achats par famille de produits" />
+    <TunnelTeledeclarationGroupTitle title="Total des achats par famille de produits" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in totalAchatsFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
@@ -145,7 +145,7 @@ const rupImage = `${logosFolder}/rup.png`
   </div>
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
-      title="2. Achats bio ou avec mention « en conversion vers l’agriculture biologique », par famille de produits"
+      title="Achats bio ou avec mention « en conversion vers l’agriculture biologique », par famille de produits"
       :logo="bioImage"
       logo-alt="Label bio"
       :documentation="documentation.commerceEquitable"
@@ -160,7 +160,7 @@ const rupImage = `${logosFolder}/rup.png`
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="3. Label rouge, par famille de produits" :logo="labelRougeImage" logo-alt="Label rouge" />
+    <TunnelTeledeclarationGroupTitle title="Label rouge, par famille de produits" :logo="labelRougeImage" logo-alt="Label rouge" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in labelRougeFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
@@ -168,7 +168,7 @@ const rupImage = `${logosFolder}/rup.png`
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="4. AOC / AOP, par famille de produits" :logo="aocaopImage" logo-alt="Labels AOC et AOP" />
+    <TunnelTeledeclarationGroupTitle title="AOC / AOP, par famille de produits" :logo="aocaopImage" logo-alt="Labels AOC et AOP" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in aocaopFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
@@ -176,7 +176,7 @@ const rupImage = `${logosFolder}/rup.png`
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="5. IGP, par famille de produits" :logo="igpImage" logo-alt="Label IGP" />
+    <TunnelTeledeclarationGroupTitle title="IGP, par famille de produits" :logo="igpImage" logo-alt="Label IGP" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in igpFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
@@ -184,7 +184,7 @@ const rupImage = `${logosFolder}/rup.png`
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="6. STG, par famille de produits" :logo="stgImage" logo-alt="Label STG" />
+    <TunnelTeledeclarationGroupTitle title="STG, par famille de produits" :logo="stgImage" logo-alt="Label STG" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in stgFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
@@ -193,7 +193,7 @@ const rupImage = `${logosFolder}/rup.png`
   </div>
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
-      title="7. Certification environnementale de niveau 2 ou 3 (Haute Valeur Environnementale - HVE), par famille de produits"
+      title="Certification environnementale de niveau 2 ou 3 (Haute Valeur Environnementale - HVE), par famille de produits"
       badge="Nouveauté loi UPSA"
       :logo="hveImage"
       logo-alt="Label Haute Valeur Environnementale"
@@ -210,7 +210,7 @@ const rupImage = `${logosFolder}/rup.png`
   </div>
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
-      title="8. Ecolabel pêche durable, 7°bis ou 7°ter, par famille de produits"
+      title="Ecolabel pêche durable, 7°bis ou 7°ter, par famille de produits"
       badge="Nouveauté loi UPSA"
       :documentation="documentation.pecheDurable"
     />
@@ -224,7 +224,7 @@ const rupImage = `${logosFolder}/rup.png`
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="9. RUP, par famille de produits" :logo="rupImage" logo-alt="Logo Région ultrapériphérique" />
+    <TunnelTeledeclarationGroupTitle title="RUP, par famille de produits" :logo="rupImage" logo-alt="Logo Région ultrapériphérique" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in rupFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
@@ -233,7 +233,7 @@ const rupImage = `${logosFolder}/rup.png`
   </div>
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
-      title="10. Commerce équitable non bio, par famille de produits"
+      title="Commerce équitable non bio, par famille de produits"
       :documentation="documentation.commerceEquitable"
     />
     <p>
@@ -247,7 +247,7 @@ const rupImage = `${logosFolder}/rup.png`
   </div>
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
-      title="11. Produits « fermiers », 3°quater ou 4°bis, par famille de produits"
+      title="Produits « fermiers », 3°quater ou 4°bis, par famille de produits"
       badge="Nouveauté loi UPSA"
       :documentation="documentation.fermier"
     />
@@ -262,7 +262,7 @@ const rupImage = `${logosFolder}/rup.png`
   </div>
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
-      title="12. Produits sélectionnés sur la base de critères d’externalités environnementales"
+      title="Produits sélectionnés sur la base de critères d’externalités environnementales"
       :documentation="documentation.externalites"
     />
     <div class="fr-grid-row fr-grid-row--gutters">
@@ -273,7 +273,7 @@ const rupImage = `${logosFolder}/rup.png`
   </div>
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
-      title="13. Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs"
+      title="Produits sélectionnés sur la base de critères de performance environnementale et d’approvisionnements directs"
       :documentation="documentation.performance"
     />
     <div class="fr-grid-row fr-grid-row--gutters">

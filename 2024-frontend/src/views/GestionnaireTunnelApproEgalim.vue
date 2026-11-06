@@ -26,7 +26,7 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
 <template>
   <TunnelTeledeclarationUPSABanner />
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
-    <div class="fr-col-12 fr-col-md-6">
+    <div class="fr-col-12 fr-col-md-7">
       <h2>Approvisionnements EGalim</h2>
       <p class="fr-mb-0">
         Étape principale et obligatoire de la télédéclaration. Permet de renseigner vos achats au regard des 12
@@ -34,7 +34,7 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
         SIQO, autres EGalim, critères d'achats).
       </p>
     </div>
-    <div class="fr-col-12 fr-col-md-6">
+    <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur les 12 catégories EGalim">
         <ul class="ma-cantine--unstyled-list fr-mb-0">
           <li class="fr-mb-1w">

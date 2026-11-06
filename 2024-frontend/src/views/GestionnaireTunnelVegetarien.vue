@@ -33,7 +33,7 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
       </p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="En savoir plus sur ce volet thématique">
+      <AppHelpCard title="En savoir plus sur vos obligations">
         <ul class="ma-cantine--unstyled-list fr-mb-0">
           <li class="fr-mb-1w">
             <a :href="documentation.diversificationSourcesProteinesMenusVegetariens" target="_blank">Consultez la documentation</a>
@@ -48,12 +48,12 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
       </AppHelpCard>
     </div>
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Diversification des sources de protéines" :documentation="diversificationDocumentation" />
     <TunnelTeledeclarationField name="planDiversificationEnPlace" />
     <TunnelTeledeclarationField name="planDiversificationActions" />
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Menu végétarien" :documentation="menuVegetarienDocumentation" />
     <TunnelTeledeclarationField name="serviceType" />
     <TunnelTeledeclarationField name="menuVegetarienFrequence" />

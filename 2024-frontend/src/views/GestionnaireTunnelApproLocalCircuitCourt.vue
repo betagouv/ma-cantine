@@ -56,7 +56,7 @@ const updateDefinitionLocal = (value) => {
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="1. Achats en circuit court" :documentation="documentation.accueil" />
+    <TunnelTeledeclarationGroupTitle title="Achats en circuit court" :documentation="documentation.accueil" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12">
         <TunnelTeledeclarationField name="valeurCircuitCourt" />
@@ -69,7 +69,7 @@ const updateDefinitionLocal = (value) => {
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="2. Achats en produits « locaux »" :documentation="documentation.produitsLocaux" />
+    <TunnelTeledeclarationGroupTitle title="Achats en produits « locaux »" :documentation="documentation.produitsLocaux" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12">
         <TunnelTeledeclarationField name="valeurLocal" />
@@ -90,7 +90,7 @@ const updateDefinitionLocal = (value) => {
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="3. Total des achats par famille de produits" />
+    <TunnelTeledeclarationGroupTitle title="Total des achats par famille de produits" />
     <p>
       Pour chaque famille de produits renseignée dans les achats en circuit court ou en « local », vous devez déclarer
       le total des achats de cette famille.

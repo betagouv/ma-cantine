@@ -39,13 +39,12 @@ const europeFields = [
 <template>
   <TunnelTeledeclarationUPSABanner />
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
-    <div class="fr-col-12 fr-col-md-6">
+    <div class="fr-col-12 fr-col-md-7">
       <h2>Origine France ou Europe (hors France)</h2>
       <p>
         Étape permettant de renseigner des achats par famille de produit (ou toute famille de produit confondue) au
-        regard des catégories d'origine France ou origine Europe (hors France). Vous pouvez renseigner des achats dans
-        une seule famille de produit, dans plusieurs familles de produits, ou uniquement le total (dans le cas où vous
-        ne suivez pas l'origine par famille).
+        regard des catégories d'origine France ou origine Europe (hors France). La télédéclaration sur l'origine des produits peut être réalisée sur certaines familles de produits et/ou sur le total de vos approvisionnements dans le cas où vous
+        ne suivez pas l'origine par famille.
       </p>
       <p class="fr-mb-0">
         Cette étape est distincte de l'étape de télédéclaration EGalim. Par exemple, l'achat d'un produit bio et
@@ -53,12 +52,8 @@ const europeFields = [
         origine France (étape actuelle).
       </p>
     </div>
-    <div class="fr-col-12 fr-col-md-6">
+    <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur le suivi et la télédéclaration de l'origine des produits">
-        <p>
-          La télédéclaration sur l'origine des produits peut être réalisée sur certaines familles de produits et/ou sur
-          le total de vos approvisionnements.
-        </p>
         <p>
           En accord avec la loi UPSA, le suivi de l'origine des produits (Europe et France) sera rendu obligatoire dès
           la campagne de télédéclaration 2028.
@@ -68,7 +63,7 @@ const europeFields = [
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="1. Achats origine France" />
+    <TunnelTeledeclarationGroupTitle title="Achats origine France" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12">
         <TunnelTeledeclarationField name="valeurFrance" />
@@ -81,7 +76,7 @@ const europeFields = [
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="2. Achats origine Europe (hors France)" />
+    <TunnelTeledeclarationGroupTitle title="Achats origine Europe (hors France)" />
     <p>
       Achats issus de l'Union Européenne (UE), de l'Espace économique européen (EEE) ou des pays et territoires
       d'outre-mer (PTOM)
@@ -98,7 +93,7 @@ const europeFields = [
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="3. Total des achats par famille de produits" />
+    <TunnelTeledeclarationGroupTitle title="Total des achats par famille de produits" />
     <p>
       Pour chaque famille de produits renseignée dans les achats origine France ou origine Europe (hors France), vous
       devez déclarer le total des achats de cette famille.

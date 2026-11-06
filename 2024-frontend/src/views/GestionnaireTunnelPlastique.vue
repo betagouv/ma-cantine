@@ -41,12 +41,12 @@ const emporterDocumentation = `${documentation.interdictionPlastique}#1-5-vente-
       </ul>
     </div>
     <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="En savoir plus sur ce volet thématique">
+      <AppHelpCard title="En savoir plus sur vos obligations">
         <a :href="documentation.interdictionPlastique" target="_blank">Consultez la documentation</a>
       </AppHelpCard>
     </div>
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle
       title="Interdiction des bouteilles en plastique et obligation de mise à disposition de fontaines à eau"
       :documentation="bouteillesDocumentation"
@@ -54,25 +54,25 @@ const emporterDocumentation = `${documentation.interdictionPlastique}#1-5-vente-
     <TunnelTeledeclarationField name="plastiqueBouteilleBoissonRemplace" />
     <TunnelTeledeclarationField name="plastiqueBouteilleRemplace" />
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle
       title="Interdiction des ustensiles en plastique à usage unique"
       :documentation="ustensilesDocumentation"
     />
     <TunnelTeledeclarationField name="plastiqueUstensileRemplace" />
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Obligation de vaisselle réemployable" :documentation="vaisselleDocumentation" />
     <TunnelTeledeclarationField name="plastiqueVaisselleJetableRemplace" />
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle
       title="Fin de l’utilisation de contenants de cuisson, réchauffe et service"
       :documentation="contenantsDocumentation"
     />
     <TunnelTeledeclarationField name="plastiqueContenantRemplace" />
   </div>
-  <div class="fr-mb-6w">
+  <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Vente à emporter" :documentation="emporterDocumentation" />
     <TunnelTeledeclarationField name="plastiqueContenantEmporterRemplace" />
   </div>
