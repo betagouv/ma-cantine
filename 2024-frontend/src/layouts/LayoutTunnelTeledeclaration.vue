@@ -5,7 +5,8 @@ import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
-import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
+import TunnelTeledeclarationTopNavApprovisionnements from "@/components/TunnelTeledeclarationTopNavApprovisionnements.vue"
+import TunnelTeledeclarationTopNavThematiques from "@/components/TunnelTeledeclarationTopNavThematiques.vue"
 import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
 import TunnelTeledeclarationModalErrors from "@/components/TunnelTeledeclarationModalErrors.vue"
 import TunnelTeledeclarationModalQuit from "@/components/TunnelTeledeclarationModalQuit.vue"
@@ -14,6 +15,7 @@ const route = useRoute()
 const router = useRouter()
 const currentRoute = computed(() => route.name)
 const hideTopNav = computed(() => route.meta.hideTopNav)
+const topNav = computed(() => route.meta.topNav)
 
 /* Content */
 const routeTitle = computed(() => route.meta.title)
@@ -117,7 +119,8 @@ const goTo = (page) => {
         <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" @save="save" :displayTeledeclaredBadge="isTeledeclared" />
       </div>
       <div class="fr-col-12 fr-col-md-9">
-        <TunnelTeledeclarationTopNav v-if="!hideTopNav" @save="save" />
+        <TunnelTeledeclarationTopNavApprovisionnements v-if="topNav === 'approvisionnements' && !hideTopNav" @save="save" />
+        <TunnelTeledeclarationTopNavThematiques v-if="topNav === 'thematiques'" @save="save" />
         <div class="fr-mt-2w fr-pl-0 fr-pl-md-4w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
           <RouterView />

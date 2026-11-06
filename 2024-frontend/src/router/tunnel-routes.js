@@ -57,6 +57,9 @@ const tunnelRoutes = {
   children: [
     {
       path: "approvisionnements",
+      meta: {
+        topNav: "approvisionnements",
+      },
       children: [
         {
           path: "informations",
@@ -160,6 +163,9 @@ const tunnelRoutes = {
     },
     {
       path: "volets-thematiques",
+      meta: {
+        topNav: "thematiques",
+      },
       children: [
         {
           path: "informations-convives",
@@ -201,6 +207,7 @@ const tunnelRoutes = {
             title: "Substitution du plastique",
             volet: "plastique",
             previous: "GestionnaireTunnelVegetarien",
+            isLast: true,
           },
         },
       ]
