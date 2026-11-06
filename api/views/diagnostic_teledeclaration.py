@@ -25,7 +25,11 @@ from api.serializers import DiagnosticTeledeclaredOpenDataSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
 from data.fields import ChoiceArrayField
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
-from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_FIELDS, get_teledeclaration_fields_all
+from data.models.diagnostic_teledeclaration_fields import (
+    VOLETS,
+    get_teledeclaration_fields_all,
+    get_teledeclaration_verbose_name,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -331,17 +335,17 @@ class DiagnosticTeledeclarationPdfView(APIView):
     @staticmethod
     def _get_volets_fields(diagnostic):
         """
-        Returns the fields of the volet for the diagnostic year,
-        format the value and use verbose name
+        Returns the fields of each volet from the config file of the diagnostic year,
+        with the verbose name from the config file and the formatted value
         """
         volets = {}
-        for volet in TELEDECLARATION_FIELDS[diagnostic.year]:
+        for volet in VOLETS:
             volets[volet] = []
             for field_name in get_teledeclaration_fields_all(diagnostic.year, volet, diagnostic.diagnostic_type):
                 field = Diagnostic._meta.get_field(field_name)
                 volets[volet].append(
                     {
-                        "label": field.verbose_name,
+                        "label": get_teledeclaration_verbose_name(diagnostic.year, volet, field_name),
                         "value": DiagnosticTeledeclarationPdfView._get_prettify_value(
                             field, getattr(diagnostic, field_name)
                         ),
