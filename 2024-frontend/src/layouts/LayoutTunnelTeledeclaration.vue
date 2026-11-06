@@ -5,8 +5,9 @@ import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
-import TunnelTeledeclarationTopNav from "@/components/TunnelTeledeclarationTopNav.vue"
-import TunnelTeledeclarationSidebar from "@/components/TunnelTeledeclarationSidebar.vue"
+import TunnelTeledeclarationNavApprovisionnements from "@/components/TunnelTeledeclarationNavApprovisionnements.vue"
+import TunnelTeledeclarationNavThematiques from "@/components/TunnelTeledeclarationNavThematiques.vue"
+import TunnelTeledeclarationNavSidebar from "@/components/TunnelTeledeclarationNavSidebar.vue"
 import TunnelTeledeclarationModalErrors from "@/components/TunnelTeledeclarationModalErrors.vue"
 import TunnelTeledeclarationModalQuit from "@/components/TunnelTeledeclarationModalQuit.vue"
 
@@ -14,6 +15,8 @@ const route = useRoute()
 const router = useRouter()
 const currentRoute = computed(() => route.name)
 const hideTopNav = computed(() => route.meta.hideTopNav)
+const topNav = computed(() => route.meta.topNav)
+const isThematiques = computed(() => topNav.value === "thematiques")
 
 /* Content */
 const routeTitle = computed(() => route.meta.title)
@@ -104,6 +107,12 @@ onMounted(() => window.addEventListener("beforeunload", quitBrowser))
 onBeforeUnmount(() => window.removeEventListener("beforeunload", quitBrowser))
 onBeforeRouteLeave(quitTunnel)
 
+const forceRender = ref(0)
+const resetVolet = () => {
+  teledeclarationStore.resetVolet(route.meta.volet)
+  forceRender.value++
+}
+
 /* Navigation */
 const goTo = (page) => {
   showModal.value = false
@@ -114,13 +123,22 @@ const goTo = (page) => {
   <div v-if="canteenInformations" class="ma-cantine--sticky__container ma-cantine--stick-to-footer">
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
-        <TunnelTeledeclarationSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" @save="save" :displayTeledeclaredBadge="isTeledeclared" />
+        <TunnelTeledeclarationNavSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" @save="save" :displayTeledeclaredBadge="isTeledeclared" />
       </div>
       <div class="fr-col-12 fr-col-md-9">
-        <TunnelTeledeclarationTopNav v-if="!hideTopNav" @save="save" />
+        <TunnelTeledeclarationNavThematiques v-if="isThematiques" @save="save" />
+        <TunnelTeledeclarationNavApprovisionnements v-else-if="!hideTopNav" @save="save" />
         <div class="fr-mt-2w fr-pl-0 fr-pl-md-4w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
-          <RouterView />
+          <RouterView :key="forceRender" />
+          <div v-if="isThematiques" class="ma-cantine--text-center fr-my-6w">
+            <DsfrButton
+              tertiary
+              icon="fr-icon-delete-line"
+              label="Réinitialiser ma saisie"
+              @click="resetVolet()"
+            />
+          </div>
         </div>
       </div>
     </div>

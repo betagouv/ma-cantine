@@ -192,6 +192,15 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     clearError(field)
   }
 
+  /* Empty the fields of a volet */
+  function resetVolet(volet) {
+    const fields = tunnelTeledeclaration.getFieldsListFromGroup(volet)
+    fields.forEach((field) => {
+      const isCheckboxes = tunnelTeledeclaration.getField(field)?.type === "checkboxes"
+      setValue(field, isCheckboxes ? [] : null)
+    })
+  }
+
   /* Empty store */
   function deleteStore() {
     refreshStore()
@@ -305,6 +314,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     getYear,
     setDiagnostic,
     setValue,
+    resetVolet,
     saveDiagnostic,
     updateMealCount,
     autofillDiagnostic,

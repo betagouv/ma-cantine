@@ -39,7 +39,7 @@ const goTo = (to) => router.push(to)
 </script>
 
 <template>
-  <div class="tunnel-teledeclaration-sidebar fr-background-alt--blue-france fr-pb-4w">
+  <div class="tunnel-teledeclaration-nav-sidebar fr-background-alt--blue-france fr-pb-4w">
     <div class="fr-pt-4w fr-pr-4w ma-cantine--sticky__top">
       <div class="ma-cantine--z-index-1">
         <div class="fr-mb-4w">
@@ -53,12 +53,12 @@ const goTo = (to) => router.push(to)
         <div>
           <h3 class="fr-text--sm ma-cantine--text-uppercase fr-mb-1w">Approvisionnements</h3>
           <DsfrBadge v-if="displayTeledeclaredBadge" label="Télédéclaré" type="success" />
-          <nav v-else class="tunnel-teledeclaration-sidebar__nav">
+          <nav v-else class="tunnel-teledeclaration-nav-sidebar__nav">
             <DsfrButton
               v-for="link in approvisementsNav"
               :key="link.to.name"
               :[link.type]="true"
-              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
+              class="tunnel-teledeclaration-nav-sidebar__link fr-background-default--grey"
               @click="emit('save', link.pageName)"
             >
               <TunnelTeledeclarationIconCheck v-if="!link.icon" :fieldsPageName="link.pageName" :slug="link.slug" class="fr-mr-1w" />
@@ -72,12 +72,12 @@ const goTo = (to) => router.push(to)
           <h3 class="fr-text--sm ma-cantine--text-uppercase fr-mb-1w">
             Volets thématiques
           </h3>
-          <nav class="tunnel-teledeclaration-sidebar__nav">
+          <nav class="tunnel-teledeclaration-nav-sidebar__nav">
             <DsfrButton
               v-for="link in thematiquesNav"
               :key="link.to.name"
               :[link.type]="true"
-              class="tunnel-teledeclaration-sidebar__link fr-background-default--grey"
+              class="tunnel-teledeclaration-nav-sidebar__link fr-background-default--grey"
               @click="goTo(link.to)"
             >
               <TunnelTeledeclarationIconCheck :fieldsPageName="link.pageName" class="fr-mr-1w" />
@@ -86,7 +86,7 @@ const goTo = (to) => router.push(to)
           </nav>
         </div>
         <div class="fr-mt-2w ma-cantine--sticky__bottom">
-          <AppHelpCard title="Centre d’aide" content="Votre télédéclaration pas à pas" class="tunnel-teledeclaration-sidebar__help-card">
+          <AppHelpCard title="Centre d’aide" content="Votre télédéclaration pas à pas" class="tunnel-teledeclaration-nav-sidebar__help-card">
             <a :href="documentation.teledeclaration" target="_blank">Je consulte l’aide</a>
           </AppHelpCard>
         </div>
@@ -96,7 +96,7 @@ const goTo = (to) => router.push(to)
 </template>
 
 <style lang="scss" scoped>
-.tunnel-teledeclaration-sidebar {
+.tunnel-teledeclaration-nav-sidebar {
   position: relative;
   &:before {
     content: "";
