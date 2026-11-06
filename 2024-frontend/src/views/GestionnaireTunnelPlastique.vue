@@ -13,7 +13,7 @@ const emporterDocumentation = `${documentation.interdictionPlastique}#1-5-vente-
 </script>
 
 <template>
-  <h2>Substitution des plastique et de l’usage unique</h2>
+  <h2>Substitution des plastiques et de l’usage unique</h2>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <p class="fr-mb-1w">
