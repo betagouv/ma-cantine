@@ -22,6 +22,8 @@ const route = useRoute()
 const field = ref()
 const data = computed(() => tunnelTeledeclarationService.getField(props.name))
 const isNumber = computed(() => data.value?.type === "number")
+const isText = computed(() => data.value?.type === "text")
+const isTextarea = computed(() => data.value?.type === "textarea")
 const isSelect = computed(() => data.value?.type === "select")
 const isCheckboxes = computed(() => data.value?.type === "checkboxes")
 const isRadio = computed(() => data.value?.type === "radio")
@@ -37,6 +39,7 @@ const selectErrorMessage = computed(() => errorMessage.value?.join(". "))
 const hint = computed(() => data.value.hint)
 const options = computed(() => data.value.options)
 const radioOptions = computed(() => options.value.map((option) => ({ label: option.label, value: option.value })))
+const isInline = computed(() => data.value?.inline)
 const checkboxesOptions = computed(() => options.value.map((option) => ({ id: `${props.name}-${option.value}`, name: props.name, label: option.label, value: option.value })))
 
 /* OSA */
@@ -91,9 +94,11 @@ const resetField = () => {
           <TunnelTeledeclarationAutofill v-if="displayAutofill" :name="props.name" :value="field" @fill="fillField" @reset="resetField" class="tunnel-teledeclaration-field__container-tag" />
         </template>
       </DsfrInputGroup>
+      <DsfrInputGroup v-if="isText" v-model="field" :label="displayedLabel" :label-visible="true" :name="props.name" type="text" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" />
+      <DsfrInputGroup v-if="isTextarea" v-model="field" :label="displayedLabel" :label-visible="true" :name="props.name" is-textarea rows="4" class="ma-cantine--textarea" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" />
       <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint"/>
-      <DsfrRadioButtonSet v-if="isRadio" v-model="field" :legend="label" :name="props.name" :required="isRequired" :options="radioOptions" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint" />
-      <DsfrCheckboxSet v-if="isCheckboxes" v-model="field" :legend="label" :required="isRequired" :options="checkboxesOptions" @update:modelValue="fieldChange" :error-message="selectErrorMessage" />
+      <DsfrRadioButtonSet v-if="isRadio" v-model="field" :legend="label" :name="props.name" :required="isRequired" :options="radioOptions" :inline="isInline" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint" />
+      <DsfrCheckboxSet v-if="isCheckboxes" v-model="field" :legend="label" :required="isRequired" :options="checkboxesOptions" :inline="isInline" @update:modelValue="fieldChange" :error-message="selectErrorMessage" />
     </div>
     <div v-if="tooltip" class="tunnel-teledeclaration-field__tooltip fr-pl-1w fr-pb-1v">
       <AppTooltipHover :content="tooltip" />

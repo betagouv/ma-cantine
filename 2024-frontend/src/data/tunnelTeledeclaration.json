@@ -190,6 +190,128 @@
       "valeurBoissonsPerformance": {"shortName": "Boissons"}
     }
   },
+  "gaspillage": {
+    "groups": {
+      "gaspillage": [
+        "diagnosticGaspillageRealise",
+        "planGaspillageEnPlace",
+        "actionsGaspillageRealisees",
+        "actionsGaspillageAutre",
+        "donsConvention",
+        "donsFrequence",
+        "donsQuantite",
+        "donsTypeDenrees"
+      ]
+    },
+    "fields": {
+      "diagnosticGaspillageRealise": {
+        "type": "radio",
+        "inline": true,
+        "required": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "planGaspillageEnPlace": {
+        "type": "radio",
+        "inline": true,
+        "required": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "actionsGaspillageRealisees": {
+        "type": "checkboxes",
+        "required": false,
+        "options": [
+          {
+            "label": "Pré-inscription des convives obligatoire",
+            "valueDisplay": "Pré-inscription des convives obligatoire",
+            "value": "INSCRIPTION"
+          },
+          {
+            "label": "Sensibilisation par affichage ou autre média",
+            "valueDisplay": "Sensibilisation par affichage ou autre média",
+            "value": "SENSIBILISATION"
+          },
+          {
+            "label": "Formation / information du personnel de restauration",
+            "valueDisplay": "Formation / information du personnel de restauration",
+            "value": "FORMATION"
+          },
+          {
+            "label": "Réorganisation de la distribution des composantes du repas",
+            "valueDisplay": "Réorganisation de la distribution des composantes du repas",
+            "value": "DISTRIBUTION"
+          },
+          {
+            "label": "Choix des portions (grande faim, petite faim)",
+            "valueDisplay": "Choix des portions (grande faim, petite faim)",
+            "value": "PORTIONS"
+          },
+          {
+            "label": "Réutilisation des restes de préparation / surplus",
+            "valueDisplay": "Réutilisation des restes de préparation / surplus",
+            "value": "REUTILISATION"
+          }
+        ]
+      },
+      "actionsGaspillageAutre": {
+        "shortName": "Si vous avez réalisé d'autres actions vous pouvez les renseigner ici :",
+        "type": "textarea",
+        "required": false
+      },
+      "donsConvention": {
+        "type": "radio",
+        "inline": true,
+        "required": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "donsFrequence": {
+        "hint": "En dons/an",
+        "type": "number",
+        "required": false
+      },
+      "donsQuantite": {
+        "hint": "En kg/an",
+        "type": "number",
+        "required": false
+      },
+      "donsTypeDenrees": {
+        "type": "textarea",
+        "required": false
+      }
+    }
+  },
   "diversification": {
     "groups": {
       "diversification": [
@@ -203,6 +325,7 @@
     "fields": {
       "planDiversificationEnPlace": {
         "type": "radio",
+        "inline": true,
         "required": true,
         "options": [
           {
