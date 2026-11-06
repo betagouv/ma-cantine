@@ -48,6 +48,18 @@ def get_teledeclaration_verbose_name(year, volet, field_name):
     return get_teledeclaration_config(year)[volet][field_name]["verbose_name"]
 
 
+def get_teledeclaration_verbose_names(year):
+    """
+    The verbose_name of the fields of all the volets for a given year (fields with an empty verbose_name are skipped)
+    """
+    return {
+        name: field["verbose_name"]
+        for volet_fields in get_teledeclaration_config(year).values()
+        for name, field in volet_fields.items()
+        if field["verbose_name"]
+    }
+
+
 def _sort_by_index_code(year, volet, field_names):
     volet_fields = get_teledeclaration_config(year)[volet]
     return sorted(field_names, key=lambda name: volet_fields[name]["index_code"])
