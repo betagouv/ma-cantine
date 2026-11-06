@@ -1,6 +1,9 @@
 from django.db import models
 
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all_years
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all_years,
+    get_teledeclaration_fields_required,
+)
 
 
 class DiagnosticVoletPlastiqueMixin(models.Model):
@@ -55,5 +58,6 @@ class DiagnosticVoletPlastiqueMixin(models.Model):
 
     @property
     def is_filled_plastique(self) -> bool:
-        # TODO: define the volet's filled rule (no required fields in teledeclaration/<year>/champs.json yet)
-        return True
+        return all(
+            getattr(self, field) is not None for field in get_teledeclaration_fields_required(self.year, "PLASTIQUE")
+        )
