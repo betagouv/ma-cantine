@@ -5,7 +5,11 @@ from simple_history.admin import SimpleHistoryAdmin
 from data.admin.utils import ReadOnlyAdminMixin, json_pretty
 from data.models import Diagnostic
 from data.models.creation_source import CreationSource
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all, get_tunnel_progress_field
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
+    get_teledeclaration_verbose_names,
+    get_tunnel_progress_field,
+)
 
 
 class DiagnosticForm(forms.ModelForm):
@@ -113,6 +117,15 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             qs = qs.order_by(*ordering)
         qs = qs.prefetch_related("canteen")
         return qs
+
+    def get_form(self, request, obj=None, **kwargs):
+        """
+        The field labels depend on the diagnostic's year (see teledeclaration/<year>/champs.json).
+        Meta.labels is also used for the readonly fields (e.g. teledeclared diagnostics).
+        """
+        if obj is not None:
+            kwargs["labels"] = get_teledeclaration_verbose_names(obj.year)
+        return super().get_form(request, obj, **kwargs)
 
     def get_fieldsets(self, request, obj=None):
         """
