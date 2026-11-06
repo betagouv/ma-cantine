@@ -1664,6 +1664,23 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertIn("dechetsMesureDuree", body["errors"])
 
     @authenticate
+    def test_can_get_diagnostic_check_with_volet_thematique_required_field_missing(self):
+        self.canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(
+            year=2026, canteen=self.canteen, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, service_type=None
+        )
+
+        response = self.client.get(
+            reverse("diagnostic_check", kwargs={"canteen_pk": self.canteen.id, "pk": diagnostic.id})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isClean"], False)
+        self.assertEqual(body["isCleanDiversification"], False)
+        self.assertEqual(body["errors"]["serviceType"], ["Ce champ est obligatoire pour l'année 2026."])
+
+    @authenticate
     def test_can_get_diagnostic_check_when_teledeclared(self):
         self.canteen.managers.add(authenticate.user)
         self.diagnostic.teledeclare(applicant=self.user)
