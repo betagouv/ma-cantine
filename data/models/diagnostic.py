@@ -861,14 +861,27 @@ class Diagnostic(
     def _is_filled(self) -> bool:
         return bool(not diagnostic_validators.validate_year(self) and self.is_filled_approvisionnement)
 
-    def is_clean(self, raise_errors=False) -> tuple[bool, dict]:
+    def get_validation_errors(self, skip_thematiques=False) -> dict:
+        """
+        - skip_thematiques: if True, the required fields of the volets thématiques are not checked
+        """
+        errors = {}
         try:
             self.full_clean()
-            return True, {}
         except ValidationError as e:
-            if raise_errors:
-                raise
-            return False, e.message_dict
+            errors = e.message_dict
+        if not skip_thematiques:
+            errors = utils_utils.merge_validation_errors(
+                errors, diagnostic_validators.validate_thematiques_fields_required(self)
+            )
+        # normalize the format: {"field": ["error1", ...]}
+        return ValidationError(errors).message_dict if errors else {}
+
+    def is_clean(self, raise_errors=False, skip_thematiques=False) -> tuple[bool, dict]:
+        errors = self.get_validation_errors(skip_thematiques=skip_thematiques)
+        if errors and raise_errors:
+            raise ValidationError(errors)
+        return not errors, errors
 
     @property
     def has_invalid_reason(self) -> bool:
