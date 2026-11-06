@@ -1,0 +1,1685 @@
+{
+  "APPROVISIONNEMENT": {
+    "valeur_autres_aocaop_igp_stg": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, AOC / AOP / IGP / STG"
+    },
+    "valeur_autres_bio": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Bio"
+    },
+    "valeur_autres_circuit_court": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Circuit-court"
+    },
+    "valeur_autres_commerce_equitable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Commerce équitable"
+    },
+    "valeur_autres_externalites": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
+    },
+    "valeur_autres_fermier": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Fermier"
+    },
+    "valeur_autres_france": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Provenance France"
+    },
+    "valeur_autres_hve": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Haute valeur environnementale"
+    },
+    "valeur_autres_label_rouge": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Label rouge"
+    },
+    "valeur_autres_local": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Produit local"
+    },
+    "valeur_autres_non_egalim": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, non-EGalim."
+    },
+    "valeur_autres_peche_durable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Pêche durable"
+    },
+    "valeur_autres_performance": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Produits acquis sur la base de leurs performances en matière environnementale"
+    },
+    "valeur_autres_rup": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Autres produits frais, surgelés et d’épicerie, Région ultrapériphérique"
+    },
+    "valeur_bio": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": false,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": true,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Bio - Valeur annuelle HT"
+    },
+    "valeur_boissons_aocaop_igp_stg": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, AOC / AOP / IGP / STG"
+    },
+    "valeur_boissons_bio": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Bio"
+    },
+    "valeur_boissons_circuit_court": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Circuit-court"
+    },
+    "valeur_boissons_commerce_equitable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Commerce équitable"
+    },
+    "valeur_boissons_externalites": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
+    },
+    "valeur_boissons_fermier": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Fermier"
+    },
+    "valeur_boissons_france": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Provenance France"
+    },
+    "valeur_boissons_hve": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Haute valeur environnementale"
+    },
+    "valeur_boissons_label_rouge": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Label rouge"
+    },
+    "valeur_boissons_local": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Produit local"
+    },
+    "valeur_boissons_non_egalim": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, non-EGalim."
+    },
+    "valeur_boissons_peche_durable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Pêche durable"
+    },
+    "valeur_boissons_performance": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Produits acquis sur la base de leurs performances en matière environnementale"
+    },
+    "valeur_boissons_rup": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boissons, Région ultrapériphérique"
+    },
+    "valeur_boulangerie_aocaop_igp_stg": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, AOC / AOP / IGP / STG"
+    },
+    "valeur_boulangerie_bio": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Bio"
+    },
+    "valeur_boulangerie_circuit_court": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Circuit-court"
+    },
+    "valeur_boulangerie_commerce_equitable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Commerce équitable"
+    },
+    "valeur_boulangerie_externalites": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
+    },
+    "valeur_boulangerie_fermier": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Fermier"
+    },
+    "valeur_boulangerie_france": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Provenance France"
+    },
+    "valeur_boulangerie_hve": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Haute valeur environnementale"
+    },
+    "valeur_boulangerie_label_rouge": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Label rouge"
+    },
+    "valeur_boulangerie_local": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Produit local"
+    },
+    "valeur_boulangerie_non_egalim": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, non-EGalim."
+    },
+    "valeur_boulangerie_peche_durable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Pêche durable"
+    },
+    "valeur_boulangerie_performance": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale"
+    },
+    "valeur_boulangerie_rup": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Boulangerie/Pâtisserie fraîches et surgelées, Région ultrapériphérique"
+    },
+    "valeur_charcuterie_aocaop_igp_stg": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, AOC / AOP / IGP / STG"
+    },
+    "valeur_charcuterie_bio": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Bio"
+    },
+    "valeur_charcuterie_circuit_court": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Circuit-court"
+    },
+    "valeur_charcuterie_commerce_equitable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Commerce équitable"
+    },
+    "valeur_charcuterie_externalites": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
+    },
+    "valeur_charcuterie_fermier": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Fermier"
+    },
+    "valeur_charcuterie_france": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Provenance France"
+    },
+    "valeur_charcuterie_hve": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Haute valeur environnementale"
+    },
+    "valeur_charcuterie_label_rouge": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Label rouge"
+    },
+    "valeur_charcuterie_local": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Produit local"
+    },
+    "valeur_charcuterie_non_egalim": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, non-EGalim."
+    },
+    "valeur_charcuterie_peche_durable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Pêche durable"
+    },
+    "valeur_charcuterie_performance": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Produits acquis sur la base de leurs performances en matière environnementale"
+    },
+    "valeur_charcuterie_rup": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Charcuterie, Région ultrapériphérique"
+    },
+    "valeur_egalim_autres": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": false,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": true,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Valeur totale (HT) des autres achats EGalim"
+    },
+    "valeur_externalites_performance": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": false,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": true,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale"
+    },
+    "valeur_fruits_et_legumes_aocaop_igp_stg": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, AOC / AOP / IGP / STG"
+    },
+    "valeur_fruits_et_legumes_bio": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Bio"
+    },
+    "valeur_fruits_et_legumes_circuit_court": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Circuit-court"
+    },
+    "valeur_fruits_et_legumes_commerce_equitable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Commerce équitable"
+    },
+    "valeur_fruits_et_legumes_externalites": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
+    },
+    "valeur_fruits_et_legumes_fermier": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Fermier"
+    },
+    "valeur_fruits_et_legumes_france": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Provenance France"
+    },
+    "valeur_fruits_et_legumes_hve": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Haute valeur environnementale"
+    },
+    "valeur_fruits_et_legumes_label_rouge": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Label rouge"
+    },
+    "valeur_fruits_et_legumes_local": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Produit local"
+    },
+    "valeur_fruits_et_legumes_non_egalim": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, non-EGalim."
+    },
+    "valeur_fruits_et_legumes_peche_durable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Pêche durable"
+    },
+    "valeur_fruits_et_legumes_performance": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale"
+    },
+    "valeur_fruits_et_legumes_rup": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Fruits et légumes frais et surgelés, Région ultrapériphérique"
+    },
+    "valeur_produits_de_la_mer": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": true,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Valeur totale (HT) poissons et produits aquatiques"
+    },
+    "valeur_produits_de_la_mer_aocaop_igp_stg": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, AOC / AOP / IGP / STG"
+    },
+    "valeur_produits_de_la_mer_bio": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Bio"
+    },
+    "valeur_produits_de_la_mer_circuit_court": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Circuit-court"
+    },
+    "valeur_produits_de_la_mer_commerce_equitable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Commerce équitable"
+    },
+    "valeur_produits_de_la_mer_egalim": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": false,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": true,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Valeur totale (HT) poissons et produits aquatiques EGalim"
+    },
+    "valeur_produits_de_la_mer_externalites": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
+    },
+    "valeur_produits_de_la_mer_fermier": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Fermier"
+    },
+    "valeur_produits_de_la_mer_france": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Provenance France"
+    },
+    "valeur_produits_de_la_mer_hve": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Haute valeur environnementale"
+    },
+    "valeur_produits_de_la_mer_label_rouge": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Label rouge"
+    },
+    "valeur_produits_de_la_mer_local": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Produit local"
+    },
+    "valeur_produits_de_la_mer_non_egalim": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, non-EGalim."
+    },
+    "valeur_produits_de_la_mer_peche_durable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Pêche durable"
+    },
+    "valeur_produits_de_la_mer_performance": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Produits acquis sur la base de leurs performances en matière environnementale"
+    },
+    "valeur_produits_de_la_mer_rup": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits aquatiques frais et surgelés, Région ultrapériphérique"
+    },
+    "valeur_produits_laitiers_aocaop_igp_stg": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), AOC / AOP / IGP / STG"
+    },
+    "valeur_produits_laitiers_bio": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Bio"
+    },
+    "valeur_produits_laitiers_circuit_court": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Circuit-court"
+    },
+    "valeur_produits_laitiers_commerce_equitable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Commerce équitable"
+    },
+    "valeur_produits_laitiers_externalites": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
+    },
+    "valeur_produits_laitiers_fermier": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Fermier"
+    },
+    "valeur_produits_laitiers_france": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Provenance France"
+    },
+    "valeur_produits_laitiers_hve": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Haute valeur environnementale"
+    },
+    "valeur_produits_laitiers_label_rouge": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Label rouge"
+    },
+    "valeur_produits_laitiers_local": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Produit local"
+    },
+    "valeur_produits_laitiers_non_egalim": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), non-EGalim."
+    },
+    "valeur_produits_laitiers_peche_durable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Pêche durable"
+    },
+    "valeur_produits_laitiers_performance": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Produits acquis sur la base de leurs performances en matière environnementale"
+    },
+    "valeur_produits_laitiers_rup": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "BOF (Produits laitiers, beurre et œufs), Région ultrapériphérique"
+    },
+    "valeur_siqo": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": false,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": true,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Produits SIQO (hors bio) - Valeur annuelle HT"
+    },
+    "valeur_totale": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": true
+        },
+        "SIMPLE": {
+          "is_present": true,
+          "is_required": true
+        }
+      },
+      "verbose_name": "Valeur totale annuelle HT"
+    },
+    "valeur_viandes_volailles": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": true,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Valeur totale (HT) viandes et volailles fraiches ou surgelées"
+    },
+    "valeur_viandes_volailles_aocaop_igp_stg": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, AOC / AOP / IGP / STG"
+    },
+    "valeur_viandes_volailles_bio": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Bio"
+    },
+    "valeur_viandes_volailles_circuit_court": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Circuit-court"
+    },
+    "valeur_viandes_volailles_commerce_equitable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Commerce équitable"
+    },
+    "valeur_viandes_volailles_egalim": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": false,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": true,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Valeur totale (HT) viandes et volailles fraiches ou surgelées EGalim"
+    },
+    "valeur_viandes_volailles_externalites": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Produit prenant en compte les coûts imputés aux externalités environnementales pendant son cycle de vie"
+    },
+    "valeur_viandes_volailles_fermier": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Fermier"
+    },
+    "valeur_viandes_volailles_france": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": true,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Provenance France"
+    },
+    "valeur_viandes_volailles_hve": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Haute valeur environnementale"
+    },
+    "valeur_viandes_volailles_label_rouge": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Label rouge"
+    },
+    "valeur_viandes_volailles_local": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Produit local"
+    },
+    "valeur_viandes_volailles_non_egalim": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, non-EGalim."
+    },
+    "valeur_viandes_volailles_peche_durable": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Pêche durable"
+    },
+    "valeur_viandes_volailles_performance": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Produits acquis sur la base de leurs performances en matière environnementale"
+    },
+    "valeur_viandes_volailles_rup": {
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": true,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "verbose_name": "Viandes et volailles fraîches et surgelées, Région ultrapériphérique"
+    }
+  },
+  "DIVERSIFICATION": {
+    "menu_vegetarien_bases": {
+      "is_required": false,
+      "verbose_name": "Le plat principal du menu végétarien est majoritairement à base de"
+    },
+    "menu_vegetarien_frequence": {
+      "is_required": false,
+      "verbose_name": "Fréquence hebdomadaire des menus végétariens"
+    },
+    "plan_diversification_actions": {
+      "is_required": false,
+      "verbose_name": "Ce plan comporte les actions suivantes"
+    },
+    "plan_diversification_en_place": {
+      "is_required": false,
+      "verbose_name": "Plan de diversification en place"
+    },
+    "service_type": {
+      "is_required": false,
+      "verbose_name": "Service proposé"
+    }
+  },
+  "GASPILLAGE": {
+    "actions_gaspillage_autre": {
+      "is_required": false,
+      "verbose_name": "autre action contre le gaspillage alimentaire"
+    },
+    "actions_gaspillage_realisees": {
+      "is_required": false,
+      "verbose_name": "Actions de lutte contre le gaspillage"
+    },
+    "commentaires_gaspillage_autre": {
+      "is_required": false,
+      "verbose_name": "Commentaires concernant la lutte contre le gaspillage et dons alimentaires"
+    },
+    "diagnostic_gaspillage_realise": {
+      "is_required": false,
+      "verbose_name": "Diagnostic sur le gaspillage réalisé"
+    },
+    "dons_convention": {
+      "is_required": false,
+      "verbose_name": "Propose des dons alimentaires"
+    },
+    "dons_frequence": {
+      "is_required": false,
+      "verbose_name": "Fréquence de dons"
+    },
+    "dons_quantite": {
+      "is_required": false,
+      "verbose_name": "Quantité des denrées données"
+    },
+    "dons_type_denrees": {
+      "is_required": false,
+      "verbose_name": "Type de denrées données"
+    },
+    "mesures_gaspillage_realisees": {
+      "is_required": false,
+      "verbose_name": "Réalisé des mesures contre le gaspillage alimentaire"
+    },
+    "plan_gaspillage_en_place": {
+      "is_required": false,
+      "verbose_name": "Plan d'action contre le gaspillage en place"
+    }
+  },
+  "INFORMATION": {
+    "information_frequence": {
+      "is_required": false,
+      "verbose_name": "Fréquence de cette communication"
+    },
+    "information_qualite_durable": {
+      "is_required": false,
+      "verbose_name": "Communique sur les démarches qualité/durables/équitables"
+    },
+    "information_qualite_nutritionnelle": {
+      "is_required": false,
+      "verbose_name": "Communique sur le plan alimentaire"
+    },
+    "information_support_url": {
+      "is_required": false,
+      "verbose_name": "Lien vers le support de communication"
+    },
+    "information_supports": {
+      "is_required": false,
+      "verbose_name": "L'information sur la qualité des approvisionnements se fait"
+    },
+    "information_supports_autre": {
+      "is_required": false,
+      "verbose_name": "autre communication utilisée"
+    }
+  },
+  "PLASTIQUE": {
+    "plastique_bouteille_remplace": {
+      "is_required": false,
+      "verbose_name": "Bouteilles en plastique remplacées"
+    },
+    "plastique_contenant_cuisson_remplace": {
+      "is_required": false,
+      "verbose_name": "Contenants de cuisson en plastique remplacés"
+    },
+    "plastique_contenant_service_remplace": {
+      "is_required": false,
+      "verbose_name": "Contenants de service en plastique remplacés"
+    },
+    "plastique_ustensile_remplace": {
+      "is_required": false,
+      "verbose_name": "Ustensils en plastique remplacées"
+    }
+  }
+}
