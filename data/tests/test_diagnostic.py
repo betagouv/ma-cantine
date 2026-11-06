@@ -845,7 +845,9 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.diagnostic = DiagnosticFactory(
-            **VALID_DIAGNOSTIC_SIMPLE_2024, plan_gaspillage_en_place=False, status=Diagnostic.DiagnosticStatus.SUBMITTED
+            **VALID_DIAGNOSTIC_SIMPLE_2024,
+            plan_gaspillage_en_place=False,
+            status=Diagnostic.DiagnosticStatus.SUBMITTED,
         )
 
     @freeze_time(date_in_teledeclaration_campaign)
@@ -1419,6 +1421,7 @@ class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
         ):
             with self.subTest(index=index, diagnostic=diagnostic):
                 self.assertTrue(diagnostic._is_filled())
+                self.assertTrue(diagnostic.is_filled_approvisionnement)
         # not filled
         for index, diagnostic in enumerate(
             [
@@ -1432,6 +1435,7 @@ class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
             diagnostic.refresh_from_db()
             with self.subTest(index=index, diagnostic=diagnostic):
                 self.assertFalse(diagnostic._is_filled())
+                self.assertFalse(diagnostic.is_filled_approvisionnement)
 
     def test_is_filled_field_set_on_save(self):
         # filled
