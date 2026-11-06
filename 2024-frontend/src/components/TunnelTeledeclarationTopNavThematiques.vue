@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { useRoute } from "vue-router"
 
-const emit = defineEmits(["save", "quit"])
+const emit = defineEmits(["save"])
 const route = useRoute()
 const nextStep = computed(() => route.meta.next)
 const isLast = computed(() => route.meta.isLast)
@@ -17,9 +17,10 @@ const saveAndGoNext = () => {
   <nav class="tunnel-teledeclaration-top-nav-thematiques ma-cantine--sticky__top fr-background-default--grey fr-py-2w">
     <DsfrButton
       tertiary
-      icon="fr-icon-close-line"
-      label="Quitter sans enregistrer"
-      @click="emit('quit', 'GestionnaireCantineTeledeclarationEnCours')"
+      no-outline
+      icon="fr-icon-save-line"
+      label="Enregistrer et quitter"
+      @click="emit('save', 'GestionnaireCantineTeledeclarationEnCours')"
     />
     <DsfrButton
       icon="fr-icon-arrow-right-line"

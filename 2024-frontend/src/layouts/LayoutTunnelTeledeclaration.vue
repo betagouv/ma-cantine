@@ -102,11 +102,6 @@ const quit = () => {
   router.push(quitRoute.value)
 }
 
-const goToPageWithoutSaving = (page) => {
-  quitRoute.value = { name: page }
-  quit()
-}
-
 onMounted(() => window.addEventListener("beforeunload", quitBrowser))
 onBeforeUnmount(() => window.removeEventListener("beforeunload", quitBrowser))
 onBeforeRouteLeave(quitTunnel)
@@ -125,7 +120,7 @@ const goTo = (page) => {
       </div>
       <div class="fr-col-12 fr-col-md-9">
         <TunnelTeledeclarationTopNavApprovisionnements v-if="topNav === 'approvisionnements' && !hideTopNav" @save="save" />
-        <TunnelTeledeclarationTopNavThematiques v-if="topNav === 'thematiques'" @save="save" @quit="goToPageWithoutSaving" />
+        <TunnelTeledeclarationTopNavThematiques v-if="topNav === 'thematiques'" @save="save" />
         <div class="fr-mt-2w fr-pl-0 fr-pl-md-4w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
           <RouterView />
