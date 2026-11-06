@@ -207,7 +207,6 @@
       "diagnosticGaspillageRealise": {
         "type": "radio",
         "inline": true,
-        "required": true,
         "options": [
           {
             "label": "Oui",
@@ -224,7 +223,6 @@
       "planGaspillageEnPlace": {
         "type": "radio",
         "inline": true,
-        "required": true,
         "options": [
           {
             "label": "Oui",
@@ -240,7 +238,6 @@
       },
       "actionsGaspillageRealisees": {
         "type": "checkboxes",
-        "required": false,
         "options": [
           {
             "label": "Pré-inscription des convives obligatoire",
@@ -276,13 +273,11 @@
       },
       "actionsGaspillageAutre": {
         "shortName": "Si vous avez réalisé d'autres actions vous pouvez les renseigner ici :",
-        "type": "textarea",
-        "required": false
+        "type": "textarea"
       },
       "donsConvention": {
         "type": "radio",
         "inline": true,
-        "required": true,
         "options": [
           {
             "label": "Oui",
@@ -298,17 +293,14 @@
       },
       "donsFrequence": {
         "hint": "En dons/an",
-        "type": "number",
-        "required": false
+        "type": "number"
       },
       "donsQuantite": {
         "hint": "En kg/an",
-        "type": "number",
-        "required": false
+        "type": "number"
       },
       "donsTypeDenrees": {
-        "type": "textarea",
-        "required": false
+        "type": "textarea"
       }
     }
   },
@@ -326,7 +318,6 @@
       "planDiversificationEnPlace": {
         "type": "radio",
         "inline": true,
-        "required": true,
         "options": [
           {
             "label": "Oui",
@@ -342,7 +333,6 @@
       },
       "planDiversificationActions": {
         "type": "checkboxes",
-        "required": false,
         "options": [
           {
             "label": "Agir sur les plats et les produits (diversification, gestion des quantités, recette traditionnelle, gout...)",
@@ -373,7 +363,6 @@
       },
       "serviceType": {
         "type": "radio",
-        "required": true,
         "options": [
           {
             "label": "Menu unique",
@@ -394,7 +383,6 @@
       },
       "menuVegetarienFrequence": {
         "type": "radio",
-        "required": true,
         "options": [
           {
             "label": "De façon quotidienne",
@@ -425,7 +413,6 @@
       },
       "menuVegetarienBases": {
         "type": "checkboxes",
-        "required": false,
         "options": [
           {
             "label": "De céréales et/ou les légumes secs (hors soja)",

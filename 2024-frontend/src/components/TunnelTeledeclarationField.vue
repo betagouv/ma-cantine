@@ -83,7 +83,7 @@ const resetField = () => {
 }
 </script>
 <template>
-  <div class="fr-grid-row fr-col-12 fr-mb-2w">
+  <div class="fr-grid-row fr-col-12">
     <IconLink v-if="isRelatedVertical" class="fr-col-1" bottom="1.25rem" />
     <div v-if="isRelatedHorizontal" class="fr-col-2 fr-pr-3w ma-cantine--flex-start">
       <AppSeparator class="fr-m-0" />

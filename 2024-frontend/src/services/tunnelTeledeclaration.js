@@ -50,6 +50,7 @@ const generateVoletFields = (voletConfig, voletCustomisation) => {
         apiKey,
         shortName: `${config.verbose_name} :`,
         labelRecap: config.verbose_name,
+        required: config.is_required,
         ...voletCustomisation[apiKey]
     }
   }
