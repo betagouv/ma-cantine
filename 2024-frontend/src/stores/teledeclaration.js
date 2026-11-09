@@ -156,8 +156,9 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     }
   }
 
-  /* Check if the step has been visited */
-  function isPageVisited(slug) {
+  /* Check if the page has been visited : "complet" for a volet, the page slug in the list of the visited pages for the appro */
+  function isPageVisited({ slug, volet }) {
+    if (volet) return diagnostic.value?.[voletTunnelProgressionFields[volet]] === "complet"
     return tunnelApproVisitedPages.value.includes(slug)
   }
 
@@ -186,16 +187,9 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return isFilledVolets[volet]
   }
 
-  /* Check if the volet has been visited */
-  function isVoletVisited(volet) {
-    return diagnostic.value?.[voletTunnelProgressionFields[volet]] === "complet"
-  }
-
   /* Only display errors if the step or the volet has been visited before */
   function getDisplayedErrors({ slug, volet }) {
-    const isVoletDisplayed = volet && isVoletVisited(volet)
-    const isPageDisplayed = !volet && isPageVisited(slug)
-    if (isVoletDisplayed || isPageDisplayed) return diagnosticErrors.value
+    if (isPageVisited({ slug, volet })) return diagnosticErrors.value
     return []
   }
 
