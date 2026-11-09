@@ -13,7 +13,10 @@ class ApiDocsTest(TestCase):
             properties["valeurBio"]["description"],
             "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »",
         )
-        # empty verbose_name in 2026: 2025's (v1 field exposed under its English name)
-        self.assertEqual(properties["hasWastePlan"]["description"], "Plan d'action contre le gaspillage en place")
+        # v1 field exposed under its English name
+        self.assertEqual(
+            properties["hasWastePlan"]["description"],
+            "J’ai mis en place un plan d’action pour la réduction de mes déchets alimentaires",
+        )
         # not in the teledeclaration config: the model field's verbose_name
         self.assertEqual(properties["year"]["description"], "année")
