@@ -38,7 +38,7 @@ attrs==26.1.0
     #   aiohttp
     #   jsonschema
     #   referencing
-authlib==1.8.0
+authlib==1.9.5
     # via ma-cantine
 babel==2.18.0
     # via agate
@@ -247,7 +247,7 @@ executing==2.2.1
 factory-boy==3.3.3
 faker==27.0.0
     # via factory-boy
-filelock==3.32.5
+filelock==4.2.9
     # via
     #   cachecontrol
     #   python-discovery
@@ -293,7 +293,7 @@ jmespath==1.1.0
     # via
     #   boto3
     #   botocore
-joserfc==1.7.5
+joserfc==1.8.0
     # via authlib
 jsonschema==4.26.0
     # via
@@ -303,7 +303,7 @@ jsonschema==4.26.0
     #   metricflow
 jsonschema-specifications==2025.9.1
     # via jsonschema
-jwcrypto==1.6.0
+jwcrypto==1.6.1
     # via django-oauth-toolkit
 kombu==5.6.2
     # via celery
@@ -334,7 +334,7 @@ metricflow==0.212.0
     # via dbt-core
 more-itertools==10.8.0
     # via metricflow
-msgpack==1.2.2
+msgpack==1.2.4
     # via
     #   cachecontrol
     #   mashumaro
@@ -350,7 +350,7 @@ numpy==2.4.2
     # via
     #   ma-cantine
     #   pandas
-oauthlib==3.3.1
+oauthlib==4.0.1
     # via django-oauth-toolkit
 openpyxl==3.1.5
     # via
@@ -459,7 +459,7 @@ pyhanko-certvalidator==0.32.0
     #   xhtml2pdf
 pyparsing==3.3.2
     # via pip-requirements-parser
-pypdf==6.21.2
+pypdf==6.21.4
     # via xhtml2pdf
 python-bidi==0.6.11
     # via xhtml2pdf
