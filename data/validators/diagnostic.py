@@ -5,6 +5,7 @@ from django.utils import timezone
 from data.models.definitionlocal import DefinitionLocal
 from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
+    get_current_campaign_year,
     get_year_campaign_end_date_or_today_date,
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )
@@ -39,7 +40,8 @@ def validate_year(instance):
 def validate_year_and_can_edit(instance):
     """
     - extra validation:
-        - year must be in the current campaign year (now.year - 1 & now.year)
+        - year must be in the current campaign year (campaign year & the next one, e.g. 2026 & 2027 during the 2026 campaign)
+          (see get_current_campaign_year: the previous year, or TELEDECLARATION_YEAR_OVERRIDE)
         - if year is valid:
             - after teledeclaration end date, DRAFT diagnostic cannot be edited anymore
             - after correction end date, any diagnostic cannot be edited anymore
@@ -48,7 +50,8 @@ def validate_year_and_can_edit(instance):
     field_name = "year"
     value = getattr(instance, field_name)
     now = timezone.now()
-    current_campaign_years = [now.year - 1, now.year]
+    campaign_year = get_current_campaign_year()
+    current_campaign_years = [campaign_year, campaign_year + 1]
     if int(value) not in current_campaign_years:
         utils_utils.add_validation_error(
             errors,

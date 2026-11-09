@@ -4,7 +4,7 @@ from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
-from django.test import TestCase, TransactionTestCase
+from django.test import TestCase, TransactionTestCase, override_settings
 from django.utils import timezone
 from freezegun import freeze_time
 
@@ -101,6 +101,24 @@ class DiagnosticModelSaveTest(TransactionTestCase):
             with self.subTest(year=VALUE_NOT_OK_ON_FULL_CLEAN):
                 diagnostic = DiagnosticFactory(year=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
+
+    @freeze_time("2026-11-09")  # outside of a campaign, but the year is overridden (e.g. demo environment)
+    @override_settings(TELEDECLARATION_YEAR_OVERRIDE=2026)
+    def test_year_validation_with_year_override(self):
+        """
+        The allowed years follow the overridden campaign year (2026 & 2027) instead of the current date (2025 & 2026)
+        """
+        VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
+        VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
+        diagnostic = DiagnosticFactory(year=2026, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+        diagnostic.full_clean()  # should not raise
+        diagnostic = DiagnosticFactory(year=2025, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
+        with self.assertRaises(ValidationError) as context:
+            diagnostic.full_clean()
+        self.assertEqual(
+            context.exception.message_dict["year"],
+            ["L'année doit être dans l'année de campagne en cours (2026, 2027)."],
+        )
 
     def test_can_edit_status_draft_validation(self):
         # DRAFT diagnostic cannot be edited during the campaign but not after
