@@ -227,6 +227,7 @@ class DiagnosticCheckView(APIView):
             "is_empty": is_empty,
             "is_filled": is_filled,
             **{field: getattr(diagnostic, field) for field in Diagnostic.IS_FILLED_VOLET_FIELDS},
+            **{field: getattr(diagnostic, field) for field in Diagnostic.IS_STARTED_VOLET_FIELDS},
             "is_clean": is_clean,
             # split the errors per volet (the errors outside of the volets, ex: year, only impact is_clean)
             **{
