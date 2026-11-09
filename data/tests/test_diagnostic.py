@@ -21,6 +21,7 @@ from data.models.diagnostic import (
     local_sup_france_query,
 )
 from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
+from data.validators import diagnostic as diagnostic_validators
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
@@ -1569,6 +1570,10 @@ class DiagnosticVoletIsStartedPropertyTest(TestCase):
             with self.subTest(volet=volet):
                 setattr(self.diagnostic, field, True)
                 self.assertTrue(getattr(self.diagnostic, f"is_started_{volet.lower()}"))
+
+    def test_volet_not_started_cannot_have_errors(self):
+        errors = diagnostic_validators.validate_volets_thematiques_fields_required(self.diagnostic)
+        self.assertEqual(errors, {})
 
 
 class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
