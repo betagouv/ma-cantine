@@ -24,7 +24,10 @@ from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_all,
     get_teledeclaration_fields_required,
 )
-from data.validators import diagnostic as diagnostic_validators
+from data.validators import diagnostic_volet_diversification as diagnostic_volet_diversification_validators
+from data.validators import diagnostic_volet_gaspillage as diagnostic_volet_gaspillage_validators
+from data.validators import diagnostic_volet_information as diagnostic_volet_information_validators
+from data.validators import diagnostic_volet_plastique as diagnostic_volet_plastique_validators
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
@@ -1594,8 +1597,14 @@ class DiagnosticVoletThematiqueIsFilledPropertyTest(TestCase):
                 self.assertTrue(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
 
     def test_volet_not_started_cannot_have_errors(self):
-        errors = diagnostic_validators.validate_volets_thematiques_fields_required(self.diagnostic)
-        self.assertEqual(errors, {})
+        for validate_fields_required in [
+            diagnostic_volet_gaspillage_validators.validate_gaspillage_fields_required,
+            diagnostic_volet_diversification_validators.validate_diversification_fields_required,
+            diagnostic_volet_plastique_validators.validate_plastique_fields_required,
+            diagnostic_volet_information_validators.validate_information_fields_required,
+        ]:
+            with self.subTest(validator=validate_fields_required.__name__):
+                self.assertEqual(validate_fields_required(self.diagnostic), {})
 
 
 class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
