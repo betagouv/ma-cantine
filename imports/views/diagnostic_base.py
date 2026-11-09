@@ -8,11 +8,13 @@ from simple_history.utils import update_change_reason
 from imports.views.base import BaseImportView
 from data.models import Canteen, Diagnostic
 from data.models.creation_source import CreationSource
+from data.models.diagnostic_teledeclaration_dates import get_current_campaign_year
 from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
 from data.validators.diagnostic_teledeclaration import validate_is_in_teledeclaration_or_correction_period
 
 
 DEFAULT_SCHEMA_VERSION = "2025"
+YEAR_COLUMN = "année_bilan"  # only in the 2025 format (since 2026: the current campaign year)
 
 
 class BaseDiagnosticsImportView(BaseImportView):
@@ -22,7 +24,7 @@ class BaseDiagnosticsImportView(BaseImportView):
     Subclasses provide:
     - `diagnostic_type`: the type of the diagnostics created or updated (simple or complete)
     - `_get_schemas()`: the JSON Table Schemas to validate against, by schema version (file format)
-      (columns: identifier (siret or cantine_id), année_bilan, values)
+      (columns: identifier (siret or cantine_id), année_bilan (2025 format only), values)
 
     The schema version is chosen with the `schema_version` param (default: DEFAULT_SCHEMA_VERSION)
     """
@@ -85,11 +87,15 @@ class BaseDiagnosticsImportView(BaseImportView):
         self._update_or_create_diagnostic(canteen, diagnostic_year, values_dict, diagnostic_type)
 
     def _validate_diagnostic(self, row):
-        """Parse row (values read by column name) and return (year, values_dict, diagnostic_type)"""
-        _, year_column, *value_columns = self.schema.header
+        """
+        Parse row (values read by column name) and return (year, values_dict, diagnostic_type)
+        - year: the année_bilan column (2025 format), else the current campaign year (2026 format)
+        """
+        _, *columns = self.schema.header
         row_dict = self._get_row_dict(row)
-        values_dict = {column: row_dict[column] or None for column in value_columns}
-        return row_dict[year_column], values_dict, self.diagnostic_type
+        year = row_dict[YEAR_COLUMN] if YEAR_COLUMN in row_dict else get_current_campaign_year()
+        values_dict = {column: row_dict[column] or None for column in columns if column != YEAR_COLUMN}
+        return year, values_dict, self.diagnostic_type
 
     def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
         diagnostic_exists = Diagnostic.objects.filter(canteen=canteen, year=diagnostic_year).exists()

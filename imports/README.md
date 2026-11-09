@@ -30,7 +30,7 @@ Chaque import déclare le schéma contre lequel valider le fichier (`_get_schema
 
 Les valeurs d'une ligne sont lues par nom de colonne (`_get_row_dict()`, avec les colonnes du schéma), et non par position.
 
-Bilans : les imports ne sont possibles que pendant la campagne (télédéclaration ou correction), par exemple au début de 2027 pour les bilans 2026 : hors campagne, le fichier entier est refusé (`_process_file()`). L'année de chaque ligne est ensuite vérifiée par la validation du modèle (`CAMPAIGN_DATES`, avec les settings `TELEDECLARATION_*_OVERRIDE` pour tester dans les environnements non-prod).
+Bilans : les imports ne sont possibles que pendant la campagne (télédéclaration ou correction), par exemple au début de 2027 pour les bilans 2026 : hors campagne, le fichier entier est refusé (`_process_file()`). Format 2026 : pas de colonne `année_bilan`, les bilans sont ceux de l'année de la campagne en cours (`get_current_campaign_year()`). Format 2025 : l'année de chaque ligne (`année_bilan`) est vérifiée par la validation du modèle (`CAMPAIGN_DATES`, avec les settings `TELEDECLARATION_*_OVERRIDE` pour tester dans les environnements non-prod).
 
 Bilans : les erreurs de validation sur les champs absents du fichier sont ignorées (`_full_clean()`). Par exemple, le format 2025 n'a pas de colonne `nombre_repas_an`, obligatoire pour les bilans 2026 : il sera à compléter dans l'interface avant la télédéclaration.
 
