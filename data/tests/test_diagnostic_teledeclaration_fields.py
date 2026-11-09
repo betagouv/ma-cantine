@@ -13,6 +13,7 @@ from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_all_volets,
     get_teledeclaration_fields_all_years,
     get_teledeclaration_fields_required,
+    get_teledeclaration_verbose_names,
     get_tunnel_progress_field,
 )
 
@@ -173,6 +174,20 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         self.assertNotIn("service_type", get_teledeclaration_fields_all_volets(2023, "SIMPLE"))
         self.assertIn("service_type", get_teledeclaration_fields_all_volets(2024, "SIMPLE"))
         self.assertIn("diagnostic_gaspillage_realise", get_teledeclaration_fields_all_volets("2025", "SIMPLE"))
+
+    def test_get_teledeclaration_verbose_names(self):
+        verbose_names_2025 = get_teledeclaration_verbose_names(2025)
+        verbose_names_2026 = get_teledeclaration_verbose_names(2026)
+        # the labels change from one year to another
+        self.assertEqual(verbose_names_2025["valeur_bio"], "Bio - Valeur annuelle HT")
+        self.assertEqual(
+            verbose_names_2026["valeur_bio"],
+            "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »",
+        )
+        # all the volets
+        self.assertEqual(verbose_names_2025["plan_gaspillage_en_place"], "Plan d'action contre le gaspillage en place")
+        # empty verbose_name are skipped
+        self.assertNotIn("plan_gaspillage_en_place", verbose_names_2026)
 
     def test_get_tunnel_progress_field(self):
         self.assertEqual(list(TUNNEL_PROGRESS_FIELD_BY_VOLET.keys()), VOLETS)
