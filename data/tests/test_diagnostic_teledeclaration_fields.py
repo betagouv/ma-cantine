@@ -1,10 +1,6 @@
-import copy
-from unittest import mock
-
 from django.test import SimpleTestCase
 
 from data.models import Diagnostic
-from data.models import diagnostic_teledeclaration_fields
 from data.models.diagnostic_teledeclaration_fields import (
     DIAGNOSTIC_TYPES,
     TELEDECLARATION_YEARS,
@@ -23,21 +19,17 @@ from data.models.diagnostic_teledeclaration_fields import (
 )
 
 
-def _config_with_empty_plan_gaspillage_en_place_2026(year):
-    """
-    The real config, with an empty verbose_name for plan_gaspillage_en_place in 2026 (none is empty in the real one)
-    """
-    config = copy.deepcopy(get_teledeclaration_config(year))
-    if year == 2026:
-        config["GASPILLAGE"]["plan_gaspillage_en_place"]["verbose_name"] = ""
-    return config
-
-
 class TeledeclarationFieldsTest(SimpleTestCase):
     def test_every_year_has_all_volets(self):
         for year in TELEDECLARATION_YEARS:
             with self.subTest(year=year):
                 self.assertEqual(set(get_teledeclaration_config(year)), set(VOLETS))
+
+    def test_every_field_has_a_verbose_name(self):
+        for year in TELEDECLARATION_YEARS:
+            for volet, volet_fields in get_teledeclaration_config(year).items():
+                with self.subTest(year=year, volet=volet):
+                    self.assertEqual([name for name, field in volet_fields.items() if not field["verbose_name"]], [])
 
     def test_every_field_exists_on_the_model(self):
         model_fields = {field.name for field in Diagnostic._meta.get_fields()}
@@ -201,13 +193,6 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         )
         # all the volets
         self.assertEqual(verbose_names_2025["plan_gaspillage_en_place"], "Plan d'action contre le gaspillage en place")
-        # empty verbose_name are skipped
-        with mock.patch.object(
-            diagnostic_teledeclaration_fields,
-            "get_teledeclaration_config",
-            side_effect=_config_with_empty_plan_gaspillage_en_place_2026,
-        ):
-            self.assertNotIn("plan_gaspillage_en_place", get_teledeclaration_verbose_names(2026))
 
     def test_get_teledeclaration_latest_verbose_names(self):
         latest_verbose_names = get_teledeclaration_latest_verbose_names()
@@ -219,17 +204,6 @@ class TeledeclarationFieldsTest(SimpleTestCase):
             latest_verbose_names["valeur_autres_aocaop_igp_stg"],
             get_teledeclaration_verbose_names(2025)["valeur_autres_aocaop_igp_stg"],
         )
-        # empty verbose_name in the most recent year: the previous year
-        with mock.patch.object(
-            diagnostic_teledeclaration_fields,
-            "get_teledeclaration_config",
-            side_effect=_config_with_empty_plan_gaspillage_en_place_2026,
-        ):
-            # __wrapped__: bypass the @cache
-            self.assertEqual(
-                get_teledeclaration_latest_verbose_names.__wrapped__()["plan_gaspillage_en_place"],
-                "Plan d'action contre le gaspillage en place",
-            )
 
     def test_get_tunnel_progress_field(self):
         self.assertEqual(list(TUNNEL_PROGRESS_FIELD_BY_VOLET.keys()), VOLETS)
