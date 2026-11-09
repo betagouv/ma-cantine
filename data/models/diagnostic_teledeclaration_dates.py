@@ -77,15 +77,23 @@ CAMPAIGN_DATES = {
 }
 
 
+def get_current_campaign_year():
+    """
+    The year of the diagnostics of the current campaign: the previous year (or TELEDECLARATION_YEAR_OVERRIDE)
+    e.g. 2026 diagnostics are teledeclared in 2027
+    """
+    if settings.TELEDECLARATION_YEAR_OVERRIDE:
+        return int(settings.TELEDECLARATION_YEAR_OVERRIDE)
+    return timezone.now().year - 1
+
+
 def is_in_teledeclaration(year=None):
     """
     Check if the current date is within a teledeclaration period.
     If year is passed, double check that it corresponds to the current campaign year.
     """
     now = timezone.now()
-    campaign_year = (
-        int(settings.TELEDECLARATION_YEAR_OVERRIDE) if settings.TELEDECLARATION_YEAR_OVERRIDE else now.year - 1
-    )
+    campaign_year = get_current_campaign_year()
     if year is not None:
         if year != campaign_year:
             return False
@@ -102,9 +110,7 @@ def is_in_correction(year=None):
     If year is passed, double check that it corresponds to the current campaign year.
     """
     now = timezone.now()
-    campaign_year = (
-        int(settings.TELEDECLARATION_YEAR_OVERRIDE) if settings.TELEDECLARATION_YEAR_OVERRIDE else now.year - 1
-    )
+    campaign_year = get_current_campaign_year()
     if year is not None:
         if year != campaign_year:
             return False
