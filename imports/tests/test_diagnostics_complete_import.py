@@ -226,6 +226,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
             diagnostic.refresh_from_db()
             self.assertEqual(diagnostic.valeur_totale, 2000)
 
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_canteen_not_found_with_siret(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -245,6 +246,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
             "Une cantine avec le siret « 21340172201787 » n'existe pas sur la plateforme.",
         )
 
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_user_not_canteen_manager(self):
         CanteenFactory(siret="21340172201787", managers=[])
