@@ -1684,7 +1684,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["errors"]["serviceType"], ["Ce champ est obligatoire pour l'année 2026."])
 
     @authenticate
-    def test_can_get_diagnostic_check_with_volet_thematique_not_started(self):
+    def test_can_get_diagnostic_check_with_volet_thematique_empty(self):
         self.canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory(
             year=2026, canteen=self.canteen, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE

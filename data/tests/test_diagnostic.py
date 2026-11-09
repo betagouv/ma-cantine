@@ -1563,16 +1563,28 @@ class DiagnosticVoletThematiqueIsFilledPropertyTest(TestCase):
             for field in get_teledeclaration_fields_all(2026, volet):
                 setattr(self.diagnostic, field, None)
 
-    def test_volet_is_not_filled_if_not_started(self):
-        for volet in self.VOLETS_FIELD:
-            with self.subTest(volet=volet):
-                self.assertFalse(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
-
-    def test_volet_is_not_filled_if_started_but_required_fields_missing(self):
+    def test_volet_is_filled_if_at_least_one_field_is_filled(self):
         for volet, field in self.VOLETS_FIELD.items():
             with self.subTest(volet=volet):
-                setattr(self.diagnostic, field, True)
+                # Initially not filled
                 self.assertFalse(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
+
+                # Fill one field - should now be considered "filled"
+                setattr(self.diagnostic, field, True)
+                self.assertTrue(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
+
+                # Reset for next test
+                setattr(self.diagnostic, field, None)
+
+    def test_volet_is_filled_even_if_required_fields_missing(self):
+        for volet, field in self.VOLETS_FIELD.items():
+            with self.subTest(volet=volet):
+                # Fill one field - should be considered "filled" even if required fields are missing
+                setattr(self.diagnostic, field, True)
+                self.assertTrue(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
+
+                # Reset for next test
+                setattr(self.diagnostic, field, None)
 
     def test_volet_is_filled_if_all_required_fields_filled(self):
         for volet in self.VOLETS_FIELD:
