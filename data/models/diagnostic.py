@@ -491,6 +491,12 @@ class Diagnostic(
         "is_filled_plastique",
         "is_filled_information",
     ]
+    IS_STARTED_VOLET_FIELDS = [
+        "is_started_gaspillage",
+        "is_started_diversification",
+        "is_started_plastique",
+        "is_started_information",
+    ]
 
     CANTEEN_FIELDS = [
         # new in 2026
