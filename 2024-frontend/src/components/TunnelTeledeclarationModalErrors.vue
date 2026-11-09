@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import AppErrorList from "@/components/AppErrorList.vue"
 
-const props = defineProps(["opened", "errors"])
+const props = defineProps(["opened", "errors", "isVolet"])
 const emit = defineEmits(["close", "continue"])
 const title = computed(() => props.errors.length > 1 ? "Erreurs détectées" : "Erreur détectée")
 </script>
@@ -15,7 +15,8 @@ const title = computed(() => props.errors.length > 1 ? "Erreurs détectées" : "
   >
     <p>Lors de l'enregistrement de vos données, nous avons détecté une ou plusieurs erreurs : </p>
     <AppErrorList :errors="errors.map((error) => error.field)" />
-    <p>Vous n'êtes pas obligé de faire la correction maintenant mais vous devrez la faire avant de télédéclarer.</p>
+    <p v-if="isVolet">Vous n'êtes pas obligé de faire la correction maintenant mais tant que les données seront incorrectes elles ne seront pas prises en compte dans votre télédéclaration du volet thématique.</p>
+    <p v-else>Vous n'êtes pas obligé de faire la correction maintenant mais vous devrez la faire avant de télédéclarer.</p>
     <div class="ma-cantine--flex-end">
       <DsfrButton
         secondary
