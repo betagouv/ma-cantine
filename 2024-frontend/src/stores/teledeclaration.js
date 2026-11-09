@@ -191,20 +191,9 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return diagnostic.value?.[voletTunnelProgressionFields[volet]] === "complet"
   }
 
-  /* Check if the volet is filled according to the last check */
-  function isVoletFilled(volet) {
-    const isFilledVolets = {
-      information: diagnoticCheck.value.isFilledInformation,
-      gaspillage: diagnoticCheck.value.isFilledGaspillage,
-      diversification: diagnoticCheck.value.isFilledDiversification,
-      plastique: diagnoticCheck.value.isFilledPlastique,
-    }
-    return isFilledVolets[volet] === true
-  }
-
-  /* Only display errors if the step has been visited before, or if the volet is visited or filled */
+  /* Only display errors if the step or the volet has been visited before */
   function getDisplayedErrors({ slug, volet }) {
-    const isVoletDisplayed = volet && (isVoletVisited(volet) || isVoletFilled(volet))
+    const isVoletDisplayed = volet && isVoletVisited(volet)
     const isPageDisplayed = !volet && isPageVisited(slug)
     if (isVoletDisplayed || isPageDisplayed) return diagnosticErrors.value
     return []
