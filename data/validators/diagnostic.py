@@ -136,7 +136,7 @@ def validate_appro_fields_required(instance):
     return errors
 
 
-def validate_thematiques_fields_required(instance):
+def validate_volets_thematiques_fields_required(instance):
     """
     - extra validation: depending on the year of the diagnostic
         - [NEW in 2026] the volets thématiques have required fields
