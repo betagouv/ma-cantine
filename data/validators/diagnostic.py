@@ -10,7 +10,10 @@ from data.models.diagnostic_teledeclaration_dates import (
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )
 from common.utils import utils as utils_utils
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
+    get_teledeclaration_fields_required,
+)
 from data.models.diagnostic_teledeclaration_field_groups import get_teledeclaration_field_groups
 
 
@@ -146,7 +149,7 @@ def validate_volets_thematiques_fields_required(instance):
     errors = {}
     if instance.year:
         for volet in ["GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]:
-            if not getattr(instance, f"is_started_{volet.lower()}"):
+            if all(getattr(instance, field) is None for field in get_teledeclaration_fields_all(instance.year, volet)):
                 continue
             for field in get_teledeclaration_fields_required(instance.year, volet):
                 if getattr(instance, field) is None:

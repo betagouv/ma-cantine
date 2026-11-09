@@ -20,7 +20,10 @@ from data.models.diagnostic import (
     commerce_equitable_sup_bio_query,
     local_sup_france_query,
 )
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
+    get_teledeclaration_fields_required,
+)
 from data.validators import diagnostic as diagnostic_validators
 
 year_data = 2024
@@ -1542,7 +1545,7 @@ class DiagnosticIsCleanMethodTest(TestCase):
         self.assertEqual(errors, {})
 
 
-class DiagnosticVoletIsStartedPropertyTest(TestCase):
+class DiagnosticVoletThematiqueIsFilledPropertyTest(TestCase):
     # a boolean field of each volet thématique (2026)
     VOLETS_FIELD = {
         "GASPILLAGE": "diagnostic_gaspillage_realise",
@@ -1560,16 +1563,23 @@ class DiagnosticVoletIsStartedPropertyTest(TestCase):
             for field in get_teledeclaration_fields_all(2026, volet):
                 setattr(self.diagnostic, field, None)
 
-    def test_volet_is_not_started_if_all_its_fields_are_blank(self):
+    def test_volet_is_not_filled_if_not_started(self):
         for volet in self.VOLETS_FIELD:
             with self.subTest(volet=volet):
-                self.assertFalse(getattr(self.diagnostic, f"is_started_{volet.lower()}"))
+                self.assertFalse(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
 
-    def test_volet_is_started_if_one_or_more_fields_are_filled(self):
+    def test_volet_is_not_filled_if_started_but_required_fields_missing(self):
         for volet, field in self.VOLETS_FIELD.items():
             with self.subTest(volet=volet):
                 setattr(self.diagnostic, field, True)
-                self.assertTrue(getattr(self.diagnostic, f"is_started_{volet.lower()}"))
+                self.assertFalse(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
+
+    def test_volet_is_filled_if_all_required_fields_filled(self):
+        for volet in self.VOLETS_FIELD:
+            with self.subTest(volet=volet):
+                for field in get_teledeclaration_fields_required(2026, volet):
+                    setattr(self.diagnostic, field, True)
+                self.assertTrue(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
 
     def test_volet_not_started_cannot_have_errors(self):
         errors = diagnostic_validators.validate_volets_thematiques_fields_required(self.diagnostic)

@@ -87,13 +87,11 @@ class DiagnosticVoletInformationMixin(models.Model):
         abstract = True
 
     @property
-    def is_started_information(self) -> bool:
-        return any(
+    def is_filled_information(self) -> bool:
+        # the volet must be started (at least one of its fields filled)
+        is_started = any(
             getattr(self, field) is not None for field in get_teledeclaration_fields_all(self.year, "INFORMATION")
         )
-
-    @property
-    def is_filled_information(self) -> bool:
-        return all(
+        return is_started and all(
             getattr(self, field) is not None for field in get_teledeclaration_fields_required(self.year, "INFORMATION")
         )
