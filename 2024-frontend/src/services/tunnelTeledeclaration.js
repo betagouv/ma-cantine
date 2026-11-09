@@ -107,6 +107,8 @@ const getFieldsListFromPage = (pageName, canteenIsGroupe, diagnosticIsSimple) =>
       return groups.gaspillage
     case pageName === "GestionnaireTunnelConvives":
       return groups.information
+    case pageName === "GestionnaireTunnelVegetarien":
+      return groups.diversification
     case pageName === "GestionnaireTunnelPlastique":
       return groups.plastique
     default:
