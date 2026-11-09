@@ -344,29 +344,28 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         )
 
     @authenticate
-    def test_diagnostic_year_outside_campaign(self):
+    def test_import_outside_campaign(self):
         """
-        Diagnostics can only be imported during their campaign (teledeclaration or correction)
+        Diagnostics can only be imported during the campaign (teledeclaration or correction):
+        outside of it, the whole file is rejected
         """
         CanteenFactory(siret="21340172201787", managers=[authenticate.user])
 
-        for date, file_path, schema_version, year in [
-            # 2026 diagnostics: not before the 2026 campaign (in 2027)
+        for date, file_path, schema_version in [
+            # before the 2026 campaign (in 2027)
             (
                 "2026-10-30",
                 "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_good_one_canteen.csv",
                 "2026",
-                2026,
             ),
-            # 2025 diagnostics: not after the 2025 correction campaign
+            # after the 2025 correction campaign
             (
                 "2026-06-01",
                 "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv",
                 "2025",
-                2025,
             ),
         ]:
-            with self.subTest(year=year), freeze_time(date):
+            with self.subTest(date=date), freeze_time(date):
                 with open(file_path) as diag_file:
                     response = self.client.post(
                         reverse("diagnostics_simple_import"),
@@ -375,12 +374,13 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
 
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 self.assertEqual(Diagnostic.objects.count(), 0)
+                assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_SIMPLE_SIRET, file_path)
                 body = response.json()
                 self.assertEqual(body["count"], 0)
                 self.assertEqual(len(body["errors"]), 1)
                 self.assertEqual(
                     body["errors"][0]["message"],
-                    f"Champ 'année' : Les bilans {year} ne peuvent être importés que pendant la campagne de télédéclaration (ou de correction) {year}.",
+                    "Ce n'est pas possible d'importer des bilans hors de la période de la campagne",
                 )
 
     @authenticate
@@ -458,6 +458,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             diagnostic.refresh_from_db()
             self.assertEqual(diagnostic.valeur_totale, 1000)
 
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_canteen_not_found_with_siret(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -477,6 +478,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
             "Une cantine avec le siret « 21340172201787 » n'existe pas sur la plateforme.",
         )
 
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_user_not_canteen_manager(self):
         CanteenFactory(siret="21340172201787", managers=[])
@@ -734,6 +736,7 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_canteen_not_found_with_id(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -750,6 +753,7 @@ class DiagnosticsSimpleImportIdApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 1)
         self.assertEqual(errors.pop(0)["message"], "Une cantine avec l'id « 949 » n'existe pas sur la plateforme.")
 
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_user_not_canteen_manager_with_id(self):
         CanteenFactory(id=949, managers=[])
