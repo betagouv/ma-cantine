@@ -1684,6 +1684,33 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["errors"]["serviceType"], ["Ce champ est obligatoire pour l'année 2026."])
 
     @authenticate
+    def test_can_get_diagnostic_check_with_volet_thematique_is_started(self):
+        self.canteen.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(
+            year=2026, canteen=self.canteen, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        # empty all the fields of the volets thématiques
+        for volet in ["GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]:
+            for field in get_teledeclaration_fields_all(2026, volet):
+                setattr(diagnostic, field, None)
+        # start all the volets thématiques except gaspillage
+        diagnostic.plan_diversification_en_place = True
+        diagnostic.plastique_bouteille_boisson_remplace = True
+        diagnostic.information_affichage_permanent = True
+        diagnostic.save()
+
+        response = self.client.get(
+            reverse("diagnostic_check", kwargs={"canteen_pk": self.canteen.id, "pk": diagnostic.id})
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isStartedGaspillage"], False)
+        self.assertEqual(body["isStartedDiversification"], True)
+        self.assertEqual(body["isStartedPlastique"], True)
+        self.assertEqual(body["isStartedInformation"], True)
+
+    @authenticate
     def test_can_get_diagnostic_check_when_teledeclared(self):
         self.canteen.managers.add(authenticate.user)
         self.diagnostic.teledeclare(applicant=self.user)
