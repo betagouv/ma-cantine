@@ -172,15 +172,18 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return isCleanVolets[volet] === true
   }
 
-  /* Check if the volet has been started according to the last check */
-  function isVoletStarted(volet) {
-    const isStartedVolets = {
-      information: diagnoticCheck.value.isStartedInformation,
-      gaspillage: diagnoticCheck.value.isStartedGaspillage,
-      diversification: diagnoticCheck.value.isStartedDiversification,
-      plastique: diagnoticCheck.value.isStartedPlastique,
+  /* Check if the volet has been filled from the last check */
+  function isVoletFilled(volet) {
+    // TODO (fix later): Handle the approvisionnements case which doesn't have a specific volet
+    if (!volet) return diagnoticCheck.value.isFilledApprovisionnements;
+
+    const isFilledVolets = {
+      information: diagnoticCheck.value.isFilledInformation,
+      gaspillage: diagnoticCheck.value.isFilledGaspillage,
+      diversification: diagnoticCheck.value.isFilledDiversification,
+      plastique: diagnoticCheck.value.isFilledPlastique,
     }
-    return isStartedVolets[volet] === true
+    return isFilledVolets[volet]
   }
 
   /* Only display errors if the step has been visited before */
@@ -345,7 +348,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     markPageAsVisited,
     isPageVisited,
     isVoletClean,
-    isVoletStarted,
+    isVoletFilled,
     getDisplayedErrors,
     addErrorsFromCheck,
     clearErrors,
