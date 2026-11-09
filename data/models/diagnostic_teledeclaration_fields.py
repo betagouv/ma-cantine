@@ -60,6 +60,18 @@ def get_teledeclaration_verbose_names(year):
     }
 
 
+@cache
+def get_teledeclaration_latest_verbose_names():
+    """
+    The most recent non-empty verbose_name of every field, over all the years
+    (e.g. for the API docs, which are not specific to a year)
+    """
+    verbose_names = {}
+    for year in sorted(TELEDECLARATION_YEARS):
+        verbose_names.update(get_teledeclaration_verbose_names(year))
+    return verbose_names
+
+
 def _sort_by_index_code(year, volet, field_names):
     volet_fields = get_teledeclaration_config(year)[volet]
     return sorted(field_names, key=lambda name: volet_fields[name]["index_code"])
