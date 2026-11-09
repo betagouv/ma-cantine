@@ -50,20 +50,19 @@ def get_teledeclaration_verbose_name(year, volet, field_name):
 
 def get_teledeclaration_verbose_names(year):
     """
-    The verbose_name of the fields of all the volets for a given year (fields with an empty verbose_name are skipped)
+    The verbose_name of the fields of all the volets for a given year
     """
     return {
         name: field["verbose_name"]
         for volet_fields in get_teledeclaration_config(year).values()
         for name, field in volet_fields.items()
-        if field["verbose_name"]
     }
 
 
 @cache
 def get_teledeclaration_latest_verbose_names():
     """
-    The most recent non-empty verbose_name of every field, over all the years
+    The most recent verbose_name of every field, over all the years
     (e.g. for the API docs, which are not specific to a year)
     """
     verbose_names = {}
