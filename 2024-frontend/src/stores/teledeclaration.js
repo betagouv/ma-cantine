@@ -172,6 +172,17 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return isCleanVolets[volet] === true
   }
 
+  /* Check if the volet has been started according to the last check */
+  function isVoletStarted(volet) {
+    const isStartedVolets = {
+      information: diagnoticCheck.value.isStartedInformation,
+      gaspillage: diagnoticCheck.value.isStartedGaspillage,
+      diversification: diagnoticCheck.value.isStartedDiversification,
+      plastique: diagnoticCheck.value.isStartedPlastique,
+    }
+    return isStartedVolets[volet] === true
+  }
+
   /* Only display errors if the step has been visited before */
   function getDisplayedErrors(slug) {
     if (!slug || isPageVisited(slug)) return diagnosticErrors.value
@@ -334,6 +345,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     markPageAsVisited,
     isPageVisited,
     isVoletClean,
+    isVoletStarted,
     getDisplayedErrors,
     addErrorsFromCheck,
     clearErrors,
