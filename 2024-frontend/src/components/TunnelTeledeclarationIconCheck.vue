@@ -10,7 +10,11 @@ const errors = computed(() => {
   return []
 })
 const hasErrors = computed(() => errors.value && errors.value?.length > 0)
-const isVisited = computed(() => !props.slug || teledeclarationStore.isPageVisited(props.slug))
+const isVisited = computed(() => {
+  const visitNotRequired = props.fieldsGroupName || props.volet
+  if (visitNotRequired) return true
+  return teledeclarationStore.isPageVisited({ slug: props.slug })
+})
 const isFilled = computed(() => !props.volet || teledeclarationStore.isVoletFilled(props.volet))
 const isClean = computed(() => !props.volet || teledeclarationStore.isVoletClean(props.volet))
 const isValid = computed(() => isVisited.value && isFilled.value && isClean.value && !hasErrors.value)
