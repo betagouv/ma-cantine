@@ -11,8 +11,9 @@ const errors = computed(() => {
 })
 const hasErrors = computed(() => errors.value && errors.value?.length > 0)
 const isVisited = computed(() => !props.slug || teledeclarationStore.isPageVisited(props.slug))
+const isStarted = computed(() => !props.volet || teledeclarationStore.isVoletStarted(props.volet))
 const isClean = computed(() => !props.volet || teledeclarationStore.isVoletClean(props.volet))
-const isValid = computed(() => isVisited.value && isClean.value && !hasErrors.value)
+const isValid = computed(() => isVisited.value && isStarted.value && isClean.value && !hasErrors.value)
 
 const iconClasses = computed(() => {
   const color = isValid.value ? "default--success" : "mention--grey"
