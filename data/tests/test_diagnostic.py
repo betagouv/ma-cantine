@@ -20,6 +20,7 @@ from data.models.diagnostic import (
     commerce_equitable_sup_bio_query,
     local_sup_france_query,
 )
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
@@ -1538,6 +1539,36 @@ class DiagnosticIsCleanMethodTest(TestCase):
         is_clean, errors = self.diagnostic_2024_simple_valid.is_clean(raise_errors=True)
         self.assertTrue(is_clean)
         self.assertEqual(errors, {})
+
+
+class DiagnosticVoletIsStartedPropertyTest(TestCase):
+    # a boolean field of each volet thématique (2026)
+    VOLETS_FIELD = {
+        "GASPILLAGE": "diagnostic_gaspillage_realise",
+        "DIVERSIFICATION": "plan_diversification_en_place",
+        "PLASTIQUE": "plastique_bouteille_boisson_remplace",
+        "INFORMATION": "information_affichage_permanent",
+    }
+
+    def setUp(self):
+        self.diagnostic = DiagnosticFactory(
+            year=2026, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        # empty all the fields of the volets thématiques
+        for volet in self.VOLETS_FIELD:
+            for field in get_teledeclaration_fields_all(2026, volet):
+                setattr(self.diagnostic, field, None)
+
+    def test_volet_is_not_started_if_all_its_fields_are_blank(self):
+        for volet in self.VOLETS_FIELD:
+            with self.subTest(volet=volet):
+                self.assertFalse(getattr(self.diagnostic, f"is_started_{volet.lower()}"))
+
+    def test_volet_is_started_if_one_or_more_fields_are_filled(self):
+        for volet, field in self.VOLETS_FIELD.items():
+            with self.subTest(volet=volet):
+                setattr(self.diagnostic, field, True)
+                self.assertTrue(getattr(self.diagnostic, f"is_started_{volet.lower()}"))
 
 
 class DiagnosticLabelFamilySumQuerySetAndPropertyTest(TestCase):
