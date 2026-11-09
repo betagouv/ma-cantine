@@ -4,7 +4,6 @@ from data.fields import ChoiceArrayField
 from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_all,
     get_teledeclaration_fields_all_years,
-    get_teledeclaration_fields_required,
 )
 
 
@@ -115,11 +114,7 @@ class DiagnosticVoletDiversificationMixin(models.Model):
 
     @property
     def is_filled_diversification(self) -> bool:
-        # the volet must be started (at least one of its fields filled)
-        is_started = any(
+        # At least one field of the volet is filled
+        return any(
             getattr(self, field) is not None for field in get_teledeclaration_fields_all(self.year, "DIVERSIFICATION")
-        )
-        return is_started and all(
-            getattr(self, field) is not None
-            for field in get_teledeclaration_fields_required(self.year, "DIVERSIFICATION")
         )
