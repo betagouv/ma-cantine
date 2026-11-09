@@ -2,6 +2,7 @@ from django.db import models
 
 from data.fields import ChoiceArrayField
 from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
     get_teledeclaration_fields_all_years,
     get_teledeclaration_fields_required,
 )
@@ -84,6 +85,12 @@ class DiagnosticVoletInformationMixin(models.Model):
 
     class Meta:
         abstract = True
+
+    @property
+    def is_started_information(self) -> bool:
+        return any(
+            getattr(self, field) is not None for field in get_teledeclaration_fields_all(self.year, "INFORMATION")
+        )
 
     @property
     def is_filled_information(self) -> bool:
