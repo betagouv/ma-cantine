@@ -1684,7 +1684,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["errors"]["serviceType"], ["Ce champ est obligatoire pour l'année 2026."])
 
     @authenticate
-    def test_can_get_diagnostic_check_with_volet_thematique_is_started(self):
+    def test_can_get_diagnostic_check_with_volet_thematique_not_started(self):
         self.canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory(
             year=2026, canteen=self.canteen, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
@@ -1705,10 +1705,10 @@ class DiagnosticDetailCheckApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["isStartedGaspillage"], False)
-        self.assertEqual(body["isStartedDiversification"], True)
-        self.assertEqual(body["isStartedPlastique"], True)
-        self.assertEqual(body["isStartedInformation"], True)
+        self.assertEqual(body["isFilledGaspillage"], False)  # not started
+        self.assertEqual(body["isCleanGaspillage"], True)  # not started: no required fields errors
+        self.assertEqual(body["isFilledDiversification"], False)  # started, but required fields missing
+        self.assertEqual(body["isCleanDiversification"], False)
 
     @authenticate
     def test_can_get_diagnostic_check_when_teledeclared(self):
