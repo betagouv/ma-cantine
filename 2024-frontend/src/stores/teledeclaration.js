@@ -314,6 +314,12 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return diagnosticErrors.value.find((error) => error.field === field)?.message.join(". ")
   }
 
+  /* Check if a volet has errors */
+  function hasVoletErrors(volet) {
+    const fields = tunnelTeledeclaration.getFieldsFromVolet(volet)
+    return diagnosticErrors.value.some(error => fields.includes(error.field))
+  }
+
   /* Get year of the current campaign */
   function getYear() {
     return year
@@ -357,6 +363,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     getErrorsGroup,
     isFieldError,
     getErrorMessage,
+    hasVoletErrors,
   }
 })
 

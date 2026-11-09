@@ -42,39 +42,47 @@ const volets = computed(() => {
       sentence: getSentence("appro"),
       status: macaronsStatus.value.appro,
       page: { name: "GestionnaireTunnelApproRecapitulatif" },
-      displayErrors: hasErrors.value
+      displayErrors: teledeclarationStore.hasVoletErrors("appro")
     },
     {
+      key: "info",
       title: "Information des convives",
       shortTitle: "Information convives",
       macaron: IconMacaronInfo,
       sentence: getSentence("info"),
       status: macaronsStatus.value.info,
-      page: { name: "GestionnaireTunnelConvives" }
+      page: { name: "GestionnaireTunnelConvives" },
+      displayErrors: teledeclarationStore.hasVoletErrors("info")
     },
     {
+      key: "waste",
       title: "Lutte contre le gaspillage alimentaire",
       shortTitle: "Gaspillage alimentaire",
       macaron: IconMacaronWaste,
       sentence: getSentence("waste"),
       status: macaronsStatus.value.waste,
-      page: { name: "GestionnaireTunnelGaspillage" }
+      page: { name: "GestionnaireTunnelGaspillage" },
+      displayErrors: teledeclarationStore.hasVoletErrors("waste")
     },
     {
+      key: "diversification",
       title: "Diversification des sources de protéines et menus végétariens",
       shortTitle: "Menus végétariens",
       macaron: IconMacaronDiversification,
       sentence: getSentence("diversification"),
       status: macaronsStatus.value.diversification,
-      page: { name: "GestionnaireTunnelVegetarien" }
+      page: { name: "GestionnaireTunnelVegetarien" },
+      displayErrors: teledeclarationStore.hasVoletErrors("diversification")
     },
     {
+      key: "plastic",
       title: "Substitution du plastique",
       shortTitle: "Substitution plastique",
       macaron: IconMacaronPlastic,
       sentence: getSentence("plastic"),
       status: macaronsStatus.value.plastic,
-      page: { name: "GestionnaireTunnelPlastique" }
+      page: { name: "GestionnaireTunnelPlastique" },
+      displayErrors: teledeclarationStore.hasVoletErrors("plastic")
     }
   ]
 })
