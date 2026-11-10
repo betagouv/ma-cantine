@@ -23,7 +23,7 @@ const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Teledeclaration */
 const teledeclarationStore = useStoreTeledeclaration()
-const { diagnosticRecap, hasDiagnostic, canteenAction, isTeledeclared, diagnoticCheck } = storeToRefs(teledeclarationStore)
+const { diagnosticRecap, hasDiagnostic, canteenAction, isTeledeclared } = storeToRefs(teledeclarationStore)
 const year = teledeclarationStore.getYear()
 const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
 
@@ -122,6 +122,6 @@ const showError = (message) => rootStore.notifyServerError(message)
   <div v-if="!canTeledeclare && !isTeledeclared">
     <h3 class="fr-h5 fr-mb-4w">Avant de débuter :</h3>
     <DiagnosticSatellitesLinked class="fr-mt-4w" :canteen-informations="canteenInformations" />
-    <DiagnosticPurchasesLinked v-if="!diagnoticCheck.isClean" class="fr-mt-4w" />
+    <DiagnosticPurchasesLinked class="fr-mt-4w" />
   </div>
 </template>
