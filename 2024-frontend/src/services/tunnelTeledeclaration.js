@@ -117,19 +117,29 @@ const getFieldsListFromPage = (pageName, canteenIsGroupe, diagnosticIsSimple) =>
 }
 
 const getFieldsListFromGroup = (groupName) => {
-  return groups[groupName]
+  if (groupName !== "approvisionnement") return groups[groupName]
+
+  return [
+    ...groups.informationsCantine,
+    ...groups.informationsGroupe,
+    ...groups.couverts,
+    ...groups.saisie,
+    ...groups.egalimSimple,
+    ...groups.egalimComplete,
+    ...groups.origine,
+    ...groups.localCircuitCourt
+  ]
 }
 
 const getFieldsFromVolet = (volet) => {
-  const voletToGroupMap = {
-    appro: "approvisionnement",
-    info: "information",
-    waste: "gaspillage",
-    diversification: "diversification",
-    plastic: "plastique"
+  const fields = {
+    info: getFieldsListFromGroup("information"),
+    waste: getFieldsListFromGroup("gaspillage"),
+    diversification: getFieldsListFromGroup("diversification"),
+    plastic: getFieldsListFromGroup("plastique"),
+    appro: getFieldsListFromGroup("approvisionnement")
   }
-  const groupName = voletToGroupMap[volet]
-  return groupName ? groups[groupName] || [] : []
+  return fields[volet]
 }
 
 const getFieldsWithAutofill = () => {
