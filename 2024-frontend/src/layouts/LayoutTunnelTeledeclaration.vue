@@ -145,7 +145,7 @@ const goTo = (page) => {
     <TunnelTeledeclarationModalErrors
       :opened="showModal"
       :errors="modalErrors"
-      :isVolet="!!route.meta.volet"
+      :isVolet="isThematiques"
       @close="showModal = false"
       @continue="goTo(modalLink)"
     />
