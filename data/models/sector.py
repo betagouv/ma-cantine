@@ -130,6 +130,9 @@ SECTOR_INFORMATION_CONSULTATION_QUALITE_LIST = (
     + [Sector.ADMINISTRATION_PRISON]  # établissements pénitentiaires
 )
 
+# fin de l'utilisation de bouteilles d'eau plate en plastique (loi EGalim): "services de restauration collective scolaire"
+SECTOR_PLASTIQUE_BOUTEILLE_LIST = EDUCATION_SECTOR_LIST
+
 MAPPING_OLD_SECTOR_NAME_TO_NEW_SECTOR_VALUE = {
     # current mappings
     **{Sector(sector).label: sector for sector in Sector.values},
