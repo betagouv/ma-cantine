@@ -11,6 +11,20 @@ watch(() => props.open, (value) => activeAccordion.value = value)
 /* Navigation */
 const router = useRouter()
 const goToPage = (page) => router.push(page)
+
+/* Sentence */
+const getSentence = (volet) => {
+  if (volet.isFilled && !volet.hasErrors) return "Volet non télédéclaré."
+  if (volet.isFilled && volet.hasErrors) return "Volet en attente de correction."
+  return "Volet non renseigné."
+}
+
+const displaySentence = (volet) => {
+  if (props.isTeledeclared && volet.isAppro) return false
+  if (props.isTeledeclared && !volet.isAppro && !volet.hasErrors) return false
+  return true
+}
+
 </script>
 <template>
   <DsfrAccordionsGroup v-model="activeAccordion" :id="anchorName" class="diagnostic-summary-accordions">
@@ -24,11 +38,11 @@ const goToPage = (page) => router.push(page)
         <span class="ma-cantine--flex-start ma-cantine--flex-gap-1">
           <component :is="volet.macaron" :status="volet.status" class="diagnostic-summary-accordions__image" />
           {{ volet.title }}
-          <DsfrBadge v-if="volet.displayErrors" label="Erreurs" type="error"/>
+          <DsfrBadge v-if="volet.hasErrors" label="Erreurs" type="error"/>
         </span>
       </template>
-      <p v-if="!isTeledeclared" class="fr-mb-0">
-        <span class="fr-text--bold">{{ volet.sentence }}</span>
+      <p v-if="displaySentence(volet)" class="fr-mb-0">
+        <span class="fr-text--bold">{{ getSentence(volet) }}</span>
         <br>
         Consulter le volet <AppLinkRouter :to="volet.page" :title="volet.title.toLowerCase()"/>
       </p>
@@ -36,7 +50,7 @@ const goToPage = (page) => router.push(page)
         <DsfrButton v-if="volet.key !== 'appro'" @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
       </div>
       <DiagnosticSummaryAppro
-        v-if="volet.key === 'appro' && isTeledeclared"
+        v-if="volet.isAppro && isTeledeclared"
         :diagnostic-recap="diagnosticRecap"
       />
     </DsfrAccordion>

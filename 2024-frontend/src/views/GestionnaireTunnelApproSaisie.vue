@@ -23,7 +23,7 @@ const field = computed(() => tunnelTeledeclarationService.getField(diagnosticTyp
 const isRequired = computed(() => field.value.required)
 const label = computed(() => field.value.shortName)
 const errorMessage = computed(() => {
-  const errors = tunnelTeledeclarationService.getFieldError(diagnosticTypeFieldName, storeTeledeclaration.getDisplayedErrors(route.meta.slug))
+  const errors = tunnelTeledeclarationService.getFieldError(diagnosticTypeFieldName, storeTeledeclaration.getDisplayedErrors(route.meta))
   return errors ? errors.join('. ') : ''
 })
 const options = computed(() => {

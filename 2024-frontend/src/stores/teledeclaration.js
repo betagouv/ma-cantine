@@ -156,8 +156,9 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     }
   }
 
-  /* Check if the step has been visited */
-  function isPageVisited(slug) {
+  /* Check if the page has been visited : "complet" for a volet, the page slug in the list of the visited pages for the appro */
+  function isPageVisited({ slug, volet }) {
+    if (volet) return diagnostic.value?.[voletTunnelProgressionFields[volet]] === "complet"
     return tunnelApproVisitedPages.value.includes(slug)
   }
 
@@ -174,8 +175,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Check if the volet has been filled from the last check */
   function isVoletFilled(volet) {
-    // TODO (fix later): Handle the approvisionnements case which doesn't have a specific volet
-    if (!volet) return diagnoticCheck.value.isFilledApprovisionnements;
+    if (!volet || volet === "approvisionnement") return hasDiagnostic.value
 
     const isFilledVolets = {
       information: diagnoticCheck.value.isFilledInformation,
@@ -186,9 +186,9 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return isFilledVolets[volet]
   }
 
-  /* Only display errors if the step has been visited before */
-  function getDisplayedErrors(slug) {
-    if (!slug || isPageVisited(slug)) return diagnosticErrors.value
+  /* Only display errors if the step or the volet has been visited before */
+  function getDisplayedErrors({ slug, volet }) {
+    if (isPageVisited({ slug, volet })) return diagnosticErrors.value
     return []
   }
 
@@ -313,6 +313,12 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return diagnosticErrors.value.find((error) => error.field === field)?.message.join(". ")
   }
 
+  /* Check if a volet has errors */
+  function hasVoletErrors(volet) {
+    const fields = tunnelTeledeclaration.getFieldsFromVolet(volet)
+    return diagnosticErrors.value.some(error => fields.includes(error.field))
+  }
+
   /* Get year of the current campaign */
   function getYear() {
     return year
@@ -356,6 +362,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     getErrorsGroup,
     isFieldError,
     getErrorMessage,
+    hasVoletErrors,
   }
 })
 

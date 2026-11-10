@@ -107,6 +107,8 @@ const getFieldsListFromPage = (pageName, canteenIsGroupe, diagnosticIsSimple) =>
       return groups.gaspillage
     case pageName === "GestionnaireTunnelConvives":
       return groups.information
+    case pageName === "GestionnaireTunnelVegetarien":
+      return groups.diversification
     case pageName === "GestionnaireTunnelPlastique":
       return groups.plastique
     default:
@@ -115,11 +117,33 @@ const getFieldsListFromPage = (pageName, canteenIsGroupe, diagnosticIsSimple) =>
 }
 
 const getFieldsListFromGroup = (groupName) => {
-  return groups[groupName]
+  if (groupName !== "approvisionnement") return groups[groupName]
+
+  return [
+    ...groups.informationsCantine,
+    ...groups.informationsGroupe,
+    ...groups.couverts,
+    ...groups.saisie,
+    ...groups.egalimSimple,
+    ...groups.egalimComplete,
+    ...groups.origine,
+    ...groups.localCircuitCourt
+  ]
+}
+
+const getFieldsFromVolet = (volet) => {
+  const fields = {
+    info: getFieldsListFromGroup("information"),
+    waste: getFieldsListFromGroup("gaspillage"),
+    diversification: getFieldsListFromGroup("diversification"),
+    plastic: getFieldsListFromGroup("plastique"),
+    appro: getFieldsListFromGroup("approvisionnement")
+  }
+  return fields[volet]
 }
 
 const getFieldsWithAutofill = () => {
   return Object.keys(fields).filter((field) => fields[field].autofill)
 }
 
-export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup, getFieldsWithAutofill }
+export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup, getFieldsFromVolet, getFieldsWithAutofill }
