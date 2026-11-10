@@ -33,9 +33,11 @@ const getSentence = (key) => {
 
 /* Volets */
 const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value, diagnosticRecap.value))
+
 const volets = computed(() => {
   return [
     {
+      isAppro: true,
       key: "appro",
       title: "Approvisionnements",
       macaron: IconMacaronAppro,

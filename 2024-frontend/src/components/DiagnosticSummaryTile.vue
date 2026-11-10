@@ -7,8 +7,8 @@ import IconAward from "@/components/IconAward.vue"
 
 const props = defineProps(["volets", "anchorName", "isTeledeclared", "diagnosticRecap"])
 
-const appro = computed(() => props.volets.find(volet => volet.key === "appro"))
-const thematiques = computed(() => props.volets.filter(volet => volet.key !== "appro"))
+const appro = computed(() => props.volets.find(volet => volet.isAppro))
+const thematiques = computed(() => props.volets.filter(volet => !volet.isAppro))
 const emit = defineEmits(["openAccordion"])
 const clickLink = (index) => emit("openAccordion", index)
 
