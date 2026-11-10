@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { useRoute } from "vue-router"
 
-const emit = defineEmits(["save"])
+const emit = defineEmits(["save", "saveQuit"])
 const route = useRoute()
 const nextStep = computed(() => route.meta.next)
 const isLast = computed(() => route.meta.isLast)
@@ -20,7 +20,7 @@ const saveAndGoNext = () => {
       no-outline
       icon="fr-icon-save-line"
       label="Enregistrer et quitter"
-      @click="emit('save', 'GestionnaireCantineTeledeclarationEnCours')"
+      @click="emit('saveQuit')"
     />
     <DsfrButton
       icon="fr-icon-arrow-right-line"
