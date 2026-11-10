@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue"
-import { useRouter } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import AppBadgeSiretSiren from "@/components/AppBadgeSiretSiren.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
@@ -10,6 +10,7 @@ import documentation from "@/data/documentation.json"
 
 const props = defineProps(["canteen", "nav", "active", "displayTeledeclaredBadge"])
 const router = useRouter()
+const route = useRoute()
 const emit = defineEmits(["save"])
 
 /* Navigation */
@@ -33,10 +34,15 @@ const generateNav = (name) => {
   }
   return links
 }
+
 const approvisementsNav = computed(() => generateNav('approvisionnements'))
 const thematiquesNav = computed(() => generateNav('thematiques'))
+const currentPageInApprovisionnements = computed(() => route.meta.volet === "approvisionnement")
 
-const goTo = (to) => router.push(to)
+const goToThematique = (link) => {
+  if (currentPageInApprovisionnements.value) emit("save", { page: link.pageName, checkErrors: true })
+  else router.push(link.to)
+}
 </script>
 
 <template>
@@ -79,7 +85,7 @@ const goTo = (to) => router.push(to)
               :key="link.to.name"
               :[link.type]="true"
               class="tunnel-teledeclaration-nav-sidebar__link fr-background-default--grey"
-              @click="goTo(link.to)"
+              @click="goToThematique(link)"
             >
               <TunnelTeledeclarationIconCheck type="volet" :name="link.volet" class="fr-mr-1w" />
               {{ link.label }}
