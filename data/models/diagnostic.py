@@ -880,7 +880,7 @@ class Diagnostic(
 
     def get_validation_errors(self, skip_volets_thematiques=False) -> dict:
         """
-        - skip_volets_thematiques: if True, the required fields of the volets thématiques are not checked
+        - skip_volets_thematiques: if True, the volets thématiques are not checked (required fields & other rules)
         """
         errors = {}
         try:
@@ -891,6 +891,7 @@ class Diagnostic(
             errors = utils_utils.merge_validation_errors(
                 errors,
                 diagnostic_volet_gaspillage_validators.validate_gaspillage_fields_required(self),
+                diagnostic_volet_gaspillage_validators.validate_gaspillage_dons_fields(self),
                 diagnostic_volet_diversification_validators.validate_diversification_fields_required(self),
                 diagnostic_volet_plastique_validators.validate_plastique_fields_required(self),
                 diagnostic_volet_information_validators.validate_information_fields_required(self),

@@ -20,3 +20,20 @@ def validate_gaspillage_fields_required(instance):
                     errors, field, f"Ce champ est obligatoire pour l'année {instance.year}."
                 )
     return errors
+
+
+def validate_gaspillage_dons_fields(instance):
+    """
+    - extra validation: depending on the year of the diagnostic
+        - [NEW in 2026] dons_frequence, dons_quantite & dons_type_denrees can only be filled if dons_convention is True
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    """
+    errors = {}
+    if instance.year and int(instance.year) >= 2026:
+        if instance.dons_convention is not True:
+            for field in ["dons_frequence", "dons_quantite", "dons_type_denrees"]:
+                if getattr(instance, field) not in [None, ""]:
+                    utils_utils.add_validation_error(
+                        errors, field, "Ce champ ne peut être renseigné que si une convention de dons est en place."
+                    )
+    return errors
