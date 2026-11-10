@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from "vue"
 import { storeToRefs } from "pinia"
 import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
+import { useRootStore } from "@/stores/root.js"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
@@ -26,6 +27,7 @@ const steps = computed(() => routerSteps.value.map((step) => step.title))
 const stepIndex = computed(() => routerSteps.value.findIndex((step) => step.to.name === currentRoute.value) + 1)
 
 /* Store */
+const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const teledeclarationStore = useStoreTeledeclaration()
@@ -44,12 +46,26 @@ const checkRedirect = (page) => {
 }
 
 /* Save */
-const save = async (page) => {
+const save = ({ page, checkErrors }) => {
+  if (checkErrors) saveWithErrorCheck(page)
+  else saveWithoutErrorCheck(page)
+}
+
+const saveWithErrorCheck = async (page) => {
   const pageToGo = checkRedirect(page)
   teledeclarationStore.markPageAsVisited(route.meta)
   const response = await teledeclarationStore.saveDiagnostic(route.meta.volet)
   if (response.status === "error") displayErrors(pageToGo)
   else checkDiagnostic(pageToGo)
+}
+
+const saveWithoutErrorCheck = async (page) => {
+  const response = await teledeclarationStore.saveDiagnostic(route.meta.volet)
+  if (response.status === "error") rootStore.notifyServerError(response)
+  else {
+    await teledeclarationStore.checkDiagnosticSteps()
+    router.push({ name: page })
+  }
 }
 
 /* Errors */

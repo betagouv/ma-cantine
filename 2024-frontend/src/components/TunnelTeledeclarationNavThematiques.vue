@@ -8,8 +8,8 @@ const nextStep = computed(() => route.meta.next)
 const isLast = computed(() => route.meta.isLast)
 
 const saveAndGoNext = () => {
-  if (isLast.value) emit("save", "GestionnaireCantineTeledeclarationEnCours")
-  else emit("save", nextStep.value)
+  if (isLast.value) emit("save", { page: "GestionnaireCantineTeledeclarationEnCours", checkErrors: true })
+  else emit("save", { page: nextStep.value, checkErrors: true })
 }
 </script>
 
@@ -20,7 +20,7 @@ const saveAndGoNext = () => {
       no-outline
       icon="fr-icon-save-line"
       label="Enregistrer et quitter"
-      @click="emit('save', 'GestionnaireCantineTeledeclarationEnCours')"
+      @click="emit('save', { page: 'GestionnaireCantineTeledeclarationEnCours', checkErrors: false })"
     />
     <DsfrButton
       icon="fr-icon-arrow-right-line"

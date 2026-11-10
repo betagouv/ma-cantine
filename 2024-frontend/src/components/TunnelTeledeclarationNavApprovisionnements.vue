@@ -1,26 +1,11 @@
 <script setup>
 import { computed } from "vue"
-import { useRouter, useRoute } from "vue-router"
-import { useRootStore } from "@/stores/root.js"
-import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
+import { useRoute } from "vue-router"
 
 const emit = defineEmits(["save"])
-const router = useRouter()
 const route = useRoute()
-const rootStore = useRootStore()
-const teledeclarationStore = useStoreTeledeclaration()
 const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
-
-const saveAndQuit = async () => {
-  teledeclarationStore.markPageAsVisited(route.meta)
-  const response = await teledeclarationStore.saveDiagnostic(route.meta.volet)
-  if (response.status === "error") rootStore.notifyServerError(response)
-  else {
-    await teledeclarationStore.checkDiagnosticSteps()
-    router.push({ name: 'GestionnaireCantineTeledeclarationEnCours' })
-  }
-}
 </script>
 
 <template>
@@ -30,20 +15,20 @@ const saveAndQuit = async () => {
       icon="fr-icon-save-line"
       label="Enregistrer et finir plus tard"
       no-outline
-      @click="saveAndQuit()"
+      @click="emit('save', { page: 'GestionnaireCantineTeledeclarationEnCours', checkErrors: false })"
     />
     <DsfrButton
       secondary
       icon="fr-icon-arrow-left-s-first-line"
       label="Étape précédente"
-      @click="emit('save', previousStep)"
+      @click="emit('save', { page: previousStep, checkErrors: true })"
       :disabled="!previousStep"
     />
     <DsfrButton
       secondary
       icon="fr-icon-arrow-right-s-last-line"
       label="Étape suivante"
-      @click="emit('save', nextStep)"
+      @click="emit('save', { page: nextStep, checkErrors: true })"
       :disabled="!nextStep"
       :icon-right="true"
     />
