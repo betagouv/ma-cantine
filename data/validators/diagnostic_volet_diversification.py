@@ -38,3 +38,22 @@ def validate_diversification_plan_fields(instance):
                     "Ce champ ne peut être renseigné que si un plan de diversification est en place.",
                 )
     return errors
+
+
+def validate_diversification_menu_vegetarien_fields(instance):
+    """
+    - extra validation: depending on the year of the diagnostic
+        - [NEW in 2026] menu_vegetarien_bases can only be filled if a menu végétarien is proposed
+          (menu_vegetarien_frequence filled & not JAMAIS)
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    """
+    errors = {}
+    if instance.year and int(instance.year) >= 2026:
+        if instance.menu_vegetarien_frequence in [None, "", instance.MenuVegetarienFrequence.JAMAIS]:
+            if instance.menu_vegetarien_bases:
+                utils_utils.add_validation_error(
+                    errors,
+                    "menu_vegetarien_bases",
+                    "Ce champ ne peut être renseigné que si un menu végétarien est proposé.",
+                )
+    return errors
