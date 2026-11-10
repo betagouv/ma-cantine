@@ -56,8 +56,6 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const canteenCheck = await canteenService.checkCanteen(canteenId)
     const check = {
       ...diagnosticCheck,
-      isClean: canteenCheck.isClean && diagnosticCheck.isClean,
-      isFilled: canteenCheck.isFilled && diagnosticCheck.isFilled,
       errors: {...canteenCheck.errors, ...diagnosticCheck.errors}
     }
     addErrorsFromCheck(check.errors)
