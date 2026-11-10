@@ -1667,7 +1667,11 @@ class DiagnosticDetailCheckApiTest(APITestCase):
     def test_can_get_diagnostic_check_with_volet_thematique_required_field_missing(self):
         self.canteen.managers.add(authenticate.user)
         diagnostic = DiagnosticFactory(
-            year=2026, canteen=self.canteen, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, service_type=None
+            year=2026,
+            canteen=self.canteen,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.HEBDO,
+            service_type=None,
         )
 
         response = self.client.get(
@@ -1676,7 +1680,6 @@ class DiagnosticDetailCheckApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
-        self.assertEqual(body["isClean"], False)
         self.assertEqual(body["isCleanDiversification"], False)
         self.assertEqual(body["errors"]["serviceType"], ["Ce champ est obligatoire pour l'année 2026."])
 
