@@ -19,9 +19,9 @@ const exampleFile = {
   size: "7 ko",
 }
 const filePreviews = {
-  success: "importer_des_bilans_simples_id_2026_exemple_fichier_accepte.jpg?v=1",
+  success: "importer_des_bilans_simples_id_2026_exemple_fichier_accepte.jpg?v=2",
   altSuccess: "Exemple de fichier accepté pour importer des bilans simples avec identification de la cantine via son ID, qui contient le bon nom de colonnes et les bonnes valeurs",
-  error: "importer_des_bilans_simples_id_2026_exemple_fichier_rejete.jpg?v=1",
+  error: "importer_des_bilans_simples_id_2026_exemple_fichier_rejete.jpg?v=2",
   altError: "Exemple de fichier rejeté pour importer des bilans simples avec identification de la cantine via son ID, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 const links = [

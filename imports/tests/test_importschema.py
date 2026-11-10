@@ -29,20 +29,21 @@ class DiagnosticsImportSchemasTest(SimpleTestCase):
     def test_schemas_columns_are_diagnostic_fields(self):
         """
         The values are read by column name: the value columns must be Diagnostic fields
+        (the 2026 format has no année_bilan column: the diagnostics are those of the current campaign year)
         """
         diagnostic_field_names = [field.name for field in Diagnostic._meta.get_fields()]
-        for schema, identifier in [
-            (DIAGNOSTICS_SIMPLE_SIRET_SCHEMA, "siret"),
-            (DIAGNOSTICS_SIMPLE_ID_SCHEMA, "cantine_id"),
-            (DIAGNOSTICS_COMPLETE_SIRET_SCHEMA, "siret"),
-            (DIAGNOSTICS_SIMPLE_SIRET_2026_SCHEMA, "siret"),
-            (DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA, "cantine_id"),
-            (DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA, "siret"),
-            (DIAGNOSTICS_COMPLETE_ID_2026_SCHEMA, "cantine_id"),
+        for schema, first_columns in [
+            (DIAGNOSTICS_SIMPLE_SIRET_SCHEMA, ["siret", "année_bilan"]),
+            (DIAGNOSTICS_SIMPLE_ID_SCHEMA, ["cantine_id", "année_bilan"]),
+            (DIAGNOSTICS_COMPLETE_SIRET_SCHEMA, ["siret", "année_bilan"]),
+            (DIAGNOSTICS_SIMPLE_SIRET_2026_SCHEMA, ["siret"]),
+            (DIAGNOSTICS_SIMPLE_ID_2026_SCHEMA, ["cantine_id"]),
+            (DIAGNOSTICS_COMPLETE_SIRET_2026_SCHEMA, ["siret"]),
+            (DIAGNOSTICS_COMPLETE_ID_2026_SCHEMA, ["cantine_id"]),
         ]:
             with self.subTest(schema=schema.name):
-                self.assertEqual(schema.header[:2], [identifier, "année_bilan"])
-                for column in schema.header[2:]:
+                self.assertEqual(schema.header[: len(first_columns)], first_columns)
+                for column in schema.header[len(first_columns) :]:
                     self.assertIn(column, diagnostic_field_names)
 
     def test_schemas_are_up_to_date(self):

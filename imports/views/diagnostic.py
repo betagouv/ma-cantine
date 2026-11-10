@@ -3,7 +3,7 @@ from data.models import Diagnostic
 from imports.models import ImportSchema, ImportType
 from imports.views.diagnostic_base import BaseDiagnosticsImportView
 
-# Columns: identifier (siret or cantine_id), année_bilan, values
+# Columns: identifier (siret or cantine_id), année_bilan (2025 format only), values
 # simple
 DIAGNOSTICS_SIMPLE_SIRET_SCHEMA = ImportSchema("bilans_simple_siret.json")
 DIAGNOSTICS_SIMPLE_ID_SCHEMA = ImportSchema("bilans_simple_id.json")

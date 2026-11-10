@@ -634,6 +634,9 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
     @freeze_time("2027-01-20")  # during the 2026 campaign
     @authenticate
     def test_diagnostics_created_with_schema_version_2026(self):
+        """
+        The 2026 format has no année_bilan column: the diagnostics are those of the current campaign year
+        """
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
 
         file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_good_one_canteen.csv"
