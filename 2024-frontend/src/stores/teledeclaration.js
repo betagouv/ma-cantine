@@ -315,7 +315,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Check if a volet has errors */
   function hasVoletErrors(volet) {
-    const fields = tunnelTeledeclaration.getFieldsFromVolet(volet)
+    const fields = tunnelTeledeclaration.getFieldsListFromGroup(volet)
     return diagnosticErrors.value.some(error => fields.includes(error.field))
   }
 

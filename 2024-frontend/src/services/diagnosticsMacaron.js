@@ -1,5 +1,5 @@
 const getStatus = (key, isTeledeclared, check, recap) => {
-  if (key !== "appro") return "empty"
+  if (key !== "approvisionnement") return "empty"
   if (recap?.canteenDiagnosticApproStats?.objectifsEgalimAtteints) return "objectivesReached"
   if (isTeledeclared) return "teledeclared"
   if (check?.isClean) return "clean"
@@ -8,11 +8,11 @@ const getStatus = (key, isTeledeclared, check, recap) => {
 
 const getMacaronsStatus = (isTeledeclared, check, recap) => {
   return {
-    appro: getStatus("appro", isTeledeclared, check, recap),
-    info: getStatus("info", isTeledeclared, check),
-    waste: getStatus("waste", isTeledeclared, check),
+    approvisionnement: getStatus("approvisionnement", isTeledeclared, check, recap),
+    information: getStatus("information", isTeledeclared, check),
+    gaspillage: getStatus("gaspillage", isTeledeclared, check),
     diversification: getStatus("diversification", isTeledeclared, check),
-    plastic: getStatus("plastic", isTeledeclared, check),
+    plastique: getStatus("plastique", isTeledeclared, check),
   }
 }
 

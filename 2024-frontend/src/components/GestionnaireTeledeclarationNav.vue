@@ -53,12 +53,12 @@ const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTel
             <div class="gestionnaire-teledeclaration-nav__indicator ma-cantine--width-100">
               <IconLink bottom="50%" class="gestionnaire-teledeclaration-nav__link" />
               <div class="gestionnaire-teledeclaration-nav__macarons fr-py-1v fr-px-1w">
-                <IconMacaronAppro :status="macaronsStatus.appro" />
+                <IconMacaronAppro :status="macaronsStatus.approvisionnement" />
                 <AppSeparator orientation="vertical" class="fr-my-0-5v" />
-                <IconMacaronInfo :status="macaronsStatus.info" />
-                <IconMacaronWaste :status="macaronsStatus.waste" />
+                <IconMacaronInfo :status="macaronsStatus.information" />
+                <IconMacaronWaste :status="macaronsStatus.gaspillage" />
                 <IconMacaronDiversification :status="macaronsStatus.diversification" />
-                <IconMacaronPlastic :status="macaronsStatus.plastic" />
+                <IconMacaronPlastic :status="macaronsStatus.plastique" />
               </div>
             </div>
           </router-link>

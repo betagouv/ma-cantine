@@ -23,31 +23,31 @@ const volets = computed(() => {
   return [
     {
       isAppro: true,
-      key: "appro",
+      key: "approvisionnement",
       title: "Approvisionnements",
       macaron: IconMacaronAppro,
-      status: macaronsStatus.value.appro,
-      hasErrors: teledeclarationStore.hasVoletErrors("appro"),
+      status: macaronsStatus.value.approvisionnement,
+      hasErrors: teledeclarationStore.hasVoletErrors("approvisionnement"),
       isFilled: teledeclarationStore.isVoletFilled("approvisionnement"),
       page: { name: "GestionnaireTunnelApproRecapitulatif" }
     },
     {
-      key: "info",
+      key: "information",
       title: "Information des convives",
       shortTitle: "Information convives",
       macaron: IconMacaronInfo,
-      status: macaronsStatus.value.info,
-      hasErrors: teledeclarationStore.hasVoletErrors("info"),
+      status: macaronsStatus.value.information,
+      hasErrors: teledeclarationStore.hasVoletErrors("information"),
       isFilled: teledeclarationStore.isVoletFilled("information"),
       page: { name: "GestionnaireTunnelConvives" }
     },
     {
-      key: "waste",
+      key: "gaspillage",
       title: "Lutte contre le gaspillage alimentaire",
       shortTitle: "Gaspillage alimentaire",
       macaron: IconMacaronWaste,
-      status: macaronsStatus.value.waste,
-      hasErrors: teledeclarationStore.hasVoletErrors("waste"),
+      status: macaronsStatus.value.gaspillage,
+      hasErrors: teledeclarationStore.hasVoletErrors("gaspillage"),
       isFilled: teledeclarationStore.isVoletFilled("gaspillage"),
       page: { name: "GestionnaireTunnelGaspillage" }
     },
@@ -62,12 +62,12 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelVegetarien" }
     },
     {
-      key: "plastic",
+      key: "plastique",
       title: "Substitution du plastique",
       shortTitle: "Substitution plastique",
       macaron: IconMacaronPlastic,
-      status: macaronsStatus.value.plastic,
-      hasErrors: teledeclarationStore.hasVoletErrors("plastic"),
+      status: macaronsStatus.value.plastique,
+      hasErrors: teledeclarationStore.hasVoletErrors("plastique"),
       isFilled: teledeclarationStore.isVoletFilled("plastique"),
       page: { name: "GestionnaireTunnelPlastique" }
     }
