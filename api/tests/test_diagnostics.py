@@ -1587,6 +1587,8 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["isFilledPlastique"], True)  # no required fields yet
         self.assertEqual(body["isFilledInformation"], True)  # no required fields yet
         self.assertEqual(body["isClean"], True)
+        for volet in ["Approvisionnement", "Gaspillage", "Diversification", "Plastique", "Information"]:
+            self.assertEqual(body[f"isClean{volet}"], True)
         self.assertEqual(body["errors"], {})
         self.assertEqual(body["isTeledeclared"], False)
 
@@ -1639,8 +1641,27 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["isEmpty"], False)
         self.assertEqual(body["isFilled"], True)
         self.assertEqual(body["isClean"], False)
+        self.assertEqual(body["isCleanApprovisionnement"], False)
+        for volet in ["Gaspillage", "Diversification", "Plastique", "Information"]:
+            self.assertEqual(body[f"isClean{volet}"], True)
         self.assertNotEqual(body["errors"], {})
         self.assertEqual(body["isTeledeclared"], False)
+
+    @authenticate
+    def test_can_get_diagnostic_check_with_non_appro_clean_errors(self):
+        self.canteen.managers.add(authenticate.user)
+        self.diagnostic.dechets_mesure_duree = 400  # max 365
+        self.diagnostic.save()
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isClean"], False)
+        self.assertEqual(body["isCleanGaspillage"], False)
+        for volet in ["Approvisionnement", "Diversification", "Plastique", "Information"]:
+            self.assertEqual(body[f"isClean{volet}"], True)
+        self.assertIn("dechetsMesureDuree", body["errors"])
 
     @authenticate
     def test_can_get_diagnostic_check_when_teledeclared(self):
