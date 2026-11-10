@@ -53,6 +53,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const diagnosticCheck = await diagnosticService.checkDiagnostic(canteenId, diagnostic.value.id)
     const canteenCheck = await canteenService.checkCanteen(canteenId)
     const check = {
+      ...diagnosticCheck,
       isClean: canteenCheck.isClean && diagnosticCheck.isClean,
       isFilled: canteenCheck.isFilled && diagnosticCheck.isFilled,
       errors: {...canteenCheck.errors, ...diagnosticCheck.errors}
@@ -158,6 +159,31 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Check if the step has been visited */
   function isPageVisited(slug) {
     return tunnelApproVisitedPages.value.includes(slug)
+  }
+
+  /* Check if the volet has no errors according to the last check */
+  function isVoletClean(volet) {
+    const isCleanVolets = {
+      information: diagnoticCheck.value.isCleanInformation,
+      gaspillage: diagnoticCheck.value.isCleanGaspillage,
+      diversification: diagnoticCheck.value.isCleanDiversification,
+      plastique: diagnoticCheck.value.isCleanPlastique,
+    }
+    return isCleanVolets[volet] === true
+  }
+
+  /* Check if the volet has been filled from the last check */
+  function isVoletFilled(volet) {
+    // TODO (fix later): Handle the approvisionnements case which doesn't have a specific volet
+    if (!volet) return diagnoticCheck.value.isFilledApprovisionnements;
+
+    const isFilledVolets = {
+      information: diagnoticCheck.value.isFilledInformation,
+      gaspillage: diagnoticCheck.value.isFilledGaspillage,
+      diversification: diagnoticCheck.value.isFilledDiversification,
+      plastique: diagnoticCheck.value.isFilledPlastique,
+    }
+    return isFilledVolets[volet]
   }
 
   /* Only display errors if the step has been visited before */
@@ -321,6 +347,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setSelectAutofill,
     markPageAsVisited,
     isPageVisited,
+    isVoletClean,
+    isVoletFilled,
     getDisplayedErrors,
     addErrorsFromCheck,
     clearErrors,

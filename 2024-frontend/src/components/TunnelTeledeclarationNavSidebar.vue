@@ -20,6 +20,7 @@ const generateNav = (name) => {
 
   for (let i = 0; i < list.length; i++) {
     const isCurrent = i === activeIndex
+    const meta = router.resolve(list[i].to).meta
     links.push({
       disabled: activeIndex === -1,
       type: isCurrent ? 'secondary' : 'tertiary',
@@ -27,7 +28,8 @@ const generateNav = (name) => {
       to: list[i].to,
       icon: list[i].icon,
       pageName: list[i].to.name,
-      slug: router.resolve(list[i].to).meta.slug,
+      slug: meta.slug,
+      volet: meta.volet,
     })
   }
   return links
@@ -80,7 +82,7 @@ const goTo = (to) => router.push(to)
               class="tunnel-teledeclaration-nav-sidebar__link fr-background-default--grey"
               @click="goTo(link.to)"
             >
-              <TunnelTeledeclarationIconCheck :fieldsPageName="link.pageName" class="fr-mr-1w" />
+              <TunnelTeledeclarationIconCheck :volet="link.volet" class="fr-mr-1w" />
               {{ link.label }}
             </DsfrButton>
           </nav>
