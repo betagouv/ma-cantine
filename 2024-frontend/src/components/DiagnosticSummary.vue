@@ -5,27 +5,27 @@ import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import diagnosticsMacaron from "@/services/diagnosticsMacaron.js"
 import DiagnosticSummaryTile from "@/components/DiagnosticSummaryTile.vue"
 import DiagnosticSummaryAccordions from "@/components/DiagnosticSummaryAccordions.vue"
-import IconMacaronAppro from "@/components/IconMacaronAppro.vue"
-import IconMacaronInfo from "@/components/IconMacaronInfo.vue"
-import IconMacaronWaste from "@/components/IconMacaronWaste.vue"
+import IconMacaronApprovisionnement from "@/components/IconMacaronApprovisionnement.vue"
+import IconMacaronInformation from "@/components/IconMacaronInformation.vue"
+import IconMacaronGaspillage from "@/components/IconMacaronGaspillage.vue"
 import IconMacaronDiversification from "@/components/IconMacaronDiversification.vue"
-import IconMacaronPlastic from "@/components/IconMacaronPlastic.vue"
+import IconMacaronPlastique from "@/components/IconMacaronPlastique.vue"
 
 const anchorName = "accordeons"
 const openedAccordion = ref(-1)
 
 const teledeclarationStore = useStoreTeledeclaration()
 const { isTeledeclared, hasDiagnostic, diagnoticCheck, diagnosticRecap } = storeToRefs(teledeclarationStore)
-const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value, diagnosticRecap.value))
 
 /* Volets */
 const volets = computed(() => {
+  const macaronsStatus = diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value, diagnosticRecap.value)
   return [
     {
       isAppro: true,
       title: "Approvisionnements",
-      macaron: IconMacaronAppro,
-      status: macaronsStatus.value.approvisionnement,
+      macaron: IconMacaronApprovisionnement,
+      macaronStatus: macaronsStatus.approvisionnement,
       hasErrors: teledeclarationStore.hasVoletErrors("approvisionnement"),
       isFilled: teledeclarationStore.isVoletFilled("approvisionnement"),
       page: { name: "GestionnaireTunnelApproRecapitulatif" }
@@ -33,8 +33,8 @@ const volets = computed(() => {
     {
       title: "Information des convives",
       shortTitle: "Information convives",
-      macaron: IconMacaronInfo,
-      status: macaronsStatus.value.information,
+      macaron: IconMacaronInformation,
+      macaronStatus: macaronsStatus.information,
       hasErrors: teledeclarationStore.hasVoletErrors("information"),
       isFilled: teledeclarationStore.isVoletFilled("information"),
       page: { name: "GestionnaireTunnelConvives" }
@@ -42,8 +42,8 @@ const volets = computed(() => {
     {
       title: "Lutte contre le gaspillage alimentaire",
       shortTitle: "Gaspillage alimentaire",
-      macaron: IconMacaronWaste,
-      status: macaronsStatus.value.gaspillage,
+      macaron: IconMacaronGaspillage,
+      macaronStatus: macaronsStatus.gaspillage,
       hasErrors: teledeclarationStore.hasVoletErrors("gaspillage"),
       isFilled: teledeclarationStore.isVoletFilled("gaspillage"),
       page: { name: "GestionnaireTunnelGaspillage" }
@@ -52,7 +52,7 @@ const volets = computed(() => {
       title: "Diversification des sources de protéines et menus végétariens",
       shortTitle: "Menus végétariens",
       macaron: IconMacaronDiversification,
-      status: macaronsStatus.value.diversification,
+      macaronStatus: macaronsStatus.diversification,
       hasErrors: teledeclarationStore.hasVoletErrors("diversification"),
       isFilled: teledeclarationStore.isVoletFilled("diversification"),
       page: { name: "GestionnaireTunnelVegetarien" }
@@ -60,8 +60,8 @@ const volets = computed(() => {
     {
       title: "Substitution du plastique",
       shortTitle: "Substitution plastique",
-      macaron: IconMacaronPlastic,
-      status: macaronsStatus.value.plastique,
+      macaron: IconMacaronPlastique,
+      macaronStatus: macaronsStatus.plastique,
       hasErrors: teledeclarationStore.hasVoletErrors("plastique"),
       isFilled: teledeclarationStore.isVoletFilled("plastique"),
       page: { name: "GestionnaireTunnelPlastique" }

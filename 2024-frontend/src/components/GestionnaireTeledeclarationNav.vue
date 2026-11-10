@@ -10,11 +10,11 @@ import diagnosticsMacaron from "@/services/diagnosticsMacaron.js"
 import AppBadgeDiagnostic from "@/components/AppBadgeDiagnostic.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import IconLink from "@/components/IconLink.vue"
-import IconMacaronAppro from "@/components/IconMacaronAppro.vue"
-import IconMacaronInfo from "@/components/IconMacaronInfo.vue"
-import IconMacaronWaste from "@/components/IconMacaronWaste.vue"
+import IconMacaronApprovisionnement from "@/components/IconMacaronApprovisionnement.vue"
+import IconMacaronInformation from "@/components/IconMacaronInformation.vue"
+import IconMacaronGaspillage from "@/components/IconMacaronGaspillage.vue"
 import IconMacaronDiversification from "@/components/IconMacaronDiversification.vue"
-import IconMacaronPlastic from "@/components/IconMacaronPlastic.vue"
+import IconMacaronPlastique from "@/components/IconMacaronPlastique.vue"
 
 const props = defineProps(["canteen"])
 const route = useRoute()
@@ -53,12 +53,12 @@ const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTel
             <div class="gestionnaire-teledeclaration-nav__indicator ma-cantine--width-100">
               <IconLink bottom="50%" class="gestionnaire-teledeclaration-nav__link" />
               <div class="gestionnaire-teledeclaration-nav__macarons fr-py-1v fr-px-1w">
-                <IconMacaronAppro :status="macaronsStatus.approvisionnement" />
+                <IconMacaronApprovisionnement :status="macaronsStatus.approvisionnement" />
                 <AppSeparator orientation="vertical" class="fr-my-0-5v" />
-                <IconMacaronInfo :status="macaronsStatus.information" />
-                <IconMacaronWaste :status="macaronsStatus.gaspillage" />
+                <IconMacaronInformation :status="macaronsStatus.information" />
+                <IconMacaronGaspillage :status="macaronsStatus.gaspillage" />
                 <IconMacaronDiversification :status="macaronsStatus.diversification" />
-                <IconMacaronPlastic :status="macaronsStatus.plastique" />
+                <IconMacaronPlastique :status="macaronsStatus.plastique" />
               </div>
             </div>
           </router-link>

@@ -36,7 +36,7 @@ const displaySentence = (volet) => {
     >
       <template #title>
         <span class="ma-cantine--flex-start ma-cantine--flex-gap-1">
-          <component :is="volet.macaron" :status="volet.status" class="diagnostic-summary-accordions__image" />
+          <component :is="volet.macaron" :status="volet.macaronStatus" class="diagnostic-summary-accordions__image" />
           {{ volet.title }}
           <DsfrBadge v-if="volet.hasErrors" label="Erreurs" type="error"/>
         </span>
