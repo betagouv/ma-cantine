@@ -5,69 +5,64 @@ import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import diagnosticsMacaron from "@/services/diagnosticsMacaron.js"
 import DiagnosticSummaryTile from "@/components/DiagnosticSummaryTile.vue"
 import DiagnosticSummaryAccordions from "@/components/DiagnosticSummaryAccordions.vue"
-import IconMacaronAppro from "@/components/IconMacaronAppro.vue"
-import IconMacaronInfo from "@/components/IconMacaronInfo.vue"
-import IconMacaronWaste from "@/components/IconMacaronWaste.vue"
+import IconMacaronApprovisionnement from "@/components/IconMacaronApprovisionnement.vue"
+import IconMacaronInformation from "@/components/IconMacaronInformation.vue"
+import IconMacaronGaspillage from "@/components/IconMacaronGaspillage.vue"
 import IconMacaronDiversification from "@/components/IconMacaronDiversification.vue"
-import IconMacaronPlastic from "@/components/IconMacaronPlastic.vue"
+import IconMacaronPlastique from "@/components/IconMacaronPlastique.vue"
 
 const anchorName = "accordeons"
 const openedAccordion = ref(-1)
 
 const teledeclarationStore = useStoreTeledeclaration()
 const { isTeledeclared, hasDiagnostic, diagnoticCheck, diagnosticRecap } = storeToRefs(teledeclarationStore)
-const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value, diagnosticRecap.value))
 
 /* Volets */
 const volets = computed(() => {
+  const macaronsStatus = diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value, diagnosticRecap.value)
   return [
     {
       isAppro: true,
-      key: "appro",
       title: "Approvisionnements",
-      macaron: IconMacaronAppro,
-      status: macaronsStatus.value.appro,
-      hasErrors: teledeclarationStore.hasVoletErrors("appro"),
+      macaron: IconMacaronApprovisionnement,
+      macaronStatus: macaronsStatus.approvisionnement,
+      hasErrors: teledeclarationStore.hasVoletErrors("approvisionnement"),
       isFilled: teledeclarationStore.isVoletFilled("approvisionnement"),
       page: { name: "GestionnaireTunnelApproRecapitulatif" }
     },
     {
-      key: "info",
       title: "Information des convives",
       shortTitle: "Information convives",
-      macaron: IconMacaronInfo,
-      status: macaronsStatus.value.info,
-      hasErrors: teledeclarationStore.hasVoletErrors("info"),
+      macaron: IconMacaronInformation,
+      macaronStatus: macaronsStatus.information,
+      hasErrors: teledeclarationStore.hasVoletErrors("information"),
       isFilled: teledeclarationStore.isVoletFilled("information"),
       page: { name: "GestionnaireTunnelConvives" }
     },
     {
-      key: "waste",
       title: "Lutte contre le gaspillage alimentaire",
       shortTitle: "Gaspillage alimentaire",
-      macaron: IconMacaronWaste,
-      status: macaronsStatus.value.waste,
-      hasErrors: teledeclarationStore.hasVoletErrors("waste"),
+      macaron: IconMacaronGaspillage,
+      macaronStatus: macaronsStatus.gaspillage,
+      hasErrors: teledeclarationStore.hasVoletErrors("gaspillage"),
       isFilled: teledeclarationStore.isVoletFilled("gaspillage"),
       page: { name: "GestionnaireTunnelGaspillage" }
     },
     {
-      key: "diversification",
       title: "Diversification des sources de protéines et menus végétariens",
       shortTitle: "Menus végétariens",
       macaron: IconMacaronDiversification,
-      status: macaronsStatus.value.diversification,
+      macaronStatus: macaronsStatus.diversification,
       hasErrors: teledeclarationStore.hasVoletErrors("diversification"),
       isFilled: teledeclarationStore.isVoletFilled("diversification"),
       page: { name: "GestionnaireTunnelVegetarien" }
     },
     {
-      key: "plastic",
       title: "Substitution du plastique",
       shortTitle: "Substitution plastique",
-      macaron: IconMacaronPlastic,
-      status: macaronsStatus.value.plastic,
-      hasErrors: teledeclarationStore.hasVoletErrors("plastic"),
+      macaron: IconMacaronPlastique,
+      macaronStatus: macaronsStatus.plastique,
+      hasErrors: teledeclarationStore.hasVoletErrors("plastique"),
       isFilled: teledeclarationStore.isVoletFilled("plastique"),
       page: { name: "GestionnaireTunnelPlastique" }
     }

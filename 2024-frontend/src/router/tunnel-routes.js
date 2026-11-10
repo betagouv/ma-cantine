@@ -70,7 +70,7 @@ const tunnelRoutes = {
             slug: "informations",
             title: "Informations",
             next: "GestionnaireTunnelApproCouverts",
-            stepper: "approvisionnements",
+            volet: "approvisionnement",
           },
         },
         {
@@ -83,7 +83,7 @@ const tunnelRoutes = {
             title: "Couverts annuels",
             previous: "GestionnaireTunnelApproInformations",
             next: "GestionnaireTunnelApproSaisie",
-            stepper: "approvisionnements",
+            volet: "approvisionnement",
           },
         },
         {
@@ -93,10 +93,10 @@ const tunnelRoutes = {
           beforeEnter: redirectIfTeledeclared,
           meta: {
             slug: "saisie",
-            title: "Mes approvisionnements : mode de saisie",
+            title: "Mode de saisie",
             previous: "GestionnaireTunnelApproCouverts",
             next: "GestionnaireTunnelApproEgalim",
-            stepper: "approvisionnements",
+            volet: "approvisionnement",
           },
         },
         {
@@ -109,7 +109,7 @@ const tunnelRoutes = {
             title: "EGalim",
             previous: "GestionnaireTunnelApproSaisie",
             next: "GestionnaireTunnelApproOrigine",
-            stepper: "approvisionnements",
+            volet: "approvisionnement",
           },
         },
         {
@@ -122,7 +122,7 @@ const tunnelRoutes = {
             title: "Origine France et UE",
             previous: "GestionnaireTunnelApproEgalim",
             next: "GestionnaireTunnelApproLocalCircuitCourt",
-            stepper: "approvisionnements",
+            volet: "approvisionnement",
           },
         },
         {
@@ -135,7 +135,7 @@ const tunnelRoutes = {
             title: "« Local » et circuit court",
             previous: "GestionnaireTunnelApproOrigine",
             next: "GestionnaireTunnelApproRecapitulatif",
-            stepper: "approvisionnements",
+            volet: "approvisionnement",
           },
         },
         {
@@ -146,7 +146,7 @@ const tunnelRoutes = {
           meta: {
             title: "Recapitulatif des approvisionnements",
             previous: "GestionnaireTunnelApproLocalCircuitCourt",
-            stepper: "approvisionnements",
+            volet: "approvisionnement",
           },
         },
         {

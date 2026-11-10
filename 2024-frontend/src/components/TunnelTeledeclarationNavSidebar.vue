@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from "vue"
-import { useRouter } from "vue-router"
+import { useRoute, useRouter } from "vue-router"
 import AppBadgeSiretSiren from "@/components/AppBadgeSiretSiren.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
@@ -10,6 +10,7 @@ import documentation from "@/data/documentation.json"
 
 const props = defineProps(["canteen", "nav", "active", "displayTeledeclaredBadge"])
 const router = useRouter()
+const route = useRoute()
 const emit = defineEmits(["save"])
 
 /* Navigation */
@@ -28,16 +29,20 @@ const generateNav = (name) => {
       to: list[i].to,
       icon: list[i].icon,
       pageName: list[i].to.name,
-      slug: meta.slug,
       volet: meta.volet,
     })
   }
   return links
 }
+
 const approvisementsNav = computed(() => generateNav('approvisionnements'))
 const thematiquesNav = computed(() => generateNav('thematiques'))
+const currentPageInApprovisionnements = computed(() => route.meta.volet === "approvisionnement")
 
-const goTo = (to) => router.push(to)
+const goToThematique = (link) => {
+  if (currentPageInApprovisionnements.value) emit("save", { page: link.pageName, checkErrors: true })
+  else router.push(link.to)
+}
 </script>
 
 <template>
@@ -63,7 +68,7 @@ const goTo = (to) => router.push(to)
               class="tunnel-teledeclaration-nav-sidebar__link fr-background-default--grey"
               @click="emit('save', link.pageName)"
             >
-              <TunnelTeledeclarationIconCheck v-if="!link.icon" :fieldsPageName="link.pageName" :slug="link.slug" class="fr-mr-1w" />
+              <TunnelTeledeclarationIconCheck v-if="!link.icon" type="page" :name="link.pageName" class="fr-mr-1w" />
               <span v-else :class="`${link.icon} ma-cantine--icon-xs`" ></span>
               {{ link.label }}
             </DsfrButton>
@@ -80,9 +85,9 @@ const goTo = (to) => router.push(to)
               :key="link.to.name"
               :[link.type]="true"
               class="tunnel-teledeclaration-nav-sidebar__link fr-background-default--grey"
-              @click="goTo(link.to)"
+              @click="goToThematique(link)"
             >
-              <TunnelTeledeclarationIconCheck :volet="link.volet" class="fr-mr-1w" />
+              <TunnelTeledeclarationIconCheck type="volet" :name="link.volet" class="fr-mr-1w" />
               {{ link.label }}
             </DsfrButton>
           </nav>

@@ -131,19 +131,8 @@ const getFieldsListFromGroup = (groupName) => {
   ]
 }
 
-const getFieldsFromVolet = (volet) => {
-  const fields = {
-    info: getFieldsListFromGroup("information"),
-    waste: getFieldsListFromGroup("gaspillage"),
-    diversification: getFieldsListFromGroup("diversification"),
-    plastic: getFieldsListFromGroup("plastique"),
-    appro: getFieldsListFromGroup("approvisionnement")
-  }
-  return fields[volet]
-}
-
 const getFieldsWithAutofill = () => {
   return Object.keys(fields).filter((field) => fields[field].autofill)
 }
 
-export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup, getFieldsFromVolet, getFieldsWithAutofill }
+export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup, getFieldsWithAutofill }

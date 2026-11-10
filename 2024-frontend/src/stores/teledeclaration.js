@@ -24,6 +24,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const visitedPagesSeparator = ","
   const tunnelApproVisitedPages = computed(() => diagnostic.value?.tunnelAppro?.split(visitedPagesSeparator) || [])
   const voletTunnelProgressionFields = {
+    approvisionnement: "tunnelAppro",
     gaspillage: "tunnelWaste",
     diversification: "tunnelDiversification",
     plastique: "tunnelPlastic",
@@ -99,23 +100,19 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   async function saveDiagnostic(volet) {
     if (!diagnostic.value) return
     const canteenId = diagnostic.value.canteenId
-    const response = volet ? await saveVolet(canteenId, volet) : await saveAppro(canteenId)
+    const response = await saveVolet(canteenId, volet)
     if (response.status === "error") replaceErrors(response.list)
     else setDiagnostic({ ...diagnostic.value, ...response })
     await setCanteenAction()
     return response
   }
 
-  /* Save the approvisionnement fields with the v1 API */
-  async function saveAppro(canteenId) {
-    if (hasSelectAutofill.value && !diagnostic.value.generatedFromPurchases) autofillDiagnostic()
-    const diagnosticValues = diagnostic.value
-    return await diagnosticService.updateDiagnostic(canteenId, diagnosticValues.id, diagnosticValues)
-  }
-
   /* Save the fields of a volet */
   async function saveVolet(canteenId, volet) {
-    const fields = [...tunnelTeledeclaration.getFieldsListFromGroup(volet), voletTunnelProgressionFields[volet]]
+    const isApprovisionnement = volet === "approvisionnement"
+    if (isApprovisionnement && hasSelectAutofill.value && !diagnostic.value.generatedFromPurchases) autofillDiagnostic()
+    const extraFields = isApprovisionnement ? ["generatedFromPurchases"] : []
+    const fields = [...tunnelTeledeclaration.getFieldsListFromGroup(volet), voletTunnelProgressionFields[volet], ...extraFields]
     const voletValues = Object.fromEntries(fields.map((field) => [field, diagnostic.value[field]]))
     return await diagnosticService.updateVolet(canteenId, diagnostic.value.id, volet, voletValues)
   }
@@ -139,7 +136,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const fields = tunnelTeledeclaration.getFieldsWithAutofill()
     for (const field of fields) setValue(field, purchaseSummary[field])
     setValue("generatedFromPurchases", true)
-    autofillSteps.forEach((slug) => markPageAsVisited({ slug }))
+    autofillSteps.forEach((slug) => markPageAsVisited({ slug, volet: "approvisionnement" }))
   }
 
   /* Set if the diagnostic must be filled from purchases on next save */
@@ -147,19 +144,19 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     hasSelectAutofill.value = value
   }
 
-  /* Save the visit of the page : "complet" for a volet, the page slug in the list of the visited pages for the appro */
+  /* Save the visit of the page : the page slug in the list of the visited pages for the appro, "complet" for the other volets */
   function markPageAsVisited({ slug, volet }) {
-    if (!diagnostic.value) return
-    if (volet) diagnostic.value[voletTunnelProgressionFields[volet]] = "complet"
+    if (!diagnostic.value || !volet) return
+    if (volet !== "approvisionnement") diagnostic.value[voletTunnelProgressionFields[volet]] = "complet"
     else if (slug && !tunnelApproVisitedPages.value.includes(slug)) {
       diagnostic.value.tunnelAppro = [...tunnelApproVisitedPages.value, slug].join(visitedPagesSeparator)
     }
   }
 
-  /* Check if the page has been visited : "complet" for a volet, the page slug in the list of the visited pages for the appro */
+  /* Check if the page has been visited : the page slug in the list of the visited pages for the appro, "complet" for the other volets */
   function isPageVisited({ slug, volet }) {
-    if (volet) return diagnostic.value?.[voletTunnelProgressionFields[volet]] === "complet"
-    return tunnelApproVisitedPages.value.includes(slug)
+    if (volet === "approvisionnement") return tunnelApproVisitedPages.value.includes(slug)
+    return diagnostic.value?.[voletTunnelProgressionFields[volet]] === "complet"
   }
 
   /* Check if the volet has no errors according to the last check */
@@ -169,19 +166,19 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
       gaspillage: diagnoticCheck.value.isCleanGaspillage,
       diversification: diagnoticCheck.value.isCleanDiversification,
       plastique: diagnoticCheck.value.isCleanPlastique,
+      approvisionnement: diagnoticCheck.value.isCleanApprovisionnement
     }
-    return isCleanVolets[volet] === true
+    return isCleanVolets[volet]
   }
 
   /* Check if the volet has been filled from the last check */
   function isVoletFilled(volet) {
-    if (!volet || volet === "approvisionnement") return hasDiagnostic.value
-
     const isFilledVolets = {
       information: diagnoticCheck.value.isFilledInformation,
       gaspillage: diagnoticCheck.value.isFilledGaspillage,
       diversification: diagnoticCheck.value.isFilledDiversification,
       plastique: diagnoticCheck.value.isFilledPlastique,
+      approvisionnement: diagnoticCheck.value.isFilledApprovisionnement
     }
     return isFilledVolets[volet]
   }
@@ -315,7 +312,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Check if a volet has errors */
   function hasVoletErrors(volet) {
-    const fields = tunnelTeledeclaration.getFieldsFromVolet(volet)
+    const fields = tunnelTeledeclaration.getFieldsListFromGroup(volet)
     return diagnosticErrors.value.some(error => fields.includes(error.field))
   }
 
