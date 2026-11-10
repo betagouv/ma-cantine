@@ -56,7 +56,10 @@ const saveWithErrorCheck = async (page) => {
   teledeclarationStore.markPageAsVisited(route.meta)
   const response = await teledeclarationStore.saveDiagnostic(route.meta.volet)
   if (response.status === "error") displayErrors(pageToGo)
-  else checkDiagnostic(pageToGo)
+  else {
+    await teledeclarationStore.checkDiagnosticSteps()
+    displayErrors(page)
+  }
 }
 
 const saveWithoutErrorCheck = async (page) => {
@@ -69,12 +72,6 @@ const saveWithoutErrorCheck = async (page) => {
 }
 
 /* Errors */
-const checkDiagnostic = async (page) => {
-  const check = await teledeclarationStore.checkDiagnosticSteps()
-  if (check.isClean) goTo(page)
-  else displayErrors(page)
-}
-
 const displayErrors = (page) => {
   const pageErrors = teledeclarationStore.getErrorsPage(route.name, canteenInformations.value.isGroupe)
   if (pageErrors.length > 0) displayModal(pageErrors, page)
