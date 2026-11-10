@@ -23,7 +23,6 @@ const volets = computed(() => {
   return [
     {
       isAppro: true,
-      key: "approvisionnement",
       title: "Approvisionnements",
       macaron: IconMacaronAppro,
       status: macaronsStatus.value.approvisionnement,
@@ -32,7 +31,6 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelApproRecapitulatif" }
     },
     {
-      key: "information",
       title: "Information des convives",
       shortTitle: "Information convives",
       macaron: IconMacaronInfo,
@@ -42,7 +40,6 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelConvives" }
     },
     {
-      key: "gaspillage",
       title: "Lutte contre le gaspillage alimentaire",
       shortTitle: "Gaspillage alimentaire",
       macaron: IconMacaronWaste,
@@ -52,7 +49,6 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelGaspillage" }
     },
     {
-      key: "diversification",
       title: "Diversification des sources de protéines et menus végétariens",
       shortTitle: "Menus végétariens",
       macaron: IconMacaronDiversification,
@@ -62,7 +58,6 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelVegetarien" }
     },
     {
-      key: "plastique",
       title: "Substitution du plastique",
       shortTitle: "Substitution plastique",
       macaron: IconMacaronPlastic,
