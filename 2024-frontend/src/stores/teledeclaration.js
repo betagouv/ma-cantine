@@ -218,10 +218,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   /* Empty the fields of a volet */
   function resetVolet(volet) {
     const fields = tunnelTeledeclaration.getFieldsListFromGroup(volet)
-    fields.forEach((field) => {
-      const isCheckboxes = tunnelTeledeclaration.getField(field)?.type === "checkboxes"
-      setValue(field, isCheckboxes ? [] : null)
-    })
+    fields.forEach((field) => setValue(field, null))
+    diagnostic.value[voletTunnelProgressionFields[volet]] = null
   }
 
   /* Empty store */
