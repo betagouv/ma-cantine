@@ -2,6 +2,7 @@
 import { computed, onBeforeUnmount, onMounted, ref } from "vue"
 import { storeToRefs } from "pinia"
 import { onBeforeRouteLeave, useRoute, useRouter } from "vue-router"
+import { useRootStore } from "@/stores/root.js"
 import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration.js"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
@@ -26,6 +27,7 @@ const steps = computed(() => routerSteps.value.map((step) => step.title))
 const stepIndex = computed(() => routerSteps.value.findIndex((step) => step.to.name === currentRoute.value) + 1)
 
 /* Store */
+const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const teledeclarationStore = useStoreTeledeclaration()
@@ -50,6 +52,15 @@ const save = async (page) => {
   const response = await teledeclarationStore.saveDiagnostic(route.meta.volet)
   if (response.status === "error") displayErrors(pageToGo)
   else checkDiagnostic(pageToGo)
+}
+
+const saveQuit = async () => {
+  const response = await teledeclarationStore.saveDiagnostic(route.meta.volet)
+  if (response.status === "error") rootStore.notifyServerError(response)
+  else {
+    await teledeclarationStore.checkDiagnosticSteps()
+    router.push({ name: "GestionnaireCantineTeledeclarationEnCours" })
+  }
 }
 
 /* Errors */
@@ -126,8 +137,8 @@ const goTo = (page) => {
         <TunnelTeledeclarationNavSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" @save="save" :displayTeledeclaredBadge="isTeledeclared" />
       </div>
       <div class="fr-col-12 fr-col-md-9">
-        <TunnelTeledeclarationNavThematiques v-if="isThematiques" @save="save" />
-        <TunnelTeledeclarationNavApprovisionnements v-else-if="!hideTopNav" @save="save" />
+        <TunnelTeledeclarationNavThematiques v-if="isThematiques" @save="save" @saveQuit="saveQuit" />
+        <TunnelTeledeclarationNavApprovisionnements v-else-if="!hideTopNav" @save="save" @saveQuit="saveQuit" />
         <div class="fr-mt-2w fr-pl-0 fr-pl-md-4w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
           <RouterView :key="forceRender" />
