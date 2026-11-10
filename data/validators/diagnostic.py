@@ -10,7 +10,9 @@ from data.models.diagnostic_teledeclaration_dates import (
     get_year_correction_end_date_or_campaign_end_date_or_today_date,
 )
 from common.utils import utils as utils_utils
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_required,
+)
 from data.models.diagnostic_teledeclaration_field_groups import get_teledeclaration_field_groups
 
 
@@ -140,11 +142,15 @@ def validate_volets_thematiques_fields_required(instance):
     """
     - extra validation: depending on the year of the diagnostic
         - [NEW in 2026] the volets thématiques have required fields
+        - a volet thématique not started (none of its fields filled) is skipped
     NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
     """
     errors = {}
     if instance.year:
         for volet in ["GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]:
+            # Skip validation if volet is not filled
+            if not getattr(instance, f"is_filled_{volet.lower()}"):
+                continue
             for field in get_teledeclaration_fields_required(instance.year, volet):
                 if getattr(instance, field) is None:
                     utils_utils.add_validation_error(

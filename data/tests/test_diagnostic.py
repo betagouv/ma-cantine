@@ -20,6 +20,11 @@ from data.models.diagnostic import (
     commerce_equitable_sup_bio_query,
     local_sup_france_query,
 )
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
+    get_teledeclaration_fields_required,
+)
+from data.validators import diagnostic as diagnostic_validators
 
 year_data = 2024
 date_in_teledeclaration_campaign = "2025-03-30"
@@ -1537,6 +1542,59 @@ class DiagnosticIsCleanMethodTest(TestCase):
 
         is_clean, errors = self.diagnostic_2024_simple_valid.is_clean(raise_errors=True)
         self.assertTrue(is_clean)
+        self.assertEqual(errors, {})
+
+
+class DiagnosticVoletThematiqueIsFilledPropertyTest(TestCase):
+    # a boolean field of each volet thématique (2026)
+    VOLETS_FIELD = {
+        "GASPILLAGE": "diagnostic_gaspillage_realise",
+        "DIVERSIFICATION": "plan_diversification_en_place",
+        "PLASTIQUE": "plastique_bouteille_boisson_remplace",
+        "INFORMATION": "information_affichage_permanent",
+    }
+
+    def setUp(self):
+        self.diagnostic = DiagnosticFactory(
+            year=2026, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        # empty all the fields of the volets thématiques
+        for volet in self.VOLETS_FIELD:
+            for field in get_teledeclaration_fields_all(2026, volet):
+                setattr(self.diagnostic, field, None)
+
+    def test_volet_is_filled_if_at_least_one_field_is_filled(self):
+        for volet, field in self.VOLETS_FIELD.items():
+            with self.subTest(volet=volet):
+                # Initially not filled
+                self.assertFalse(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
+
+                # Fill one field - should now be considered "filled"
+                setattr(self.diagnostic, field, True)
+                self.assertTrue(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
+
+                # Reset for next test
+                setattr(self.diagnostic, field, None)
+
+    def test_volet_is_filled_even_if_required_fields_missing(self):
+        for volet, field in self.VOLETS_FIELD.items():
+            with self.subTest(volet=volet):
+                # Fill one field - should be considered "filled" even if required fields are missing
+                setattr(self.diagnostic, field, True)
+                self.assertTrue(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
+
+                # Reset for next test
+                setattr(self.diagnostic, field, None)
+
+    def test_volet_is_filled_if_all_required_fields_filled(self):
+        for volet in self.VOLETS_FIELD:
+            with self.subTest(volet=volet):
+                for field in get_teledeclaration_fields_required(2026, volet):
+                    setattr(self.diagnostic, field, True)
+                self.assertTrue(getattr(self.diagnostic, f"is_filled_{volet.lower()}"))
+
+    def test_volet_not_started_cannot_have_errors(self):
+        errors = diagnostic_validators.validate_volets_thematiques_fields_required(self.diagnostic)
         self.assertEqual(errors, {})
 
 

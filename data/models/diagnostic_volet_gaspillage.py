@@ -3,8 +3,8 @@ from django.db import models
 
 from data.fields import ChoiceArrayField
 from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
     get_teledeclaration_fields_all_years,
-    get_teledeclaration_fields_required,
 )
 from data.utils import make_optional_positive_decimal_field
 
@@ -120,6 +120,7 @@ class DiagnosticVoletGaspillageMixin(models.Model):
 
     @property
     def is_filled_gaspillage(self) -> bool:
-        return all(
-            getattr(self, field) is not None for field in get_teledeclaration_fields_required(self.year, "GASPILLAGE")
+        # At least one field of the volet is filled
+        return any(
+            getattr(self, field) is not None for field in get_teledeclaration_fields_all(self.year, "GASPILLAGE")
         )
