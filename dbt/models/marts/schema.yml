@@ -557,12 +557,13 @@ models:
 
   - name: mart_api_bilans_crees
     description: >
-      Une ligne par bilan créé via l'API par un logiciel connu
-      (`creation_source_api_oauth2_application_id` renseigné). Les bilans de satellites générés
-      depuis celui d'un groupe copient ses champs de création : ils sont exclus. Lu dans les
-      bilans et non dans EventLog, qui ne connaît pas l'identifiant du bilan créé : c'est ici
-      que se lit la part télédéclarée des bilans créés via l'API. `jour_creation` est à l'heure
-      de Paris.
+      Une ligne par bilan créé via l'API (`creation_source = 'API'`). Les bilans de satellites
+      générés depuis celui d'un groupe copient ses champs de création : ils sont exclus. Le
+      logiciel peut manquer pour des bilans créés avant le 23/06/2026 (application non stockée
+      avant, et non retrouvée par les commandes fill) : le bilan est gardé, avec un éditeur vide,
+      comme dans mart_api_ecritures. Lu dans les bilans et non dans EventLog, qui ne connaît pas
+      l'identifiant du bilan créé : c'est ici que se lit la part télédéclarée des bilans créés via
+      l'API. `jour_creation` est à l'heure de Paris.
       Les tests de ce mart ne tournent qu'en dev : la tâche de nuit lance `dbt run`, pas `dbt test`.
     columns:
       - name: diagnostic_id
@@ -579,7 +580,9 @@ models:
       - name: jour_creation
         description: Jour de création du bilan, à l'heure de Paris.
       - name: application_id
-        description: Identifiant de l'application OAuth2 qui a créé le bilan.
+        description: >
+          Identifiant de l'application OAuth2 qui a créé le bilan. Vide pour des bilans créés
+          avant le 23/06/2026 dont le logiciel n'a pas été retrouvé.
       - name: application_nom
         description: Nom de l'application OAuth2.
       - name: editeur
