@@ -201,6 +201,11 @@ class DiagnosticSerializer(serializers.ModelSerializer):
 class DiagnosticCheckSerializer(serializers.Serializer):
     is_empty = serializers.BooleanField(read_only=True)
     is_filled = serializers.BooleanField(read_only=True)
+    is_filled_approvisionnement = serializers.BooleanField(read_only=True)
+    is_filled_gaspillage = serializers.BooleanField(read_only=True)
+    is_filled_diversification = serializers.BooleanField(read_only=True)
+    is_filled_plastique = serializers.BooleanField(read_only=True)
+    is_filled_information = serializers.BooleanField(read_only=True)
     is_clean = serializers.BooleanField(read_only=True)
     # infos = serializers.DictField(read_only=True)
     # warnings = serializers.DictField(read_only=True)
