@@ -66,7 +66,7 @@ const goToThematique = (link) => {
               :key="link.to.name"
               :[link.type]="true"
               class="tunnel-teledeclaration-nav-sidebar__link fr-background-default--grey"
-              @click="emit('save', link.pageName)"
+              @click="emit('save', { page: link.pageName, checkErrors: true })"
             >
               <TunnelTeledeclarationIconCheck v-if="!link.icon" type="page" :name="link.pageName" class="fr-mr-1w" />
               <span v-else :class="`${link.icon} ma-cantine--icon-xs`" ></span>

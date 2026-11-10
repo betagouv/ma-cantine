@@ -46,7 +46,12 @@ const checkRedirect = (page) => {
 }
 
 /* Save */
-const save = async (page) => {
+const save = ({ page, checkErrors }) => {
+  if (checkErrors) saveWithErrorCheck(page)
+  else saveWithoutErrorCheck(page)
+}
+
+const saveWithErrorCheck = async (page) => {
   const pageToGo = checkRedirect(page)
   teledeclarationStore.markPageAsVisited(route.meta)
   const response = await teledeclarationStore.saveDiagnostic(route.meta.volet)
@@ -54,12 +59,12 @@ const save = async (page) => {
   else checkDiagnostic(pageToGo)
 }
 
-const saveQuit = async () => {
+const saveWithoutErrorCheck = async (page) => {
   const response = await teledeclarationStore.saveDiagnostic(route.meta.volet)
   if (response.status === "error") rootStore.notifyServerError(response)
   else {
     await teledeclarationStore.checkDiagnosticSteps()
-    router.push({ name: "GestionnaireCantineTeledeclarationEnCours" })
+    router.push({ name: page })
   }
 }
 
@@ -137,8 +142,8 @@ const goTo = (page) => {
         <TunnelTeledeclarationNavSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" @save="save" :displayTeledeclaredBadge="isTeledeclared" />
       </div>
       <div class="fr-col-12 fr-col-md-9">
-        <TunnelTeledeclarationNavThematiques v-if="isThematiques" @save="save" @saveQuit="saveQuit" />
-        <TunnelTeledeclarationNavApprovisionnements v-else-if="!hideTopNav" @save="save" @saveQuit="saveQuit" />
+        <TunnelTeledeclarationNavThematiques v-if="isThematiques" @save="save" />
+        <TunnelTeledeclarationNavApprovisionnements v-else-if="!hideTopNav" @save="save" />
         <div class="fr-mt-2w fr-pl-0 fr-pl-md-4w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
           <RouterView :key="forceRender" />

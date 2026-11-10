@@ -2,7 +2,7 @@
 import { computed } from "vue"
 import { useRoute } from "vue-router"
 
-const emit = defineEmits(["save", "saveQuit"])
+const emit = defineEmits(["save"])
 const route = useRoute()
 const previousStep = computed(() => route.meta.previous)
 const nextStep = computed(() => route.meta.next)
@@ -15,20 +15,20 @@ const nextStep = computed(() => route.meta.next)
       icon="fr-icon-save-line"
       label="Enregistrer et finir plus tard"
       no-outline
-      @click="emit('saveQuit')"
+      @click="emit('save', { page: 'GestionnaireCantineTeledeclarationEnCours', checkErrors: false })"
     />
     <DsfrButton
       secondary
       icon="fr-icon-arrow-left-s-first-line"
       label="Étape précédente"
-      @click="emit('save', previousStep)"
+      @click="emit('save', { page: previousStep, checkErrors: true })"
       :disabled="!previousStep"
     />
     <DsfrButton
       secondary
       icon="fr-icon-arrow-right-s-last-line"
       label="Étape suivante"
-      @click="emit('save', nextStep)"
+      @click="emit('save', { page: nextStep, checkErrors: true })"
       :disabled="!nextStep"
       :icon-right="true"
     />
