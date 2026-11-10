@@ -1695,8 +1695,6 @@ class DiagnosticDetailCheckApiTest(APITestCase):
                 setattr(diagnostic, field, None)
         # start all the volets thématiques except gaspillage
         diagnostic.plan_diversification_en_place = True
-        diagnostic.plastique_bouteille_boisson_remplace = True
-        diagnostic.information_affichage_permanent = True
         diagnostic.save()
 
         response = self.client.get(
@@ -1707,8 +1705,8 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["isFilledGaspillage"], False)  # not started
         self.assertEqual(body["isCleanGaspillage"], True)  # not started: no required fields errors
-        self.assertEqual(body["isFilledDiversification"], False)  # started, but required fields missing
-        self.assertEqual(body["isCleanDiversification"], False)
+        self.assertEqual(body["isFilledDiversification"], True)  # started
+        self.assertEqual(body["isCleanDiversification"], False)  # started: and required fields missing
 
     @authenticate
     def test_can_get_diagnostic_check_when_teledeclared(self):
