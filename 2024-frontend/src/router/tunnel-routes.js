@@ -71,7 +71,6 @@ const tunnelRoutes = {
             title: "Informations",
             next: "GestionnaireTunnelApproCouverts",
             volet: "approvisionnement",
-            stepper: "approvisionnements",
           },
         },
         {
@@ -85,7 +84,6 @@ const tunnelRoutes = {
             previous: "GestionnaireTunnelApproInformations",
             next: "GestionnaireTunnelApproSaisie",
             volet: "approvisionnement",
-            stepper: "approvisionnements",
           },
         },
         {
@@ -99,7 +97,6 @@ const tunnelRoutes = {
             previous: "GestionnaireTunnelApproCouverts",
             next: "GestionnaireTunnelApproEgalim",
             volet: "approvisionnement",
-            stepper: "approvisionnements",
           },
         },
         {
@@ -113,7 +110,6 @@ const tunnelRoutes = {
             previous: "GestionnaireTunnelApproSaisie",
             next: "GestionnaireTunnelApproOrigine",
             volet: "approvisionnement",
-            stepper: "approvisionnements",
           },
         },
         {
@@ -127,7 +123,6 @@ const tunnelRoutes = {
             previous: "GestionnaireTunnelApproEgalim",
             next: "GestionnaireTunnelApproLocalCircuitCourt",
             volet: "approvisionnement",
-            stepper: "approvisionnements",
           },
         },
         {
@@ -141,7 +136,6 @@ const tunnelRoutes = {
             previous: "GestionnaireTunnelApproOrigine",
             next: "GestionnaireTunnelApproRecapitulatif",
             volet: "approvisionnement",
-            stepper: "approvisionnements",
           },
         },
         {
@@ -153,7 +147,6 @@ const tunnelRoutes = {
             title: "Recapitulatif des approvisionnements",
             previous: "GestionnaireTunnelApproLocalCircuitCourt",
             volet: "approvisionnement",
-            stepper: "approvisionnements",
           },
         },
         {

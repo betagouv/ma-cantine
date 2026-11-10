@@ -20,8 +20,8 @@ const isThematiques = computed(() => topNav.value === "thematiques")
 
 /* Content */
 const routeTitle = computed(() => route.meta.title)
-const hasStepper = computed(() => route.meta.stepper && route.meta.stepper !== "" && route.meta.stepper !== undefined)
-const routerSteps = computed(() => hasStepper.value ? route.meta.nav[route.meta.stepper] : [] )
+const hasStepper = computed(() => route.meta.volet === "approvisionnement")
+const routerSteps = computed(() => hasStepper.value ? route.meta.nav.approvisionnements : [] )
 const steps = computed(() => routerSteps.value.map((step) => step.title))
 const stepIndex = computed(() => routerSteps.value.findIndex((step) => step.to.name === currentRoute.value) + 1)
 
