@@ -6,6 +6,32 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.60.0](https://github.com/betagouv/ma-cantine/compare/v2026.59.0...v2026.60.0) (2026-11-10)
+
+
+### Nouveautés
+
+* **Télédéclaration:** rend les icônes de la navigation dynamiques pour les volets thématiques ([#7545](https://github.com/betagouv/ma-cantine/issues/7545)) ([9d2a9b8](https://github.com/betagouv/ma-cantine/commit/9d2a9b8e406e0b8867d60fa2fe4d51a50abf81a0))
+
+
+### Améliorations
+
+* **Diagnostics:** ajoute un is_filled par volet ([#7532](https://github.com/betagouv/ma-cantine/issues/7532)) ([db0e222](https://github.com/betagouv/ma-cantine/commit/db0e222dab4490323967b06aa234014197af1f57))
+* **Diagnostics:** API v2: retourne le is_filled de chaque volet dans son endpoint ([#7533](https://github.com/betagouv/ma-cantine/issues/7533)) ([663d3ef](https://github.com/betagouv/ma-cantine/commit/663d3efb179dd0e0469f1a7d01963369cc509ff1))
+* **Diagnostics:** endpoint check: retourne le is_clean de chaque volet ([#7536](https://github.com/betagouv/ma-cantine/issues/7536)) ([fc02ec9](https://github.com/betagouv/ma-cantine/commit/fc02ec9b54b6fb1d896789ea73a338b6f52e79ae))
+* **Diagnostics:** endpoint check: retourne le is_filled de chaque volet ([#7534](https://github.com/betagouv/ma-cantine/issues/7534)) ([6ee559d](https://github.com/betagouv/ma-cantine/commit/6ee559dcddf6407b8c803b8610e24376beff5bf6))
+* **Imports:** Bilans (format 2026): enlève la colonne année_bilan (année de la campagne en cours) ([#7558](https://github.com/betagouv/ma-cantine/issues/7558)) ([a225c66](https://github.com/betagouv/ma-cantine/commit/a225c66a7231bcb8fcce1ab791e0fd1790159c8e))
+* **Télédéclaration:** affiche les erreurs des volets thématiques ([#7548](https://github.com/betagouv/ma-cantine/issues/7548)) ([d21d204](https://github.com/betagouv/ma-cantine/commit/d21d20486168458b4eb6ac094f90b5b8fb501279))
+* **Télédéclaration:** ajoute les validations des champs obligatoires des volets thématiques seulement au /check ([#7544](https://github.com/betagouv/ma-cantine/issues/7544)) ([0298b99](https://github.com/betagouv/ma-cantine/commit/0298b99e5273d0bafe6fe345b4cac0c753dde9c2))
+* **Télédéclaration:** lancer les validateurs des volets thématiques uniquement s'ils ont déjà une valeur de renseignée ([#7549](https://github.com/betagouv/ma-cantine/issues/7549)) ([cd8c50a](https://github.com/betagouv/ma-cantine/commit/cd8c50a5fba5f3904f7e1c2a6a974fbeec6b8f2d))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** à la réinitialisation d'un volet thématique supprime les erreurs affichées ([#7567](https://github.com/betagouv/ma-cantine/issues/7567)) ([de05ae9](https://github.com/betagouv/ma-cantine/commit/de05ae9c4227728233fcfecd5bbde9e2cc4d49cc))
+* **Télédéclaration:** corrige l'utilisation du isClean général pour l'affichage des blocs et des macarons ([#7568](https://github.com/betagouv/ma-cantine/issues/7568)) ([96c42e7](https://github.com/betagouv/ma-cantine/commit/96c42e7d1bfc42740ab1419f79907f3d89aa8112))
+* **Télédéclaration:** différentes améliorations après l'ajout des volets thématiques ([#7565](https://github.com/betagouv/ma-cantine/issues/7565)) ([3ad29d0](https://github.com/betagouv/ma-cantine/commit/3ad29d074fe9c62bff94e9a7b1d00bd00a2390c0))
+
 ## [2026.59.0](https://github.com/betagouv/ma-cantine/compare/v2026.58.0...v2026.59.0) (2026-11-10)
 
 
