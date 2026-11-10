@@ -1,6 +1,6 @@
 from common.utils import utils as utils_utils
 from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
-from data.models.sector import SECTOR_PLASTIQUE_BOUTEILLE_LIST
+from data.models.sector import SECTOR_PLASTIQUE_BOUTEILLE_LIST, SECTOR_PLASTIQUE_CONTENANT_LIST
 
 
 def validate_plastique_fields_required(instance):
@@ -10,6 +10,8 @@ def validate_plastique_fields_required(instance):
         - [NEW in 2026] the volet is skipped if not started (none of its fields filled)
         - [NEW in 2026] plastique_bouteille_remplace is optional if none of the canteen's sectors is concerned
           (see SECTOR_PLASTIQUE_BOUTEILLE_LIST)
+        - [NEW in 2026] plastique_contenant_remplace is optional if none of the canteen's sectors is concerned
+          (see SECTOR_PLASTIQUE_CONTENANT_LIST)
     NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
     """
     errors = {}
@@ -21,8 +23,13 @@ def validate_plastique_fields_required(instance):
         canteen_has_sector_plastique_bouteille = bool(
             canteen_sector_list.intersection(SECTOR_PLASTIQUE_BOUTEILLE_LIST)
         )
+        canteen_has_sector_plastique_contenant = bool(
+            canteen_sector_list.intersection(SECTOR_PLASTIQUE_CONTENANT_LIST)
+        )
         for field in get_teledeclaration_fields_required(instance.year, "PLASTIQUE"):
             if field == "plastique_bouteille_remplace" and not canteen_has_sector_plastique_bouteille:
+                continue
+            if field == "plastique_contenant_remplace" and not canteen_has_sector_plastique_contenant:
                 continue
             if getattr(instance, field) is None:
                 utils_utils.add_validation_error(

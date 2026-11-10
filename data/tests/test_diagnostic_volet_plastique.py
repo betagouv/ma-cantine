@@ -145,3 +145,40 @@ class DiagnosticVoletPlastiqueBouteilleValidatorTest(TestCase):
         diagnostic.plastique_ustensile_remplace = None
         errors = diagnostic_volet_plastique_validators.validate_plastique_fields_required(diagnostic)
         self.assertEqual(list(errors.keys()), ["plastique_ustensile_remplace"])
+
+
+class DiagnosticVoletPlastiqueContenantValidatorTest(TestCase):
+    FIELD = "plastique_contenant_remplace"
+
+    def test_plastique_contenant_remplace_required_if_canteen_in_a_concerned_sector(self):
+        for sector in [
+            Sector.EDUCATION_PRIMAIRE,  # établissement scolaire
+            Sector.EDUCATION_SUPERIEUR_UNIVERSITAIRE,  # établissement universitaire
+            Sector.SOCIAL_CRECHE,  # accueil des enfants de moins de 6 ans
+            Sector.SANTE_HOPITAL,  # pédiatrie, obstétrique, maternité
+            Sector.SANTE_CLINIQUE,
+            Sector.SANTE_AUTRE,
+        ]:
+            with self.subTest(sector=sector):
+                diagnostic = get_plastique_diagnostic(field_empty=self.FIELD, sector_list=[sector])
+                errors = diagnostic_volet_plastique_validators.validate_plastique_fields_required(diagnostic)
+                self.assertEqual(list(errors.keys()), [self.FIELD])
+
+    def test_plastique_contenant_remplace_optional_if_canteen_not_in_a_concerned_sector(self):
+        for sector_list in [
+            [Sector.ENTERPRISE_ENTREPRISE],  # restaurants d'entreprise: not concerned
+            [Sector.ADMINISTRATION_ADMINISTRATIF],
+            [Sector.SOCIAL_EHPAD],
+            [Sector.LOISIR_CENTRE_VACANCES],
+        ]:
+            with self.subTest(sector_list=sector_list):
+                diagnostic = get_plastique_diagnostic(field_empty=self.FIELD, sector_list=sector_list)
+                errors = diagnostic_volet_plastique_validators.validate_plastique_fields_required(diagnostic)
+                self.assertEqual(errors, {})
+
+    def test_plastique_contenant_remplace_optional_if_canteen_without_sector(self):
+        diagnostic = get_plastique_diagnostic(
+            field_empty=self.FIELD, sector_list=[], production_type=Canteen.ProductionType.GROUPE
+        )
+        errors = diagnostic_volet_plastique_validators.validate_plastique_fields_required(diagnostic)
+        self.assertEqual(errors, {})

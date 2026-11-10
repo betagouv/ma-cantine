@@ -133,6 +133,15 @@ SECTOR_INFORMATION_CONSULTATION_QUALITE_LIST = (
 # fin de l'utilisation de bouteilles d'eau plate en plastique (loi EGalim): "services de restauration collective scolaire"
 SECTOR_PLASTIQUE_BOUTEILLE_LIST = EDUCATION_SECTOR_LIST
 
+# fin de l'utilisation de contenants alimentaires de cuisson, de réchauffage et de service en plastique (loi EGalim & AGEC):
+# "établissements scolaires et universitaires, établissements d'accueil des enfants de moins de six ans",
+# "services de pédiatrie, d'obstétrique et de maternité, centres périnataux de proximité et services de PMI"
+SECTOR_PLASTIQUE_CONTENANT_LIST = (
+    EDUCATION_SECTOR_LIST  # établissements scolaires & universitaires
+    + [Sector.SOCIAL_CRECHE]  # accueil des enfants de moins de 6 ans
+    + HEALTH_SECTOR_LIST  # pédiatrie, obstétrique, maternité (pas de secteur dédié)
+)
+
 MAPPING_OLD_SECTOR_NAME_TO_NEW_SECTOR_VALUE = {
     # current mappings
     **{Sector(sector).label: sector for sector in Sector.values},
