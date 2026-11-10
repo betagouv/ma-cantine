@@ -28,7 +28,6 @@ const generateNav = (name) => {
       to: list[i].to,
       icon: list[i].icon,
       pageName: list[i].to.name,
-      slug: meta.slug,
       volet: meta.volet,
     })
   }
@@ -63,7 +62,7 @@ const goTo = (to) => router.push(to)
               class="tunnel-teledeclaration-nav-sidebar__link fr-background-default--grey"
               @click="emit('save', link.pageName)"
             >
-              <TunnelTeledeclarationIconCheck v-if="!link.icon" :fieldsPageName="link.pageName" :slug="link.slug" class="fr-mr-1w" />
+              <TunnelTeledeclarationIconCheck v-if="!link.icon" type="page" :name="link.pageName" class="fr-mr-1w" />
               <span v-else :class="`${link.icon} ma-cantine--icon-xs`" ></span>
               {{ link.label }}
             </DsfrButton>
@@ -82,7 +81,7 @@ const goTo = (to) => router.push(to)
               class="tunnel-teledeclaration-nav-sidebar__link fr-background-default--grey"
               @click="goTo(link.to)"
             >
-              <TunnelTeledeclarationIconCheck :volet="link.volet" class="fr-mr-1w" />
+              <TunnelTeledeclarationIconCheck type="volet" :name="link.volet" class="fr-mr-1w" />
               {{ link.label }}
             </DsfrButton>
           </nav>

@@ -66,7 +66,7 @@ const goToStep = (page) => router.push(page)
 <template>
   <DsfrAccordion :id="id" :title="accordion.title">
     <template #title>
-      <TunnelTeledeclarationIconCheck :fieldsGroupName="accordion.fieldsGroupName" class="fr-mr-1w" />
+      <TunnelTeledeclarationIconCheck type="group" :name="accordion.fieldsGroupName" class="fr-mr-1w" />
       {{ accordion.title }}
       <DsfrBadge v-if="hasErrors" :label="errorBadge" type="error" class="fr-ml-2w" />
     </template>

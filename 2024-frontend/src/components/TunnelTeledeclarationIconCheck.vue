@@ -1,23 +1,18 @@
 <script setup>
 import { computed } from "vue"
+import { useStoreCanteen } from "@/stores/canteen.js"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 
-const props = defineProps(["fieldsGroupName", "fieldsPageName", "slug", "volet"])
+const props = defineProps(["type", "name"])
+const canteenStore = useStoreCanteen()
 const teledeclarationStore = useStoreTeledeclaration()
-const errors = computed(() => {
-  if (props.fieldsGroupName) return teledeclarationStore.getErrorsGroup(props.fieldsGroupName)
-  if (props.fieldsPageName) return teledeclarationStore.getErrorsPage(props.fieldsPageName)
-  return []
+
+const isValid = computed(() => {
+  if (props.type === "volet") return teledeclarationStore.isVoletFilled(props.name) && teledeclarationStore.isVoletClean(props.name)
+  if (props.type === "group") return teledeclarationStore.getErrorsGroup(props.name).length === 0
+  if (props.type === "page") return teledeclarationStore.getErrorsPage(props.name, canteenStore.canteenInformations?.isGroupe).length === 0
+  return false
 })
-const hasErrors = computed(() => errors.value && errors.value?.length > 0)
-const isVisited = computed(() => {
-  const visitNotRequired = props.fieldsGroupName || props.volet
-  if (visitNotRequired) return true
-  return teledeclarationStore.isPageVisited({ slug: props.slug })
-})
-const isFilled = computed(() => !props.volet || teledeclarationStore.isVoletFilled(props.volet))
-const isClean = computed(() => !props.volet || teledeclarationStore.isVoletClean(props.volet))
-const isValid = computed(() => isVisited.value && isFilled.value && isClean.value && !hasErrors.value)
 
 const iconClasses = computed(() => {
   const color = isValid.value ? "default--success" : "mention--grey"
