@@ -20,3 +20,21 @@ def validate_diversification_fields_required(instance):
                     errors, field, f"Ce champ est obligatoire pour l'année {instance.year}."
                 )
     return errors
+
+
+def validate_diversification_plan_fields(instance):
+    """
+    - extra validation: depending on the year of the diagnostic
+        - [NEW in 2026] plan_diversification_actions can only be filled if plan_diversification_en_place is True
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    """
+    errors = {}
+    if instance.year and int(instance.year) >= 2026:
+        if instance.plan_diversification_en_place is not True:
+            if instance.plan_diversification_actions:
+                utils_utils.add_validation_error(
+                    errors,
+                    "plan_diversification_actions",
+                    "Ce champ ne peut être renseigné que si un plan de diversification est en place.",
+                )
+    return errors
