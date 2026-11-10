@@ -7,14 +7,14 @@ def validate_information_fields_required(instance):
     """
     - extra validation: depending on the year of the diagnostic
         - [NEW in 2026] the volet has required fields
-        - the volet is skipped if not started (none of its fields filled)
-        - information_part_pat is optional if the canteen doesn't belong to a PAT (empty pat_list)
-        - information_consultation_qualite is optional if none of the canteen's sectors is concerned
+        - [NEW in 2026] the volet is skipped if not started (none of its fields filled)
+        - [NEW in 2026] information_part_pat is optional if the canteen doesn't belong to a PAT (empty pat_list)
+        - [NEW in 2026] information_consultation_qualite is optional if none of the canteen's sectors is concerned
           (see SECTOR_INFORMATION_CONSULTATION_QUALITE_LIST)
     NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
     """
     errors = {}
-    if instance.year:
+    if instance.year and int(instance.year) >= 2026:
         # Skip validation if volet is not filled
         if not instance.is_filled_information:
             return errors

@@ -10,6 +10,24 @@ from data.models.diagnostic_teledeclaration_fields import (
 from data.validators import diagnostic_volet_information as diagnostic_volet_information_validators
 
 
+class DiagnosticVoletInformationYearValidatorTest(TestCase):
+    def test_no_validation_before_2026(self):
+        for year in [2021, 2022, 2023, 2024, 2025]:
+            with self.subTest(year=year):
+                # volet started (a field of the year filled), canteen in a PAT & in a concerned sector
+                diagnostic = DiagnosticFactory(
+                    year=year,
+                    canteen=CanteenFactory(pat_list=["1415"], sector_list=[Sector.EDUCATION_PRIMAIRE]),
+                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                )
+                for field in get_teledeclaration_fields_all(year, "INFORMATION"):
+                    setattr(diagnostic, field, None)
+                diagnostic.information_qualite_durable = True
+                self.assertTrue(diagnostic.is_filled_information)
+                errors = diagnostic_volet_information_validators.validate_information_fields_required(diagnostic)
+                self.assertEqual(errors, {})
+
+
 class DiagnosticVoletInformationValidatorTest(TestCase):
     def _diagnostic(self, pat_list):
         diagnostic = DiagnosticFactory(
