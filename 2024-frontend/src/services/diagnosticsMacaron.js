@@ -1,8 +1,27 @@
 const getStatus = (key, isTeledeclared, check, recap) => {
-  if (key !== "approvisionnement") return "empty"
+
+  const isCleanVolets = {
+    information: check?.isCleanInformation,
+    gaspillage: check?.isCleanGaspillage,
+    diversification: check?.isCleanDiversification,
+    plastique: check?.isCleanPlastique,
+    approvisionnement: check?.isCleanApprovisionnement,
+  }
+
+  const isFilledVolets = {
+    information: check?.isFilledInformation,
+    gaspillage: check?.isFilledGaspillage,
+    diversification: check?.isFilledDiversification,
+    plastique: check?.isFilledPlastique,
+    approvisionnement: check?.isFilledApprovisionnement,
+  }
+
+  const isAppro = key === "approvisionnement"
   if (recap?.canteenDiagnosticApproStats?.objectifsEgalimAtteints) return "objectivesReached"
-  if (isTeledeclared) return "teledeclared"
-  if (check?.isClean) return "clean"
+  if (isAppro && isTeledeclared) return "teledeclared"
+  if (!isAppro && isTeledeclared && isCleanVolets[key] && isFilledVolets[key]) return "teledeclared"
+  if (isAppro && isCleanVolets[key]) return "clean"
+  if (!isAppro && isCleanVolets[key] && isFilledVolets[key]) return "clean"
   return "empty"
 }
 

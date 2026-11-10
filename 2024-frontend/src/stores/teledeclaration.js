@@ -21,6 +21,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const isSaved = ref(true)
   const hasSelectAutofill = ref(false)
   const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
+  const canBeTeledeclared = computed(() => canteenAction.value === "40_teledeclare")
   const visitedPagesSeparator = ","
   const tunnelApproVisitedPages = computed(() => diagnostic.value?.tunnelAppro?.split(visitedPagesSeparator) || [])
   const voletTunnelProgressionFields = {
@@ -55,8 +56,6 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const canteenCheck = await canteenService.checkCanteen(canteenId)
     const check = {
       ...diagnosticCheck,
-      isClean: canteenCheck.isClean && diagnosticCheck.isClean,
-      isFilled: canteenCheck.isFilled && diagnosticCheck.isFilled,
       errors: {...canteenCheck.errors, ...diagnosticCheck.errors}
     }
     addErrorsFromCheck(check.errors)
@@ -332,6 +331,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     isSaved,
     hasSelectAutofill,
     isTeledeclared,
+    canBeTeledeclared,
     initStore,
     checkDiagnosticSteps,
     teledeclare,
