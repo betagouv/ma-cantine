@@ -175,8 +175,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Check if the volet has been filled from the last check */
   function isVoletFilled(volet) {
-    // TODO (fix later): Handle the approvisionnements case which doesn't have a specific volet
-    if (!volet) return diagnoticCheck.value.isFilledApprovisionnements;
+    if (!volet || volet === "approvisionnement") return hasDiagnostic.value
 
     const isFilledVolets = {
       information: diagnoticCheck.value.isFilledInformation,
