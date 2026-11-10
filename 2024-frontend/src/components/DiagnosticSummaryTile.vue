@@ -5,7 +5,10 @@ import IconLink from "@/components/IconLink.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
 import IconAward from "@/components/IconAward.vue"
 
-const props = defineProps(["thematiques", "anchorName", "isTeledeclared", "appro", "diagnosticRecap"])
+const props = defineProps(["volets", "anchorName", "isTeledeclared", "diagnosticRecap"])
+
+const appro = computed(() => props.volets.find(volet => volet.key === "appro"))
+const thematiques = computed(() => props.volets.filter(volet => volet.key !== "appro"))
 const emit = defineEmits(["openAccordion"])
 const clickLink = (index) => emit("openAccordion", index)
 

@@ -87,17 +87,13 @@ const volets = computed(() => {
   ]
 })
 
-/* Volets thematiques : tous les volets sauf les approvisionnements */
-const thematiques = computed(() => volets.value.slice(1))
-const appro = computed(() => volets.value[0])
 </script>
 
 <template>
   <div v-if="hasDiagnostic">
     <DiagnosticSummaryTile
       class="fr-mb-5w"
-      :thematiques="thematiques"
-      :appro="appro"
+      :volets="volets"
       :anchor-name="anchorName"
       :is-teledeclared="isTeledeclared"
       :diagnostic-recap="diagnosticRecap"
