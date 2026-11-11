@@ -194,3 +194,79 @@ class DiagnosticGroupeNombreRepasAnApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.diagnostic_site.refresh_from_db()
         self.assertEqual(self.diagnostic_site.nombre_repas_an, 2000)
+
+
+class DiagnosticGroupeRetrieveApiTest(APITestCase):
+    """
+    diag/:id (v1 & v2): satellites_nombre_repas_an (list) & satellites_nombre_repas_an_total (read-only)
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
+    def setUp(self):
+        self.diagnostic_groupe = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an={str(self.canteen_satellite.id): 1000},
+        )
+        self.diagnostic_site = DiagnosticFactory(canteen=self.canteen_site, year=2026)
+
+    def _urls(self, canteen, diagnostic):
+        kwargs = {"canteen_pk": canteen.id, "pk": diagnostic.id}
+        return [
+            reverse("diagnostic_retrieve_update", kwargs=kwargs),
+            reverse("diagnostic_v2_retrieve_update", kwargs=kwargs),
+        ]
+
+    @authenticate
+    def test_groupe(self):
+        self.canteen_groupe.managers.add(authenticate.user)
+        for url in self._urls(self.canteen_groupe, self.diagnostic_groupe):
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                body = response.json()
+                self.assertEqual(body["satellitesNombreRepasAnTotal"], 1000)
+                self.assertEqual(
+                    body["satellitesNombreRepasAn"],
+                    [
+                        {
+                            "id": self.canteen_satellite.id,
+                            "siret": self.canteen_satellite.siret,
+                            "sirenUniteLegale": self.canteen_satellite.siren_unite_legale,
+                            "name": self.canteen_satellite.name,
+                            "nombreRepasAn": 1000,
+                        }
+                    ],
+                )
+
+    @authenticate
+    def test_not_groupe(self):
+        self.canteen_site.managers.add(authenticate.user)
+        for url in self._urls(self.canteen_site, self.diagnostic_site):
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                body = response.json()
+                self.assertIsNone(body["satellitesNombreRepasAnTotal"])
+                self.assertIsNone(body["satellitesNombreRepasAn"])
+
+    @authenticate
+    def test_fields_are_read_only(self):
+        self.canteen_groupe.managers.add(authenticate.user)
+        for url in self._urls(self.canteen_groupe, self.diagnostic_groupe):
+            with self.subTest(url=url):
+                self.client.patch(
+                    url, {"satellitesNombreRepasAn": [], "satellitesNombreRepasAnTotal": 5}, format="json"
+                )
+                self.diagnostic_groupe.refresh_from_db()
+                self.assertEqual(
+                    self.diagnostic_groupe.satellites_nombre_repas_an, {str(self.canteen_satellite.id): 1000}
+                )
+                self.assertEqual(self.diagnostic_groupe.satellites_nombre_repas_an_total, 1000)
