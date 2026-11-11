@@ -1208,6 +1208,7 @@ class DiagnosticListRecapApiTest(APITestCase):
             valeur_viandes_volailles_egalim=50,
             valeur_produits_de_la_mer=80,
             valeur_produits_de_la_mer_egalim=40,
+            information_qualite_durable=True,
         )
         diagnostic.teledeclare(applicant=authenticate.user)
 
@@ -1219,6 +1220,7 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertEqual(body[0]["year"], 2024)
         self.assertIsNone(body[0]["canteenDiagnosticApproStats"])
         self.assertIsNone(body[0]["generatedFromGroupeDiagnosticApproStats"])
+        self.assertIsNone(body[0]["canteenDiagnosticThematiquesStats"])
         # 2025
         self.assertEqual(body[1]["year"], 2025)
         self.assertEqual(body[1]["isTeledeclared"], True)
@@ -1236,6 +1238,12 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertEqual(stats["pourcentageProduitsDeLaMerEgalim"], 50)
         self.assertIsNone(stats["pourcentageProduitsDeLaMerFrance"])
         self.assertIn("objectifsEgalimAtteints", stats)
+        thematiques_stats = body[1]["canteenDiagnosticThematiquesStats"]
+        self.assertEqual(len(thematiques_stats), 4)
+        self.assertIn("objectifsDiversificationAtteints", thematiques_stats)
+        self.assertIn("objectifsPlastiqueAtteints", thematiques_stats)
+        self.assertIn("objectifsGaspillageAtteints", thematiques_stats)
+        self.assertTrue(thematiques_stats["objectifsInformationAtteints"])
 
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
