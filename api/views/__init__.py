@@ -45,6 +45,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticsToTeledeclareListView,
     EmailDiagnosticImportFileView,
 )
+from .diagnostic_groupe import DiagnosticGroupeCouvertsAnnuelsView  # noqa: F401
 from .diagnostic_v2 import (  # noqa: F401
     DiagnosticV2ListCreateView,
     DiagnosticV2RetrieveUpdateView,

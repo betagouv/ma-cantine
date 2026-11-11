@@ -23,6 +23,7 @@ from api.views import (
     ClaimCanteenView,
     CommunityEventsView,
     DiagnosticCheckView,
+    DiagnosticGroupeCouvertsAnnuelsView,
     DiagnosticListCreateView,
     DiagnosticListRecapView,
     DiagnosticRecapView,
@@ -180,6 +181,11 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>/check",
         DiagnosticCheckView.as_view(),
         name="diagnostic_check",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/diagnostics/<int:pk>/groupe-couverts-annuels",
+        DiagnosticGroupeCouvertsAnnuelsView.as_view(),
+        name="diagnostic_groupe_couverts_annuels",
     ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/create",
