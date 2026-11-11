@@ -2,7 +2,9 @@ from django.test import TestCase
 
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Diagnostic, Sector
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
+from data.models import diagnostic_teledeclaration_badges
+from data.models.diagnostic_teledeclaration_badges import get_teledeclaration_badges_config
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_YEARS, get_teledeclaration_fields_all
 
 TELEDECLARED = {"status": Diagnostic.DiagnosticStatus.SUBMITTED}
 
@@ -21,6 +23,12 @@ class DiagnosticBadgesTest(TestCase):
                 canteen = CanteenFactory(**canteen_kwargs)
                 diagnostic = DiagnosticFactory(canteen=canteen, year=year, **diagnostic_kwargs)
                 self.assertIs(getattr(diagnostic, badge), expected)
+
+    def test_badges_config_functions_exist(self):
+        for year in TELEDECLARATION_YEARS:
+            for volet, function_name in get_teledeclaration_badges_config(year).items():
+                with self.subTest(year=year, volet=volet):
+                    self.assertTrue(callable(getattr(diagnostic_teledeclaration_badges, function_name, None)))
 
     def test_waste_badge_v1(self):
         reached = {
