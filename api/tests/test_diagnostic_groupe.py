@@ -270,3 +270,23 @@ class DiagnosticGroupeRetrieveApiTest(APITestCase):
                     self.diagnostic_groupe.satellites_nombre_repas_an, {str(self.canteen_satellite.id): 1000}
                 )
                 self.assertEqual(self.diagnostic_groupe.satellites_nombre_repas_an_total, 1000)
+
+
+class DiagnosticGroupeCheckApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+
+    @authenticate
+    def test_check_returns_the_satellites_errors(self):
+        self.canteen_groupe.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026, nombre_repas_an=1000)
+        url = reverse("diagnostic_check", kwargs={"canteen_pk": self.canteen_groupe.id, "pk": diagnostic.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertFalse(body["isClean"])
+        self.assertIn("satellitesNombreRepasAn", body["errors"])

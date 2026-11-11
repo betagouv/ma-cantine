@@ -2013,6 +2013,97 @@ class DiagnosticSatellitesNombreRepasAnTotalTest(TestCase):
         self.assertIsNone(satellites_snapshot[self.canteen_satellite_2.id]["nombre_repas_an"])
 
 
+class DiagnosticGroupeSatellitesNombreRepasAnValidationTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_1 = CanteenFactory(
+            name="Satellite 1", production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_satellite_2 = CanteenFactory(
+            name="Satellite 2", production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
+    def _validate(self, **kwargs):
+        diagnostic = DiagnosticFactory.build(**kwargs)
+        return diagnostic_validators.validate_groupe_satellites_nombre_repas_an(diagnostic)
+
+    def test_valid(self):
+        errors = self._validate(
+            canteen=self.canteen_groupe,
+            year=2026,
+            nombre_repas_an=3000,
+            satellites_nombre_repas_an={
+                str(self.canteen_satellite_1.id): 1000,
+                str(self.canteen_satellite_2.id): 2000,
+            },
+        )
+        self.assertEqual(errors, {})
+
+    def test_missing_satellite_value(self):
+        errors = self._validate(
+            canteen=self.canteen_groupe,
+            year=2026,
+            nombre_repas_an=1000,
+            satellites_nombre_repas_an={str(self.canteen_satellite_1.id): 1000},
+        )
+        self.assertEqual(list(errors.keys()), ["satellites_nombre_repas_an"])
+        self.assertIn("Satellite 2", str(errors["satellites_nombre_repas_an"]))
+
+    def test_satellite_value_below_min(self):
+        errors = self._validate(
+            canteen=self.canteen_groupe,
+            year=2026,
+            nombre_repas_an=1419,
+            satellites_nombre_repas_an={
+                str(self.canteen_satellite_1.id): 1000,
+                str(self.canteen_satellite_2.id): 419,
+            },
+        )
+        self.assertEqual(list(errors.keys()), ["satellites_nombre_repas_an"])
+        self.assertIn("420", str(errors["satellites_nombre_repas_an"]))
+
+    def test_nombre_repas_an_different_from_total(self):
+        errors = self._validate(
+            canteen=self.canteen_groupe,
+            year=2026,
+            nombre_repas_an=5000,
+            satellites_nombre_repas_an={
+                str(self.canteen_satellite_1.id): 1000,
+                str(self.canteen_satellite_2.id): 2000,
+            },
+        )
+        self.assertEqual(list(errors.keys()), ["nombre_repas_an"])
+
+    def test_ignores_canteens_not_linked_to_the_groupe(self):
+        errors = self._validate(
+            canteen=self.canteen_groupe,
+            year=2026,
+            nombre_repas_an=3000,
+            satellites_nombre_repas_an={
+                str(self.canteen_satellite_1.id): 1000,
+                str(self.canteen_satellite_2.id): 2000,
+                str(self.canteen_site.id): 10,
+            },
+        )
+        self.assertEqual(errors, {})
+
+    def test_not_checked_if_not_groupe(self):
+        errors = self._validate(canteen=self.canteen_site, year=2026, nombre_repas_an=1000)
+        self.assertEqual(errors, {})
+
+    def test_not_checked_before_2026(self):
+        errors = self._validate(canteen=self.canteen_groupe, year=2025)
+        self.assertEqual(errors, {})
+
+    def test_is_clean_returns_the_errors(self):
+        diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026, nombre_repas_an=1000)
+        is_clean, errors = diagnostic.is_clean()
+        self.assertFalse(is_clean)
+        self.assertIn("satellites_nombre_repas_an", errors)
+
+
 class DiagnosticInvalidWarningQueriesTest(TestCase):
     def test_circuit_court_sup_france_query(self):
         diagnostic_complete = DiagnosticFactory(
