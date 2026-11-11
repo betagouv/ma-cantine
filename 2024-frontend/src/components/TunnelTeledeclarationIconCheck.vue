@@ -9,8 +9,6 @@ const props = defineProps(["type", "name"])
 const router = useRouter()
 const canteenStore = useStoreCanteen()
 const teledeclarationStore = useStoreTeledeclaration()
-
-/* Visited */
 const getPageFromName = (pageName) => router.resolve({ name: pageName }).meta
 
 const isVisited = computed(() => {
