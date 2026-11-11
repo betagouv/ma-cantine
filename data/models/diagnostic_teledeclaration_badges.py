@@ -9,12 +9,19 @@ Each badge returns:
 """
 
 import json
+from dataclasses import dataclass
 from functools import cache
 from pathlib import Path
 from django.conf import settings
 from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_YEARS
 from data.models.diagnostic_volet_diversification import DiagnosticVoletDiversificationMixin
-from data.models.sector import EDUCATION_SECTOR_LIST, HEALTH_SECTOR_LIST, SOCIAL_SECTOR_LIST, Sector
+from data.models.sector import (
+    ADMINISTRATION_SECTOR_LIST,
+    EDUCATION_SECTOR_LIST,
+    HEALTH_SECTOR_LIST,
+    SOCIAL_SECTOR_LIST,
+    Sector,
+)
 
 MenuVegetarienFrequence = DiagnosticVoletDiversificationMixin.MenuVegetarienFrequence
 ServiceType = DiagnosticVoletDiversificationMixin.ServiceType
@@ -29,6 +36,28 @@ def is_volet_completed(diagnostic, volet) -> bool:
         diagnostic.is_teledeclared
         and getattr(diagnostic, f"is_filled_{volet_name}")
         and getattr(diagnostic, f"is_clean_{volet_name}")
+    )
+
+
+@dataclass
+class CanteenSnapshot:
+    """
+    The canteen data at the time of the teledeclaration (used by the 2026 badges)
+    """
+
+    daily_meal_count: int | None
+    sector_list: list[str]
+
+    @property
+    def in_administration(self) -> bool:
+        return bool(set(self.sector_list).intersection(ADMINISTRATION_SECTOR_LIST))
+
+
+def get_canteen_snapshot(diagnostic) -> CanteenSnapshot:
+    canteen_snapshot = diagnostic.canteen_snapshot or {}
+    return CanteenSnapshot(
+        daily_meal_count=canteen_snapshot.get("daily_meal_count"),
+        sector_list=canteen_snapshot.get("sector_list") or [],
     )
 
 
@@ -49,7 +78,7 @@ def waste_badge_2021(diagnostic) -> bool | None:
 def waste_badge_2026(diagnostic) -> bool | None:
     if not is_volet_completed(diagnostic, "GASPILLAGE"):
         return None
-    canteen = diagnostic.canteen
+    canteen = get_canteen_snapshot(diagnostic)
     has_diagnostic_and_actions = bool(
         diagnostic.diagnostic_gaspillage_realise
         and diagnostic.actions_gaspillage_realisees
@@ -89,7 +118,7 @@ def diversification_badge_2026(diagnostic) -> bool | None:
     """
     if not is_volet_completed(diagnostic, "DIVERSIFICATION"):
         return None
-    canteen = diagnostic.canteen
+    canteen = get_canteen_snapshot(diagnostic)
     frequence = diagnostic.menu_vegetarien_frequence
     obligations = []
     # Diversification plan: canteens with 200 daily meals or more
@@ -102,7 +131,7 @@ def diversification_badge_2026(diagnostic) -> bool | None:
         Sector.EDUCATION_SECONDAIRE_LYCEE,
         Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE,
     ]
-    if set(canteen.sector_list or []).intersection(school_sectors):
+    if set(canteen.sector_list).intersection(school_sectors):
         obligations.append(
             frequence
             in [MenuVegetarienFrequence.HEBDO, MenuVegetarienFrequence.PLUS_HEBDO, MenuVegetarienFrequence.QUOTIDIEN]
@@ -147,8 +176,8 @@ def plastic_badge_2026(diagnostic) -> bool | None:
     """
     if not is_volet_completed(diagnostic, "PLASTIQUE"):
         return None
-    canteen = diagnostic.canteen
-    sectors = set(canteen.sector_list or [])
+    canteen = get_canteen_snapshot(diagnostic)
+    sectors = set(canteen.sector_list)
     obligations = [diagnostic.plastique_bouteille_boisson_remplace]
     if sectors.intersection(EDUCATION_SECTOR_LIST):
         obligations.append(diagnostic.plastique_bouteille_remplace)
@@ -175,7 +204,7 @@ def info_badge_2026(diagnostic) -> bool | None:
     """
     if not is_volet_completed(diagnostic, "INFORMATION"):
         return None
-    canteen = diagnostic.canteen
+    canteen = get_canteen_snapshot(diagnostic)
     is_reached = bool(
         diagnostic.information_part_egalim
         and diagnostic.information_affichage_permanent
@@ -184,7 +213,7 @@ def info_badge_2026(diagnostic) -> bool | None:
     sectors_quality_required = (
         EDUCATION_SECTOR_LIST + HEALTH_SECTOR_LIST + SOCIAL_SECTOR_LIST + [Sector.ADMINISTRATION_PRISON]
     )
-    if set(canteen.sector_list or []).intersection(sectors_quality_required):
+    if set(canteen.sector_list).intersection(sectors_quality_required):
         is_reached = is_reached and bool(diagnostic.information_consultation_qualite)
 
     return is_reached

@@ -1,7 +1,8 @@
 from django.test import TestCase
 
+from api.serializers import CanteenTeledeclarationSerializer
 from data.factories import CanteenFactory, DiagnosticFactory
-from data.models import Diagnostic, Sector
+from data.models import Canteen, Diagnostic, Sector
 from data.models import diagnostic_teledeclaration_badges
 from data.models.diagnostic_teledeclaration_badges import get_teledeclaration_badges_config
 from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_YEARS, get_teledeclaration_fields_all
@@ -21,6 +22,12 @@ class DiagnosticBadgesTest(TestCase):
         for description, canteen_kwargs, diagnostic_kwargs, expected in cases:
             with self.subTest(year=year, case=description):
                 canteen = CanteenFactory(**canteen_kwargs)
+                if diagnostic_kwargs.get("status") == Diagnostic.DiagnosticStatus.SUBMITTED:
+                    # same snapshot as Diagnostic.teledeclare()
+                    diagnostic_kwargs = {
+                        **diagnostic_kwargs,
+                        "canteen_snapshot": CanteenTeledeclarationSerializer(canteen).data,
+                    }
                 diagnostic = DiagnosticFactory(canteen=canteen, year=year, **diagnostic_kwargs)
                 self.assertIs(getattr(diagnostic, badge), expected)
 
@@ -444,6 +451,49 @@ class DiagnosticBadgesTest(TestCase):
             ),
         ]
         self.assertBadge("info_badge", 2026, cases)
+
+    def test_badges_2026_use_the_canteen_snapshot(self):
+        """
+        The 2026 badges use the canteen data at the time of the teledeclaration (canteen_snapshot),
+        not the current canteen data
+        """
+        # sector_list: education requires the plastic water bottles to be replaced
+        canteen = CanteenFactory(sector_list=[Sector.EDUCATION_PRIMAIRE], daily_meal_count=12)
+        diagnostic = DiagnosticFactory(
+            canteen=canteen,
+            year=2026,
+            canteen_snapshot=CanteenTeledeclarationSerializer(canteen).data,
+            plastique_bouteille_boisson_remplace=True,
+            plastique_bouteille_remplace=False,
+            plastique_vaisselle_jetable_remplace=False,
+            plastique_contenant_remplace=False,
+            plastique_ustensile_remplace=True,
+            plastique_contenant_emporter_remplace=True,
+            **TELEDECLARED,
+        )
+        self.assertIs(diagnostic.plastic_badge, False)
+        Canteen.objects.filter(pk=canteen.pk).update(sector_list=[Sector.ENTERPRISE_ENTREPRISE])
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.canteen.sector_list, [Sector.ENTERPRISE_ENTREPRISE])
+        self.assertIs(diagnostic.plastic_badge, False)
+
+        # daily_meal_count: 3000 or more requires a donation agreement
+        canteen = CanteenFactory(daily_meal_count=3000, yearly_meal_count=1000000)
+        diagnostic = DiagnosticFactory(
+            canteen=canteen,
+            year=2026,
+            canteen_snapshot=CanteenTeledeclarationSerializer(canteen).data,
+            diagnostic_gaspillage_realise=True,
+            plan_gaspillage_en_place=True,
+            actions_gaspillage_realisees=[Diagnostic.ActionsGaspillage.INSCRIPTION],
+            dons_convention=False,
+            **TELEDECLARED,
+        )
+        self.assertIs(diagnostic.waste_badge, False)
+        Canteen.objects.filter(pk=canteen.pk).update(daily_meal_count=100)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.canteen.daily_meal_count, 100)
+        self.assertIs(diagnostic.waste_badge, False)
 
     def test_badges_2026_need_a_teledeclared_filled_and_clean_volet(self):
         """
