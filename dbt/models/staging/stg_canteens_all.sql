@@ -48,6 +48,7 @@ renamed as (
 
         -- status
         is_filled,
+        is_petite_structure,
         has_been_claimed,
 
         -- teledeclarations

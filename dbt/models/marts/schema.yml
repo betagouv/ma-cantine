@@ -117,6 +117,13 @@ models:
         description: La cantine a déclaré ses données pour 2024. = `declaration_donnees_2024` dans le RNC.
       - name: declaration_donnees_2025
         description: La cantine a déclaré ses données pour 2025. = `declaration_donnees_2025` dans le RNC.
+      - name: is_petite_structure
+        description: >
+          Vrai si la cantine est éligible à l'expérimentation « Petites structures ». Champ
+          calculé par l'application (`Canteen.is_petite_structure`, règle dans
+          data/models/canteen_petite_structure.py) : gestion directe, cuisine sur place, un seul
+          secteur éligible et nombre de repas/jour <= seuil (30 ou 70 selon le secteur).
+          Éligible ne veut pas dire participant.
       - name: est_perimetre_rnc
         description: >
           Vrai si la cantine figure dans le RNC : `Canteen.objects.publicly_visible()`
