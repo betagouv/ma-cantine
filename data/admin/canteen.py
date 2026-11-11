@@ -73,6 +73,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "management_type",
         "production_type",
         "economic_model",
+        "is_petite_structure",
         SoftDeletionStatusFilter,
         get_arrayfield_list_filter("sector_list", "Secteur"),
         "region",
@@ -123,6 +124,10 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             {"fields": ("is_filled", "publication_status_display", "has_been_claimed")},
         ),
         (
+            "Expérimentation « Petites structures »",
+            {"fields": ("is_petite_structure",)},
+        ),
+        (
             "Télédéclaration",
             {
                 "description": "ℹ️ Champ calculé toutes les nuits (pendant la campagne) <br /><br /><hr />",
@@ -147,6 +152,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "logo_display",
         "image_count",
         "is_filled",
+        "is_petite_structure",
         "publication_status_display",
         "has_been_claimed",
         *[field_name for field_name in Canteen.GEO_FIELDS if field_name not in ("city_insee_code",)],
