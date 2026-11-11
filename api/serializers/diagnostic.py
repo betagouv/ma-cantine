@@ -5,7 +5,7 @@ from drf_spectacular.utils import extend_schema_serializer
 from rest_framework import serializers
 
 from api.serializers.utils import ReadOnlySerializerMixin, set_help_text_from_verbose_name
-from data.models import Diagnostic
+from data.models import Canteen, Diagnostic
 
 from .teledeclaration import ShortTeledeclarationSerializer
 
@@ -196,6 +196,42 @@ class DiagnosticSerializer(serializers.ModelSerializer):
                     )
         validated_data = super().to_internal_value(data)
         return validated_data
+
+    def _get_canteen(self):
+        if isinstance(self.instance, Diagnostic):
+            return self.instance.canteen
+        # creation: the canteen is in the url
+        view = self.context.get("view")
+        canteen_pk = view.kwargs.get("canteen_pk") if view else None
+        return Canteen.objects.filter(pk=canteen_pk).first() if canteen_pk else None
+
+    def _get_year(self):
+        if isinstance(self.instance, Diagnostic):
+            return self.instance.year
+        return getattr(self, "initial_data", {}).get("year")
+
+    def validate_nombre_repas_an(self, value):
+        """
+        [NEW in 2026] Groupe: the nombre_repas_an can only be edited via an external application (OAuth2)
+        - from the app (frontend): it is computed from the satellites (see satellites_nombre_repas_an)
+        - a value identical to the current one is accepted (the frontend can send the whole diagnostic)
+        """
+        from api.views.utils import get_oauth_application  # avoid circular import (api.views imports api.serializers)
+
+        current_value = self.instance.nombre_repas_an if isinstance(self.instance, Diagnostic) else None
+        if value == current_value:
+            return value
+        request = self.context.get("request")
+        if not request or get_oauth_application(request):
+            return value
+        year = self._get_year()
+        canteen = self._get_canteen()
+        if year and int(year) >= 2026 and canteen and canteen.is_groupe:
+            raise serializers.ValidationError(
+                "Pour un groupe, le nombre de repas par an ne peut être modifié que via une application externe "
+                "(il est calculé à partir des nombres de repas par an des satellites)."
+            )
+        return value
 
 
 class DiagnosticCheckSerializer(serializers.Serializer):
