@@ -797,7 +797,7 @@ class DiagnosticModelSaveTeledeclaredTest(TransactionTestCase):
     def test_computed_fields_frozen_on_teledeclared_diagnostic_update(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025, status=Diagnostic.DiagnosticStatus.SUBMITTED)
         diagnostic.refresh_from_db()
-        self.assertTrue(diagnostic.is_already_teledeclared)
+        self.assertTrue(diagnostic.is_teledeclared_already)
 
         diagnostic.valeur_bio = 500
         diagnostic.valeur_totale = None
@@ -811,12 +811,12 @@ class DiagnosticModelSaveTeledeclaredTest(TransactionTestCase):
     def test_computed_fields_populated_on_teledeclare(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025, status=Diagnostic.DiagnosticStatus.DRAFT)
         diagnostic.refresh_from_db()
-        self.assertFalse(diagnostic.is_already_teledeclared)
+        self.assertFalse(diagnostic.is_teledeclared_already)
 
         diagnostic.valeur_bio = 500
         diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
         diagnostic.refresh_from_db()
-        self.assertTrue(diagnostic.is_already_teledeclared)
+        self.assertTrue(diagnostic.is_teledeclared_already)
         self.assertEqual(diagnostic.pourcentage_bio, 50)  # recomputed
 
     def test_computed_fields_populated_when_status_changes_from_submitted(self):
@@ -826,7 +826,7 @@ class DiagnosticModelSaveTeledeclaredTest(TransactionTestCase):
         # e.g. cancel()
         diagnostic.status = Diagnostic.DiagnosticStatus.DRAFT
         diagnostic.valeur_bio = 500
-        self.assertFalse(diagnostic.is_already_teledeclared)
+        self.assertFalse(diagnostic.is_teledeclared_already)
         diagnostic.save()
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.pourcentage_bio, 50)  # recomputed
@@ -840,7 +840,7 @@ class DiagnosticModelSaveTeledeclaredTest(TransactionTestCase):
         diagnostic_copy.pk = None
         diagnostic_copy.canteen = CanteenFactory()
         diagnostic_copy.valeur_bio = 500
-        self.assertFalse(diagnostic_copy.is_already_teledeclared)
+        self.assertFalse(diagnostic_copy.is_teledeclared_already)
         diagnostic_copy.save()
         diagnostic_copy.refresh_from_db()
         self.assertEqual(diagnostic_copy.pourcentage_bio, 50)  # recomputed
@@ -1480,39 +1480,39 @@ class DiagnosticIsFilledQuerySetAndFieldTest(TestCase):
 class DiagnosticIsAlreadyTeledeclaredPropertyTest(TestCase):
     def test_false_on_creation(self):
         diagnostic = Diagnostic(status=Diagnostic.DiagnosticStatus.SUBMITTED)
-        self.assertFalse(diagnostic.is_already_teledeclared)
+        self.assertFalse(diagnostic.is_teledeclared_already)
 
     def test_false_if_not_teledeclared(self):
         diagnostic = DiagnosticFactory(status=Diagnostic.DiagnosticStatus.DRAFT)
         diagnostic.refresh_from_db()
-        self.assertFalse(diagnostic.is_already_teledeclared)
+        self.assertFalse(diagnostic.is_teledeclared_already)
 
     def test_true_if_teledeclared(self):
         diagnostic = DiagnosticFactory(status=Diagnostic.DiagnosticStatus.SUBMITTED)
-        self.assertTrue(diagnostic.is_already_teledeclared)
+        self.assertTrue(diagnostic.is_teledeclared_already)
         diagnostic = Diagnostic.objects.get(pk=diagnostic.pk)
-        self.assertTrue(diagnostic.is_already_teledeclared)
+        self.assertTrue(diagnostic.is_teledeclared_already)
 
     def test_false_when_status_changes_to_submitted(self):
         # e.g. teledeclare()
         diagnostic = DiagnosticFactory(status=Diagnostic.DiagnosticStatus.DRAFT)
         diagnostic.status = Diagnostic.DiagnosticStatus.SUBMITTED
-        self.assertFalse(diagnostic.is_already_teledeclared)
+        self.assertFalse(diagnostic.is_teledeclared_already)
         diagnostic.save()
-        self.assertTrue(diagnostic.is_already_teledeclared)  # once saved
+        self.assertTrue(diagnostic.is_teledeclared_already)  # once saved
 
     def test_false_when_status_changes_from_submitted(self):
         # e.g. cancel()
         diagnostic = DiagnosticFactory(status=Diagnostic.DiagnosticStatus.SUBMITTED)
         diagnostic.status = Diagnostic.DiagnosticStatus.DRAFT
-        self.assertFalse(diagnostic.is_already_teledeclared)
+        self.assertFalse(diagnostic.is_teledeclared_already)
 
     def test_false_on_teledeclared_diagnostic_copy(self):
         # e.g. teledeclaration_generate_1td1site
         diagnostic = DiagnosticFactory(status=Diagnostic.DiagnosticStatus.SUBMITTED)
         diagnostic_copy = deepcopy(diagnostic)
         diagnostic_copy.pk = None
-        self.assertFalse(diagnostic_copy.is_already_teledeclared)
+        self.assertFalse(diagnostic_copy.is_teledeclared_already)
 
 
 class DiagnosticIsCleanMethodTest(TestCase):

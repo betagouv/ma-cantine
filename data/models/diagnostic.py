@@ -34,7 +34,7 @@ from data.models.diagnostic_teledeclaration_dates import (
     is_in_correction,
 )
 from data.models.diagnostic_teledeclaration_fields import (
-    TUNNEL_PROGRESS_FIELD_BY_VOLET,
+    VOLETS_TUNNEL_PROGRESS_FIELD_MAPPING,
     get_teledeclaration_fields_all,
 )
 from data.models.diagnostic_teledeclaration_field_groups import (
@@ -521,7 +521,7 @@ class Diagnostic(
         "creation_mtm_medium",
     ]
 
-    TUNNEL_PROGRESS_FIELDS = list(TUNNEL_PROGRESS_FIELD_BY_VOLET.values())
+    TUNNEL_PROGRESS_FIELDS = list(VOLETS_TUNNEL_PROGRESS_FIELD_MAPPING.values())
 
     TELEDECLARATION_FIELDS = [
         "teledeclaration_date",
@@ -803,7 +803,7 @@ class Diagnostic(
         - skip_validations: if True, skip validation checks (USE WITH CAUTION) (only for scripts & tests)
         """
         # NOTE: full_clean() is not called in save() because we need to manage incomplete diagnostics (tunnel)
-        if self.is_already_teledeclared:
+        if self.is_teledeclared_already:
             if not skip_validations:
                 diagnostic_teledeclaration_validators.validate_submitted_diagnostic_update(self)
         else:
@@ -892,7 +892,7 @@ class Diagnostic(
         return self.status == Diagnostic.DiagnosticStatus.SUBMITTED
 
     @property
-    def is_already_teledeclared(self) -> bool:
+    def is_teledeclared_already(self) -> bool:
         """
         Teledeclared in DB, and stays teledeclared
         - False on creation (pk is None, also when copying an existing diagnostic, see teledeclaration_generate_1td1site)

@@ -4,10 +4,10 @@ from data.models import Diagnostic
 from data.models.diagnostic_teledeclaration_fields import (
     DIAGNOSTIC_TYPES,
     TELEDECLARATION_YEARS,
-    TUNNEL_PROGRESS_FIELD_BY_VOLET,
+    VOLETS_TUNNEL_PROGRESS_FIELD_MAPPING,
     VOLETS,
-    VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED,
-    get_fields_editable_even_if_is_teledeclared,
+    VOLETS_EDITABLE_WHEN_IS_TELEDECLARED_ALREADY,
+    get_fields_editable_when_is_teledeclared_already,
     get_teledeclaration_config,
     get_teledeclaration_fields_all,
     get_teledeclaration_fields_all_volets,
@@ -206,7 +206,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         )
 
     def test_get_tunnel_progress_field(self):
-        self.assertEqual(list(TUNNEL_PROGRESS_FIELD_BY_VOLET.keys()), VOLETS)
+        self.assertEqual(list(VOLETS_TUNNEL_PROGRESS_FIELD_MAPPING.keys()), VOLETS)
         for volet in VOLETS:
             with self.subTest(volet=volet):
                 tunnel_progress_field = get_tunnel_progress_field(volet)
@@ -216,12 +216,12 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         with self.assertRaises(ValueError):
             get_tunnel_progress_field("UNKNOWN")
 
-    def test_get_fields_editable_even_if_is_teledeclared(self):
-        self.assertNotIn("APPROVISIONNEMENT", VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED)
+    def test_get_fields_editable_when_is_teledeclared_already(self):
+        self.assertNotIn("APPROVISIONNEMENT", VOLETS_EDITABLE_WHEN_IS_TELEDECLARED_ALREADY)
         for year in TELEDECLARATION_YEARS:
             with self.subTest(year=year):
-                fields = get_fields_editable_even_if_is_teledeclared(year)
-                for volet in VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED:
+                fields = get_fields_editable_when_is_teledeclared_already(year)
+                for volet in VOLETS_EDITABLE_WHEN_IS_TELEDECLARED_ALREADY:
                     for field in get_teledeclaration_fields_all(year, volet):
                         self.assertIn(field, fields)
                     self.assertIn(get_tunnel_progress_field(volet), fields)
@@ -232,10 +232,10 @@ class TeledeclarationFieldsTest(SimpleTestCase):
                 for field in ["year", "diagnostic_type", "central_kitchen_diagnostic_mode", "status", "tunnel_appro"]:
                     self.assertNotIn(field, fields)
         # depends on the year
-        self.assertNotIn("service_type", get_fields_editable_even_if_is_teledeclared(2023))
-        self.assertIn("service_type", get_fields_editable_even_if_is_teledeclared(2024))
+        self.assertNotIn("service_type", get_fields_editable_when_is_teledeclared_already(2023))
+        self.assertIn("service_type", get_fields_editable_when_is_teledeclared_already(2024))
         with self.assertRaises(ValueError):
-            get_fields_editable_even_if_is_teledeclared(2020)
+            get_fields_editable_when_is_teledeclared_already(2020)
 
     def test_errors(self):
         with self.assertRaises(ValueError):
