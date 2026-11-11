@@ -48,6 +48,10 @@ from .diagnostic_v2 import (  # noqa: F401
     DiagnosticVoletInformationV2Serializer,
 )
 from .diagnostic_teledeclaration import DiagnosticTeledeclaredOpenDataSerializer  # noqa: F401
+from .diagnostic_groupe import (  # noqa: F401
+    DiagnosticGroupeSatelliteCouvertsAnnuelsSerializer,
+    DiagnosticGroupeCouvertsAnnuelsUpdateSerializer,
+)
 from .wastemeasurement import WasteMeasurementSerializer  # noqa: F401
 from .sector import SectorM2MSerializer  # noqa: F401
 from .partnertype import PartnerTypeSerializer  # noqa: F401
