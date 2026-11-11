@@ -127,4 +127,15 @@ const getFieldsWithAutofill = () => {
   return Object.keys(fields).filter((field) => fields[field].autofill)
 }
 
-export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup, getFieldsWithAutofill }
+const getPageFromFieldsGroup = (groupName) => {
+  return Object.keys(pagesFieldsGroups).find((pageName) => pagesFieldsGroups[pageName].includes(groupName))
+}
+
+export default {
+  getField,
+  getFieldError,
+  getFieldsListFromPage,
+  getFieldsListFromGroup,
+  getFieldsWithAutofill,
+  getPageFromFieldsGroup,
+}
