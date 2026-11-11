@@ -112,6 +112,29 @@ def plastic_badge_v1(diagnostic) -> bool | None:
         return False
 
 
+def plastic_badge_v2(diagnostic) -> bool | None:
+    """
+    For all the canteens: plastic drink bottles replaced
+    Education: plastic water bottles replaced
+    20 daily meals or more: disposable tableware replaced
+    Education, crèches and health: cooking, reheating and serving containers replaced
+    """
+    canteen = diagnostic.canteen
+    sectors = set(canteen.sector_list or [])
+    obligations = [diagnostic.plastique_bouteille_boisson_remplace]
+    if sectors.intersection(EDUCATION_SECTOR_LIST):
+        obligations.append(diagnostic.plastique_bouteille_remplace)
+    if canteen.daily_meal_count and canteen.daily_meal_count >= 20:
+        obligations.append(diagnostic.plastique_vaisselle_jetable_remplace)
+    if sectors.intersection(EDUCATION_SECTOR_LIST + [Sector.SOCIAL_CRECHE] + HEALTH_SECTOR_LIST):
+        obligations.append(diagnostic.plastique_contenant_remplace)
+
+    if all(obligation is True for obligation in obligations):
+        return True
+    if diagnostic.tunnel_plastic:
+        return False
+
+
 # Information
 def info_badge_v1(diagnostic) -> bool | None:
     if diagnostic.information_qualite_durable:

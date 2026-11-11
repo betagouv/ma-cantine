@@ -277,6 +277,82 @@ class DiagnosticBadgesTest(TestCase):
         self.assertBadge("plastic_badge", 2024, cases)
         self.assertBadge("plastic_badge", 2025, cases)
 
+    def test_plastic_badge_v2(self):
+        entreprise = {"sector_list": [Sector.ENTERPRISE_ENTREPRISE], "daily_meal_count": 12}
+        primaire = {"sector_list": [Sector.EDUCATION_PRIMAIRE], "daily_meal_count": 12}
+        creche = {"sector_list": [Sector.SOCIAL_CRECHE], "daily_meal_count": 12}
+        ehpad = {"sector_list": [Sector.SOCIAL_EHPAD], "daily_meal_count": 12}
+        hospital = {"sector_list": [Sector.SANTE_HOPITAL], "daily_meal_count": 12}
+        default_fields = {
+            "plastique_bouteille_boisson_remplace": True,
+            "plastique_bouteille_remplace": False,
+            "plastique_vaisselle_jetable_remplace": False,
+            "plastique_contenant_remplace": False,
+            "tunnel_plastic": "complet",
+        }
+        all_remplace = {
+            **default_fields,
+            "plastique_bouteille_remplace": True,
+            "plastique_vaisselle_jetable_remplace": True,
+            "plastique_contenant_remplace": True,
+        }
+        cases = [
+            # for all the canteens
+            ("all, bouteille boisson replaced", entreprise, default_fields, True),
+            (
+                "all, bouteille boisson not replaced",
+                entreprise,
+                {**default_fields, "plastique_bouteille_boisson_remplace": False},
+                False,
+            ),
+            (
+                "not reached, tunnel not visited",
+                entreprise,
+                {**default_fields, "plastique_bouteille_boisson_remplace": False, "tunnel_plastic": None},
+                None,
+            ),
+            ("social (not crèche), nothing else needed", ehpad, default_fields, True),
+            # vaisselle jetable: 20 daily meals or more
+            (
+                "19 meals, vaisselle not replaced",
+                {**entreprise, "daily_meal_count": 19},
+                default_fields,
+                True,
+            ),
+            (
+                "20 meals, vaisselle not replaced",
+                {**entreprise, "daily_meal_count": 20},
+                default_fields,
+                False,
+            ),
+            (
+                "20 meals, vaisselle replaced",
+                {**entreprise, "daily_meal_count": 20},
+                {**default_fields, "plastique_vaisselle_jetable_remplace": True},
+                True,
+            ),
+            # education: bouteille & contenant
+            ("education, all replaced", primaire, all_remplace, True),
+            (
+                "education, bouteille not replaced",
+                primaire,
+                {**all_remplace, "plastique_bouteille_remplace": False},
+                False,
+            ),
+            (
+                "education, contenant not replaced",
+                primaire,
+                {**all_remplace, "plastique_contenant_remplace": False},
+                False,
+            ),
+            # crèche & health: contenant
+            ("crèche, contenant replaced", creche, {**default_fields, "plastique_contenant_remplace": True}, True),
+            ("crèche, contenant not replaced", creche, default_fields, False),
+            ("health, contenant replaced", hospital, {**default_fields, "plastique_contenant_remplace": True}, True),
+            ("health, contenant not replaced", hospital, default_fields, False),
+        ]
+        self.assertBadge("plastic_badge", 2026, cases)
+
     def test_info_badge_v1(self):
         cases = [
             ("informs on quality", {}, {"information_qualite_durable": True, "tunnel_info": "complet"}, True),
