@@ -9,9 +9,9 @@ Each badge returns:
 """
 
 from dataclasses import dataclass
+from data.models.canteen import is_in_administration
 from data.models.diagnostic_volet_diversification import DiagnosticVoletDiversificationMixin
 from data.models.sector import (
-    ADMINISTRATION_SECTOR_LIST,
     EDUCATION_SECTOR_LIST,
     HEALTH_SECTOR_LIST,
     SOCIAL_SECTOR_LIST,
@@ -42,10 +42,12 @@ class CanteenSnapshot:
 
     daily_meal_count: int | None
     sector_list: list[str]
+    economic_model: str | None
+    line_ministry: str | None
 
     @property
     def in_administration(self) -> bool:
-        return bool(set(self.sector_list).intersection(ADMINISTRATION_SECTOR_LIST))
+        return is_in_administration(self.sector_list, self.economic_model, self.line_ministry)
 
 
 def get_canteen_snapshot(diagnostic) -> CanteenSnapshot:
@@ -53,6 +55,8 @@ def get_canteen_snapshot(diagnostic) -> CanteenSnapshot:
     return CanteenSnapshot(
         daily_meal_count=canteen_snapshot.get("daily_meal_count"),
         sector_list=canteen_snapshot.get("sector_list") or [],
+        economic_model=canteen_snapshot.get("economic_model"),
+        line_ministry=canteen_snapshot.get("line_ministry"),
     )
 
 
