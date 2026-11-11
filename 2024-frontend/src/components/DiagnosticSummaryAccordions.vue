@@ -3,6 +3,7 @@ import { ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import DiagnosticSummaryAppro from "@/components/DiagnosticSummaryAppro.vue"
+import DiagnosticSummaryThematiques from "@/components/DiagnosticSummaryThematiques.vue"
 
 const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared', 'diagnosticRecap'])
 const activeAccordion = ref(props.open)
@@ -49,6 +50,11 @@ const isVoletTeledeclared = (volet) => {
       <DiagnosticSummaryAppro
         v-if="volet.isAppro && isTeledeclared"
         :diagnostic-recap="diagnosticRecap"
+      />
+      <DiagnosticSummaryThematiques
+        v-else-if="isTeledeclared && isVoletTeledeclared(volet)"
+        :diagnostic-recap="diagnosticRecap"
+        :volet-key="volet.key"
       />
       <div class="ma-cantine--flex-end fr-mt-2w">
         <DsfrButton v-if="!volet.isAppro" @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
