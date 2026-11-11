@@ -62,3 +62,7 @@ class DiagnosticVoletPlastiqueMixin(models.Model):
         return any(
             getattr(self, field) is not None for field in get_teledeclaration_fields_all(self.year, "PLASTIQUE")
         )
+
+    @property
+    def is_clean_plastique(self) -> bool:
+        return self._is_clean_volet("PLASTIQUE")

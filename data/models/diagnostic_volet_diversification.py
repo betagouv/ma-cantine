@@ -118,3 +118,7 @@ class DiagnosticVoletDiversificationMixin(models.Model):
         return any(
             getattr(self, field) is not None for field in get_teledeclaration_fields_all(self.year, "DIVERSIFICATION")
         )
+
+    @property
+    def is_clean_diversification(self) -> bool:
+        return self._is_clean_volet("DIVERSIFICATION")

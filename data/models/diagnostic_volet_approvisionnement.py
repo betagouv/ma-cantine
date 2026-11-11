@@ -968,6 +968,10 @@ class DiagnosticVoletApprovisionnementMixin(models.Model):
         return bool(self.is_filled_simple or self.is_filled_complete)
 
     @property
+    def is_clean_approvisionnement(self) -> bool:
+        return self._is_clean_volet("APPROVISIONNEMENT")
+
+    @property
     def is_filled_simple(self) -> bool:
         return (
             self.is_diagnostic_type_simple
