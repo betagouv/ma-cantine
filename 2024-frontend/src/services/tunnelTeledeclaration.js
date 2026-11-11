@@ -75,6 +75,20 @@ const fields = {
   ...generateVoletFields(configPlastiqueFields, tunnelTeledeclaration.plastique.fields),
 }
 
+/* Pages */
+const pagesFieldsGroups = {
+  GestionnaireTunnelApproInformations: ["informationsCantine", "informationsGroupe"],
+  GestionnaireTunnelApproCouverts: ["couverts"],
+  GestionnaireTunnelApproSaisie: ["saisie"],
+  GestionnaireTunnelApproEgalim: ["egalimSimple", "egalimComplete"],
+  GestionnaireTunnelApproOrigine: ["origine"],
+  GestionnaireTunnelApproLocalCircuitCourt: ["localCircuitCourt"],
+  GestionnaireTunnelGaspillage: ["gaspillage"],
+  GestionnaireTunnelConvives: ["information"],
+  GestionnaireTunnelVegetarien: ["diversification"],
+  GestionnaireTunnelPlastique: ["plastique"],
+}
+
 /* Actions */
 const getField = (fieldName) => {
   return fields[fieldName]
@@ -86,34 +100,12 @@ const getFieldError = (fieldName, errors) => {
 }
 
 const getFieldsListFromPage = (pageName, canteenIsGroupe, diagnosticIsSimple) => {
-  switch (true) {
-    case pageName === "GestionnaireTunnelApproInformations" && !canteenIsGroupe:
-      return groups.informationsCantine
-    case pageName === "GestionnaireTunnelApproInformations" && canteenIsGroupe:
-      return groups.informationsGroupe
-    case pageName === "GestionnaireTunnelApproCouverts":
-      return groups.couverts
-    case pageName === "GestionnaireTunnelApproSaisie":
-      return groups.saisie
-    case pageName === "GestionnaireTunnelApproEgalim" && diagnosticIsSimple:
-      return groups.egalimSimple
-    case pageName === "GestionnaireTunnelApproEgalim" && !diagnosticIsSimple:
-      return groups.egalimComplete
-    case pageName === "GestionnaireTunnelApproOrigine":
-      return groups.origine
-    case pageName === "GestionnaireTunnelApproLocalCircuitCourt":
-      return groups.localCircuitCourt
-    case pageName === "GestionnaireTunnelGaspillage":
-      return groups.gaspillage
-    case pageName === "GestionnaireTunnelConvives":
-      return groups.information
-    case pageName === "GestionnaireTunnelVegetarien":
-      return groups.diversification
-    case pageName === "GestionnaireTunnelPlastique":
-      return groups.plastique
-    default:
-      return []
-  }
+  let fieldsGroups = pagesFieldsGroups[pageName] || []
+  if (canteenIsGroupe) fieldsGroups = fieldsGroups.filter((group) => group !== "informationsCantine")
+  if (!canteenIsGroupe) fieldsGroups = fieldsGroups.filter((group) => group !== "informationsGroupe")
+  if (diagnosticIsSimple) fieldsGroups = fieldsGroups.filter((group) => group !== "egalimComplete")
+  if (!diagnosticIsSimple) fieldsGroups = fieldsGroups.filter((group) => group !== "egalimSimple")
+  return groups[fieldsGroups[0]] || []
 }
 
 const getFieldsListFromGroup = (groupName) => {
@@ -135,4 +127,15 @@ const getFieldsWithAutofill = () => {
   return Object.keys(fields).filter((field) => fields[field].autofill)
 }
 
-export default { getField, getFieldError, getFieldsListFromPage, getFieldsListFromGroup, getFieldsWithAutofill }
+const getPageFromFieldsGroup = (groupName) => {
+  return Object.keys(pagesFieldsGroups).find((pageName) => pagesFieldsGroups[pageName].includes(groupName))
+}
+
+export default {
+  getField,
+  getFieldError,
+  getFieldsListFromPage,
+  getFieldsListFromGroup,
+  getFieldsWithAutofill,
+  getPageFromFieldsGroup,
+}
