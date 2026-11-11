@@ -7,7 +7,7 @@ const props = defineProps(["diagnosticRecap", "voletKey"])
 const objectiveReachedSentences = {
   information: "La cantine informe ses convives de toutes ses démarches pour du mieux manger.",
   gaspillage: "La cantine est engagée dans une démarche de réduction drastique de son gaspillage.",
-  diversification: "La cantine est en conformité avec le volet diversification des sources de protéines et menu végétarien.",
+  diversification: "La cantine est en conformité avec le volet diversification des sources de protéines et menus végétariens.",
   plastique: "La cantine n’utilise plus du tout de plastique ni pour sa production ni pour le service.",
 }
 
