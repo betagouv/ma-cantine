@@ -984,6 +984,9 @@ class Diagnostic(
     @property
     def canteen_yearly_meal_count(self):
         if self.year >= 2026:
+            # groupe: if empty, fallback on the sum of the satellites' values (only computed for groupes)
+            if self.nombre_repas_an is None:
+                return self.satellites_nombre_repas_an_total
             return self.nombre_repas_an
         else:
             if self.canteen_snapshot:
