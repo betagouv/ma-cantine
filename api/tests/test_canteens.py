@@ -354,31 +354,37 @@ class CanteenDetailApiTest(APITestCase):
         self.assertIsNone(badges["diversification"])
 
     @authenticate
-    @freeze_time("2024-01-20")
+    @freeze_time("2024-02-20")
     def test_can_get_canteen_badges_vegetarian_diversification_plan_rule(self):
+        """
+        The badges are computed with the canteen data at the time of the teledeclaration (canteen_snapshot)
+        """
         canteen_199_daily_meals = CanteenFactory(managers=[authenticate.user], daily_meal_count=199)
-        DiagnosticFactory(
+        diagnostic_199_daily_meals = DiagnosticFactory(
             canteen=canteen_199_daily_meals,
             year=2023,
             plan_diversification_en_place=True,
             menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.JAMAIS,
         )
+        diagnostic_199_daily_meals.teledeclare(applicant=authenticate.user)
 
         canteen_200_daily_meals = CanteenFactory(managers=[authenticate.user], daily_meal_count=200)
-        DiagnosticFactory(
+        diagnostic_200_daily_meals = DiagnosticFactory(
             canteen=canteen_200_daily_meals,
             year=2023,
             plan_diversification_en_place=True,
             menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.JAMAIS,
         )
+        diagnostic_200_daily_meals.teledeclare(applicant=authenticate.user)
 
         canteen_201_daily_meals = CanteenFactory(managers=[authenticate.user], daily_meal_count=201)
-        DiagnosticFactory(
+        diagnostic_201_daily_meals = DiagnosticFactory(
             canteen=canteen_201_daily_meals,
             year=2023,
             plan_diversification_en_place=True,
             menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.JAMAIS,
         )
+        diagnostic_201_daily_meals.teledeclare(applicant=authenticate.user)
 
         response_canteen_199 = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_199_daily_meals.id}))
 
