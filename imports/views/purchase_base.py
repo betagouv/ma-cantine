@@ -165,7 +165,7 @@ class BasePurchasesImportView(BaseImportView):
             raise PermissionDenied(detail="Vous n'êtes pas un gestionnaire de cette cantine.")
 
         description = row_dict["description"]
-        fournisseur = row_dict["fournisseur"]
+        fournisseur = row_dict["fournisseur"].strip() if row_dict["fournisseur"] else ""
         date = row_dict["date"]
         prix_ht = str(row_dict["prix_ht"]).replace(",", ".") if row_dict["prix_ht"] else None
 
@@ -181,7 +181,7 @@ class BasePurchasesImportView(BaseImportView):
         purchase = Purchase(
             canteen=canteen,
             description=description.strip(),
-            fournisseur=fournisseur.strip(),
+            fournisseur=fournisseur,
             date=date.strip(),
             prix_ht=prix_ht,
             famille_produits=famille_produits.strip(),
