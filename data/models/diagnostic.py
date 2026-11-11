@@ -36,6 +36,7 @@ from data.models.diagnostic_teledeclaration_dates import (
 from data.models.diagnostic_teledeclaration_fields import (
     VOLETS_TUNNEL_PROGRESS_FIELD_MAPPING,
     get_teledeclaration_fields_all,
+    get_teledeclaration_fields_all_years,
 )
 from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
@@ -491,6 +492,14 @@ class Diagnostic(
         "is_filled_plastique",
         "is_filled_information",
     ]
+    # properties (not stored in DB), see each volet's mixin
+    IS_CLEAN_VOLET_FIELDS = [
+        "is_clean_approvisionnement",
+        "is_clean_gaspillage",
+        "is_clean_diversification",
+        "is_clean_plastique",
+        "is_clean_information",
+    ]
 
     CANTEEN_FIELDS = [
         # new in 2026
@@ -882,6 +891,11 @@ class Diagnostic(
         if errors and raise_errors:
             raise ValidationError(errors)
         return not errors, errors
+
+    def _is_clean_volet(self, volet) -> bool:
+        # the errors outside of the volets (ex: year) only impact is_clean
+        _, errors = self.is_clean(raise_errors=False)
+        return not any(field in errors for field in get_teledeclaration_fields_all_years(volet))
 
     @property
     def has_invalid_reason(self) -> bool:
