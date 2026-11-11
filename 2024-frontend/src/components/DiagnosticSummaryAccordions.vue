@@ -56,7 +56,7 @@ const isVoletTeledeclared = (volet) => {
         :diagnostic-recap="diagnosticRecap"
         :volet-key="volet.key"
       />
-      <div class="ma-cantine--flex-end fr-mt-2w">
+      <div v-if="isVoletTeledeclared(volet)" class="ma-cantine--flex-end fr-mt-2w">
         <DsfrButton v-if="!volet.isAppro" @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
       </div>
     </DsfrAccordion>
