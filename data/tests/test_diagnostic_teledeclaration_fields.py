@@ -57,6 +57,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
             *Diagnostic.APPRO_STATS_FIELDS,
             *Diagnostic.OTHER_COMPUTED_FIELDS,
             *Diagnostic.META_FIELDS,
+            *Diagnostic.GROUPE_FIELDS,
             *Diagnostic.CREATION_META_FIELDS,
             *Diagnostic.MATOMO_FIELDS,
             *Diagnostic.TUNNEL_PROGRESS_FIELDS,

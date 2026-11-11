@@ -1888,6 +1888,64 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
         self.assertEqual(self.diagnostic_draft_2026.cout_repas, None)
 
 
+class DiagnosticSatellitesNombreRepasAnTotalTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
+    def test_total_is_none_if_no_value(self):
+        diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026)
+        self.assertIsNone(diagnostic.satellites_nombre_repas_an_total)
+
+    def test_total_sums_the_satellites_values(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an={
+                str(self.canteen_satellite_1.id): 1000,
+                str(self.canteen_satellite_2.id): 2000,
+            },
+        )
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_total, 3000)
+
+    def test_total_ignores_empty_values(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an={
+                str(self.canteen_satellite_1.id): 1000,
+                str(self.canteen_satellite_2.id): None,
+            },
+        )
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_total, 1000)
+
+    def test_total_ignores_canteens_not_linked_to_the_groupe(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an={
+                str(self.canteen_satellite_1.id): 1000,
+                str(self.canteen_site.id): 5000,
+            },
+        )
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_total, 1000)
+
+    def test_total_is_none_if_canteen_is_not_a_groupe(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_site,
+            year=2026,
+            satellites_nombre_repas_an={str(self.canteen_satellite_1.id): 1000},
+        )
+        self.assertIsNone(diagnostic.satellites_nombre_repas_an_total)
+
+
 class DiagnosticInvalidWarningQueriesTest(TestCase):
     def test_circuit_court_sup_france_query(self):
         diagnostic_complete = DiagnosticFactory(
