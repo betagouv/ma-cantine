@@ -50,6 +50,17 @@ def list_properties(queryset, property):
     return list(queryset.values_list(property, flat=True))
 
 
+def get_is_administration(sector_list: list[str], economic_model: str | None, line_ministry: str | None) -> bool:
+    """
+    A public canteen, in an administration sector, with a line ministry
+    """
+    return bool(
+        set(sector_list or []).intersection(ADMINISTRATION_SECTOR_LIST)
+        and economic_model == Canteen.EconomicModel.PUBLIC
+        and line_ministry
+    )
+
+
 def has_siret_or_siren_unite_legale_query():
     has_siret_query = ~has_charfield_missing_query("siret")
     has_siren_unite_legale_query = ~has_charfield_missing_query("siren_unite_legale")
@@ -1086,8 +1097,8 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         return self.published_service_diagnostics.filter(year=self.latest_published_year).first()
 
     @property
-    def in_administration(self):
-        return set(self.sector_list).intersection(ADMINISTRATION_SECTOR_LIST)
+    def is_administration(self):
+        return get_is_administration(self.sector_list, self.economic_model, self.line_ministry)
 
     @property
     def lead_image(self):

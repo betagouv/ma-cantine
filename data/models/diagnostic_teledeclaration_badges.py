@@ -9,9 +9,9 @@ Each badge returns:
 """
 
 from dataclasses import dataclass
+from data.models.canteen import get_is_administration
 from data.models.diagnostic_volet_diversification import DiagnosticVoletDiversificationMixin
 from data.models.sector import (
-    ADMINISTRATION_SECTOR_LIST,
     EDUCATION_SECTOR_LIST,
     HEALTH_SECTOR_LIST,
     SOCIAL_SECTOR_LIST,
@@ -42,10 +42,12 @@ class CanteenSnapshot:
 
     daily_meal_count: int | None
     sector_list: list[str]
+    economic_model: str | None
+    line_ministry: str | None
 
     @property
-    def in_administration(self) -> bool:
-        return bool(set(self.sector_list).intersection(ADMINISTRATION_SECTOR_LIST))
+    def is_administration(self) -> bool:
+        return get_is_administration(self.sector_list, self.economic_model, self.line_ministry)
 
 
 def get_canteen_snapshot(diagnostic) -> CanteenSnapshot:
@@ -53,6 +55,8 @@ def get_canteen_snapshot(diagnostic) -> CanteenSnapshot:
     return CanteenSnapshot(
         daily_meal_count=canteen_snapshot.get("daily_meal_count"),
         sector_list=canteen_snapshot.get("sector_list") or [],
+        economic_model=canteen_snapshot.get("economic_model"),
+        line_ministry=canteen_snapshot.get("line_ministry"),
     )
 
 
@@ -124,9 +128,9 @@ def diversification_badge_2022(diagnostic) -> bool | None:
     if canteen.daily_meal_count and canteen.daily_meal_count >= 200 and diagnostic.plan_diversification_en_place:
         return True
     # Only the canteens in the administration sector must have a daily frequency
-    if canteen.in_administration and has_daily_frequency:
+    if canteen.is_administration and has_daily_frequency:
         return True
-    if not canteen.in_administration and has_weekly_or_more_frequency:
+    if not canteen.is_administration and has_weekly_or_more_frequency:
         return True
     if diagnostic.tunnel_diversification:
         return False
@@ -159,7 +163,7 @@ def diversification_badge_2026(diagnostic) -> bool | None:
         )
     # Daily vegetarian option: administration canteens with a multiple choice service
     multiple_choice_services = [ServiceType.CHOIX_MULTIPLE_LIBRE_SERVICE, ServiceType.CHOIX_MULTIPLE_RESERVATION]
-    if canteen.in_administration and diagnostic.service_type in multiple_choice_services:
+    if canteen.is_administration and diagnostic.service_type in multiple_choice_services:
         obligations.append(frequence == MenuVegetarienFrequence.QUOTIDIEN)
 
     if obligations:

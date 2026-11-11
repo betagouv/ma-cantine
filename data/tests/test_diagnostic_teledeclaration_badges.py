@@ -99,7 +99,12 @@ class DiagnosticBadgesTest(TestCase):
 
     def test_diversification_badge_2022(self):
         not_administration = {"sector_list": [Sector.SANTE_HOPITAL], "daily_meal_count": 12}
-        administration = {"sector_list": [Sector.ADMINISTRATION_ADMINISTRATIF], "daily_meal_count": 12}
+        administration = {
+            "sector_list": [Sector.ADMINISTRATION_ADMINISTRATIF],
+            "economic_model": Canteen.EconomicModel.PUBLIC,
+            "line_ministry": Canteen.Ministries.ECONOMIE,
+            "daily_meal_count": 12,
+        }
         visited = {"plan_diversification_en_place": False, "tunnel_diversification": "complet", **TELEDECLARED}
         frequence = Diagnostic.MenuVegetarienFrequence
         cases = [
@@ -126,6 +131,18 @@ class DiagnosticBadgesTest(TestCase):
                 administration,
                 {**visited, "menu_vegetarien_frequence": frequence.HEBDO},
                 False,
+            ),
+            (
+                "administration sector but private, weekly",
+                {**administration, "economic_model": Canteen.EconomicModel.PRIVATE, "line_ministry": None},
+                {**visited, "menu_vegetarien_frequence": frequence.HEBDO},
+                True,
+            ),
+            (
+                "administration sector but no line ministry, weekly",
+                {**administration, "line_ministry": None, "skip_validations": True},  # invalid canteen (old data)
+                {**visited, "menu_vegetarien_frequence": frequence.HEBDO},
+                True,
             ),
             (
                 "200 meals with a plan",
@@ -158,7 +175,12 @@ class DiagnosticBadgesTest(TestCase):
         lycee = {"sector_list": [Sector.EDUCATION_SECONDAIRE_LYCEE], "daily_meal_count": 12}
         agricole = {"sector_list": [Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE], "daily_meal_count": 12}
         universite = {"sector_list": [Sector.EDUCATION_SUPERIEUR_UNIVERSITAIRE], "daily_meal_count": 12}
-        administration = {"sector_list": [Sector.ADMINISTRATION_ADMINISTRATIF], "daily_meal_count": 12}
+        administration = {
+            "sector_list": [Sector.ADMINISTRATION_ADMINISTRATIF],
+            "economic_model": Canteen.EconomicModel.PUBLIC,
+            "line_ministry": Canteen.Ministries.ECONOMIE,
+            "daily_meal_count": 12,
+        }
         actions = [Diagnostic.PlanDiversificationActions.PLATS_PRODUITS]
         default_fields = {
             "plan_diversification_en_place": False,
@@ -251,6 +273,26 @@ class DiagnosticBadgesTest(TestCase):
                     "menu_vegetarien_frequence": Diagnostic.MenuVegetarienFrequence.HEBDO,
                 },
                 False,
+            ),
+            (
+                "administration sector but private, réservation, weekly",
+                {**administration, "economic_model": Canteen.EconomicModel.PRIVATE, "line_ministry": None},
+                {
+                    **default_fields,
+                    "service_type": Diagnostic.ServiceType.CHOIX_MULTIPLE_RESERVATION,
+                    "menu_vegetarien_frequence": Diagnostic.MenuVegetarienFrequence.HEBDO,
+                },
+                True,
+            ),
+            (
+                "administration sector but no line ministry, réservation, weekly",
+                {**administration, "line_ministry": None, "skip_validations": True},  # invalid canteen (old data)
+                {
+                    **default_fields,
+                    "service_type": Diagnostic.ServiceType.CHOIX_MULTIPLE_RESERVATION,
+                    "menu_vegetarien_frequence": Diagnostic.MenuVegetarienFrequence.HEBDO,
+                },
+                True,
             ),
             (
                 "administration, menu unique, weekly",
