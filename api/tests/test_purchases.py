@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 from api.serializers.purchase import PurchaseSimpleSummarySerializer, PurchaseSummarySerializer
 from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, PurchaseFactory, UserFactory
-from data.models import Purchase
+from data.models import Canteen, Purchase, Sector
 from data.models.creation_source import CreationSource
 from data.models.definitionlocal import DefinitionLocal
 from data.models.diagnostic_teledeclaration_field_groups import TELEDECLARATION_FIELD_GROUPS
@@ -18,7 +18,14 @@ class PurchaseCreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.canteen = CanteenFactory(management_type=Canteen.ManagementType.CONCEDED, managers=[cls.user])
+        cls.canteen_petite_structure = CanteenFactory(
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
+            sector_list=[Sector.EDUCATION_PRIMAIRE],
+            daily_meal_count=20,
+            managers=[cls.user],
+        )
         cls.url = reverse("canteen_purchase_create", kwargs={"canteen_pk": cls.canteen.id})
         cls.PURCHASE_PAYLOAD = {
             # "canteen_id": cls.canteen.id,
@@ -138,6 +145,36 @@ class PurchaseCreateApiTest(APITestCase):
             with self.subTest(field=field):
                 payload = {**self.PURCHASE_PAYLOAD, field: ""}
                 response = self.client.post(self.url, payload)
+
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_petite_structure_can_create_purchase_without_famille_produits(self):
+        self.assertFalse(self.canteen.is_petite_structure)
+        self.assertTrue(self.canteen_petite_structure.is_petite_structure)
+        self.canteen_petite_structure.managers.add(authenticate.user)
+        url = reverse("canteen_purchase_create", kwargs={"canteen_pk": self.canteen_petite_structure.id})
+
+        for value in ["", None]:
+            with self.subTest(famille_produits=value):
+                payload = {**self.PURCHASE_PAYLOAD, "famille_produits": value}
+                response = self.client.post(url, payload, format="json")
+
+                self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+                purchase = Purchase.objects.get(id=response.json()["id"])
+                self.assertIn(purchase.famille_produits, ["", None])
+
+        # missing field
+        payload = {key: value for key, value in self.PURCHASE_PAYLOAD.items() if key != "famille_produits"}
+        response = self.client.post(url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        # the other fields are still required
+        for field in ["description", "date", "prix_ht"]:
+            with self.subTest(field=field):
+                payload = {**self.PURCHASE_PAYLOAD, field: ""}
+                response = self.client.post(url, payload)
 
                 self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -398,7 +435,7 @@ class PurchaseUpdateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        cls.canteen = CanteenFactory(managers=[cls.user])
+        cls.canteen = CanteenFactory(management_type=Canteen.ManagementType.CONCEDED, managers=[cls.user])
         cls.purchase = PurchaseFactory(
             canteen=cls.canteen,
             creation_user=cls.user,
@@ -504,6 +541,35 @@ class PurchaseUpdateApiTest(APITestCase):
                 Purchase.Characteristic.LOCAL,
             ],
         )
+
+    @authenticate
+    def test_cannot_empty_famille_produits(self):
+        self.purchase.canteen.managers.add(authenticate.user)
+
+        response = self.client.patch(self.url, {"famille_produits": ""}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_petite_structure_can_empty_famille_produits(self):
+        canteen_petite_structure = CanteenFactory(
+            management_type=Canteen.ManagementType.DIRECT,
+            production_type=Canteen.ProductionType.ON_SITE,
+            sector_list=[Sector.EDUCATION_PRIMAIRE],
+            daily_meal_count=20,
+            managers=[authenticate.user],
+        )
+        purchase = PurchaseFactory(canteen=canteen_petite_structure, creation_source=CreationSource.APP)
+        url = reverse(
+            "canteen_purchase_retrieve_update_destroy",
+            kwargs={"canteen_pk": canteen_petite_structure.id, "pk": purchase.id},
+        )
+
+        response = self.client.patch(url, {"famille_produits": ""}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        purchase.refresh_from_db()
+        self.assertIn(purchase.famille_produits, ["", None])
 
     @authenticate
     def test_partial_update_without_caracteristiques_fields_keeps_caracteristiques(self):
