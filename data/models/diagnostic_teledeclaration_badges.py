@@ -14,7 +14,7 @@ from pathlib import Path
 from django.conf import settings
 from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_YEARS
 from data.models.diagnostic_volet_diversification import DiagnosticVoletDiversificationMixin
-from data.models.sector import Sector
+from data.models.sector import EDUCATION_SECTOR_LIST, HEALTH_SECTOR_LIST, SOCIAL_SECTOR_LIST, Sector
 
 MenuVegetarienFrequence = DiagnosticVoletDiversificationMixin.MenuVegetarienFrequence
 ServiceType = DiagnosticVoletDiversificationMixin.ServiceType
@@ -115,6 +115,29 @@ def plastic_badge_v1(diagnostic) -> bool | None:
 # Information
 def info_badge_v1(diagnostic) -> bool | None:
     if diagnostic.information_qualite_durable:
+        return True
+    if diagnostic.tunnel_info:
+        return False
+
+
+def info_badge_v2(diagnostic) -> bool | None:
+    """
+    For all the canteens: part EGalim, permanent display and annual electronic communication
+    For some sectors (education, health, social, prisons): regular consultation on the food quality
+    """
+    canteen = diagnostic.canteen
+    is_reached = bool(
+        diagnostic.information_part_egalim
+        and diagnostic.information_affichage_permanent
+        and diagnostic.information_electronique_annuelle
+    )
+    sectors_quality_required = (
+        EDUCATION_SECTOR_LIST + HEALTH_SECTOR_LIST + SOCIAL_SECTOR_LIST + [Sector.ADMINISTRATION_PRISON]
+    )
+    if set(canteen.sector_list or []).intersection(sectors_quality_required):
+        is_reached = is_reached and bool(diagnostic.information_consultation_qualite)
+
+    if is_reached:
         return True
     if diagnostic.tunnel_info:
         return False

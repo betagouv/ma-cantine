@@ -293,3 +293,53 @@ class DiagnosticBadgesTest(TestCase):
         self.assertBadge("info_badge", 2023, cases)
         self.assertBadge("info_badge", 2024, cases)
         self.assertBadge("info_badge", 2025, cases)
+
+    def test_info_badge_v2(self):
+        hospital = {"sector_list": [Sector.SANTE_HOPITAL]}
+        primaire = {"sector_list": [Sector.EDUCATION_PRIMAIRE]}
+        creche = {"sector_list": [Sector.SOCIAL_CRECHE]}
+        prison = {"sector_list": [Sector.ADMINISTRATION_PRISON]}
+        administratif = {"sector_list": [Sector.ADMINISTRATION_ADMINISTRATIF]}
+        entreprise = {"sector_list": [Sector.ENTERPRISE_ENTREPRISE]}
+        default_fields = {
+            "information_part_egalim": True,
+            "information_affichage_permanent": True,
+            "information_electronique_annuelle": True,
+            "information_consultation_qualite": False,
+            "tunnel_info": "complet",
+        }
+        cases = [
+            # for all the canteens
+            ("all, everything", entreprise, default_fields, True),
+            ("all, no part EGalim", entreprise, {**default_fields, "information_part_egalim": False}, False),
+            ("all, no affichage", entreprise, {**default_fields, "information_affichage_permanent": False}, False),
+            (
+                "all, no communication électronique",
+                entreprise,
+                {**default_fields, "information_electronique_annuelle": False},
+                False,
+            ),
+            ("administratif, no consultation needed", administratif, default_fields, True),
+            (
+                "not reached, tunnel not visited",
+                entreprise,
+                {**default_fields, "information_part_egalim": False, "tunnel_info": None},
+                None,
+            ),
+            # consultation on the food quality
+            ("education, consultation", primaire, {**default_fields, "information_consultation_qualite": True}, True),
+            ("education, no consultation", primaire, default_fields, False),
+            ("health, consultation", hospital, {**default_fields, "information_consultation_qualite": True}, True),
+            ("health, no consultation", hospital, default_fields, False),
+            ("social, consultation", creche, {**default_fields, "information_consultation_qualite": True}, True),
+            ("social, no consultation", creche, default_fields, False),
+            ("prison, consultation", prison, {**default_fields, "information_consultation_qualite": True}, True),
+            ("prison, no consultation", prison, default_fields, False),
+            (
+                "education, consultation but no part EGalim",
+                primaire,
+                {**default_fields, "information_consultation_qualite": True, "information_part_egalim": False},
+                False,
+            ),
+        ]
+        self.assertBadge("info_badge", 2026, cases)
