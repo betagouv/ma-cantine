@@ -39,9 +39,18 @@ class DiagnosticV2ListApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_cannot_list_diagnostics_via_oauth2(self):
+    def test_list_diagnostics_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.json()["results"]), 2)
+
+    def test_cannot_list_diagnostics_via_oauth2_if_not_canteen_manager(self):
+        user, token = get_oauth2_token("canteen:read")
 
         self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self.url)
@@ -90,14 +99,29 @@ class DiagnosticV2CreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_cannot_create_diagnostic_via_oauth2(self):
+    def test_create_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.post(self.url, {"year": 2025})
 
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        diagnostic = Diagnostic.objects.get(id=response.json()["id"])
+        self.assertEqual(diagnostic.canteen, self.canteen)
+        self.assertEqual(diagnostic.creation_user, user)
+        self.assertEqual(diagnostic.creation_source, CreationSource.API)
+        self.assertEqual(diagnostic.creation_source_api_oauth2_application, token.application)
+
+    def test_cannot_create_diagnostic_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.post(self.url, {"year": 2025})
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(Diagnostic.objects.count(), 0)
 
     @authenticate
     def test_cannot_create_diagnostic_without_year(self):
@@ -204,6 +228,44 @@ class DiagnosticV2RetrieveUpdateApiTest(APITestCase):
         for field in Diagnostic.IS_FILLED_VOLET_FIELDS[1:]:  # non-appro volets: no required fields yet (champs.json)
             self.assertTrue(body[camelize(field)])
 
+    def test_retrieve_diagnostic_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["id"], self.diagnostic.id)
+
+    def test_update_diagnostic_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        payload = {"centralKitchenDiagnosticMode": Diagnostic.CentralKitchenDiagnosticMode.APPRO}
+        response = self.client.patch(self.url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.diagnostic.refresh_from_db()
+        self.assertEqual(
+            self.diagnostic.central_kitchen_diagnostic_mode, Diagnostic.CentralKitchenDiagnosticMode.APPRO
+        )
+        self.assertEqual(self.diagnostic.history.first().history_source_api_oauth2_application, token.application)
+
+    def test_cannot_update_diagnostic_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+        central_kitchen_diagnostic_mode = self.diagnostic.central_kitchen_diagnostic_mode
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        payload = {"centralKitchenDiagnosticMode": Diagnostic.CentralKitchenDiagnosticMode.APPRO}
+        response = self.client.patch(self.url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.diagnostic.refresh_from_db()
+        self.assertEqual(self.diagnostic.central_kitchen_diagnostic_mode, central_kitchen_diagnostic_mode)
+
     @authenticate
     def test_cannot_update_diagnostic_with_put(self):
         self.canteen.managers.add(authenticate.user)
@@ -290,14 +352,37 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_cannot_retrieve_approvisionnement_via_oauth2(self):
+    def test_retrieve_approvisionnement_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token.token}")
         response = self.client.get(self._url(self.diagnostic_simple_2025))
 
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["id"], self.diagnostic_simple_2025.id)
+
+    def test_update_approvisionnement_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.patch(self._url(self.diagnostic_simple_2025), {"valeurTotale": 2000}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.diagnostic_simple_2025.refresh_from_db()
+        self.assertEqual(self.diagnostic_simple_2025.valeur_totale, 2000)
+
+    def test_cannot_update_approvisionnement_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.patch(self._url(self.diagnostic_simple_2025), {"valeurTotale": 2000}, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.diagnostic_simple_2025.refresh_from_db()
+        self.assertNotEqual(self.diagnostic_simple_2025.valeur_totale, 2000)
 
     @authenticate
     def test_cannot_retrieve_approvisionnement_if_diagnostic_unknown(self):
@@ -457,12 +542,24 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
 
 
 class DiagnosticV2DocumentationTest(APITestCase):
-    def test_v2_endpoints_are_not_in_the_api_docs(self):
+    def test_v2_endpoints_are_in_the_api_docs(self):
         response = self.client.get(reverse("schema"))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("/api/v1/canteens/{canteen_pk}/diagnostics/", response.content.decode())
-        self.assertNotIn("/api/v2/", response.content.decode())
+        content = response.content.decode()
+        self.assertIn("/api/v1/canteens/{canteen_pk}/diagnostics/", content)
+        for path in [
+            "/api/v2/canteens/{canteen_pk}/diagnostics/",
+            "/api/v2/canteens/{canteen_pk}/diagnostics/{id}",
+            "/api/v2/canteens/{canteen_pk}/diagnostics/{id}/approvisionnements",
+            "/api/v2/canteens/{canteen_pk}/diagnostics/{id}/gaspillage-alimentaire",
+            "/api/v2/canteens/{canteen_pk}/diagnostics/{id}/menus-vegetariens",
+            "/api/v2/canteens/{canteen_pk}/diagnostics/{id}/substitution-plastique",
+            "/api/v2/canteens/{canteen_pk}/diagnostics/{id}/information-convives",
+        ]:
+            with self.subTest(path=path):
+                self.assertIn(f"{path}:", content)
+        self.assertIn("Bilans (v2)", content)
 
 
 class DiagnosticV2UrlsTest(APITestCase):
@@ -536,14 +633,43 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
             with self.subTest(volet=volet):
                 self.assertEqual(self.client.get(self._url(volet, self.diagnostic)).status_code, 403)
 
-    def test_cannot_access_volet_via_oauth2(self):
+    def test_retrieve_volet_via_oauth2(self):
         user, token = get_oauth2_token("canteen:read")
         self.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token.token}")
-        for volet, *_ in self.VOLETS:
+        for volet, field, *_ in self.VOLETS:
             with self.subTest(volet=volet):
-                self.assertEqual(self.client.get(self._url(volet, self.diagnostic)).status_code, 403)
+                response = self.client.get(self._url(volet, self.diagnostic))
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertIn(field, response.json())
+
+    def test_update_volet_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        for volet, field, model_field, value, _ in self.VOLETS:
+            with self.subTest(volet=volet):
+                response = self.client.patch(self._url(volet, self.diagnostic), {field: value}, format="json")
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.diagnostic.refresh_from_db()
+                self.assertEqual(getattr(self.diagnostic, model_field), value)
+
+    def test_cannot_update_volet_via_oauth2_without_canteen_write_scope(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen.managers.add(user)
+
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        for volet, field, model_field, value, _ in self.VOLETS:
+            with self.subTest(volet=volet):
+                response = self.client.patch(self._url(volet, self.diagnostic), {field: value}, format="json")
+
+                self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+                self.diagnostic.refresh_from_db()
+                self.assertNotEqual(getattr(self.diagnostic, model_field), value)
 
     @authenticate
     def test_retrieve_volet(self):

@@ -347,6 +347,7 @@ SPECTACULAR_SETTINGS = {
         {"name": "Cantines"},
         {"name": "Achats"},
         {"name": "Bilans"},
+        {"name": "Bilans (v2)"},
         {"name": "Télédéclaration"},
         {"name": "Évaluations du gaspillage alimentaire"},
         {"name": "Utilisateurs"},
