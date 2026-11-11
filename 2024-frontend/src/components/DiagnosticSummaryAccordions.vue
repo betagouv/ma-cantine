@@ -3,6 +3,7 @@ import { ref, watch } from "vue"
 import { useRouter } from "vue-router"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import DiagnosticSummaryAppro from "@/components/DiagnosticSummaryAppro.vue"
+import DiagnosticSummaryThematiques from "@/components/DiagnosticSummaryThematiques.vue"
 
 const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared', 'diagnosticRecap'])
 const activeAccordion = ref(props.open)
@@ -19,10 +20,10 @@ const getSentence = (volet) => {
   return "Volet non renseigné."
 }
 
-const displaySentence = (volet) => {
-  if (props.isTeledeclared && volet.isAppro) return false
-  if (props.isTeledeclared && !volet.isAppro && !volet.hasErrors) return false
-  return true
+const isVoletTeledeclared = (volet) => {
+  if (props.isTeledeclared && volet.isAppro) return true
+  if (props.isTeledeclared && !volet.isAppro && !volet.hasErrors && volet.isFilled) return true
+  return false
 }
 
 </script>
@@ -41,18 +42,23 @@ const displaySentence = (volet) => {
           <DsfrBadge v-if="volet.hasErrors" label="Erreurs" type="error"/>
         </span>
       </template>
-      <p v-if="displaySentence(volet)" class="fr-mb-0">
+      <p v-if="!isVoletTeledeclared(volet)" class="fr-mb-0">
         <span class="fr-text--bold">{{ getSentence(volet) }}</span>
         <br>
         Consulter le volet <AppLinkRouter :to="volet.page" :title="volet.title.toLowerCase()"/>
       </p>
-      <div v-else class="ma-cantine--flex-end">
-        <DsfrButton v-if="!volet.isAppro" @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
-      </div>
       <DiagnosticSummaryAppro
         v-if="volet.isAppro && isTeledeclared"
         :diagnostic-recap="diagnosticRecap"
       />
+      <DiagnosticSummaryThematiques
+        v-else-if="isTeledeclared && isVoletTeledeclared(volet)"
+        :diagnostic-recap="diagnosticRecap"
+        :volet-key="volet.key"
+      />
+      <div v-if="isVoletTeledeclared(volet)" class="ma-cantine--flex-end fr-mt-2w">
+        <DsfrButton v-if="!volet.isAppro" @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
+      </div>
     </DsfrAccordion>
   </DsfrAccordionsGroup>
 </template>

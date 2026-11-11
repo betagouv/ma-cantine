@@ -22,6 +22,7 @@ const volets = computed(() => {
   const macaronsStatus = diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value, diagnosticRecap.value)
   return [
     {
+      key: "approvisionnement",
       isAppro: true,
       title: "Approvisionnements",
       macaron: IconMacaronApprovisionnement,
@@ -31,6 +32,7 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelApproRecapitulatif" }
     },
     {
+      key: "information",
       title: "Information des convives",
       shortTitle: "Information convives",
       macaron: IconMacaronInformation,
@@ -40,6 +42,7 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelConvives" }
     },
     {
+      key: "gaspillage",
       title: "Lutte contre le gaspillage alimentaire",
       shortTitle: "Gaspillage alimentaire",
       macaron: IconMacaronGaspillage,
@@ -49,6 +52,7 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelGaspillage" }
     },
     {
+      key: "diversification",
       title: "Diversification des sources de protéines et menus végétariens",
       shortTitle: "Menus végétariens",
       macaron: IconMacaronDiversification,
@@ -58,6 +62,7 @@ const volets = computed(() => {
       page: { name: "GestionnaireTunnelVegetarien" }
     },
     {
+      key: "plastique",
       title: "Substitution du plastique",
       shortTitle: "Substitution plastique",
       macaron: IconMacaronPlastique,

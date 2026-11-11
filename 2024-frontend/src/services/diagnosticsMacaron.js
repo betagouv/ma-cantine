@@ -1,5 +1,16 @@
-const getStatus = (key, isTeledeclared, check, recap) => {
+const isObjectiveReached = (key, recap) => {
+  if (!key || !recap) return false
+  const objectives = {
+    information: recap?.canteenDiagnosticThematiquesStats?.objectifsInformationAtteints,
+    gaspillage: recap?.canteenDiagnosticThematiquesStats?.objectifsGaspillageAtteints,
+    diversification: recap?.canteenDiagnosticThematiquesStats?.objectifsDiversificationAtteints,
+    plastique: recap?.canteenDiagnosticThematiquesStats?.objectifsPlastiqueAtteints,
+    approvisionnement: recap?.canteenDiagnosticApproStats?.objectifsEgalimAtteints,
+  }
+  return objectives[key]
+}
 
+const getStatus = (key, isTeledeclared, check, recap) => {
   const isCleanVolets = {
     information: check?.isCleanInformation,
     gaspillage: check?.isCleanGaspillage,
@@ -17,7 +28,7 @@ const getStatus = (key, isTeledeclared, check, recap) => {
   }
 
   const isAppro = key === "approvisionnement"
-  if (recap?.canteenDiagnosticApproStats?.objectifsEgalimAtteints) return "objectivesReached"
+  if (isTeledeclared && isObjectiveReached(key, recap)) return "objectivesReached"
   if (isAppro && isTeledeclared) return "teledeclared"
   if (!isAppro && isTeledeclared && isCleanVolets[key] && isFilledVolets[key]) return "teledeclared"
   if (isAppro && isCleanVolets[key]) return "clean"
@@ -28,11 +39,11 @@ const getStatus = (key, isTeledeclared, check, recap) => {
 const getMacaronsStatus = (isTeledeclared, check, recap) => {
   return {
     approvisionnement: getStatus("approvisionnement", isTeledeclared, check, recap),
-    information: getStatus("information", isTeledeclared, check),
-    gaspillage: getStatus("gaspillage", isTeledeclared, check),
-    diversification: getStatus("diversification", isTeledeclared, check),
-    plastique: getStatus("plastique", isTeledeclared, check),
+    information: getStatus("information", isTeledeclared, check, recap),
+    gaspillage: getStatus("gaspillage", isTeledeclared, check, recap),
+    diversification: getStatus("diversification", isTeledeclared, check, recap),
+    plastique: getStatus("plastique", isTeledeclared, check, recap),
   }
 }
 
-export default { getMacaronsStatus }
+export default { getMacaronsStatus, isObjectiveReached }
