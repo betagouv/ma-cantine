@@ -1,8 +1,10 @@
 <script setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
+import { storeToRefs } from "pinia"
 import { useRoute } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
+import { useStoreCanteen } from "@/stores/canteen.js"
 import documentation from "@/data/documentation.json"
 import urlService from "@/services/urls.js"
 import purchasesService from "@/services/purchases.js"
@@ -19,6 +21,10 @@ const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 const forceRerender = ref(0)
 const purchaseCreatedId = ref(null)
 const errors = ref({})
+
+/* Canteen */
+const { canteenInformations } = storeToRefs(useStoreCanteen())
+const isPetiteStructure = computed(() => canteenInformations.value?.isPetiteStructure === true)
 
 /* Save purchase */
 const savePurchase = async (form) => {
@@ -72,6 +78,15 @@ const resetForm = () => {
       </li>
     </AppRessources>
   </section>
+  <DsfrAlert v-if="isPetiteStructure" title="Vous participez à l'expérimentation « Petites structures » ?" type="info" class="fr-mb-4w">
+    <p>
+      Pour cette première année, vous n'avez pas besoin de renseigner les familles de produits. Il vous suffit de suivre vos achats alimentaires en distinguant les produits bio des produits non bio.
+    </p>
+    <p>
+      Pour savoir comment renseigner vos achats dans cet outil, consultez
+      <a href="https://documentation.ma-cantine.agriculture.gouv.fr/fr/article/1l2amkb/" target="_blank">notre documentation dédiée</a>.
+    </p>
+  </DsfrAlert>
   <PurchaseForm
     :key="forceRerender"
     @sendForm="(payload) => savePurchase(payload)"
