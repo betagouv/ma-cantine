@@ -43,6 +43,7 @@ cantines as (
         declaration_donnees_2023,
         declaration_donnees_2024,
         declaration_donnees_2025,
+        is_petite_structure,
         has_manager,
         manager_emails,
         creation_date,
@@ -99,6 +100,10 @@ select
     declaration_donnees_2023,
     declaration_donnees_2024,
     declaration_donnees_2025,
+
+    -- expérimentation « Petites structures » : champ calculé par l'application
+    -- (data/models/canteen_petite_structure.py)
+    is_petite_structure,
 
     -- Périmètre du RNC : `Canteen.objects.publicly_visible()` (data/models/canteen.py:90)
     -- exclut les groupes et les cantines des armées. Le `exclude` de Django garde les
