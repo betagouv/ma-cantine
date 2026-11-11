@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from data.models import Canteen
@@ -36,3 +37,33 @@ class DiagnosticGroupeCouvertsAnnuelsUpdateSerializer(serializers.Serializer):
     nombre_repas_an = serializers.IntegerField(
         allow_null=True, min_value=0, max_value=999999999, help_text="nombre de repas par an du satellite"
     )
+
+
+def get_satellites_nombre_repas_an_list(diagnostic) -> list | None:
+    """
+    The satellites of the groupe, with their nombre_repas_an (None if the diagnostic's canteen is not a groupe)
+    """
+    if not diagnostic.canteen or not diagnostic.canteen.is_groupe:
+        return None
+    return DiagnosticGroupeSatelliteCouvertsAnnuelsSerializer(
+        diagnostic.canteen.satellites.order_by("name"),
+        many=True,
+        context={"satellites_nombre_repas_an": diagnostic.satellites_nombre_repas_an},
+    ).data
+
+
+@extend_schema_field(DiagnosticGroupeSatelliteCouvertsAnnuelsSerializer(many=True, allow_null=True))
+class SatellitesNombreRepasAnField(serializers.Field):
+    """
+    Read-only: the satellites of the groupe, with their nombre_repas_an
+    - to edit them: see the groupe-couverts-annuels endpoint
+    """
+
+    def __init__(self, **kwargs):
+        kwargs["source"] = "*"
+        kwargs["read_only"] = True
+        kwargs.setdefault("help_text", "Groupe : nombre de repas par an de chaque satellite (lecture seule)")
+        super().__init__(**kwargs)
+
+    def to_representation(self, value):
+        return get_satellites_nombre_repas_an_list(value)
