@@ -195,6 +195,7 @@ class CanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body["id"], self.canteen.id)
         self.assertEqual(body["managers"][0]["email"], authenticate.user.email)
+        self.assertIn("isPetiteStructure", body)
         self.assertNotIn("creationUser", body)
         self.assertNotIn("creationSource", body)
 
@@ -817,6 +818,19 @@ class CanteenUpdateApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.canteen.refresh_from_db()
         self.assertEqual(self.canteen.management_type, Canteen.ManagementType.DIRECT)
+
+    @authenticate
+    def test_is_petite_structure_is_read_only_and_computed(self):
+        self.canteen.managers.add(authenticate.user)
+        self.assertFalse(self.canteen.is_petite_structure)  # several sectors
+
+        payload = {"sector_list": [Sector.EDUCATION_PRIMAIRE], "is_petite_structure": False}
+        response = self.client.patch(self.url, payload, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.json()["isPetiteStructure"])  # computed, payload value ignored
+        self.canteen.refresh_from_db()
+        self.assertTrue(self.canteen.is_petite_structure)
 
     @requests_mock.Mocker()
     @authenticate
