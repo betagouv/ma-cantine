@@ -1975,6 +1975,43 @@ class DiagnosticSatellitesNombreRepasAnTotalTest(TestCase):
         self.assertIsNone(diagnostic.satellites_nombre_repas_an)
         self.assertIsNone(diagnostic.satellites_nombre_repas_an_total)
 
+    def test_cout_repas_uses_the_total_if_nombre_repas_an_is_empty(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            valeur_totale=3000,
+            nombre_repas_an=None,
+            satellites_nombre_repas_an={
+                str(self.canteen_satellite_1.id): 1000,
+                str(self.canteen_satellite_2.id): 2000,
+            },
+        )
+        self.assertEqual(diagnostic.canteen_yearly_meal_count, 3000)
+        self.assertEqual(diagnostic.cout_repas, 1.0)
+
+    def test_cout_repas_uses_nombre_repas_an_if_filled(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            valeur_totale=3000,
+            nombre_repas_an=1500,
+            satellites_nombre_repas_an={str(self.canteen_satellite_1.id): 1000},
+        )
+        self.assertEqual(diagnostic.canteen_yearly_meal_count, 1500)
+        self.assertEqual(diagnostic.cout_repas, 2.0)
+
+    def test_teledeclare_freezes_the_satellites_nombre_repas_an(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an={str(self.canteen_satellite_1.id): 1000},
+        )
+        diagnostic.teledeclare(applicant=UserFactory(), skip_validations=True)
+        diagnostic.refresh_from_db()
+        satellites_snapshot = {satellite["id"]: satellite for satellite in diagnostic.satellites_snapshot}
+        self.assertEqual(satellites_snapshot[self.canteen_satellite_1.id]["nombre_repas_an"], 1000)
+        self.assertIsNone(satellites_snapshot[self.canteen_satellite_2.id]["nombre_repas_an"])
+
 
 class DiagnosticInvalidWarningQueriesTest(TestCase):
     def test_circuit_court_sup_france_query(self):
