@@ -177,6 +177,14 @@ const formatPayload = (form) => {
       :options="familleProduitOptions"
       :error-message="formatError(v$.familleProduits) || backendErrors.familleProduits"
     />
+    <DsfrButton
+      v-if="props.isPetiteStructure && form.familleProduits"
+      class="fr-mt-n2w fr-mb-4w"
+      label="Réinitialiser ma famille de produit"
+      icon="fr-icon-refresh-line"
+      tertiary
+      @click="form.familleProduits = null"
+    />
 
     <DsfrCheckboxSet
       class="purchase-form__inline-col fr-mb-2w"
