@@ -1161,6 +1161,13 @@ class Diagnostic(
         # satellites data
         if self.canteen.is_groupe_or_central_cuisine:
             serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in self.canteen.satellites]
+            # [NEW in 2026] groupe: freeze the nombre_repas_an of each satellite
+            if self.canteen.is_groupe and int(self.year) >= 2026:
+                satellites_nombre_repas_an = self.satellites_nombre_repas_an or {}
+                for serialized_satellite in serialized_satellites:
+                    serialized_satellite["nombre_repas_an"] = satellites_nombre_repas_an.get(
+                        str(serialized_satellite["id"])
+                    )
             self.satellites_snapshot = serialized_satellites
 
         # applicant data
