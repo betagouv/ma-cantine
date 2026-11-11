@@ -42,7 +42,7 @@ from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
     get_teledeclaration_field_groups,
 )
-from data.models.diagnostic_teledeclaration_badges import get_badge
+from data.models import diagnostic_teledeclaration_badges
 from data.models.diagnostic_teledeclaration_egalim_objectives import (
     EGALIM_REGION_GROUPS,
     get_egalim_objectives,
@@ -987,19 +987,47 @@ class Diagnostic(
 
     @property
     def waste_badge(self) -> bool | None:
-        return get_badge(self, "GASPILLAGE")
+        if self.year in [2021]:
+            return diagnostic_teledeclaration_badges.waste_badge_2021(self)
+        elif self.year in [2022, 2023, 2024, 2025]:
+            return diagnostic_teledeclaration_badges.waste_badge_2022(self)
+        elif self.year in [2026]:
+            return diagnostic_teledeclaration_badges.waste_badge_2026(self)
+        else:
+            return None
 
     @property
     def diversification_badge(self) -> bool | None:
-        return get_badge(self, "DIVERSIFICATION")
+        if self.year in [2021]:
+            return diagnostic_teledeclaration_badges.diversification_badge_2021(self)
+        elif self.year in [2022, 2023, 2024, 2025]:
+            return diagnostic_teledeclaration_badges.diversification_badge_2022(self)
+        elif self.year in [2026]:
+            return diagnostic_teledeclaration_badges.diversification_badge_2026(self)
+        else:
+            return None
 
     @property
     def plastic_badge(self) -> bool | None:
-        return get_badge(self, "PLASTIQUE")
+        if self.year in [2021]:
+            return diagnostic_teledeclaration_badges.plastic_badge_2021(self)
+        elif self.year in [2022, 2023, 2024, 2025]:
+            return diagnostic_teledeclaration_badges.plastic_badge_2022(self)
+        elif self.year in [2026]:
+            return diagnostic_teledeclaration_badges.plastic_badge_2026(self)
+        else:
+            return None
 
     @property
     def info_badge(self) -> bool | None:
-        return get_badge(self, "INFORMATION")
+        if self.year in [2021]:
+            return diagnostic_teledeclaration_badges.info_badge_2021(self)
+        elif self.year in [2022, 2023, 2024, 2025]:
+            return diagnostic_teledeclaration_badges.info_badge_2022(self)
+        elif self.year in [2026]:
+            return diagnostic_teledeclaration_badges.info_badge_2026(self)
+        else:
+            return None
 
     def _should_use_central_kitchen_appro(self):
         if self.canteen.is_satellite:
