@@ -6,6 +6,39 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.61.0](https://github.com/betagouv/ma-cantine/compare/v2026.60.0...v2026.61.0) (2026-11-11)
+
+
+### Nouveautés
+
+* **Achats:** API: famille_produits facultatif pour les cantines « petite structure » ([#7593](https://github.com/betagouv/ma-cantine/issues/7593)) ([23aced1](https://github.com/betagouv/ma-cantine/commit/23aced14adbdd9f21861ed85a48bd3bfb3b1630c))
+* **API:** Bilans: ouvre l'API v2 (bilan & volets) aux éditeurs via OAuth2 & l'ajoute à la documentation ([#7577](https://github.com/betagouv/ma-cantine/issues/7577)) ([aab9f02](https://github.com/betagouv/ma-cantine/commit/aab9f023f0c8262ed472e78cfdb0ce684e43900e))
+* **Cantines:** Admin: affiche & filtre sur le champ is_petite_structure ([#7586](https://github.com/betagouv/ma-cantine/issues/7586)) ([ac57071](https://github.com/betagouv/ma-cantine/commit/ac57071e091f3fe764b52657250f899ccc8758fd))
+* **Cantines:** API: expose le champ is_petite_structure (lecture seule) ([#7587](https://github.com/betagouv/ma-cantine/issues/7587)) ([895ad22](https://github.com/betagouv/ma-cantine/commit/895ad226f612f15809998f399f14f66fae828da1))
+* **Cantines:** nouveau champ calculé is_petite_structure (expérimentation « Petites structures ») ([#7584](https://github.com/betagouv/ma-cantine/issues/7584)) ([2bebfe3](https://github.com/betagouv/ma-cantine/commit/2bebfe39d15bb266536adb5a1900a22b60c52abf))
+* **dbt:** mart_cantines, nouvelle colonne is_petite_structure ([#7588](https://github.com/betagouv/ma-cantine/issues/7588)) ([e845e3d](https://github.com/betagouv/ma-cantine/commit/e845e3de0ee77566c9ecb2d02cc479f352159ef8))
+* **Diagnostic:** ajoute le calcule des badges par années pour les volets thématiques ([#7579](https://github.com/betagouv/ma-cantine/issues/7579)) ([98e1951](https://github.com/betagouv/ma-cantine/commit/98e1951cdb48bfca2062bc3caf737a0078a684f0))
+
+
+### Améliorations
+
+* **Achats:** intégre les modifications pour les Petites Structures ([#7595](https://github.com/betagouv/ma-cantine/issues/7595)) ([53a4bfc](https://github.com/betagouv/ma-cantine/commit/53a4bfcb1efba7958aa1a9bcbd5064e86ce36715))
+* **Diagnostic:** améliore le is_clean des volets thématiques  ([#7578](https://github.com/betagouv/ma-cantine/issues/7578)) ([5a00d6b](https://github.com/betagouv/ma-cantine/commit/5a00d6beae19c74f8c62f8ff34621a8df3620760))
+* **Diagnostic:** corrige la propriété "est dans l'administration" pour le calcul des badges ([#7591](https://github.com/betagouv/ma-cantine/issues/7591)) ([a1c2fb6](https://github.com/betagouv/ma-cantine/commit/a1c2fb61a68c4c3abbe0e4fd699e855ea6453cda))
+* **Télédéclaration:** dynamise le contenu du résumé du bilan en fonction des données du récapitulatif du bilan ([#7570](https://github.com/betagouv/ma-cantine/issues/7570)) ([99cf748](https://github.com/betagouv/ma-cantine/commit/99cf748003a5869b16f1140e1b6b430de319eec5))
+* **Télédéclaration:** l'affichage de l'icone "check" valide d'un volet ou d'un group prend en compte la visite de la page ([#7571](https://github.com/betagouv/ma-cantine/issues/7571)) ([ac6565e](https://github.com/betagouv/ma-cantine/commit/ac6565ecdfcc1621ea4be6644b72375319d18233))
+
+
+### Corrections (bugs, typos...)
+
+* **API:** Bilans: les volets additionnels d'un bilan télédéclaré deviennent modifiables via l'API pendant la campagne ([#7576](https://github.com/betagouv/ma-cantine/issues/7576)) ([0a52249](https://github.com/betagouv/ma-cantine/commit/0a522499beb2953a407f5e2bf7d637cd67bee60c))
+* **Imports:** Achats: corrige l'erreur lorsqu'un fournisseurs est vide ([#7594](https://github.com/betagouv/ma-cantine/issues/7594)) ([af7c299](https://github.com/betagouv/ma-cantine/commit/af7c29982163a70b4d9c50912e10ccdd5b41192a))
+
+
+### Technique
+
+* **Diagnostics:** renomme is_already_teledeclared & les constantes/fonction des volets modifiables après télédéclaration ([#7574](https://github.com/betagouv/ma-cantine/issues/7574)) ([55d66a7](https://github.com/betagouv/ma-cantine/commit/55d66a75611f33a7ee86ce06a0ad84b0fd882d17))
+
 ## [2026.60.0](https://github.com/betagouv/ma-cantine/compare/v2026.59.0...v2026.60.0) (2026-11-10)
 
 
