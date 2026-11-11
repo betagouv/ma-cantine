@@ -37,12 +37,19 @@ class DiagnosticBadgesTest(TestCase):
                 with self.subTest(year=year, volet=volet):
                     self.assertTrue(callable(getattr(diagnostic_teledeclaration_badges, function_name, None)))
 
-    def test_waste_badge_2021(self):
+    def test_badges_2021_not_available(self):
+        diagnostic = DiagnosticFactory(year=2021, **TELEDECLARED)
+        for badge in ["waste_badge", "diversification_badge", "plastic_badge", "info_badge"]:
+            with self.subTest(badge=badge):
+                self.assertIsNone(getattr(diagnostic, badge))
+
+    def test_waste_badge_2022(self):
         reached = {
             "diagnostic_gaspillage_realise": True,
             "actions_gaspillage_realisees": [Diagnostic.ActionsGaspillage.INSCRIPTION],
             "dons_convention": True,
             "tunnel_waste": "complet",
+            **TELEDECLARED,
         }
         cases = [
             ("all the objectives", {}, reached, True),
@@ -67,7 +74,6 @@ class DiagnosticBadgesTest(TestCase):
                 None,
             ),
         ]
-        self.assertBadge("waste_badge", 2021, cases)
         self.assertBadge("waste_badge", 2022, cases)
         self.assertBadge("waste_badge", 2023, cases)
         self.assertBadge("waste_badge", 2024, cases)
@@ -99,10 +105,10 @@ class DiagnosticBadgesTest(TestCase):
         ]
         self.assertBadge("waste_badge", 2026, cases)
 
-    def test_diversification_badge_2021(self):
+    def test_diversification_badge_2022(self):
         not_administration = {"sector_list": [Sector.SANTE_HOPITAL], "daily_meal_count": 12}
         administration = {"sector_list": [Sector.ADMINISTRATION_ADMINISTRATIF], "daily_meal_count": 12}
-        visited = {"plan_diversification_en_place": False, "tunnel_diversification": "complet"}
+        visited = {"plan_diversification_en_place": False, "tunnel_diversification": "complet", **TELEDECLARED}
         frequence = Diagnostic.MenuVegetarienFrequence
         cases = [
             (
@@ -148,7 +154,6 @@ class DiagnosticBadgesTest(TestCase):
                 None,
             ),
         ]
-        self.assertBadge("diversification_badge", 2021, cases)
         self.assertBadge("diversification_badge", 2022, cases)
         self.assertBadge("diversification_badge", 2023, cases)
         self.assertBadge("diversification_badge", 2024, cases)
@@ -291,7 +296,7 @@ class DiagnosticBadgesTest(TestCase):
         ]
         self.assertBadge("diversification_badge", 2026, cases)
 
-    def test_plastic_badge_2021(self):
+    def test_plastic_badge_2022(self):
         reached = {
             "plastique_contenant_cuisson_remplace": True,
             "plastique_contenant_service_remplace": True,
@@ -312,7 +317,6 @@ class DiagnosticBadgesTest(TestCase):
                 None,
             ),
         ]
-        self.assertBadge("plastic_badge", 2021, cases)
         self.assertBadge("plastic_badge", 2022, cases)
         self.assertBadge("plastic_badge", 2023, cases)
         self.assertBadge("plastic_badge", 2024, cases)
@@ -390,7 +394,7 @@ class DiagnosticBadgesTest(TestCase):
         ]
         self.assertBadge("plastic_badge", 2026, cases)
 
-    def test_info_badge_2021(self):
+    def test_info_badge_2022(self):
         cases = [
             ("informs on quality", {}, {"information_qualite_durable": True, "tunnel_info": "complet"}, True),
             ("does not inform", {}, {"information_qualite_durable": False, "tunnel_info": "complet"}, False),
@@ -401,7 +405,6 @@ class DiagnosticBadgesTest(TestCase):
                 None,
             ),
         ]
-        self.assertBadge("info_badge", 2021, cases)
         self.assertBadge("info_badge", 2022, cases)
         self.assertBadge("info_badge", 2023, cases)
         self.assertBadge("info_badge", 2024, cases)
@@ -451,6 +454,39 @@ class DiagnosticBadgesTest(TestCase):
             ),
         ]
         self.assertBadge("info_badge", 2026, cases)
+
+    def test_badges_2022_need_a_teledeclared_diagnostic(self):
+        """
+        The 2022 badges using the canteen_snapshot (waste & diversification) are None if not teledeclared
+        """
+        waste_reached = {
+            "diagnostic_gaspillage_realise": True,
+            "actions_gaspillage_realisees": [Diagnostic.ActionsGaspillage.INSCRIPTION],
+            "dons_convention": True,
+            "tunnel_waste": "complet",
+        }
+        diversification_reached = {
+            "menu_vegetarien_frequence": Diagnostic.MenuVegetarienFrequence.HEBDO,
+            "tunnel_diversification": "complet",
+        }
+        not_administration = {"sector_list": [Sector.SANTE_HOPITAL], "daily_meal_count": 12}
+        for year in [2022, 2023, 2024, 2025]:
+            self.assertBadge(
+                "waste_badge",
+                year,
+                [
+                    ("teledeclared", {}, {**waste_reached, **TELEDECLARED}, True),
+                    ("not teledeclared", {}, waste_reached, None),
+                ],
+            )
+            self.assertBadge(
+                "diversification_badge",
+                year,
+                [
+                    ("teledeclared", not_administration, {**diversification_reached, **TELEDECLARED}, True),
+                    ("not teledeclared", not_administration, diversification_reached, None),
+                ],
+            )
 
     def test_badges_2026_use_the_canteen_snapshot(self):
         """

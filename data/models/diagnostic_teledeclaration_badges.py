@@ -1,6 +1,6 @@
 """
 Badges of the volets thématiques.
-The rules are versioned by their first year (2021, 2026...): each year declares the function used for each volet in
+The rules are versioned by their first year (2021, 2022, 2026...): each year declares the function used for each volet in
 teledeclaration/<year>/badges.json
 Each badge returns:
 - True: the objectives are reached
@@ -42,7 +42,7 @@ def is_volet_completed(diagnostic, volet) -> bool:
 @dataclass
 class CanteenSnapshot:
     """
-    The canteen data at the time of the teledeclaration (used by the 2026 badges)
+    The canteen data at the time of the teledeclaration
     """
 
     daily_meal_count: int | None
@@ -62,8 +62,21 @@ def get_canteen_snapshot(diagnostic) -> CanteenSnapshot:
 
 
 # Gaspillage
-def waste_badge_2021(diagnostic) -> bool | None:
-    canteen = diagnostic.canteen
+def waste_badge_2021(diagnostic) -> None:
+    """
+    Not available yet: the 2021 canteen_snapshot doesn't have the canteen data needed (daily_meal_count, sectors)
+    (see docs/teledeclaration_versions.md)
+    """
+    return None
+
+
+def waste_badge_2022(diagnostic) -> bool | None:
+    """
+    Computed with the canteen data at the time of the teledeclaration (canteen_snapshot)
+    """
+    if not diagnostic.is_teledeclared:
+        return None
+    canteen = get_canteen_snapshot(diagnostic)
     if (
         diagnostic.diagnostic_gaspillage_realise
         and diagnostic.actions_gaspillage_realisees
@@ -91,8 +104,21 @@ def waste_badge_2026(diagnostic) -> bool | None:
 
 
 # Diversification
-def diversification_badge_2021(diagnostic) -> bool | None:
-    canteen = diagnostic.canteen
+def diversification_badge_2021(diagnostic) -> None:
+    """
+    Not available yet: the 2021 canteen_snapshot doesn't have the canteen data needed (daily_meal_count, sectors)
+    (see docs/teledeclaration_versions.md)
+    """
+    return None
+
+
+def diversification_badge_2022(diagnostic) -> bool | None:
+    """
+    Computed with the canteen data at the time of the teledeclaration (canteen_snapshot)
+    """
+    if not diagnostic.is_teledeclared:
+        return None
+    canteen = get_canteen_snapshot(diagnostic)
     has_daily_frequency = diagnostic.menu_vegetarien_frequence == MenuVegetarienFrequence.QUOTIDIEN
     has_weekly_or_more_frequency = diagnostic.menu_vegetarien_frequence in [
         MenuVegetarienFrequence.QUOTIDIEN,
@@ -155,7 +181,14 @@ def diversification_badge_2026(diagnostic) -> bool | None:
 
 
 # Plastique
-def plastic_badge_2021(diagnostic) -> bool | None:
+def plastic_badge_2021(diagnostic) -> None:
+    """
+    Not available yet for 2021
+    """
+    return None
+
+
+def plastic_badge_2022(diagnostic) -> bool | None:
     if (
         diagnostic.plastique_contenant_cuisson_remplace
         and diagnostic.plastique_contenant_service_remplace
@@ -190,7 +223,14 @@ def plastic_badge_2026(diagnostic) -> bool | None:
 
 
 # Information
-def info_badge_2021(diagnostic) -> bool | None:
+def info_badge_2021(diagnostic) -> None:
+    """
+    Not available yet for 2021
+    """
+    return None
+
+
+def info_badge_2022(diagnostic) -> bool | None:
     if diagnostic.information_qualite_durable:
         return True
     if diagnostic.tunnel_info:
@@ -229,7 +269,7 @@ def get_teledeclaration_badges_config(year):
 
 
 def get_badge_function_name(year, volet):
-    # the years without configuration (no year, or before 2021) use the first version
+    # the years without configuration (no year, or before 2021) use the 2021 version
     if year not in TELEDECLARATION_YEARS:
         return get_teledeclaration_badges_config(TELEDECLARATION_YEARS[0])[volet]
     return get_teledeclaration_badges_config(year)[volet]
