@@ -34,9 +34,9 @@ from data.models.diagnostic_teledeclaration_dates import (
     is_in_correction,
 )
 from data.models.diagnostic_teledeclaration_fields import (
+    TELEDECLARATION_YEARS,
     VOLETS_TUNNEL_PROGRESS_FIELD_MAPPING,
     get_teledeclaration_fields_all,
-    get_teledeclaration_fields_all_years,
 )
 from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
@@ -893,9 +893,17 @@ class Diagnostic(
         return not errors, errors
 
     def _is_clean_volet(self, volet) -> bool:
-        # the errors outside of the volets (ex: year) only impact is_clean
+        """
+        No error on the fields of the volet for the year of the diagnostic
+        (the errors outside of the volets, ex: year, only impact is_clean)
+        """
+        if self.year not in TELEDECLARATION_YEARS:
+            return False
+        if volet == "APPROVISIONNEMENT" and not self.diagnostic_type:
+            return False
         _, errors = self.is_clean(raise_errors=False)
-        return not any(field in errors for field in get_teledeclaration_fields_all_years(volet))
+        volet_fields = get_teledeclaration_fields_all(self.year, volet, self.diagnostic_type)
+        return not any(field in errors for field in volet_fields)
 
     @property
     def has_invalid_reason(self) -> bool:

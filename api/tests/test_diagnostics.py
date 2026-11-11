@@ -1688,7 +1688,7 @@ class DiagnosticDetailCheckApiTest(APITestCase):
     @authenticate
     def test_can_get_diagnostic_check_with_non_appro_clean_errors(self):
         self.canteen.managers.add(authenticate.user)
-        self.diagnostic.dechets_mesure_duree = 400  # max 365
+        self.diagnostic.dons_quantite = -1  # must be positive
         self.diagnostic.save()
 
         response = self.client.get(self.url)
@@ -1698,6 +1698,26 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["isClean"], False)
         self.assertEqual(body["isCleanGaspillage"], False)
         for volet in ["Approvisionnement", "Diversification", "Plastique", "Information"]:
+            self.assertEqual(body[f"isClean{volet}"], True)
+        self.assertIn("donsQuantite", body["errors"])
+
+    @authenticate
+    def test_can_get_diagnostic_check_with_clean_errors_on_field_of_another_year(self):
+        """
+        The isClean<Volet> only look at the fields of the volet for the diagnostic's year:
+        an error on a field from another year (dechets_mesure_duree: only in 2023) makes the diagnostic not clean,
+        but no volet is impacted
+        """
+        self.canteen.managers.add(authenticate.user)
+        self.diagnostic.dechets_mesure_duree = 400  # max 365
+        self.diagnostic.save()
+
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["isClean"], False)
+        for volet in ["Approvisionnement", "Gaspillage", "Diversification", "Plastique", "Information"]:
             self.assertEqual(body[f"isClean{volet}"], True)
         self.assertIn("dechetsMesureDuree", body["errors"])
 
