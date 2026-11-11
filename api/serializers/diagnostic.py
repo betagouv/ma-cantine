@@ -387,6 +387,7 @@ class DiagnosticRecapSerializer(ReadOnlySerializerMixin, serializers.Serializer)
     declaration_donnees = serializers.JSONField()
     canteen_diagnostic_id = serializers.IntegerField(source="canteen_diagnostic.id", allow_null=True)
     canteen_diagnostic_appro_stats = DiagnosticApproStatsSerializer(source="canteen_diagnostic")
+    canteen_diagnostic_thematiques_stats = serializers.SerializerMethodField()
     generated_from_groupe_diagnostic_id = serializers.IntegerField(
         source="generated_from_groupe_diagnostic.id", allow_null=True
     )
@@ -397,3 +398,14 @@ class DiagnosticRecapSerializer(ReadOnlySerializerMixin, serializers.Serializer)
         source="generated_from_groupe_diagnostic"
     )
     notes = serializers.DictField()
+
+    def get_canteen_diagnostic_thematiques_stats(self, obj):
+        canteen_diagnostic = obj["canteen_diagnostic"]
+        if canteen_diagnostic and canteen_diagnostic.is_teledeclared:
+            return {
+                "objectifs_diversification_atteints": canteen_diagnostic.objectifs_diversification_atteints,
+                "objectifs_plastique_atteints": canteen_diagnostic.objectifs_plastique_atteints,
+                "objectifs_gaspillage_atteints": canteen_diagnostic.objectifs_gaspillage_atteints,
+                "objectifs_information_atteints": canteen_diagnostic.objectifs_information_atteints,
+            }
+        return None
