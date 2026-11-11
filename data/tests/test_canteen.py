@@ -1297,6 +1297,112 @@ class CanteenIsFilledQuerySetAndPropertyTest(TestCase):
                 self.assertFalse(canteen._is_filled())
 
 
+class CanteenIsPetiteStructureQuerySetAndPropertyTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_petite_structure_list = [
+            CanteenFactory(
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.ON_SITE,
+                sector_list=sector_list,
+                daily_meal_count=daily_meal_count,
+            )
+            for sector_list, daily_meal_count in [
+                ([Sector.EDUCATION_PRIMAIRE], 30),
+                ([Sector.SOCIAL_CRECHE], 3),
+                ([Sector.SANTE_HOPITAL], 70),
+            ]
+        ]
+        cls.canteen_not_petite_structure_list = [
+            # threshold exceeded
+            CanteenFactory(
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.ON_SITE,
+                sector_list=[Sector.EDUCATION_PRIMAIRE],
+                daily_meal_count=31,
+            ),
+            CanteenFactory(
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.ON_SITE,
+                sector_list=[Sector.SANTE_HOPITAL],
+                daily_meal_count=71,
+            ),
+            # several sectors (even if eligible)
+            CanteenFactory(
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.ON_SITE,
+                sector_list=[Sector.SOCIAL_EHPAD, Sector.LOISIR_CENTRE_VACANCES],
+                daily_meal_count=20,
+            ),
+            # sector not eligible
+            CanteenFactory(
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.ON_SITE,
+                sector_list=[Sector.EDUCATION_SECONDAIRE_COLLEGE],
+                daily_meal_count=10,
+            ),
+            CanteenFactory(
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.ON_SITE,
+                sector_list=[Sector.EDUCATION_PRIMAIRE, Sector.EDUCATION_SECONDAIRE_COLLEGE],
+                daily_meal_count=10,
+            ),
+            # management_type not eligible
+            CanteenFactory(
+                management_type=Canteen.ManagementType.CONCEDED,
+                production_type=Canteen.ProductionType.ON_SITE,
+                sector_list=[Sector.EDUCATION_PRIMAIRE],
+                daily_meal_count=10,
+            ),
+            # production_type not eligible
+            CanteenFactory(
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+                sector_list=[Sector.EDUCATION_PRIMAIRE],
+                daily_meal_count=10,
+            ),
+            CanteenFactory(
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.GROUPE,
+                daily_meal_count=10,
+            ),
+            # missing data
+            CanteenFactory(
+                management_type=Canteen.ManagementType.DIRECT,
+                production_type=Canteen.ProductionType.ON_SITE,
+                sector_list=[Sector.EDUCATION_PRIMAIRE],
+                daily_meal_count=None,
+                skip_validations=True,
+            ),
+        ]
+
+    def test_is_petite_structure_queryset(self):
+        self.assertEqual(
+            Canteen.objects.count(),
+            len(self.canteen_petite_structure_list) + len(self.canteen_not_petite_structure_list),
+        )
+        self.assertEqual(Canteen.objects.is_petite_structure().count(), len(self.canteen_petite_structure_list))
+
+    def test_is_petite_structure_field_and_property_true(self):
+        for index, canteen in enumerate(self.canteen_petite_structure_list):
+            with self.subTest(index=index, canteen=canteen):
+                self.assertTrue(canteen.is_petite_structure)
+                self.assertTrue(canteen._is_petite_structure())
+
+    def test_is_petite_structure_field_and_property_false(self):
+        for index, canteen in enumerate(self.canteen_not_petite_structure_list):
+            with self.subTest(index=index, canteen=canteen):
+                self.assertFalse(canteen.is_petite_structure)
+                self.assertFalse(canteen._is_petite_structure())
+
+    def test_is_petite_structure_updated_on_save(self):
+        canteen = self.canteen_petite_structure_list[0]
+        canteen.daily_meal_count = 100
+        canteen.save()
+        canteen.refresh_from_db()
+        self.assertFalse(canteen.is_petite_structure)
+
+
 class CanteenIsCleanMethodTest(TestCase):
     @classmethod
     def setUpTestData(cls):
