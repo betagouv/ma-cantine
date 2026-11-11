@@ -7,6 +7,15 @@ from django.conf import settings
 TELEDECLARATION_YEARS = [2021, 2022, 2023, 2024, 2025, 2026]
 VOLETS = ["APPROVISIONNEMENT", "GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]
 DIAGNOSTIC_TYPES = ["SIMPLE", "COMPLETE"]
+VOLETS_TUNNEL_PROGRESS_FIELD_MAPPING = {
+    "APPROVISIONNEMENT": "tunnel_appro",
+    "GASPILLAGE": "tunnel_waste",
+    "DIVERSIFICATION": "tunnel_diversification",
+    "PLASTIQUE": "tunnel_plastic",
+    "INFORMATION": "tunnel_info",
+}
+# opt-in: the volets that can still be edited once the diagnostic is teledeclared (the APPROVISIONNEMENT volet can't)
+VOLETS_EDITABLE_WHEN_IS_TELEDECLARED_ALREADY = ["GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]
 
 
 @cache
@@ -133,37 +142,26 @@ def get_teledeclaration_fields_all_volets(year, diagnostic_type):
     return [field for volet in VOLETS for field in get_teledeclaration_fields_all(year, volet, diagnostic_type)]
 
 
-TUNNEL_PROGRESS_FIELD_BY_VOLET = {
-    "APPROVISIONNEMENT": "tunnel_appro",
-    "GASPILLAGE": "tunnel_waste",
-    "DIVERSIFICATION": "tunnel_diversification",
-    "PLASTIQUE": "tunnel_plastic",
-    "INFORMATION": "tunnel_info",
-}
-
-
 def get_tunnel_progress_field(volet):
     """
     The tunnel_* field of the volet (used by the frontend to store the progress in the volet's tunnel)
     """
-    if volet not in TUNNEL_PROGRESS_FIELD_BY_VOLET:
-        raise ValueError(f"Volet expected one of {list(TUNNEL_PROGRESS_FIELD_BY_VOLET.keys())} but got '{volet}'.")
-    return TUNNEL_PROGRESS_FIELD_BY_VOLET[volet]
+    if volet not in VOLETS_TUNNEL_PROGRESS_FIELD_MAPPING:
+        raise ValueError(
+            f"Volet expected one of {list(VOLETS_TUNNEL_PROGRESS_FIELD_MAPPING.keys())} but got '{volet}'."
+        )
+    return VOLETS_TUNNEL_PROGRESS_FIELD_MAPPING[volet]
 
 
-# opt-in: the volets that can still be edited once the diagnostic is teledeclared (the APPROVISIONNEMENT volet can't)
-VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED = ["GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]
-
-
-def get_fields_editable_even_if_is_teledeclared(year):
+def get_fields_editable_when_is_teledeclared_already(year):
     """
     The fields that can still be edited once the diagnostic is teledeclared
-    (see VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED)
+    (see VOLETS_EDITABLE_WHEN_IS_TELEDECLARED_ALREADY)
     - the fields of these volets for the given year
     - their tunnel_* field
     """
     return [
         field
-        for volet in VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED
+        for volet in VOLETS_EDITABLE_WHEN_IS_TELEDECLARED_ALREADY
         for field in get_teledeclaration_fields_all(year, volet)
-    ] + [get_tunnel_progress_field(volet) for volet in VOLETS_EDITABLE_EVEN_IF_IS_TELEDECLARED]
+    ] + [get_tunnel_progress_field(volet) for volet in VOLETS_EDITABLE_WHEN_IS_TELEDECLARED_ALREADY]

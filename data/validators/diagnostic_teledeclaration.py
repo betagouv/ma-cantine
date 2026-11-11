@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 
 from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
-from data.models.diagnostic_teledeclaration_fields import get_fields_editable_even_if_is_teledeclared
+from data.models.diagnostic_teledeclaration_fields import get_fields_editable_when_is_teledeclared_already
 
 
 OUT_OF_CAMPAIGN_ERROR_MESSAGES = {
@@ -64,8 +64,8 @@ def validate_applicant_is_canteen_manager(instance, applicant):
 
 def validate_submitted_diagnostic_update(instance):
     """
-    Rules when updating an already teledeclared diagnostic (see Diagnostic.is_already_teledeclared)
-    - only the fields of some volets can be edited (opt-in, see get_fields_editable_even_if_is_teledeclared)
+    Rules when updating an already teledeclared diagnostic (see Diagnostic.is_teledeclared_already)
+    - only the fields of some volets can be edited (opt-in, see get_fields_editable_when_is_teledeclared_already)
     - only during the campaign (teledeclaration or correction) of the diagnostic's year
     The changes are detected with django-dirtyfields.
     """
@@ -73,7 +73,7 @@ def validate_submitted_diagnostic_update(instance):
     if not changed_fields:
         return
 
-    editable_fields = get_fields_editable_even_if_is_teledeclared(instance.year)
+    editable_fields = get_fields_editable_when_is_teledeclared_already(instance.year)
     locked_fields_changed = [field_name for field_name in changed_fields if field_name not in editable_fields]
     if locked_fields_changed:
         raise ValidationError(
