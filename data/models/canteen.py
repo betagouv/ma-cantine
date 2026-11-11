@@ -29,6 +29,7 @@ from data.models.sector import (
     SectorM2M,
     annotate_with_sector_category_list,
 )
+from data.models.canteen_petite_structure import compute_is_petite_structure
 from data.utils import has_charfield_missing_query
 from data.validators import canteen as canteen_validators
 from data.models.diagnostic_teledeclaration_dates import (
@@ -95,6 +96,10 @@ def is_public_query():
 
 def is_filled_query():
     return Q(is_filled=True)
+
+
+def is_petite_structure_query():
+    return Q(is_petite_structure=True)
 
 
 class CanteenQuerySet(SoftDeletionQuerySet):
@@ -259,6 +264,9 @@ class CanteenQuerySet(SoftDeletionQuerySet):
 
     def is_filled(self):
         return self.filter(is_filled_query())
+
+    def is_petite_structure(self):
+        return self.filter(is_petite_structure_query())
 
     def group_and_count_by_field(self, field):
         """
@@ -596,6 +604,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     )
 
     is_filled = models.BooleanField(default=False, verbose_name="cantine complétée ? (champ calculé)")
+    is_petite_structure = models.BooleanField(
+        default=False, verbose_name="petite structure (expérimentation) ? (champ calculé)"
+    )
 
     # TDs (rempli grâce à teledeclare & canteen_fill_declaration_donnees_year_field)
     declaration_donnees_2021 = models.BooleanField(default=False, verbose_name="a télédéclaré ses données de 2021")
@@ -754,6 +765,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     def set_is_filled(self):
         self.is_filled = self._is_filled()
 
+    def set_is_petite_structure(self):
+        self.is_petite_structure = self._is_petite_structure()
+
     def clean(self, *args, **kwargs):
         validation_errors = utils_utils.merge_validation_errors(
             canteen_validators.validate_canteen_siret_or_siren_unite_legale(self),
@@ -782,6 +796,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         if not skip_validations:
             self.is_clean(raise_errors=True)
         self.set_is_filled()
+        self.set_is_petite_structure()
         super().save(**kwargs)
         # see also: post_save signal
 
@@ -952,6 +967,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         ):
             is_filled = bool(self.line_ministry)
         return is_filled
+
+    def _is_petite_structure(self) -> bool:
+        return compute_is_petite_structure(self)
 
     def is_clean(self, raise_errors=False) -> tuple[bool, dict]:
         try:
