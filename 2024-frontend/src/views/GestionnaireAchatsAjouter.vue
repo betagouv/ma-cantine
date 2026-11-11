@@ -10,6 +10,7 @@ import urlService from "@/services/urls.js"
 import purchasesService from "@/services/purchases.js"
 import AppRessources from "@/components/AppRessources.vue"
 import PurchaseForm from "@/components/PurchaseForm.vue"
+import PurchasesAlertPetiteStructure from "@/components/PurchasesAlertPetiteStructure.vue"
 import PurchaseFormSuccessModal from "@/components/PurchaseFormSuccessModal.vue"
 
 /* Props */
@@ -78,15 +79,7 @@ const resetForm = () => {
       </li>
     </AppRessources>
   </section>
-  <DsfrAlert v-if="isPetiteStructure" title="Vous participez à l'expérimentation « Petites structures » ?" type="info" class="fr-mb-4w">
-    <p>
-      Pour cette première année, vous n'avez pas besoin de renseigner les familles de produits. Il vous suffit de suivre vos achats alimentaires en distinguant les produits bio des produits non bio.
-    </p>
-    <p>
-      Pour savoir comment renseigner vos achats dans cet outil, consultez
-      <a href="https://documentation.ma-cantine.agriculture.gouv.fr/fr/article/1l2amkb/" target="_blank">notre documentation dédiée</a>.
-    </p>
-  </DsfrAlert>
+  <PurchasesAlertPetiteStructure v-if="isPetiteStructure" />
   <PurchaseForm
     :key="forceRerender"
     @sendForm="(payload) => savePurchase(payload)"
