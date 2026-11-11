@@ -181,7 +181,7 @@ class BasePurchasesImportView(BaseImportView):
         purchase = Purchase(
             canteen=canteen,
             description=description.strip(),
-            fournisseur=fournisseur.strip(),
+            fournisseur=fournisseur.strip() if fournisseur else "",
             date=date.strip(),
             prix_ht=prix_ht,
             famille_produits=famille_produits.strip(),
