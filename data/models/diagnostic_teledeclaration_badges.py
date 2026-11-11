@@ -1,0 +1,95 @@
+"""
+Badges of the volets thématiques.
+The rules are versioned (v1, v2...): each year declares the function used for each volet in
+teledeclaration/<year>/badges.json
+Each badge returns:
+- True: the objectives are reached
+- False: the objectives are not reached (and the volet has been visited in the tunnel)
+- None: not enough information
+"""
+
+import json
+from functools import cache
+from pathlib import Path
+from django.conf import settings
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_YEARS
+from data.models.diagnostic_volet_diversification import DiagnosticVoletDiversificationMixin
+
+MenuVegetarienFrequence = DiagnosticVoletDiversificationMixin.MenuVegetarienFrequence
+
+
+# Gaspillage
+def waste_badge_v1(diagnostic) -> bool | None:
+    canteen = diagnostic.canteen
+    if (
+        diagnostic.diagnostic_gaspillage_realise
+        and diagnostic.actions_gaspillage_realisees
+        and len(diagnostic.actions_gaspillage_realisees) > 0
+    ):
+        if diagnostic.dons_convention or (canteen.daily_meal_count and canteen.daily_meal_count < 3000):
+            return True
+    if diagnostic.tunnel_waste:
+        return False
+
+
+# Diversification
+def diversification_badge_v1(diagnostic) -> bool | None:
+    canteen = diagnostic.canteen
+    has_daily_frequency = diagnostic.menu_vegetarien_frequence == MenuVegetarienFrequence.QUOTIDIEN
+    has_weekly_or_more_frequency = diagnostic.menu_vegetarien_frequence in [
+        MenuVegetarienFrequence.QUOTIDIEN,
+        MenuVegetarienFrequence.HEBDO,
+        MenuVegetarienFrequence.PLUS_HEBDO,
+    ]
+    # Only the canteens with more than 200 daily meals with a diversification plan
+    if canteen.daily_meal_count and canteen.daily_meal_count >= 200 and diagnostic.plan_diversification_en_place:
+        return True
+    # Only the canteens in the administration sector must have a daily frequency
+    if canteen.in_administration and has_daily_frequency:
+        return True
+    if not canteen.in_administration and has_weekly_or_more_frequency:
+        return True
+    if diagnostic.tunnel_diversification:
+        return False
+
+
+# Plastique
+def plastic_badge_v1(diagnostic) -> bool | None:
+    if (
+        diagnostic.plastique_contenant_cuisson_remplace
+        and diagnostic.plastique_contenant_service_remplace
+        and diagnostic.plastique_bouteille_remplace
+        and diagnostic.plastique_ustensile_remplace
+    ):
+        return True
+    if diagnostic.tunnel_plastic:
+        return False
+
+
+# Information
+def info_badge_v1(diagnostic) -> bool | None:
+    if diagnostic.information_qualite_durable:
+        return True
+    if diagnostic.tunnel_info:
+        return False
+
+
+@cache
+def get_teledeclaration_badges_config(year):
+    """
+    The badges configuration of a bilan year: teledeclaration/<year>/badges.json
+    """
+    config_path = Path(settings.BASE_DIR) / "teledeclaration" / str(year) / "badges.json"
+    return json.loads(config_path.read_text(encoding="utf-8"))
+
+
+def get_badge_function_name(year, volet):
+    # the years without configuration (no year, or before 2021) use the first version
+    if year not in TELEDECLARATION_YEARS:
+        return get_teledeclaration_badges_config(TELEDECLARATION_YEARS[0])[volet]
+    return get_teledeclaration_badges_config(year)[volet]
+
+
+def get_badge(diagnostic, volet) -> bool | None:
+    function_name = get_badge_function_name(diagnostic.year, volet)
+    return globals()[function_name](diagnostic)

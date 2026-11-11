@@ -42,6 +42,7 @@ from data.models.diagnostic_teledeclaration_field_groups import (
     TELEDECLARATION_FIELD_GROUPS,
     get_teledeclaration_field_groups,
 )
+from data.models.diagnostic_teledeclaration_badges import get_badge
 from data.models.diagnostic_teledeclaration_egalim_objectives import (
     EGALIM_REGION_GROUPS,
     get_egalim_objectives,
@@ -986,57 +987,19 @@ class Diagnostic(
 
     @property
     def waste_badge(self) -> bool | None:
-        if (
-            self.diagnostic_gaspillage_realise
-            and self.actions_gaspillage_realisees
-            and len(self.actions_gaspillage_realisees) > 0
-        ):
-            if self.dons_convention or (self.canteen.daily_meal_count and self.canteen.daily_meal_count < 3000):
-                return True
-        if self.tunnel_waste:
-            return False
+        return get_badge(self, "GASPILLAGE")
 
     @property
     def diversification_badge(self) -> bool | None:
-        has_daily_frequency = self.menu_vegetarien_frequence == Diagnostic.MenuVegetarienFrequence.QUOTIDIEN
-        has_weekly_or_more_frequency = self.menu_vegetarien_frequence in [
-            Diagnostic.MenuVegetarienFrequence.QUOTIDIEN,
-            Diagnostic.MenuVegetarienFrequence.HEBDO,
-            Diagnostic.MenuVegetarienFrequence.PLUS_HEBDO,
-        ]
-        # Only the canteens with more than 200 daily meals with a diversification plan
-        if (
-            self.canteen.daily_meal_count
-            and self.canteen.daily_meal_count >= 200
-            and self.plan_diversification_en_place
-        ):
-            return True
-        # Only the canteens in the administration sector must have a daily frequency
-        if self.canteen.in_administration and has_daily_frequency:
-            return True
-        if not self.canteen.in_administration and has_weekly_or_more_frequency:
-            return True
-        if self.tunnel_diversification:
-            return False
+        return get_badge(self, "DIVERSIFICATION")
 
     @property
     def plastic_badge(self) -> bool | None:
-        if (
-            self.plastique_contenant_cuisson_remplace
-            and self.plastique_contenant_service_remplace
-            and self.plastique_bouteille_remplace
-            and self.plastique_ustensile_remplace
-        ):
-            return True
-        if self.tunnel_plastic:
-            return False
+        return get_badge(self, "PLASTIQUE")
 
     @property
     def info_badge(self) -> bool | None:
-        if self.information_qualite_durable:
-            return True
-        if self.tunnel_info:
-            return False
+        return get_badge(self, "INFORMATION")
 
     def _should_use_central_kitchen_appro(self):
         if self.canteen.is_satellite:
