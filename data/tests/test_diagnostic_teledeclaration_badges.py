@@ -30,7 +30,7 @@ class DiagnosticBadgesTest(TestCase):
                 with self.subTest(year=year, volet=volet):
                     self.assertTrue(callable(getattr(diagnostic_teledeclaration_badges, function_name, None)))
 
-    def test_waste_badge_v1(self):
+    def test_waste_badge_2021(self):
         reached = {
             "diagnostic_gaspillage_realise": True,
             "actions_gaspillage_realisees": [Diagnostic.ActionsGaspillage.INSCRIPTION],
@@ -66,7 +66,7 @@ class DiagnosticBadgesTest(TestCase):
         self.assertBadge("waste_badge", 2024, cases)
         self.assertBadge("waste_badge", 2025, cases)
 
-    def test_waste_badge_v2(self):
+    def test_waste_badge_2026(self):
         reached = {
             "diagnostic_gaspillage_realise": True,
             "actions_gaspillage_realisees": [Diagnostic.ActionsGaspillage.INSCRIPTION],
@@ -92,7 +92,7 @@ class DiagnosticBadgesTest(TestCase):
         ]
         self.assertBadge("waste_badge", 2026, cases)
 
-    def test_diversification_badge_v1(self):
+    def test_diversification_badge_2021(self):
         not_administration = {"sector_list": [Sector.SANTE_HOPITAL], "daily_meal_count": 12}
         administration = {"sector_list": [Sector.ADMINISTRATION_ADMINISTRATIF], "daily_meal_count": 12}
         visited = {"plan_diversification_en_place": False, "tunnel_diversification": "complet"}
@@ -147,7 +147,7 @@ class DiagnosticBadgesTest(TestCase):
         self.assertBadge("diversification_badge", 2024, cases)
         self.assertBadge("diversification_badge", 2025, cases)
 
-    def test_diversification_badge_v2(self):
+    def test_diversification_badge_2026(self):
         hospital = {"sector_list": [Sector.SANTE_HOPITAL], "daily_meal_count": 12}
         primaire = {"sector_list": [Sector.EDUCATION_PRIMAIRE], "daily_meal_count": 12}
         college = {"sector_list": [Sector.EDUCATION_SECONDAIRE_COLLEGE], "daily_meal_count": 12}
@@ -284,7 +284,7 @@ class DiagnosticBadgesTest(TestCase):
         ]
         self.assertBadge("diversification_badge", 2026, cases)
 
-    def test_plastic_badge_v1(self):
+    def test_plastic_badge_2021(self):
         reached = {
             "plastique_contenant_cuisson_remplace": True,
             "plastique_contenant_service_remplace": True,
@@ -311,7 +311,7 @@ class DiagnosticBadgesTest(TestCase):
         self.assertBadge("plastic_badge", 2024, cases)
         self.assertBadge("plastic_badge", 2025, cases)
 
-    def test_plastic_badge_v2(self):
+    def test_plastic_badge_2026(self):
         entreprise = {"sector_list": [Sector.ENTERPRISE_ENTREPRISE], "daily_meal_count": 12}
         primaire = {"sector_list": [Sector.EDUCATION_PRIMAIRE], "daily_meal_count": 12}
         creche = {"sector_list": [Sector.SOCIAL_CRECHE], "daily_meal_count": 12}
@@ -383,7 +383,7 @@ class DiagnosticBadgesTest(TestCase):
         ]
         self.assertBadge("plastic_badge", 2026, cases)
 
-    def test_info_badge_v1(self):
+    def test_info_badge_2021(self):
         cases = [
             ("informs on quality", {}, {"information_qualite_durable": True, "tunnel_info": "complet"}, True),
             ("does not inform", {}, {"information_qualite_durable": False, "tunnel_info": "complet"}, False),
@@ -400,7 +400,7 @@ class DiagnosticBadgesTest(TestCase):
         self.assertBadge("info_badge", 2024, cases)
         self.assertBadge("info_badge", 2025, cases)
 
-    def test_info_badge_v2(self):
+    def test_info_badge_2026(self):
         hospital = {"sector_list": [Sector.SANTE_HOPITAL]}
         primaire = {"sector_list": [Sector.EDUCATION_PRIMAIRE]}
         creche = {"sector_list": [Sector.SOCIAL_CRECHE]}
@@ -445,9 +445,9 @@ class DiagnosticBadgesTest(TestCase):
         ]
         self.assertBadge("info_badge", 2026, cases)
 
-    def test_badges_v2_need_a_teledeclared_filled_and_clean_volet(self):
+    def test_badges_2026_need_a_teledeclared_filled_and_clean_volet(self):
         """
-        The v2 badges are None if the diagnostic is not teledeclared, or if the volet is empty or not clean
+        The 2026 badges are None if the diagnostic is not teledeclared, or if the volet is empty or not clean
         (see is_volet_completed: same for all the volets, tested here with the gaspillage volet)
         """
         reached = {

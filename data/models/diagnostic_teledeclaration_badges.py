@@ -1,6 +1,6 @@
 """
 Badges of the volets thématiques.
-The rules are versioned (v1, v2...): each year declares the function used for each volet in
+The rules are versioned by their first year (2021, 2026...): each year declares the function used for each volet in
 teledeclaration/<year>/badges.json
 Each badge returns:
 - True: the objectives are reached
@@ -22,7 +22,7 @@ ServiceType = DiagnosticVoletDiversificationMixin.ServiceType
 
 def is_volet_completed(diagnostic, volet) -> bool:
     """
-    The v2 badges are only computed if the diagnostic is teledeclared, and the volet is filled without errors
+    The 2026 badges are only computed if the diagnostic is teledeclared, and the volet is filled without errors
     """
     volet_name = volet.lower()
     return (
@@ -33,7 +33,7 @@ def is_volet_completed(diagnostic, volet) -> bool:
 
 
 # Gaspillage
-def waste_badge_v1(diagnostic) -> bool | None:
+def waste_badge_2021(diagnostic) -> bool | None:
     canteen = diagnostic.canteen
     if (
         diagnostic.diagnostic_gaspillage_realise
@@ -46,7 +46,7 @@ def waste_badge_v1(diagnostic) -> bool | None:
         return False
 
 
-def waste_badge_v2(diagnostic) -> bool | None:
+def waste_badge_2026(diagnostic) -> bool | None:
     if not is_volet_completed(diagnostic, "GASPILLAGE"):
         return None
     canteen = diagnostic.canteen
@@ -62,7 +62,7 @@ def waste_badge_v2(diagnostic) -> bool | None:
 
 
 # Diversification
-def diversification_badge_v1(diagnostic) -> bool | None:
+def diversification_badge_2021(diagnostic) -> bool | None:
     canteen = diagnostic.canteen
     has_daily_frequency = diagnostic.menu_vegetarien_frequence == MenuVegetarienFrequence.QUOTIDIEN
     has_weekly_or_more_frequency = diagnostic.menu_vegetarien_frequence in [
@@ -82,7 +82,7 @@ def diversification_badge_v1(diagnostic) -> bool | None:
         return False
 
 
-def diversification_badge_v2(diagnostic) -> bool | None:
+def diversification_badge_2026(diagnostic) -> bool | None:
     """
     True if all the obligations that apply to the canteen are met
     If no obligation applies: True if a diversification plan with actions, or a vegetarian menu
@@ -126,7 +126,7 @@ def diversification_badge_v2(diagnostic) -> bool | None:
 
 
 # Plastique
-def plastic_badge_v1(diagnostic) -> bool | None:
+def plastic_badge_2021(diagnostic) -> bool | None:
     if (
         diagnostic.plastique_contenant_cuisson_remplace
         and diagnostic.plastique_contenant_service_remplace
@@ -138,7 +138,7 @@ def plastic_badge_v1(diagnostic) -> bool | None:
         return False
 
 
-def plastic_badge_v2(diagnostic) -> bool | None:
+def plastic_badge_2026(diagnostic) -> bool | None:
     """
     For all the canteens: plastic drink bottles replaced
     Education: plastic water bottles replaced
@@ -161,14 +161,14 @@ def plastic_badge_v2(diagnostic) -> bool | None:
 
 
 # Information
-def info_badge_v1(diagnostic) -> bool | None:
+def info_badge_2021(diagnostic) -> bool | None:
     if diagnostic.information_qualite_durable:
         return True
     if diagnostic.tunnel_info:
         return False
 
 
-def info_badge_v2(diagnostic) -> bool | None:
+def info_badge_2026(diagnostic) -> bool | None:
     """
     For all the canteens: part EGalim, permanent display and annual electronic communication
     For some sectors (education, health, social, prisons): regular consultation on the food quality
