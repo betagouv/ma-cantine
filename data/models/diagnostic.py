@@ -25,6 +25,7 @@ from data.utils import (
     CustomJSONEncoder,
     has_arrayfield_missing_query,
     make_optional_positive_decimal_field,
+    make_optional_positive_integer_field,
     to_decimal,
 )
 from data.validators import diagnostic as diagnostic_validators
@@ -482,6 +483,7 @@ class Diagnostic(
 
     OTHER_COMPUTED_FIELDS = [
         "cout_repas",
+        "satellites_nombre_repas_an_total",
         "is_filled",
     ]
 
@@ -505,6 +507,11 @@ class Diagnostic(
     CANTEEN_FIELDS = [
         # new in 2026
         "nombre_repas_an",
+    ]
+
+    # new in 2026 (only relevant for groupes)
+    GROUPE_FIELDS = [
+        "satellites_nombre_repas_an",
     ]
 
     META_FIELDS = [
@@ -710,6 +717,18 @@ class Diagnostic(
         encoder=CustomJSONEncoder,
     )
 
+    # Groupe: nombre de repas annuels de chaque satellite (seulement pertinent pour les groupes)
+    satellites_nombre_repas_an = models.JSONField(
+        verbose_name="nombre de repas par an de chaque satellite (seulement pertinent pour les groupes)",
+        help_text='format : {"<id de la cantine satellite>": <nombre de repas par an>}',
+        blank=True,
+        null=True,
+    )
+    satellites_nombre_repas_an_total = make_optional_positive_integer_field(
+        verbose_name="somme des nombres de repas par an des satellites (champ calculé)",
+        help_text="seulement les satellites encore rattachés au groupe",
+    )
+
     cout_repas = make_optional_positive_decimal_field(
         verbose_name="coût repas (champ calculé)",
         help_text="le coût repas est calculé en divisant la valeur totale annuelle par le nombre de repas annuels de la cantine",
@@ -837,11 +856,33 @@ class Diagnostic(
                     self.populate_required_fields_with_zero()
             self.populate_aggregated_values()
             self.populate_stats_values()
+            self.populate_satellites_nombre_repas_an_total()
             self.populate_cout_repas()
         self.set_is_filled()
 
     def set_is_filled(self):
         self.is_filled = self._is_filled()
+
+    def populate_satellites_nombre_repas_an_total(self):
+        self.satellites_nombre_repas_an_total = self.compute_satellites_nombre_repas_an_total()
+
+    def compute_satellites_nombre_repas_an_total(self):
+        """
+        Sum of the satellites_nombre_repas_an values
+        - only for groupes
+        - only the satellites still linked to the groupe (a satellite can be detached after its value was filled)
+        """
+        if not self.canteen or not self.canteen.is_groupe or not self.satellites_nombre_repas_an:
+            return None
+        satellite_id_list = {
+            str(satellite_id) for satellite_id in self.canteen.satellites.values_list("id", flat=True)
+        }
+        value_list = [
+            value
+            for satellite_id, value in self.satellites_nombre_repas_an.items()
+            if satellite_id in satellite_id_list and value is not None
+        ]
+        return sum(value_list) if value_list else None
 
     def populate_cout_repas(self):
         self.cout_repas = self.compute_cout_repas()
