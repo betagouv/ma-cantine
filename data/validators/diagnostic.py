@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.utils import timezone
 
 from data.models.definitionlocal import DefinitionLocal
+from data.validators.canteen import CANTEEN_YEARLY_MEAL_COUNT_MIN
 from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
     get_current_campaign_year,
@@ -112,6 +113,49 @@ def validate_canteen_fields_required(instance):
                     utils_utils.add_validation_error(
                         errors, field, f"Ce champ est obligatoire pour l'année {instance.year}."
                     )
+    return errors
+
+
+def validate_groupe_satellites_nombre_repas_an(instance):
+    """
+    [NEW in 2026] Groupe: the nombre_repas_an of each satellite (see satellites_nombre_repas_an)
+    - only for groupes
+    - each satellite still linked to the groupe must have a value
+    - each value must be >= CANTEEN_YEARLY_MEAL_COUNT_MIN
+    - the groupe's nombre_repas_an must be equal to the sum of the satellites' values
+    NOTE: not called in save(): drafts can be filled progressively. Checked by is_clean() (/check & teledeclaration)
+    """
+    errors = {}
+    if not instance.year or int(instance.year) < 2026:
+        return errors
+    if not instance.canteen or not instance.canteen.is_groupe:
+        return errors
+
+    satellites_nombre_repas_an = instance.satellites_nombre_repas_an or {}
+    for satellite in instance.canteen.satellites.order_by("name"):
+        value = satellites_nombre_repas_an.get(str(satellite.id))
+        if value is None:
+            utils_utils.add_validation_error(
+                errors,
+                "satellites_nombre_repas_an",
+                f"Le nombre de repas par an du satellite « {satellite.name} » est obligatoire.",
+            )
+        elif value < CANTEEN_YEARLY_MEAL_COUNT_MIN:
+            utils_utils.add_validation_error(
+                errors,
+                "satellites_nombre_repas_an",
+                f"Le nombre de repas par an du satellite « {satellite.name} » doit être au moins égal à "
+                f"{CANTEEN_YEARLY_MEAL_COUNT_MIN}.",
+            )
+
+    total = instance.compute_satellites_nombre_repas_an_total()
+    if instance.nombre_repas_an is not None and total is not None and instance.nombre_repas_an != total:
+        utils_utils.add_validation_error(
+            errors,
+            "nombre_repas_an",
+            f"Le nombre de repas par an du groupe ({instance.nombre_repas_an}) doit être égal à la somme "
+            f"des nombres de repas par an des satellites ({total}).",
+        )
     return errors
 
 
