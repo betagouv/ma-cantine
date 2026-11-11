@@ -50,7 +50,7 @@ def list_properties(queryset, property):
     return list(queryset.values_list(property, flat=True))
 
 
-def is_in_administration(sector_list: list[str], economic_model: str | None, line_ministry: str | None) -> bool:
+def get_is_administration(sector_list: list[str], economic_model: str | None, line_ministry: str | None) -> bool:
     """
     A public canteen, in an administration sector, with a line ministry
     """
@@ -1097,8 +1097,8 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         return self.published_service_diagnostics.filter(year=self.latest_published_year).first()
 
     @property
-    def in_administration(self):
-        return is_in_administration(self.sector_list, self.economic_model, self.line_ministry)
+    def is_administration(self):
+        return get_is_administration(self.sector_list, self.economic_model, self.line_ministry)
 
     @property
     def lead_image(self):
