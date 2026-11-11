@@ -403,9 +403,9 @@ class DiagnosticRecapSerializer(ReadOnlySerializerMixin, serializers.Serializer)
         canteen_diagnostic = obj["canteen_diagnostic"]
         if canteen_diagnostic and canteen_diagnostic.is_teledeclared:
             return {
-                "objectifs_diversification_atteints": canteen_diagnostic.objectifs_diversification_atteints,
-                "objectifs_plastique_atteints": canteen_diagnostic.objectifs_plastique_atteints,
-                "objectifs_gaspillage_atteints": canteen_diagnostic.objectifs_gaspillage_atteints,
-                "objectifs_information_atteints": canteen_diagnostic.objectifs_information_atteints,
+                "objectifs_diversification_atteints": canteen_diagnostic.diversification_badge,
+                "objectifs_plastique_atteints": canteen_diagnostic.plastic_badge,
+                "objectifs_gaspillage_atteints": canteen_diagnostic.waste_badge,
+                "objectifs_information_atteints": canteen_diagnostic.info_badge,
             }
         return None

@@ -1016,22 +1016,6 @@ class Diagnostic(
         if self.tunnel_info:
             return False
 
-    @property
-    def objectifs_diversification_atteints(self):
-        return self.diversification_badge
-
-    @property
-    def objectifs_plastique_atteints(self):
-        return self.plastic_badge
-
-    @property
-    def objectifs_gaspillage_atteints(self):
-        return self.waste_badge
-
-    @property
-    def objectifs_information_atteints(self):
-        return self.info_badge
-
     def _should_use_central_kitchen_appro(self):
         if self.canteen.is_satellite:
             if self.canteen.groupe_id:
