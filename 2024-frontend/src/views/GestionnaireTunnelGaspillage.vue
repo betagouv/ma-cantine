@@ -29,7 +29,7 @@ const updateDonsConvention = (value) => {
       </p>
       <ul class="fr-mb-0">
         <li>
-          <span class="fr-text--bold">réaliser un diagnostic et un plan d’actions :</span> pour tous les établissements
+          <span class="fr-text--bold">réaliser un diagnostic et un plan d’actions :</span> pour tous les restaurants collectifs
         </li>
         <li>
           <span class="fr-text--bold">proposer une convention de don à une association d’aide alimentaire habilitée :</span> uniquement aux opérateurs servant plus de 3000 repas
