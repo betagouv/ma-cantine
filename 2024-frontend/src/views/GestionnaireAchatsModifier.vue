@@ -155,6 +155,7 @@ const goToPurchasesList = () => {
       :showCancelButton="true"
       :showDeleteButton="true"
       :errors="errors"
+      :isPetiteStructure="isPetiteStructure"
       @sendForm="(payload) => savePurchase(payload)"
       @cancel="goToPurchasesList"
       @delete="deletePurchase"

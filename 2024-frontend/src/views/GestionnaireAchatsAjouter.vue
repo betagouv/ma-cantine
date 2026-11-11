@@ -91,6 +91,7 @@ const resetForm = () => {
     :key="forceRerender"
     @sendForm="(payload) => savePurchase(payload)"
     :errors="errors"
+    :isPetiteStructure="isPetiteStructure"
   />
   <PurchaseFormSuccessModal
     v-if="purchaseCreatedId"
