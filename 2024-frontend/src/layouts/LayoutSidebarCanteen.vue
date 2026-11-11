@@ -85,6 +85,7 @@ const menuItems = computed(() =>  {
     <h1>{{ canteenInformations.name }}</h1>
     <div class="ma-cantine--flex-start ma-cantine--flex-gap-1 fr-mb-4w">
       <AppBadgeCanteen :canteen="canteenInformations" />
+      <DsfrBadge v-if="canteenInformations.isPetiteStructure" label="Petite structure" type="info" :noIcon="true" />
       <DsfrBadge :label="`ID : ${canteenInformations.id}`" type="neutral" />
       <AppBadgeSiretSiren :canteen="canteenInformations" />
     </div>

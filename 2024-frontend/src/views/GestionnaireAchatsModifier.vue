@@ -1,14 +1,17 @@
 <script setup>
-import { ref, onMounted } from "vue"
+import { ref, computed, onMounted } from "vue"
+import { storeToRefs } from "pinia"
 import { useRoute, useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
+import { useStoreCanteen } from "@/stores/canteen.js"
 import documentation from "@/data/documentation.json"
 import urlService from "@/services/urls.js"
 import purchasesService from "@/services/purchases.js"
 import AppLoader from "@/components/AppLoader.vue"
 import AppRessources from "@/components/AppRessources.vue"
 import PurchaseForm from "@/components/PurchaseForm.vue"
+import PurchasesAlertPetitesStructures from "@/components/PurchasesAlertPetitesStructures.vue"
 import PurchaseInvoice from "@/components/PurchaseInvoice.vue"
 
 /* Router and store */
@@ -22,6 +25,8 @@ const purchaseDeleted = ref(false)
 /* Canteen */
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
+const { canteenInformations } = storeToRefs(useStoreCanteen())
+const isPetiteStructure = computed(() => canteenInformations.value?.isPetiteStructure)
 
 /* Purchase */
 const isLoading = ref(true)
@@ -134,6 +139,7 @@ const goToPurchasesList = () => {
     </AppRessources>
   </section>
   <section class="fr-mt-4w">
+    <PurchasesAlertPetitesStructures v-if="isPetiteStructure" />
     <AppLoader v-if="isLoading" />
     <p v-else-if="!purchaseData.id" class="fr-mb-0" >
       Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».
@@ -145,6 +151,7 @@ const goToPurchasesList = () => {
       :showCancelButton="true"
       :showDeleteButton="true"
       :errors="errors"
+      :isPetiteStructure="isPetiteStructure"
       @sendForm="(payload) => savePurchase(payload)"
       @cancel="goToPurchasesList"
       @delete="deletePurchase"

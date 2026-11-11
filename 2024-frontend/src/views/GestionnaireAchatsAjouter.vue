@@ -1,13 +1,16 @@
 <script setup>
-import { ref } from "vue"
+import { ref, computed } from "vue"
+import { storeToRefs } from "pinia"
 import { useRoute } from "vue-router"
 import { useRootStore } from "@/stores/root"
 import { useStorePurchaseSummary } from "@/stores/purchaseSummary.js"
+import { useStoreCanteen } from "@/stores/canteen.js"
 import documentation from "@/data/documentation.json"
 import urlService from "@/services/urls.js"
 import purchasesService from "@/services/purchases.js"
 import AppRessources from "@/components/AppRessources.vue"
 import PurchaseForm from "@/components/PurchaseForm.vue"
+import PurchasesAlertPetitesStructures from "@/components/PurchasesAlertPetitesStructures.vue"
 import PurchaseFormSuccessModal from "@/components/PurchaseFormSuccessModal.vue"
 
 /* Props */
@@ -19,6 +22,10 @@ const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 const forceRerender = ref(0)
 const purchaseCreatedId = ref(null)
 const errors = ref({})
+
+/* Canteen */
+const { canteenInformations } = storeToRefs(useStoreCanteen())
+const isPetiteStructure = computed(() => canteenInformations.value?.isPetiteStructure)
 
 /* Save purchase */
 const savePurchase = async (form) => {
@@ -72,10 +79,12 @@ const resetForm = () => {
       </li>
     </AppRessources>
   </section>
+  <PurchasesAlertPetitesStructures v-if="isPetiteStructure" />
   <PurchaseForm
     :key="forceRerender"
     @sendForm="(payload) => savePurchase(payload)"
     :errors="errors"
+    :isPetiteStructure="isPetiteStructure"
   />
   <PurchaseFormSuccessModal
     v-if="purchaseCreatedId"

@@ -130,6 +130,7 @@ const routes = [
             { to: { name: "PurchasesHome" }, title: "Outil Suivi des Achats"},
           ],
           forceActiveNav: "PurchasesHome",
+          storesRequired: ["canteen"],
         },
       },
       {
@@ -144,6 +145,7 @@ const routes = [
             { to: { name: "PurchasesHome" }, title: "Outil Suivi des Achats" },
           ],
           forceActiveNav: "PurchasesHome",
+          storesRequired: ["canteen"],
         },
       },
     ],

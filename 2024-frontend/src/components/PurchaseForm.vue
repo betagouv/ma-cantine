@@ -8,7 +8,7 @@ import achats from "@/data/achats.json"
 import purchases from "@/services/purchases.js"
 
 /* Props and emits */
-const props = defineProps(["purchaseData", "showCancelButton", "showDeleteButton", "errors"])
+const props = defineProps(["purchaseData", "showCancelButton", "showDeleteButton", "errors", "isPetiteStructure"])
 const emit = defineEmits(["sendForm", "cancel", "delete"])
 
 /* Form fields */
@@ -62,12 +62,12 @@ const showLocalDefinition = computed(() => form.estLocal)
 const showKMDefinition = computed(() => form.estLocal && form.definitionLocal === 'KM')
 
 const { required } = useValidators()
-const rules = {
+const rules = computed(() => ({
   description: { required },
   prixHt: { required },
   date: { required },
-  familleProduits: { required },
-}
+  familleProduits: props.isPetiteStructure ? {} : { required },
+}))
 
 const v$ = useVuelidate(rules, form)
 
@@ -172,10 +172,18 @@ const formatPayload = (form) => {
     <DsfrRadioButtonSet
       class="purchase-form__inline-col fr-mb-4w"
       v-model="form.familleProduits"
-      legend="Famille de produit *"
+      :legend="props.isPetiteStructure ? 'Famille de produit' : 'Famille de produit *'"
       inline
       :options="familleProduitOptions"
       :error-message="formatError(v$.familleProduits) || backendErrors.familleProduits"
+    />
+    <DsfrButton
+      v-if="props.isPetiteStructure && form.familleProduits"
+      class="fr-mt-n2w fr-mb-4w"
+      label="Réinitialiser ma famille de produit"
+      icon="fr-icon-refresh-line"
+      tertiary
+      @click="form.familleProduits = null"
     />
 
     <DsfrCheckboxSet
