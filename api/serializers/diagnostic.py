@@ -7,6 +7,8 @@ from rest_framework import serializers
 from api.serializers.utils import ReadOnlySerializerMixin, set_help_text_from_verbose_name
 from data.models import Canteen, Diagnostic
 
+from .diagnostic_groupe import SatellitesNombreRepasAnField
+
 from .teledeclaration import ShortTeledeclarationSerializer
 
 logger = logging.getLogger(__name__)
@@ -298,6 +300,8 @@ class PublicServiceDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSeria
 @set_help_text_from_verbose_name
 @extend_schema_serializer(exclude_fields=HIDDEN_FIELDS)
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
+    satellites_nombre_repas_an = SatellitesNombreRepasAnField()
+
     class Meta:
         model = Diagnostic
         fields = (
@@ -307,6 +311,7 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
             + Diagnostic.TUNNEL_PROGRESS_FIELDS
             + Diagnostic.TELEDECLARATION_FIELDS
             + Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS
+            + Diagnostic.GROUPE_FIELDS
             + Diagnostic.OTHER_COMPUTED_FIELDS
             + Diagnostic.IS_FILLED_VOLET_FIELDS
             + [

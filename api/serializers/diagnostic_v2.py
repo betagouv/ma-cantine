@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema_serializer
 
 from api.serializers.diagnostic import DiagnosticSerializer
+from api.serializers.diagnostic_groupe import SatellitesNombreRepasAnField
 from api.serializers.utils import set_help_text_from_verbose_name
 from data.models import Diagnostic
 from data.models.diagnostic_teledeclaration_fields import (
@@ -20,6 +21,7 @@ READ_ONLY_FIELDS = (
     *Diagnostic.TELEDECLARATION_FIELDS,
     "creation_date",
     "modification_date",
+    "satellites_nombre_repas_an_total",
 )
 
 VOLET_META_FIELDS = [
@@ -43,6 +45,8 @@ class DiagnosticV2Serializer(DiagnosticSerializer):
 
     v1_choice_value_aliases = {}  # v2: the model (French) values
 
+    satellites_nombre_repas_an = SatellitesNombreRepasAnField()
+
     class Meta:
         model = Diagnostic
         fields = (
@@ -58,6 +62,8 @@ class DiagnosticV2Serializer(DiagnosticSerializer):
             *Diagnostic.TELEDECLARATION_FIELDS,
             "creation_date",
             "modification_date",
+            *Diagnostic.GROUPE_FIELDS,
+            "satellites_nombre_repas_an_total",
             *CREATE_ONLY_FIELDS,
         )
 
