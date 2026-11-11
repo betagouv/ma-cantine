@@ -11,7 +11,7 @@ import purchasesService from "@/services/purchases.js"
 import AppLoader from "@/components/AppLoader.vue"
 import AppRessources from "@/components/AppRessources.vue"
 import PurchaseForm from "@/components/PurchaseForm.vue"
-import PurchasesAlertPetiteStructure from "@/components/PurchasesAlertPetiteStructure.vue"
+import PurchasesAlertPetitesStructures from "@/components/PurchasesAlertPetitesStructures.vue"
 import PurchaseInvoice from "@/components/PurchaseInvoice.vue"
 
 /* Router and store */
@@ -139,7 +139,7 @@ const goToPurchasesList = () => {
     </AppRessources>
   </section>
   <section class="fr-mt-4w">
-    <PurchasesAlertPetiteStructure v-if="isPetiteStructure" />
+    <PurchasesAlertPetitesStructures v-if="isPetiteStructure" />
     <AppLoader v-if="isLoading" />
     <p v-else-if="!purchaseData.id" class="fr-mb-0" >
       Aucun achat trouvé avec le numéro d'identification « {{ purchaseId }} » pour la cantine « {{ canteenName }} ».

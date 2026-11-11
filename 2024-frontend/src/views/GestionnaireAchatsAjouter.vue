@@ -10,7 +10,7 @@ import urlService from "@/services/urls.js"
 import purchasesService from "@/services/purchases.js"
 import AppRessources from "@/components/AppRessources.vue"
 import PurchaseForm from "@/components/PurchaseForm.vue"
-import PurchasesAlertPetiteStructure from "@/components/PurchasesAlertPetiteStructure.vue"
+import PurchasesAlertPetitesStructures from "@/components/PurchasesAlertPetitesStructures.vue"
 import PurchaseFormSuccessModal from "@/components/PurchaseFormSuccessModal.vue"
 
 /* Props */
@@ -79,7 +79,7 @@ const resetForm = () => {
       </li>
     </AppRessources>
   </section>
-  <PurchasesAlertPetiteStructure v-if="isPetiteStructure" />
+  <PurchasesAlertPetitesStructures v-if="isPetiteStructure" />
   <PurchaseForm
     :key="forceRerender"
     @sendForm="(payload) => savePurchase(payload)"
