@@ -26,7 +26,7 @@ const purchaseDeleted = ref(false)
 const canteenName = urlService.getCanteenName(route.params.canteenUrlComponent)
 const canteenId = urlService.getCanteenId(route.params.canteenUrlComponent)
 const { canteenInformations } = storeToRefs(useStoreCanteen())
-const isPetiteStructure = computed(() => canteenInformations.value?.isPetiteStructure === true)
+const isPetiteStructure = computed(() => canteenInformations.value?.isPetiteStructure)
 
 /* Purchase */
 const isLoading = ref(true)

@@ -25,7 +25,7 @@ const errors = ref({})
 
 /* Canteen */
 const { canteenInformations } = storeToRefs(useStoreCanteen())
-const isPetiteStructure = computed(() => canteenInformations.value?.isPetiteStructure === true)
+const isPetiteStructure = computed(() => canteenInformations.value?.isPetiteStructure)
 
 /* Save purchase */
 const savePurchase = async (form) => {
