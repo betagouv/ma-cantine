@@ -20,6 +20,18 @@ MenuVegetarienFrequence = DiagnosticVoletDiversificationMixin.MenuVegetarienFreq
 ServiceType = DiagnosticVoletDiversificationMixin.ServiceType
 
 
+def is_volet_completed(diagnostic, volet) -> bool:
+    """
+    The v2 badges are only computed if the diagnostic is teledeclared, and the volet is filled without errors
+    """
+    volet_name = volet.lower()
+    return (
+        diagnostic.is_teledeclared
+        and getattr(diagnostic, f"is_filled_{volet_name}")
+        and getattr(diagnostic, f"is_clean_{volet_name}")
+    )
+
+
 # Gaspillage
 def waste_badge_v1(diagnostic) -> bool | None:
     canteen = diagnostic.canteen
@@ -32,6 +44,21 @@ def waste_badge_v1(diagnostic) -> bool | None:
             return True
     if diagnostic.tunnel_waste:
         return False
+
+
+def waste_badge_v2(diagnostic) -> bool | None:
+    if not is_volet_completed(diagnostic, "GASPILLAGE"):
+        return None
+    canteen = diagnostic.canteen
+    has_diagnostic_and_actions = bool(
+        diagnostic.diagnostic_gaspillage_realise
+        and diagnostic.actions_gaspillage_realisees
+        and len(diagnostic.actions_gaspillage_realisees) > 0
+    )
+    has_dons_or_less_than_3000_meals = bool(
+        diagnostic.dons_convention or (canteen.daily_meal_count and canteen.daily_meal_count < 3000)
+    )
+    return has_diagnostic_and_actions and has_dons_or_less_than_3000_meals
 
 
 # Diversification
@@ -60,6 +87,8 @@ def diversification_badge_v2(diagnostic) -> bool | None:
     True if all the obligations that apply to the canteen are met
     If no obligation applies: True if a diversification plan with actions, or a vegetarian menu
     """
+    if not is_volet_completed(diagnostic, "DIVERSIFICATION"):
+        return None
     canteen = diagnostic.canteen
     frequence = diagnostic.menu_vegetarien_frequence
     obligations = []
@@ -93,10 +122,7 @@ def diversification_badge_v2(diagnostic) -> bool | None:
         has_vegetarian_menu = frequence is not None and frequence != MenuVegetarienFrequence.JAMAIS
         is_reached = has_plan_with_actions or has_vegetarian_menu
 
-    if is_reached:
-        return True
-    if diagnostic.tunnel_diversification:
-        return False
+    return is_reached
 
 
 # Plastique
@@ -119,6 +145,8 @@ def plastic_badge_v2(diagnostic) -> bool | None:
     20 daily meals or more: disposable tableware replaced
     Education, crèches and health: cooking, reheating and serving containers replaced
     """
+    if not is_volet_completed(diagnostic, "PLASTIQUE"):
+        return None
     canteen = diagnostic.canteen
     sectors = set(canteen.sector_list or [])
     obligations = [diagnostic.plastique_bouteille_boisson_remplace]
@@ -129,10 +157,7 @@ def plastic_badge_v2(diagnostic) -> bool | None:
     if sectors.intersection(EDUCATION_SECTOR_LIST + [Sector.SOCIAL_CRECHE] + HEALTH_SECTOR_LIST):
         obligations.append(diagnostic.plastique_contenant_remplace)
 
-    if all(obligation is True for obligation in obligations):
-        return True
-    if diagnostic.tunnel_plastic:
-        return False
+    return all(obligation is True for obligation in obligations)
 
 
 # Information
@@ -148,6 +173,8 @@ def info_badge_v2(diagnostic) -> bool | None:
     For all the canteens: part EGalim, permanent display and annual electronic communication
     For some sectors (education, health, social, prisons): regular consultation on the food quality
     """
+    if not is_volet_completed(diagnostic, "INFORMATION"):
+        return None
     canteen = diagnostic.canteen
     is_reached = bool(
         diagnostic.information_part_egalim
@@ -160,10 +187,7 @@ def info_badge_v2(diagnostic) -> bool | None:
     if set(canteen.sector_list or []).intersection(sectors_quality_required):
         is_reached = is_reached and bool(diagnostic.information_consultation_qualite)
 
-    if is_reached:
-        return True
-    if diagnostic.tunnel_info:
-        return False
+    return is_reached
 
 
 @cache

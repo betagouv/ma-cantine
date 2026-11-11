@@ -2,6 +2,13 @@ from django.test import TestCase
 
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Diagnostic, Sector
+from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
+
+TELEDECLARED = {"status": Diagnostic.DiagnosticStatus.SUBMITTED}
+
+
+def empty_volet(year, volet):
+    return {field: None for field in get_teledeclaration_fields_all(year, volet)}
 
 
 class DiagnosticBadgesTest(TestCase):
@@ -50,6 +57,31 @@ class DiagnosticBadgesTest(TestCase):
         self.assertBadge("waste_badge", 2023, cases)
         self.assertBadge("waste_badge", 2024, cases)
         self.assertBadge("waste_badge", 2025, cases)
+
+    def test_waste_badge_v2(self):
+        reached = {
+            "diagnostic_gaspillage_realise": True,
+            "actions_gaspillage_realisees": [Diagnostic.ActionsGaspillage.INSCRIPTION],
+            "dons_convention": True,
+            **TELEDECLARED,
+        }
+        cases = [
+            ("all the objectives", {}, reached, True),
+            (
+                "no donation, < 3000 meals",
+                {"daily_meal_count": 2999, "yearly_meal_count": 1000000},
+                {**reached, "dons_convention": False},
+                True,
+            ),
+            (
+                "no donation, 3000 meals",
+                {"daily_meal_count": 3000, "yearly_meal_count": 1000000},
+                {**reached, "dons_convention": False},
+                False,
+            ),
+            ("no diagnostic", {}, {**reached, "diagnostic_gaspillage_realise": False}, False),
+            ("no action", {}, {**reached, "actions_gaspillage_realisees": []}, False),
+        ]
         self.assertBadge("waste_badge", 2026, cases)
 
     def test_diversification_badge_v1(self):
@@ -121,17 +153,11 @@ class DiagnosticBadgesTest(TestCase):
             "plan_diversification_actions": [],
             "menu_vegetarien_frequence": Diagnostic.MenuVegetarienFrequence.JAMAIS,
             "service_type": Diagnostic.ServiceType.MENU_UNIQUE,
-            "tunnel_diversification": "complet",
+            **TELEDECLARED,
         }
         cases = [
             # no obligation
             ("no obligation, nothing", hospital, default_fields, False),
-            (
-                "no obligation, nothing, tunnel not visited",
-                hospital,
-                {**default_fields, "tunnel_diversification": None},
-                None,
-            ),
             (
                 "no obligation, plan with actions",
                 hospital,
@@ -288,7 +314,9 @@ class DiagnosticBadgesTest(TestCase):
             "plastique_bouteille_remplace": False,
             "plastique_vaisselle_jetable_remplace": False,
             "plastique_contenant_remplace": False,
-            "tunnel_plastic": "complet",
+            "plastique_ustensile_remplace": True,
+            "plastique_contenant_emporter_remplace": True,
+            **TELEDECLARED,
         }
         all_remplace = {
             **default_fields,
@@ -304,12 +332,6 @@ class DiagnosticBadgesTest(TestCase):
                 entreprise,
                 {**default_fields, "plastique_bouteille_boisson_remplace": False},
                 False,
-            ),
-            (
-                "not reached, tunnel not visited",
-                entreprise,
-                {**default_fields, "plastique_bouteille_boisson_remplace": False, "tunnel_plastic": None},
-                None,
             ),
             ("social (not crèche), nothing else needed", ehpad, default_fields, True),
             # vaisselle jetable: 20 daily meals or more
@@ -382,7 +404,8 @@ class DiagnosticBadgesTest(TestCase):
             "information_affichage_permanent": True,
             "information_electronique_annuelle": True,
             "information_consultation_qualite": False,
-            "tunnel_info": "complet",
+            "information_part_pat": True,
+            **TELEDECLARED,
         }
         cases = [
             # for all the canteens
@@ -396,12 +419,6 @@ class DiagnosticBadgesTest(TestCase):
                 False,
             ),
             ("administratif, no consultation needed", administratif, default_fields, True),
-            (
-                "not reached, tunnel not visited",
-                entreprise,
-                {**default_fields, "information_part_egalim": False, "tunnel_info": None},
-                None,
-            ),
             # consultation on the food quality
             ("education, consultation", primaire, {**default_fields, "information_consultation_qualite": True}, True),
             ("education, no consultation", primaire, default_fields, False),
@@ -419,3 +436,28 @@ class DiagnosticBadgesTest(TestCase):
             ),
         ]
         self.assertBadge("info_badge", 2026, cases)
+
+    def test_badges_v2_need_a_teledeclared_filled_and_clean_volet(self):
+        """
+        The v2 badges are None if the diagnostic is not teledeclared, or if the volet is empty or not clean
+        (see is_volet_completed: same for all the volets, tested here with the gaspillage volet)
+        """
+        reached = {
+            "diagnostic_gaspillage_realise": True,
+            "plan_gaspillage_en_place": True,
+            "actions_gaspillage_realisees": [Diagnostic.ActionsGaspillage.INSCRIPTION],
+            "dons_convention": True,
+        }
+        cases = [
+            ("teledeclared, filled and clean volet", {}, {**reached, **TELEDECLARED}, True),
+            ("not teledeclared, filled and clean volet", {}, reached, None),
+            ("not teledeclared, empty volet", {}, empty_volet(2026, "GASPILLAGE"), None),
+            ("teledeclared, empty volet", {}, {**empty_volet(2026, "GASPILLAGE"), **TELEDECLARED}, None),
+            (
+                "teledeclared, volet not clean",
+                {},
+                {**reached, **TELEDECLARED, "dons_quantite": -1},  # must be positive
+                None,
+            ),
+        ]
+        self.assertBadge("waste_badge", 2026, cases)
