@@ -8,7 +8,7 @@ from api.serializers.utils import (
     choice_list_to_choices,
     set_help_text_from_verbose_name,
 )
-from data.models import Purchase
+from data.models import Canteen, Purchase
 from data.models.definitionlocal import DefinitionLocal
 
 
@@ -89,6 +89,8 @@ class PurchaseOldSerializer(serializers.ModelSerializer):
 
 
 REQUIRED_FIELDS = ["description", "date", "prix_ht", "famille_produits"]
+# expérimentation « Petites structures » : la famille de produits est facultative
+REQUIRED_FIELDS_PETITE_STRUCTURE = ["description", "date", "prix_ht"]
 CREATE_ONLY_FIELDS = ["creation_source", "import_source"]
 READ_ONLY_FIELDS = ["id", "canteen", "creation_date", "modification_date"]
 # caracteristiques is split into these 4 fields (see the Purchase model properties)
@@ -133,10 +135,27 @@ class PurchaseSerializer(serializers.ModelSerializer):
             "modification_date",
         )
 
+    def _get_canteen(self):
+        """
+        - update: the canteen of the purchase
+        - create: the canteen in the URL
+        """
+        if isinstance(self.instance, Purchase):
+            return self.instance.canteen
+        view = self.context.get("view")
+        canteen_pk = getattr(view, "kwargs", {}).get("canteen_pk")
+        if canteen_pk:
+            return Canteen.objects.filter(pk=canteen_pk).first()
+        return None
+
     def get_fields(self):
         fields = super().get_fields()
         # some fields are required
-        for field in REQUIRED_FIELDS:
+        canteen = self._get_canteen()
+        required_fields = (
+            REQUIRED_FIELDS_PETITE_STRUCTURE if canteen and canteen.is_petite_structure else REQUIRED_FIELDS
+        )
+        for field in required_fields:
             fields[field].required = True
             fields[field].allow_null = False
             fields[field].allow_blank = False
