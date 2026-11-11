@@ -14,8 +14,10 @@ from pathlib import Path
 from django.conf import settings
 from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_YEARS
 from data.models.diagnostic_volet_diversification import DiagnosticVoletDiversificationMixin
+from data.models.sector import Sector
 
 MenuVegetarienFrequence = DiagnosticVoletDiversificationMixin.MenuVegetarienFrequence
+ServiceType = DiagnosticVoletDiversificationMixin.ServiceType
 
 
 # Gaspillage
@@ -48,6 +50,50 @@ def diversification_badge_v1(diagnostic) -> bool | None:
     if canteen.in_administration and has_daily_frequency:
         return True
     if not canteen.in_administration and has_weekly_or_more_frequency:
+        return True
+    if diagnostic.tunnel_diversification:
+        return False
+
+
+def diversification_badge_v2(diagnostic) -> bool | None:
+    """
+    True if all the obligations that apply to the canteen are met
+    If no obligation applies: True if a diversification plan with actions, or a vegetarian menu
+    """
+    canteen = diagnostic.canteen
+    frequence = diagnostic.menu_vegetarien_frequence
+    obligations = []
+    # Diversification plan: canteens with 200 daily meals or more
+    if canteen.daily_meal_count and canteen.daily_meal_count >= 200:
+        obligations.append(diagnostic.plan_diversification_en_place is True)
+    # Weekly vegetarian menu: school canteens (from primaire to lycée, including enseignement agricole)
+    school_sectors = [
+        Sector.EDUCATION_PRIMAIRE,
+        Sector.EDUCATION_SECONDAIRE_COLLEGE,
+        Sector.EDUCATION_SECONDAIRE_LYCEE,
+        Sector.EDUCATION_ENSEIGNEMENT_AGRICOLE,
+    ]
+    if set(canteen.sector_list or []).intersection(school_sectors):
+        obligations.append(
+            frequence
+            in [MenuVegetarienFrequence.HEBDO, MenuVegetarienFrequence.PLUS_HEBDO, MenuVegetarienFrequence.QUOTIDIEN]
+        )
+    # Daily vegetarian option: administration canteens with a multiple choice service
+    multiple_choice_services = [ServiceType.CHOIX_MULTIPLE_LIBRE_SERVICE, ServiceType.CHOIX_MULTIPLE_RESERVATION]
+    if canteen.in_administration and diagnostic.service_type in multiple_choice_services:
+        obligations.append(frequence == MenuVegetarienFrequence.QUOTIDIEN)
+
+    if obligations:
+        is_reached = all(obligations)
+    else:
+        # No obligation: a diversification plan with actions, or a vegetarian menu
+        has_plan_with_actions = bool(
+            diagnostic.plan_diversification_en_place and diagnostic.plan_diversification_actions
+        )
+        has_vegetarian_menu = frequence is not None and frequence != MenuVegetarienFrequence.JAMAIS
+        is_reached = has_plan_with_actions or has_vegetarian_menu
+
+    if is_reached:
         return True
     if diagnostic.tunnel_diversification:
         return False
