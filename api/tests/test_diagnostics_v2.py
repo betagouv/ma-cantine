@@ -234,12 +234,15 @@ class DiagnosticV2RetrieveUpdateApiTest(APITestCase):
         self.assertEqual(self.diagnostic.creation_source, CreationSource.APP)
         self.assertNotEqual(self.diagnostic.valeur_totale, 1)
 
+    @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
-    def test_cannot_update_diagnostic_teledeclared(self):
-        diagnostic = DiagnosticFactory(year=2021)
+    def test_cannot_update_locked_fields_of_diagnostic_teledeclared(self):
+        diagnostic = DiagnosticFactory(
+            year=2024,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            status=Diagnostic.DiagnosticStatus.SUBMITTED,
+        )
         diagnostic.canteen.managers.add(authenticate.user)
-        with freeze_time("2022-08-30"):  # during the 2021 campaign
-            diagnostic.teledeclare(applicant=authenticate.user)
 
         response = self.client.patch(
             reverse(
@@ -249,7 +252,10 @@ class DiagnosticV2RetrieveUpdateApiTest(APITestCase):
             format="json",
         )
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("centralKitchenDiagnosticMode", response.json())
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.central_kitchen_diagnostic_mode, Diagnostic.CentralKitchenDiagnosticMode.ALL)
 
 
 class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
@@ -422,16 +428,18 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
         self.assertEqual(self.diagnostic_without_type_2024.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
         self.assertEqual(self.diagnostic_without_type_2024.valeur_viandes_volailles_bio, 50)
 
+    @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
     def test_cannot_update_approvisionnement_teledeclared(self):
-        diagnostic = DiagnosticFactory(year=2021)
+        diagnostic = DiagnosticFactory(year=2024, valeur_totale=1000, status=Diagnostic.DiagnosticStatus.SUBMITTED)
         diagnostic.canteen.managers.add(authenticate.user)
-        with freeze_time("2022-08-30"):  # during the 2021 campaign
-            diagnostic.teledeclare(applicant=authenticate.user)
 
         response = self.client.patch(self._url(diagnostic), {"valeurTotale": 1}, format="json")
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("valeurTotale", response.json())
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.valeur_totale, 1000)
 
     @authenticate
     def test_can_update_approvisionnement_cancelled(self):
@@ -581,18 +589,47 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
                 self.assertEqual(self.diagnostic.year, 2025)
                 self.assertEqual(self.diagnostic.valeur_totale, 1000)
 
-    @authenticate
-    def test_cannot_update_volet_teledeclared(self):
-        diagnostic = DiagnosticFactory(year=2021)
+    def _create_diagnostic_teledeclared(self):
+        diagnostic = DiagnosticFactory(
+            year=2025,
+            plan_gaspillage_en_place=False,
+            plan_diversification_en_place=False,
+            plastique_contenant_cuisson_remplace=False,
+            information_qualite_nutritionnelle=False,
+            status=Diagnostic.DiagnosticStatus.SUBMITTED,
+        )
         diagnostic.canteen.managers.add(authenticate.user)
-        with freeze_time("2022-08-30"):  # during the 2021 campaign
-            diagnostic.teledeclare(applicant=authenticate.user)
+        return diagnostic
 
-        for volet, field, _, value, _ in self.VOLETS:
+    @freeze_time("2026-02-01")  # during the 2025 campaign
+    @authenticate
+    def test_can_update_volet_teledeclared(self):
+        diagnostic = self._create_diagnostic_teledeclared()
+
+        for volet, field, model_field, value, tunnel_field in self.VOLETS:
+            with self.subTest(volet=volet):
+                payload = {field: value, camelize(tunnel_field): "fin"}
+                response = self.client.patch(self._url(volet, diagnostic), payload, format="json")
+
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                diagnostic.refresh_from_db()
+                self.assertEqual(getattr(diagnostic, model_field), value)
+                self.assertEqual(getattr(diagnostic, tunnel_field), "fin")
+                self.assertTrue(diagnostic.is_teledeclared)  # unchanged
+
+    @freeze_time("2026-06-01")  # outside of the 2025 campaign
+    @authenticate
+    def test_cannot_update_volet_teledeclared_outside_of_the_campaign(self):
+        diagnostic = self._create_diagnostic_teledeclared()
+
+        for volet, field, model_field, value, _ in self.VOLETS:
             with self.subTest(volet=volet):
                 response = self.client.patch(self._url(volet, diagnostic), {field: value}, format="json")
 
-                self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+                self.assertIn("hors de la période de la campagne", str(response.json()))
+                diagnostic.refresh_from_db()
+                self.assertNotEqual(getattr(diagnostic, model_field), value)
 
 
 class DiagnosticVoletGaspillageV2ApiTest(APITestCase):

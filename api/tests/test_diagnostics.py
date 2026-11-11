@@ -1042,25 +1042,55 @@ class DiagnosticUpdateApiTest(APITestCase):
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.dechets_total, Decimal("1.23456"))
 
+    @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
-    def test_cannot_update_diagnostic_teledeclared(self):
-        diagnostic = DiagnosticFactory(year=2021)
-        diagnostic.canteen.managers.add(authenticate.user)
-        with freeze_time("2022-08-30"):  # during the 2021 campaign
-            diagnostic.teledeclare(applicant=authenticate.user)
-
-        payload = {"year": 2021}
-        response = self.client.patch(
-            reverse(
-                "diagnostic_retrieve_update",
-                kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id},
-            ),
-            payload,
+    def test_can_update_editable_volet_fields_of_diagnostic_teledeclared(self):
+        diagnostic = DiagnosticFactory(
+            year=2024, plan_gaspillage_en_place=False, status=Diagnostic.DiagnosticStatus.SUBMITTED
         )
+        diagnostic.canteen.managers.add(authenticate.user)
+        url = reverse("diagnostic_retrieve_update", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id})
 
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        response = self.client.patch(url, {"hasWastePlan": True, "tunnelWaste": "fin"}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         diagnostic.refresh_from_db()
-        self.assertEqual(diagnostic.year, 2021)
+        self.assertTrue(diagnostic.plan_gaspillage_en_place)
+        self.assertEqual(diagnostic.tunnel_waste, "fin")
+        self.assertTrue(diagnostic.is_teledeclared)  # unchanged
+
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @authenticate
+    def test_cannot_update_locked_fields_of_diagnostic_teledeclared(self):
+        diagnostic = DiagnosticFactory(
+            year=2024, valeur_totale=1000, plan_gaspillage_en_place=False, status=Diagnostic.DiagnosticStatus.SUBMITTED
+        )
+        diagnostic.canteen.managers.add(authenticate.user)
+        url = reverse("diagnostic_retrieve_update", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id})
+
+        response = self.client.patch(url, {"valeurTotale": 1, "hasWastePlan": True}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("valeurTotale", response.json())
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.valeur_totale, 1000)
+        self.assertFalse(diagnostic.plan_gaspillage_en_place)  # the whole update is rejected
+
+    @freeze_time("2025-06-01")  # outside of the 2024 campaign
+    @authenticate
+    def test_cannot_update_diagnostic_teledeclared_outside_of_the_campaign(self):
+        diagnostic = DiagnosticFactory(
+            year=2024, plan_gaspillage_en_place=False, status=Diagnostic.DiagnosticStatus.SUBMITTED
+        )
+        diagnostic.canteen.managers.add(authenticate.user)
+        url = reverse("diagnostic_retrieve_update", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id})
+
+        response = self.client.patch(url, {"hasWastePlan": True}, format="json")
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("hors de la période de la campagne", str(response.json()))
+        diagnostic.refresh_from_db()
+        self.assertFalse(diagnostic.plan_gaspillage_en_place)
 
     @authenticate
     def test_can_update_diagnostic_cancelled(self):

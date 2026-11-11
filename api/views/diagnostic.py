@@ -6,7 +6,6 @@ from django.db import IntegrityError
 from django.db.models import Exists, OuterRef
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseServerError
 from drf_spectacular.utils import extend_schema, extend_schema_view
-from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView, get_object_or_404
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
@@ -97,7 +96,7 @@ class DiagnosticListCreateView(ListCreateAPIView):
     ),
     patch=extend_schema(
         summary="Modifier un bilan existant.",
-        description="À noter qu'un bilan ne peut pas être modifié une fois qu'il a été télédéclaré. Pour ce faire, il faut d'abord annuler la télédéclaration.",
+        description="À noter qu'une fois un bilan télédéclaré, seuls les champs des volets additionnels (hors approvisionnement) restent modifiables, et uniquement pendant la campagne. Pour modifier les autres champs, il faut d'abord annuler la télédéclaration.",
         tags=["Bilans"],
     ),
 )
@@ -117,9 +116,8 @@ class DiagnosticRetrieveUpdateView(RetrieveUpdateAPIView):
         return get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
 
     def perform_update(self, serializer):
-        if self.get_object().is_teledeclared:
-            # if the user wants to cancel, see DiagnosticTeledeclarationCancelView
-            raise PermissionDenied("Ce n'est pas possible de modifier un bilan télédéclaré.")
+        # if the diagnostic is already teledeclared: only some volets can be edited (see Diagnostic.save)
+        # to edit the other fields, the user must first cancel (see DiagnosticTeledeclarationCancelView)
         serializer.is_valid(raise_exception=True)
         diagnostic = serializer.save()
         update_change_reason_with_auth(self, diagnostic)
