@@ -124,6 +124,7 @@ READ_ONLY_FIELDS = (
     "generated_from_groupe_diagnostic",
     *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
     *Diagnostic.OTHER_COMPUTED_FIELDS,
+    "satellites_nombre_repas_an_total",
 )
 
 

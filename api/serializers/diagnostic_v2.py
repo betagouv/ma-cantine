@@ -63,7 +63,6 @@ class DiagnosticV2Serializer(DiagnosticSerializer):
             "creation_date",
             "modification_date",
             *Diagnostic.GROUPE_FIELDS,
-            "satellites_nombre_repas_an_total",
             *CREATE_ONLY_FIELDS,
         )
 
