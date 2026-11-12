@@ -1926,7 +1926,34 @@ class DiagnosticSatellitesNombreRepasAnTotalTest(TestCase):
         )
         self.assertEqual(diagnostic.satellites_nombre_repas_an_total, 1000)
 
-    def test_total_ignores_canteens_not_linked_to_the_groupe(self):
+    def test_total_is_none_if_canteen_is_not_a_groupe(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_site,
+            year=2026,
+            satellites_nombre_repas_an={str(self.canteen_satellite_1.id): 1000},
+        )
+        self.assertIsNone(diagnostic.satellites_nombre_repas_an_total)
+
+    def test_save_prefills_the_satellites_with_empty_values(self):
+        diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026)
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an,
+            {str(self.canteen_satellite_1.id): None, str(self.canteen_satellite_2.id): None},
+        )
+
+    def test_save_keeps_the_existing_values(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an={str(self.canteen_satellite_1.id): 1000},
+        )
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an,
+            {str(self.canteen_satellite_1.id): 1000, str(self.canteen_satellite_2.id): None},
+        )
+
+    def test_save_removes_the_canteens_not_linked_to_the_groupe(self):
+        # e.g. edited in the admin
         diagnostic = DiagnosticFactory(
             canteen=self.canteen_groupe,
             year=2026,
@@ -1935,14 +1962,24 @@ class DiagnosticSatellitesNombreRepasAnTotalTest(TestCase):
                 str(self.canteen_site.id): 5000,
             },
         )
+        self.assertNotIn(str(self.canteen_site.id), diagnostic.satellites_nombre_repas_an)
         self.assertEqual(diagnostic.satellites_nombre_repas_an_total, 1000)
 
-    def test_total_is_none_if_canteen_is_not_a_groupe(self):
+    def test_save_empties_the_field_if_canteen_is_not_a_groupe(self):
         diagnostic = DiagnosticFactory(
             canteen=self.canteen_site,
             year=2026,
             satellites_nombre_repas_an={str(self.canteen_satellite_1.id): 1000},
         )
+        self.assertIsNone(diagnostic.satellites_nombre_repas_an)
+
+    def test_save_empties_the_field_before_2026(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2025,
+            satellites_nombre_repas_an={str(self.canteen_satellite_1.id): 1000},
+        )
+        self.assertIsNone(diagnostic.satellites_nombre_repas_an)
         self.assertIsNone(diagnostic.satellites_nombre_repas_an_total)
 
 
