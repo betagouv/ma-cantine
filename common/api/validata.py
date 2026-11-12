@@ -48,11 +48,15 @@ def validate_file_against_schema(file, schema_url):
         raise Exception("Erreur lors de la validation du fichier (Validata). Merci de réessayer plus tard.") from e
 
 
-def process_errors(report):
+def process_errors(report, field_titles=None):
+    """
+    field_titles: the title of each column of the schema (displayed instead of the column name), e.g.
+    {"nombre_repas_an": "Nombre de couverts par an"}
+    """
     errors = []
     for error in report["errors"]:
         common_informations = get_common_error_informations(error)
-        specific_informations = get_specific_error_informations(error)
+        specific_informations = get_specific_error_informations(error, field_titles or {})
         error_informations = common_informations | specific_informations
         errors.append(error_informations)
     return errors
@@ -125,7 +129,7 @@ def get_common_error_informations(error):
     }
 
 
-def get_specific_error_informations(error):
+def get_specific_error_informations(error, field_titles):
     if error["type"] == "blank-row":
         return {
             "title": "Valeur incorrecte la ligne doit être supprimée",
@@ -138,6 +142,7 @@ def get_specific_error_informations(error):
         "title": error["title"],
         "column": error["fieldNumber"],
         "field": error["fieldName"],
+        "field_title": field_titles.get(error["fieldName"]),
         "cell": error["cell"],
         "has_doc": True,
     }

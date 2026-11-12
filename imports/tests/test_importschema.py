@@ -25,6 +25,8 @@ class ImportSchemaTest(SimpleTestCase):
         self.assertTrue(schema.url.startswith("https://raw.githubusercontent.com/betagouv/ma-cantine/refs/heads/"))
         self.assertTrue(schema.url.endswith("/data/schemas/imports/bilans_simple_id.json"))
         self.assertEqual(schema.header[:3], ["cantine_id", "année_bilan", "valeur_totale"])
+        self.assertEqual(schema.titles["valeur_totale"], "Valeur totale annuelle HT")
+        self.assertEqual(list(schema.titles), schema.header)
 
 
 class DiagnosticsImportSchemasTest(SimpleTestCase):

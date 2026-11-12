@@ -136,7 +136,7 @@ class BaseImportView(ABC, APIView):
                 return self._get_success_response()
 
             # Rows validation
-            self.errors = validata.process_errors(validata_response["report"])
+            self.errors = validata.process_errors(validata_response["report"], self.schema.titles)
             if len(self.errors):
                 self._log_error(f"Echec lors de la validation du fichier (schema {self.schema.name} - Validata)")
                 return self._get_success_response()
