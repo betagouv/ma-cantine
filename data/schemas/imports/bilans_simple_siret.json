@@ -28,152 +28,171 @@
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_totale",
       "title": "Valeur totale annuelle HT",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_bio",
       "title": "Bio - Valeur annuelle HT",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_bio_dont_commerce_equitable",
       "title": "Bio dont commerce équitable - Valeur annuelle HT",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_siqo",
       "title": "Produits SIQO (hors bio) - Valeur annuelle HT",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_externalites_performance",
       "title": "Valeur totale (HT) prenant en compte les coûts imputés aux externalités environnementales ou leurs performances en matière environnementale",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_egalim_autres",
       "title": "Valeur totale (HT) des autres achats EGalim",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_egalim_autres_dont_commerce_equitable",
       "title": "Valeur totale (HT) des achats commerce équitable (hors bio)",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_viandes_volailles",
       "title": "Valeur totale (HT) viandes et volailles fraiches ou surgelées",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_viandes_volailles_egalim",
       "title": "Valeur totale (HT) viandes et volailles fraiches ou surgelées, EGalim",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_viandes_volailles_france",
       "title": "Viandes et volailles fraîches et surgelées, Origine France",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_de_la_mer",
       "title": "Valeur totale (HT) poissons et produits aquatiques",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_de_la_mer_egalim",
       "title": "Valeur totale (HT) poissons et produits aquatiques, EGalim",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_de_la_mer_france",
       "title": "Poissons, produits de la mer et de l'aquaculture, Origine France",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_fruits_et_legumes_france",
       "title": "Fruits et légumes frais et surgelés, Origine France",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_charcuterie_france",
       "title": "Charcuterie, Origine France",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_laitiers_france",
       "title": "BOF (Produits laitiers, beurre et œufs), Origine France",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boulangerie_france",
       "title": "Boulangerie / Pâtisserie fraîches, Origine France",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boissons_france",
       "title": "Boissons, Origine France",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_autres_france",
       "title": "Autres produits frais, surgelés et d'épicerie, Origine France",
-      "type": "number"
+      "type": "any"
     }
   ],
   "homepage": "https://github.com/betagouv/ma-cantine",
