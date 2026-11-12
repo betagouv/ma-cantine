@@ -896,6 +896,7 @@ class Diagnostic(
                 diagnostic_volet_diversification_validators.validate_diversification_plan_fields(self),
                 diagnostic_volet_diversification_validators.validate_diversification_menu_vegetarien_fields(self),
                 diagnostic_volet_plastique_validators.validate_plastique_fields_required(self),
+                diagnostic_volet_plastique_validators.validate_plastique_contenant_emporter_fields(self),
                 diagnostic_volet_information_validators.validate_information_fields_required(self),
             )
         # normalize the format: {"field": ["error1", ...]}

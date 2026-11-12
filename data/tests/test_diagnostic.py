@@ -1601,6 +1601,7 @@ class DiagnosticVoletThematiqueIsFilledPropertyTest(TestCase):
             diagnostic_volet_gaspillage_validators.validate_gaspillage_fields_required,
             diagnostic_volet_diversification_validators.validate_diversification_fields_required,
             diagnostic_volet_plastique_validators.validate_plastique_fields_required,
+            diagnostic_volet_plastique_validators.validate_plastique_contenant_emporter_fields,
             diagnostic_volet_information_validators.validate_information_fields_required,
         ]:
             with self.subTest(validator=validate_fields_required.__name__):
