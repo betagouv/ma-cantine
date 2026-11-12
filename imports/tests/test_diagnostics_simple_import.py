@@ -735,6 +735,26 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
 
     @freeze_time("2027-01-20")  # during the 2026 campaign
     @authenticate
+    def test_diagnostics_created_with_siret_with_spaces(self):
+        """
+        The spaces in the siret are removed (e.g. " 213 401 722 01787 ", with a non-breaking space)
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_good_siret_with_spaces.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        self.assertEqual(body["count"], 1)
+        self.assertTrue(Diagnostic.objects.filter(canteen_id=canteen.id, year=2026).exists())
+
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
     def test_model_validation_error_invalid_number(self):
         """
         Decimal fields: their schema type is "any" (to accept both decimal separators), the number is checked by the model

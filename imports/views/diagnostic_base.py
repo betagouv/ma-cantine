@@ -6,6 +6,7 @@ from django.db import models, transaction
 from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
 
+from common.utils import utils as utils_utils
 from imports.views.base import BaseImportView
 from data.models import Canteen, Diagnostic
 from data.models.creation_source import CreationSource
@@ -81,7 +82,8 @@ class BaseDiagnosticsImportView(BaseImportView):
 
     @transaction.atomic
     def _save_data_from_row(self, row):
-        identifier = row[0]
+        # siret: remove the spaces (e.g. "213 401 722 01787"), like the other imports
+        identifier = utils_utils.normalize_string(row[0]) if self.is_siret_import else row[0]
         if self.is_siret_import and not Canteen.objects.filter(siret=identifier).exists():
             raise ObjectDoesNotExist()
         elif not self.is_siret_import and not Canteen.objects.filter(id=identifier).exists():
