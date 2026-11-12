@@ -153,7 +153,13 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             ),
             (
                 "Informations de la cantine",
-                {"fields": (*Diagnostic.CANTEEN_FIELDS, *Diagnostic.GROUPE_FIELDS)},
+                {
+                    "fields": (
+                        *Diagnostic.CANTEEN_FIELDS,
+                        *Diagnostic.GROUPE_FIELDS,
+                        "satellites_nombre_repas_an_total",
+                    )
+                },
             ),
             (
                 "Plus de produits de qualité et durables dans nos assiettes",
@@ -210,7 +216,12 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                     "fields": (
                         *Diagnostic.APPRO_AGGREGATED_FIELDS,
                         *Diagnostic.APPRO_STATS_FIELDS,
-                        *Diagnostic.OTHER_COMPUTED_FIELDS,
+                        # satellites_nombre_repas_an_total: displayed in "Informations de la cantine"
+                        *[
+                            field
+                            for field in Diagnostic.OTHER_COMPUTED_FIELDS
+                            if field != "satellites_nombre_repas_an_total"
+                        ],
                     )
                 },
             ),
