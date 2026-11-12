@@ -98,8 +98,7 @@ SCHEMA_SPECS = {
             "year": 2026,
             "custom_verbose_name": True,
             "fields_ordered": ["cantine_id"] + get_teledeclaration_import_fields(2026, "SIMPLE"),
-            "fields_required": ["cantine_id"]
-            + get_teledeclaration_import_fields_required(2026, "SIMPLE"),
+            "fields_required": ["cantine_id"] + get_teledeclaration_import_fields_required(2026, "SIMPLE"),
             "schema_name": "import-bilans-simple-id-2026",
             "schema_title": "Schema import des bilans (simple) par ID (format 2026)",
         },
@@ -126,8 +125,7 @@ SCHEMA_SPECS = {
             "year": 2026,
             "custom_verbose_name": True,
             "fields_ordered": ["cantine_id"] + get_teledeclaration_import_fields(2026, "COMPLETE"),
-            "fields_required": ["cantine_id"]
-            + get_teledeclaration_import_fields_required(2026, "COMPLETE"),
+            "fields_required": ["cantine_id"] + get_teledeclaration_import_fields_required(2026, "COMPLETE"),
             "schema_name": "import-bilans-detaille-id-2026",
             "schema_title": "Schema import des bilans (detaille) par ID (format 2026)",
         },
@@ -248,10 +246,8 @@ class Command(BaseCommand):
 
         field_definition = {
             "description": "",
-            "example": "1234.99",
             "name": name,
             "title": title,
-            "type": "number",
         }
 
         # e.g. definition_local
@@ -265,6 +261,13 @@ class Command(BaseCommand):
         elif isinstance(model_field, models.IntegerField):
             field_definition["type"] = "integer"
             field_definition["example"] = "1234"
+        # e.g. valeur_totale: type "any" to accept both decimal separators ("." & ",")
+        # (a Table Schema number only accepts one decimalChar). The value is then checked by the model (DecimalField)
+        else:
+            field_definition["type"] = "any"
+            field_definition["doc_type"] = "number"
+            field_definition["example"] = "1234,99"
+            field_definition["description"] = "Utiliser un point ou une virgule comme séparateur décimal"
 
         if is_required:
             field_definition.setdefault("constraints", {})["required"] = True

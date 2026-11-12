@@ -28,390 +28,443 @@
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_totale",
       "title": "Total des achats alimentaires toutes familles de produits confondues",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_bio",
       "title": "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_bio_dont_commerce_equitable",
       "title": "Dont total des achats bio issus du commerce équitable",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_siqo",
       "title": "Total des achats SIQO (hors bio) : Label Rouge, AOC / AOP, IGP, STG",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_externalites_performance",
       "title": "Total des achats prenant en compte les externalités environnementales",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_egalim_autres",
       "title": "Total des autres achats EGalim",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_egalim_autres_dont_commerce_equitable",
       "title": "Dont total des achats non bio issus du commerce équitable",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_viandes_volailles",
       "title": "Total des achats pour la famille Viandes et volailles fraîches ou surgelées",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {
         "required": true
       },
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_viandes_volailles_egalim",
       "title": "Total des achats EGalim en viandes et volailles fraîches ou surgelées",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_de_la_mer",
       "title": "Total des achats pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_de_la_mer_egalim",
       "title": "Total des achats EGalim en poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_fruits_et_legumes",
       "title": "Total des achats pour la famille Fruits et légumes frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_charcuterie",
       "title": "Total des achats pour la famille Charcuteries",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_laitiers",
       "title": "Total des achats pour la famille BOF (Produits laitiers, beurre et œufs)",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boulangerie",
       "title": "Total des achats pour la famille Boulangerie/Pâtisseries fraîches",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boissons",
       "title": "Total des achats pour la famille Boissons",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_autres",
       "title": "Total des achats pour la famille Autres produits frais, surgelés et d'épicerie",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_europe",
       "title": "Total des achats origine Europe (hors France) toutes familles de produits confondues",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_france",
       "title": "Total des achats origine France toutes familles de produits confondues",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_circuit_court",
       "title": "Total des achats en circuit court toutes familles de produits confondues",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_local",
       "title": "Total des achats en produits « locaux » toutes familles de produits confondues",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_viandes_volailles_europe",
       "title": "Total des achats origine Europe (hors France) pour la famille Viandes et volailles fraîches ou surgelées",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_de_la_mer_europe",
       "title": "Total des achats origine Europe (hors France) pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_fruits_et_legumes_europe",
       "title": "Total des achats origine Europe (hors France) pour la famille Fruits et légumes frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_charcuterie_europe",
       "title": "Total des achats origine Europe (hors France) pour la famille Charcuteries",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_laitiers_europe",
       "title": "Total des achats origine Europe (hors France) pour la famille BOF (Produits laitiers, beurre et œufs)",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boulangerie_europe",
       "title": "Total des achats origine Europe (hors France) pour la famille Boulangerie/Pâtisseries fraîches",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boissons_europe",
       "title": "Total des achats origine Europe (hors France) pour la famille Boissons",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_autres_europe",
       "title": "Total des achats origine Europe (hors France) pour la famille Autres produits frais, surgelés et d'épicerie",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_viandes_volailles_france",
       "title": "Total des achats origine France pour la famille Viandes et volailles fraîches ou surgelées",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_de_la_mer_france",
       "title": "Total des achats origine France pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_fruits_et_legumes_france",
       "title": "Total des achats origine France pour la famille Fruits et légumes frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_charcuterie_france",
       "title": "Total des achats origine France pour la famille Charcuteries",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_laitiers_france",
       "title": "Total des achats origine France pour la famille BOF (Produits laitiers, beurre et œufs)",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boulangerie_france",
       "title": "Total des achats origine France pour la famille Boulangerie/Pâtisseries fraîches",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boissons_france",
       "title": "Total des achats origine France pour la famille Boissons",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_autres_france",
       "title": "Total des achats origine France pour la famille Autres produits frais, surgelés et d'épicerie",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_viandes_volailles_circuit_court",
       "title": "Total des achats circuit court pour la famille Viandes et volailles fraîches ou surgelées",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_de_la_mer_circuit_court",
       "title": "Total des achats circuit court pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_fruits_et_legumes_circuit_court",
       "title": "Total des achats circuit court pour la famille Fruits et légumes frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_charcuterie_circuit_court",
       "title": "Total des achats circuit court pour la famille Charcuteries",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_laitiers_circuit_court",
       "title": "Total des achats circuit court pour la famille BOF (Produits laitiers, beurre et œufs)",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boulangerie_circuit_court",
       "title": "Total des achats circuit court pour la famille Boulangerie/Pâtisseries fraîches",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boissons_circuit_court",
       "title": "Total des achats circuit court pour la famille Boissons",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_autres_circuit_court",
       "title": "Total des achats circuit court pour la famille Autres produits frais, surgelés et d'épicerie",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_viandes_volailles_local",
       "title": "Total des achats locaux pour la famille Viandes et volailles fraîches ou surgelées",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_de_la_mer_local",
       "title": "Total des achats locaux pour la famille Poissons, produits de la mer et de l'aquaculture frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_fruits_et_legumes_local",
       "title": "Total des achats locaux pour la famille Fruits et légumes frais et surgelés",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_charcuterie_local",
       "title": "Total des achats locaux pour la famille Charcuteries",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_produits_laitiers_local",
       "title": "Total des achats locaux pour la famille BOF (Produits laitiers, beurre et œufs)",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boulangerie_local",
       "title": "Total des achats locaux pour la famille Boulangerie/Pâtisseries fraîches",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_boissons_local",
       "title": "Total des achats locaux pour la famille Boissons",
-      "type": "number"
+      "type": "any"
     },
     {
-      "description": "",
-      "example": "1234.99",
+      "description": "Utiliser un point ou une virgule comme séparateur décimal",
+      "doc_type": "number",
+      "example": "1234,99",
       "name": "valeur_autres_local",
       "title": "Total des achats locaux pour la famille Autres produits frais, surgelés et d'épicerie",
-      "type": "number"
+      "type": "any"
     },
     {
       "constraints": {

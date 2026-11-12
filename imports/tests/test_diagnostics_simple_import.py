@@ -122,7 +122,7 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 10)
+        self.assertEqual(len(errors), 8)
         # Missing required values
         self.assertEqual(errors[0]["field"], "année_bilan")
         self.assertEqual(errors[0]["field_title"], DIAGNOSTICS_SIMPLE_SIRET_SCHEMA.titles["année_bilan"])
@@ -140,16 +140,11 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(errors[5]["message"], "La valeur est obligatoire et doit être renseignée")
         self.assertEqual(errors[6]["field"], "siret")
         self.assertEqual(errors[6]["message"], "La valeur est obligatoire et doit être renseignée")
-        # Invalid number
-        self.assertEqual(errors[7]["field"], "valeur_totale")
-        self.assertEqual(
-            errors[7]["message"], "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal"
-        )
-        self.assertEqual(errors[8]["field"], "valeur_totale")
-        self.assertTrue(errors[8]["message"].startswith("Le séparateur décimal à utiliser est le point"))
+        # NOTE: no Validata error on the invalid number ("invalid number") & the decimal comma ("20,5")
+        # (decimal fields: schema type "any", see test_model_validation_error_invalid_number)
         # Unique SIRET
-        self.assertEqual(errors[9]["field"], "siret")
-        self.assertEqual(errors[9]["message"], "Les valeurs de cette colonne doivent être uniques")
+        self.assertEqual(errors[7]["field"], "siret")
+        self.assertEqual(errors[7]["message"], "Les valeurs de cette colonne doivent être uniques")
 
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
@@ -713,6 +708,59 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic.nombre_repas_an, 42000)
         self.assertEqual(diagnostic.valeur_totale, 1000)
         self.assertEqual(diagnostic.valeur_fruits_et_legumes, 250)
+
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_diagnostics_created_with_decimal_comma(self):
+        """
+        Both decimal separators are accepted: "." & ","
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_good_decimal_comma.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        self.assertEqual(body["count"], 1)
+
+        diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
+        self.assertEqual(diagnostic.valeur_totale, Decimal("1000.5"))  # "1000,5"
+        self.assertEqual(diagnostic.valeur_bio, Decimal("200.25"))  # "200.25"
+        self.assertEqual(diagnostic.valeur_siqo, Decimal("100.1"))  # "100,1"
+
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_model_validation_error_invalid_number(self):
+        """
+        Decimal fields: their schema type is "any" (to accept both decimal separators), the number is checked by the model
+        """
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_bad_invalid_number.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 1, body["errors"])
+        error = body["errors"][0]
+        self.assertEqual(error["row"], 2)
+        self.assertTrue(
+            error["message"].startswith(
+                "Champ 'Total des achats alimentaires toutes familles de produits confondues' :"
+            ),
+            error["message"],
+        )
+        self.assertIn("nombre décimal", error["message"])
 
     @freeze_time("2027-01-20")  # during the 2026 campaign
     @authenticate

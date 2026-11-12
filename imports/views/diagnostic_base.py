@@ -1,7 +1,8 @@
 from abc import abstractmethod
+from decimal import Decimal, InvalidOperation
 
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
-from django.db import transaction
+from django.db import models, transaction
 from rest_framework.exceptions import PermissionDenied
 from simple_history.utils import update_change_reason
 
@@ -101,11 +102,26 @@ class BaseDiagnosticsImportView(BaseImportView):
         year = row_dict[YEAR_COLUMN] if YEAR_COLUMN in row_dict else get_current_campaign_year()
         # empty cell -> None. NOTE: not `or None`, a 0 is a value (Excel files: Validata returns numbers, not strings)
         values_dict = {
-            column: None if row_dict[column] in ("", None) else row_dict[column]
+            column: None if row_dict[column] in ("", None) else self._parse_value(column, row_dict[column])
             for column in columns
             if column != YEAR_COLUMN
         }
         return year, values_dict, self.diagnostic_type
+
+    def _parse_value(self, column, value):
+        """
+        Decimal fields (e.g. valeur_totale): accept both decimal separators, "." & "," (e.g. "1234,99")
+        (their schema type is "any", so Validata doesn't check that they are numbers: done here)
+        """
+        model_field = Diagnostic._meta.get_field(column)
+        if isinstance(value, str) and isinstance(model_field, models.DecimalField):
+            try:
+                return Decimal(value.strip().replace(",", "."))
+            except InvalidOperation:
+                raise ValidationError(
+                    {column: ValidationError(model_field.error_messages["invalid"], params={"value": value})}
+                )
+        return value
 
     def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
         diagnostic_exists = Diagnostic.objects.filter(canteen=canteen, year=diagnostic_year).exists()

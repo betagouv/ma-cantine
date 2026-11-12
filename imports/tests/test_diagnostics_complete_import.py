@@ -120,7 +120,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         body = response.json()
         errors = body["errors"]
         self.assertEqual(body["count"], 0)
-        self.assertEqual(len(errors), 10)
+        self.assertEqual(len(errors), 8)
         # Missing required values
         self.assertEqual(errors[0]["field"], "année_bilan")
         self.assertEqual(errors[0]["message"], "La valeur est obligatoire et doit être renseignée")
@@ -136,16 +136,11 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         self.assertEqual(errors[5]["message"], "La valeur est obligatoire et doit être renseignée")
         self.assertEqual(errors[6]["field"], "siret")
         self.assertEqual(errors[6]["message"], "La valeur est obligatoire et doit être renseignée")
-        # Invalid number
-        self.assertEqual(errors[7]["field"], "valeur_totale")
-        self.assertEqual(
-            errors[7]["message"], "La valeur ne doit comporter que des chiffres et le point comme séparateur décimal"
-        )
-        self.assertEqual(errors[8]["field"], "valeur_totale")
-        self.assertTrue(errors[8]["message"].startswith("Le séparateur décimal à utiliser est le point"))
+        # NOTE: no Validata error on the invalid number ("invalid number") & the decimal comma ("20,5")
+        # (decimal fields: schema type "any", see test_model_validation_error_invalid_number)
         # Unique SIRET
-        self.assertEqual(errors[9]["field"], "siret")
-        self.assertEqual(errors[9]["message"], "Les valeurs de cette colonne doivent être uniques")
+        self.assertEqual(errors[7]["field"], "siret")
+        self.assertEqual(errors[7]["message"], "Les valeurs de cette colonne doivent être uniques")
 
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
