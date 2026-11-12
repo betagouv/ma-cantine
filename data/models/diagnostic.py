@@ -28,6 +28,11 @@ from data.utils import (
     to_decimal,
 )
 from data.validators import diagnostic as diagnostic_validators
+from data.validators import diagnostic_volet_approvisionnement as diagnostic_volet_approvisionnement_validators
+from data.validators import diagnostic_volet_diversification as diagnostic_volet_diversification_validators
+from data.validators import diagnostic_volet_gaspillage as diagnostic_volet_gaspillage_validators
+from data.validators import diagnostic_volet_information as diagnostic_volet_information_validators
+from data.validators import diagnostic_volet_plastique as diagnostic_volet_plastique_validators
 from data.validators import diagnostic_teledeclaration as diagnostic_teledeclaration_validators
 from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
@@ -789,15 +794,17 @@ class Diagnostic(
             validation_errors = utils_utils.merge_validation_errors(
                 validation_errors,
                 diagnostic_validators.validate_diagnostic_type(self),
-                diagnostic_validators.validate_appro_fields_required(self),
-                diagnostic_validators.validate_valeur_totale(self),
-                diagnostic_validators.validate_valeur_famille(self),
-                diagnostic_validators.validate_valeur_famille_bio(self),
-                diagnostic_validators.validate_valeur_label(self),
-                diagnostic_validators.validate_viandes_volailles_total(self),
-                diagnostic_validators.validate_produits_de_la_mer_total(self),
-                diagnostic_validators.validate_viandes_volailles_produits_de_la_mer_egalim(self),
-                diagnostic_validators.validate_definition_local(self),
+                diagnostic_volet_approvisionnement_validators.validate_appro_fields_required(self),
+                diagnostic_volet_approvisionnement_validators.validate_valeur_totale(self),
+                diagnostic_volet_approvisionnement_validators.validate_valeur_famille(self),
+                diagnostic_volet_approvisionnement_validators.validate_valeur_famille_bio(self),
+                diagnostic_volet_approvisionnement_validators.validate_valeur_label(self),
+                diagnostic_volet_approvisionnement_validators.validate_viandes_volailles_total(self),
+                diagnostic_volet_approvisionnement_validators.validate_produits_de_la_mer_total(self),
+                diagnostic_volet_approvisionnement_validators.validate_viandes_volailles_produits_de_la_mer_egalim(
+                    self
+                ),
+                diagnostic_volet_approvisionnement_validators.validate_definition_local(self),
             )
         if validation_errors:
             raise ValidationError(validation_errors)
@@ -882,7 +889,11 @@ class Diagnostic(
             errors = e.message_dict
         if not skip_volets_thematiques:
             errors = utils_utils.merge_validation_errors(
-                errors, diagnostic_validators.validate_volets_thematiques_fields_required(self)
+                errors,
+                diagnostic_volet_gaspillage_validators.validate_gaspillage_fields_required(self),
+                diagnostic_volet_diversification_validators.validate_diversification_fields_required(self),
+                diagnostic_volet_plastique_validators.validate_plastique_fields_required(self),
+                diagnostic_volet_information_validators.validate_information_fields_required(self),
             )
         # normalize the format: {"field": ["error1", ...]}
         return ValidationError(errors).message_dict if errors else {}
