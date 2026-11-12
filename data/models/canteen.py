@@ -762,6 +762,24 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             ):
                 self.reset_geo_fields(with_city_insee_code=False, with_save=False)
 
+    def set_should_fill_geo_fields(self):
+        """
+        Used by the post_save signal (fill_geo_fields_from_siret), because dirty fields are reset after save.
+        Cases where we need to fill geo fields:
+        - the canteen is being created
+        - OR the siret has changed (and is not empty)
+        - OR the city_insee_code has changed (and is not empty)
+        - OR the geo fields have been reset (see reset_geo_fields())
+        """
+        dirty_fields = self.get_dirty_fields()
+        self._should_fill_geo_fields = (
+            self._state.adding
+            or ("siret" in dirty_fields and bool(self.siret))
+            or ("city_insee_code" in dirty_fields and bool(self.city_insee_code))
+            or getattr(self, "_geo_fields_reset", False)
+        )
+        self._geo_fields_reset = False
+
     def set_is_filled(self):
         self.is_filled = self._is_filled()
 
@@ -793,6 +811,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         self.normalize_fields()
         self.optimize_logo()
         self.reset_geo_fields_if_siret_or_city_insee_code_changed()
+        self.set_should_fill_geo_fields()
         if not skip_validations:
             self.is_clean(raise_errors=True)
         self.set_is_filled()
@@ -1035,6 +1054,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         self.region_lib = None
         self.siret_inconnu = False
         self.siret_etat_administratif = None
+        self._geo_fields_reset = True  # the post_save signal will fill them again
         if with_save:
             self.save(skip_validations=True)
             update_change_reason(self, "Reset geo fields")
@@ -1126,18 +1146,22 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
 @receiver(post_save, sender=Canteen)
 def fill_geo_fields_from_siret(sender, instance, created, **kwargs):
     """
-    On canteen creation, we need to fill its geo fields
+    On canteen creation (or when its siret or city_insee_code changes), we need to fill its geo fields
 
     Notes:
-    - SIRET: if city_insee_code is (already) set, we don't override it
+    - not triggered on other saves (nor on fixture loading), see set_should_fill_geo_fields()
+    - SIRET without city_insee_code: we fetch it (API Recherche Entreprises), then fill the other geo fields
+    - SIRET or SIREN with city_insee_code: we don't override it, we fill the other (missing) geo fields
     - SIREN: if city_insee_code is not set, we can't fill geo fields (we don't know which city to use), so we don't do anything
     - GROUPE canteens: they don't have siret, so it won't be triggered for them
     """
     from macantine import tasks
 
+    if not getattr(instance, "_should_fill_geo_fields", False):
+        return
     if instance.siret and not instance.city_insee_code:
         tasks.update_canteen_geo_fields_from_siret(instance)
-    elif instance.siren_unite_legale and instance.city_insee_code:
+    elif instance.city_insee_code:
         tasks.update_canteen_geo_data_from_insee_code(instance)
 
 
