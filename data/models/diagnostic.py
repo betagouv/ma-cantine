@@ -483,7 +483,6 @@ class Diagnostic(
 
     OTHER_COMPUTED_FIELDS = [
         "cout_repas",
-        "satellites_nombre_repas_an_total",
         "is_filled",
     ]
 
@@ -511,6 +510,7 @@ class Diagnostic(
 
     GROUPE_FIELDS = [
         "satellites_nombre_repas_an",
+        "satellites_nombre_repas_an_total",  # computed
     ]
 
     META_FIELDS = [
