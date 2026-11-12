@@ -1926,14 +1926,6 @@ class DiagnosticSatellitesNombreRepasAnTotalTest(TestCase):
         )
         self.assertEqual(diagnostic.satellites_nombre_repas_an_total, 1000)
 
-    def test_total_is_none_if_canteen_is_not_a_groupe(self):
-        diagnostic = DiagnosticFactory(
-            canteen=self.canteen_site,
-            year=2026,
-            satellites_nombre_repas_an={str(self.canteen_satellite_1.id): 1000},
-        )
-        self.assertIsNone(diagnostic.satellites_nombre_repas_an_total)
-
     def test_save_prefills_the_satellites_with_empty_values(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026)
         self.assertEqual(
@@ -1972,6 +1964,7 @@ class DiagnosticSatellitesNombreRepasAnTotalTest(TestCase):
             satellites_nombre_repas_an={str(self.canteen_satellite_1.id): 1000},
         )
         self.assertIsNone(diagnostic.satellites_nombre_repas_an)
+        self.assertIsNone(diagnostic.satellites_nombre_repas_an_total)
 
     def test_save_empties_the_field_before_2026(self):
         diagnostic = DiagnosticFactory(
