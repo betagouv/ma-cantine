@@ -34,6 +34,8 @@ Bilans : les imports ne sont possibles que pendant la campagne (télédéclarati
 
 Bilans : les erreurs de validation sur les champs absents du fichier sont ignorées (`_full_clean()`). Par exemple, le format 2025 n'a pas de colonne `nombre_repas_an`, obligatoire pour les bilans 2026 : il sera à compléter dans l'interface avant la télédéclaration.
 
+Bilans : dans les messages d'erreur, le nom des champs est celui de `teledeclaration/<année>/champs.json` (année du format du fichier, `schema_version`), comme les titres des colonnes du schéma (`_get_verbose_field_name()`). Les champs hors `champs.json` (`year`, `canteen`…) gardent le `verbose_name` du modèle.
+
 ## Ce qui reste ailleurs
 
 - schémas : `data/schemas/imports/` (Validata les lit depuis GitHub, sur la branche `GIT_BRANCH`)
