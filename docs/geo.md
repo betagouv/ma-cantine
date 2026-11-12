@@ -46,9 +46,9 @@ On stock actuellement en dure la liste des départements ([data/department_choic
 
 ## Comment ça marche ?
 
-* Un signal `post_save` est envoyé à chaque fois qu'une cantine est créée ou mise à jour
+* Un signal `post_save` est envoyé à la création d'une cantine, quand son `siret` ou son `city_insee_code` change, ou après `reset_geo_fields()` (voir `set_should_fill_geo_fields()`)
 * Si la cantine a un `siret` mais pas de `city_insee_code`, on appelle `update_canteen_geo_fields_from_siret`
-* Si la cantine a un `siren_unite_legale` et un `city_insee_code` mais pas de données géographiques, on appelle `update_canteen_geo_data_from_insee_code`
+* Si la cantine a un `city_insee_code` (`siret` ou `siren_unite_legale`), on appelle `update_canteen_geo_data_from_insee_code`, qui remplit les données géographiques manquantes (sans écraser les existantes)
 
 ## FAQ
 
@@ -68,6 +68,10 @@ On stock actuellement en dure la liste des départements ([data/department_choic
 
 * Pour éviter de faire des appels API à chaque fois qu'on a besoin de récupérer les données géographiques
 * Vu que les données géo "Découpage Administratif" et "PAT" ne changent (quasiment) jamais
+
+### Comment compléter les données géographiques manquantes ?
+
+Lancer la commande `python manage.py canteen_fill_missing_geo_data_using_city_insee_code` ("apply") : elle remplit les champs vides des cantines ayant un `city_insee_code`, sans écraser les valeurs existantes.
 
 ### Comment gérer la MAJ annuelle des communes et EPCI ?
 

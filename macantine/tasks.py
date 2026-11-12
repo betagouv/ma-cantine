@@ -94,64 +94,77 @@ def update_canteen_geo_data_from_insee_code(canteen):
         _update_canteen_geo_data_from_insee_code(canteen)
 
 
-def _update_canteen_geo_data_from_insee_code(canteen):  # noqa C901
+def _update_canteen_geo_data_from_insee_code(canteen):
     # fetch geo data from API Découpage Administratif & DataGouv
     communes_details = map_communes_infos()
     epcis_names = map_epcis_code_name()
     pat_mapping = map_pat_list_to_communes_insee_code()
 
-    update = False
+    updated_fields = fill_missing_canteen_geo_fields_from_insee_code(
+        canteen, communes_details, epcis_names, pat_mapping
+    )
+    # save
+    if updated_fields:
+        canteen.save(skip_validations=True)
+        update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
+        return True
+
+
+def fill_missing_canteen_geo_fields_from_insee_code(canteen, communes_details, epcis_names, pat_mapping):  # noqa C901
+    """
+    Fill the canteen's missing (empty) geo fields, using its city_insee_code
+    - existing values are never overwritten
+    - in memory only: the caller is responsible for saving the canteen
+    Input: mappings from map_communes_infos(), map_epcis_code_name() & map_pat_list_to_communes_insee_code()
+    Output: list of the updated field names (empty if nothing was updated)
+    """
+    updated_fields = []
     # geo fields
     if canteen.city_insee_code in communes_details:
         if not canteen.postal_code:
             postal_code_list = fetch_commune_detail(canteen.city_insee_code, communes_details, "postal_code_list")
-            postal_code = postal_code_list[0] if postal_code_list else None
             if postal_code_list:
-                canteen.postal_code = postal_code
-                update = True
+                canteen.postal_code = postal_code_list[0]
+                updated_fields.append("postal_code")
         if not canteen.city:
             city = fetch_commune_detail(canteen.city_insee_code, communes_details, "city")
             if city:
                 canteen.city = city
-                update = True
+                updated_fields.append("city")
         if not canteen.epci:
             epci = fetch_commune_detail(canteen.city_insee_code, communes_details, "epci")
             if epci:
                 canteen.epci = epci
-                update = True
+                updated_fields.append("epci")
         if not canteen.pat_list:
             pat_list = fetch_commune_pat_list(canteen.city_insee_code, pat_mapping, "id")
             if pat_list:
                 canteen.pat_list = pat_list
-                update = True
+                updated_fields.append("pat_list")
         if not canteen.department:
             department = fetch_commune_detail(canteen.city_insee_code, communes_details, "department")
             if department:
                 canteen.department = department
-                update = True
+                updated_fields.append("department")
         if not canteen.region:
             region = fetch_commune_detail(canteen.city_insee_code, communes_details, "region")
             if region:
                 canteen.region = region
-                update = True
+                updated_fields.append("region")
     # geo lib fields
     if canteen.epci and not canteen.epci_lib and canteen.epci in epcis_names:
         canteen.epci_lib = fetch_epci_name(canteen.epci, epcis_names)
-        update = True
+        updated_fields.append("epci_lib")
     if canteen.pat_list and not canteen.pat_lib_list:
         canteen.pat_lib_list = fetch_commune_pat_list(canteen.city_insee_code, pat_mapping, "lib")
-        update = True
+        updated_fields.append("pat_lib_list")
     if canteen.department and not canteen.department_lib:
         canteen.department_lib = get_lib_department_from_code(canteen.department)
-        update = True
+        updated_fields.append("department_lib")
     if canteen.region and not canteen.region_lib:
         canteen.region_lib = get_lib_region_from_code(canteen.region)
-        update = True
-    # save
-    if update:
-        canteen.save(skip_validations=True)
-        update_change_reason(canteen, "Données de localisation MAJ par bot, via code INSEE")
-        return True
+        updated_fields.append("region_lib")
+    return updated_fields
 
 
 @app.task()
