@@ -292,6 +292,7 @@
         "plastiqueUstensileRemplace",
         "plastiqueVaisselleJetableRemplace",
         "plastiqueContenantRemplace",
+        "venteEmporter",
         "plastiqueContenantEmporterRemplace"
       ]
     },
@@ -361,6 +362,22 @@
         ]
       },
       "plastiqueContenantRemplace": {
+        "type": "radio",
+        "inline": true,
+        "options": [
+          {
+            "label": "Oui",
+            "valueDisplay": "Oui",
+            "value": true
+          },
+          {
+            "label": "Non",
+            "valueDisplay": "Non",
+            "value": false
+          }
+        ]
+      },
+      "venteEmporter": {
         "type": "radio",
         "inline": true,
         "options": [
