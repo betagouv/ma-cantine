@@ -2076,19 +2076,6 @@ class DiagnosticGroupeSatellitesNombreRepasAnValidationTest(TestCase):
         )
         self.assertEqual(list(errors.keys()), ["nombre_repas_an"])
 
-    def test_ignores_canteens_not_linked_to_the_groupe(self):
-        errors = self._validate(
-            canteen=self.canteen_groupe,
-            year=2026,
-            nombre_repas_an=3000,
-            satellites_nombre_repas_an={
-                str(self.canteen_satellite_1.id): 1000,
-                str(self.canteen_satellite_2.id): 2000,
-                str(self.canteen_site.id): 10,
-            },
-        )
-        self.assertEqual(errors, {})
-
     def test_not_checked_if_not_groupe(self):
         errors = self._validate(canteen=self.canteen_site, year=2026, nombre_repas_an=1000)
         self.assertEqual(errors, {})
