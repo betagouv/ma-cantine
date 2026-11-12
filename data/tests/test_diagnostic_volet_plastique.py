@@ -30,3 +30,13 @@ class DiagnosticVoletPlastiqueVenteEmporterValidatorTest(TestCase):
         diagnostic = get_plastique_diagnostic(field_empty=self.FIELD, sector_list=[Sector.EDUCATION_PRIMAIRE])
         errors = diagnostic_volet_plastique_validators.validate_plastique_fields_required(diagnostic)
         self.assertIn(self.FIELD, errors)
+
+
+class DiagnosticVoletPlastiqueContenantEmporterValidatorTest(TestCase):
+    FIELD = "plastique_contenant_emporter_remplace"
+
+    def test_plastique_contenant_emporter_remplace_optional(self):
+        """
+        Only asked (in the tunnel) if vente_emporter is True, like the dons_* fields with dons_convention
+        """
+        self.assertNotIn(self.FIELD, get_teledeclaration_fields_required(2026, "PLASTIQUE"))
