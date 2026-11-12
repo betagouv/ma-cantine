@@ -509,7 +509,6 @@ class Diagnostic(
         "nombre_repas_an",
     ]
 
-    # new in 2026 (only relevant for groupes)
     GROUPE_FIELDS = [
         "satellites_nombre_repas_an",
     ]
@@ -717,7 +716,6 @@ class Diagnostic(
         encoder=CustomJSONEncoder,
     )
 
-    # Groupe: nombre de repas annuels de chaque satellite (seulement pertinent pour les groupes)
     satellites_nombre_repas_an = models.JSONField(
         verbose_name="nombre de repas par an de chaque satellite (seulement pertinent pour les groupes)",
         help_text='format : {"<id de la cantine satellite>": <nombre de repas par an>}',
