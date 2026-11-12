@@ -755,6 +755,26 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
 
     @freeze_time("2027-01-20")  # during the 2026 campaign
     @authenticate
+    def test_diagnostics_created_excel_file_with_siret_leading_zero(self):
+        """
+        Excel number cell: the leading 0 of the siret is lost (5980406200087 instead of "05980406200087"), it is added back
+        """
+        canteen = CanteenFactory(siret="05980406200087", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_good_siret_leading_zero.xlsx"
+        with open(file_path, "rb") as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        self.assertEqual(body["count"], 1)
+        self.assertTrue(Diagnostic.objects.filter(canteen_id=canteen.id, year=2026).exists())
+
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
     def test_model_validation_error_invalid_number(self):
         """
         Decimal fields: their schema type is "any" (to accept both decimal separators), the number is checked by the model

@@ -1,5 +1,20 @@
 from django.core.exceptions import ValidationError
 
+from common.utils.utils import normalize_string
+
+
+def normalize_siret(siret):
+    """
+    Clean a SIRET read from an import file:
+    - remove the spaces (e.g. "213 401 722 01787" -> "21340172201787")
+    - Excel number cell: the leading 0s are lost (e.g. 5980406200087 instead of "05980406200087"): add them back
+    """
+    if isinstance(siret, float) and siret.is_integer():
+        siret = int(siret)
+    if isinstance(siret, int) and not isinstance(siret, bool):
+        return str(siret).zfill(14)
+    return normalize_string(siret)
+
 
 def is_valid_length_siren(siren: str) -> bool:
     if len(siren) == 9:
