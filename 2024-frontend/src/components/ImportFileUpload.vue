@@ -70,6 +70,7 @@ const groupErrorsByColumn = (errors) => {
     if (index === -1) {
       groupedErrors.push({
         field: error.field,
+        fieldTitle: error.field_title, // Validata: the column's title (from the schema) is displayed instead of its name
         message: errorMessage,
         rowList: [],
         showLink: error.has_doc,
@@ -137,7 +138,7 @@ const showErrors = (count) => {
         <ul>
           <li v-for="(error, index) in hasErrors.list" :key="index" class="fr-text-default--error">
             <p class="fr-mb-1v">
-              <span v-if="error.field" class="ma-cantine--bold">{{ error.field }} :</span>
+              <span v-if="error.field" class="ma-cantine--bold">{{ error.fieldTitle || error.field }} :</span>
               {{ error.message }}
             </p>
             <ul v-if="error.purchases" class="ma-cantine--unstyled-list fr-text-default--grey">

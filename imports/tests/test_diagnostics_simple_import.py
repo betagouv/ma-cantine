@@ -12,6 +12,7 @@ from api.tests.utils import assert_import_failure_created, assert_import_success
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic
 from imports.models import ImportType
+from imports.views.diagnostic import DIAGNOSTICS_SIMPLE_SIRET_SCHEMA
 from data.models.creation_source import CreationSource
 
 
@@ -124,8 +125,10 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         self.assertEqual(len(errors), 10)
         # Missing required values
         self.assertEqual(errors[0]["field"], "année_bilan")
+        self.assertEqual(errors[0]["field_title"], DIAGNOSTICS_SIMPLE_SIRET_SCHEMA.titles["année_bilan"])
         self.assertEqual(errors[0]["message"], "La valeur est obligatoire et doit être renseignée")
         self.assertEqual(errors[1]["field"], "valeur_totale")
+        self.assertEqual(errors[1]["field_title"], "Valeur totale annuelle HT")  # champs.json 2025
         self.assertEqual(errors[1]["message"], "La valeur est obligatoire et doit être renseignée")
         self.assertEqual(errors[2]["field"], "valeur_bio")
         self.assertEqual(errors[2]["message"], "La valeur est obligatoire et doit être renseignée")

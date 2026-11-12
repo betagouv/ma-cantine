@@ -1,3 +1,4 @@
+import json
 from functools import cached_property
 
 from django.conf import settings
@@ -30,3 +31,9 @@ class ImportSchema:
     @cached_property
     def header(self):
         return file_import.get_expected_header_from_schema(self.path)
+
+    @cached_property
+    def titles(self):
+        """The title of each column, e.g. {"nombre_repas_an": "Nombre de couverts par an"}"""
+        with open(self.path, encoding="utf-8") as schema_file:
+            return {field["name"]: field.get("title") for field in json.load(schema_file)["fields"]}
