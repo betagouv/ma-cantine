@@ -426,6 +426,19 @@ class DiagnosticBadgesTest(TestCase):
             ("crèche, contenant not replaced", creche, default_fields, False),
             ("health, contenant replaced", hospital, {**default_fields, "plastique_contenant_remplace": True}, True),
             ("health, contenant not replaced", hospital, default_fields, False),
+            # repas à emporter: contenant emporter
+            (
+                "vente emporter, contenant emporter not replaced",
+                entreprise,
+                {**default_fields, "plastique_contenant_emporter_remplace": False},
+                False,
+            ),
+            (
+                "no vente emporter, contenant emporter not needed",
+                entreprise,
+                {**default_fields, "vente_emporter": False, "plastique_contenant_emporter_remplace": None},
+                True,
+            ),
         ]
         self.assertBadge("plastic_badge", 2026, cases)
 

@@ -205,6 +205,7 @@ def plastic_badge_2026(diagnostic) -> bool | None:
     Education: plastic water bottles replaced
     20 daily meals or more: disposable tableware replaced
     Education, crèches and health: cooking, reheating and serving containers replaced
+    Repas à emporter: reusable or recyclable take-away containers
     """
     if not is_volet_completed(diagnostic, "PLASTIQUE"):
         return None
@@ -217,6 +218,8 @@ def plastic_badge_2026(diagnostic) -> bool | None:
         obligations.append(diagnostic.plastique_vaisselle_jetable_remplace)
     if sectors.intersection(EDUCATION_SECTOR_LIST + [Sector.SOCIAL_CRECHE] + HEALTH_SECTOR_LIST):
         obligations.append(diagnostic.plastique_contenant_remplace)
+    if diagnostic.vente_emporter:
+        obligations.append(diagnostic.plastique_contenant_emporter_remplace)
 
     return all(obligation is True for obligation in obligations)
 
