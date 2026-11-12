@@ -36,6 +36,18 @@ Bilans : les erreurs de validation sur les champs absents du fichier sont ignor�
 
 Bilans : dans les messages d'erreur, le nom des champs est celui de `teledeclaration/<année>/champs.json` (année du format du fichier, `schema_version`), comme les titres des colonnes du schéma (`_get_verbose_field_name()`). Les champs hors `champs.json` (`year`, `canteen`…) gardent le `verbose_name` du modèle.
 
+## Tests
+
+Les tests des imports n'appellent pas l'API Validata : ils rejouent ses réponses, enregistrées dans `imports/tests/files/validata_responses/<schéma>/<fichier>.json` (`ValidataReplayMixin`, dans `imports/tests/validata_replay.py`). Chaque réponse garde le hash du schéma et du fichier : s'il change (ou si la réponse n'existe pas), le test échoue.
+
+Pour enregistrer les réponses manquantes ou obsolètes (appelle l'API Validata) :
+
+```bash
+VALIDATA_RECORD=1 python manage.py test imports
+```
+
+Si un schéma change : Validata le lit depuis GitHub, il faut donc d'abord pousser la branche, puis enregistrer avec `GIT_BRANCH=<branche>` (l'enregistrement échoue si le schéma sur GitHub est différent du schéma local).
+
 ## Ce qui reste ailleurs
 
 - schémas : `data/schemas/imports/` (Validata les lit depuis GitHub, sur la branche `GIT_BRANCH`)

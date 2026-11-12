@@ -7,13 +7,14 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
+from imports.tests.validata_replay import ValidataReplayMixin
 from data.factories import CanteenFactory, UserFactory
 from data.models import ManagerInvitation
 from imports.models import ImportType
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class CanteensManagersImportApiNonAdminErrorTest(APITestCase):
+class CanteensManagersImportApiNonAdminErrorTest(ValidataReplayMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse("canteens_managers_import")
@@ -49,7 +50,7 @@ class CanteensManagersImportApiNonAdminErrorTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class CanteensManagersImportApiErrorTest(APITestCase):
+class CanteensManagersImportApiErrorTest(ValidataReplayMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse("canteens_managers_import")
@@ -223,7 +224,7 @@ class CanteensManagersImportApiErrorTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class CanteensManagersImportApiSuccessTest(APITestCase):
+class CanteensManagersImportApiSuccessTest(ValidataReplayMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse("canteens_managers_import")

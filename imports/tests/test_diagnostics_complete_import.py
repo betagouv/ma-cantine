@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
+from imports.tests.validata_replay import ValidataReplayMixin
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic
 from imports.models import ImportType
@@ -15,7 +16,7 @@ from data.models.creation_source import CreationSource
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class DiagnosticsCompleteImportApiErrorTest(APITestCase):
+class DiagnosticsCompleteImportApiErrorTest(ValidataReplayMixin, APITestCase):
     def test_cannot_import_if_unauthenticated(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
 
@@ -274,7 +275,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
+class DiagnosticsCompleteImportApiSuccessTest(ValidataReplayMixin, APITestCase):
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_diagnostics_created(self):
@@ -453,7 +454,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class DiagnosticsCompleteImportIdApiTest(APITestCase):
+class DiagnosticsCompleteImportIdApiTest(ValidataReplayMixin, APITestCase):
     @authenticate
     def test_schema_version_2025_with_id(self):
         """

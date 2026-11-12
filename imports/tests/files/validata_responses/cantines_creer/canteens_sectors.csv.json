@@ -1,0 +1,71 @@
+{
+  "key": {
+    "file_sha256": "a586366cb5fbbdc2a8460a3a53f566aa4b7e269a6516ac14c41333d2e5271d9a",
+    "schema": "cantines_creer.json",
+    "schema_sha256": "14baa550fe10cafc836893f7f4da081057c2658b0657d2fed220f2fad7cd1057"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [],
+      "stats": {
+        "errors": 0,
+        "fields": 12,
+        "rows": 2,
+        "rows_processed": 2,
+        "warnings": 0
+      },
+      "valid": true,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "siret",
+        "nom",
+        "siret_cuisine_centrale",
+        "nombre_repas_jour",
+        "nombre_repas_an",
+        "secteurs",
+        "type_production",
+        "type_gestion",
+        "modèle_économique",
+        "groupe_id",
+        "administration_tutelle",
+        "gestionnaires_additionnels"
+      ],
+      [
+        "21340172201787",
+        "Canteen 1",
+        "",
+        "700",
+        "14000",
+        "Restaurants d’entreprises",
+        "Restaurant avec cuisine sur place",
+        "Concédée",
+        "Public",
+        "",
+        "",
+        ""
+      ],
+      [
+        "58137739217041",
+        "Canteen 2",
+        "",
+        "700",
+        "14000",
+        "Restaurants d'entreprises",
+        "Restaurant avec cuisine sur place",
+        "Concédée",
+        "Public",
+        "",
+        "",
+        ""
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

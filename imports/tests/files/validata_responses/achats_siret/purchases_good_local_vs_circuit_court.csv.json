@@ -1,0 +1,71 @@
+{
+  "key": {
+    "file_sha256": "768255d78f717cc07ebd7bb61ffb163a0122fb50ae222cd4770947ddc4858cc3",
+    "schema": "achats_siret.json",
+    "schema_sha256": "23a842f1bc9101122c7fe4bb325f715d74882340b3617b1b2c810ec5d2708ee5"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [],
+      "stats": {
+        "errors": 0,
+        "fields": 12,
+        "rows": 2,
+        "rows_processed": 2,
+        "warnings": 0
+      },
+      "valid": true,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "siret",
+        "description",
+        "fournisseur",
+        "date",
+        "prix_ht",
+        "famille_produits",
+        "categories_egalim",
+        "origine",
+        "est_circuit_court",
+        "est_local",
+        "definition_local",
+        "definition_local_km"
+      ],
+      [
+        "21010034300016",
+        "Only local",
+        "Le bon traiteur",
+        "2026-06-22",
+        "100.00",
+        "AUTRES",
+        "",
+        "",
+        "non",
+        "x",
+        "DEPARTEMENT",
+        ""
+      ],
+      [
+        "21010034300016",
+        "Only circuit court",
+        "Le bon traiteur",
+        "2026-06-22",
+        "100.00",
+        "AUTRES",
+        "",
+        "",
+        "x",
+        "non",
+        "",
+        ""
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

@@ -1,0 +1,116 @@
+{
+  "key": {
+    "file_sha256": "0fdb143ddc498a649481bfaeeb8c1de9d2b235771de71b7d87ae5a675729ac54",
+    "schema": "achats_siret.json",
+    "schema_sha256": "23a842f1bc9101122c7fe4bb325f715d74882340b3617b1b2c810ec5d2708ee5"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [
+        {
+          "fieldName": "siret",
+          "fieldNumber": 13,
+          "message": "La colonne obligatoire `siret` est manquante",
+          "tags": [
+            "#table",
+            "#header",
+            "#label"
+          ],
+          "title": "Colonne manquante",
+          "type": "missing-label"
+        },
+        {
+          "fieldName": "prix_ht",
+          "fieldNumber": 14,
+          "message": "La colonne obligatoire `prix_ht` est manquante",
+          "tags": [
+            "#table",
+            "#header",
+            "#label"
+          ],
+          "title": "Colonne manquante",
+          "type": "missing-label"
+        },
+        {
+          "fieldName": "famille_produits",
+          "fieldNumber": 15,
+          "message": "La colonne obligatoire `famille_produits` est manquante",
+          "tags": [
+            "#table",
+            "#header",
+            "#label"
+          ],
+          "title": "Colonne manquante",
+          "type": "missing-label"
+        }
+      ],
+      "stats": {
+        "errors": 3,
+        "fields": 12,
+        "rows": 2,
+        "rows_processed": 2,
+        "warnings": 7
+      },
+      "valid": false,
+      "warnings": [
+        "Colonne manquante : Ajoutez la colonne manquante `definition_local`.",
+        "Colonne manquante : Ajoutez la colonne manquante `definition_local_km`.",
+        "Colonne surnuméraire : Retirez la colonne `canteen siret` non définie dans le schéma.",
+        "Colonne surnuméraire : Retirez la colonne `prix ht` non définie dans le schéma.",
+        "Colonne surnuméraire : Retirez la colonne `famille` non définie dans le schéma.",
+        "Colonne surnuméraire : Retirez la colonne `definition de local` non définie dans le schéma.",
+        "Colonne surnuméraire : Retirez la colonne `distance` non définie dans le schéma."
+      ]
+    },
+    "resource_data": [
+      [
+        "canteen siret",
+        "description",
+        "fournisseur",
+        "date",
+        "prix HT",
+        "famille",
+        "categories_egalim",
+        "origine",
+        "est_circuit_court",
+        "est_local",
+        "definition de local",
+        "distance"
+      ],
+      [
+        "21010034300016",
+        "Pommes, rouges",
+        "Le bon traiteur ",
+        "2022-05-02",
+        "90.11",
+        " PRODUITS_LAITIERS ",
+        "BIO",
+        "",
+        "",
+        "x",
+        " DEPARTEMENT",
+        ""
+      ],
+      [
+        "21010034300016",
+        "Pommes, vertes",
+        "Le bon traiteur ",
+        "2022-05-03",
+        "910.11",
+        " PRODUITS_LAITIERS ",
+        "BIO",
+        "",
+        "",
+        "x",
+        " DEPARTEMENT",
+        ""
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}
