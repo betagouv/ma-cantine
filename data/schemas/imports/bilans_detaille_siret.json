@@ -438,7 +438,7 @@
       "description": "",
       "example": "1234.99",
       "name": "valeur_produits_de_la_mer_peche_durable",
-      "title": "Poissons, produits de la mer et de l'aquaculture, Pêche durable (non applicable)",
+      "title": "Poissons, produits de la mer et de l'aquaculture, Pêche durable",
       "type": "number"
     },
     {
