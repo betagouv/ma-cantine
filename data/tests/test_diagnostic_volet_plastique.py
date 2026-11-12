@@ -65,10 +65,26 @@ class DiagnosticVoletPlastiqueContenantEmporterFieldsValidatorTest(TestCase):
                 errors = diagnostic_volet_plastique_validators.validate_plastique_contenant_emporter_fields(diagnostic)
                 self.assertEqual(errors, {})
 
+    def test_plastique_contenant_emporter_remplace_must_be_empty_if_no_vente_emporter(self):
+        for vente_emporter in [False, None]:
+            for value in [True, False]:
+                with self.subTest(vente_emporter=vente_emporter, value=value):
+                    diagnostic = get_plastique_diagnostic()
+                    diagnostic.vente_emporter = vente_emporter
+                    setattr(diagnostic, self.FIELD, value)
+                    errors = diagnostic_volet_plastique_validators.validate_plastique_contenant_emporter_fields(
+                        diagnostic
+                    )
+                    self.assertEqual(list(errors.keys()), [self.FIELD])
+
     def test_no_validation_before_2026(self):
         diagnostic = get_plastique_diagnostic(year=2025)
         diagnostic.vente_emporter = True
         diagnostic.plastique_contenant_emporter_remplace = None
+        errors = diagnostic_volet_plastique_validators.validate_plastique_contenant_emporter_fields(diagnostic)
+        self.assertEqual(errors, {})
+        diagnostic.vente_emporter = False
+        diagnostic.plastique_contenant_emporter_remplace = True
         errors = diagnostic_volet_plastique_validators.validate_plastique_contenant_emporter_fields(diagnostic)
         self.assertEqual(errors, {})
 

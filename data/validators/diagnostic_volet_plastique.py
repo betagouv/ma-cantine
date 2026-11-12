@@ -26,6 +26,7 @@ def validate_plastique_contenant_emporter_fields(instance):
     """
     - extra validation: depending on the year of the diagnostic
         - [NEW in 2026] plastique_contenant_emporter_remplace is required if vente_emporter is True
+        - [NEW in 2026] plastique_contenant_emporter_remplace can only be filled if vente_emporter is True
     NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
     """
     errors = {}
@@ -37,5 +38,12 @@ def validate_plastique_contenant_emporter_fields(instance):
                     errors,
                     field,
                     "Ce champ est obligatoire si l'établissement propose des repas à emporter.",
+                )
+        else:
+            if getattr(instance, field) is not None:
+                utils_utils.add_validation_error(
+                    errors,
+                    field,
+                    "Ce champ ne peut être renseigné que si l'établissement propose des repas à emporter.",
                 )
     return errors
