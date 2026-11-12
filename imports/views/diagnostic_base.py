@@ -9,7 +9,12 @@ from imports.views.base import BaseImportView
 from data.models import Canteen, Diagnostic
 from data.models.creation_source import CreationSource
 from data.models.diagnostic_teledeclaration_dates import get_current_campaign_year
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
+from data.models.diagnostic_teledeclaration_fields import (
+    TELEDECLARATION_YEARS,
+    get_teledeclaration_fields_all,
+    get_teledeclaration_latest_verbose_names,
+    get_teledeclaration_verbose_names,
+)
 from data.validators.diagnostic_teledeclaration import validate_is_in_teledeclaration_or_correction_period
 
 
@@ -153,7 +158,19 @@ class BaseDiagnosticsImportView(BaseImportView):
         }
 
     def _get_verbose_field_name(self, field_name):
-        """Check both Canteen and Diagnostic models for field names"""
+        """
+        Bilan fields: the verbose_name of teledeclaration/<schema_version>/champs.json
+        (= the column titles of the file's schema, e.g. 2025 labels for a 2025 format file with 2026 diagnostics)
+        Other fields (year, canteen...): the verbose_name of the Canteen or Diagnostic model
+        """
+        schema_year = int(self.schema_version) if str(self.schema_version).isdigit() else None
+        teledeclaration_verbose_names = (
+            get_teledeclaration_verbose_names(schema_year)
+            if schema_year in TELEDECLARATION_YEARS
+            else get_teledeclaration_latest_verbose_names()
+        )
+        if field_name in teledeclaration_verbose_names:
+            return teledeclaration_verbose_names[field_name]
         try:
             return Canteen._meta.get_field(field_name).verbose_name
         except Exception:

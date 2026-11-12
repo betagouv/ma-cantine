@@ -303,6 +303,34 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
         for error in body["errors"]:
             self.assertNotIn(nombre_repas_an_verbose_name, error["message"])
 
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_model_validation_error_field_verbose_name_from_champs_json(self):
+        """
+        The field names in the error messages are those of teledeclaration/<year>/champs.json
+        (the column titles of the import schema), not the verbose_name of the model
+        """
+        CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_bad_europe.csv"
+        with open(file_path) as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Diagnostic.objects.count(), 0)
+        body = response.json()
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(body["errors"]), 2, body["errors"])
+        self.assertEqual(
+            body["errors"][0]["message"],
+            "Champ 'Total des achats origine Europe (hors France) toutes familles de produits confondues' : La valeur (HT) europe, 100, est moins que la valeur (HT) viandes_volailles_europe, 200",
+        )
+        model_verbose_name = Diagnostic._meta.get_field("valeur_europe").verbose_name
+        for error in body["errors"]:
+            self.assertNotIn(model_verbose_name, error["message"])
+
     @authenticate
     def test_schema_version_2026_with_2025_file(self):
         """
