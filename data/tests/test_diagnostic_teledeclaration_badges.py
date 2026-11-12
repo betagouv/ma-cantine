@@ -368,6 +368,7 @@ class DiagnosticBadgesTest(TestCase):
             "plastique_vaisselle_jetable_remplace": False,
             "plastique_contenant_remplace": False,
             "plastique_ustensile_remplace": True,
+            "vente_emporter": True,
             "plastique_contenant_emporter_remplace": True,
             **TELEDECLARED,
         }
@@ -538,6 +539,7 @@ class DiagnosticBadgesTest(TestCase):
             plastique_vaisselle_jetable_remplace=False,
             plastique_contenant_remplace=False,
             plastique_ustensile_remplace=True,
+            vente_emporter=True,
             plastique_contenant_emporter_remplace=True,
             **TELEDECLARED,
         )

@@ -2389,7 +2389,7 @@
       "verbose_name": "Aucune bouteilles d’eau plate en plastique n’est commercialisée/distribuée au sein de la cantine"
     },
     "plastique_contenant_emporter_remplace": {
-      "index_code": 6,
+      "index_code": 7,
       "is_required": true,
       "verbose_name": "Des contenants réutilisables ou composés de matières recyclables sont proposés pour l’ensemble des repas à emporter"
     },
@@ -2407,6 +2407,11 @@
       "index_code": 4,
       "is_required": true,
       "verbose_name": "Aucune vaisselle jetable n’est utilisée pour les repas consommés sur place (gobelets, assiette et récipients, couverts)"
+    },
+    "vente_emporter": {
+      "index_code": 6,
+      "is_required": true,
+      "verbose_name": "L'établissement propose des repas à emporter"
     }
   }
 }

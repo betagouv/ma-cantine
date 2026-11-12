@@ -238,6 +238,7 @@ renamed as (
         plastique_bouteille_boisson_remplace,
         plastique_vaisselle_jetable_remplace,
         plastique_contenant_remplace,
+        vente_emporter,
         plastique_contenant_emporter_remplace,
 
         -- ── INFORMATION ───────────────────────────────────────────────────────
