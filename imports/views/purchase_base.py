@@ -9,8 +9,8 @@ from rest_framework.exceptions import PermissionDenied
 
 from api.serializers import PurchaseSerializer
 from imports.views.base import BaseImportView
+from common.utils import siret as utils_siret
 from common.utils import file_import
-from common.utils import utils as utils_utils
 from data.models import Canteen, Purchase
 from imports.models import ImportType
 from data.models.creation_source import CreationSource
@@ -131,7 +131,7 @@ class BasePurchasesImportView(BaseImportView):
 
         for row_number, row in chunk:
             try:
-                siret = utils_utils.normalize_string(row[0])
+                siret = utils_siret.normalize_siret(row[0])
                 purchase = self._create_purchase_for_canteen(siret, self._get_row_dict(row))
                 chunk_purchases.append(purchase)
 

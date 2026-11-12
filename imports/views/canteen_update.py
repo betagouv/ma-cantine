@@ -9,6 +9,7 @@ from django.utils import timezone
 from api.serializers import FullCanteenSerializer
 from imports.models import ImportSchema, ImportType
 from imports.views.base import BaseImportView
+from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
 from data.models import Canteen, Sector
 from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
@@ -111,7 +112,7 @@ class CanteensUpdateImportView(BaseImportView):
                 {"id": f"Aucune cantine avec le numéro identifiant « {id} » trouvée sur la plateforme."}
             )
 
-        siret = utils_utils.normalize_string(row_dict["siret"]) if row_dict["siret"] else None
+        siret = utils_siret.normalize_siret(row_dict["siret"]) if row_dict["siret"] else None
         siren_unite_legale = (
             utils_utils.normalize_string(row_dict["siren_unite_legale"]) if row_dict["siren_unite_legale"] else None
         )
@@ -134,7 +135,7 @@ class CanteensUpdateImportView(BaseImportView):
                 )
 
         central_producer_siret = (
-            utils_utils.normalize_string(row_dict["siret_cuisine_centrale"])
+            utils_siret.normalize_siret(row_dict["siret_cuisine_centrale"])
             if row_dict["siret_cuisine_centrale"]
             else None
         )

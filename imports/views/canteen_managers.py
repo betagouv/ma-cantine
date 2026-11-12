@@ -8,7 +8,7 @@ from simple_history.utils import update_change_reason
 from api.serializers import FullCanteenSerializer
 from imports.models import ImportSchema, ImportType
 from imports.views.base import BaseImportView
-from common.utils import utils as utils_utils
+from common.utils import siret as utils_siret
 from data.models import Canteen
 
 from api.views.canteen_managers import AddManagerView
@@ -99,7 +99,7 @@ class CanteensManagersImportView(BaseImportView):
         import_source,
         silently_added_manager_emails,
     ):
-        siret = utils_utils.normalize_string(row_dict["siret"])
+        siret = utils_siret.normalize_siret(row_dict["siret"])
         canteen_exists = Canteen.objects.filter(siret=siret).exists()
 
         if not canteen_exists:

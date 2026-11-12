@@ -8,7 +8,7 @@ from simple_history.utils import update_change_reason
 from api.serializers import FullCanteenSerializer
 from imports.models import ImportSchema, ImportType
 from imports.views.base import BaseImportView
-from common.utils import utils as utils_utils
+from common.utils import siret as utils_siret
 from data.models import Canteen, Sector
 from data.models.creation_source import CreationSource
 from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
@@ -103,10 +103,10 @@ class CanteensCreateImportView(BaseImportView):
         manager_emails,
     ):
         # Fields cleaning
-        siret = utils_utils.normalize_string(row_dict["siret"])
+        siret = utils_siret.normalize_siret(row_dict["siret"])
         name = row_dict["nom"].strip()
         central_producer_siret = (
-            utils_utils.normalize_string(row_dict["siret_cuisine_centrale"])
+            utils_siret.normalize_siret(row_dict["siret_cuisine_centrale"])
             if row_dict["siret_cuisine_centrale"]
             else None
         )
