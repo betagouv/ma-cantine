@@ -834,8 +834,28 @@ class Diagnostic(
             if not skip_validations:
                 diagnostic_teledeclaration_validators.validate_submitted_diagnostic_update(self)
         else:
+            self.sync_satellites_nombre_repas_an()
             self.populate_computed_fields()
         return super().save(**kwargs)
+
+    def sync_satellites_nombre_repas_an(self):
+        """
+        [NEW in 2026] Groupe: satellites_nombre_repas_an always contains exactly the satellites of the groupe
+        - keep the existing value of each satellite, None for the new satellites
+        - remove the canteens that are not (or no longer) satellites of the groupe
+        - not a groupe (or before 2026): None
+        """
+        if diagnostic_validators.validate_year(self) or int(self.year) < 2026:
+            self.satellites_nombre_repas_an = None
+            return
+        if not self.canteen or not self.canteen.is_groupe:
+            self.satellites_nombre_repas_an = None
+            return
+        current_values = self.satellites_nombre_repas_an or {}
+        self.satellites_nombre_repas_an = {
+            str(satellite_id): current_values.get(str(satellite_id))
+            for satellite_id in self.canteen.satellites.order_by("id").values_list("id", flat=True)
+        }
 
     def populate_computed_fields(self):
         """
@@ -866,20 +886,11 @@ class Diagnostic(
 
     def compute_satellites_nombre_repas_an_total(self):
         """
-        Sum of the satellites_nombre_repas_an values
-        - only for groupes
-        - only the satellites still linked to the groupe (a satellite can be detached after its value was filled)
+        Sum of the satellites_nombre_repas_an values (the list is synced with the satellites, see save())
         """
-        if not self.canteen or not self.canteen.is_groupe or not self.satellites_nombre_repas_an:
+        if not self.satellites_nombre_repas_an:
             return None
-        satellite_id_list = {
-            str(satellite_id) for satellite_id in self.canteen.satellites.values_list("id", flat=True)
-        }
-        value_list = [
-            value
-            for satellite_id, value in self.satellites_nombre_repas_an.items()
-            if satellite_id in satellite_id_list and value is not None
-        ]
+        value_list = [value for value in self.satellites_nombre_repas_an.values() if value is not None]
         return sum(value_list) if value_list else None
 
     def populate_cout_repas(self):
