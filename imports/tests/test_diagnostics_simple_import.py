@@ -619,6 +619,31 @@ class DiagnosticsSimpleImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_2.diagnostic_type, Diagnostic.DiagnosticType.SIMPLE)
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
 
+    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @authenticate
+    def test_diagnostics_created_excel_file_with_zero_values(self):
+        """
+        Excel file: Validata returns the numbers as numbers (and not as strings like in a CSV file)
+        A 0 is a value: it must not be considered as empty (valeur_bio & valeur_siqo are required)
+        """
+        canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
+
+        file_path = "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_good_zero_values.xlsx"
+        with open(file_path, "rb") as diag_file:
+            response = self.client.post(
+                reverse("diagnostics_simple_import"), {"file": diag_file, "type": "siret", "schema_version": "2026"}
+            )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["errors"]), 0, body["errors"])
+        self.assertEqual(body["count"], 1)
+
+        diagnostic = Diagnostic.objects.get(canteen_id=canteen.id)
+        self.assertEqual(diagnostic.valeur_bio, 0)
+        self.assertEqual(diagnostic.valeur_siqo, 0)
+        self.assertIsNone(diagnostic.valeur_bio_dont_commerce_equitable)  # empty cell
+
     @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_diagnostics_created_excel_file(self):

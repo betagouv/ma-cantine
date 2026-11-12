@@ -99,7 +99,12 @@ class BaseDiagnosticsImportView(BaseImportView):
         _, *columns = self.schema.header
         row_dict = self._get_row_dict(row)
         year = row_dict[YEAR_COLUMN] if YEAR_COLUMN in row_dict else get_current_campaign_year()
-        values_dict = {column: row_dict[column] or None for column in columns if column != YEAR_COLUMN}
+        # empty cell -> None. NOTE: not `or None`, a 0 is a value (Excel files: Validata returns numbers, not strings)
+        values_dict = {
+            column: None if row_dict[column] in ("", None) else row_dict[column]
+            for column in columns
+            if column != YEAR_COLUMN
+        }
         return year, values_dict, self.diagnostic_type
 
     def _update_or_create_diagnostic(self, canteen, diagnostic_year, values_dict, diagnostic_type):
