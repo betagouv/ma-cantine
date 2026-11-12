@@ -94,7 +94,7 @@
       "diagnostic_type": {
         "COMPLETE": {
           "is_present": true,
-          "is_required": true,
+          "is_required": false,
           "legacy_import_order": 75
         },
         "SIMPLE": {
@@ -103,7 +103,7 @@
         }
       },
       "index_code": 83,
-      "verbose_name": "Autres produits frais, surgelés et d'épicerie, Fermier"
+      "verbose_name": "Autres produits frais, surgelés et d'épicerie, Fermier (non applicable)"
     },
     "valeur_autres_france": {
       "diagnostic_type": {
@@ -350,7 +350,7 @@
       "diagnostic_type": {
         "COMPLETE": {
           "is_present": true,
-          "is_required": true,
+          "is_required": false,
           "legacy_import_order": 74
         },
         "SIMPLE": {
@@ -359,7 +359,7 @@
         }
       },
       "index_code": 82,
-      "verbose_name": "Boissons, Fermier"
+      "verbose_name": "Boissons, Fermier (non applicable)"
     },
     "valeur_boissons_france": {
       "diagnostic_type": {
@@ -576,7 +576,7 @@
       "diagnostic_type": {
         "COMPLETE": {
           "is_present": true,
-          "is_required": true,
+          "is_required": false,
           "legacy_import_order": 73
         },
         "SIMPLE": {
@@ -585,7 +585,7 @@
         }
       },
       "index_code": 81,
-      "verbose_name": "Boulangerie / Pâtisserie fraîches, Fermier"
+      "verbose_name": "Boulangerie / Pâtisserie fraîches, Fermier (non applicable)"
     },
     "valeur_boulangerie_france": {
       "diagnostic_type": {
@@ -1073,7 +1073,7 @@
       "diagnostic_type": {
         "COMPLETE": {
           "is_present": true,
-          "is_required": true,
+          "is_required": false,
           "legacy_import_order": 70
         },
         "SIMPLE": {
@@ -1082,7 +1082,7 @@
         }
       },
       "index_code": 78,
-      "verbose_name": "Fruits et légumes frais et surgelés, Fermier"
+      "verbose_name": "Fruits et légumes frais et surgelés, Fermier (non applicable)"
     },
     "valeur_fruits_et_legumes_france": {
       "diagnostic_type": {
@@ -1330,7 +1330,7 @@
       "diagnostic_type": {
         "COMPLETE": {
           "is_present": true,
-          "is_required": true,
+          "is_required": false,
           "legacy_import_order": 69
         },
         "SIMPLE": {
@@ -1339,7 +1339,7 @@
         }
       },
       "index_code": 77,
-      "verbose_name": "Poissons, produits de la mer et de l'aquaculture, Fermier"
+      "verbose_name": "Poissons, produits de la mer et de l'aquaculture, Fermier (non applicable)"
     },
     "valeur_produits_de_la_mer_france": {
       "diagnostic_type": {
