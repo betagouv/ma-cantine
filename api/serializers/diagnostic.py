@@ -219,6 +219,20 @@ class DiagnosticCheckSerializer(serializers.Serializer):
     is_teledeclared = serializers.BooleanField(read_only=True)
 
 
+class DiagnosticSatelliteNombreRepasAnSerializer(serializers.Serializer):
+    """
+    [NEW in 2026] Groupe: a satellite of the groupe, with its nombre_repas_an (see Diagnostic.satellites_nombre_repas_an_list)
+    """
+
+    id = serializers.IntegerField(read_only=True, help_text="id de la cantine satellite")
+    name = serializers.CharField(read_only=True, allow_null=True)
+    siret = serializers.CharField(read_only=True, allow_null=True)
+    siren_unite_legale = serializers.CharField(read_only=True, allow_null=True)
+    nombre_repas_an = serializers.IntegerField(
+        read_only=True, allow_null=True, help_text="nombre de repas par an du satellite"
+    )
+
+
 class CentralKitchenDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     """
     This serializer masks financial data and gives the basic information on appro as percentages

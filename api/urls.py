@@ -27,6 +27,7 @@ from api.views import (
     DiagnosticListRecapView,
     DiagnosticRecapView,
     DiagnosticRetrieveUpdateView,
+    DiagnosticSatellitesNombreRepasAnView,
     DiagnosticsToTeledeclareListView,
     DiagnosticTeledeclarationCancelView,
     DiagnosticTeledeclarationCreateView,
@@ -180,6 +181,11 @@ urlpatterns = {
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>/check",
         DiagnosticCheckView.as_view(),
         name="diagnostic_check",
+    ),
+    path(
+        "canteens/<int:canteen_pk>/diagnostics/<int:pk>/satellites-nombre-repas-an",
+        DiagnosticSatellitesNombreRepasAnView.as_view(),
+        name="diagnostic_satellites_nombre_repas_an",
     ),
     path(
         "canteens/<int:canteen_pk>/diagnostics/<int:pk>/teledeclaration/create",

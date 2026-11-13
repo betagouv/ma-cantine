@@ -42,6 +42,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticRecapView,
     DiagnosticCheckView,
     DiagnosticRetrieveUpdateView,
+    DiagnosticSatellitesNombreRepasAnView,
     DiagnosticsToTeledeclareListView,
     EmailDiagnosticImportFileView,
 )
