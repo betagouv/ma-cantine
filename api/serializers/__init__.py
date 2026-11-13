@@ -39,6 +39,7 @@ from .diagnostic import (  # noqa: F401
     DiagnosticCheckSerializer,
     DiagnosticRecapSerializer,
     DiagnosticSatelliteNombreRepasAnSerializer,
+    DiagnosticSatelliteNombreRepasAnUpdateSerializer,
 )
 from .diagnostic_v2 import (  # noqa: F401
     DiagnosticV2Serializer,

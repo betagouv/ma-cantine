@@ -233,6 +233,17 @@ class DiagnosticSatelliteNombreRepasAnSerializer(serializers.Serializer):
     )
 
 
+class DiagnosticSatelliteNombreRepasAnUpdateSerializer(serializers.Serializer):
+    """
+    [NEW in 2026] Groupe: update the nombre_repas_an of one satellite of the groupe
+    """
+
+    id = serializers.IntegerField(help_text="id de la cantine satellite")
+    nombre_repas_an = serializers.IntegerField(
+        allow_null=True, min_value=0, max_value=999999999, help_text="nombre de repas par an du satellite"
+    )
+
+
 class CentralKitchenDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSerializer):
     """
     This serializer masks financial data and gives the basic information on appro as percentages
