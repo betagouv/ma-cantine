@@ -12,7 +12,10 @@ from api.tests.utils import authenticate, get_oauth2_token
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclarationPdfView
 from data.models import Canteen, Diagnostic, Sector, Teledeclaration
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_required
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
+    get_teledeclaration_fields_required,
+)
 
 
 class DiagnosticToTeledeclareApiTest(APITestCase):
@@ -914,6 +917,56 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
                 self.assertIn("Contenants de cuisson en plastique remplacés", html)
                 self.assertIn("Contenants de service en plastique remplacés", html)
                 self.assertIn("Bouteilles en plastique non remplacées", html)
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @authenticate
+    def test_generate_pdf_uses_v3_template_since_2026(self):
+        canteen = CanteenFactory(managers=[authenticate.user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2026, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
+        diagnostic.teledeclare(applicant=authenticate.user)
+
+        response = self.client.get(
+            reverse(
+                "diagnostic_teledeclaration_pdf", kwargs={"canteen_pk": diagnostic.canteen.id, "pk": diagnostic.id}
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTemplateUsed(response, "teledeclaration_pdf/v3.html")
+        self.assertTemplateNotUsed(response, "teledeclaration_pdf/v2.html")
+
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_pdf_v3_display_if_volet_not_filled(self):
+        user = UserFactory()
+        canteen = CanteenFactory(managers=[user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2026, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
+        # empty all the fields of the gaspillage volet
+        for field in get_teledeclaration_fields_all(2026, "GASPILLAGE"):
+            setattr(diagnostic, field, None)
+        diagnostic.teledeclare(user)
+
+        context = DiagnosticTeledeclarationPdfView.get_context(diagnostic)
+        self.assertEqual(context["volets"]["GASPILLAGE"], [])
+
+        html = get_template("teledeclaration_pdf/v3.html").render(context)
+        # the gaspillage section only contains the "Non renseigné" row
+        gaspillage_section = html[html.index("Gaspillage alimentaire") : html.index("Diversification des protéines")]
+        self.assertIn("Non renseigné", gaspillage_section)
+
+    def test_pdf_v3_display_provisional_alert_only_during_campaign(self):
+        user = UserFactory()
+        canteen = CanteenFactory(managers=[user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2026, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
+        template = get_template("teledeclaration_pdf/v3.html")
+
+        with freeze_time("2027-01-30"):  # during the 2026 campaign
+            diagnostic.teledeclare(user)
+            html = template.render(DiagnosticTeledeclarationPdfView.get_context(diagnostic))
+            self.assertIn("Justificatif provisoire", html)
+
+        with freeze_time("2027-06-30"):  # after the 2026 campaign
+            html = template.render(DiagnosticTeledeclarationPdfView.get_context(diagnostic))
+            self.assertNotIn("Justificatif provisoire", html)
 
 
 class DiagnosticTeledeclarationPdfInformation2026Test(SimpleTestCase):
