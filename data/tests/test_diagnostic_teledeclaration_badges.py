@@ -145,14 +145,14 @@ class DiagnosticBadgesTest(TestCase):
                 True,
             ),
             (
-                "200 meals with a plan",
-                {**not_administration, "daily_meal_count": 200},
+                "201 meals with a plan",
+                {**not_administration, "daily_meal_count": 201},
                 {**visited, "plan_diversification_en_place": True, "menu_vegetarien_frequence": frequence.JAMAIS},
                 True,
             ),
             (
-                "199 meals with a plan",
-                {**not_administration, "daily_meal_count": 199},
+                "200 meals with a plan",
+                {**not_administration, "daily_meal_count": 200},
                 {**visited, "plan_diversification_en_place": True, "menu_vegetarien_frequence": frequence.JAMAIS},
                 False,
             ),
@@ -181,10 +181,8 @@ class DiagnosticBadgesTest(TestCase):
             "line_ministry": Canteen.Ministries.ECONOMIE,
             "daily_meal_count": 12,
         }
-        actions = [Diagnostic.PlanDiversificationActions.PLATS_PRODUITS]
         default_fields = {
             "plan_diversification_en_place": False,
-            "plan_diversification_actions": [],
             "menu_vegetarien_frequence": Diagnostic.MenuVegetarienFrequence.JAMAIS,
             "service_type": Diagnostic.ServiceType.MENU_UNIQUE,
             **TELEDECLARED,
@@ -193,13 +191,7 @@ class DiagnosticBadgesTest(TestCase):
             # no obligation
             ("no obligation, nothing", hospital, default_fields, False),
             (
-                "no obligation, plan with actions",
-                hospital,
-                {**default_fields, "plan_diversification_en_place": True, "plan_diversification_actions": actions},
-                True,
-            ),
-            (
-                "no obligation, plan without action",
+                "no obligation, plan but no vegetarian menu",
                 hospital,
                 {**default_fields, "plan_diversification_en_place": True},
                 False,
@@ -211,15 +203,31 @@ class DiagnosticBadgesTest(TestCase):
                 True,
             ),
             ("not a school sector, nothing", universite, default_fields, False),
-            ("199 meals, nothing", {**hospital, "daily_meal_count": 199}, default_fields, False),
-            # diversification plan
+            ("200 meals, nothing", {**hospital, "daily_meal_count": 200}, default_fields, False),
             (
-                "200 meals with a plan",
+                "200 meals, vegetarian menu without a plan",
                 {**hospital, "daily_meal_count": 200},
-                {**default_fields, "plan_diversification_en_place": True},
+                {**default_fields, "menu_vegetarien_frequence": Diagnostic.MenuVegetarienFrequence.MOINS_HEBDO},
                 True,
             ),
-            ("200 meals without a plan", {**hospital, "daily_meal_count": 200}, default_fields, False),
+            # diversification plan
+            (
+                "201 meals with a plan",
+                {**hospital, "daily_meal_count": 201},
+                {
+                    **default_fields,
+                    "plan_diversification_en_place": True,
+                    "menu_vegetarien_frequence": Diagnostic.MenuVegetarienFrequence.MOINS_HEBDO,
+                },
+                True,
+            ),
+            (
+                "201 meals with a plan but no vegetarian menu",
+                {**hospital, "daily_meal_count": 201},
+                {**default_fields, "plan_diversification_en_place": True},
+                False,
+            ),
+            ("201 meals without a plan", {**hospital, "daily_meal_count": 201}, default_fields, False),
             # weekly vegetarian menu
             (
                 "primaire, weekly",
