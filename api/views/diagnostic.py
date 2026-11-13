@@ -22,6 +22,7 @@ from api.serializers import (
     ManagerDiagnosticSerializer,
     DiagnosticCheckSerializer,
     DiagnosticRecapSerializer,
+    DiagnosticSatelliteNombreRepasAnSerializer,
 )
 from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.utils import file_import, send_mail
@@ -230,6 +231,53 @@ class DiagnosticCheckView(APIView):
             "is_teledeclared": is_teledeclared,
         }
         return Response(DiagnosticCheckSerializer(response).data)
+
+
+@extend_schema_view(
+    get=extend_schema(
+        summary="Lister les restaurants satellites d'un bilan de groupe, avec leur nombre de repas par an.",
+        description="Seulement pour les bilans des groupes, à partir de 2026.",
+        tags=["Bilans"],
+        responses=DiagnosticSatelliteNombreRepasAnSerializer(many=True),
+    ),
+)
+class DiagnosticSatellitesNombreRepasAnView(APIView):
+    """
+    [NEW in 2026] Groupe: the nombre_repas_an of each satellite (see Diagnostic.satellites_nombre_repas_an_list)
+    - not available via OAuth2 (yet)
+    """
+
+    permission_classes = [IsAuthenticated, IsCanteenManagerUrlParam]
+
+    def _get_canteen(self):
+        # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
+        return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
+
+    def get(self, request, canteen_pk, pk):
+        canteen = self._get_canteen()
+        diagnostic = get_object_or_404(Diagnostic, pk=pk, canteen=canteen)
+        if not canteen.is_groupe:
+            raise ValidationError("Seuls les bilans des groupes ont des satellites.")
+        if diagnostic.year < 2026:
+            raise ValidationError("Le nombre de repas par an des satellites n'existe qu'à partir de 2026.")
+
+        # all_objects: the satellite may have been deleted since the last save of the diagnostic
+        satellite_dict = Canteen.all_objects.in_bulk(
+            [item["id"] for item in diagnostic.satellites_nombre_repas_an_list]
+        )
+        data = []
+        for item in diagnostic.satellites_nombre_repas_an_list:
+            satellite = satellite_dict.get(item["id"])
+            data.append(
+                {
+                    "id": item["id"],
+                    "name": getattr(satellite, "name", None),
+                    "siret": getattr(satellite, "siret", None),
+                    "siren_unite_legale": getattr(satellite, "siren_unite_legale", None),
+                    "nombre_repas_an": item["nombre_repas_an"],
+                }
+            )
+        return Response(DiagnosticSatelliteNombreRepasAnSerializer(data, many=True).data)
 
 
 class EmailDiagnosticImportFileView(APIView):

@@ -1782,6 +1782,89 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["isTeledeclared"], True)
 
 
+class DiagnosticSatellitesNombreRepasAnApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[cls.user])
+        cls.canteen_satellite_1 = CanteenFactory(
+            name="B", production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_satellite_2 = CanteenFactory(
+            name="A", production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user])
+
+    def setUp(self):
+        self.diagnostic_groupe = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an_list=[{"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000}],
+        )
+        self.url = self._url(self.canteen_groupe, self.diagnostic_groupe)
+
+    def _url(self, canteen, diagnostic):
+        return reverse("diagnostic_satellites_nombre_repas_an", kwargs={"canteen_pk": canteen.id, "pk": diagnostic.id})
+
+    def test_cannot_get_if_unauthenticated(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_get_if_not_canteen_manager(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_get_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:read")
+        self.canteen_groupe.managers.add(user)
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_get_diagnostic_of_another_canteen(self):
+        self.client.force_authenticate(user=self.user)
+        diagnostic_site = DiagnosticFactory(canteen=self.canteen_site, year=2026)
+        response = self.client.get(self._url(self.canteen_groupe, diagnostic_site))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_cannot_get_if_not_groupe(self):
+        self.client.force_authenticate(user=self.user)
+        diagnostic_site = DiagnosticFactory(canteen=self.canteen_site, year=2026)
+        response = self.client.get(self._url(self.canteen_site, diagnostic_site))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_cannot_get_before_2026(self):
+        self.client.force_authenticate(user=self.user)
+        diagnostic_groupe_2025 = DiagnosticFactory(canteen=self.canteen_groupe, year=2025)
+        response = self.client.get(self._url(self.canteen_groupe, diagnostic_groupe_2025))
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_get(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(
+            response.json(),
+            [
+                {
+                    "id": self.canteen_satellite_1.id,
+                    "name": "B",
+                    "siret": self.canteen_satellite_1.siret,
+                    "sirenUniteLegale": self.canteen_satellite_1.siren_unite_legale,
+                    "nombreRepasAn": 1000,
+                },
+                {
+                    "id": self.canteen_satellite_2.id,
+                    "name": "A",
+                    "siret": self.canteen_satellite_2.siret,
+                    "sirenUniteLegale": self.canteen_satellite_2.siren_unite_legale,
+                    "nombreRepasAn": None,
+                },
+            ],
+        )
+
+
 class DiagnosticGroupeSatellitesNombreRepasAnListApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
