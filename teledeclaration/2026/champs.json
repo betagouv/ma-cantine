@@ -2327,6 +2327,7 @@
     "dons_convention": {
       "index_code": 5,
       "is_required": true,
+      "is_required_depends_on_canteen": true,
       "verbose_name": "Je propose une ou des conventions de dons à des associations habilitées d’aide alimentaire"
     },
     "dons_frequence": {
