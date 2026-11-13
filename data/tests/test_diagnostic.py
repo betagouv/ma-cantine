@@ -1188,6 +1188,59 @@ class DiagnosticGroupeSatellitesNombreRepasAnSumTest(TestCase):
                 self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, expected)
 
 
+class DiagnosticGroupeSatellitesNombreRepasAnValidatorTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_1 = CanteenFactory(
+            name="Satellite 1", production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_satellite_2 = CanteenFactory(
+            name="Satellite 2", production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
+    def _validate(self, canteen, year=2026, nombre_repas_an=None, value_1=None, value_2=None):
+        diagnostic = Diagnostic(
+            canteen=canteen,
+            year=year,
+            nombre_repas_an=nombre_repas_an,
+            satellites_nombre_repas_an_list=[
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": value_1},
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": value_2},
+            ],
+        )
+        return diagnostic_validators.validate_groupe_satellites_nombre_repas_an(diagnostic)
+
+    def test_valid(self):
+        errors = self._validate(self.canteen_groupe, nombre_repas_an=3000, value_1=1000, value_2=2000)
+        self.assertEqual(errors, {})
+
+    def test_missing_satellite_value(self):
+        errors = self._validate(self.canteen_groupe, nombre_repas_an=1000, value_1=1000)
+        self.assertEqual(list(errors.keys()), ["satellites_nombre_repas_an_list"])
+        self.assertIn("Satellite 2", str(errors["satellites_nombre_repas_an_list"]))
+
+    def test_nombre_repas_an_different_from_sum(self):
+        errors = self._validate(self.canteen_groupe, nombre_repas_an=5000, value_1=1000, value_2=2000)
+        self.assertEqual(list(errors.keys()), ["nombre_repas_an"])
+        self.assertIn("3000", str(errors["nombre_repas_an"]))
+
+    def test_not_checked_if_not_groupe(self):
+        errors = self._validate(self.canteen_site, nombre_repas_an=5000)
+        self.assertEqual(errors, {})
+
+    def test_not_checked_before_2026(self):
+        errors = self._validate(self.canteen_groupe, year=2025, nombre_repas_an=5000)
+        self.assertEqual(errors, {})
+
+    def test_is_clean_returns_the_errors(self):
+        diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026, nombre_repas_an=1000)
+        is_clean, errors = diagnostic.is_clean()
+        self.assertFalse(is_clean)
+        self.assertIn("satellites_nombre_repas_an_list", errors)
+
+
 class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
     def _validate(self, value):
         return diagnostic_validators.validate_satellites_nombre_repas_an_list(

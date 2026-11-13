@@ -2035,3 +2035,23 @@ class DiagnosticGroupeSatellitesNombreRepasAnListApiTest(APITestCase):
                     self.diagnostic_groupe.satellites_nombre_repas_an_list,
                     [{"id": self.canteen_satellite.id, "nombre_repas_an": 1000}],
                 )
+
+
+class DiagnosticGroupeSatellitesNombreRepasAnCheckApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[cls.user])
+        cls.canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+
+    def test_check_returns_the_satellites_errors(self):
+        self.client.force_authenticate(user=self.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026, nombre_repas_an=1000)
+        url = reverse("diagnostic_check", kwargs={"canteen_pk": self.canteen_groupe.id, "pk": diagnostic.id})
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertFalse(body["isClean"])
+        self.assertIn("satellitesNombreRepasAnList", body["errors"])
