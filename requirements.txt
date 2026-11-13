@@ -548,7 +548,7 @@ snowplow-tracker==1.1.0
     # via dbt-core
 sortedcontainers==2.4.0
     # via cyclonedx-python-lib
-soupsieve==2.9.2
+soupsieve==4.0
     # via beautifulsoup4
 sqlfluff==4.3.0
 sqlglot==30.18.0
