@@ -1,0 +1,128 @@
+{% load static %}
+/*
+ * Styles of the v3 teledeclaration PDF.
+ * Rendered with xhtml2pdf (CSS 2.1 subset only: no flexbox, grid, CSS variables or :nth-child),
+ * so the DSFR values are copied here as plain values and the layout is done with tables.
+ */
+
+/* Fonts */
+
+@font-face {
+    font-family: 'Marianne';
+    src: url({% static '../../../web/static/fonts/Marianne-Regular.ttf' %}) format('truetype');
+}
+
+@font-face {
+    font-family: 'Marianne-Light';
+    src: url({% static '../../../web/static/fonts/Marianne-Light.ttf' %}) format('truetype');
+}
+
+@font-face {
+    font-family: 'Marianne-Light-Italic';
+    src: url({% static '../../../web/static/fonts/Marianne-Light_Italic.ttf' %}) format('truetype');
+}
+
+@font-face {
+    font-family: 'Marianne-Medium';
+    src: url({% static '../../../web/static/fonts/Marianne-Medium.ttf' %}) format('truetype');
+}
+
+@font-face {
+    font-family: 'Marianne-Bold';
+    src: url({% static '../../../web/static/fonts/Marianne-Bold.ttf' %}) format('truetype');
+}
+
+@font-face {
+    font-family: 'Marianne-ExtraBold';
+    src: url({% static '../../../web/static/fonts/Marianne-ExtraBold.ttf' %}) format('truetype');
+}
+
+/* Base */
+
+body {
+    font-family: 'Marianne', Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    color: #161616;
+}
+
+h1 {
+    font-family: 'Marianne-ExtraBold';
+    font-size: 22px;
+    margin: 0px 0px 4px 0px;
+}
+
+h3 {
+    font-family: 'Marianne-Medium';
+    font-size: 16px;
+    margin: 24px 0px 8px 0px;
+}
+
+p {
+    margin: 0px 0px 8px 0px;
+}
+
+hr {
+    margin-top: 24px;
+}
+
+.text-bold {
+    font-family: 'Marianne-Bold';
+}
+
+.text-italic {
+    font-family: 'Marianne-Light-Italic';
+}
+
+.text-left {
+    text-align: left;
+}
+
+.text-right {
+    text-align: right;
+}
+
+/* Grid (table based) */
+
+.row {
+    width: 100%;
+    margin-bottom: 24px;
+}
+
+.row td {
+    vertical-align: top;
+}
+
+td.align-middle {
+    vertical-align: middle;
+}
+
+.col-4 {
+    width: 33.33%;
+}
+
+.col-6 {
+    width: 50%;
+}
+
+.col-8 {
+    width: 66.67%;
+}
+
+.col-gutter {
+    padding-right: 12px;
+}
+
+/* Header */
+
+.header-logos img {
+    margin-right: 8px;
+}
+
+.header-title {
+    vertical-align: middle;
+    padding-left: 48px;
+}
+
+.header-subtitle {
+    font-size: 14px;
+}

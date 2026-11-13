@@ -1,68 +1,54 @@
 {% load static %}
 <html>
 
-<head>{% include "./blocks/style.html" %}</head>
+<head>
+  <style>
+    {% include "./styles_v3.css" %}
+  </style>
+</head>
 
 <body>
-  <div>
-    <img src="{% static '../../../web/static/images/Marianne-Republique-Francaise.svg' %}"
-      alt="République Française" height="60" />
-    <img src="{% static '../../../web/static/images/ma-cantine-logo-light.jpg' %}" alt="ma cantine" height="60" />
-  </div>
-  <h1>Justificatif pour télédéclaration
-    {{ year }}
-  </h1>
-  <h2>Télédéclaration faite le
-    {{ date|date:"l j F Y" }} par
-    {{ applicant }}
-  </h2>
-  <h3>Informations de mon établissement</h3>
-  <ul>
-    {% if canteen.name %}
-    <li><span>Nom</span> : {{ canteen.name }}</li>
-    {% endif %}
-    {% if canteen.siret %}
-    <li><span>SIRET</span> : {{ canteen.siret }}</li>
-    {% endif %}
-    {% if canteen.siren_unite_legale %}
-    <li><span>SIREN</span> : {{ canteen.siren_unite_legale }}</li>
-    {% endif %}
-    {% if canteen.production_type %}
-    <li><span>Mode de production</span> : {{ canteen.production_type }}</li>
-    {% endif %}
-    {% if canteen.city_insee_code %}
-    <li><span>Code Insee</span> : {{ canteen.city_insee_code }}</li>
-    {% endif %}
-    {% if canteen.central_producer_siret %}
-    <li><span>SIRET de la cuisine centrale</span> : {{ canteen.central_producer_siret }}</li>
-    {% endif %}
-    {% if canteen.sectors %}
-    <li><span>Secteurs d'activité</span> : {{ canteen.sectors }}</li>
-    {% endif %}
-    {% if canteen.line_ministry %}
-    <li><span>Administration générale de tutelle (ministère ou ATE)</span> : {{ canteen.line_ministry }}</li>
-    {% endif %}
-    {% if canteen.management_type %}
-    <li><span>Mode de gestion</span> : {{ canteen.management_type }}</li>
-    {% endif %}
-    {% if canteen.economic_model %}
-    <li><span>Modèle économique</span> : {{ canteen.economic_model }}</li>
-    {% endif %}
-  </ul>
+  <table class="row">
+    <tr>
+      <td class="col-4 header-logos">
+        <img src="{% static '../../../web/static/images/Marianne-Republique-Francaise.svg' %}"
+          alt="République Française" height="60" />
+        <img src="{% static '../../../web/static/images/ma-cantine-logo-light.jpg' %}" alt="ma cantine" height="60" />
+      </td>
+      <td class="col-8 header-title">
+        <h1>Justificatif de télédéclaration {{ year }}</h1>
+        <p class="header-subtitle">Campagne {{ year|add:1 }} sur les achats de l’année {{ year }}</p>
+      </td>
+    </tr>
+  </table>
 
-  <h3>Vous avez choisi la télédéclaration
-    {{ diagnostic_type }}.
-  </h3>
-  <p>
-    L'arrêté du 14 septembre 2022 rend obligatoire la saisie et la transmission des données d'achat de l'année n-1 à
-    l'administration.
-  </p>
-  {% include "./blocks/satellites.html" %}
-  <p>
-    Pour l'année
-    {{ year }}, les données suivantes ont été télédéclarées le
-    {{ date|date:"l j F Y" }} via la plateforme numérique « ma cantine » :
-  </p>
+  {% include "./blocks/provisional_alert.html" %}
+
+  <table class="row">
+    <tr>
+      <td class="col-6 col-gutter">
+        {% include "./blocks/quick_informations.html" %}
+      </td>
+      <td class="col-6 align-middle">
+        <p class="text-italic">
+          Ce document vaut justificatif de la télédéclaration des données d'approvisionnement de la cantine,
+          en réponse à toute demande relative aux obligations de la loi EGalim.
+        </p>
+        <p class="text-italic">
+          Les données de ce document peuvent être vérifiées sur la page publique de la cantine,
+          sur ma-cantine.agriculture.gouv.fr, par l'organisme à qui le justificatif est remis.
+        </p>
+      </td>
+    </tr>
+  </table>
+
+  {% include "./blocks/cost_per_meal.html" %}
+
+  <h3>{% if canteen.production_type == "Groupe" %}Informations du groupe{% else %}Informations de la cantine{% endif %}</h3>
+  {% include "./blocks/fields_table.html" with fields=volets.CANTEEN %}
+
+  <h3>Couverts annuels</h3>
+  {% include "./blocks/fields_table.html" with fields=volets.MEAL_COUNT %}
 
   <h3>Approvisionnements</h3>
   {% include "./blocks/fields_table.html" with fields=volets.APPROVISIONNEMENT %}
@@ -78,6 +64,8 @@
 
   <h3>Information des convives</h3>
   {% include "./blocks/fields_table.html" with fields=volets.INFORMATION %}
+
+  {% include "./blocks/satellites.html" %}
 
   <hr />
   <p>
