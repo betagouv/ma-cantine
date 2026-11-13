@@ -1,15 +1,3 @@
 {% if satellites %}
-    <p>Cette télédéclaration concerne les restaurants satellites :</p>
-    <ul>
-        {% for satellite in satellites %}
-        <li>{{ satellite.name }}
-            {% if satellite.siret %}
-            (SIRET : {{ satellite.siret }})
-            {% endif %}
-            {% if satellite.siren_unite_legale %}
-            (SIREN : {{ satellite.siren_unite_legale }})
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
+    <p>Listes des cantines rattachées au groupe à venir</p>
 {% endif %}
