@@ -153,7 +153,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
             ),
             (
                 "Informations de la cantine",
-                {"fields": (*Diagnostic.CANTEEN_FIELDS,)},
+                {"fields": (*Diagnostic.CANTEEN_FIELDS, *Diagnostic.GROUPE_FIELDS)},
             ),
             (
                 "Plus de produits de qualité et durables dans nos assiettes",
