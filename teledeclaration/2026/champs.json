@@ -2359,6 +2359,7 @@
     "information_consultation_qualite": {
       "index_code": 5,
       "is_required": true,
+      "is_required_depends_on_canteen": true,
       "verbose_name": "L’établissement informe et consulte régulièrement, par tous moyens utiles, les usagers sur le respect de la qualité alimentaire et nutritionnelle des repas servis"
     },
     "information_electronique_annuelle": {
@@ -2374,6 +2375,7 @@
     "information_part_pat": {
       "index_code": 4,
       "is_required": true,
+      "is_required_depends_on_canteen": true,
       "verbose_name": "Vous communiquez sur la part des produits issus de Projets alimentaires territoriaux (PAT)"
     }
   },

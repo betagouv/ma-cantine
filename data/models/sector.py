@@ -119,6 +119,17 @@ SECTOR_HAS_LINE_MINISTRY_LIST = [
     Sector.SOCIAL_PJJ,
 ]
 
+# information & consultation des usagers sur la qualité alimentaire et nutritionnelle (article L.230-5 du CRPM)
+# "restaurants collectifs, publics et privés, des établissements scolaire et universitaire, des établissements
+# d'accueil des enfants de moins de six ans, des établissements de santé, des établissements sociaux et
+# médico-sociaux et des établissements pénitentiaires"
+SECTOR_INFORMATION_CONSULTATION_QUALITE_LIST = (
+    EDUCATION_SECTOR_LIST  # établissements scolaires & universitaires
+    + HEALTH_SECTOR_LIST  # établissements de santé
+    + SOCIAL_SECTOR_LIST  # établissements sociaux & médico-sociaux (dont crèches : accueil des enfants de moins de 6 ans)
+    + [Sector.ADMINISTRATION_PRISON]  # établissements pénitentiaires
+)
+
 MAPPING_OLD_SECTOR_NAME_TO_NEW_SECTOR_VALUE = {
     # current mappings
     **{Sector(sector).label: sector for sector in Sector.values},
