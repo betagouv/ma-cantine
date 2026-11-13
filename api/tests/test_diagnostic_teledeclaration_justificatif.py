@@ -480,6 +480,37 @@ class DiagnosticTeledeclarationJustificatif2026Test(APITestCase):
             with self.subTest(field=field_name):
                 self.assertNotIn(get_teledeclaration_verbose_name(2025, volet, field_name), text)
 
+    def test_display_the_description_only_if_not_groupe(self):
+        user = UserFactory()
+        canteen_site = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE,
+            publication_comments="Description du site",
+            managers=[user],
+        )
+        canteen_groupe = CanteenFactory(
+            production_type=Canteen.ProductionType.GROUPE,
+            publication_comments="Description du groupe",
+            managers=[user],
+        )
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe)
+        diagnostic_site = DiagnosticFactory(
+            canteen=canteen_site, year=2026, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        diagnostic_groupe = DiagnosticFactory(
+            canteen=canteen_groupe, year=2026, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
+        )
+        diagnostic_site.teledeclare(user)
+        # skip_validations: the meal count of each satellite isn't needed for this test
+        diagnostic_groupe.teledeclare(user, skip_validations=True)
+
+        # site: the description is displayed
+        canteen_fields = DiagnosticTeledeclarationPdfView.get_context(diagnostic_site)["volets"]["CANTEEN"]
+        self.assertIn({"label": "Description", "value": "Description du site"}, canteen_fields)
+
+        # groupe: the description is never displayed
+        canteen_fields = DiagnosticTeledeclarationPdfView.get_context(diagnostic_groupe)["volets"]["CANTEEN"]
+        self.assertNotIn("Description", [field["label"] for field in canteen_fields])
+
     def test_display_the_cost_per_meal(self):
         diagnostic = self._teledeclared_diagnostic(valeur_totale=10000, nombre_repas_an=1000)
 
