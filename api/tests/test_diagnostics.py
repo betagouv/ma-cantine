@@ -1941,6 +1941,53 @@ class DiagnosticSatellitesNombreRepasAnApiTest(APITestCase):
         self.assertIsNone(self.diagnostic_groupe.satellites_nombre_repas_an_list[1]["nombre_repas_an"])
 
 
+class DiagnosticGroupeSatellitesNombreRepasAnSumApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[cls.user])
+        cls.canteen_satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+
+    def setUp(self):
+        self.diagnostic_groupe = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            nombre_repas_an=5000,
+            satellites_nombre_repas_an_list=[
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000},
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": 2000},
+            ],
+        )
+        kwargs = {"canteen_pk": self.canteen_groupe.id, "pk": self.diagnostic_groupe.id}
+        self.url_list = [
+            reverse("diagnostic_retrieve_update", kwargs=kwargs),  # v1
+            reverse("diagnostic_v2_retrieve_update", kwargs=kwargs),
+        ]
+
+    def test_get(self):
+        self.client.force_authenticate(user=self.user)
+        for url in self.url_list:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                body = response.json()
+                self.assertEqual(body["nombreRepasAn"], 5000)
+                self.assertEqual(body["satellitesNombreRepasAnSum"], 3000)
+
+    def test_read_only(self):
+        self.client.force_authenticate(user=self.user)
+        for url in self.url_list:
+            with self.subTest(url=url):
+                response = self.client.patch(url, {"satellitesNombreRepasAnSum": 10}, format="json")
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertEqual(response.json()["satellitesNombreRepasAnSum"], 3000)
+
+
 class DiagnosticGroupeSatellitesNombreRepasAnListApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):

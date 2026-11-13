@@ -288,10 +288,17 @@ class PublicServiceDiagnosticSerializer(ReadOnlySerializerMixin, DiagnosticSeria
 @set_help_text_from_verbose_name
 @extend_schema_serializer(exclude_fields=HIDDEN_FIELDS)
 class ManagerDiagnosticSerializer(DiagnosticSerializer):
+    satellites_nombre_repas_an_sum = serializers.IntegerField(
+        read_only=True,
+        allow_null=True,
+        help_text="Groupe : somme des nombres de repas par an des satellites (champ calculé)",
+    )  # property
+
     class Meta:
         model = Diagnostic
         fields = (
             FIELDS
+            + ["satellites_nombre_repas_an_sum"]
             + Diagnostic.MATOMO_FIELDS
             + ["creation_source", "creation_date", "modification_date"]
             + Diagnostic.TUNNEL_PROGRESS_FIELDS

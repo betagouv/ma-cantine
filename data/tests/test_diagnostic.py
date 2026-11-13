@@ -1174,6 +1174,20 @@ class DiagnosticGroupeSatellitesNombreRepasAnListSyncTest(TestCase):
         self.assertEqual(len(diagnostic.satellites_nombre_repas_an_list), 2)
 
 
+class DiagnosticGroupeSatellitesNombreRepasAnSumTest(TestCase):
+    def test_sum(self):
+        for value, expected in [
+            ([], None),
+            ([{"id": 1, "nombre_repas_an": None}], None),
+            ([{"id": 1, "nombre_repas_an": 0}], 0),
+            ([{"id": 1, "nombre_repas_an": 1000}, {"id": 2, "nombre_repas_an": None}], 1000),
+            ([{"id": 1, "nombre_repas_an": 1000}, {"id": 2, "nombre_repas_an": 2000}], 3000),
+        ]:
+            with self.subTest(value=value):
+                diagnostic = Diagnostic(satellites_nombre_repas_an_list=value)
+                self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, expected)
+
+
 class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
     def _validate(self, value):
         return diagnostic_validators.validate_satellites_nombre_repas_an_list(

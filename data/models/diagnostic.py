@@ -988,6 +988,18 @@ class Diagnostic(
         ]
 
     @property
+    def satellites_nombre_repas_an_sum(self) -> int | None:
+        """
+        [NEW in 2026] Groupe: sum of the nombre_repas_an of the satellites (None if no value)
+        """
+        value_list = [
+            item["nombre_repas_an"]
+            for item in self.satellites_nombre_repas_an_list or []
+            if item.get("nombre_repas_an") is not None
+        ]
+        return sum(value_list) if value_list else None
+
+    @property
     def canteen_yearly_meal_count(self):
         if self.year >= 2026:
             return self.nombre_repas_an
