@@ -512,6 +512,11 @@ class Diagnostic(
         "nombre_repas_an",
     ]
 
+    GROUPE_FIELDS = [
+        # new in 2026
+        "satellites_nombre_repas_an_list",
+    ]
+
     META_FIELDS = [
         "id",
         "canteen_id",
@@ -700,6 +705,16 @@ class Diagnostic(
         verbose_name="déclarant (copie au moment de la télédéclaration)",
         blank=True,
         null=True,
+        encoder=CustomJSONEncoder,
+    )
+
+    # Groupe
+    satellites_nombre_repas_an_list = models.JSONField(
+        verbose_name="nombre de repas par an de chaque satellite (seulement pertinent pour les groupes)",
+        help_text='format : [{"id": <id de la cantine satellite>, "nombre_repas_an": <nombre de repas par an>}, ...]',
+        # not null: simple_history's update_change_reason filters on every field, and JSONField=None matches JSON null
+        default=list,
+        blank=True,
         encoder=CustomJSONEncoder,
     )
 

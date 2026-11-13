@@ -122,6 +122,7 @@ READ_ONLY_FIELDS = (
     "generated_from_groupe_diagnostic",
     *Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS,
     *Diagnostic.OTHER_COMPUTED_FIELDS,
+    *Diagnostic.GROUPE_FIELDS,  # edited via a dedicated endpoint
 )
 
 
@@ -272,6 +273,7 @@ class ManagerDiagnosticSerializer(DiagnosticSerializer):
             + Diagnostic.TELEDECLARATION_FIELDS
             + Diagnostic.TELEDECLARATION_DATA_QUALITY_FIELDS
             + Diagnostic.OTHER_COMPUTED_FIELDS
+            + Diagnostic.GROUPE_FIELDS
             + Diagnostic.IS_FILLED_VOLET_FIELDS
             + [
                 "generated_from_purchases",
