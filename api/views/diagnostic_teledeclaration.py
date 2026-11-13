@@ -24,7 +24,11 @@ from api.permissions import (
 from api.serializers import DiagnosticTeledeclaredOpenDataSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
 from data.fields import ChoiceArrayField
-from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES, is_in_teledeclaration_or_correction
+from data.models.diagnostic_teledeclaration_dates import (
+    CAMPAIGN_DATES,
+    get_year_correction_end_date_or_campaign_end_date_or_today_date,
+    is_in_teledeclaration_or_correction,
+)
 from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_all,
     get_teledeclaration_verbose_name,
@@ -139,6 +143,8 @@ class DiagnosticTeledeclarationPdfView(APIView):
         processed_diagnostic_data = DiagnosticTeledeclarationPdfView._get_teledeclaration_override_data(diagnostic)
         additional_questions = DiagnosticTeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_snapshot)
         volets = {
+            "CANTEEN": DiagnosticTeledeclarationPdfView._get_canteen_fields(diagnostic),
+            "MEAL_COUNT": DiagnosticTeledeclarationPdfView._get_meal_count_fields(diagnostic),
             "APPROVISIONNEMENT": (
                 DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "APPROVISIONNEMENT")
                 if diagnostic.diagnostic_type
@@ -161,7 +167,9 @@ class DiagnosticTeledeclarationPdfView(APIView):
                 "diagnostic_type": "détaillée" if diagnostic.is_diagnostic_type_complete else "simplifiée",
                 "year": diagnostic.year,
                 "date": diagnostic.teledeclaration_date,
+                "teledeclaration_id": diagnostic.teledeclaration_id,
                 "applicant": diagnostic.applicant_snapshot["name"],
+                "yearly_meal_count": diagnostic.canteen_yearly_meal_count,
                 "teledeclaration_mode": diagnostic.teledeclaration_mode,
                 "central_kitchen_siret": central_kitchen_siret,
                 "central_kitchen_name": central_kitchen_name,
@@ -171,6 +179,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
                 "complete_appro": structure_complete_appro_data,
                 "volets": volets,
                 "is_provisional": is_in_teledeclaration_or_correction(diagnostic.year),
+                "end_campaign_date": get_year_correction_end_date_or_campaign_end_date_or_today_date(diagnostic.year),
             },
         }
 
@@ -211,6 +220,39 @@ class DiagnosticTeledeclarationPdfView(APIView):
         if not os.path.isfile(path):
             raise Exception("media URI must start with {} or {}".format(sUrl, mUrl))
         return path
+
+    @staticmethod
+    def _get_canteen_fields(diagnostic):
+        """
+        Returns the fields of the canteen (from the canteen snapshot, with human-readable values),
+        in the same format as the volets fields. Empty fields are skipped
+        """
+        canteen = {
+            **diagnostic.canteen_snapshot,
+            **DiagnosticTeledeclarationPdfView._get_canteen_override_data(diagnostic),
+        }
+        fields = [
+            ("Nom", canteen.get("name")),
+            ("Identifiant / ID", canteen.get("id")),
+            ("Numéro SIRET", canteen.get("siret"))
+            if canteen.get("siret")
+            else ("Numéro SIREN", canteen.get("siren_unite_legale")),
+            ("Nombre de couverts / jour", canteen.get("daily_meal_count")),
+            ("Modèle économique", canteen.get("economic_model")),
+            ("Mode de gestion", canteen.get("management_type")),
+            ("Mode de production", canteen.get("production_type")),
+            ("SIRET de la cuisine centrale", canteen.get("central_producer_siret")),
+            ("Secteurs d'activité", canteen.get("sectors")),
+            ("Administration générale de tutelle (ministère ou ATE)", canteen.get("line_ministry")),
+        ]
+        return [{"label": label, "value": value} for label, value in fields if value]
+
+    @staticmethod
+    def _get_meal_count_fields(diagnostic):
+        """
+        Returns the yearly meal count, in the same format as the volets fields
+        """
+        return [{"label": "Nombre de couverts par an", "value": diagnostic.canteen_yearly_meal_count}]
 
     @staticmethod
     def _get_canteen_override_data(diagnostic):
