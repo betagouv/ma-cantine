@@ -26,7 +26,6 @@ from data.models import Canteen, Diagnostic, Teledeclaration
 from data.fields import ChoiceArrayField
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
 from data.models.diagnostic_teledeclaration_fields import (
-    VOLETS,
     get_teledeclaration_fields_all,
     get_teledeclaration_verbose_name,
 )
@@ -139,7 +138,17 @@ class DiagnosticTeledeclarationPdfView(APIView):
         processed_canteen_snapshot = DiagnosticTeledeclarationPdfView._get_canteen_override_data(diagnostic)
         processed_diagnostic_data = DiagnosticTeledeclarationPdfView._get_teledeclaration_override_data(diagnostic)
         additional_questions = DiagnosticTeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_snapshot)
-        volets = DiagnosticTeledeclarationPdfView._get_volets_fields(diagnostic)
+        volets = {
+            "APPROVISIONNEMENT": (
+                DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "APPROVISIONNEMENT")
+                if diagnostic.diagnostic_type
+                else []
+            ),
+            "GASPILLAGE": DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "GASPILLAGE"),
+            "DIVERSIFICATION": DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "DIVERSIFICATION"),
+            "PLASTIQUE": DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "PLASTIQUE"),
+            "INFORMATION": DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "INFORMATION"),
+        }
 
         structure_complete_appro_data = {}
         if diagnostic.is_diagnostic_type_complete:
@@ -333,25 +342,23 @@ class DiagnosticTeledeclarationPdfView(APIView):
         return structured_data
 
     @staticmethod
-    def _get_volets_fields(diagnostic):
+    def _get_volet_fields(diagnostic, volet):
         """
-        Returns the fields of each volet from the config file of the diagnostic year,
+        Returns the fields of the volet from the config file of the diagnostic year,
         with the verbose name from the config file and the formatted value
         """
-        volets = {}
-        for volet in VOLETS:
-            volets[volet] = []
-            for field_name in get_teledeclaration_fields_all(diagnostic.year, volet, diagnostic.diagnostic_type):
-                field = Diagnostic._meta.get_field(field_name)
-                volets[volet].append(
-                    {
-                        "label": get_teledeclaration_verbose_name(diagnostic.year, volet, field_name),
-                        "value": DiagnosticTeledeclarationPdfView._get_prettify_value(
-                            field, getattr(diagnostic, field_name)
-                        ),
-                    }
-                )
-        return volets
+        fields = []
+        for field_name in get_teledeclaration_fields_all(diagnostic.year, volet, diagnostic.diagnostic_type):
+            field = Diagnostic._meta.get_field(field_name)
+            fields.append(
+                {
+                    "label": get_teledeclaration_verbose_name(diagnostic.year, volet, field_name),
+                    "value": DiagnosticTeledeclarationPdfView._get_prettify_value(
+                        field, getattr(diagnostic, field_name)
+                    ),
+                }
+            )
+        return fields
 
     @staticmethod
     def _get_prettify_value(field, value):
