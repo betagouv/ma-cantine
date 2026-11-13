@@ -32,6 +32,32 @@ def validate_year(instance):
     return errors
 
 
+def validate_satellites_nombre_repas_an_list(instance):
+    """
+    [NEW in 2026] Groupe: the nombre_repas_an of each satellite must be empty or a positive integer
+    - the structure (one item per satellite of the groupe) is rebuilt in save() (see sync_satellites_nombre_repas_an_list)
+    """
+    errors = {}
+    field_name = "satellites_nombre_repas_an_list"
+    value = getattr(instance, field_name)
+    error_message = (
+        'Format attendu : [{"id": <id de la cantine satellite>, "nombre_repas_an": <nombre entier positif ou null>}]'
+    )
+    if not isinstance(value, list) or not all(isinstance(item, dict) for item in value):
+        utils_utils.add_validation_error(errors, field_name, error_message)
+        return errors
+    for item in value:
+        nombre_repas_an = item.get("nombre_repas_an")
+        if nombre_repas_an is not None and (
+            not isinstance(nombre_repas_an, int)
+            or isinstance(nombre_repas_an, bool)
+            or not (0 <= nombre_repas_an <= 999999999)
+        ):
+            utils_utils.add_validation_error(errors, field_name, error_message)
+            return errors
+    return errors
+
+
 def validate_year_and_can_edit(instance):
     """
     - extra validation:

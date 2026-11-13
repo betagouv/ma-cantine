@@ -24,6 +24,7 @@ from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_all,
     get_teledeclaration_fields_required,
 )
+from data.validators import diagnostic as diagnostic_validators
 from data.validators import diagnostic_volet_diversification as diagnostic_volet_diversification_validators
 from data.validators import diagnostic_volet_gaspillage as diagnostic_volet_gaspillage_validators
 from data.validators import diagnostic_volet_information as diagnostic_volet_information_validators
@@ -1068,6 +1069,146 @@ class Diagnostic2026ModelSaveTest(TransactionTestCase):
         self.assertIsNone(diagnostic.pourcentage_france)
         self.assertIsNone(diagnostic.pourcentage_circuit_court)
         self.assertIsNone(diagnostic.pourcentage_local)
+
+
+class DiagnosticGroupeSatellitesNombreRepasAnListSyncTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
+    def test_save_prefills_the_satellites_with_empty_values(self):
+        diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026)
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an_list,
+            [
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": None},
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": None},
+            ],
+        )
+
+    def test_save_keeps_the_existing_values(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an_list=[{"id": self.canteen_satellite_2.id, "nombre_repas_an": 2000}],
+        )
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an_list,
+            [
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": None},
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": 2000},
+            ],
+        )
+
+    def test_save_adds_the_new_satellites_and_removes_the_old_ones(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an_list=[
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000},
+                {"id": self.canteen_site.id, "nombre_repas_an": 5000},  # not a satellite of the groupe
+            ],
+        )
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an_list,
+            [
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000},
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": None},
+            ],
+        )
+        # a satellite leaves the groupe, a new one joins
+        canteen_satellite_3 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe
+        )
+        self.canteen_satellite_1.groupe = None
+        self.canteen_satellite_1.save()
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an_list,
+            [
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": None},
+                {"id": canteen_satellite_3.id, "nombre_repas_an": None},
+            ],
+        )
+
+    def test_save_empties_the_list_if_canteen_is_not_a_groupe(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_site,
+            year=2026,
+            satellites_nombre_repas_an_list=[{"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000}],
+        )
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_list, [])
+
+    def test_save_empties_the_list_before_2026(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2025,
+            satellites_nombre_repas_an_list=[{"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000}],
+        )
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_list, [])
+
+    def test_save_does_not_sync_if_teledeclared(self):
+        diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an_list=[
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000},
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": 2000},
+            ],
+            status=Diagnostic.DiagnosticStatus.SUBMITTED,
+        )
+        diagnostic.refresh_from_db()
+        self.assertTrue(diagnostic.is_teledeclared_already)
+        # a new satellite joins the groupe after the teledeclaration: the list is frozen
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe)
+        diagnostic.save(skip_validations=True)
+        diagnostic.refresh_from_db()
+        self.assertEqual(len(diagnostic.satellites_nombre_repas_an_list), 2)
+
+
+class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
+    def _validate(self, value):
+        return diagnostic_validators.validate_satellites_nombre_repas_an_list(
+            Diagnostic(satellites_nombre_repas_an_list=value)
+        )
+
+    def test_valid(self):
+        for value in [
+            [],
+            [{"id": 1, "nombre_repas_an": None}],
+            [{"id": 1, "nombre_repas_an": 0}, {"id": 2, "nombre_repas_an": 999999999}],
+        ]:
+            with self.subTest(value=value):
+                self.assertEqual(self._validate(value), {})
+
+    def test_invalid(self):
+        for value in [
+            None,
+            {"1": 1000},
+            [1000],
+            [{"id": 1, "nombre_repas_an": "1000"}],
+            [{"id": 1, "nombre_repas_an": 10.5}],
+            [{"id": 1, "nombre_repas_an": True}],
+            [{"id": 1, "nombre_repas_an": -1}],
+            [{"id": 1, "nombre_repas_an": 1000000000}],
+        ]:
+            with self.subTest(value=value):
+                self.assertEqual(list(self._validate(value).keys()), ["satellites_nombre_repas_an_list"])
+
+    def test_is_clean_returns_the_error(self):
+        diagnostic = DiagnosticFactory(year=2026)
+        diagnostic.satellites_nombre_repas_an_list = [{"id": 1, "nombre_repas_an": -1}]
+        is_clean, errors = diagnostic.is_clean()
+        self.assertFalse(is_clean)
+        self.assertIn("satellites_nombre_repas_an_list", errors)
 
 
 class DiagnosticQuerySetTest(TestCase):

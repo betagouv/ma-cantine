@@ -803,6 +803,7 @@ class Diagnostic(
             diagnostic_validators.validate_year(self),
             diagnostic_validators.validate_year_and_can_edit(self),
             diagnostic_validators.validate_canteen_fields_required(self),
+            diagnostic_validators.validate_satellites_nombre_repas_an_list(self),
         )
         # satellites whose groupe handles appro centrally don't declare their own diagnostic_type/appro fields
         if not self._should_use_central_kitchen_appro():
@@ -839,8 +840,33 @@ class Diagnostic(
             if not skip_validations:
                 diagnostic_teledeclaration_validators.validate_submitted_diagnostic_update(self)
         else:
+            self.sync_satellites_nombre_repas_an_list()
             self.populate_computed_fields()
         return super().save(**kwargs)
+
+    def sync_satellites_nombre_repas_an_list(self):
+        """
+        [NEW in 2026] Groupe: satellites_nombre_repas_an_list always contains exactly the satellites of the groupe
+        - keep the existing value of each satellite, None for the new satellites
+        - remove the canteens that are not (or no longer) satellites of the groupe
+        - not a groupe (or before 2026): empty list
+        - called in save() (except if the diagnostic is already teledeclared: the list is frozen)
+        """
+        if diagnostic_validators.validate_year(self) or int(self.year) < 2026:
+            self.satellites_nombre_repas_an_list = []
+            return
+        if not self.canteen_id or not self.canteen.is_groupe:
+            self.satellites_nombre_repas_an_list = []
+            return
+        current_values = {
+            item["id"]: item.get("nombre_repas_an")
+            for item in (self.satellites_nombre_repas_an_list or [])
+            if isinstance(item, dict) and "id" in item
+        }
+        self.satellites_nombre_repas_an_list = [
+            {"id": satellite_id, "nombre_repas_an": current_values.get(satellite_id)}
+            for satellite_id in self.canteen.satellites.order_by("id").values_list("id", flat=True)
+        ]
 
     def populate_computed_fields(self):
         """
