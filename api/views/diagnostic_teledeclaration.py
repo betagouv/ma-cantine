@@ -24,7 +24,7 @@ from api.permissions import (
 from api.serializers import DiagnosticTeledeclaredOpenDataSerializer
 from data.models import Canteen, Diagnostic, Teledeclaration
 from data.fields import ChoiceArrayField
-from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
+from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES, is_in_teledeclaration_or_correction
 from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_all,
     get_teledeclaration_verbose_name,
@@ -170,6 +170,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
                 "additional_questions": additional_questions,
                 "complete_appro": structure_complete_appro_data,
                 "volets": volets,
+                "is_provisional": is_in_teledeclaration_or_correction(diagnostic.year),
             },
         }
 
