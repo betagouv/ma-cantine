@@ -6,6 +6,33 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.61.1](https://github.com/betagouv/ma-cantine/compare/v2026.61.0...v2026.61.1) (2026-11-13)
+
+
+### Améliorations
+
+* **Cantines:** Données géo: commande pour compléter les champs géo manquants à partir du code INSEE ([#7617](https://github.com/betagouv/ma-cantine/issues/7617)) ([cbfe954](https://github.com/betagouv/ma-cantine/commit/cbfe954620cc485642dced258a6d4b8ff714bdb9))
+* **dbt:** mart_spe_pilotage, origine France des viandes, source de saisie et date de mise à jour ([#7566](https://github.com/betagouv/ma-cantine/issues/7566)) ([c30097e](https://github.com/betagouv/ma-cantine/commit/c30097e769a56feba4ddcafab5af366415da8f5c))
+* **Diagnostics:** Volet plastique: nouvelle question vente_emporter (L'établissement propose des repas à emporter) ([#7604](https://github.com/betagouv/ma-cantine/issues/7604)) ([2c345ef](https://github.com/betagouv/ma-cantine/commit/2c345efe020297085c9dc9688caa0d440c70f505))
+* **Diagnostics:** Volets thématiques: règles de validation entre champs liés (2026) ([#7606](https://github.com/betagouv/ma-cantine/issues/7606)) ([82fcf23](https://github.com/betagouv/ma-cantine/commit/82fcf2330853655b7ebd8e3dd28b49877d1c526c))
+* **Imports:** Bilans: accepter le point ou la virgule comme séparateur décimal ([#7613](https://github.com/betagouv/ma-cantine/issues/7613)) ([4296f28](https://github.com/betagouv/ma-cantine/commit/4296f282a0f251295c1d75cae06a20e59ae8f6cf))
+* **Imports:** Bilans: enlever les espaces du SIRET (comme pour les autres imports) ([#7614](https://github.com/betagouv/ma-cantine/issues/7614)) ([bfb19d7](https://github.com/betagouv/ma-cantine/commit/bfb19d7c18518ce718d67e70ae00b35eecba98f1))
+* **Imports:** erreurs Validata : afficher le titre de la colonne (au lieu de son nom) ([#7610](https://github.com/betagouv/ma-cantine/issues/7610)) ([04333d5](https://github.com/betagouv/ma-cantine/commit/04333d5f62adbe07d19dfe3679c4b21962e26497))
+* **Imports:** SIRET : rajouter les 0 initiaux perdus dans Excel (cellule au format nombre) ([#7615](https://github.com/betagouv/ma-cantine/issues/7615)) ([a6a9fd0](https://github.com/betagouv/ma-cantine/commit/a6a9fd00f748d97595e52459ba1a0d3482f2f340))
+
+
+### Corrections (bugs, typos...)
+
+* **Cantines:** Données géo: remplir aussi les cantines SIRET créées avec un code INSEE (ou dont la commune change) ([#7603](https://github.com/betagouv/ma-cantine/issues/7603)) ([e5b4cf8](https://github.com/betagouv/ma-cantine/commit/e5b4cf868dfe71b67a3ce0c78ac927d8917d9322))
+* **Imports:** Bilans: une valeur 0 n'est plus considérée comme vide (fichiers Excel) ([#7611](https://github.com/betagouv/ma-cantine/issues/7611)) ([8cd7094](https://github.com/betagouv/ma-cantine/commit/8cd7094c545c65e540d8205e3b883595fb81205b))
+* **Télédéclaration:** champs.json 2025 : les champs Fermier non applicables (bilan détaillé) ne sont plus obligatoires ([#7609](https://github.com/betagouv/ma-cantine/issues/7609)) ([e95e73e](https://github.com/betagouv/ma-cantine/commit/e95e73e3fb865da61daa31d8b561d42e4e38e8c0))
+
+
+### Technique
+
+* **Diagnostics:** Validateurs: un fichier par volet (approvisionnement & volets thématiques) ([#7560](https://github.com/betagouv/ma-cantine/issues/7560)) ([d9a3290](https://github.com/betagouv/ma-cantine/commit/d9a3290ed967a7beee215efc05e64d1b18c77a16))
+* **Imports:** utiliser les noms des champs de champs.json dans les messages d'erreur des imports de bilans ([#7608](https://github.com/betagouv/ma-cantine/issues/7608)) ([45d4b88](https://github.com/betagouv/ma-cantine/commit/45d4b8866fc1c11f262467493465daa23d6a43a8))
+
 ## [2026.61.0](https://github.com/betagouv/ma-cantine/compare/v2026.60.0...v2026.61.0) (2026-11-11)
 
 
