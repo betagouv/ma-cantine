@@ -795,6 +795,20 @@ models:
         description: >
           Vrai si une TD a été déposée pour l'année mais écartée de mart_teledeclarations
           (valeurs aberrantes, valeur totale vide…).
+      - name: source_saisie
+        description: >
+          Source de saisie de la télédéclaration retenue : Application ma cantine, Import de
+          fichier, Logiciel via l'API, Équipe ma cantine, Non renseignée. Pour un satellite dont la
+          TD a été générée depuis son groupe, source du bilan du groupe. Vide sans TD retenue.
+        tests:
+          - accepted_values:
+              values:
+                - 'Application ma cantine'
+                - 'Import de fichier'
+                # apostrophe doublée : accepted_values recopie la valeur entre '' sans l'échapper
+                - "Logiciel via l''API"
+                - 'Équipe ma cantine'
+                - 'Non renseignée'
       - name: jour_campagne_teledeclaration
         description: >
           Jour de campagne de la télédéclaration (1 = jour d'ouverture, calendrier téléversé par
@@ -817,6 +831,15 @@ models:
         description: Somme viandes volailles + produits de la mer (€).
       - name: valeur_viandes_et_poissons_egalim
         description: Somme EGalim viandes volailles + produits de la mer (€).
+      - name: valeur_viandes_volailles_avec_france
+        description: >
+          Valeur totale des viandes et volailles de la TD retenue, renseignée seulement si
+          l'origine France l'est aussi : dénominateur de la part d'origine France.
+      - name: valeur_viandes_volailles_france
+        description: >
+          Valeur des viandes et volailles d'origine France, renseignée seulement si la valeur
+          totale l'est aussi. Part France = somme de cette colonne / somme de
+          `valeur_viandes_volailles_avec_france`.
       - name: atteint_bio
         description: Objectif bio atteint, seuil selon la zone (voir `seuil_applicable`).
       - name: atteint_egalim
@@ -847,3 +870,7 @@ models:
         description: >
           Niveau ADEME de gaspillage (Niveau 3 ≤ 47 g, Niveau 2 ≤ 74 g, Niveau 1 ≤ 95 g, Non
           atteint au-delà), calculé sur le ratio non arrondi comme int_spe_waste_by_canteen.
+      - name: date_mise_a_jour
+        description: >
+          Date et heure (Paris) du run dbt qui a construit la table ; les données sont celles de
+          l'export de la nuit, une demi-heure avant.

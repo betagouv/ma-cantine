@@ -8,6 +8,10 @@
 -- (modèle 3737), pour qu'une correction apparaisse tout de suite. Le calendrier téléversé
 -- (modèle 3738) sert au jour de campagne.
 -- Adresses des gestionnaires : sans les comptes de l'équipe ma cantine (is_staff ou is_dev).
+-- Origine France des viandes et volailles : les deux valeurs seulement quand la TD renseigne
+-- l'origine France (champ facultatif), pour une part somme / somme non sous-estimée.
+-- Source de saisie : celle du bilan retenu (pour un satellite généré, celle du bilan du groupe).
+-- date_mise_a_jour : heure du run dbt (Paris), pour la carte « données à jour au ».
 
 with perimetre as (
     select * from {{ ref('int_spe_perimetre') }}
@@ -23,6 +27,16 @@ statuts as (
 
 teledeclarations as (
     select * from {{ ref('mart_teledeclarations') }}
+),
+
+-- source de saisie des TD ; (canteen_id, teledeclaration_id) est unique hors bilans orphelins
+sources_saisie as (
+    select
+        canteen_id,
+        teledeclaration_id,
+        creation_source
+    from {{ ref('stg_teledeclarations') }}
+    where canteen_id is not null
 ),
 
 -- Gestionnaires par cantine, sans les comptes de l'équipe ma cantine : rattachés à de
@@ -43,9 +57,11 @@ campagnes as (
     select * from {{ ref('stg_spe_campagnes') }}
 ),
 
--- date du run de nuit, à l'heure de Paris
+-- date et heure du run de nuit, à l'heure de Paris
 aujourdhui as (
-    select (now() at time zone 'Europe/Paris')::date       as jour
+    select
+        (now() at time zone 'Europe/Paris')::date                       as jour,
+        date_trunc('minute', now() at time zone 'Europe/Paris')         as maintenant
 )
 
 select
@@ -100,6 +116,16 @@ select
     s.en_cours_via_groupe,
     s.td_deposee_non_retenue,
 
+    -- source de saisie de la TD retenue
+    case
+        when t.teledeclaration_id is null           then null
+        when ss.creation_source = 'APP'             then 'Application ma cantine'
+        when ss.creation_source = 'IMPORT'          then 'Import de fichier'
+        when ss.creation_source = 'API'             then 'Logiciel via l''API'
+        when ss.creation_source = 'ADMIN'           then 'Équipe ma cantine'
+        else                                             'Non renseignée'
+    end                                                         as source_saisie,
+
     -- jour de campagne : 1 = jour d'ouverture (calendrier de la DGAL) ; vide sans calendrier
     s.date_teledeclaration - cal.date_ouverture + 1             as jour_campagne_teledeclaration,
     (select jour from aujourdhui) - cal.date_ouverture + 1      as jour_campagne_aujourdhui,
@@ -119,6 +145,13 @@ select
     t.valeur_egalim_agg,
     t.valeur_viandes_et_poissons,
     t.valeur_viandes_et_poissons_egalim,
+    -- origine France des viandes et volailles, seulement si la TD renseigne les deux valeurs
+    case
+        when t.valeur_viandes_volailles_france is not null then t.valeur_viandes_volailles
+    end                                                         as valeur_viandes_volailles_avec_france,
+    case
+        when t.valeur_viandes_volailles is not null then t.valeur_viandes_volailles_france
+    end                                                         as valeur_viandes_volailles_france,
 
     -- objectifs, seuils selon la zone (même règle que les atteint_* de mart_teledeclarations)
     t.atteint_bio,
@@ -147,7 +180,10 @@ select
         when t.gaspi_total_mass_kg * 1000 / t.gaspi_meal_count <= 74        then 'Niveau 2'
         when t.gaspi_total_mass_kg * 1000 / t.gaspi_meal_count <= 95        then 'Niveau 1'
         else                                                                     'Non atteint'
-    end                                                         as niveau_ademe
+    end                                                         as niveau_ademe,
+
+    -- heure du run dbt (Paris) ; les données sont celles de l'export de la nuit
+    (select maintenant from aujourdhui)                         as date_mise_a_jour
 
 from perimetre as p
 inner join cantines as c on p.canteen_id = c.id
@@ -156,6 +192,8 @@ inner join statuts as s on p.canteen_id = s.canteen_id
 -- teledeclaration_id n'est pas unique (satellites déclarés par un groupe) : jointure sur la cantine aussi
 left join teledeclarations as t
     on s.canteen_id = t.canteen_id and s.teledeclaration_id = t.teledeclaration_id
+left join sources_saisie as ss
+    on t.canteen_id = ss.canteen_id and t.teledeclaration_id = ss.teledeclaration_id
 left join gestionnaires as gc on c.id = gc.canteen_id
 left join gestionnaires as gg on c.groupe_id = gg.canteen_id
 left join campagnes as cal on s.annee = cal.annee
