@@ -1864,6 +1864,82 @@ class DiagnosticSatellitesNombreRepasAnApiTest(APITestCase):
             ],
         )
 
+    def test_patch(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(
+            self.url, {"id": self.canteen_satellite_2.id, "nombreRepasAn": 2000}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # returns the full list
+        self.assertEqual(
+            [(item["id"], item["nombreRepasAn"]) for item in response.json()],
+            [(self.canteen_satellite_1.id, 1000), (self.canteen_satellite_2.id, 2000)],
+        )
+        self.diagnostic_groupe.refresh_from_db()
+        self.assertEqual(
+            self.diagnostic_groupe.satellites_nombre_repas_an_list,
+            [
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000},
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": 2000},
+            ],
+        )
+
+    def test_patch_empty_value(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(
+            self.url, {"id": self.canteen_satellite_1.id, "nombreRepasAn": None}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.diagnostic_groupe.refresh_from_db()
+        self.assertIsNone(self.diagnostic_groupe.satellites_nombre_repas_an_list[0]["nombre_repas_an"])
+
+    def test_cannot_patch_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.canteen_groupe.managers.add(user)
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.patch(
+            self.url, {"id": self.canteen_satellite_2.id, "nombreRepasAn": 2000}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_patch_canteen_not_satellite_of_the_groupe(self):
+        self.client.force_authenticate(user=self.user)
+        response = self.client.patch(self.url, {"id": self.canteen_site.id, "nombreRepasAn": 2000}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_cannot_patch_invalid_value(self):
+        self.client.force_authenticate(user=self.user)
+        for payload in [
+            {"id": self.canteen_satellite_2.id, "nombreRepasAn": -1},
+            {"id": self.canteen_satellite_2.id, "nombreRepasAn": "abc"},
+            {"id": self.canteen_satellite_2.id, "nombreRepasAn": 1000000000},
+            {"id": self.canteen_satellite_2.id},
+            {"nombreRepasAn": 2000},
+        ]:
+            with self.subTest(payload=payload):
+                response = self.client.patch(self.url, payload, format="json")
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_cannot_patch_if_not_groupe(self):
+        self.client.force_authenticate(user=self.user)
+        diagnostic_site = DiagnosticFactory(canteen=self.canteen_site, year=2026)
+        response = self.client.patch(
+            self._url(self.canteen_site, diagnostic_site),
+            {"id": self.canteen_satellite_2.id, "nombreRepasAn": 2000},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_cannot_patch_if_teledeclared(self):
+        self.client.force_authenticate(user=self.user)
+        Diagnostic.objects.filter(id=self.diagnostic_groupe.id).update(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        response = self.client.patch(
+            self.url, {"id": self.canteen_satellite_2.id, "nombreRepasAn": 2000}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.diagnostic_groupe.refresh_from_db()
+        self.assertIsNone(self.diagnostic_groupe.satellites_nombre_repas_an_list[1]["nombre_repas_an"])
+
 
 class DiagnosticGroupeSatellitesNombreRepasAnListApiTest(APITestCase):
     @classmethod

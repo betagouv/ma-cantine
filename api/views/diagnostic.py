@@ -23,6 +23,7 @@ from api.serializers import (
     DiagnosticCheckSerializer,
     DiagnosticRecapSerializer,
     DiagnosticSatelliteNombreRepasAnSerializer,
+    DiagnosticSatelliteNombreRepasAnUpdateSerializer,
 )
 from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.utils import file_import, send_mail
@@ -240,6 +241,14 @@ class DiagnosticCheckView(APIView):
         tags=["Bilans"],
         responses=DiagnosticSatelliteNombreRepasAnSerializer(many=True),
     ),
+    patch=extend_schema(
+        summary="Modifier le nombre de repas par an d'un restaurant satellite d'un bilan de groupe.",
+        description="Seulement pour les bilans des groupes non télédéclarés, à partir de 2026. "
+        "Retourne la liste complète des satellites.",
+        tags=["Bilans"],
+        request=DiagnosticSatelliteNombreRepasAnUpdateSerializer,
+        responses=DiagnosticSatelliteNombreRepasAnSerializer(many=True),
+    ),
 )
 class DiagnosticSatellitesNombreRepasAnView(APIView):
     """
@@ -253,14 +262,16 @@ class DiagnosticSatellitesNombreRepasAnView(APIView):
         # IsCanteenManagerUrlParam will raise a 404 if the canteen doesn't exist
         return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
 
-    def get(self, request, canteen_pk, pk):
+    def _get_diagnostic(self):
         canteen = self._get_canteen()
-        diagnostic = get_object_or_404(Diagnostic, pk=pk, canteen=canteen)
+        diagnostic = get_object_or_404(Diagnostic, pk=self.kwargs["pk"], canteen=canteen)
         if not canteen.is_groupe:
             raise ValidationError("Seuls les bilans des groupes ont des satellites.")
         if diagnostic.year < 2026:
             raise ValidationError("Le nombre de repas par an des satellites n'existe qu'à partir de 2026.")
+        return diagnostic
 
+    def _get_response(self, diagnostic):
         # all_objects: the satellite may have been deleted since the last save of the diagnostic
         satellite_dict = Canteen.all_objects.in_bulk(
             [item["id"] for item in diagnostic.satellites_nombre_repas_an_list]
@@ -278,6 +289,31 @@ class DiagnosticSatellitesNombreRepasAnView(APIView):
                 }
             )
         return Response(DiagnosticSatelliteNombreRepasAnSerializer(data, many=True).data)
+
+    def get(self, request, canteen_pk, pk):
+        diagnostic = self._get_diagnostic()
+        return self._get_response(diagnostic)
+
+    def patch(self, request, canteen_pk, pk):
+        diagnostic = self._get_diagnostic()
+        if diagnostic.is_teledeclared_already:
+            raise ValidationError("Le bilan est déjà télédéclaré : il faut d'abord annuler la télédéclaration.")
+
+        serializer = DiagnosticSatelliteNombreRepasAnUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        satellite_id = serializer.validated_data["id"]
+        nombre_repas_an = serializer.validated_data["nombre_repas_an"]
+
+        if satellite_id not in [item["id"] for item in diagnostic.satellites_nombre_repas_an_list]:
+            raise ValidationError("Cette cantine n'est pas un satellite du groupe.")
+
+        diagnostic.satellites_nombre_repas_an_list = [
+            {**item, "nombre_repas_an": nombre_repas_an} if item["id"] == satellite_id else item
+            for item in diagnostic.satellites_nombre_repas_an_list
+        ]
+        diagnostic.save()  # also syncs the list with the satellites of the groupe
+        update_change_reason_with_auth(self, diagnostic)
+        return self._get_response(diagnostic)
 
 
 class EmailDiagnosticImportFileView(APIView):
