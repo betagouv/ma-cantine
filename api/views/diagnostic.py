@@ -260,11 +260,8 @@ class DiagnosticSatellitesNombreRepasAnView(APIView):
             raise ValidationError("Seuls les bilans des groupes ont des satellites.")
         if diagnostic.year < 2026:
             raise ValidationError("Le nombre de repas par an des satellites n'existe qu'à partir de 2026.")
-        if not diagnostic.is_teledeclared_already:
-            # the satellites of the groupe may have changed since the last save (frozen once teledeclared)
-            diagnostic.sync_satellites_nombre_repas_an_list()
 
-        # all_objects: the satellite may have been deleted since the teledeclaration
+        # all_objects: the satellite may have been deleted since the last save of the diagnostic
         satellite_dict = Canteen.all_objects.in_bulk(
             [item["id"] for item in diagnostic.satellites_nombre_repas_an_list]
         )

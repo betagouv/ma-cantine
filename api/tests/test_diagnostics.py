@@ -1864,23 +1864,6 @@ class DiagnosticSatellitesNombreRepasAnApiTest(APITestCase):
             ],
         )
 
-    def test_get_includes_the_new_satellites(self):
-        self.client.force_authenticate(user=self.user)
-        canteen_satellite_3 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe
-        )
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()[-1]["id"], canteen_satellite_3.id)
-
-    def test_get_teledeclared_is_frozen(self):
-        self.client.force_authenticate(user=self.user)
-        Diagnostic.objects.filter(id=self.diagnostic_groupe.id).update(status=Diagnostic.DiagnosticStatus.SUBMITTED)
-        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.json()), 2)  # the new satellite is not added
-
 
 class DiagnosticGroupeSatellitesNombreRepasAnListApiTest(APITestCase):
     @classmethod
