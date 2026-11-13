@@ -20,6 +20,7 @@ READ_ONLY_FIELDS = (
     *Diagnostic.TELEDECLARATION_FIELDS,
     "creation_date",
     "modification_date",
+    *Diagnostic.GROUPE_FIELDS,  # edited via a dedicated endpoint
 )
 
 VOLET_META_FIELDS = [
@@ -58,6 +59,7 @@ class DiagnosticV2Serializer(DiagnosticSerializer):
             *Diagnostic.TELEDECLARATION_FIELDS,
             "creation_date",
             "modification_date",
+            *Diagnostic.GROUPE_FIELDS,
             *CREATE_ONLY_FIELDS,
         )
 

@@ -1780,3 +1780,52 @@ class DiagnosticDetailCheckApiTest(APITestCase):
         self.assertEqual(body["isClean"], True)
         self.assertEqual(body["errors"], {})
         self.assertEqual(body["isTeledeclared"], True)
+
+
+class DiagnosticGroupeSatellitesNombreRepasAnListApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[cls.user])
+        cls.canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+
+    def setUp(self):
+        self.diagnostic_groupe = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an_list=[{"id": self.canteen_satellite.id, "nombre_repas_an": 1000}],
+        )
+        kwargs = {"canteen_pk": self.canteen_groupe.id, "pk": self.diagnostic_groupe.id}
+        self.url_list = [
+            reverse("diagnostic_retrieve_update", kwargs=kwargs),  # v1
+            reverse("diagnostic_v2_retrieve_update", kwargs=kwargs),
+        ]
+
+    def test_get(self):
+        self.client.force_authenticate(user=self.user)
+        for url in self.url_list:
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.assertEqual(
+                    response.json()["satellitesNombreRepasAnList"],
+                    [{"id": self.canteen_satellite.id, "nombreRepasAn": 1000}],
+                )
+
+    def test_read_only(self):
+        self.client.force_authenticate(user=self.user)
+        for url in self.url_list:
+            with self.subTest(url=url):
+                response = self.client.patch(
+                    url,
+                    {"satellitesNombreRepasAnList": [{"id": self.canteen_satellite.id, "nombreRepasAn": 2000}]},
+                    format="json",
+                )
+                self.assertEqual(response.status_code, status.HTTP_200_OK)
+                self.diagnostic_groupe.refresh_from_db()
+                self.assertEqual(
+                    self.diagnostic_groupe.satellites_nombre_repas_an_list,
+                    [{"id": self.canteen_satellite.id, "nombre_repas_an": 1000}],
+                )
