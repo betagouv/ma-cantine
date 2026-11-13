@@ -16,6 +16,7 @@ const goToPage = (page) => router.push(page)
 /* Sentence */
 const getSentence = (volet) => {
   if (volet.isFilled && !volet.hasErrors) return "Volet non télédéclaré."
+  if (volet.isFilled && volet.hasErrors && !volet.isAppro) return "Volet en attente de finalisation."
   if (volet.isFilled && volet.hasErrors) return "Volet en attente de correction."
   return "Volet non renseigné."
 }
@@ -39,7 +40,7 @@ const isVoletTeledeclared = (volet) => {
         <span class="ma-cantine--flex-start ma-cantine--flex-gap-1">
           <component :is="volet.macaron" :status="volet.macaronStatus" class="diagnostic-summary-accordions__image" />
           {{ volet.title }}
-          <DsfrBadge v-if="volet.hasErrors" label="Erreurs" type="error"/>
+          <DsfrBadge v-if="volet.hasErrors" :label="volet.isAppro ? 'Erreurs' : 'Non finalisé'" type="error"/>
         </span>
       </template>
       <p v-if="!isVoletTeledeclared(volet)" class="fr-mb-0">
