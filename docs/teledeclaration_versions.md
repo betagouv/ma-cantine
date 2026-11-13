@@ -4,6 +4,7 @@ Actuellement les dates sont celles des 1ères créations de TD avec la version c
 
 |Version|Année(s) concernée(s)|Date première TD|Date dernière TD|Nombre de TDs|Changements|
 |-|-|-|-|-|-|
+|* à confirmer|||||- Ajout du champ Canteen.publication_comments|
 |16.2|||||- Ajout des champs Canteen.epci et Canteen.pat_list|
 |16.1|||||- Enlève les anciens sectors (M2M)<br>- Ajout des champs Canteen.groupe_id et Canteen.is_filled|
 |16|2025|12/01/2026||en cours|- Nouveaux champs simplifiée et détaillée<br>- Renommer 'value' en 'valeur', enlever 'ht'<br>- Traduit certains champs en français<br>- Ajout de champs supplémentaires dans les snapshot 'canteen' et 'satellites' (sector_list entre autre)|
