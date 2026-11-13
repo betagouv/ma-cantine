@@ -890,12 +890,12 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
         diagnostic.teledeclare(user)
         context = DiagnosticTeledeclarationPdfView.get_context(diagnostic)
 
-        for template_name in ["teledeclaration_campaign_2024/index.html", "teledeclaration_pdf.html"]:
+        for template_name in ["teledeclaration_pdf/v2.html", "teledeclaration_pdf/v1.html"]:
             with self.subTest(template_name=template_name):
                 html = get_template(template_name).render(context)
                 # gaspillage
                 self.assertIn("Diagnostic sur le gaspillage réalisé", html)
-                if template_name == "teledeclaration_campaign_2024/index.html":
+                if template_name == "teledeclaration_pdf/v2.html":
                     self.assertIn(Diagnostic.ActionsGaspillage.SENSIBILISATION.label, html)
                 # diversification
                 # only displayed if plan_diversification_en_place
@@ -918,7 +918,7 @@ class DiagnosticTeledeclarationPdfApiTest(APITestCase):
 
 class DiagnosticTeledeclarationPdfInformation2026Test(SimpleTestCase):
     def test_measure_info_template_since_2026(self):
-        template = get_template("teledeclaration_campaign_2024/measure_info.html")
+        template = get_template("teledeclaration_pdf/blocks/measure_info.html")
         context = {
             "information_affichage_permanent": True,
             "information_electronique_annuelle": False,
@@ -943,7 +943,7 @@ class DiagnosticTeledeclarationPdfInformation2026Test(SimpleTestCase):
 
 class DiagnosticTeledeclarationPdfPlastique2026Test(SimpleTestCase):
     def test_measure_plastic_template_since_2026(self):
-        template = get_template("teledeclaration_campaign_2024/measure_plastic.html")
+        template = get_template("teledeclaration_pdf/blocks/measure_plastic.html")
         context = {
             "plastique_bouteille_boisson_remplace": True,
             "plastique_bouteille_remplace": None,
