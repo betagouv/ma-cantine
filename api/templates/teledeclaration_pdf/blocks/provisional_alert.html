@@ -1,0 +1,42 @@
+{% load static %}
+<style>
+    .fr-alert {
+        width: 100%;
+        margin-bottom: 24px;
+        border: 1px solid #0063cb;
+    }
+
+    .fr-alert-band {
+        width: 30px;
+        padding: 4px 0px 0px 0px;
+        background-color: #0063cb;
+        text-align: center;
+        vertical-align: top;
+    }
+
+    .fr-alert-content {
+        padding: 8px 16px 4px 6px;
+    }
+
+    .fr-alert-title {
+        font-family: 'Marianne-Bold';
+        font-size: 16px;
+    }
+</style>
+{% if is_provisional %}
+<table class="fr-alert">
+    <tr>
+        <td class="fr-alert-band">
+            <img src="{% static '../../../web/static/images/info-fill-white.svg' %}" alt="" width="24" height="24" />
+        </td>
+        <td class="fr-alert-content">
+            <p class="fr-alert-title">Justificatif provisoire</p>
+            <p>
+                Jusqu'à la clôture de la télédéclaration, {{ end_campaign_date|date:"j F Y" }}.
+                Jusqu'à cette date, la télédéclaration peut encore être modifiée ;
+                un justificatif définitif sera alors disponible dans votre espace.
+            </p>
+        </td>
+    </tr>
+</table>
+{% endif %}
