@@ -1,4 +1,7 @@
 <script setup>
+import { computed } from "vue"
+import { storeToRefs } from "pinia"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
@@ -10,6 +13,14 @@ const ustensilesDocumentation = `${documentation.interdictionPlastique}#1-2-inte
 const vaisselleDocumentation = `${documentation.interdictionPlastique}#1-3-obligation-de-vaisselle-reemployable`
 const contenantsDocumentation = `${documentation.interdictionPlastique}#1-4-fin-de-lutilisation-des-contenants-alimentaires-de-cuisson-de-rechauffe-et-de-service-en-plastique`
 const emporterDocumentation = `${documentation.interdictionPlastique}#1-5-vente-a-emporter`
+
+/* Vente à emporter : les contenants ne sont attendus que si l'établissement propose des repas à emporter */
+const storeTeledeclaration = useStoreTeledeclaration()
+const { diagnostic } = storeToRefs(storeTeledeclaration)
+const isVenteEmporter = computed(() => diagnostic.value.venteEmporter === true)
+const updateVenteEmporter = (value) => {
+  if (value !== true) storeTeledeclaration.setValue("plastiqueContenantEmporterRemplace", null)
+}
 </script>
 
 <template>
@@ -74,6 +85,7 @@ const emporterDocumentation = `${documentation.interdictionPlastique}#1-5-vente-
   </div>
   <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Vente à emporter" :documentation="emporterDocumentation" />
-    <TunnelTeledeclarationField name="plastiqueContenantEmporterRemplace" />
+    <TunnelTeledeclarationField name="venteEmporter" @change="updateVenteEmporter" />
+    <TunnelTeledeclarationField v-if="isVenteEmporter" name="plastiqueContenantEmporterRemplace" />
   </div>
 </template>

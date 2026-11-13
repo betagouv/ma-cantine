@@ -47,6 +47,11 @@ class DiagnosticVoletPlastiqueMixin(models.Model):
         null=True,
         verbose_name="Aucun contenant alimentaire de cuisson, de réchauffage et de service en plastique sont utilisés au sein de l’établissement",
     )
+    vente_emporter = models.BooleanField(
+        blank=True,
+        null=True,
+        verbose_name="L'établissement propose des repas à emporter",
+    )
     plastique_contenant_emporter_remplace = models.BooleanField(
         blank=True,
         null=True,

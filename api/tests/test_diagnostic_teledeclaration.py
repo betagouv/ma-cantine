@@ -950,6 +950,7 @@ class DiagnosticTeledeclarationPdfPlastique2026Test(SimpleTestCase):
             "plastique_ustensile_remplace": True,
             "plastique_vaisselle_jetable_remplace": False,
             "plastique_contenant_remplace": True,
+            "vente_emporter": True,
             "plastique_contenant_emporter_remplace": True,
             # removed in 2026
             "plastique_contenant_cuisson_remplace": True,
@@ -965,6 +966,12 @@ class DiagnosticTeledeclarationPdfPlastique2026Test(SimpleTestCase):
         html = template.render({"year": 2025, **context})
         self.assertIn("Contenants de cuisson en plastique remplacés", html)
         self.assertNotIn("fontaine d'eau potable", html)
+
+    def test_measure_plastic_template_since_2026_without_vente_emporter(self):
+        template = get_template("teledeclaration_campaign_2024/measure_plastic.html")
+        html = template.render({"year": 2026, "vente_emporter": False, "plastique_contenant_emporter_remplace": None})
+        self.assertIn("L'établissement ne propose pas de repas à emporter", html)
+        self.assertNotIn("repas à emporter : Inconnu", html)
 
 
 NEW_PLASTIQUE_FIELDS_2026 = [
