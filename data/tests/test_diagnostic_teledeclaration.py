@@ -341,6 +341,7 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
             siret="21640122400011",
             production_type=Canteen.ProductionType.ON_SITE,
             sector_list=[Sector.EDUCATION_PRIMAIRE, Sector.SANTE_HOPITAL],
+            publication_comments="Commentaire de publication",
             managers=[cls.user],
         )
         cls.diagnostic_site = DiagnosticFactory(
@@ -388,6 +389,7 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
             self.diagnostic_site.canteen_snapshot_category_lib_list,
             ["Enseignement", "Santé"],
         )
+        self.assertEqual(self.diagnostic_site.canteen_snapshot["publication_comments"], "Commentaire de publication")
 
     def test_diagnostic_satellites_snapshot(self):
         # groupe (default canteen ordering when snapshot is -creation_date)
