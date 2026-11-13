@@ -125,7 +125,7 @@ def diversification_badge_2022(diagnostic) -> bool | None:
         MenuVegetarienFrequence.PLUS_HEBDO,
     ]
     # Only the canteens with more than 200 daily meals with a diversification plan
-    if canteen.daily_meal_count and canteen.daily_meal_count >= 200 and diagnostic.plan_diversification_en_place:
+    if canteen.daily_meal_count and canteen.daily_meal_count > 200 and diagnostic.plan_diversification_en_place:
         return True
     # Only the canteens in the administration sector must have a daily frequency
     if canteen.is_administration and has_daily_frequency:
@@ -147,7 +147,7 @@ def diversification_badge_2026(diagnostic) -> bool | None:
     frequence = diagnostic.menu_vegetarien_frequence
     obligations = []
     # Diversification plan: canteens with 200 daily meals or more
-    if canteen.daily_meal_count and canteen.daily_meal_count >= 200:
+    if canteen.daily_meal_count and canteen.daily_meal_count > 200:
         obligations.append(diagnostic.plan_diversification_en_place is True)
     # Weekly vegetarian menu: school canteens (from primaire to lycée, including enseignement agricole)
     school_sectors = [
