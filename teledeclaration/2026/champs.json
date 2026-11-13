@@ -2300,6 +2300,7 @@
     "plan_diversification_en_place": {
       "index_code": 1,
       "is_required": true,
+      "is_required_depends_on_canteen": true,
       "verbose_name": "Un plan pluriannuel de diversification des protéines incluant des alternatives à base de protéines végétales a été mis en place dans l’établissement"
     },
     "service_type": {

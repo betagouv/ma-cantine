@@ -1,9 +1,76 @@
 from django.test import TestCase
 
-from data.factories import DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Diagnostic
-from data.models.diagnostic_teledeclaration_fields import get_teledeclaration_fields_all
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
+)
 from data.validators import diagnostic_volet_diversification as diagnostic_volet_diversification_validators
+
+
+class DiagnosticVoletDiversificationYearValidatorTest(TestCase):
+    def test_no_validation_before_2026(self):
+        for year in [2021, 2022, 2023, 2024, 2025]:
+            with self.subTest(year=year):
+                # volet started, canteen with the plan_diversification obligation
+                diagnostic = DiagnosticFactory(
+                    year=year,
+                    canteen=CanteenFactory(daily_meal_count=500, yearly_meal_count=500 * 200),
+                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                )
+                for field in get_teledeclaration_fields_all(year, "DIVERSIFICATION"):
+                    setattr(diagnostic, field, None)
+                diagnostic.plan_diversification_en_place = True
+                self.assertTrue(diagnostic.is_filled_diversification)
+                errors = diagnostic_volet_diversification_validators.validate_diversification_fields_required(
+                    diagnostic
+                )
+                self.assertEqual(errors, {})
+
+
+class DiagnosticVoletDiversificationPlanRequiredValidatorTest(TestCase):
+    def _diagnostic(self, daily_meal_count):
+        diagnostic = DiagnosticFactory(
+            year=2026,
+            canteen=CanteenFactory(daily_meal_count=daily_meal_count, yearly_meal_count=daily_meal_count * 200),
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+        )
+        # volet started: all the required fields filled, except plan_diversification_en_place
+        for field in get_teledeclaration_fields_all(2026, "DIVERSIFICATION"):
+            setattr(diagnostic, field, None)
+        diagnostic.service_type = Diagnostic.ServiceType.MENU_UNIQUE
+        diagnostic.menu_vegetarien_frequence = Diagnostic.MenuVegetarienFrequence.HEBDO
+        return diagnostic
+
+    def test_plan_diversification_en_place_required_if_canteen_serves_200_meals_or_more(self):
+        for daily_meal_count in [200, 500]:
+            with self.subTest(daily_meal_count=daily_meal_count):
+                diagnostic = self._diagnostic(daily_meal_count=daily_meal_count)
+                errors = diagnostic_volet_diversification_validators.validate_diversification_fields_required(
+                    diagnostic
+                )
+                self.assertEqual(list(errors.keys()), ["plan_diversification_en_place"])
+
+                diagnostic.plan_diversification_en_place = False
+                errors = diagnostic_volet_diversification_validators.validate_diversification_fields_required(
+                    diagnostic
+                )
+                self.assertEqual(errors, {})
+
+    def test_plan_diversification_en_place_optional_if_canteen_serves_less_than_200_meals(self):
+        for daily_meal_count in [12, 199]:
+            with self.subTest(daily_meal_count=daily_meal_count):
+                diagnostic = self._diagnostic(daily_meal_count=daily_meal_count)
+                errors = diagnostic_volet_diversification_validators.validate_diversification_fields_required(
+                    diagnostic
+                )
+                self.assertEqual(errors, {})
+
+    def test_other_fields_still_required_if_canteen_serves_less_than_200_meals(self):
+        diagnostic = self._diagnostic(daily_meal_count=12)
+        diagnostic.service_type = None
+        errors = diagnostic_volet_diversification_validators.validate_diversification_fields_required(diagnostic)
+        self.assertEqual(list(errors.keys()), ["service_type"])
 
 
 class DiagnosticVoletDiversificationPlanFieldsValidatorTest(TestCase):
