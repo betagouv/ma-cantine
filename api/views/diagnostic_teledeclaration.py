@@ -150,10 +150,26 @@ class DiagnosticTeledeclarationPdfView(APIView):
                 if diagnostic.diagnostic_type
                 else []
             ),
-            "GASPILLAGE": DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "GASPILLAGE"),
-            "DIVERSIFICATION": DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "DIVERSIFICATION"),
-            "PLASTIQUE": DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "PLASTIQUE"),
-            "INFORMATION": DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "INFORMATION"),
+            "GASPILLAGE": (
+                DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "GASPILLAGE")
+                if diagnostic.is_filled_gaspillage
+                else []
+            ),
+            "DIVERSIFICATION": (
+                DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "DIVERSIFICATION")
+                if diagnostic.is_filled_diversification
+                else []
+            ),
+            "PLASTIQUE": (
+                DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "PLASTIQUE")
+                if diagnostic.is_filled_plastique
+                else []
+            ),
+            "INFORMATION": (
+                DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "INFORMATION")
+                if diagnostic.is_filled_information
+                else []
+            ),
         }
 
         structure_complete_appro_data = {}

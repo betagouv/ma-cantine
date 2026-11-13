@@ -34,5 +34,9 @@
             {% endif %}
         </td>
     </tr>
+    {% empty %}
+    <tr class="fields-table-row-white">
+        <td colspan="2" class="text-left">Non renseigné</td>
+    </tr>
     {% endfor %}
 </table>
