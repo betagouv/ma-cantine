@@ -2390,6 +2390,7 @@
     "plastique_bouteille_remplace": {
       "index_code": 2,
       "is_required": true,
+      "is_required_depends_on_canteen": true,
       "verbose_name": "Aucune bouteilles d’eau plate en plastique n’est commercialisée/distribuée au sein de la cantine"
     },
     "plastique_contenant_emporter_remplace": {
@@ -2400,6 +2401,7 @@
     "plastique_contenant_remplace": {
       "index_code": 5,
       "is_required": true,
+      "is_required_depends_on_canteen": true,
       "verbose_name": "Aucun contenant alimentaire de cuisson, de réchauffage et de service en plastique sont utilisés au sein de l’établissement"
     },
     "plastique_ustensile_remplace": {
