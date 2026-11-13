@@ -804,6 +804,7 @@ class Diagnostic(
             diagnostic_validators.validate_year_and_can_edit(self),
             diagnostic_validators.validate_canteen_fields_required(self),
             diagnostic_validators.validate_satellites_nombre_repas_an_list(self),
+            diagnostic_validators.validate_groupe_satellites_nombre_repas_an(self),
         )
         # satellites whose groupe handles appro centrally don't declare their own diagnostic_type/appro fields
         if not self._should_use_central_kitchen_appro():
