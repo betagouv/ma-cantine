@@ -101,9 +101,9 @@ class DiagnosticTeledeclarationPdfView(APIView):
         #     raise ValidationError(f"Le diagnostic est télédéclaré mais invalide : {diagnostic.invalid_reason_list}")
 
         template = (
-            get_template("teledeclaration_campaign_2024/index.html")
+            get_template("teledeclaration_pdf/justificatif_2023/index.html")
             if diagnostic.year >= 2023
-            else get_template("teledeclaration_pdf.html")
+            else get_template("teledeclaration_pdf/justificatif_2021/index.html")
         )
         context = DiagnosticTeledeclarationPdfView.get_context(diagnostic)
         html = template.render(context)
