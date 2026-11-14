@@ -125,7 +125,7 @@ def diversification_badge_2022(diagnostic) -> bool | None:
         MenuVegetarienFrequence.PLUS_HEBDO,
     ]
     # Only the canteens with more than 200 daily meals with a diversification plan
-    if canteen.daily_meal_count and canteen.daily_meal_count >= 200 and diagnostic.plan_diversification_en_place:
+    if canteen.daily_meal_count and canteen.daily_meal_count > 200 and diagnostic.plan_diversification_en_place:
         return True
     # Only the canteens in the administration sector must have a daily frequency
     if canteen.is_administration and has_daily_frequency:
@@ -138,16 +138,16 @@ def diversification_badge_2022(diagnostic) -> bool | None:
 
 def diversification_badge_2026(diagnostic) -> bool | None:
     """
-    True if all the obligations that apply to the canteen are met
-    If no obligation applies: True if a diversification plan with actions, or a vegetarian menu
+    True if the canteen has a vegetarian menu, and meets all the other obligations that apply to it
     """
     if not is_volet_completed(diagnostic, "DIVERSIFICATION"):
         return None
     canteen = get_canteen_snapshot(diagnostic)
     frequence = diagnostic.menu_vegetarien_frequence
-    obligations = []
-    # Diversification plan: canteens with 200 daily meals or more
-    if canteen.daily_meal_count and canteen.daily_meal_count >= 200:
+    # Vegetarian menu: all canteens
+    obligations = [frequence is not None and frequence != MenuVegetarienFrequence.JAMAIS]
+    # Diversification plan: canteens with more than 200 daily meals
+    if canteen.daily_meal_count and canteen.daily_meal_count > 200:
         obligations.append(diagnostic.plan_diversification_en_place is True)
     # Weekly vegetarian menu: school canteens (from primaire to lycée, including enseignement agricole)
     school_sectors = [
@@ -166,17 +166,7 @@ def diversification_badge_2026(diagnostic) -> bool | None:
     if canteen.is_administration and diagnostic.service_type in multiple_choice_services:
         obligations.append(frequence == MenuVegetarienFrequence.QUOTIDIEN)
 
-    if obligations:
-        is_reached = all(obligations)
-    else:
-        # No obligation: a diversification plan with actions, or a vegetarian menu
-        has_plan_with_actions = bool(
-            diagnostic.plan_diversification_en_place and diagnostic.plan_diversification_actions
-        )
-        has_vegetarian_menu = frequence is not None and frequence != MenuVegetarienFrequence.JAMAIS
-        is_reached = has_plan_with_actions or has_vegetarian_menu
-
-    return is_reached
+    return all(obligations)
 
 
 # Plastique

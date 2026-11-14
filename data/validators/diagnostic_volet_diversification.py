@@ -7,7 +7,7 @@ def validate_diversification_fields_required(instance):
     - extra validation: depending on the year of the diagnostic
         - [NEW in 2026] the volet has required fields
         - [NEW in 2026] the volet is skipped if not started (none of its fields filled)
-        - [NEW in 2026] plan_diversification_en_place is optional if the canteen serves less than 200 meals per day
+        - [NEW in 2026] plan_diversification_en_place is optional if the canteen serves 200 meals or less per day
           (loi EGalim: the plan is only mandatory above 200 meals per day)
     NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
     """
@@ -17,7 +17,7 @@ def validate_diversification_fields_required(instance):
         if not instance.is_filled_diversification:
             return errors
         canteen_has_plan_diversification_obligation = bool(
-            instance.canteen and instance.canteen.daily_meal_count and instance.canteen.daily_meal_count >= 200
+            instance.canteen and instance.canteen.daily_meal_count and instance.canteen.daily_meal_count > 200
         )
         for field in get_teledeclaration_fields_required(instance.year, "DIVERSIFICATION"):
             if field == "plan_diversification_en_place" and not canteen_has_plan_diversification_obligation:

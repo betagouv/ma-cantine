@@ -399,7 +399,7 @@ class CanteenDetailApiTest(APITestCase):
         self.assertEqual(response_canteen_200.status_code, status.HTTP_200_OK)
         body = response_canteen_200.json()
         self.assertIs(body["dailyMealCount"], 200)
-        self.assertIs(body["badges"]["diversification"], True)
+        self.assertIs(body["badges"]["diversification"], None)
 
         response_canteen_201 = self.client.get(reverse("single_canteen", kwargs={"pk": canteen_201_daily_meals.id}))
 

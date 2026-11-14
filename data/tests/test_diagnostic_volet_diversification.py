@@ -42,8 +42,8 @@ class DiagnosticVoletDiversificationPlanRequiredValidatorTest(TestCase):
         diagnostic.menu_vegetarien_frequence = Diagnostic.MenuVegetarienFrequence.HEBDO
         return diagnostic
 
-    def test_plan_diversification_en_place_required_if_canteen_serves_200_meals_or_more(self):
-        for daily_meal_count in [200, 500]:
+    def test_plan_diversification_en_place_required_if_canteen_serves_more_than_200_meals(self):
+        for daily_meal_count in [201, 500]:
             with self.subTest(daily_meal_count=daily_meal_count):
                 diagnostic = self._diagnostic(daily_meal_count=daily_meal_count)
                 errors = diagnostic_volet_diversification_validators.validate_diversification_fields_required(
@@ -57,8 +57,8 @@ class DiagnosticVoletDiversificationPlanRequiredValidatorTest(TestCase):
                 )
                 self.assertEqual(errors, {})
 
-    def test_plan_diversification_en_place_optional_if_canteen_serves_less_than_200_meals(self):
-        for daily_meal_count in [12, 199]:
+    def test_plan_diversification_en_place_optional_if_canteen_serves_200_meals_or_less(self):
+        for daily_meal_count in [12, 200]:
             with self.subTest(daily_meal_count=daily_meal_count):
                 diagnostic = self._diagnostic(daily_meal_count=daily_meal_count)
                 errors = diagnostic_volet_diversification_validators.validate_diversification_fields_required(
@@ -66,7 +66,7 @@ class DiagnosticVoletDiversificationPlanRequiredValidatorTest(TestCase):
                 )
                 self.assertEqual(errors, {})
 
-    def test_other_fields_still_required_if_canteen_serves_less_than_200_meals(self):
+    def test_other_fields_still_required_if_canteen_serves_200_meals_or_less(self):
         diagnostic = self._diagnostic(daily_meal_count=12)
         diagnostic.service_type = None
         errors = diagnostic_volet_diversification_validators.validate_diversification_fields_required(diagnostic)
