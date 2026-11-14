@@ -6,6 +6,32 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.62.0](https://github.com/betagouv/ma-cantine/compare/v2026.61.1...v2026.62.0) (2026-11-14)
+
+
+### Nouveautés
+
+* **Diagnostics:** Groupe: API: endpoint pour lire le nombre de repas par an des satellites ([#7623](https://github.com/betagouv/ma-cantine/issues/7623)) ([818737d](https://github.com/betagouv/ma-cantine/commit/818737d990d0d68be5464b61f0911b8b606fcb48))
+* **Diagnostics:** Groupe: API: endpoint pour modifier le nombre de repas par an d'un satellite ([#7626](https://github.com/betagouv/ma-cantine/issues/7626)) ([a2f64b3](https://github.com/betagouv/ma-cantine/commit/a2f64b323493cf4ce715f45174a0c595ff3e7be3))
+* **Diagnostics:** Groupe: nouveau champ satellites_nombre_repas_an_list (nombre de repas par an de chaque satellite) ([#7621](https://github.com/betagouv/ma-cantine/issues/7621)) ([2f60cc6](https://github.com/betagouv/ma-cantine/commit/2f60cc62d72ab11edc5db462eda0fc9a11e6fc7f))
+
+
+### Améliorations
+
+* **Diagnostics:** Groupe: nouvelle propriété satellites_nombre_repas_an_sum (admin & API) ([#7627](https://github.com/betagouv/ma-cantine/issues/7627)) ([9f09b9c](https://github.com/betagouv/ma-cantine/commit/9f09b9ccdd514410c8b85a36232de278601be6da))
+* **Diagnostics:** Groupe: satellites_nombre_repas_an_list synchronisé avec la liste des satellites à chaque sauvegarde ([#7622](https://github.com/betagouv/ma-cantine/issues/7622)) ([5fb0bab](https://github.com/betagouv/ma-cantine/commit/5fb0babc845ea0beed03106b53f97a6266f04689))
+* **Diagnostics:** Groupe: validation du nombre de repas par an des satellites (obligatoire, somme égale au nombre de repas par an du groupe) ([#7629](https://github.com/betagouv/ma-cantine/issues/7629)) ([85ba9c9](https://github.com/betagouv/ma-cantine/commit/85ba9c99562773e262abf2e506bb3bb3642b87da))
+* **Diagnostics:** Volet diversification: plan_diversification_en_place optionnel sous 200 repas par jour (2026) ([#7564](https://github.com/betagouv/ma-cantine/issues/7564)) ([9d6841d](https://github.com/betagouv/ma-cantine/commit/9d6841d323dba9b9c719bb6c78cbaa6b069d3acb))
+* **Diagnostics:** Volet gaspillage: dons_convention optionnel sous 3000 repas par jour (2026) ([#7563](https://github.com/betagouv/ma-cantine/issues/7563)) ([1745034](https://github.com/betagouv/ma-cantine/commit/1745034ebe9cbad6ed458aec121b55cb5ad552a4))
+* **Diagnostics:** Volet information: information_part_pat & information_consultation_qualite optionnels selon la cantine (PAT, secteurs) ([#7562](https://github.com/betagouv/ma-cantine/issues/7562)) ([14f4f57](https://github.com/betagouv/ma-cantine/commit/14f4f5773d37fd786c58e417f7692f725f547cd8))
+* **Diagnostics:** Volet plastique: bouteilles & contenants optionnels selon les secteurs de la cantine (2026) ([#7573](https://github.com/betagouv/ma-cantine/issues/7573)) ([5aa6735](https://github.com/betagouv/ma-cantine/commit/5aa67356f418980365530150eb01ed1a5995a650))
+* **Télédéclaration:** indique non finalisé au lieu de "erreur" pour les volets thématiques ([#7620](https://github.com/betagouv/ma-cantine/issues/7620)) ([8ec6fa9](https://github.com/betagouv/ma-cantine/commit/8ec6fa9960d004202f76685f0c61bf5c517a728f))
+
+
+### Corrections (bugs, typos...)
+
+* **Télédéclaration:** Badge: corrige le badge végétarien pour 200 non inclu ([#7631](https://github.com/betagouv/ma-cantine/issues/7631)) ([2ed40a2](https://github.com/betagouv/ma-cantine/commit/2ed40a29c68fb25e09fdb5c9c7377c6a0c3778e1))
+
 ## [2026.61.1](https://github.com/betagouv/ma-cantine/compare/v2026.61.0...v2026.61.1) (2026-11-13)
 
 
