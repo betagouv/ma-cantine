@@ -1,7 +1,7 @@
 <script setup>
 import TunnelTeledeclarationLockedInput from "@/components/TunnelTeledeclarationLockedInput.vue"
 
-defineProps(["text", "mention", "value"])
+defineProps(["text", "mention", "value", "errorMessage"])
 </script>
 
 <template>
@@ -13,7 +13,7 @@ defineProps(["text", "mention", "value"])
         <p v-if="mention" class="fr-text--sm fr-text-mention--grey fr-mb-0">{{ mention }}</p>
       </div>
       <div class="fr-col-12 fr-col-md-5">
-        <TunnelTeledeclarationLockedInput :value="value" :label="text" />
+        <TunnelTeledeclarationLockedInput :value="value" :label="text" :error-message="errorMessage" />
       </div>
     </div>
   </DsfrCallout>
