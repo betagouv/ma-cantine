@@ -1,51 +1,51 @@
 <style>
-    .canteen-table {
+    .quick-informations__table {
         width: 100%;
     }
 
-    .canteen-table td {
+    .quick-informations__table td {
         padding: 2px 0px;
         vertical-align: top;
     }
 
-    .canteen-table .text-left {
+    .quick-informations__label {
         font-family: 'Marianne-Medium';
     }
 
-    .canteen-table .text-right {
+    .quick-informations__value {
         font-family: 'Marianne-Light';
     }
 
-    .fr-callout {
+    .quick-informations {
         width: 100%;
     }
 
-    .fr-callout-band {
+    .quick-informations__band {
         width: 4px;
         padding: 0px;
         background-color: #6a6af4;
     }
 
-    .fr-callout-content {
+    .quick-informations__content {
         background-color: #f6f6f6;
         padding: 12px 16px 4px 16px;
     }
 </style>
-<table class="fr-callout">
+<table class="quick-informations">
     <tr>
-        <td class="fr-callout-band"></td>
-        <td class="fr-callout-content">
-            <table class="canteen-table">
-                <tr><td class="text-left">Nom de la cantine</td><td class="text-right">{{ canteen.name }}</td></tr>
-                <tr><td class="text-left">ID de la télédéclaration</td><td class="text-right">{{ teledeclaration_id }}</td></tr>
-                <tr><td class="text-left">ID de la cantine</td><td class="text-right">{{ canteen.id }}</td></tr>
+        <td class="quick-informations__band"></td>
+        <td class="quick-informations__content">
+            <table class="quick-informations__table">
+                <tr><td class="text-left quick-informations__label">Nom de la cantine</td><td class="text-right quick-informations__value">{{ canteen.name }}</td></tr>
+                <tr><td class="text-left quick-informations__label">ID de la télédéclaration</td><td class="text-right quick-informations__value">{{ teledeclaration_id }}</td></tr>
+                <tr><td class="text-left quick-informations__label">ID de la cantine</td><td class="text-right quick-informations__value">{{ canteen.id }}</td></tr>
                 {% if canteen.siret %}
-                <tr><td class="text-left">SIRET</td><td class="text-right">{{ canteen.siret }}</td></tr>
+                <tr><td class="text-left quick-informations__label">SIRET</td><td class="text-right quick-informations__value">{{ canteen.siret }}</td></tr>
                 {% elif canteen.siren_unite_legale %}
-                <tr><td class="text-left">SIREN</td><td class="text-right">{{ canteen.siren_unite_legale }}</td></tr>
+                <tr><td class="text-left quick-informations__label">SIREN</td><td class="text-right quick-informations__value">{{ canteen.siren_unite_legale }}</td></tr>
                 {% endif %}
-                <tr><td class="text-left">Transmise le</td><td class="text-right">{{ date|date:"j F Y" }}</td></tr>
-                <tr><td class="text-left">Validé par</td><td class="text-right">{{ applicant_snapshot.email }}</td></tr>
+                <tr><td class="text-left quick-informations__label">Transmise le</td><td class="text-right quick-informations__value">{{ date|date:"j F Y" }}</td></tr>
+                <tr><td class="text-left quick-informations__label">Validé par</td><td class="text-right quick-informations__value">{{ applicant_snapshot.email }}</td></tr>
             </table>
         </td>
     </tr>

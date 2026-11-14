@@ -10,22 +10,22 @@
         font-family: 'Marianne-Light';
     }
 
-    .fields-table-label {
+    .fields-table__label {
         width: 65%;
     }
 
-    .fields-table-row-white {
+    .fields-table__row--white {
         background-color: #ffffff;
     }
 
-    .fields-table-row-grey {
+    .fields-table__row--grey {
         background-color: #f6f6f6;
     }
 </style>
 <table class="fields-table">
     {% for field in fields %}
-    <tr class="{% cycle 'fields-table-row-grey' 'fields-table-row-white' %}">
-        <td class="fields-table-label text-left">{{ field.label }}</td>
+    <tr class="{% cycle 'fields-table__row--grey' 'fields-table__row--white' %}">
+        <td class="fields-table__label text-left">{{ field.label }}</td>
         <td class="text-right">
             {% if field.value is None %}
                 Non renseigné
@@ -35,7 +35,7 @@
         </td>
     </tr>
     {% empty %}
-    <tr class="fields-table-row-grey">
+    <tr class="fields-table__row--grey">
         <td colspan="2" class="text-left">Volet non renseigné</td>
     </tr>
     {% endfor %}
