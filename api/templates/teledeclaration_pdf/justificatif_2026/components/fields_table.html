@@ -5,7 +5,7 @@
     }
 
     .fields-table td {
-        padding: 2px 8px;
+        padding: 6px 8px 2px 8px;
         vertical-align: top;
         font-family: 'Marianne-Light';
     }
@@ -24,7 +24,7 @@
 </style>
 <table class="fields-table">
     {% for field in fields %}
-    <tr class="{% cycle 'fields-table-row-white' 'fields-table-row-grey' %}">
+    <tr class="{% cycle 'fields-table-row-grey' 'fields-table-row-white' %}">
         <td class="fields-table-label text-left">{{ field.label }}</td>
         <td class="text-right">
             {% if field.value is None %}
@@ -35,7 +35,7 @@
         </td>
     </tr>
     {% empty %}
-    <tr class="fields-table-row-white">
+    <tr class="fields-table-row-grey">
         <td colspan="2" class="text-left">Volet non renseigné</td>
     </tr>
     {% endfor %}
