@@ -66,7 +66,7 @@ class DiagnosticVoletDiversificationPlanRequiredValidatorTest(TestCase):
                 )
                 self.assertEqual(errors, {})
 
-    def test_other_fields_still_required_if_canteen_serves_less_than_201_meals(self):
+    def test_other_fields_still_required_if_canteen_serves_200_meals_or_less(self):
         diagnostic = self._diagnostic(daily_meal_count=12)
         diagnostic.service_type = None
         errors = diagnostic_volet_diversification_validators.validate_diversification_fields_required(diagnostic)
