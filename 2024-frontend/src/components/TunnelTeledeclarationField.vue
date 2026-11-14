@@ -37,7 +37,7 @@ const placeholder = computed(() => isRequired.value ? undefined : "Je ne sais pa
 const errorMessage = computed(() => tunnelTeledeclarationService.getFieldError(props.name, storeTeledeclaration.getDisplayedErrors(route.meta)))
 const selectErrorMessage = computed(() => errorMessage.value?.join(". "))
 const hint = computed(() => data.value.hint)
-const hasOptionNonConcerne = computed(() => data.value?.hasOptionNonConcerne === true && (isRadio.value || isCheckboxes.value))
+const hasOptionNonConcerne = computed(() => data.value?.isRequiredDependsOnCanteen && (isRadio.value || isCheckboxes.value))
 const optionNonConcerne = { label: "Non concerné", value: "" }
 const options = computed(() => hasOptionNonConcerne.value ? [...data.value.options, optionNonConcerne] : data.value.options)
 const radioOptions = computed(() => options.value.map((option) => ({ label: option.label, value: option.value })))
