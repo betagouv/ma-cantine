@@ -12,6 +12,7 @@ const router = useRouter()
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const isGroupe = computed(() => canteenInformations.value.isGroupe)
+const title = computed(() => isGroupe.value ? 'Compléter les volets thématiques' : 'Compléter les volets thématiques et votre page publique')
 
 /* Redirects */
 const topButtons = computed(() => {
@@ -48,7 +49,7 @@ const topButtons = computed(() => {
       Vous pouvez retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits sur la <AppLinkRouter :title="`page de votre ${isGroupe ? 'groupe' : 'cantine'}`" :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" />.
     </p>
   </DsfrAlert>
-  <h2 class="fr-h5">Compléter les volets thématiques<template v-if="!isGroupe"> et votre page publique</template></h2>
+  <h2 class="fr-h5">{{ title }}</h2>
   <p class="ma-cantine--bold">Envie de faire rayonner vos engagements pour une restauration collective durable et de qualité ?</p>
   <p>
     Renseignez vos avancées sur <span class="ma-cantine--bold">l’information des convives</span>, la <span class="ma-cantine--bold">lutte contre le gaspillage alimentaire</span>, la <span class="ma-cantine--bold">diversification des sources de protéines</span> et <span class="ma-cantine--bold">menus végétariens</span> et la <span class="ma-cantine--bold">substitution des plastiques</span>, pour :

@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router'
 import { useRootStore } from '@/stores/root'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import { useStoreCanteen } from '@/stores/canteen'
+import AppLinkRouter from '@/components/AppLinkRouter.vue'
 
 const opened = defineModel(['opened'])
 const emit = defineEmits(['close'])
@@ -89,7 +90,7 @@ const displayError = (error) => {
       Une fois votre télédéclaration effectuée, votre télédéclaration reste modifiable jusqu’à la fin de la campagne de correction.
     </p>
     <p>
-      Retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits dans la page de votre {{ isGroupe ? 'groupe' : 'cantine' }}.
+      Retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits sur la page de votre {{ isGroupe ? 'groupe' : 'cantine' }}.
     </p>
     <DsfrCheckbox
       v-model="checkBoxeConfirmed"
@@ -99,11 +100,12 @@ const displayError = (error) => {
     <DsfrCheckbox
       v-model="checkboxeCGU"
       name="checkboxeCGU"
-      label="J’ai lu et j’accepte les Conditions Générales d’Utilisation de mes données"
+      label="J’ai lu et j’accepte les Conditions Générales d’Utilisation de mes données personnelles"
     >
       <template #label>
-        J’ai lu et j’accepte les
-        <router-link :to="{ name: 'ConditionsGeneralesUtilisation' }" target="_blank">Conditions Générales d’Utilisation de mes données</router-link>
+        <span>
+          J’ai lu et j’accepte les <AppLinkRouter title="Conditions Générales d’Utilisation" :to="{ name: 'ConditionsGeneralesUtilisation' }" :is-blank="true" /> de mes <AppLinkRouter title="données personnelles" :to="{ name: 'DonneesPersonnelles' }" :is-blank="true" />
+        </span>
       </template>
     </DsfrCheckbox>
   </DsfrModal>
