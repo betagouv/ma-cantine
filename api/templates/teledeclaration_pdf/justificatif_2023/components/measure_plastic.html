@@ -1,19 +1,6 @@
 {% load static %}
 <h3>Substitution des plastiques</h3>
-{% if year >= 2026 %}
-    {% include "./response.html" with success=plastique_bouteille_boisson_remplace success_text="La cantine est équipée d’au moins une fontaine d'eau potable accessible au public et n’assure aucune distribution gratuite de bouteilles en plastique contenant des boissons" failure_text="La cantine est équipée d’au moins une fontaine d'eau potable accessible au public et n’assure aucune distribution gratuite de bouteilles en plastique contenant des boissons" only %}
-    {% include "./response.html" with success=plastique_bouteille_remplace success_text="Aucune bouteilles d’eau plate en plastique n’est commercialisée/distribuée au sein de la cantine" failure_text="Aucune bouteilles d’eau plate en plastique n’est commercialisée/distribuée au sein de la cantine" only %}
-    {% include "./response.html" with success=plastique_ustensile_remplace success_text="Aucun ustensiles à usage unique en matière plastique est utilisé/distribué au sein de l’établissement" failure_text="Aucun ustensiles à usage unique en matière plastique est utilisé/distribué au sein de l’établissement" only %}
-    {% include "./response.html" with success=plastique_vaisselle_jetable_remplace success_text="Aucune vaisselle jetable n’est utilisée pour les repas consommés sur place (gobelets, assiette et récipients, couverts)" failure_text="Aucune vaisselle jetable n’est utilisée pour les repas consommés sur place (gobelets, assiette et récipients, couverts)" only %}
-    {% include "./response.html" with success=plastique_contenant_remplace success_text="Aucun contenant alimentaire de cuisson, de réchauffage et de service en plastique sont utilisés au sein de l’établissement" failure_text="Aucun contenant alimentaire de cuisson, de réchauffage et de service en plastique sont utilisés au sein de l’établissement" only %}
-    {% if vente_emporter is False %}
-        <p>L'établissement ne propose pas de repas à emporter</p>
-    {% else %}
-        {% include "./response.html" with success=plastique_contenant_emporter_remplace success_text="Des contenants réutilisables ou composés de matières recyclables sont proposés pour l’ensemble des repas à emporter" failure_text="Des contenants réutilisables ou composés de matières recyclables sont proposés pour l’ensemble des repas à emporter" only %}
-    {% endif %}
-{% else %}
-    {% include "./response.html" with success=plastique_contenant_cuisson_remplace success_text="Contenants de cuisson en plastique remplacés" failure_text="Contenants de cuisson en plastique non remplacés" only %}
-    {% include "./response.html" with success=plastique_contenant_service_remplace success_text="Contenants de service en plastique remplacés" failure_text="Contenants de service en plastique non remplacés" only %}
-    {% include "./response.html" with success=plastique_bouteille_remplace success_text="Bouteilles en plastique remplacées" failure_text="Bouteilles en plastique non remplacées" only %}
-    {% include "./response.html" with success=plastique_ustensile_remplace success_text="Ustensils en plastique remplacées" failure_text="Ustensils en plastique non remplacées" only %}
-{% endif %}
+{% include "./response.html" with success=plastique_contenant_cuisson_remplace success_text="Contenants de cuisson en plastique remplacés" failure_text="Contenants de cuisson en plastique non remplacés" only %}
+{% include "./response.html" with success=plastique_contenant_service_remplace success_text="Contenants de service en plastique remplacés" failure_text="Contenants de service en plastique non remplacés" only %}
+{% include "./response.html" with success=plastique_bouteille_remplace success_text="Bouteilles en plastique remplacées" failure_text="Bouteilles en plastique non remplacées" only %}
+{% include "./response.html" with success=plastique_ustensile_remplace success_text="Ustensils en plastique remplacées" failure_text="Ustensils en plastique non remplacées" only %}

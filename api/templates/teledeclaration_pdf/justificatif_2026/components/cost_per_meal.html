@@ -1,0 +1,51 @@
+<style>
+    .cost-per-meal {
+        width: 100%;
+        margin-bottom: 8px;
+    }
+
+    .cost-per-meal td {
+        background-color: #e2e2fc;
+        padding: 8px;
+    }
+
+    td.cost-per-meal__price {
+        width: 25%;
+        vertical-align: middle;
+    }
+
+    .cost-per-meal__title {
+        font-family: 'Marianne-Medium';
+        font-size: 14px;
+    }
+
+    p.cost-per-meal__text {
+        margin: 0px;
+    }
+
+    .cost-per-meal__detail {
+        font-family: 'Marianne-Light';
+        font-size: 10px;
+    }
+
+    .cost-per-meal__detail .text-bold {
+        font-family: 'Marianne-Medium';
+    }
+</style>
+{% if cout_repas %}
+<table class="cost-per-meal">
+    <tr>
+        <td class="text-left">
+            <p class="cost-per-meal__text">
+                <span class="cost-per-meal__title">Estimation du coût moyen par repas servi</span><br />
+                <span class="cost-per-meal__detail">
+                    Valeur calculée automatiquement à partir de vos
+                    <span class="text-bold">{{ valeur_totale|floatformat:"2g" }} € HT</span> d’achat
+                    et <span class="text-bold">{{ yearly_meal_count|floatformat:"0g" }}</span> couverts annuels
+                </span>
+            </p>
+        </td>
+        <td class="text-right cost-per-meal__title cost-per-meal__price">{{ cout_repas|floatformat:"2g" }} € HT</td>
+    </tr>
+</table>
+{% endif %}
