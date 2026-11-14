@@ -138,12 +138,16 @@ class DiagnosticTeledeclarationPdfView(APIView):
             except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
                 pass
 
-        canteen_snapshot = diagnostic.canteen_snapshot
-        processed_canteen_snapshot = DiagnosticTeledeclarationPdfView._get_canteen_override_data(diagnostic)
+        canteen = {
+            **diagnostic.canteen_snapshot,
+            **DiagnosticTeledeclarationPdfView._get_canteen_override_data(diagnostic),
+        }
         processed_diagnostic_data = DiagnosticTeledeclarationPdfView._get_teledeclaration_override_data(diagnostic)
-        additional_questions = DiagnosticTeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_snapshot)
+        additional_questions = DiagnosticTeledeclarationPdfView._get_applicable_diagnostic_rules(
+            diagnostic.canteen_snapshot
+        )
         volets = {
-            "CANTEEN": DiagnosticTeledeclarationPdfView._get_canteen_fields(diagnostic),
+            "CANTEEN": DiagnosticTeledeclarationPdfView._get_canteen_fields(canteen),
             "MEAL_COUNT": DiagnosticTeledeclarationPdfView._get_meal_count_fields(diagnostic),
             "APPROVISIONNEMENT": (
                 DiagnosticTeledeclarationPdfView._get_approvisionnement_fields(diagnostic)
@@ -190,7 +194,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
                 "central_kitchen_siret": central_kitchen_siret,
                 "central_kitchen_name": central_kitchen_name,
                 "satellites": diagnostic.satellites_snapshot or [],
-                "canteen": {**canteen_snapshot, **processed_canteen_snapshot},
+                "canteen": canteen,
                 "additional_questions": additional_questions,
                 "complete_appro": structure_complete_appro_data,
                 "volets": volets,
@@ -238,15 +242,11 @@ class DiagnosticTeledeclarationPdfView(APIView):
         return path
 
     @staticmethod
-    def _get_canteen_fields(diagnostic):
+    def _get_canteen_fields(canteen):
         """
-        Returns the fields of the canteen (from the canteen snapshot, with human-readable values),
+        Returns the fields of the canteen (the canteen snapshot, with human-readable values),
         in the same format as the volets fields. Empty fields are skipped
         """
-        canteen = {
-            **diagnostic.canteen_snapshot,
-            **DiagnosticTeledeclarationPdfView._get_canteen_override_data(diagnostic),
-        }
         fields = [
             ("Nom", canteen.get("name")),
             ("Identifiant / ID", canteen.get("id")),
