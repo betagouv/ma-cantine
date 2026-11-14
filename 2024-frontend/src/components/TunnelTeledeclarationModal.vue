@@ -26,12 +26,13 @@ const title = computed(() => {
 
 /* Modale */
 const checkBoxeConfirmed = ref(false)
+const checkBoxeCgu = ref(false)
 const loading = ref(false)
 const modalActions = computed(() => [
   {
     label: loading.value ? 'Télédéclaration en cours...' : 'Télédéclarer ces données',
     icon: 'ri-send-plane-line',
-    disabled: !checkBoxeConfirmed.value || loading.value,
+    disabled: !checkBoxeConfirmed.value || !checkBoxeCgu.value || loading.value,
     onClick: teledeclare,
   },
   {
@@ -43,6 +44,7 @@ const modalActions = computed(() => [
 
 const closeModal = () => {
   checkBoxeConfirmed.value = false
+  checkBoxeCgu.value = false
   loading.value = false
   emit('close')
 }
@@ -92,5 +94,15 @@ const displayError = (error) => {
       name="checkBoxeConfirmed"
       label="Je déclare sur l'honneur la véracité de ces informations"
     />
+    <DsfrCheckbox
+      v-model="checkBoxeCgu"
+      name="checkBoxeCgu"
+      label="J’ai lu et j’accepte les Conditions Générales d’Utilisation de mes données"
+    >
+      <template #label>
+        J’ai lu et j’accepte les
+        <router-link :to="{ name: 'ConditionsGeneralesUtilisation' }" target="_blank">Conditions Générales d’Utilisation de mes données</router-link>
+      </template>
+    </DsfrCheckbox>
   </DsfrModal>
 </template>
