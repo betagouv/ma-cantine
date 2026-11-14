@@ -968,7 +968,7 @@ class DiagnosticTeledeclarationPdfPlastique2026Test(SimpleTestCase):
         self.assertNotIn("fontaine d'eau potable", html)
 
     def test_measure_plastic_template_since_2026_without_vente_emporter(self):
-        template = get_template("teledeclaration_campaign_2024/measure_plastic.html")
+        template = get_template("teledeclaration_pdf/blocks/measure_plastic.html")
         html = template.render({"year": 2026, "vente_emporter": False, "plastique_contenant_emporter_remplace": None})
         self.assertIn("L'établissement ne propose pas de repas à emporter", html)
         self.assertNotIn("repas à emporter : Inconnu", html)
