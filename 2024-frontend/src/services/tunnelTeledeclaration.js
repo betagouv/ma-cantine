@@ -44,29 +44,17 @@ const generateApproFields = () => {
   return fields
 }
 
-const optionNonConcerne = { label: "Non concerné", valueDisplay: "Non concerné", value: "" }
-
-const getOptionNonConcerneProps = (customisation, config) => {
-  const hasOptions = ["radio", "checkboxes"].includes(customisation.type)
-  if (!config.is_required_depends_on_canteen || !hasOptions) return {}
-  return {
-    options: [...customisation.options, optionNonConcerne],
-    hasOptionNonConcerne: true,
-  }
-}
-
 const generateVoletFields = (voletConfig, voletCustomisation) => {
   const fields = {}
   for (const [name, config] of Object.entries(voletConfig)) {
     const apiKey = toCamelCase(name)
-    const customisation = voletCustomisation[apiKey] ?? {}
     fields[apiKey] = {
         apiKey,
         shortName: `${config.verbose_name} :`,
         labelRecap: config.verbose_name,
         required: config.is_required,
-        ...customisation,
-        ...getOptionNonConcerneProps(customisation, config),
+        hasOptionNonConcerne: config.is_required_depends_on_canteen === true,
+        ...voletCustomisation[apiKey]
     }
   }
   return fields
