@@ -67,6 +67,7 @@ const groups = {
   ...tunnelTeledeclaration.gaspillage.groups,
   ...tunnelTeledeclaration.information.groups,
   ...tunnelTeledeclaration.plastique.groups,
+  couvertsGroupe: ["nombreRepasAn", "satellitesNombreRepasAnList"],
 }
 const fields = {
   ...generateApproFields(),
@@ -80,6 +81,7 @@ const fields = {
 const pagesFieldsGroups = {
   GestionnaireTunnelApproInformations: ["informationsCantine", "informationsGroupe"],
   GestionnaireTunnelApproCouverts: ["couverts"],
+  GestionnaireTunnelApproCouvertsGroupe: ["couvertsGroupe"],
   GestionnaireTunnelApproSaisie: ["saisie"],
   GestionnaireTunnelApproEgalim: ["egalimSimple", "egalimComplete"],
   GestionnaireTunnelApproOrigine: ["origine"],
@@ -128,6 +130,12 @@ const getFieldsWithAutofill = () => {
   return Object.keys(fields).filter((field) => fields[field].autofill)
 }
 
+const getGroupeCanteenError = (canteen, errors) => {
+  if (canteen.nombreRepasAn != null) return null
+  const messages = [].concat(getFieldError("satellitesNombreRepasAnList", errors) || [])
+  return messages.find((message) => message.includes(`« ${canteen.name ?? canteen.id} »`)) || null
+}
+
 const getPageFromFieldsGroup = (groupName) => {
   return Object.keys(pagesFieldsGroups).find((pageName) => pagesFieldsGroups[pageName].includes(groupName))
 }
@@ -138,5 +146,6 @@ export default {
   getFieldsListFromPage,
   getFieldsListFromGroup,
   getFieldsWithAutofill,
+  getGroupeCanteenError,
   getPageFromFieldsGroup,
 }
