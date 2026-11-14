@@ -77,13 +77,12 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
 
   /* Fetch the meal count of each canteen of the groupe */
   async function setGroupeCanteensMealCount() {
-    const isGroupe = diagnostic.value?.satellitesNombreRepasAnList?.length > 0
-    if (!isGroupe) {
-      groupeCanteensMealCount.value = []
-      return
+    groupeCanteensMealCount.value = []
+    const hasCanteenMealCount = diagnostic.value?.satellitesNombreRepasAnList?.length > 0
+    if (hasCanteenMealCount) {
+      const response = await diagnosticService.fetchGroupeCanteensMealCountDetailled(diagnostic.value.canteenId, diagnostic.value.id)
+      if (response.status !== "error") groupeCanteensMealCount.value = response
     }
-    const response = await diagnosticService.fetchGroupeCanteensMealCountDetailled(diagnostic.value.canteenId, diagnostic.value.id)
-    groupeCanteensMealCount.value = response.status === "error" ? [] : response
   }
 
   /* Teledeclare diagnostic */
