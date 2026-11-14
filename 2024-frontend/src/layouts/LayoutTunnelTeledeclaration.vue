@@ -15,6 +15,7 @@ import TunnelTeledeclarationModalQuit from "@/components/TunnelTeledeclarationMo
 const route = useRoute()
 const router = useRouter()
 const currentRoute = computed(() => route.name)
+const currentNavRoute = computed(() => route.meta.navName ?? route.name)
 const hideTopNav = computed(() => route.meta.hideTopNav)
 const topNav = computed(() => route.meta.topNav)
 const isThematiques = computed(() => topNav.value === "thematiques")
@@ -24,7 +25,7 @@ const routeTitle = computed(() => route.meta.title)
 const hasStepper = computed(() => route.meta.volet === "approvisionnement")
 const routerSteps = computed(() => hasStepper.value ? route.meta.nav.approvisionnements : [] )
 const steps = computed(() => routerSteps.value.map((step) => step.title))
-const stepIndex = computed(() => routerSteps.value.findIndex((step) => step.to.name === currentRoute.value) + 1)
+const stepIndex = computed(() => routerSteps.value.findIndex((step) => step.to.name === currentNavRoute.value) + 1)
 
 /* Store */
 const rootStore = useRootStore()
@@ -136,7 +137,7 @@ const goTo = (page) => {
   <div v-if="canteenInformations" class="ma-cantine--sticky__container ma-cantine--stick-to-footer">
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-md-3 fr-hidden fr-unhidden-md">
-        <TunnelTeledeclarationNavSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentRoute" @save="save" :displayTeledeclaredBadge="isTeledeclared" />
+        <TunnelTeledeclarationNavSidebar :canteen="canteenInformations" :nav="route.meta.nav" :active="currentNavRoute" @save="save" :displayTeledeclaredBadge="isTeledeclared" />
       </div>
       <div class="fr-col-12 fr-col-md-9">
         <TunnelTeledeclarationNavThematiques v-if="isThematiques" @save="save" />
