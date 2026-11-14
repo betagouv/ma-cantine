@@ -1,0 +1,120 @@
+{
+  "key": {
+    "file_sha256": "da549df242fc2a0a66e051aa668c500e8ba6de4e721a0c1c53d2d5479e308303",
+    "schema": "achats_siret.json",
+    "schema_sha256": "23a842f1bc9101122c7fe4bb325f715d74882340b3617b1b2c810ec5d2708ee5"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [
+        {
+          "fieldName": "siret",
+          "fieldNumber": 2,
+          "message": "La colonne obligatoire `siret` est manquante",
+          "tags": [
+            "#table",
+            "#header",
+            "#label"
+          ],
+          "title": "Colonne manquante",
+          "type": "missing-label"
+        },
+        {
+          "fieldName": "description",
+          "fieldNumber": 3,
+          "message": "La colonne obligatoire `description` est manquante",
+          "tags": [
+            "#table",
+            "#header",
+            "#label"
+          ],
+          "title": "Colonne manquante",
+          "type": "missing-label"
+        },
+        {
+          "fieldName": "date",
+          "fieldNumber": 4,
+          "message": "La colonne obligatoire `date` est manquante",
+          "tags": [
+            "#table",
+            "#header",
+            "#label"
+          ],
+          "title": "Colonne manquante",
+          "type": "missing-label"
+        },
+        {
+          "fieldName": "prix_ht",
+          "fieldNumber": 5,
+          "message": "La colonne obligatoire `prix_ht` est manquante",
+          "tags": [
+            "#table",
+            "#header",
+            "#label"
+          ],
+          "title": "Colonne manquante",
+          "type": "missing-label"
+        },
+        {
+          "fieldName": "famille_produits",
+          "fieldNumber": 6,
+          "message": "La colonne obligatoire `famille_produits` est manquante",
+          "tags": [
+            "#table",
+            "#header",
+            "#label"
+          ],
+          "title": "Colonne manquante",
+          "type": "missing-label"
+        },
+        {
+          "cell": "",
+          "fieldName": "",
+          "fieldNumber": 2,
+          "message": "Le nombre de cellules de la ligne excède le nombre de colonnes défini dans le schéma",
+          "rowNumber": 2,
+          "tags": [
+            "#table",
+            "#row",
+            "#cell"
+          ],
+          "title": "Valeur surnuméraire",
+          "type": "extra-cell"
+        }
+      ],
+      "stats": {
+        "errors": 6,
+        "fields": 1,
+        "rows": 1,
+        "rows_processed": 1,
+        "warnings": 8
+      },
+      "valid": false,
+      "warnings": [
+        "Colonne manquante : Ajoutez la colonne manquante `fournisseur`.",
+        "Colonne manquante : Ajoutez la colonne manquante `categories_egalim`.",
+        "Colonne manquante : Ajoutez la colonne manquante `origine`.",
+        "Colonne manquante : Ajoutez la colonne manquante `est_circuit_court`.",
+        "Colonne manquante : Ajoutez la colonne manquante `est_local`.",
+        "Colonne manquante : Ajoutez la colonne manquante `definition_local`.",
+        "Colonne manquante : Ajoutez la colonne manquante `definition_local_km`.",
+        "Colonne surnuméraire : Retirez la colonne `siret,\"description\",\"fournisseur\",\"date\",\"prix_ht\",\"famille_produits\",\"categories_egalim\",\"origine\",\"est_circuit_court\",\"est_local\",\"definition_local\",\"definition_local_km\"` non définie dans le schéma."
+      ]
+    },
+    "resource_data": [
+      [
+        "siret,\"description\",\"fournisseur\",\"date\",\"prix_ht\",\"famille_produits\",\"categories_egalim\",\"origine\",\"est_circuit_court\",\"est_local\",\"definition_local\",\"definition_local_km\""
+      ],
+      [
+        "21010034300016,\"weird formatting\",\"Le bon traiteur\",\"2022-05-02\",\"90.11\",\"PRODUITS_LAITIERS\",\"BIO\",\"\"\"\"x\",\"REGION\"",
+        ""
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

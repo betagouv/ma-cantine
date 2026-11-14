@@ -1,0 +1,55 @@
+{
+  "key": {
+    "file_sha256": "f8c52f29e7b2308f844cbe2d92e0b0ccc29304ad7e9f6fa03adf1b99229f2c7c",
+    "schema": "cantines_gestionnaires.json",
+    "schema_sha256": "58a7596fe11f2fb85e193950107980bdcf507825fd2c22471e35361bcb84c17f"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [
+        {
+          "message": "La ligne vide doit être retirée de la table",
+          "rowNumber": 3,
+          "tags": [
+            "#table",
+            "#row"
+          ],
+          "title": "Ligne vide",
+          "type": "blank-row"
+        }
+      ],
+      "stats": {
+        "errors": 1,
+        "fields": 3,
+        "rows": 2,
+        "rows_processed": 2,
+        "warnings": 0
+      },
+      "valid": false,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "siret",
+        "gestionnaires_additionnels",
+        "source_donnees"
+      ],
+      [
+        "21340172201787",
+        "manager1@example.com,manager2@example.com",
+        "test_import"
+      ],
+      [
+        "",
+        "",
+        ""
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

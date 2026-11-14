@@ -1,0 +1,63 @@
+{
+  "key": {
+    "file_sha256": "6033df55ee54822fbea7466818cf288cfcdd8481bfd5874526104d68d66059a6",
+    "schema": "cantines_creer.json",
+    "schema_sha256": "14baa550fe10cafc836893f7f4da081057c2658b0657d2fed220f2fad7cd1057"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [
+        {
+          "message": "frictionless encountered an unexpected error. This is likely an internal error  (error message: 'Row does not have a field siret').",
+          "tags": [],
+          "title": "Error",
+          "type": "error"
+        }
+      ],
+      "stats": {
+        "errors": 1,
+        "fields": -1,
+        "rows": 1,
+        "rows_processed": -1,
+        "warnings": 0
+      },
+      "valid": false,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "SI_RET",
+        "Nom de la cantine",
+        "SIRET CRO",
+        "Nb de repas par jour",
+        "Nb de repas par an",
+        "Secteurs",
+        "Mode de production",
+        "Mode de gestion",
+        "Secteur économique",
+        "Groupe identifiant",
+        "Administration de tutelle",
+        "Gestionnaires notifiés"
+      ],
+      [
+        "21340172201787",
+        "A canteen",
+        "",
+        "700",
+        "14000",
+        "Secondaire collège",
+        "Restaurant avec cuisine sur place",
+        "Concédée",
+        "",
+        "",
+        ""
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

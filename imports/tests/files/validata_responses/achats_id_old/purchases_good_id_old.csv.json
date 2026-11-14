@@ -1,0 +1,49 @@
+{
+  "key": {
+    "file_sha256": "f570d7a9e5264163d0bc320f6cc0c634027c5cdb7569b016508ee32dfa48ae3d",
+    "schema": "achats_id_old.json",
+    "schema_sha256": "9743c9bcae3decab9940beb6614e45eb034cdbcad6a6aea0f8e7633dc57b675d"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [],
+      "stats": {
+        "errors": 0,
+        "fields": 8,
+        "rows": 1,
+        "rows_processed": 1,
+        "warnings": 0
+      },
+      "valid": true,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "cantine_id",
+        "description",
+        "fournisseur",
+        "date",
+        "prix_ht",
+        "famille_produits",
+        "caracteristiques",
+        "definition_local"
+      ],
+      [
+        "949",
+        "Pommes, rouges",
+        "Le bon traiteur ",
+        "2022-05-02",
+        "90.11",
+        " PRODUITS_LAITIERS ",
+        "BIO, LOCAL",
+        " DEPARTEMENT"
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

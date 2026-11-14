@@ -12,6 +12,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
+from imports.tests.validata_replay import ValidataReplayMixin
 from data.factories import CanteenFactory
 from imports.models import ImportType
 from data.models.creation_source import CreationSource
@@ -20,7 +21,7 @@ from data.models.purchase import Purchase
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class PurchasesImportApiErrorTest(APITestCase):
+class PurchasesImportApiErrorTest(ValidataReplayMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse("purchases_import")
@@ -391,7 +392,7 @@ class PurchasesImportApiErrorTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class PurchasesImportApiSuccessTest(APITestCase):
+class PurchasesImportApiSuccessTest(ValidataReplayMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse("purchases_import")
@@ -728,7 +729,7 @@ class PurchasesImportApiSuccessTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class PurchasesImportIdApiErrorTest(APITestCase):
+class PurchasesImportIdApiErrorTest(ValidataReplayMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse("purchases_import")
@@ -751,7 +752,7 @@ class PurchasesImportIdApiErrorTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class PurchasesImportIdApiSuccessTest(APITestCase):
+class PurchasesImportIdApiSuccessTest(ValidataReplayMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse("purchases_import")

@@ -1,0 +1,42 @@
+{
+  "key": {
+    "file_sha256": "29258dc906546afea7f99d1a658c4f07d0c98aab9790f01d2109d500cfb3b9f9",
+    "schema": "cantines_modifier.json",
+    "schema_sha256": "5274e62738734089a7824ec49bb973a0e51259d3eb5794455b36f0784ce343e2"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [
+        {
+          "message": "frictionless encountered an unexpected error. This is likely an internal error  (error message: 'Row does not have a field cantine_id').",
+          "tags": [],
+          "title": "Error",
+          "type": "error"
+        }
+      ],
+      "stats": {
+        "errors": 1,
+        "fields": -1,
+        "rows": 1,
+        "rows_processed": -1,
+        "warnings": 0
+      },
+      "valid": false,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "some random content without header"
+      ],
+      [
+        "this is not valid"
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

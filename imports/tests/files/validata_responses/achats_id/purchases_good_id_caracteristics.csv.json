@@ -1,0 +1,71 @@
+{
+  "key": {
+    "file_sha256": "f74edfbe1a7c9d0f171b3e8d39566d5a991dd49364a6a1d5c64f6c77a0a2e052",
+    "schema": "achats_id.json",
+    "schema_sha256": "1740e2f038b78fe446b104752d2e538e8845a49a55fb35cab992bb63875175e7"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [],
+      "stats": {
+        "errors": 0,
+        "fields": 12,
+        "rows": 2,
+        "rows_processed": 2,
+        "warnings": 0
+      },
+      "valid": true,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "cantine_id",
+        "description",
+        "fournisseur",
+        "date",
+        "prix_ht",
+        "famille_produits",
+        "categories_egalim",
+        "origine",
+        "est_circuit_court",
+        "est_local",
+        "definition_local",
+        "definition_local_km"
+      ],
+      [
+        "949",
+        "Pomme 1",
+        "Le bon traiteur",
+        "2026-06-22",
+        "100",
+        "AUTRES",
+        "BIO,COMMERCE_EQUITABLE",
+        "FRANCE",
+        "oui",
+        "x",
+        "REGION",
+        ""
+      ],
+      [
+        "949",
+        "Pomme 2",
+        "Le bon traiteur",
+        "2026-06-22",
+        "200",
+        "AUTRES",
+        "BIO,COMMERCE_EQUITABLE",
+        "EUROPE",
+        "non",
+        "",
+        "",
+        ""
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

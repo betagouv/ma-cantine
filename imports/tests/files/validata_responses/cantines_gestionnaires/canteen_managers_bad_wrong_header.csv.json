@@ -1,0 +1,46 @@
+{
+  "key": {
+    "file_sha256": "24da2202c1c2c8e2130e981f22f7dd20135d6d845dad11fa10d8eeafa38be0d4",
+    "schema": "cantines_gestionnaires.json",
+    "schema_sha256": "58a7596fe11f2fb85e193950107980bdcf507825fd2c22471e35361bcb84c17f"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [
+        {
+          "message": "frictionless encountered an unexpected error. This is likely an internal error  (error message: 'Row does not have a field siret').",
+          "tags": [],
+          "title": "Error",
+          "type": "error"
+        }
+      ],
+      "stats": {
+        "errors": 1,
+        "fields": -1,
+        "rows": 1,
+        "rows_processed": -1,
+        "warnings": 0
+      },
+      "valid": false,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "wrong_siret",
+        "wrong_emails",
+        "wrong_source"
+      ],
+      [
+        "21340172201787",
+        "manager1@example.com,manager2@example.com",
+        "test_import"
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}
