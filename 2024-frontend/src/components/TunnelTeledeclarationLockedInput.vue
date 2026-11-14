@@ -19,6 +19,8 @@ const props = defineProps(["value", "label"])
   .fr-input {
     background-color: var(--background-default-grey);
     box-shadow: inset 0 -2px 0 0 #e5e5e5;
+    pointer-events: none;
+    user-select: none;
   }
 
   .fr-icon-lock-fill::before {
