@@ -75,7 +75,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnosticRecap.value = response.status === "error" ? null : response
   }
 
-  /* Fetch the diagnostic to keep the store aligned with the backend */
+  /* Fetch the diagnostic with the backend */
   async function refreshDiagnostic() {
     if (!diagnostic.value) return
     const response = await diagnosticService.fetchDiagnostic(diagnostic.value.canteenId, diagnostic.value.id, "v2")
@@ -133,10 +133,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const canteenId = diagnostic.value.canteenId
     const response = await saveVolet(canteenId, volet)
     if (response.status === "error") replaceErrors(response.list)
-    else {
-      setDiagnostic({ ...diagnostic.value, ...response })
-      await refreshDiagnostic()
-    }
+    else await refreshDiagnostic()
     await setCanteenAction()
     return response
   }
