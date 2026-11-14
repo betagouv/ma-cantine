@@ -114,6 +114,18 @@ const fetchDiagnosticRecap = (canteenId, diagnosticId) => {
     .catch((e) => e)
 }
 
+const fetchGroupeCanteensMealCountDetailled = (canteenId, diagnosticId) => {
+  return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/satellites-nombre-repas-an`, {
+    method: "GET",
+    headers: {
+      "X-CSRFToken": window.CSRF_TOKEN || "",
+    },
+  })
+    .then(verifyResponse)
+    .then((response) => response)
+    .catch((e) => e)
+}
+
 const checkDiagnostic = (canteenId, diagnosticId) => {
   return fetch(`/api/v1/canteens/${canteenId}/diagnostics/${diagnosticId}/check`, {
     method: "GET",
@@ -160,6 +172,7 @@ export default {
   fetchDiagnostics,
   fetchDiagnosticsRecap,
   fetchDiagnosticRecap,
+  fetchGroupeCanteensMealCountDetailled,
   teledeclareDiagnostic,
   cancelTeledeclaration,
 }
