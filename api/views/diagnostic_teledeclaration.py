@@ -20,6 +20,7 @@ from api.permissions import (
     IsCanteenManagerUrlParam,
 )
 from api.serializers import DiagnosticTeledeclaredOpenDataSerializer
+from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
 from data.models import Canteen, Diagnostic, Teledeclaration
 
 logger = logging.getLogger(__name__)
@@ -100,11 +101,8 @@ class DiagnosticTeledeclarationPdfView(APIView):
         # if diagnostic.has_invalid_reason:
         #     raise ValidationError(f"Le diagnostic est télédéclaré mais invalide : {diagnostic.invalid_reason_list}")
 
-        template = (
-            get_template("teledeclaration_campaign_2024/index.html")
-            if diagnostic.year >= 2023
-            else get_template("teledeclaration_pdf.html")
-        )
+        template_version = CAMPAIGN_DATES[diagnostic.year]["teledeclaration_pdf_version"]
+        template = get_template(f"teledeclaration_pdf/{template_version}/index.html")
         context = DiagnosticTeledeclarationPdfView.get_context(diagnostic)
         html = template.render(context)
 
