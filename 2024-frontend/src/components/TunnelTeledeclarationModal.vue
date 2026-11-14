@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 import { useRouter } from 'vue-router'
 import { useRootStore } from '@/stores/root'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
+import { useStoreCanteen } from '@/stores/canteen'
 
 const opened = defineModel(['opened'])
 const emit = defineEmits(['close'])
@@ -13,6 +14,15 @@ const router = useRouter()
 /* Teledeclaration */
 const storeTeledeclaration = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(storeTeledeclaration)
+
+/* Canteen */
+const storeCanteen = useStoreCanteen()
+const { canteenInformations } = storeToRefs(storeCanteen)
+const isGroupe = computed(() => canteenInformations.value?.isGroupe)
+const title = computed(() => {
+  if (!isGroupe.value) return 'Plus qu’une étape pour valider votre télédéclaration'
+  return `Plus qu’une étape pour télédéclarer vos ${canteenInformations.value.satellitesCount} restaurants`
+})
 
 /* Modale */
 const checkBoxeConfirmed = ref(false)
@@ -64,12 +74,18 @@ const displayError = (error) => {
 <template>
   <DsfrModal
     :opened="opened"
-    title="Plus qu’une étape vous valider votre déclaration"
+    :title="title"
     @close="closeModal"
     :actions="modalActions"
   >
+    <p v-if="isGroupe">
+      Vous allez effectuer une déclaration pour l’ensemble des cantines de votre groupe. Les cantines de votre groupe pourront ajouter des approvisionnements additionnels et compléter les volets thématiques.
+    </p>
     <p>
-      Retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits dans votre espace cantine.
+      Une fois votre télédéclaration effectuée, votre télédéclaration reste modifiable jusqu’à la fin de la campagne de correction.
+    </p>
+    <p>
+      Retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits dans la page de votre {{ isGroupe ? 'groupe' : 'cantine' }}.
     </p>
     <DsfrCheckbox
       v-model="checkBoxeConfirmed"
