@@ -13,8 +13,8 @@ const { diagnostic } = storeToRefs(teledeclarationStore)
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <h2>Estimer le nombre de couverts de mon groupe</h2>
-      <p>Vous devez détailler la répartition entre toutes les cantines du groupe l’ajuster à l’aide du tableau ci-dessous.</p>
-      <p>Par défaut, le nombre de couverts de chaque cantine est prérempli à partir de leur nombre de couverts annuels.</p>
+      <p>Vous devez détailler la répartition entre toutes les cantines du groupe et l’ajuster à l’aide du tableau ci-dessous.</p>
+      <p>Par défaut, le nombre de couverts de chaque cantine est prérempli à partir du nombre de couverts annuels renseigné dans leurs informations.</p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="Ajuster mes établissements">
