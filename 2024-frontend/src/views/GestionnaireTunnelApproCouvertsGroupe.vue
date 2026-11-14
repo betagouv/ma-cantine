@@ -10,7 +10,15 @@ import CanteensTableCouvertsGroupe from "@/components/CanteensTableCouvertsGroup
 
 const teledeclarationStore = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(teledeclarationStore)
-const hasNombreRepasAn = computed(() => diagnostic.value?.nombreRepasAn != null)
+const nombreRepasAnSentence = computed(() => {
+  const count = diagnostic.value?.nombreRepasAn
+  if (count == null) return null
+  const isPlural = count > 1
+  return {
+    count: `${formatNumber(count)} ${isPlural ? "couverts" : "couvert"}`,
+    text: `${isPlural ? "ont été renseignés" : "a été renseigné"} via API ou import. Votre répartition doit être identique, ou modifier votre import.`,
+  }
+})
 </script>
 
 <template>
@@ -32,9 +40,9 @@ const hasNombreRepasAn = computed(() => diagnostic.value?.nombreRepasAn != null)
   <div>
     <h3 class="fr-h5">Renseigner la répartition de mes couverts annuels entre mes cantines :</h3>
     <p>Pour avoir une donnée de qualité vous devez ajuster la répartition du nombre de couvert pour chaque cantine, votre estimation et la répartition des couverts entre vos établissement doit correspondre. Elle peut se faire manuellement, ou via fichier d’import dédié.</p>
-    <DsfrAlert v-if="hasNombreRepasAn" type="info" class="fr-mb-3w">
+    <DsfrAlert v-if="nombreRepasAnSentence" type="info" class="fr-mb-3w">
       <p>
-        <span class="fr-text--bold">{{ formatNumber(diagnostic.nombreRepasAn) }} couverts</span> ont été renseignés via API ou import. Votre répartition doit être identique, ou modifier votre import.
+        <span class="fr-text--bold">{{ nombreRepasAnSentence.count }}</span> {{ nombreRepasAnSentence.text }}
       </p>
     </DsfrAlert>
     <div class="fr-callout ma-cantine--callout-border-top">
