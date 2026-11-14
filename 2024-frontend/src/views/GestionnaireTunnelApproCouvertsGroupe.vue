@@ -39,7 +39,7 @@ const nombreRepasAnSentence = computed(() => {
   </div>
   <div>
     <h3 class="fr-h5">Renseigner la répartition de mes couverts annuels entre mes cantines :</h3>
-    <p>Pour avoir une donnée de qualité vous devez ajuster la répartition du nombre de couvert pour chaque cantine, votre estimation et la répartition des couverts entre vos établissement doit correspondre. Elle peut se faire manuellement, ou via fichier d’import dédié.</p>
+    <p>Pour avoir une donnée de qualité vous devez ajuster la répartition du nombre de couvert pour chaque cantine dans le tableau ci-dessous.<template v-if="nombreRepasAnSentence"> L'estimation et la répartition des couverts entre vos établissement doit correspondre.</template></p>
     <DsfrAlert v-if="nombreRepasAnSentence" type="info" class="fr-mb-3w">
       <p>
         <span class="fr-text--bold">{{ nombreRepasAnSentence.count }}</span> {{ nombreRepasAnSentence.text }}
