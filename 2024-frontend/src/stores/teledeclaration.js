@@ -14,6 +14,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const diagnosticErrors = ref([])
   const diagnoticCheck = ref({})
   const diagnosticRecap = ref(null)
+  const groupeCanteensMealCount = ref([])
   const hasDiagnostic = computed(() => diagnostic.value !== null)
   const hasErrors = computed(() => diagnosticErrors.value.length > 0)
   const isSimple = computed(() => diagnostic.value?.diagnosticType === "SIMPLE")
@@ -45,6 +46,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
       await setCanteenAction()
       await checkDiagnosticSteps()
       await setDiagnosticRecap()
+      await setGroupeCanteensMealCount()
     }
   }
 
@@ -71,6 +73,17 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     }
     const response = await diagnosticService.fetchDiagnosticRecap(diagnostic.value.canteenId, diagnostic.value.id)
     diagnosticRecap.value = response.status === "error" ? null : response
+  }
+
+  /* Fetch the meal count of each canteen of the groupe */
+  async function setGroupeCanteensMealCount() {
+    const isGroupe = diagnostic.value?.satellitesNombreRepasAnList?.length > 0
+    if (!isGroupe) {
+      groupeCanteensMealCount.value = []
+      return
+    }
+    const response = await diagnosticService.fetchGroupeCanteensMealCountDetailled(diagnostic.value.canteenId, diagnostic.value.id)
+    groupeCanteensMealCount.value = response.status === "error" ? [] : response
   }
 
   /* Teledeclare diagnostic */
@@ -230,6 +243,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     hasSelectAutofill.value = false
     diagnoticCheck.value = {}
     diagnosticRecap.value = null
+    groupeCanteensMealCount.value = []
     diagnosticErrors.value = []
   }
 
@@ -324,6 +338,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnosticErrors,
     diagnoticCheck,
     diagnosticRecap,
+    groupeCanteensMealCount,
     hasDiagnostic,
     hasErrors,
     isSimple,
