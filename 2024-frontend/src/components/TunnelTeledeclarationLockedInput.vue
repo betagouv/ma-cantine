@@ -14,14 +14,14 @@ const props = defineProps(["value", "label"])
   </div>
 </template>
 
-<style scoped lang="scss">
+<style lang="scss">
 .tunnel-teledeclaration-locked-input {
-  :deep(.fr-input) {
-    background-color: white;
+  .fr-input {
+    background-color: var(--background-default-grey);
     box-shadow: inset 0 -2px 0 0 #e5e5e5;
   }
 
-  :deep(.fr-icon-lock-fill::before) {
+  .fr-icon-lock-fill::before {
     color: var(--text-title-blue-france);
   }
 }

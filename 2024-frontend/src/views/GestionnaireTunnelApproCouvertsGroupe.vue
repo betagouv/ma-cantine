@@ -6,7 +6,7 @@ import TunnelTeledeclarationLockedInput from "@/components/TunnelTeledeclaration
 </script>
 
 <template>
-  <div class="fr-grid-row fr-grid-row--gutters">
+  <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <h2>Estimer le nombre de couverts de mon groupe</h2>
       <p>Vous devez renseigner le nombre annuel moyen et dans un second temps, détailler la répartition entre toutes les cantines du groupe l’ajuster à l’aide du tableau ou du fichier d’import dédié.</p>
@@ -21,14 +21,14 @@ import TunnelTeledeclarationLockedInput from "@/components/TunnelTeledeclaration
       </AppHelpCard>
     </div>
   </div>
-  <div class="fr-mt-4w">
-    <h3>Renseigner la répartition de mes couverts annuels entre mes cantines :</h3>
+  <div>
+    <h3 class="fr-h5">Renseigner la répartition de mes couverts annuels entre mes cantines :</h3>
     <p>Pour avoir une donnée de qualité vous devez ajuster la répartition du nombre de couvert pour chaque cantine, votre estimation et la répartition des couverts entre vos établissement doit correspondre. Elle peut se faire manuellement, ou via fichier d’import dédié.</p>
     <TunnelTeledeclarationCallout>
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
         <div class="fr-col-12 fr-col-md-10">
           <p class="fr-mb-0">Total des couverts annuels répartis entre vos cantines</p>
-          <p class="fr-text--sm fr-text-mention--grey fr-mb-0">A partir des données couverts de chaque restaurant</p>
+          <p class="fr-text--sm fr-text-mention--grey fr-mb-0">À partir des données couverts de chaque restaurant</p>
         </div>
         <div class="fr-col-12 fr-col-md-2">
           <TunnelTeledeclarationLockedInput :value="0" label="Total des couverts annuels répartis entre vos cantines" />
