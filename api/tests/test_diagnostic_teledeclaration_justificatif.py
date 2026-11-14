@@ -453,8 +453,25 @@ class DiagnosticTeledeclarationJustificatif2026Test(APITestCase):
         html = self._render(diagnostic)
 
         text = " ".join(unescape(strip_tags(html)).split())
-        label = Diagnostic._meta.get_field("diagnostic_type").verbose_name
-        self.assertIn(f"{label} {Diagnostic.DiagnosticType.SIMPLE.label}", text)
+        self.assertIn(f"Vous avez choisi {Diagnostic.DiagnosticType.SIMPLE.label}", text)
+
+    def test_display_if_generated_from_purchases(self):
+        for generated_from_purchases, displayed_value in [(True, "Oui"), (False, "Non")]:
+            with self.subTest(generated_from_purchases=generated_from_purchases):
+                # one diagnostic per canteen and year
+                canteen = CanteenFactory(managers=[self.user])
+                diagnostic = DiagnosticFactory(
+                    canteen=canteen,
+                    year=2026,
+                    diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+                    generated_from_purchases=generated_from_purchases,
+                )
+                diagnostic.teledeclare(self.user)
+
+                html = self._render(diagnostic)
+
+                text = " ".join(unescape(strip_tags(html)).split())
+                self.assertIn(f"A été automatiquement généré depuis les achats {displayed_value}", text)
 
     def test_display_the_value_of_the_volet_fields(self):
         diagnostic = self._teledeclared_diagnostic(**VOLET_ANSWERS_2026)

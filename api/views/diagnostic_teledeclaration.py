@@ -149,8 +149,11 @@ class DiagnosticTeledeclarationPdfView(APIView):
         volets = {
             "CANTEEN": DiagnosticTeledeclarationPdfView._get_canteen_fields(canteen),
             "MEAL_COUNT": DiagnosticTeledeclarationPdfView._get_meal_count_fields(diagnostic),
+            "SAISIE": DiagnosticTeledeclarationPdfView._get_saisie_fields(diagnostic),
             "APPROVISIONNEMENT": (
-                DiagnosticTeledeclarationPdfView._get_approvisionnement_fields(diagnostic)
+                DiagnosticTeledeclarationPdfView._get_volet_fields(
+                    diagnostic, "APPROVISIONNEMENT", excluded_fields=["nombre_repas_an"]
+                )
                 if diagnostic.diagnostic_type
                 else []
             ),
@@ -401,20 +404,23 @@ class DiagnosticTeledeclarationPdfView(APIView):
         return structured_data
 
     @staticmethod
-    def _get_approvisionnement_fields(diagnostic):
+    def _get_saisie_fields(diagnostic):
         """
-        Customize the fields displayed for the approvisionnement volet.
+        Returns the fields of the "Mode de saisie" block (not in the config file: labels defined here)
         """
-        diagnostic_type_field = Diagnostic._meta.get_field("diagnostic_type")
-        diagnostic_type = {
-            "label": "Mode de saisie des approvisionnements",
-            "value": DiagnosticTeledeclarationPdfView._get_prettify_value(
-                diagnostic_type_field, diagnostic.diagnostic_type
-            ),
-        }
-        return [diagnostic_type] + DiagnosticTeledeclarationPdfView._get_volet_fields(
-            diagnostic, "APPROVISIONNEMENT", excluded_fields=["nombre_repas_an"]
-        )
+        fields = [
+            ("diagnostic_type", "Vous avez choisi"),
+            ("generated_from_purchases", "A été automatiquement généré depuis l'Outil Suivi des Achats'"),
+        ]
+        return [
+            {
+                "label": label,
+                "value": DiagnosticTeledeclarationPdfView._get_prettify_value(
+                    Diagnostic._meta.get_field(field_name), getattr(diagnostic, field_name)
+                ),
+            }
+            for field_name, label in fields
+        ]
 
     @staticmethod
     def _get_volet_fields(diagnostic, volet, excluded_fields=()):
