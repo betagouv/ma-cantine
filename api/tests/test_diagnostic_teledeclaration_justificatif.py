@@ -341,64 +341,34 @@ class DiagnosticTeledeclarationJustificatif2023Test(APITestCase):
         # only in this version
         self.assertIn(Diagnostic.ActionsGaspillage.SENSIBILISATION.label, html)
 
-    def test_measure_info_component_since_2026(self):
-        template = get_template("teledeclaration_pdf/justificatif_2023/components/measure_info.html")
-        context = {
-            "information_affichage_permanent": True,
-            "information_electronique_annuelle": False,
-            "information_part_egalim": True,
-            "information_part_pat": None,
-            "information_consultation_qualite": True,
-            # previous fields (ignored since 2026)
-            "information_qualite_nutritionnelle": True,
-        }
+    @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_does_not_display_the_fields_created_in_2026(self):
+        fields_created_in_2026 = [
+            ("PLASTIQUE", "plastique_bouteille_boisson_remplace"),
+            ("PLASTIQUE", "plastique_vaisselle_jetable_remplace"),
+            ("PLASTIQUE", "plastique_contenant_remplace"),
+            ("PLASTIQUE", "vente_emporter"),
+            ("PLASTIQUE", "plastique_contenant_emporter_remplace"),
+            ("INFORMATION", "information_affichage_permanent"),
+            ("INFORMATION", "information_electronique_annuelle"),
+            ("INFORMATION", "information_part_egalim"),
+            ("INFORMATION", "information_part_pat"),
+            ("INFORMATION", "information_consultation_qualite"),
+        ]
+        user = UserFactory()
+        canteen = CanteenFactory(managers=[user])
+        diagnostic = DiagnosticFactory(canteen=canteen, year=2024)
+        diagnostic.teledeclare(user)
+        # filled after teledeclare: these fields didn't exist in 2024
+        for _, field_name in fields_created_in_2026:
+            setattr(diagnostic, field_name, True)
 
-        html = template.render({"year": 2026, **context})
-        for field_name in context:
-            if field_name.startswith("information_qualite"):
-                continue
-            self.assertIn(Diagnostic._meta.get_field(field_name).verbose_name, html)
-        self.assertNotIn("Communique sur le plan alimentaire", html)
+        html = get_template(self.template_name).render(DiagnosticTeledeclarationPdfView.get_context(diagnostic))
 
-        html = template.render({"year": 2025, **context})
-        self.assertIn("Communique sur le plan alimentaire", html)
-        self.assertNotIn("affichage permanent", html)
-
-    def test_measure_plastic_component_since_2026(self):
-        template = get_template("teledeclaration_pdf/justificatif_2023/components/measure_plastic.html")
-        context = {
-            "plastique_bouteille_boisson_remplace": True,
-            "plastique_bouteille_remplace": None,
-            "plastique_ustensile_remplace": True,
-            "plastique_vaisselle_jetable_remplace": False,
-            "plastique_contenant_remplace": True,
-            "vente_emporter": True,
-            "plastique_contenant_emporter_remplace": True,
-            # removed in 2026
-            "plastique_contenant_cuisson_remplace": True,
-        }
-
-        html = template.render({"year": 2026, **context})
-        for field_name in [
-            "plastique_bouteille_boisson_remplace",
-            "plastique_vaisselle_jetable_remplace",
-            "plastique_contenant_remplace",
-            "plastique_contenant_emporter_remplace",
-        ]:
-            self.assertIn(Diagnostic._meta.get_field(field_name).verbose_name, html)
-        self.assertIn("Aucune bouteilles d’eau plate en plastique", html)
-        self.assertIn("Aucun ustensiles à usage unique en matière plastique", html)
-        self.assertNotIn("Contenants de cuisson en plastique remplacés", html)
-
-        html = template.render({"year": 2025, **context})
-        self.assertIn("Contenants de cuisson en plastique remplacés", html)
-        self.assertNotIn("fontaine d'eau potable", html)
-
-    def test_measure_plastic_component_since_2026_without_vente_emporter(self):
-        template = get_template("teledeclaration_pdf/justificatif_2023/components/measure_plastic.html")
-        html = template.render({"year": 2026, "vente_emporter": False, "plastique_contenant_emporter_remplace": None})
-        self.assertIn("L'établissement ne propose pas de repas à emporter", html)
-        self.assertNotIn("repas à emporter : Inconnu", html)
+        text = " ".join(unescape(strip_tags(html)).split())
+        for volet, field_name in fields_created_in_2026:
+            with self.subTest(field=field_name):
+                self.assertNotIn(get_teledeclaration_verbose_name(2026, volet, field_name), text)
 
 
 # 2026 volets with all their fields filled
