@@ -53,6 +53,7 @@ const generateVoletFields = (voletConfig, voletCustomisation) => {
         shortName: `${config.verbose_name} :`,
         labelRecap: config.verbose_name,
         required: config.is_required,
+        isRequiredDependsOnCanteen: config.is_required_depends_on_canteen,
         ...voletCustomisation[apiKey]
     }
   }

@@ -37,10 +37,18 @@ const placeholder = computed(() => isRequired.value ? undefined : "Je ne sais pa
 const errorMessage = computed(() => tunnelTeledeclarationService.getFieldError(props.name, storeTeledeclaration.getDisplayedErrors(route.meta)))
 const selectErrorMessage = computed(() => errorMessage.value?.join(". "))
 const hint = computed(() => data.value.hint)
-const options = computed(() => data.value.options)
+const hasOptionNonConcerne = computed(() => data.value?.isRequiredDependsOnCanteen && (isRadio.value || isCheckboxes.value))
+const optionNonConcerne = { label: "Non concerné", value: "" }
+const options = computed(() => hasOptionNonConcerne.value ? [...data.value.options, optionNonConcerne] : data.value.options)
 const radioOptions = computed(() => options.value.map((option) => ({ label: option.label, value: option.value })))
 const isInline = computed(() => data.value?.inline)
 const checkboxesOptions = computed(() => options.value.map((option) => ({ id: `${props.name}-${option.value}`, name: props.name, label: option.label, value: option.value })))
+
+/* Non concerné : an empty value is saved as null, select the option only if the page has already been visited */
+const isNonConcerne = computed(() => {
+  const isEmpty = field.value === null || field.value === undefined
+  return hasOptionNonConcerne.value && isEmpty && storeTeledeclaration.isPageVisited(route.meta)
+})
 
 /* OSA */
 const isAutofill = computed(() => data.value?.autofill === true)
@@ -65,6 +73,7 @@ const fieldChange = () =>  {
 const prefillField = () => {
   field.value = storeTeledeclaration.diagnostic[props.name]
   if (isCheckboxes.value && !field.value) field.value = []
+  if (isNonConcerne.value) field.value = ""
   valueBeforeAutofill.value = field.value
 }
 onMounted(prefillField)
