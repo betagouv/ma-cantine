@@ -98,7 +98,10 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const payload = { id, nombreRepasAn }
     const response = await diagnosticService.updateGroupeCanteenMealCount(diagnostic.value.canteenId, diagnostic.value.id, payload)
     if (response.status === "error") useRootStore().notifyServerError(response)
-    else groupeCanteensMealCount.value = response
+    else {
+      groupeCanteensMealCount.value = response
+      await refreshDiagnostic()
+    }
     return response
   }
 
