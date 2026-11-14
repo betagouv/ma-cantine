@@ -21,7 +21,9 @@ const { canteenInformations } = storeToRefs(storeCanteen)
 const isGroupe = computed(() => canteenInformations.value?.isGroupe)
 const title = computed(() => {
   if (!isGroupe.value) return 'Plus qu’une étape pour valider votre télédéclaration'
-  return `Plus qu’une étape pour télédéclarer vos ${canteenInformations.value.satellitesCount} restaurants`
+  const count = canteenInformations.value.satellitesCount
+  const restaurants = count > 1 ? `vos ${count} restaurants` : 'votre restaurant'
+  return `Plus qu’une étape pour télédéclarer ${restaurants}`
 })
 
 /* Modale */
