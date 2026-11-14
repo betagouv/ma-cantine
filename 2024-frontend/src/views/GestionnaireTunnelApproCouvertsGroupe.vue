@@ -1,7 +1,12 @@
 <script setup>
+import { storeToRefs } from "pinia"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationLockedInput from "@/components/TunnelTeledeclarationLockedInput.vue"
+
+const teledeclarationStore = useStoreTeledeclaration()
+const { diagnostic } = storeToRefs(teledeclarationStore)
 </script>
 
 <template>
@@ -30,7 +35,7 @@ import TunnelTeledeclarationLockedInput from "@/components/TunnelTeledeclaration
           <p class="fr-text--sm fr-text-mention--grey fr-mb-0">À partir des données couverts de chaque restaurant</p>
         </div>
         <div class="fr-col-12 fr-col-md-2">
-          <TunnelTeledeclarationLockedInput :value="0" label="Total des couverts annuels répartis entre vos cantines" />
+          <TunnelTeledeclarationLockedInput :value="diagnostic?.satellitesNombreRepasAnSum" label="Total des couverts annuels répartis entre vos cantines" />
         </div>
       </div>
     </div>
