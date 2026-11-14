@@ -4,6 +4,8 @@ import os
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.http import HttpResponse
+from django.db import models
+from django.template.defaultfilters import floatformat
 from django.template.loader import get_template
 from django.utils.text import slugify
 from django_filters import rest_framework as django_filters
@@ -20,8 +22,17 @@ from api.permissions import (
     IsCanteenManagerUrlParam,
 )
 from api.serializers import DiagnosticTeledeclaredOpenDataSerializer
-from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
 from data.models import Canteen, Diagnostic, Teledeclaration
+from data.fields import ChoiceArrayField
+from data.models.diagnostic_teledeclaration_dates import (
+    CAMPAIGN_DATES,
+    get_year_correction_end_date_or_campaign_end_date_or_today_date,
+    is_in_teledeclaration_or_correction,
+)
+from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_fields_all,
+    get_teledeclaration_verbose_name,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -127,10 +138,46 @@ class DiagnosticTeledeclarationPdfView(APIView):
             except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned):
                 pass
 
-        canteen_snapshot = diagnostic.canteen_snapshot
-        processed_canteen_snapshot = DiagnosticTeledeclarationPdfView._get_canteen_override_data(diagnostic)
+        canteen = {
+            **diagnostic.canteen_snapshot,
+            **DiagnosticTeledeclarationPdfView._get_canteen_override_data(diagnostic),
+        }
         processed_diagnostic_data = DiagnosticTeledeclarationPdfView._get_teledeclaration_override_data(diagnostic)
-        additional_questions = DiagnosticTeledeclarationPdfView._get_applicable_diagnostic_rules(canteen_snapshot)
+        additional_questions = DiagnosticTeledeclarationPdfView._get_applicable_diagnostic_rules(
+            diagnostic.canteen_snapshot
+        )
+        volets = {
+            "CANTEEN": DiagnosticTeledeclarationPdfView._get_canteen_fields(canteen),
+            "MEAL_COUNT": DiagnosticTeledeclarationPdfView._get_meal_count_fields(diagnostic),
+            "SAISIE": DiagnosticTeledeclarationPdfView._get_saisie_fields(diagnostic),
+            "APPROVISIONNEMENT": (
+                DiagnosticTeledeclarationPdfView._get_volet_fields(
+                    diagnostic, "APPROVISIONNEMENT", excluded_fields=["nombre_repas_an"]
+                )
+                if diagnostic.diagnostic_type
+                else []
+            ),
+            "GASPILLAGE": (
+                DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "GASPILLAGE")
+                if diagnostic.is_filled_gaspillage
+                else []
+            ),
+            "DIVERSIFICATION": (
+                DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "DIVERSIFICATION")
+                if diagnostic.is_filled_diversification
+                else []
+            ),
+            "PLASTIQUE": (
+                DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "PLASTIQUE")
+                if diagnostic.is_filled_plastique
+                else []
+            ),
+            "INFORMATION": (
+                DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "INFORMATION")
+                if diagnostic.is_filled_information
+                else []
+            ),
+        }
 
         structure_complete_appro_data = {}
         if diagnostic.is_diagnostic_type_complete:
@@ -143,14 +190,19 @@ class DiagnosticTeledeclarationPdfView(APIView):
                 "diagnostic_type": "détaillée" if diagnostic.is_diagnostic_type_complete else "simplifiée",
                 "year": diagnostic.year,
                 "date": diagnostic.teledeclaration_date,
+                "teledeclaration_id": diagnostic.teledeclaration_id,
                 "applicant": diagnostic.applicant_snapshot["name"],
+                "yearly_meal_count": diagnostic.canteen_yearly_meal_count,
                 "teledeclaration_mode": diagnostic.teledeclaration_mode,
                 "central_kitchen_siret": central_kitchen_siret,
                 "central_kitchen_name": central_kitchen_name,
                 "satellites": diagnostic.satellites_snapshot or [],
-                "canteen": {**canteen_snapshot, **processed_canteen_snapshot},
+                "canteen": canteen,
                 "additional_questions": additional_questions,
                 "complete_appro": structure_complete_appro_data,
+                "volets": volets,
+                "is_provisional": is_in_teledeclaration_or_correction(diagnostic.year),
+                "end_campaign_date": get_year_correction_end_date_or_campaign_end_date_or_today_date(diagnostic.year),
             },
         }
 
@@ -191,6 +243,35 @@ class DiagnosticTeledeclarationPdfView(APIView):
         if not os.path.isfile(path):
             raise Exception("media URI must start with {} or {}".format(sUrl, mUrl))
         return path
+
+    @staticmethod
+    def _get_canteen_fields(canteen):
+        """
+        Returns the fields of the canteen (the canteen snapshot, with human-readable values),
+        in the same format as the volets fields. Empty fields are skipped
+        """
+        fields = [
+            ("Nom", canteen.get("name")),
+            ("Identifiant / ID", canteen.get("id")),
+            ("Numéro SIRET", canteen.get("siret"))
+            if canteen.get("siret")
+            else ("Numéro SIREN", canteen.get("siren_unite_legale")),
+            ("Nombre de couverts / jour", canteen.get("daily_meal_count")),
+            ("Modèle économique", canteen.get("economic_model")),
+            ("Mode de gestion", canteen.get("management_type")),
+            ("Mode de production", canteen.get("production_type")),
+            ("SIRET de la cuisine centrale", canteen.get("central_producer_siret")),
+            ("Secteurs d'activité", canteen.get("sectors")),
+            ("Administration générale de tutelle (ministère ou ATE)", canteen.get("line_ministry")),
+        ]
+        return [{"label": label, "value": value} for label, value in fields if value]
+
+    @staticmethod
+    def _get_meal_count_fields(diagnostic):
+        """
+        Returns the yearly meal count, in the same format as the volets fields
+        """
+        return [{"label": "Nombre de couverts par an", "value": diagnostic.canteen_yearly_meal_count}]
 
     @staticmethod
     def _get_canteen_override_data(diagnostic):
@@ -321,6 +402,64 @@ class DiagnosticTeledeclarationPdfView(APIView):
             for family, display_family in family_variable_to_display.items():
                 structured_data[display_label][display_family] = getattr(diagnostic, f"valeur_{family}_{label}")
         return structured_data
+
+    @staticmethod
+    def _get_saisie_fields(diagnostic):
+        """
+        Returns the fields of the "Mode de saisie" block (not in the config file: labels defined here)
+        """
+        fields = [
+            ("diagnostic_type", "Vous avez choisi"),
+            ("generated_from_purchases", "A été automatiquement généré depuis l'Outil Suivi des Achats'"),
+        ]
+        return [
+            {
+                "label": label,
+                "value": DiagnosticTeledeclarationPdfView._get_prettify_value(
+                    Diagnostic._meta.get_field(field_name), getattr(diagnostic, field_name)
+                ),
+            }
+            for field_name, label in fields
+        ]
+
+    @staticmethod
+    def _get_volet_fields(diagnostic, volet, excluded_fields=()):
+        """
+        Returns the fields of the volet from the config file of the diagnostic year,
+        with the verbose name from the config file and the formatted value
+        """
+        fields = []
+        for field_name in get_teledeclaration_fields_all(diagnostic.year, volet, diagnostic.diagnostic_type):
+            if field_name in excluded_fields:
+                continue
+            field = Diagnostic._meta.get_field(field_name)
+            fields.append(
+                {
+                    "label": get_teledeclaration_verbose_name(diagnostic.year, volet, field_name),
+                    "value": DiagnosticTeledeclarationPdfView._get_prettify_value(
+                        field, getattr(diagnostic, field_name)
+                    ),
+                }
+            )
+        return fields
+
+    @staticmethod
+    def _get_prettify_value(field, value):
+        """
+        Returns the human-readable value of the field
+        """
+        if value is None or value == [] or value == "":
+            return None
+        if isinstance(field, ChoiceArrayField):
+            choices = dict(field.base_field.flatchoices)
+            return ", ".join(str(choices.get(item, item)) for item in value)
+        if field.choices:
+            return str(dict(field.flatchoices).get(value, value))
+        if isinstance(field, models.BooleanField):
+            return "Oui" if value else "Non"
+        if isinstance(field, models.DecimalField) and field.name.startswith("valeur_"):
+            return f"{floatformat(value, 2)} €"
+        return value
 
 
 class DiagnosticTeledeclaredOpenDataListView(ListAPIView):
