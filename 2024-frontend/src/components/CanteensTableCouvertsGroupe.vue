@@ -1,9 +1,11 @@
 <script setup>
 import { computed, ref } from "vue"
 import { storeToRefs } from "pinia"
+import { useRoute } from "vue-router"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { formatSiretOrSiren } from "@/utils"
 import canteensTableService from "@/services/canteensTable.js"
+import tunnelTeledeclarationService from "@/services/tunnelTeledeclaration"
 
 /* Settings */
 const minPagination = 50
@@ -11,6 +13,8 @@ const teledeclarationStore = useStoreTeledeclaration()
 const { groupeCanteensMealCount } = storeToRefs(teledeclarationStore)
 const showPagination = computed(() => groupeCanteensMealCount.value.length > minPagination)
 const errors = ref({})
+const route = useRoute()
+const displayedErrors = computed(() => teledeclarationStore.getDisplayedErrors(route.meta))
 
 /* Total */
 const canteenSentence = computed(() => {
@@ -55,6 +59,7 @@ const tableRows = computed(() => {
         id: canteen.id,
         name: canteen.name,
         value: canteen.nombreRepasAn,
+        error: errors.value[canteen.id] || tunnelTeledeclarationService.getGroupeCanteenError(canteen, displayedErrors.value),
       },
     }
   })
@@ -93,7 +98,7 @@ const updateMealCount = async (id, value) => {
           :name="`mealCount-${cell.id}`"
           type="number"
           min="0"
-          :error-message="errors[cell.id]"
+          :error-message="cell.error"
           @change="(event) => updateMealCount(cell.id, event.target.value)"
         />
       </template>
