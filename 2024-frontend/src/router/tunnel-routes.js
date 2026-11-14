@@ -1,6 +1,7 @@
 /* Components */
 import GestionnaireTunnelApproInformations from "@/views/GestionnaireTunnelApproInformations.vue"
 import GestionnaireTunnelApproCouverts from "@/views/GestionnaireTunnelApproCouverts.vue"
+import GestionnaireTunnelApproCouvertsGroupe from "@/views/GestionnaireTunnelApproCouvertsGroupe.vue"
 import GestionnaireTunnelApproSaisie from "@/views/GestionnaireTunnelApproSaisie.vue"
 import GestionnaireTunnelApproEgalim from "@/views/GestionnaireTunnelApproEgalim.vue"
 import GestionnaireTunnelApproOrigine from "@/views/GestionnaireTunnelApproOrigine.vue"
@@ -16,6 +17,7 @@ import LayoutTunnelTeledeclaration from "@/layouts/LayoutTunnelTeledeclaration.v
 
 /* Redirections */
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
+import { useStoreCanteen } from "@/stores/canteen"
 
 const redirectIfTeledeclared = (to) => {
   const teledeclarationStore = useStoreTeledeclaration()
@@ -27,6 +29,18 @@ const redirectIfNotTeledeclared = (to) => {
   const teledeclarationStore = useStoreTeledeclaration()
   if (teledeclarationStore.isTeledeclared) return true
   return { name: "GestionnaireTunnelApproRecapitulatif", params: to.params }
+}
+
+const redirectCouvertsIfNotGroupe = (to) => {
+  const canteenStore = useStoreCanteen()
+  if (canteenStore.canteenInformations.isGroupe) return true
+  return { name: "GestionnaireTunnelApproCouverts", params: to.params }
+}
+
+const redirectCouvertsIfIsGroupe = (to) => {
+  const canteenStore = useStoreCanteen()
+  if (!canteenStore.canteenInformations.isGroupe) return true
+  return { name: "GestionnaireTunnelApproCouvertsGroupe", params: to.params }
 }
 
 /* Route */
@@ -77,13 +91,27 @@ const tunnelRoutes = {
           path: "couverts-annuels",
           name: "GestionnaireTunnelApproCouverts",
           component: GestionnaireTunnelApproCouverts,
-          beforeEnter: redirectIfTeledeclared,
+          beforeEnter: [redirectIfTeledeclared, redirectCouvertsIfIsGroupe],
           meta: {
             slug: "couverts",
             title: "Couverts annuels",
             previous: "GestionnaireTunnelApproInformations",
             next: "GestionnaireTunnelApproSaisie",
             volet: "approvisionnement",
+          },
+        },
+        {
+          path: "couverts-annuels-groupe",
+          name: "GestionnaireTunnelApproCouvertsGroupe",
+          component: GestionnaireTunnelApproCouvertsGroupe,
+          beforeEnter: [redirectIfTeledeclared, redirectCouvertsIfNotGroupe],
+          meta: {
+            slug: "couverts-groupe",
+            title: "Couverts de mon groupe",
+            previous: "GestionnaireTunnelApproInformations",
+            next: "GestionnaireTunnelApproSaisie",
+            volet: "approvisionnement",
+            navName: "GestionnaireTunnelApproCouverts",
           },
         },
         {
