@@ -1,15 +1,20 @@
 """
 Badges of the volets thématiques.
-The rules are versioned by their first year (2021, 2022, 2026...): the Diagnostic badge properties pick the
-function to use depending on the year of the diagnostic
+The rules are versioned by their first year (2021, 2022, 2026...): each year declares the function used for each volet in
+teledeclaration/<year>/badges.json
 Each badge returns:
 - True: the objectives are reached
 - False: the objectives are not reached (and the volet has been visited in the tunnel)
 - None: not enough information
 """
 
+import json
 from dataclasses import dataclass
+from functools import cache
+from pathlib import Path
+from django.conf import settings
 from data.models.canteen import get_is_administration
+from data.models.diagnostic_teledeclaration_fields import TELEDECLARATION_YEARS
 from data.models.diagnostic_volet_diversification import DiagnosticVoletDiversificationMixin
 from data.models.sector import (
     EDUCATION_SECTOR_LIST,
@@ -259,3 +264,24 @@ def info_badge_2026(diagnostic) -> bool | None:
         is_reached = is_reached and bool(diagnostic.information_consultation_qualite)
 
     return is_reached
+
+
+@cache
+def get_teledeclaration_badges_config(year):
+    """
+    The badges configuration of a bilan year: teledeclaration/<year>/badges.json
+    """
+    config_path = Path(settings.BASE_DIR) / "teledeclaration" / str(year) / "badges.json"
+    return json.loads(config_path.read_text(encoding="utf-8"))
+
+
+def get_badge_function_name(year, volet):
+    # the years without configuration (no year, or before 2021) use the 2021 version
+    if year not in TELEDECLARATION_YEARS:
+        return get_teledeclaration_badges_config(TELEDECLARATION_YEARS[0])[volet]
+    return get_teledeclaration_badges_config(year)[volet]
+
+
+def get_badge(diagnostic, volet) -> bool | None:
+    function_name = get_badge_function_name(diagnostic.year, volet)
+    return globals()[function_name](diagnostic)
