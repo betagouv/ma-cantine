@@ -4,6 +4,7 @@ import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationLockedInput from "@/components/TunnelTeledeclarationLockedInput.vue"
+import TunnelTeledeclarationTableCouvertsGroupe from "@/components/TunnelTeledeclarationTableCouvertsGroupe.vue"
 
 const teledeclarationStore = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(teledeclarationStore)
@@ -39,5 +40,6 @@ const { diagnostic } = storeToRefs(teledeclarationStore)
         </div>
       </div>
     </div>
+    <TunnelTeledeclarationTableCouvertsGroupe />
   </div>
 </template>
