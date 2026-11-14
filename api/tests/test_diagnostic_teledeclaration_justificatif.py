@@ -471,7 +471,7 @@ class DiagnosticTeledeclarationJustificatif2026Test(APITestCase):
                 html = self._render(diagnostic)
 
                 text = " ".join(unescape(strip_tags(html)).split())
-                self.assertIn(f"A été automatiquement généré depuis les achats {displayed_value}", text)
+                self.assertIn(f"A été automatiquement généré depuis l'Outil Suivi des Achats {displayed_value}", text)
 
     def test_display_the_value_of_the_volet_fields(self):
         diagnostic = self._teledeclared_diagnostic(**VOLET_ANSWERS_2026)

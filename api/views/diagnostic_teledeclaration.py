@@ -410,7 +410,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
         """
         fields = [
             ("diagnostic_type", "Vous avez choisi"),
-            ("generated_from_purchases", "A été automatiquement généré depuis l'Outil Suivi des Achats'"),
+            ("generated_from_purchases", "A été automatiquement généré depuis l'Outil Suivi des Achats"),
         ]
         return [
             {
