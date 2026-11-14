@@ -42,6 +42,13 @@ const radioOptions = computed(() => options.value.map((option) => ({ label: opti
 const isInline = computed(() => data.value?.inline)
 const checkboxesOptions = computed(() => options.value.map((option) => ({ id: `${props.name}-${option.value}`, name: props.name, label: option.label, value: option.value })))
 
+/* Non concerné : an empty value is saved as null, select the option only if the page has already been visited */
+const isNonConcerne = computed(() => {
+  const hasOption = data.value?.hasOptionNonConcerne === true
+  const isEmpty = field.value === null || field.value === undefined
+  return hasOption && isEmpty && storeTeledeclaration.isPageVisited(route.meta)
+})
+
 /* OSA */
 const isAutofill = computed(() => data.value?.autofill === true)
 const displayAutofill = computed(() => hasPurchaseTotal.value && isAutofill.value)
@@ -65,6 +72,7 @@ const fieldChange = () =>  {
 const prefillField = () => {
   field.value = storeTeledeclaration.diagnostic[props.name]
   if (isCheckboxes.value && !field.value) field.value = []
+  if (isNonConcerne.value) field.value = ""
   valueBeforeAutofill.value = field.value
 }
 onMounted(prefillField)
