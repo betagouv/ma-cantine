@@ -233,4 +233,4 @@ Les champs du bilan détaillé (une famille de produits × un label ou une carac
 
 - dbt (créé en 09/2026) ne connaît que les nouveaux noms : `stg_diagnostics`, `stg_teledeclarations` et `mart_teledeclarations` lisent les colonnes `valeur_*`.
 - Les anciennes tables et questions Metabase construites avant le 03/12/2025 utilisent les anciens noms (`value_*_ht`) : pour les relire, utiliser les tableaux ci-dessus.
-- Les achats ont aussi été renommés en français, dans un ADR séparé. `short_distribution` → `circuit_court` change aussi une valeur de `Purchase.characteristics` (#5965).
+- Les champs des achats ont été renommés en français le 02/06/2026, voir `2026-06-02-achats-champs-francais.md`. `short_distribution` → `circuit_court` change aussi une valeur de `Purchase.characteristics` (#5965).
