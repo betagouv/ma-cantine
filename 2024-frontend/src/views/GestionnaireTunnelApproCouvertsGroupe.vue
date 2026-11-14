@@ -4,7 +4,6 @@ import { storeToRefs } from "pinia"
 import { useRoute } from "vue-router"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { formatNumber } from "@/utils"
-import tunnelTeledeclarationService from "@/services/tunnelTeledeclaration"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationCalloutField from "@/components/TunnelTeledeclarationCalloutField.vue"
@@ -14,9 +13,8 @@ const teledeclarationStore = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(teledeclarationStore)
 const route = useRoute()
 const sumErrorMessage = computed(() => {
-  const errors = teledeclarationStore.getDisplayedErrors(route.meta)
-  const message = tunnelTeledeclarationService.getFieldError("nombreRepasAn", errors)
-  return message ? [].concat(message).join(". ") : null
+  if (!teledeclarationStore.isPageVisited(route.meta)) return null
+  return teledeclarationStore.getErrorMessage("nombreRepasAn")
 })
 const nombreRepasAnSentence = computed(() => {
   const count = diagnostic.value?.nombreRepasAn
