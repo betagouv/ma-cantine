@@ -45,7 +45,7 @@ const topButtons = computed(() => {
     class="fr-mb-4w"
   >
     <p>
-      Vous pouvez retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits sur la page de votre <AppLinkRouter :title="isGroupe ? 'groupe' : 'cantine'" :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" />.
+      Vous pouvez retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits sur la <AppLinkRouter :title="`page de votre ${isGroupe ? 'groupe' : 'cantine'}`" :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" />.
     </p>
   </DsfrAlert>
   <h2 class="fr-h5">Compléter les volets thématiques<template v-if="!isGroupe"> et votre page publique</template></h2>
