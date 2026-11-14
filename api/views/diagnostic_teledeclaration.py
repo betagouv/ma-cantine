@@ -264,6 +264,9 @@ class DiagnosticTeledeclarationPdfView(APIView):
             ("Secteurs d'activité", canteen.get("sectors")),
             ("Administration générale de tutelle (ministère ou ATE)", canteen.get("line_ministry")),
         ]
+        # production_type is already replaced by its label
+        if canteen.get("production_type") != Canteen.ProductionType.GROUPE.label:
+            fields.append(("Description", canteen.get("publication_comments")))
         return [{"label": label, "value": value} for label, value in fields if value]
 
     @staticmethod
