@@ -5,6 +5,8 @@ import { storeToRefs } from 'pinia'
 import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import tunnelTeledeclarationService from '@/services/tunnelTeledeclaration'
+import canteensTableService from '@/services/canteensTable.js'
+import { formatSiretOrSiren } from '@/utils'
 import CanteenDisplayInformations from '@/components/CanteenDisplayInformations.vue'
 import TunnelTeledeclarationIconCheck from '@/components/TunnelTeledeclarationIconCheck.vue'
 
@@ -17,7 +19,7 @@ const router = useRouter()
 const canteenStore = useStoreCanteen()
 const teledeclarationStore = useStoreTeledeclaration()
 const { canteenInformations } = storeToRefs(canteenStore)
-const { diagnostic } = storeToRefs(teledeclarationStore)
+const { diagnostic, diagnosticErrors, groupeCanteensMealCount } = storeToRefs(teledeclarationStore)
 
 /* Errors */
 const errors = computed(() => teledeclarationStore.getErrorsGroup(props.accordion.fieldsGroupName))
@@ -43,9 +45,23 @@ const getPrettyDiagnosticValue = (field) => {
   return prettyValue ?? "Non renseigné"
 }
 
+const getGroupeCanteensRows = () => {
+  return groupeCanteensMealCount.value.map(canteen => {
+    const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(canteen))
+    return {
+      name: {
+        label: `${canteen.name} ${siretSiren} (ID : ${canteen.id})`,
+        error: tunnelTeledeclarationService.getGroupeCanteenError(canteen, diagnosticErrors.value) || "",
+      },
+      value: canteen.nombreRepasAn ?? "Non renseigné",
+    }
+  })
+}
+
 const rows = computed(() => {
   const fields = tunnelTeledeclarationService.getFieldsListFromGroup(props.accordion.fieldsGroupName)
-  return fields.map(field => {
+  return fields.flatMap(field => {
+    if (field === "satellitesNombreRepasAnList") return getGroupeCanteensRows()
     const isCanteen = props.accordion.isCanteenFields
     const name = isCanteen ? field : tunnelTeledeclarationService.getField(field).labelRecap
     const value = isCanteen ? canteenInformations.value[field] : getPrettyDiagnosticValue(field)
