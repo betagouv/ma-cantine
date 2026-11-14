@@ -1,0 +1,75 @@
+{% load static %}
+<html>
+
+<head>
+  {% include "./style.html" %}
+</head>
+
+<body>
+  <table class="row">
+    <tr>
+      <td class="col-4 header-logos">
+        <img src="{% static '../../../web/static/images/Marianne-Republique-Francaise.svg' %}"
+          alt="République Française" height="60" />
+        <img src="{% static '../../../web/static/images/ma-cantine-logo-light.jpg' %}" alt="ma cantine" height="60" />
+      </td>
+      <td class="col-8 header-title">
+        <h1>Justificatif de télédéclaration {{ year }}</h1>
+        <p class="header-subtitle">Campagne {{ year|add:1 }} sur les achats de l’année {{ year }}</p>
+      </td>
+    </tr>
+  </table>
+
+  {% include "./components/provisional_alert.html" %}
+
+  <table class="row">
+    <tr>
+      <td class="col-6 col-gutter">
+        {% include "./components/quick_informations.html" %}
+      </td>
+      <td class="col-6 align-middle">
+        <p class="text-italic">
+          Ce document vaut justificatif de la télédéclaration des données d'approvisionnement de la cantine,
+          en réponse à toute demande relative aux obligations de la loi EGalim.
+        </p>
+        <p class="text-italic">
+          Les données de ce document peuvent être vérifiées sur la page publique de la cantine,
+          sur ma-cantine.agriculture.gouv.fr, par l'organisme à qui le justificatif est remis.
+        </p>
+      </td>
+    </tr>
+  </table>
+
+  {% include "./components/cost_per_meal.html" %}
+
+  <h3>{% if canteen.production_type == "Groupe" %}Informations du groupe{% else %}Informations de la cantine{% endif %}</h3>
+  {% include "./components/fields_table.html" with fields=volets.CANTEEN %}
+
+  <h3>Couverts annuels</h3>
+  {% include "./components/fields_table.html" with fields=volets.MEAL_COUNT %}
+
+  <h3>Approvisionnements</h3>
+  {% include "./components/fields_table.html" with fields=volets.APPROVISIONNEMENT %}
+
+  <h3>Gaspillage alimentaire</h3>
+  {% include "./components/fields_table.html" with fields=volets.GASPILLAGE %}
+
+  <h3>Diversification des protéines et menus végétariens</h3>
+  {% include "./components/fields_table.html" with fields=volets.DIVERSIFICATION %}
+
+  <h3>Substitution des plastiques</h3>
+  {% include "./components/fields_table.html" with fields=volets.PLASTIQUE %}
+
+  <h3>Information des convives</h3>
+  {% include "./components/fields_table.html" with fields=volets.INFORMATION %}
+
+  {% include "./components/satellites.html" %}
+
+  <hr />
+  <p>
+    En savoir plus de la loi EGalim : <a
+      href="https://ma-cantine.agriculture.gouv.fr/">https://ma-cantine.agriculture.gouv.fr/</a>
+  </p>
+</body>
+
+</html>

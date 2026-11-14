@@ -1,0 +1,42 @@
+<style>
+    .fields-table {
+        width: 100%;
+        margin-bottom: 16px;
+    }
+
+    .fields-table td {
+        padding: 2px 8px;
+        vertical-align: top;
+        font-family: 'Marianne-Light';
+    }
+
+    .fields-table-label {
+        width: 65%;
+    }
+
+    .fields-table-row-white {
+        background-color: #ffffff;
+    }
+
+    .fields-table-row-grey {
+        background-color: #f6f6f6;
+    }
+</style>
+<table class="fields-table">
+    {% for field in fields %}
+    <tr class="{% cycle 'fields-table-row-white' 'fields-table-row-grey' %}">
+        <td class="fields-table-label text-left">{{ field.label }}</td>
+        <td class="text-right">
+            {% if field.value is None %}
+                Non renseigné
+            {% else %}
+                {{ field.value }}
+            {% endif %}
+        </td>
+    </tr>
+    {% empty %}
+    <tr class="fields-table-row-white">
+        <td colspan="2" class="text-left">Volet non renseigné</td>
+    </tr>
+    {% endfor %}
+</table>
