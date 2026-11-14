@@ -440,7 +440,21 @@ class DiagnosticTeledeclarationJustificatif2026Test(APITestCase):
         for volet in ["APPROVISIONNEMENT", "GASPILLAGE", "DIVERSIFICATION", "PLASTIQUE", "INFORMATION"]:
             for field_name in get_teledeclaration_fields_all(2026, volet, diagnostic.diagnostic_type):
                 with self.subTest(volet=volet, field=field_name):
-                    self.assertIn(escape(get_teledeclaration_verbose_name(2026, volet, field_name)), html)
+                    label = escape(get_teledeclaration_verbose_name(2026, volet, field_name))
+                    if field_name == "nombre_repas_an":
+                        # only in the meal count block, not repeated in the approvisionnement volet
+                        self.assertEqual(html.count(label), 1)
+                    else:
+                        self.assertIn(label, html)
+
+    def test_display_the_diagnostic_type(self):
+        diagnostic = self._teledeclared_diagnostic()
+
+        html = self._render(diagnostic)
+
+        text = " ".join(unescape(strip_tags(html)).split())
+        label = Diagnostic._meta.get_field("diagnostic_type").verbose_name
+        self.assertIn(f"{label} {Diagnostic.DiagnosticType.SIMPLE.label}", text)
 
     def test_display_the_value_of_the_volet_fields(self):
         diagnostic = self._teledeclared_diagnostic(**VOLET_ANSWERS_2026)

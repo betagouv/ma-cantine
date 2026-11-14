@@ -146,7 +146,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
             "CANTEEN": DiagnosticTeledeclarationPdfView._get_canteen_fields(diagnostic),
             "MEAL_COUNT": DiagnosticTeledeclarationPdfView._get_meal_count_fields(diagnostic),
             "APPROVISIONNEMENT": (
-                DiagnosticTeledeclarationPdfView._get_volet_fields(diagnostic, "APPROVISIONNEMENT")
+                DiagnosticTeledeclarationPdfView._get_approvisionnement_fields(diagnostic)
                 if diagnostic.diagnostic_type
                 else []
             ),
@@ -401,13 +401,31 @@ class DiagnosticTeledeclarationPdfView(APIView):
         return structured_data
 
     @staticmethod
-    def _get_volet_fields(diagnostic, volet):
+    def _get_approvisionnement_fields(diagnostic):
+        """
+        Customize the fields displayed for the approvisionnement volet.
+        """
+        diagnostic_type_field = Diagnostic._meta.get_field("diagnostic_type")
+        diagnostic_type = {
+            "label": "Mode de saisie des approvisionnements",
+            "value": DiagnosticTeledeclarationPdfView._get_prettify_value(
+                diagnostic_type_field, diagnostic.diagnostic_type
+            ),
+        }
+        return [diagnostic_type] + DiagnosticTeledeclarationPdfView._get_volet_fields(
+            diagnostic, "APPROVISIONNEMENT", excluded_fields=["nombre_repas_an"]
+        )
+
+    @staticmethod
+    def _get_volet_fields(diagnostic, volet, excluded_fields=()):
         """
         Returns the fields of the volet from the config file of the diagnostic year,
         with the verbose name from the config file and the formatted value
         """
         fields = []
         for field_name in get_teledeclaration_fields_all(diagnostic.year, volet, diagnostic.diagnostic_type):
+            if field_name in excluded_fields:
+                continue
             field = Diagnostic._meta.get_field(field_name)
             fields.append(
                 {
