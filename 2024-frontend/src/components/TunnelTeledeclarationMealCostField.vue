@@ -11,5 +11,9 @@ const coutRepas = computed(() => diagnostic.value[coutRepasFieldName] || '-')
 </script>
 
 <template>
-  <TunnelTeledeclarationCalloutField text="Le coût repas moyen représente :" :value="coutRepas" />
+  <TunnelTeledeclarationCalloutField text="Le coût repas moyen représente :" :value="coutRepas">
+    <template #introduction>
+      <slot name="introduction" />
+    </template>
+  </TunnelTeledeclarationCalloutField>
 </template>
