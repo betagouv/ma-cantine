@@ -25,8 +25,8 @@ const cols = computed(() => ({
 
 <style lang="scss">
 .tunnel-teledeclaration-callout {
-  background-image: linear-gradient(0deg, var(--border-default-blue-france), var(--border-default-blue-france));
-  background-size: 100% 0.25rem;
-  background-position: 0 0;
+  background-image: linear-gradient(0deg, var(--border-default-blue-france), var(--border-default-blue-france)) !important;
+  background-size: 100% 0.25rem !important;
+  background-position: 0 0 !important;
 }
 </style>
