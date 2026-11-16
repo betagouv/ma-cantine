@@ -21,8 +21,6 @@ defineProps(["value", "label", "errorMessage"])
   position: relative;
 
   .fr-input {
-    margin-top: 0;
-    padding-right: 2.5rem;
     background-color: var(--background-default-grey);
     box-shadow: inset 0 -2px 0 0 #e5e5e5;
     pointer-events: none;
