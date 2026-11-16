@@ -1290,7 +1290,7 @@ class DiagnosticGroupeSatellitesNombreRepasAnSumTest(TestCase):
                 self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, expected)
 
 
-class DiagnosticGroupeSatellitesNombreRepasAnValidatorTest(TestCase):
+class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
@@ -1301,7 +1301,7 @@ class DiagnosticGroupeSatellitesNombreRepasAnValidatorTest(TestCase):
             name="Satellite 2", production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
         )
         cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
-        # no prefill on creation (see sync_satellites_nombre_repas_an_list)
+        # no prefill (see sync_satellites_nombre_repas_an_list)
         Canteen.objects.filter(groupe=cls.canteen_groupe).update(yearly_meal_count=None)
 
     def _validate(self, canteen, year=2026, nombre_repas_an=None, value_1=None, value_2=None):
@@ -1314,11 +1314,37 @@ class DiagnosticGroupeSatellitesNombreRepasAnValidatorTest(TestCase):
                 {"id": self.canteen_satellite_2.id, "nombre_repas_an": value_2},
             ],
         )
-        return diagnostic_validators.validate_groupe_satellites_nombre_repas_an(diagnostic)
+        return diagnostic_validators.validate_satellites_nombre_repas_an_list(diagnostic)
+
+    def _validate_value(self, canteen, value):
+        diagnostic = Diagnostic(canteen=canteen, year=2026, satellites_nombre_repas_an_list=value)
+        return diagnostic_validators.validate_satellites_nombre_repas_an_list(diagnostic)
 
     def test_valid(self):
         errors = self._validate(self.canteen_groupe, nombre_repas_an=3000, value_1=1000, value_2=2000)
         self.assertEqual(errors, {})
+
+    def test_invalid_format(self):
+        for value in [
+            None,
+            {"1": 1000},
+            [1000],
+            [{"nombre_repas_an": 1000}],
+            [{"id": "1", "nombre_repas_an": 1000}],
+            [{"id": 1, "nombre_repas_an": "1000"}],
+            [{"id": 1, "nombre_repas_an": 10.5}],
+            [{"id": 1, "nombre_repas_an": True}],
+            [{"id": 1, "nombre_repas_an": -1}],
+            [{"id": 1, "nombre_repas_an": 1000000000}],
+        ]:
+            with self.subTest(value=value):
+                errors = self._validate_value(self.canteen_groupe, value)
+                self.assertEqual(list(errors.keys()), ["satellites_nombre_repas_an_list"])
+                self.assertIn("Format attendu", str(errors["satellites_nombre_repas_an_list"]))
+
+    def test_invalid_format_not_checked_if_not_groupe(self):
+        # the list is emptied in save() for the other diagnostics
+        self.assertEqual(self._validate_value(self.canteen_site, [{"id": 1, "nombre_repas_an": -1}]), {})
 
     def test_missing_satellite_value(self):
         errors = self._validate(self.canteen_groupe, nombre_repas_an=1000, value_1=1000)
@@ -1340,43 +1366,6 @@ class DiagnosticGroupeSatellitesNombreRepasAnValidatorTest(TestCase):
 
     def test_is_clean_returns_the_errors(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026, nombre_repas_an=1000)
-        is_clean, errors = diagnostic.is_clean()
-        self.assertFalse(is_clean)
-        self.assertIn("satellites_nombre_repas_an_list", errors)
-
-
-class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
-    def _validate(self, value):
-        return diagnostic_validators.validate_satellites_nombre_repas_an_list(
-            Diagnostic(satellites_nombre_repas_an_list=value)
-        )
-
-    def test_valid(self):
-        for value in [
-            [],
-            [{"id": 1, "nombre_repas_an": None}],
-            [{"id": 1, "nombre_repas_an": 0}, {"id": 2, "nombre_repas_an": 999999999}],
-        ]:
-            with self.subTest(value=value):
-                self.assertEqual(self._validate(value), {})
-
-    def test_invalid(self):
-        for value in [
-            None,
-            {"1": 1000},
-            [1000],
-            [{"id": 1, "nombre_repas_an": "1000"}],
-            [{"id": 1, "nombre_repas_an": 10.5}],
-            [{"id": 1, "nombre_repas_an": True}],
-            [{"id": 1, "nombre_repas_an": -1}],
-            [{"id": 1, "nombre_repas_an": 1000000000}],
-        ]:
-            with self.subTest(value=value):
-                self.assertEqual(list(self._validate(value).keys()), ["satellites_nombre_repas_an_list"])
-
-    def test_is_clean_returns_the_error(self):
-        diagnostic = DiagnosticFactory(year=2026)
-        diagnostic.satellites_nombre_repas_an_list = [{"id": 1, "nombre_repas_an": -1}]
         is_clean, errors = diagnostic.is_clean()
         self.assertFalse(is_clean)
         self.assertIn("satellites_nombre_repas_an_list", errors)
