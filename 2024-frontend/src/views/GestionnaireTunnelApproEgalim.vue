@@ -13,13 +13,11 @@ import tunnelTeledeclarationService from "@/services/tunnelTeledeclaration.js"
 
 /* Fields names */
 const valeurTotalFieldName = tunnelTeledeclarationService.getFieldsListFromGroup("valeurTotale")[0]
+const onChangeTotalField = async () => await storeTeledeclaration.saveMealCost()
 
 /* Teledeclaration */
 const storeTeledeclaration = useStoreTeledeclaration()
 const { isSimple, isComplete } = storeToRefs(storeTeledeclaration)
-
-/* Meal count */
-const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
 </script>
 <template>
   <TunnelTeledeclarationUPSABanner />
@@ -52,7 +50,7 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
     <h3 class="fr-h5">Total des achats</h3>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
       <div class="fr-col-12 fr-col-md-6">
-        <TunnelTeledeclarationField :name="valeurTotalFieldName" @change="updateCoutRepas" />
+        <TunnelTeledeclarationField :name="valeurTotalFieldName" @change="onChangeTotalField" />
       </div>
       <div class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationMealCostField class="fr-mb-0" />

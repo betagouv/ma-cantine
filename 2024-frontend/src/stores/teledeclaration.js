@@ -148,8 +148,8 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     return await diagnosticService.updateVolet(canteenId, diagnostic.value.id, volet, voletValues)
   }
 
-  /* Save only the given fields of the diagnostic */
-  async function updateMealCount() {
+  /* Save the total value and get the meal cost computed by the backend */
+  async function saveMealCost() {
     if (!diagnostic.value) return
     const canteenId = diagnostic.value.canteenId
     const valeurTotalFieldName = tunnelTeledeclaration.getFieldsListFromGroup("valeurTotale")[0]
@@ -377,7 +377,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     setValue,
     resetVolet,
     saveDiagnostic,
-    updateMealCount,
+    saveMealCost,
     updateGroupCanteenMealCount,
     autofillDiagnostic,
     setSelectAutofill,
