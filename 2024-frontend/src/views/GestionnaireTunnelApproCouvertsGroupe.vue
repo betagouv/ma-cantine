@@ -45,7 +45,7 @@ const nombreRepasAnSentence = computed(() => {
         <span class="fr-text--bold">{{ nombreRepasAnSentence.count }}</span> {{ nombreRepasAnSentence.text }}
       </p>
     </DsfrAlert>
-    <div class="fr-callout ma-cantine--callout-border-top">
+    <DsfrCallout class="ma-cantine--callout-border-top">
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
         <div class="fr-col-12 fr-col-md-10">
           <p class="fr-mb-0">Total des couverts annuels répartis entre vos cantines</p>
@@ -55,7 +55,7 @@ const nombreRepasAnSentence = computed(() => {
           <TunnelTeledeclarationLockedInput :value="diagnostic?.satellitesNombreRepasAnSum" label="Total des couverts annuels répartis entre vos cantines" />
         </div>
       </div>
-    </div>
+    </DsfrCallout>
     <CanteensTableCouvertsGroupe />
   </div>
 </template>
