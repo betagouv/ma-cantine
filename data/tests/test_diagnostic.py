@@ -1290,6 +1290,41 @@ class DiagnosticGroupeSatellitesNombreRepasAnSumTest(TestCase):
                 self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, expected)
 
 
+class DiagnosticGroupeCanteenYearlyMealCountTest(TestCase):
+    """
+    [NEW in 2026] Groupe: if nombre_repas_an is empty, the sum of the satellites' values is used (e.g. for cout_repas)
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe, yearly_meal_count=1400
+        )
+        cls.canteen_satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe, yearly_meal_count=1600
+        )
+
+    def _create_diagnostic(self, nombre_repas_an):
+        diagnostic = DiagnosticFactory(
+            **{**VALID_DIAGNOSTIC_SIMPLE_2026, "valeur_totale": 12000}, canteen=self.canteen_groupe
+        )  # satellites prefilled: 1400 + 1600
+        diagnostic.nombre_repas_an = nombre_repas_an  # DiagnosticFactory fills the required fields
+        diagnostic.save()
+        return diagnostic
+
+    def test_without_nombre_repas_an(self):
+        diagnostic = self._create_diagnostic(nombre_repas_an=None)
+        self.assertEqual(diagnostic.canteen_yearly_meal_count, 3000)
+        self.assertEqual(diagnostic.cout_repas, 4)
+
+    def test_with_nombre_repas_an(self):
+        # e.g. filled via API or import
+        diagnostic = self._create_diagnostic(nombre_repas_an=2000)
+        self.assertEqual(diagnostic.canteen_yearly_meal_count, 2000)
+        self.assertEqual(diagnostic.cout_repas, 6)
+
+
 class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
     @classmethod
     def setUpTestData(cls):
