@@ -11,6 +11,7 @@ const poissonFamilleFields = ["valeurProduitsDeLaMer", "valeurProduitsDeLaMerEga
 /* Liens */
 const bioImage = "/static/images/quality-labels/egalim-bio.jpg"
 const siqoImage = "/static/images/quality-labels/egalim-siqo.jpg"
+const bioDocumentation = `${documentation.qualiteDurabiliteProduits}#3-1-les-produits-issus-de-lagriculture-biologique-bio`
 const siqoDocumentation = `${documentation.qualiteDurabiliteProduits}#3-2-a-5-les-produits-sous-signes-didentification-de-la-qualite-et-de-lorigine-siqo-hors-bio`
 const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-6-a-10-les-autres-labels-compatibles-egalim`
 </script>
@@ -20,7 +21,7 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
       title="Achats bio ou avec mention « en conversion vers l’agriculture biologique »"
       :logo="bioImage"
       logo-alt="Label bio"
-      :documentation="documentation.commerceEquitable"
+      :documentation="bioDocumentation"
     />
     <p>
       Les achats en produits bio et issus du commerce équitable sont à renseigner dans le champ principal (achat bio ou en conversion) et, si vous en avez la possibilité, dans le champ facultatif « [...] dont bio équitable ». Ce sont les seuls achats qui peuvent être comptabilisés dans deux champs distincts de cette étape (double comptabilisation).

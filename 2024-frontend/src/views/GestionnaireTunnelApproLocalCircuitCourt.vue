@@ -56,7 +56,7 @@ const updateDefinitionLocal = (value) => {
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="Achats en circuit court" :documentation="documentation.accueil" />
+    <TunnelTeledeclarationGroupTitle title="Achats en circuit court" :documentation="documentation.circuitCourt" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12">
         <TunnelTeledeclarationField name="valeurCircuitCourt" />
