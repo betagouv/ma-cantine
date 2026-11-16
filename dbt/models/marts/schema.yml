@@ -874,3 +874,136 @@ models:
         description: >
           Date et heure (Paris) du run dbt qui a construit la table ; les données sont celles de
           l'export de la nuit, une demi-heure avant.
+
+  - name: mart_petites_structures
+    description: >
+      Expérimentation « Petites structures » : pilotage par les DRAAF (onglet « Expérimentation
+      petites structures » du tableau Metabase 70). Une ligne par cantine éligible, état du jour.
+      Éligibilité : `is_petite_structure` de mart_cantines, champ calculé par l'application
+      (data/models/canteen_petite_structure.py : gestion directe, cuisine sur place, un seul
+      secteur éligible, nombre de repas par jour sous le seuil du secteur), jamais recalculé ici.
+      Éligible ne veut pas dire inscrit dans l'expérimentation : l'inscription, l'année d'entrée et
+      le palier seront ajoutés quand l'application les enregistrera.
+      Les 32 premières colonnes reprennent celles du modèle Metabase 964 (liste des cantines du
+      tableau 70) : mêmes noms, types et valeurs (libellés en français).
+      Année de l'expérimentation : variable dbt `petites_structures_annee` (2026 par défaut =
+      achats 2026, campagne de télédéclaration 2027).
+      Les tests de ce mart ne tournent qu'en dev : la tâche de nuit lance `dbt run`, pas `dbt test`.
+    tests:
+      - dbt_utils.expression_is_true:
+          expression: "(td_annee = 'Oui') = (date_teledeclaration is not null)"
+      - dbt_utils.expression_is_true:
+          expression: "(activite_osa = 'Oui') = (date_derniere_saisie_osa is not null)"
+    columns:
+      - name: id
+        description: Identifiant de la cantine.
+        tests:
+          - unique
+          - not_null
+      - name: nom
+        description: Nom de la cantine.
+      - name: siret
+        description: SIRET de la cantine.
+      - name: siren_unite_legale
+        description: SIREN de l'unité légale.
+      - name: code_insee_commune
+        description: Code INSEE de la commune.
+      - name: libelle_commune
+        description: Libellé de la commune (valeur du filtre « Commune » du tableau 70).
+      - name: departement
+        description: Code du département (valeur du filtre « Département » du tableau 70).
+      - name: departement_lib
+        description: Libellé du département.
+      - name: region
+        description: Code de la région.
+      - name: region_lib
+        description: Libellé de la région (valeur du filtre « Région » du tableau 70).
+      - name: epci
+        description: Code SIREN de l'EPCI.
+      - name: epci_lib
+        description: Libellé de l'EPCI (valeur du filtre « EPCI » du tableau 70).
+      - name: pat_liste
+        description: Identifiants des PAT, séparés par `,`.
+      - name: pat_lib_liste
+        description: Libellés des PAT, séparés par `,` (valeur du filtre « PAT » du tableau 70).
+      - name: date_creation
+        description: Date d'inscription de la cantine sur ma cantine, à l'heure de Paris.
+      - name: date_modification
+        description: Date de dernière modification de la cantine.
+      - name: nbre_repas_jour
+        description: Nombre de repas servis par jour.
+      - name: nbre_repas_an
+        description: Nombre de repas servis par an.
+      - name: modele_economique
+        description: Modèle économique, en libellé (Public, Privé).
+      - name: type_gestion
+        description: Mode de gestion, en libellé (toujours « Directe » pour une cantine éligible).
+      - name: type_production
+        description: >
+          Type de production, en libellé (toujours « Restaurant avec cuisine sur place » pour une
+          cantine éligible).
+      - name: siret_cuisine_centrale
+        description: SIRET de la cuisine centrale qui livre la cantine, le cas échéant.
+      - name: ministere_tutelle
+        description: Administration de tutelle, en libellé (= ministere_tutelle_lib de mart_cantines).
+      - name: secteur
+        description: Secteurs de la cantine, libellés séparés par `,` (valeur du filtre « Secteur »).
+      - name: categorie
+        description: Catégories des secteurs, libellés séparés par `,` (valeur du filtre « Segment »).
+      - name: spe
+        description: Oui si la cantine relève du service public de l'État (SPE).
+      - name: adresses_gestionnaires
+        description: Courriels de tous les gestionnaires de la cantine, séparés par `, `.
+      - name: declaration_donnees_2021
+        description: La cantine a télédéclaré ses données 2021 (campagne 2022).
+      - name: declaration_donnees_2022
+        description: La cantine a télédéclaré ses données 2022 (campagne 2023).
+      - name: declaration_donnees_2023
+        description: La cantine a télédéclaré ses données 2023 (campagne 2024).
+      - name: declaration_donnees_2024
+        description: La cantine a télédéclaré ses données 2024 (campagne 2025).
+      - name: declaration_donnees_2025
+        description: La cantine a télédéclaré ses données 2025 (campagne 2026).
+      - name: modele_economique_code
+        description: >
+          Modèle économique, en code (public, private) : valeur ciblée par le filtre « Modèle
+          économique » du tableau 70.
+      - name: annee_experimentation
+        description: >
+          Année d'achats suivie par l'expérimentation (variable dbt `petites_structures_annee`),
+          télédéclarée pendant la campagne de l'année suivante.
+        tests:
+          - not_null
+      - name: td_annee
+        description: >
+          Oui si la cantine a une télédéclaration retenue pour l'année de l'expérimentation dans
+          mart_teledeclarations (mêmes règles que l'observatoire), sinon Non.
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Oui', 'Non']
+      - name: date_teledeclaration
+        description: >
+          Date de cette télédéclaration, à l'heure de Paris : sert à la courbe du nombre cumulé de
+          télédéclarations depuis l'ouverture de la campagne.
+      - name: type_td
+        description: Type de cette télédéclaration (Simplifiée, Détaillée).
+        tests:
+          - accepted_values:
+              values: ['Simplifiée', 'Détaillée']
+      - name: activite_osa
+        description: >
+          Oui si la cantine a au moins un achat actif daté de l'année de l'expérimentation dans
+          l'outil de suivi des achats, sinon Non (valeur du filtre « Activité OSA »).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Oui', 'Non']
+      - name: date_premiere_saisie_osa
+        description: >
+          Date de saisie, à l'heure de Paris, du premier achat de l'année de l'expérimentation :
+          sert à la courbe du nombre de cantines actives dans l'OSA. Peut précéder le 1er janvier.
+      - name: date_derniere_saisie_osa
+        description: >
+          Date de saisie, à l'heure de Paris, du dernier achat de l'année de l'expérimentation
+          (colonne « Dernière saisie OSA » de la liste).
