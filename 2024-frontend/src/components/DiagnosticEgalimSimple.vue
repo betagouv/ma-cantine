@@ -58,6 +58,14 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
     </div>
   </div>
   <div class="fr-mb-6w">
+    <TunnelTeledeclarationGroupTitle title="Famille de produits « Poissons, produits de la mer et de l'aquaculture frais et surgelés »" />
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div v-for="field in poissonFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField :name="field" />
+      </div>
+    </div>
+  </div>
+  <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
       title="Autres achats EGalim"
       badge="Nouveauté loi UPSA"
@@ -80,14 +88,6 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField name="valeurExternalitesPerformance" />
-      </div>
-    </div>
-  </div>
-  <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="Famille de produits « Poissons, produits de la mer et de l'aquaculture frais et surgelés »" />
-    <div class="fr-grid-row fr-grid-row--gutters">
-      <div v-for="field in poissonFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
-        <TunnelTeledeclarationField :name="field" />
       </div>
     </div>
   </div>
