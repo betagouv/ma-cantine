@@ -90,8 +90,8 @@ const saveWithoutErrorCheck = async (page) => {
   else {
     await teledeclarationStore.checkDiagnosticSteps()
     rootStore.notify({
-      title: "Télédéclaration enregistrée",
-      message: "Les informations ont bien été sauvegardées vous pourrez reprendre la saisie ultérieurement.",
+      title: "Votre télédéclaration a bien été enregistrée",
+      message: "Vous devrez reprendre votre télédéclaration, la finaliser ou/et la valider officiellement et obtenir votre justificatif.",
       status: "success",
     })
     router.push({ name: page })
