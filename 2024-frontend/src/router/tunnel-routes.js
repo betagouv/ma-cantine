@@ -129,7 +129,7 @@ const tunnelRoutes = {
           beforeEnter: redirectIfTeledeclared,
           meta: {
             slug: "origine",
-            title: "Origine France et UE",
+            title: "Origine France et Europe",
             previous: "GestionnaireTunnelApproEgalim",
             next: "GestionnaireTunnelApproLocalCircuitCourt",
             volet: "approvisionnement",

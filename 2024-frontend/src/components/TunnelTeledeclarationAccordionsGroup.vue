@@ -42,7 +42,7 @@ const accordions = computed(() => {
       fieldsGroupName: isSimple.value ? "egalimSimple" : "egalimComplete"
     },
     {
-      title: "Origine France et UE",
+      title: "Origine France et Europe",
       to: { name: 'GestionnaireTunnelApproOrigine' },
       fieldsGroupName: "origine"
     },

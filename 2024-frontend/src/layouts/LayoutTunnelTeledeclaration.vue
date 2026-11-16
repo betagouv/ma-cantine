@@ -43,7 +43,7 @@ const nav = computed(() => {
       { to: { name: isGroupe ? "GestionnaireTunnelApproCouvertsGroupe" : "GestionnaireTunnelApproCouverts" }, title: "Couverts annuels" },
       { to: { name: "GestionnaireTunnelApproSaisie" }, title: "Mode de saisie" },
       { to: { name: "GestionnaireTunnelApproEgalim" }, title: "EGalim" },
-      { to: { name: "GestionnaireTunnelApproOrigine" }, title: "Origine France et UE" },
+      { to: { name: "GestionnaireTunnelApproOrigine" }, title: "Origine France et Europe" },
       { to: { name: "GestionnaireTunnelApproLocalCircuitCourt" }, title: "« Local » et circuit court" },
       { to: { name: "GestionnaireTunnelApproRecapitulatif" }, title: "Récapitulatif", icon: "fr-icon-flag-fill" },
     ],
