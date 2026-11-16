@@ -1,6 +1,8 @@
 <script setup>
+import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
+import { formatNumber } from "@/utils"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationLockedInput from "@/components/TunnelTeledeclarationLockedInput.vue"
@@ -8,6 +10,15 @@ import CanteensTableCouvertsGroupe from "@/components/CanteensTableCouvertsGroup
 
 const teledeclarationStore = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(teledeclarationStore)
+const nombreRepasAnSentence = computed(() => {
+  const count = diagnostic.value?.nombreRepasAn
+  if (count == null) return null
+  const isPlural = count > 1
+  return {
+    count: `${formatNumber(count)} ${isPlural ? "couverts" : "couvert"}`,
+    text: `${isPlural ? "ont été renseignés" : "a été renseigné"} via API ou import. Votre répartition doit être identique, ou modifier votre import.`,
+  }
+})
 </script>
 
 <template>
@@ -28,7 +39,12 @@ const { diagnostic } = storeToRefs(teledeclarationStore)
   </div>
   <div>
     <h3 class="fr-h5">Renseigner la répartition de mes couverts annuels entre mes cantines :</h3>
-    <p>Pour avoir une donnée de qualité vous devez ajuster la répartition du nombre de couvert pour chaque cantine, votre estimation et la répartition des couverts entre vos établissement doit correspondre. Elle peut se faire manuellement, ou via fichier d’import dédié.</p>
+    <p>Pour avoir une donnée de qualité vous devez ajuster la répartition du nombre de couvert pour chaque cantine dans le tableau ci-dessous.<template v-if="nombreRepasAnSentence"> L'estimation et la répartition des couverts entre vos établissement doit correspondre.</template></p>
+    <DsfrAlert v-if="nombreRepasAnSentence" type="info" class="fr-mb-3w">
+      <p>
+        <span class="fr-text--bold">{{ nombreRepasAnSentence.count }}</span> {{ nombreRepasAnSentence.text }}
+      </p>
+    </DsfrAlert>
     <div class="fr-callout ma-cantine--callout-border-top">
       <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
         <div class="fr-col-12 fr-col-md-10">
