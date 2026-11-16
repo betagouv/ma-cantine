@@ -67,7 +67,6 @@ const groups = {
   ...tunnelTeledeclaration.gaspillage.groups,
   ...tunnelTeledeclaration.information.groups,
   ...tunnelTeledeclaration.plastique.groups,
-  couvertsGroupe: ["nombreRepasAn", "satellitesNombreRepasAnList"],
 }
 const fields = {
   ...generateApproFields(),
@@ -130,7 +129,7 @@ const getFieldsWithAutofill = () => {
   return Object.keys(fields).filter((field) => fields[field].autofill)
 }
 
-const getGroupeCanteenError = (canteen, errors) => {
+const getGroupeCanteenMealCountError = (canteen, errors) => {
   if (canteen.nombreRepasAn != null) return null
   const messages = [].concat(getFieldError("satellitesNombreRepasAnList", errors) || [])
   return messages.find((message) => message.includes(`« ${canteen.name ?? canteen.id} »`)) || null
@@ -146,6 +145,6 @@ export default {
   getFieldsListFromPage,
   getFieldsListFromGroup,
   getFieldsWithAutofill,
-  getGroupeCanteenError,
+  getGroupeCanteenMealCountError,
   getPageFromFieldsGroup,
 }
