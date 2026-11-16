@@ -75,6 +75,13 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     diagnosticRecap.value = response.status === "error" ? null : response
   }
 
+  /* Refresh the diagnostic */
+  async function refreshDiagnostic() {
+    if (!diagnostic.value) return
+    const response = await diagnosticService.fetchDiagnostic(diagnostic.value.canteenId, diagnostic.value.id, "v2")
+    if (response.status !== "error") setDiagnostic(response)
+  }
+
   /* Fetch the meal count of each canteen of the groupe */
   async function setGroupeCanteensMealCount() {
     groupeCanteensMealCount.value = []
@@ -91,7 +98,10 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const payload = { id, nombreRepasAn }
     const response = await diagnosticService.updateGroupeCanteenMealCount(diagnostic.value.canteenId, diagnostic.value.id, payload)
     if (response.status === "error") useRootStore().notifyServerError(response)
-    else groupeCanteensMealCount.value = response
+    else {
+      groupeCanteensMealCount.value = response
+      await refreshDiagnostic()
+    }
     return response
   }
 
@@ -123,7 +133,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const canteenId = diagnostic.value.canteenId
     const response = await saveVolet(canteenId, volet)
     if (response.status === "error") replaceErrors(response.list)
-    else setDiagnostic({ ...diagnostic.value, ...response })
+    else await refreshDiagnostic()
     await setCanteenAction()
     return response
   }
