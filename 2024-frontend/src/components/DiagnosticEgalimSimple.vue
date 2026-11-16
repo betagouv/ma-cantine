@@ -34,7 +34,6 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
       title="Achats SIQO (hors bio)"
-      badge="Nouveauté loi UPSA"
       :logo="siqoImage"
       logo-alt="Labels SIQO : Label Rouge, AOC, AOP, IGP, STG"
       :documentation="siqoDocumentation"
