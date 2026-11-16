@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import tunnelTeledeclarationService from '@/services/tunnelTeledeclaration.js'
 
 const props = defineProps(["errors"])
 const badge = computed(() => {
@@ -7,6 +8,10 @@ const badge = computed(() => {
   const sentence = count > 1 ? 'erreurs détectées' : 'erreur détectée'
   return `${count} ${sentence}`
 })
+const getFieldLabel = (fieldName) => {
+  const field = tunnelTeledeclarationService.getField(fieldName)
+  return field?.labelRecap || fieldName
+}
 </script>
 
 <template>
@@ -14,7 +19,7 @@ const badge = computed(() => {
   <ul>
     <li v-for="field in errors" :key="field" class="fr-text-default--error">
       <p class="fr-mb-0">
-        erreur sur le champ <span class="ma-cantine--bold">« {{ field }} »</span>
+        erreur sur le champ <span class="ma-cantine--bold">« {{ getFieldLabel(field) }} »</span>
       </p>
     </li>
   </ul>

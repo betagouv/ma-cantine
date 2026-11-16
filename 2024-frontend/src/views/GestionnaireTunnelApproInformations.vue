@@ -30,5 +30,5 @@ const gotTo = () => {
       @click="gotTo"
     />
   </div>
-  <CanteenDisplayInformations :canteen-information="canteenInformations" :canteen-is-groupe="canteenInformations.isGroupe" />
+  <CanteenDisplayInformations :canteen-information="canteenInformations" :canteen-is-groupe="canteenInformations.isGroupe" class="fr-mb-4w" />
 </template>

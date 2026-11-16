@@ -1,4 +1,6 @@
 <script setup>
+import { storeToRefs } from 'pinia'
+import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import TunnelTeledeclarationUPSABanner from '@/components/TunnelTeledeclarationUPSABanner.vue'
 import documentation from '@/data/documentation.json'
@@ -35,6 +37,9 @@ const europeFields = [
   "valeurAutresEurope",
   "valeurBoissonsEurope",
 ]
+
+const storeTeledeclaration = useStoreTeledeclaration()
+const { isComplete } = storeToRefs(storeTeledeclaration)
 </script>
 <template>
   <TunnelTeledeclarationUPSABanner />
@@ -92,7 +97,7 @@ const europeFields = [
       </div>
     </div>
   </div>
-  <div class="fr-mb-6w">
+  <div v-if="!isComplete" class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle title="Total des achats par famille de produits" />
     <p>
       Pour chaque famille de produits renseignée dans les achats origine France ou origine Europe (hors France), vous

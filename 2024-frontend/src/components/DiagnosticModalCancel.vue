@@ -43,7 +43,7 @@ const cancelTeledeclaration = () => {
     <div class="fr-mb-3w">
       Si vous modifiez les informations de votre télédéclaration, son statut repassera automatiquement à
       <DsfrBadge label="À télédéclarer" type="warning" no-icon small />.
-      Une fois vos modifications terminées, pensez à cliquer de nouveau sur le bouton « Valider ma télédéclaration » afin que vos nouvelles données soient prises en compte.
+      Une fois vos modifications terminées, vous devrez les télédéclarer afin que vos nouvelles données soient prises en compte.
     </div>
     <div class="fr-mb-3w">
       Votre cantine repassera alors au statut

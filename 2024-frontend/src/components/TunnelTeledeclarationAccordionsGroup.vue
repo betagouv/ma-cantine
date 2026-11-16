@@ -13,13 +13,12 @@ const route = useRoute()
 const canteenStore = useStoreCanteen()
 const teledeclarationStore = useStoreTeledeclaration()
 const { canteenInformations } = storeToRefs(canteenStore)
-const { diagnostic } = storeToRefs(teledeclarationStore)
+const { isSimple } = storeToRefs(teledeclarationStore)
 
 /* Accordions */
 const activeAccordion = ref()
 const accordions = computed(() => {
   const isGroupe = canteenInformations.value.isGroupe
-  const isSimple = diagnostic.value.diagnosticType === "SIMPLE"
   return [
     {
       title: isGroupe ? "Informations du groupe" : "Informations de la cantine",
@@ -40,7 +39,7 @@ const accordions = computed(() => {
     {
       title: "EGalim",
       to: { name: 'GestionnaireTunnelApproEgalim' },
-      fieldsGroupName: isSimple ? "egalimSimple" : "egalimComplete"
+      fieldsGroupName: isSimple.value ? "egalimSimple" : "egalimComplete"
     },
     {
       title: "Origine France et UE",

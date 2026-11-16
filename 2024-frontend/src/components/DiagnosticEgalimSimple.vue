@@ -34,7 +34,6 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
       title="Achats SIQO (hors bio)"
-      badge="Nouveauté loi UPSA"
       :logo="siqoImage"
       logo-alt="Labels SIQO : Label Rouge, AOC, AOP, IGP, STG"
       :documentation="siqoDocumentation"
@@ -54,6 +53,14 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
     <TunnelTeledeclarationGroupTitle title="Famille de produits « Viandes et volailles fraîches ou surgelées »" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in viandeFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
+        <TunnelTeledeclarationField :name="field" />
+      </div>
+    </div>
+  </div>
+  <div class="fr-mb-6w">
+    <TunnelTeledeclarationGroupTitle title="Famille de produits « Poissons, produits de la mer et de l'aquaculture frais et surgelés »" />
+    <div class="fr-grid-row fr-grid-row--gutters">
+      <div v-for="field in poissonFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
       </div>
     </div>
@@ -81,14 +88,6 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField name="valeurExternalitesPerformance" />
-      </div>
-    </div>
-  </div>
-  <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="Famille de produits « Poissons, produits de la mer et de l'aquaculture frais et surgelés »" />
-    <div class="fr-grid-row fr-grid-row--gutters">
-      <div v-for="field in poissonFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
-        <TunnelTeledeclarationField :name="field" />
       </div>
     </div>
   </div>

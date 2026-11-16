@@ -39,7 +39,7 @@ const localFields = [
 
 /* Définition du local : la distance n'est attendue que pour le périmètre "KM" */
 const storeTeledeclaration = useStoreTeledeclaration()
-const { diagnostic } = storeToRefs(storeTeledeclaration)
+const { diagnostic, isComplete } = storeToRefs(storeTeledeclaration)
 const isDefinitionLocalKm = computed(() => diagnostic.value.definitionLocal === "KM")
 const updateDefinitionLocal = (value) => {
   if (value !== "KM") storeTeledeclaration.setValue("definitionLocalKm", null)
@@ -89,7 +89,7 @@ const updateDefinitionLocal = (value) => {
       </div>
     </div>
   </div>
-  <div class="fr-mb-6w">
+  <div v-if="!isComplete" class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle title="Total des achats par famille de produits" />
     <p>
       Pour chaque famille de produits renseignée dans les achats en circuit court ou en « local », vous devez déclarer
