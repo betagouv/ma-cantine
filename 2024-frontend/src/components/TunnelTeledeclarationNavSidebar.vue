@@ -53,6 +53,7 @@ const goToThematique = (link) => {
           <h2 class="fr-h4 fr-mb-1w">{{ canteen?.name }}</h2>
           <div>
             <AppBadgeCanteen :canteen="canteen" class="fr-mr-1v fr-mb-1v" />
+            <DsfrBadge :label="`ID : ${canteen?.id}`" type="neutral" class="fr-mr-1v fr-mb-1v" />
             <AppBadgeSiretSiren :canteen="canteen" />
           </div>
         </div>
