@@ -9,8 +9,7 @@ import DiagnosticEgalimSimple from "@/components/DiagnosticEgalimSimple.vue"
 import DiagnosticEgalimComplete from "@/components/DiagnosticEgalimComplete.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import TunnelTeledeclarationUPSABanner from "@/components/TunnelTeledeclarationUPSABanner.vue"
-import TunnelTeledeclarationCallout from "@/components/TunnelTeledeclarationCallout.vue"
-import TunnelTeledeclarationLockedInput from "@/components/TunnelTeledeclarationLockedInput.vue"
+import TunnelTeledeclarationCalloutField from "@/components/TunnelTeledeclarationCalloutField.vue"
 import tunnelTeledeclarationService from "@/services/tunnelTeledeclaration.js"
 
 /* Fields names */
@@ -59,12 +58,11 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
         <TunnelTeledeclarationField :name="valeurTotalFieldName" @change="updateCoutRepas" />
       </div>
       <div class="fr-col-12 fr-col-md-6">
-        <TunnelTeledeclarationCallout
+        <TunnelTeledeclarationCalloutField
           class="fr-mb-0"
           text="Estimation du coût moyen par repas servi"
-        >
-          <TunnelTeledeclarationLockedInput :value="coutRepas" label="Estimation du coût moyen par repas servi" />
-        </TunnelTeledeclarationCallout>
+          :value="coutRepas"
+        />
       </div>
     </div>
   </div>
