@@ -1979,6 +1979,7 @@ class DiagnosticGroupeSatellitesNombreRepasAnSumApiTest(APITestCase):
                 self.assertEqual(body["nombreRepasAn"], 5000)
                 self.assertEqual(body["satellitesNombreRepasAnSum"], 3000)
 
+    @freeze_time("2027-01-20")  # during the 2026 campaign (v2: update only during the campaign)
     def test_read_only(self):
         self.client.force_authenticate(user=self.user)
         for url in self.url_list:
@@ -2020,6 +2021,7 @@ class DiagnosticGroupeSatellitesNombreRepasAnListApiTest(APITestCase):
                     [{"id": self.canteen_satellite.id, "nombreRepasAn": 1000}],
                 )
 
+    @freeze_time("2027-01-20")  # during the 2026 campaign (v2: update only during the campaign)
     def test_read_only(self):
         self.client.force_authenticate(user=self.user)
         for url in self.url_list:

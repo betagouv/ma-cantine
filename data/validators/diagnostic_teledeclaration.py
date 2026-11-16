@@ -10,13 +10,14 @@ OUT_OF_CAMPAIGN_ERROR_MESSAGES = {
     "cancel": "Ce n'est pas possible d'annuler une télédéclaration hors de la période de la campagne",
     "import": "Ce n'est pas possible d'importer des bilans hors de la période de la campagne",
     "create": "Ce n'est pas possible de créer un bilan hors de la période de la campagne",
+    "update": "Ce n'est pas possible de modifier un bilan hors de la période de la campagne",
 }
 OUT_OF_CAMPAIGN_ERROR_MESSAGE_DEFAULT = "Cette action n'est pas possible hors de la période de la campagne"
 
 
 def validate_is_in_teledeclaration_or_correction_period(action=None):
     """
-    action: "edit", "teledeclare", "cancel", "import" or "create" for a specific error message, else a generic one
+    action: "edit", "teledeclare", "cancel", "import", "create" or "update" for a specific error message, else a generic one
     """
     if not is_in_teledeclaration_or_correction():
         raise ValidationError(OUT_OF_CAMPAIGN_ERROR_MESSAGES.get(action, OUT_OF_CAMPAIGN_ERROR_MESSAGE_DEFAULT))
