@@ -9,6 +9,7 @@ from api.serializers import (
     DiagnosticV2Serializer,
 )
 from api.views.diagnostic import DiagnosticListCreateView, DiagnosticRetrieveUpdateView
+from data.validators.diagnostic_teledeclaration import validate_is_in_teledeclaration_or_correction_period
 
 # same permissions (session or OAuth2 with the "canteen" scope) as the v1 views they inherit from
 
@@ -21,12 +22,17 @@ from api.views.diagnostic import DiagnosticListCreateView, DiagnosticRetrieveUpd
     ),
     post=extend_schema(
         summary="Créer un nouveau bilan.",
-        description="Un bilan doit être rattaché à une cantine. Les volets se remplissent ensuite via leurs propres endpoints.",
+        description="Un bilan doit être rattaché à une cantine. Les volets se remplissent ensuite via leurs propres endpoints. L'année n'est pas demandée : le bilan est celui de l'année de la campagne en cours (ex : bilan 2026 pendant la campagne de début 2027). La création n'est possible que pendant la campagne (télédéclaration ou correction).",
         tags=["Bilans (v2)"],
     ),
 )
 class DiagnosticV2ListCreateView(DiagnosticListCreateView):
     serializer_class = DiagnosticV2Serializer
+
+    def perform_create(self, serializer):
+        # like the imports: only during the campaign (the year is the current campaign year, see the serializer)
+        validate_is_in_teledeclaration_or_correction_period("create")
+        super().perform_create(serializer)
 
 
 @extend_schema_view(
