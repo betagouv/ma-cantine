@@ -23,9 +23,8 @@ const { canteenInformations } = storeToRefs(canteenStore)
 
 /* Teledeclaration */
 const teledeclarationStore = useStoreTeledeclaration()
-const { diagnosticRecap, hasDiagnostic, canteenAction, isTeledeclared } = storeToRefs(teledeclarationStore)
+const { diagnosticRecap, hasDiagnostic, isTeledeclared } = storeToRefs(teledeclarationStore)
 const year = teledeclarationStore.getYear()
-const canTeledeclare = computed(() => canteenAction.value === "40_teledeclare")
 
 /* Content */
 const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédéclaration ${currentYear}` : `Ma télédéclaration ${currentYear}`)
@@ -33,8 +32,6 @@ const buttonTop = computed(() => {
   switch (true) {
     case isTeledeclared.value:
       return { label: 'Modifier ma télédéclaration', icon: 'fr-icon-edit-line', openModal: true }
-    case canTeledeclare.value:
-      return { label: 'Valider ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproRecapitulatif" }
     case hasDiagnostic.value:
       return { label: 'Reprendre ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproInformations" }
     default:
@@ -81,7 +78,6 @@ const showError = (message) => rootStore.notifyServerError(message)
   </GestionnaireSidebarTitle>
   <DiagnosticModalCancel :opened="showCancelModal" @close="showCancelModal = false" />
 
-  <DsfrAlert v-if="canTeledeclare" class="fr-mb-5w" title="Il reste une étape pour finaliser votre télédéclaration." description="Vos données sont complètes il ne reste qu’à télédéclarer pour qu’elles soient prise en compte." type="info" />
   <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters fr-grid-row--top">
     <div v-if="isTeledeclared" class="fr-col-12 fr-col-md-7">
       <h3 class="fr-h5 fr-mb-4w">Valorisez et partagez vos résultats.</h3>
