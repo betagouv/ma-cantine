@@ -45,34 +45,37 @@ const getPrettyDiagnosticValue = (field) => {
   return prettyValue ?? "Non renseigné"
 }
 
-const getGroupeCanteensRows = () => {
-  return groupeCanteensMealCount.value.map(canteen => {
+const getRowName = (field, canteen) => {
+  if (canteen) {
     const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(canteen))
-    return {
-      name: {
-        label: `${canteen.name} ${siretSiren} (ID : ${canteen.id})`,
-        error: tunnelTeledeclarationService.getGroupeCanteenMealCountError(canteen, diagnosticErrors.value) || "",
-      },
-      value: canteen.nombreRepasAn ?? "Non renseigné",
-    }
-  })
+    return `${canteen.name} ${siretSiren} (ID : ${canteen.id})`
+  }
+  if (props.accordion.isCanteenFields) return field
+  return tunnelTeledeclarationService.getField(field).labelRecap
+}
+
+const getRowValue = (field, canteen) => {
+  if (canteen) return canteen.nombreRepasAn
+  if (props.accordion.isCanteenFields) return canteenInformations.value[field]
+  return getPrettyDiagnosticValue(field)
+}
+
+const getRowError = (field, canteen) => {
+  if (canteen) return tunnelTeledeclarationService.getGroupeCanteenMealCountError(canteen, diagnosticErrors.value)
+  return teledeclarationStore.getErrorMessage(field)
 }
 
 const rows = computed(() => {
   const fields = tunnelTeledeclarationService.getFieldsListFromGroup(props.accordion.fieldsGroupName)
   return fields.flatMap(field => {
-    if (field === "satellitesNombreRepasAnList") return getGroupeCanteensRows()
-    const isCanteen = props.accordion.isCanteenFields
-    const name = isCanteen ? field : tunnelTeledeclarationService.getField(field).labelRecap
-    const value = isCanteen ? canteenInformations.value[field] : getPrettyDiagnosticValue(field)
-    const hasError = teledeclarationStore.isFieldError(field)
-    return {
+    const canteens = field === "satellitesNombreRepasAnList" ? groupeCanteensMealCount.value : [null]
+    return canteens.map(canteen => ({
       name: {
-        label: name,
-        error: hasError ? teledeclarationStore.getErrorMessage(field) : "",
+        label: getRowName(field, canteen),
+        error: getRowError(field, canteen) || "",
       },
-      value: value ?? "Non renseigné",
-    }
+      value: getRowValue(field, canteen) ?? "Non renseigné",
+    }))
   })
 })
 
