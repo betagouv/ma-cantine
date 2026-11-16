@@ -22,6 +22,8 @@ def _fill_required_fields(obj):
         pass
     if obj.year and obj.diagnostic_type and int(obj.year) >= 2026:
         for field_name in Diagnostic.CANTEEN_FIELDS:
+            if field_name == "nombre_repas_an" and obj.canteen_id and obj.canteen.is_groupe:
+                continue  # not required for groupes (see validate_canteen_fields_required)
             if getattr(obj, field_name) is None:
                 setattr(obj, field_name, 0)
 
