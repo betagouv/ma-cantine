@@ -1,6 +1,8 @@
 <script setup>
 import { computed } from "vue"
 import { useRoute, useRouter } from "vue-router"
+import { storeToRefs } from "pinia"
+import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import AppBadgeSiretSiren from "@/components/AppBadgeSiretSiren.vue"
 import AppBadgeCanteen from "@/components/AppBadgeCanteen.vue"
 import AppSeparator from "@/components/AppSeparator.vue"
@@ -12,6 +14,19 @@ const props = defineProps(["canteen", "nav", "active", "displayTeledeclaredBadge
 const router = useRouter()
 const route = useRoute()
 const emit = defineEmits(["save"])
+const storeTeledeclaration = useStoreTeledeclaration()
+const { diagnostic, isSimple, isComplete } = storeToRefs(storeTeledeclaration)
+
+/* Badge */
+const diagnosticTypeLabel = computed(() => {
+  const isSaisieVisited = storeTeledeclaration.isPageVisited({ slug: "saisie", volet: "approvisionnement" })
+  if (!diagnostic.value?.diagnosticType || !isSaisieVisited) return null
+  let label = "saisie "
+  if (isSimple.value) label += "simplifiée"
+  if (isComplete.value) label += "détaillée"
+  if (diagnostic.value.generatedFromPurchases) label += " : osa"
+  return label
+})
 
 /* Navigation */
 const generateNav = (name) => {
@@ -60,6 +75,10 @@ const goToThematique = (link) => {
         <AppSeparator class="fr-mb-2w" />
         <div>
           <h3 class="fr-text--sm ma-cantine--text-uppercase fr-mb-1w">Approvisionnements</h3>
+          <div v-if="diagnosticTypeLabel" class="fr-grid-row fr-mb-2w fr-mt-n1w">
+            <p class="fr-mb-0 fr-mr-1v fr-text--bold fr-text--sm">Mode de saisie</p>
+            <DsfrBadge :label="diagnosticTypeLabel" no-icon type="info" small />
+          </div>
           <DsfrBadge v-if="displayTeledeclaredBadge" label="Télédéclaré" type="success" />
           <nav v-else class="tunnel-teledeclaration-nav-sidebar__nav">
             <DsfrButton
