@@ -1,6 +1,7 @@
 <script setup>
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
+import TunnelTeledeclarationButtonReset from "@/components/TunnelTeledeclarationButtonReset.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 
@@ -46,6 +47,7 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
           </li>
         </ul>
       </AppHelpCard>
+      <TunnelTeledeclarationButtonReset />
     </div>
   </div>
   <div class="fr-mb-6w ma-cantine--fields-group">

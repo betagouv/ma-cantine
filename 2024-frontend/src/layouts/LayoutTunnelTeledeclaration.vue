@@ -31,7 +31,7 @@ const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const teledeclarationStore = useStoreTeledeclaration()
-const { isTeledeclared } = storeToRefs(teledeclarationStore)
+const { isTeledeclared, forceRenderRefresh } = storeToRefs(teledeclarationStore)
 const purchaseSummaryStore = useStorePurchaseSummary()
 
 /* Navigation */
@@ -147,12 +147,6 @@ onMounted(() => window.addEventListener("beforeunload", quitBrowser))
 onBeforeUnmount(() => window.removeEventListener("beforeunload", quitBrowser))
 onBeforeRouteLeave(quitTunnel)
 
-const forceRender = ref(0)
-const resetVolet = () => {
-  teledeclarationStore.resetVolet(route.meta.volet)
-  forceRender.value++
-}
-
 /* Navigation */
 const goTo = (page) => {
   showModal.value = false
@@ -170,15 +164,7 @@ const goTo = (page) => {
         <TunnelTeledeclarationNavApprovisionnements v-else-if="!hideTopNav" @save="save" />
         <div class="fr-mt-2w fr-pl-0 fr-pl-md-4w">
           <DsfrStepper v-if="hasStepper" :title="routeTitle" :steps="steps" :current-step="stepIndex" />
-          <RouterView :key="forceRender" />
-          <div v-if="isThematiques" class="ma-cantine--text-center fr-my-6w">
-            <DsfrButton
-              tertiary
-              icon="fr-icon-delete-line"
-              label="Réinitialiser ma saisie"
-              @click="resetVolet()"
-            />
-          </div>
+          <RouterView :key="forceRenderRefresh" />
         </div>
       </div>
     </div>
