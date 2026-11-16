@@ -6,8 +6,8 @@ const props = defineProps(["text", "mention", "inline"])
   <DsfrCallout class="tunnel-teledeclaration-callout">
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
       <div class="fr-col-12" :class="{ 'fr-col-md-10': props.inline }">
-        <p class="fr-mb-0">{{ props.text }}</p>
-        <p v-if="mention" class="fr-text--sm fr-text-mention--grey fr-mb-0">{{ props.mention }}</p>
+        <p class="fr-mb-0">{{ text }}</p>
+        <p v-if="mention" class="fr-text--sm fr-text-mention--grey fr-mb-0">{{ mention }}</p>
       </div>
       <div class="fr-col-12" :class="{ 'fr-col-md-2': props.inline }">
         <slot />
