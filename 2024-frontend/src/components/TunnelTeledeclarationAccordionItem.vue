@@ -51,7 +51,7 @@ const getGroupeCanteensRows = () => {
     return {
       name: {
         label: `${canteen.name} ${siretSiren} (ID : ${canteen.id})`,
-        error: tunnelTeledeclarationService.getGroupeCanteenError(canteen, diagnosticErrors.value) || "",
+        error: tunnelTeledeclarationService.getGroupeCanteenMealCountError(canteen, diagnosticErrors.value) || "",
       },
       value: canteen.nombreRepasAn ?? "Non renseigné",
     }
