@@ -117,6 +117,7 @@ const getFieldsListFromGroup = (groupName) => {
     ...groups.informationsCantine,
     ...groups.informationsGroupe,
     ...groups.couverts,
+    ...groups.couvertsGroupe,
     ...groups.saisie,
     ...groups.egalimSimple,
     ...groups.egalimComplete,
