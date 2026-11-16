@@ -5,7 +5,7 @@ import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { formatNumber } from "@/utils"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
-import TunnelTeledeclarationLockedInput from "@/components/TunnelTeledeclarationLockedInput.vue"
+import TunnelTeledeclarationCalloutField from "@/components/TunnelTeledeclarationCalloutField.vue"
 import CanteensTableCouvertsGroupe from "@/components/CanteensTableCouvertsGroupe.vue"
 
 const teledeclarationStore = useStoreTeledeclaration()
@@ -45,17 +45,11 @@ const nombreRepasAnSentence = computed(() => {
         <span class="fr-text--bold">{{ nombreRepasAnSentence.count }}</span> {{ nombreRepasAnSentence.text }}
       </p>
     </DsfrAlert>
-    <div class="fr-callout ma-cantine--callout-border-top">
-      <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
-        <div class="fr-col-12 fr-col-md-10">
-          <p class="fr-mb-0">Total des couverts annuels répartis entre vos cantines</p>
-          <p class="fr-text--sm fr-text-mention--grey fr-mb-0">À partir des données couverts de chaque restaurant</p>
-        </div>
-        <div class="fr-col-12 fr-col-md-2">
-          <TunnelTeledeclarationLockedInput :value="diagnostic?.satellitesNombreRepasAnSum" label="Total des couverts annuels répartis entre vos cantines" />
-        </div>
-      </div>
-    </div>
+    <TunnelTeledeclarationCalloutField
+      text="Total des couverts annuels répartis entre vos cantines"
+      mention="À partir des données couverts de chaque restaurant"
+      :value="diagnostic?.satellitesNombreRepasAnSum"
+    />
     <CanteensTableCouvertsGroupe />
   </div>
 </template>
