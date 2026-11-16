@@ -3,16 +3,29 @@ import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import { useStoreCanteen } from '@/stores/canteen'
+import { formatNumber } from '@/utils'
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import TunnelTeledeclarationAccordionsGroup from '@/components/TunnelTeledeclarationAccordionsGroup.vue'
 import TunnelTeledeclarationModal from '@/components/TunnelTeledeclarationModal.vue'
+import TunnelTeledeclarationMealCostField from '@/components/TunnelTeledeclarationMealCostField.vue'
 
 /* Stores */
 const teledeclarationStore = useStoreTeledeclaration()
-const { canBeTeledeclared } = storeToRefs(teledeclarationStore)
+const { diagnostic, canBeTeledeclared } = storeToRefs(teledeclarationStore)
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const isGroupe = computed(() => canteenInformations.value.isGroupe)
+
+/* Introduction */
+const introduction = computed(() => {
+  const mealCount = isGroupe.value ? diagnostic.value?.satellitesNombreRepasAnSum : diagnostic.value?.nombreRepasAn
+  const satellitesCount = canteenInformations.value.satellitesCount
+  return {
+    valeurTotale: formatNumber(diagnostic.value?.valeurTotale),
+    couverts: `${formatNumber(mealCount)}\u00A0${mealCount > 1 ? 'couverts' : 'couvert'}`,
+    restaurants: `${satellitesCount}\u00A0${satellitesCount > 1 ? 'restaurants' : 'restaurant'}`,
+  }
+})
 
 /* TD CTA */
 const sentence = computed(() => {
@@ -29,6 +42,15 @@ const isModalOpened = ref(false)
       <div class="fr-col-12 fr-col-md-7">
         <h2 class="fr-h5">Votre télédéclaration vous semble t’elle cohérente ?</h2>
         <p v-if="canBeTeledeclared">Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
+        <TunnelTeledeclarationMealCostField>
+          <template #introduction>
+            <p class="fr-mb-2w">
+              Vous allez déclarer <span class="fr-text--bold">{{ introduction.valeurTotale }}&nbsp;€&nbsp;HT d’achat</span>
+              <template v-if="isGroupe"> pour les <span class="fr-text--bold">{{ introduction.restaurants }}</span> de votre groupe, rassemblant <span class="fr-text--bold">{{ introduction.couverts }}</span>.</template>
+              <template v-else> pour <span class="fr-text--bold">{{ introduction.couverts }}</span>.</template>
+            </p>
+          </template>
+        </TunnelTeledeclarationMealCostField>
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard

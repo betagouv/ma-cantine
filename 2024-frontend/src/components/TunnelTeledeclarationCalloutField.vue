@@ -6,6 +6,7 @@ defineProps(["text", "mention", "value"])
 
 <template>
   <DsfrCallout class="tunnel-teledeclaration-callout-field">
+    <slot name="introduction" />
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--middle">
       <div class="fr-col-12 fr-col-md-7">
         <p class="fr-mb-0">{{ text }}</p>

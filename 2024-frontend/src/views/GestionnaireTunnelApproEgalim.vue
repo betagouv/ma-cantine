@@ -1,5 +1,4 @@
 <script setup>
-import { computed } from "vue"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { storeToRefs } from "pinia"
 import documentation from "@/data/documentation.json"
@@ -9,20 +8,16 @@ import DiagnosticEgalimSimple from "@/components/DiagnosticEgalimSimple.vue"
 import DiagnosticEgalimComplete from "@/components/DiagnosticEgalimComplete.vue"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import TunnelTeledeclarationUPSABanner from "@/components/TunnelTeledeclarationUPSABanner.vue"
-import TunnelTeledeclarationCalloutField from "@/components/TunnelTeledeclarationCalloutField.vue"
+import TunnelTeledeclarationMealCostField from "@/components/TunnelTeledeclarationMealCostField.vue"
 import tunnelTeledeclarationService from "@/services/tunnelTeledeclaration.js"
 
 /* Fields names */
 const valeurTotalFieldName = tunnelTeledeclarationService.getFieldsListFromGroup("valeurTotale")[0]
-const coutRepasFieldName = tunnelTeledeclarationService.getFieldsListFromGroup("coutRepas")[0]
+const onChangeTotalField = async () => await storeTeledeclaration.saveMealCost()
 
 /* Teledeclaration */
 const storeTeledeclaration = useStoreTeledeclaration()
-const { diagnostic, isSimple, isComplete } = storeToRefs(storeTeledeclaration)
-
-/* Meal count */
-const coutRepas = computed(() => diagnostic.value[coutRepasFieldName] || '-')
-const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
+const { isSimple, isComplete } = storeToRefs(storeTeledeclaration)
 </script>
 <template>
   <TunnelTeledeclarationUPSABanner />
@@ -55,14 +50,10 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
     <h3 class="fr-h5">Total des achats</h3>
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top">
       <div class="fr-col-12 fr-col-md-6">
-        <TunnelTeledeclarationField :name="valeurTotalFieldName" @change="updateCoutRepas" />
+        <TunnelTeledeclarationField :name="valeurTotalFieldName" @change="onChangeTotalField" />
       </div>
       <div class="fr-col-12 fr-col-md-6">
-        <TunnelTeledeclarationCalloutField
-          class="fr-mb-0"
-          text="Estimation du coût moyen par repas servi"
-          :value="coutRepas"
-        />
+        <TunnelTeledeclarationMealCostField class="fr-mb-0" />
       </div>
     </div>
   </div>
