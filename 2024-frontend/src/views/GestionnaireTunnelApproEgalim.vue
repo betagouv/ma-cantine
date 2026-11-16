@@ -61,7 +61,6 @@ const updateCoutRepas = async () => await storeTeledeclaration.updateMealCount()
       <div class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationCallout
           class="fr-mb-0"
-          :col-sizes="{ left: 7, right: 5 }"
           text="Estimation du coût moyen par repas servi"
         >
           <TunnelTeledeclarationLockedInput :value="coutRepas" label="Estimation du coût moyen par repas servi" />

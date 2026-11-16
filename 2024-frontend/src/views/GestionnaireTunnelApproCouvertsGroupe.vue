@@ -47,7 +47,6 @@ const nombreRepasAnSentence = computed(() => {
       </p>
     </DsfrAlert>
     <TunnelTeledeclarationCallout
-      :col-sizes="{ left: 10, right: 2 }"
       text="Total des couverts annuels répartis entre vos cantines"
       mention="À partir des données couverts de chaque restaurant"
     >
