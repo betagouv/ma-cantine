@@ -61,8 +61,10 @@ const tableRows = computed(() => {
 })
 
 /* Actions */
-const updateMealCount = (id, value) => {
-  console.log("change", value)
+const updateMealCount = async (id, value) => {
+  const nombreRepasAn = value === "" ? null : Number(value)
+  const response = await teledeclarationStore.updateGroupCanteenMealCount(id, nombreRepasAn)
+  errors.value[id] = response?.status === "error" ? response.message : null
 }
 </script>
 

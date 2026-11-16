@@ -85,6 +85,16 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     }
   }
 
+  /* Update the meal count of one canteen of the groupe */
+  async function updateGroupCanteenMealCount(id, nombreRepasAn) {
+    if (!diagnostic.value) return
+    const payload = { id, nombreRepasAn }
+    const response = await diagnosticService.updateGroupeCanteenMealCount(diagnostic.value.canteenId, diagnostic.value.id, payload)
+    if (response.status === "error") useRootStore().notifyServerError(response)
+    else groupeCanteensMealCount.value = response
+    return response
+  }
+
   /* Teledeclare diagnostic */
   async function teledeclare() {
     if (!diagnostic.value) return
@@ -358,6 +368,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     resetVolet,
     saveDiagnostic,
     updateMealCount,
+    updateGroupCanteenMealCount,
     autofillDiagnostic,
     setSelectAutofill,
     markPageAsVisited,
