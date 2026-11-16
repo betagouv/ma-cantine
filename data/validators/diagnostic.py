@@ -150,7 +150,8 @@ def validate_satellites_nombre_repas_an_list(instance):
             )
 
     # the groupe's nombre_repas_an must be equal to the sum
-    satellites_nombre_repas_an_sum = instance.satellites_nombre_repas_an_sum
+    # computed from the list (the stored field is only updated on save, e.g. admin form)
+    satellites_nombre_repas_an_sum = instance.compute_satellites_nombre_repas_an_sum()
     if (
         instance.nombre_repas_an is not None
         and satellites_nombre_repas_an_sum is not None
