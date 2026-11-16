@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import { useStoreCanteen } from '@/stores/canteen'
+import { formatNumber } from '@/utils'
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import TunnelTeledeclarationAccordionsGroup from '@/components/TunnelTeledeclarationAccordionsGroup.vue'
 import TunnelTeledeclarationModal from '@/components/TunnelTeledeclarationModal.vue'
@@ -10,10 +11,21 @@ import TunnelTeledeclarationMealCostField from '@/components/TunnelTeledeclarati
 
 /* Stores */
 const teledeclarationStore = useStoreTeledeclaration()
-const { canBeTeledeclared } = storeToRefs(teledeclarationStore)
+const { diagnostic, canBeTeledeclared } = storeToRefs(teledeclarationStore)
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const isGroupe = computed(() => canteenInformations.value.isGroupe)
+
+/* Introduction */
+const introduction = computed(() => {
+  const valeurTotale = `${formatNumber(diagnostic.value?.valeurTotale)} € HT`
+  const mealCount = isGroupe.value ? diagnostic.value?.satellitesNombreRepasAnSum : diagnostic.value?.nombreRepasAn
+  const couverts = `${formatNumber(mealCount)} ${mealCount > 1 ? 'couverts' : 'couvert'}`
+  if (!isGroupe.value) return `Vous allez déclarer ${valeurTotale} d’achat pour ${couverts}.`
+  const satellitesCount = canteenInformations.value.satellitesCount
+  const restaurants = `${satellitesCount} ${satellitesCount > 1 ? 'restaurants' : 'restaurant'}`
+  return `Vous allez déclarer ${valeurTotale} d’achat pour les ${restaurants} de votre groupe, rassemblant ${couverts}.`
+})
 
 /* TD CTA */
 const sentence = computed(() => {
@@ -30,7 +42,11 @@ const isModalOpened = ref(false)
       <div class="fr-col-12 fr-col-md-7">
         <h2 class="fr-h5">Votre télédéclaration vous semble t’elle cohérente ?</h2>
         <p v-if="canBeTeledeclared">Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
-        <TunnelTeledeclarationMealCostField />
+        <TunnelTeledeclarationMealCostField>
+          <template #introduction>
+            <p class="fr-mb-2w">{{ introduction }}</p>
+          </template>
+        </TunnelTeledeclarationMealCostField>
       </div>
       <div class="fr-col-12 fr-col-md-5">
         <AppHelpCard
