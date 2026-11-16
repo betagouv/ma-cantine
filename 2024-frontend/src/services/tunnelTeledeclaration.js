@@ -19,7 +19,7 @@ const getRequiredApproProps = ({ SIMPLE, COMPLETE }) => {
 
 const getHintApproProps = (customisation, config) => {
   if (customisation.hint) return customisation.hint
-  return config.index_metier ? `${config.index_metier} : ${config.verbose_name}` : undefined
+  return config.index_metier || undefined
 }
 
 const generateApproFields = () => {

@@ -51,7 +51,8 @@ const getRowName = (field, canteen) => {
     return `${canteen.name} ${siretSiren} (ID : ${canteen.id})`
   }
   if (props.accordion.isCanteenFields) return field
-  return tunnelTeledeclarationService.getField(field).labelRecap
+  const { labelRecap, hint } = tunnelTeledeclarationService.getField(field)
+  return hint ? `${labelRecap} (${hint})` : labelRecap
 }
 
 const getRowValue = (field, canteen) => {
