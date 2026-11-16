@@ -220,3 +220,18 @@ models:
         description: End date of the correction period.
       - name: statut_dates
         description: observe (dates observed) or previsionnel (planned dates).
+
+  - name: stg_purchases
+    description: >
+      One row per active purchase entered in the purchase tracking tool (OSA), soft-deleted
+      purchases excluded. `purchase_date` is the date of the purchase, `creation_date` the date it
+      was entered (UTC).
+    columns:
+      - name: purchase_id
+        description: Primary key.
+        tests:
+          - unique
+          - not_null
+      - name: canteen_id
+        tests:
+          - not_null
