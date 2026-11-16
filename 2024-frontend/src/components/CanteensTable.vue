@@ -1,5 +1,7 @@
 <script setup>
 import { computed } from "vue"
+import { storeToRefs } from "pinia"
+import { useStoreCampaignDates } from "@/stores/campaignDates.js"
 import urlService from "@/services/urls.js"
 import canteensTableService from "@/services/canteensTable.js"
 import AppRawHTML from "@/components/AppRawHTML.vue"
@@ -10,6 +12,11 @@ import AppBadgeDiagnostic from "@/components/AppBadgeDiagnostic.vue"
 const props = defineProps(["canteens"])
 const lastYear = window.TELEDECLARATION_YEAR
 const minPagination = 50
+
+/* Campaign */
+const campaignDatesStore = useStoreCampaignDates()
+const { currentCampaignIsOpen } = storeToRefs(campaignDatesStore)
+const canteenLinkName = computed(() => currentCampaignIsOpen.value ? "GestionnaireCantineTeledeclarationEnCours" : "GestionnaireCantine")
 
 /* Table */
 const showPagination = computed(() => props.canteens.length > minPagination)
@@ -105,7 +112,7 @@ const getDropdownLinks = (canteen) => {
       <template v-if="colKey === 'name'">
         <p>
           <router-link
-            :to="{ name: 'GestionnaireCantine', params: { canteenUrlComponent: cell.url } }"
+            :to="{ name: canteenLinkName, params: { canteenUrlComponent: cell.url } }"
             class="fr-text-title--blue-france fr-text--bold"
           >
             {{ cell.name }}
