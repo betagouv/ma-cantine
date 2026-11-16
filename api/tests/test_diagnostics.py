@@ -1794,6 +1794,8 @@ class DiagnosticSatellitesNombreRepasAnApiTest(APITestCase):
             name="A", production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
         )
         cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user])
+        # no prefill on creation (see Diagnostic.sync_satellites_nombre_repas_an_list)
+        Canteen.objects.filter(groupe=cls.canteen_groupe).update(yearly_meal_count=None)
 
     def setUp(self):
         self.diagnostic_groupe = DiagnosticFactory(
@@ -2045,6 +2047,8 @@ class DiagnosticGroupeSatellitesNombreRepasAnCheckApiTest(APITestCase):
         cls.canteen_satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
         )
+        # no prefill on creation (see Diagnostic.sync_satellites_nombre_repas_an_list)
+        Canteen.objects.filter(groupe=cls.canteen_groupe).update(yearly_meal_count=None)
 
     def test_check_returns_the_satellites_errors(self):
         self.client.force_authenticate(user=self.user)

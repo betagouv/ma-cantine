@@ -848,7 +848,8 @@ class Diagnostic(
     def sync_satellites_nombre_repas_an_list(self):
         """
         [NEW in 2026] Groupe: satellites_nombre_repas_an_list always contains exactly the satellites of the groupe
-        - keep the existing value of each satellite, None for the new satellites
+        - keep the existing value of each satellite
+        - new satellites (or on the diagnostic's creation): prefilled with their yearly_meal_count
         - remove the canteens that are not (or no longer) satellites of the groupe
         - not a groupe (or before 2026): empty list
         - called in save() (except if the diagnostic is already teledeclared: the list is frozen)
@@ -865,8 +866,10 @@ class Diagnostic(
             if isinstance(item, dict) and "id" in item
         }
         self.satellites_nombre_repas_an_list = [
-            {"id": satellite_id, "nombre_repas_an": current_values.get(satellite_id)}
-            for satellite_id in self.canteen.satellites.order_by("id").values_list("id", flat=True)
+            {"id": satellite_id, "nombre_repas_an": current_values.get(satellite_id, satellite_yearly_meal_count)}
+            for satellite_id, satellite_yearly_meal_count in self.canteen.satellites.order_by("id").values_list(
+                "id", "yearly_meal_count"
+            )
         ]
 
     def populate_computed_fields(self):

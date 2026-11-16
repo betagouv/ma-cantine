@@ -1076,24 +1076,34 @@ class DiagnosticGroupeSatellitesNombreRepasAnListSyncTest(TestCase):
     def setUpTestData(cls):
         cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
         cls.canteen_satellite_1 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe, yearly_meal_count=1100
         )
         cls.canteen_satellite_2 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe, yearly_meal_count=1200
         )
         cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
 
-    def test_save_prefills_the_satellites_with_empty_values(self):
+    def test_creation_prefills_the_satellites_with_their_yearly_meal_count(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026)
         self.assertEqual(
             diagnostic.satellites_nombre_repas_an_list,
             [
-                {"id": self.canteen_satellite_1.id, "nombre_repas_an": None},
-                {"id": self.canteen_satellite_2.id, "nombre_repas_an": None},
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": 1100},
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": 1200},
             ],
         )
 
-    def test_save_keeps_the_existing_values(self):
+    def test_creation_prefills_with_empty_value_if_no_yearly_meal_count(self):
+        canteen_satellite_3 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe
+        )
+        Canteen.objects.filter(id=canteen_satellite_3.id).update(yearly_meal_count=None)  # skip validation
+        diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026)
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an_list[-1], {"id": canteen_satellite_3.id, "nombre_repas_an": None}
+        )
+
+    def test_creation_keeps_the_values_given(self):
         diagnostic = DiagnosticFactory(
             canteen=self.canteen_groupe,
             year=2026,
@@ -1102,8 +1112,8 @@ class DiagnosticGroupeSatellitesNombreRepasAnListSyncTest(TestCase):
         self.assertEqual(
             diagnostic.satellites_nombre_repas_an_list,
             [
-                {"id": self.canteen_satellite_1.id, "nombre_repas_an": None},
-                {"id": self.canteen_satellite_2.id, "nombre_repas_an": 2000},
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": 1100},  # prefilled
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": 2000},  # kept
             ],
         )
 
@@ -1120,12 +1130,12 @@ class DiagnosticGroupeSatellitesNombreRepasAnListSyncTest(TestCase):
             diagnostic.satellites_nombre_repas_an_list,
             [
                 {"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000},
-                {"id": self.canteen_satellite_2.id, "nombre_repas_an": None},
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": 1200},
             ],
         )
         # a satellite leaves the groupe, a new one joins
         canteen_satellite_3 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe, yearly_meal_count=1300
         )
         self.canteen_satellite_1.groupe = None
         self.canteen_satellite_1.save()
@@ -1134,8 +1144,8 @@ class DiagnosticGroupeSatellitesNombreRepasAnListSyncTest(TestCase):
         self.assertEqual(
             diagnostic.satellites_nombre_repas_an_list,
             [
-                {"id": self.canteen_satellite_2.id, "nombre_repas_an": None},
-                {"id": canteen_satellite_3.id, "nombre_repas_an": None},
+                {"id": self.canteen_satellite_2.id, "nombre_repas_an": 1200},
+                {"id": canteen_satellite_3.id, "nombre_repas_an": 1300},  # prefilled
             ],
         )
 
@@ -1199,6 +1209,8 @@ class DiagnosticGroupeSatellitesNombreRepasAnValidatorTest(TestCase):
             name="Satellite 2", production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
         )
         cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        # no prefill on creation (see sync_satellites_nombre_repas_an_list)
+        Canteen.objects.filter(groupe=cls.canteen_groupe).update(yearly_meal_count=None)
 
     def _validate(self, canteen, year=2026, nombre_repas_an=None, value_1=None, value_2=None):
         diagnostic = Diagnostic(
