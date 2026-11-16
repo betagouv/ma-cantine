@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
+import { useStoreCanteen } from '@/stores/canteen'
 import AppHelpCard from '@/components/AppHelpCard.vue'
 import TunnelTeledeclarationAccordionsGroup from '@/components/TunnelTeledeclarationAccordionsGroup.vue'
 import TunnelTeledeclarationModal from '@/components/TunnelTeledeclarationModal.vue'
@@ -9,9 +10,16 @@ import TunnelTeledeclarationModal from '@/components/TunnelTeledeclarationModal.
 /* Stores */
 const teledeclarationStore = useStoreTeledeclaration()
 const { canBeTeledeclared } = storeToRefs(teledeclarationStore)
+const canteenStore = useStoreCanteen()
+const { canteenInformations } = storeToRefs(canteenStore)
+const isGroupe = computed(() => canteenInformations.value.isGroupe)
 
 /* TD CTA */
-const sentence = computed(() => canBeTeledeclared.value ? "Je valide ma déclaration et la publication des données sur mon espace vitrine" : "Vous devez corriger votre télédéclaration pour la télédéclarer")
+const sentence = computed(() => {
+  if (!canBeTeledeclared.value) return "Vous devez corriger votre télédéclaration pour la télédéclarer"
+  if (isGroupe.value) return "Je valide ma télédéclaration"
+  return "Je valide ma télédéclaration et la publication des données sur ma page publique"
+})
 const icon = computed(() => canBeTeledeclared.value ? "fr-icon-checkbox-circle-fill fr-text-default--success" : "fr-icon-checkbox-line fr-text-mention--grey")
 const isModalOpened = ref(false)
 </script>
