@@ -20,6 +20,7 @@ const canteenStore = useStoreCanteen()
 const router = useRouter()
 const currentYear = new Date().getFullYear()
 const { canteenInformations } = storeToRefs(canteenStore)
+const isConceded = computed(() => canteenInformations.value.managementType === "conceded")
 
 /* Teledeclaration */
 const teledeclarationStore = useStoreTeledeclaration()
@@ -105,9 +106,12 @@ const showError = (message) => rootStore.notifyServerError(message)
             <a :href="documentation.teledeclarationMatrice" target="_blank">La matrice de télédéclaration</a>
           </li>
           <li class="fr-mb-1w">
-            <a :href="documentation.teledeclarationChecklist" target="_blank">L’antisèche</a>
+            <a :href="documentation.teledeclarationAntiseche" target="_blank">L’antisèche</a>
           </li>
           <li class="fr-mb-1w">
+            <a :href="documentation.teledeclarationKit" target="_blank">Kit du télédéclarant</a>
+          </li>
+          <li v-if="isConceded" class="fr-mb-1w">
             <a :href="documentation.gestionConcedee" target="_blank">Gestion concédée : bien m’organiser</a>
           </li>
         </ul>

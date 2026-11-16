@@ -39,9 +39,6 @@ const { isSimple, isComplete } = storeToRefs(storeTeledeclaration)
           <li class="fr-mb-1w">
             <a :href="documentation.teledeclarationAntiseche" target="_blank">Antisèche</a>
           </li>
-          <li class="fr-mb-1w">
-            <a :href="documentation.teledeclarationKit" target="_blank">Kit du télédéclarant</a>
-          </li>
         </ul>
       </AppHelpCard>
     </div>
