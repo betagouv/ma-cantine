@@ -1,12 +1,12 @@
 <script setup>
-const props = defineProps(["value", "label"])
+defineProps(["value", "label"])
 </script>
 
 <template>
   <div class="tunnel-teledeclaration-locked-input">
     <DsfrInput
-      :model-value="props.value"
-      :label="props.label"
+      :model-value="value"
+      :label="label"
       :label-visible="false"
       wrapper-class="fr-input-wrap fr-icon-lock-fill"
       readonly
