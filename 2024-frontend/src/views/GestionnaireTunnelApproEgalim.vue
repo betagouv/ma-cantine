@@ -36,8 +36,11 @@ const { isSimple, isComplete } = storeToRefs(storeTeledeclaration)
           <li class="fr-mb-1w">
             <a :href="`${documentation.qualiteDurabiliteProduits}/#1-les-12-categories-egalim`" target="_blank">Les 12 catégories</a>
           </li>
-          <li class="fr-mb-1w">
-            <a :href="documentation.teledeclarationAntiseche" target="_blank">Antisèche</a>
+          <li v-if="isSimple" class="fr-mb-1w">
+            <a :href="documentation.teledeclarationAntisecheSimplifiee" target="_blank">Antisèche</a>
+          </li>
+          <li v-else-if="isComplete" class="fr-mb-1w">
+            <a :href="documentation.teledeclarationAntisecheDetaillee" target="_blank">Antisèche</a>
           </li>
         </ul>
       </AppHelpCard>
