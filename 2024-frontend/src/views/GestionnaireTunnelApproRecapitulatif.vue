@@ -18,13 +18,13 @@ const isGroupe = computed(() => canteenInformations.value.isGroupe)
 
 /* Introduction */
 const introduction = computed(() => {
-  const valeurTotale = `${formatNumber(diagnostic.value?.valeurTotale)} € HT`
   const mealCount = isGroupe.value ? diagnostic.value?.satellitesNombreRepasAnSum : diagnostic.value?.nombreRepasAn
-  const couverts = `${formatNumber(mealCount)} ${mealCount > 1 ? 'couverts' : 'couvert'}`
-  if (!isGroupe.value) return `Vous allez déclarer ${valeurTotale} d’achat pour ${couverts}.`
   const satellitesCount = canteenInformations.value.satellitesCount
-  const restaurants = `${satellitesCount} ${satellitesCount > 1 ? 'restaurants' : 'restaurant'}`
-  return `Vous allez déclarer ${valeurTotale} d’achat pour les ${restaurants} de votre groupe, rassemblant ${couverts}.`
+  return {
+    valeurTotale: formatNumber(diagnostic.value?.valeurTotale),
+    couverts: `${formatNumber(mealCount)}\u00A0${mealCount > 1 ? 'couverts' : 'couvert'}`,
+    restaurants: `${satellitesCount}\u00A0${satellitesCount > 1 ? 'restaurants' : 'restaurant'}`,
+  }
 })
 
 /* TD CTA */
@@ -44,7 +44,11 @@ const isModalOpened = ref(false)
         <p v-if="canBeTeledeclared">Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
         <TunnelTeledeclarationMealCostField>
           <template #introduction>
-            <p class="fr-mb-2w">{{ introduction }}</p>
+            <p class="fr-mb-2w">
+              Vous allez déclarer <span class="fr-text--bold">{{ introduction.valeurTotale }}&nbsp;€&nbsp;HT d’achat</span>
+              <template v-if="isGroupe"> pour les <span class="fr-text--bold">{{ introduction.restaurants }}</span> de votre groupe, rassemblant <span class="fr-text--bold">{{ introduction.couverts }}</span>.</template>
+              <template v-else> pour <span class="fr-text--bold">{{ introduction.couverts }}</span>.</template>
+            </p>
           </template>
         </TunnelTeledeclarationMealCostField>
       </div>
