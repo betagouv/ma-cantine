@@ -1,9 +1,11 @@
 <script setup>
 import { computed, ref } from "vue"
 import { storeToRefs } from "pinia"
+import { useRoute } from "vue-router"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { formatSiretOrSiren } from "@/utils"
 import canteensTableService from "@/services/canteensTable.js"
+import tunnelTeledeclarationService from "@/services/tunnelTeledeclaration"
 
 /* Settings */
 const minPagination = 50
@@ -11,6 +13,8 @@ const teledeclarationStore = useStoreTeledeclaration()
 const { groupeCanteensMealCount } = storeToRefs(teledeclarationStore)
 const showPagination = computed(() => groupeCanteensMealCount.value.length > minPagination)
 const errors = ref({})
+const route = useRoute()
+const displayedErrors = computed(() => teledeclarationStore.getDisplayedErrors(route.meta))
 
 /* Total */
 const canteenSentence = computed(() => {
@@ -24,37 +28,44 @@ const tableHeaders = [
   {
     key: "name",
     label: "Nom de la cantine",
+    headerAttrs: { style: { width: "30%" } },
   },
   {
     key: "siretSiren",
     label: "SIRET / SIREN",
+    headerAttrs: { style: { width: "15%" } },
   },
   {
     key: "id",
     label: "ID",
+    headerAttrs: { style: { width: "10%" } },
   },
   {
     key: "status",
     label: "Statut",
+    headerAttrs: { style: { width: "15%" } },
   },
   {
     key: "mealCount",
     label: "Couverts / an",
+    headerAttrs: { style: { width: "30%" } },
   },
 ]
 
 const tableRows = computed(() => {
   return groupeCanteensMealCount.value.map((canteen) => {
     const canteenSiretOrSiren = canteensTableService.getSiretOrSirenInfos(canteen)
+    const error = errors.value[canteen.id] || tunnelTeledeclarationService.getGroupeCanteenMealCountError(canteen, displayedErrors.value)
     return {
       name: canteen.name,
       siretSiren: formatSiretOrSiren(canteenSiretOrSiren),
       id: canteen.id,
-      status: "",
+      status: error ? "Erreur" : "",
       mealCount: {
         id: canteen.id,
         name: canteen.name,
         value: canteen.nombreRepasAn,
+        error,
       },
     }
   })
@@ -79,11 +90,15 @@ const updateMealCount = async (id, value) => {
     :pagination="showPagination"
     :pagination-options="[minPagination, 100, 200]"
     :rows-per-page="minPagination"
+    class="canteens-table-couverts-groupe"
     pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
   >
     <template #cell="{ colKey, cell }">
       <template v-if="colKey === 'name'">
         <span class="fr-text--bold">{{ cell }}</span>
+      </template>
+      <template v-else-if="colKey === 'status'">
+        <DsfrBadge v-if="cell" :label="cell" type="error" small />
       </template>
       <template v-else-if="colKey === 'mealCount'">
         <DsfrInputGroup
@@ -93,7 +108,7 @@ const updateMealCount = async (id, value) => {
           :name="`mealCount-${cell.id}`"
           type="number"
           min="0"
-          :error-message="errors[cell.id]"
+          :error-message="cell.error"
           @change="(event) => updateMealCount(cell.id, event.target.value)"
         />
       </template>
@@ -103,3 +118,11 @@ const updateMealCount = async (id, value) => {
     </template>
   </DsfrDataTable>
 </template>
+
+<style lang="scss">
+.canteens-table-couverts-groupe {
+  .fr-error-text {
+    white-space: pre-wrap;
+  }
+}
+</style>

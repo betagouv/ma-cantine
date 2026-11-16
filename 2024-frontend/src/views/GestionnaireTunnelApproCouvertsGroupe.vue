@@ -1,8 +1,10 @@
 <script setup>
 import { computed } from "vue"
 import { storeToRefs } from "pinia"
+import { useRoute } from "vue-router"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import { formatNumber } from "@/utils"
+import tunnelTeledeclarationService from "@/services/tunnelTeledeclaration"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationCalloutField from "@/components/TunnelTeledeclarationCalloutField.vue"
@@ -10,6 +12,8 @@ import CanteensTableCouvertsGroupe from "@/components/CanteensTableCouvertsGroup
 
 const teledeclarationStore = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(teledeclarationStore)
+const route = useRoute()
+const sumErrorMessage = computed(() => tunnelTeledeclarationService.getFieldError("nombreRepasAn", teledeclarationStore.getDisplayedErrors(route.meta)))
 const nombreRepasAnSentence = computed(() => {
   const count = diagnostic.value?.nombreRepasAn
   if (count == null) return null
@@ -49,6 +53,7 @@ const nombreRepasAnSentence = computed(() => {
       text="Total des couverts annuels répartis entre vos cantines"
       mention="À partir des données couverts de chaque restaurant"
       :value="diagnostic?.satellitesNombreRepasAnSum"
+      :error-message="sumErrorMessage"
     />
     <CanteensTableCouvertsGroupe />
   </div>

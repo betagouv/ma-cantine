@@ -50,23 +50,6 @@ const tunnelRoutes = {
   meta: {
     isTunnel: true,
     storesRequired: ["teledeclaration", "canteen", "purchaseSummary", "campaignDates"],
-    nav: {
-      approvisionnements: [
-        { to: { name: "GestionnaireTunnelApproInformations" }, title: "Informations" },
-        { to: { name: "GestionnaireTunnelApproCouverts" }, title: "Couverts annuels" },
-        { to: { name: "GestionnaireTunnelApproSaisie" }, title: "Mode de saisie" },
-        { to: { name: "GestionnaireTunnelApproEgalim" }, title: "EGalim" },
-        { to: { name: "GestionnaireTunnelApproOrigine" }, title: "Origine France et UE" },
-        { to: { name: "GestionnaireTunnelApproLocalCircuitCourt" }, title: "« Local » et circuit court" },
-        { to: { name: "GestionnaireTunnelApproRecapitulatif" }, title: "Récapitulatif", icon: "fr-icon-flag-fill" },
-      ],
-      thematiques: [
-        { to: { name: "GestionnaireTunnelConvives" }, title: "Information convives" },
-        { to: { name: "GestionnaireTunnelGaspillage" }, title: "Gaspillage alimentaire" },
-        { to: { name: "GestionnaireTunnelVegetarien" }, title: "Menus végétariens" },
-        { to: { name: "GestionnaireTunnelPlastique" }, title: "Substitution plastique" },
-      ]
-    }
   },
   children: [
     {
@@ -111,7 +94,6 @@ const tunnelRoutes = {
             previous: "GestionnaireTunnelApproInformations",
             next: "GestionnaireTunnelApproSaisie",
             volet: "approvisionnement",
-            navName: "GestionnaireTunnelApproCouverts",
           },
         },
         {

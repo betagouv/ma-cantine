@@ -5,6 +5,8 @@ import { storeToRefs } from 'pinia'
 import { useStoreCanteen } from '@/stores/canteen'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import tunnelTeledeclarationService from '@/services/tunnelTeledeclaration'
+import canteensTableService from '@/services/canteensTable.js'
+import { formatSiretOrSiren } from '@/utils'
 import CanteenDisplayInformations from '@/components/CanteenDisplayInformations.vue'
 import TunnelTeledeclarationIconCheck from '@/components/TunnelTeledeclarationIconCheck.vue'
 
@@ -17,7 +19,7 @@ const router = useRouter()
 const canteenStore = useStoreCanteen()
 const teledeclarationStore = useStoreTeledeclaration()
 const { canteenInformations } = storeToRefs(canteenStore)
-const { diagnostic } = storeToRefs(teledeclarationStore)
+const { diagnostic, diagnosticErrors, groupeCanteensMealCount } = storeToRefs(teledeclarationStore)
 
 /* Errors */
 const errors = computed(() => teledeclarationStore.getErrorsGroup(props.accordion.fieldsGroupName))
@@ -43,20 +45,37 @@ const getPrettyDiagnosticValue = (field) => {
   return prettyValue ?? "Non renseigné"
 }
 
+const getRowName = (field, canteen) => {
+  if (canteen) {
+    const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(canteen))
+    return `${canteen.name} ${siretSiren} (ID : ${canteen.id})`
+  }
+  if (props.accordion.isCanteenFields) return field
+  return tunnelTeledeclarationService.getField(field).labelRecap
+}
+
+const getRowValue = (field, canteen) => {
+  if (canteen) return canteen.nombreRepasAn
+  if (props.accordion.isCanteenFields) return canteenInformations.value[field]
+  return getPrettyDiagnosticValue(field)
+}
+
+const getRowError = (field, canteen) => {
+  if (canteen) return tunnelTeledeclarationService.getGroupeCanteenMealCountError(canteen, diagnosticErrors.value)
+  return teledeclarationStore.getErrorMessage(field)
+}
+
 const rows = computed(() => {
   const fields = tunnelTeledeclarationService.getFieldsListFromGroup(props.accordion.fieldsGroupName)
-  return fields.map(field => {
-    const isCanteen = props.accordion.isCanteenFields
-    const name = isCanteen ? field : tunnelTeledeclarationService.getField(field).labelRecap
-    const value = isCanteen ? canteenInformations.value[field] : getPrettyDiagnosticValue(field)
-    const hasError = teledeclarationStore.isFieldError(field)
-    return {
+  return fields.flatMap(field => {
+    const canteens = field === "satellitesNombreRepasAnList" ? groupeCanteensMealCount.value : [null]
+    return canteens.map(canteen => ({
       name: {
-        label: name,
-        error: hasError ? teledeclarationStore.getErrorMessage(field) : "",
+        label: getRowName(field, canteen),
+        error: getRowError(field, canteen) || "",
       },
-      value: value ?? "Non renseigné",
-    }
+      value: getRowValue(field, canteen) ?? "Non renseigné",
+    }))
   })
 })
 

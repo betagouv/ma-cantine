@@ -30,7 +30,7 @@ const accordions = computed(() => {
     {
       title: "Couverts annuels",
       to: { name: 'GestionnaireTunnelApproCouverts' },
-      fieldsGroupName: "couverts"
+      fieldsGroupName: isGroupe ? "couvertsGroupe" : "couverts"
     },
     {
       title: "Mode de saisie",
