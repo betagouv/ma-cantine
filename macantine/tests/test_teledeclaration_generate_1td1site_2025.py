@@ -416,7 +416,9 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(
+                applicant=self.user, skip_validations=True
+            )  # legacy production_type: not valid anymore
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2025, apply=True)

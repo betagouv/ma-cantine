@@ -98,6 +98,10 @@ def is_filled_query():
     return Q(is_filled=True)
 
 
+def is_clean_query():
+    return Q(is_clean=True)
+
+
 def is_petite_structure_query():
     return Q(is_petite_structure=True)
 
@@ -370,7 +374,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
                 then=Value(Canteen.Actions.FILL_DIAGNOSTIC),
             )
         )
-        conditions.append(When(~is_filled_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)))
+        conditions.append(When(~is_filled_query() | ~is_clean_query(), then=Value(Canteen.Actions.FILL_CANTEEN_DATA)))
         conditions.append(
             When(
                 is_groupe_query() & Q(satellites_in_db_missing_data_count__gt=0),

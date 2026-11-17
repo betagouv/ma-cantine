@@ -93,6 +93,32 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.FILL_CANTEEN_DATA,
         )
 
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_canteen_not_clean_actions(self):
+        DiagnosticFactory(canteen=self.canteen_site, year=2024, valeur_totale=100)
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(canteen_qs.get(id=self.canteen_site.id).action, Canteen.Actions.TELEDECLARE)
+
+        # filled, but not clean (daily_meal_count too low, only possible with skip_validations)
+        self.canteen_site.daily_meal_count = 1
+        self.canteen_site.save(skip_validations=True)
+        self.assertTrue(self.canteen_site.is_filled)
+        self.assertFalse(self.canteen_site.is_clean)
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(canteen_qs.get(id=self.canteen_site.id).action, Canteen.Actions.FILL_CANTEEN_DATA)
+
+        # clean again
+        self.canteen_site.daily_meal_count = 10
+        self.canteen_site.save()
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(canteen_qs.get(id=self.canteen_site.id).action, Canteen.Actions.TELEDECLARE)
+
     @freeze_time("2025-08-30")  # after the 2024 campaign
     def test_canteen_site_did_not_teledeclare_actions(self):
         # Without diagnostic

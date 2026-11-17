@@ -49,6 +49,11 @@ def validate_canteen_is_filled(instance):
         raise ValidationError("La cantine associée à ce diagnostic n'est pas remplie")
 
 
+def validate_canteen_is_clean(instance):
+    if not instance.canteen.is_clean:
+        raise ValidationError("La cantine associée à ce diagnostic n'est pas valide")
+
+
 def validate_canteen_groupe_satellites(instance):
     if instance.canteen.is_groupe:
         if instance.canteen.satellites_count == 0:

@@ -356,6 +356,23 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_teledeclare_if_canteen_not_clean(self):
+        diagnostic = DiagnosticFactory(canteen=self.canteen_site, year=2024)
+        self.canteen_site.managers.add(authenticate.user)
+        Canteen.objects.filter(id=self.canteen_site.id).update(is_clean=False)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_create",
+                kwargs={"canteen_pk": self.canteen_site.id, "pk": diagnostic.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.json()["detail"], ["La cantine associée à ce diagnostic n'est pas valide"])
+
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_teledeclare_if_bad_total(self):
         diagnostic = DiagnosticFactory(
             canteen=self.canteen_site, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE

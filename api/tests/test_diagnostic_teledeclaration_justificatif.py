@@ -142,7 +142,9 @@ class DiagnosticTeledeclarationJustificatifTest(APITestCase):
         diagnostic = DiagnosticFactory(
             canteen=canteen_central, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
         )
-        diagnostic.teledeclare(applicant=authenticate.user)
+        diagnostic.teledeclare(
+            applicant=authenticate.user, skip_validations=True
+        )  # legacy production_type: not valid anymore
 
         response = self.client.get(
             reverse(

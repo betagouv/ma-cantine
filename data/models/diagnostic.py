@@ -1172,6 +1172,7 @@ class Diagnostic(
             # canteen validations
             diagnostic_teledeclaration_validators.validate_diagnostic_is_filled(self)
             diagnostic_teledeclaration_validators.validate_canteen_is_filled(self)
+            diagnostic_teledeclaration_validators.validate_canteen_is_clean(self)
             diagnostic_teledeclaration_validators.validate_canteen_groupe_satellites(self)
             diagnostic_teledeclaration_validators.validate_applicant_is_canteen_manager(self, applicant)
         # only once past every check above that could still raise: clearing earlier would mutate

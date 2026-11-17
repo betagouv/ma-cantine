@@ -66,7 +66,9 @@ class UserModelTest(TestCase):
         cls.canteen_site_deleted.delete()
 
         with freeze_time("2026-01-30"):  # during the 2025 campaign
-            cls.canteen_centrale_diagnostic_teledeclared.teledeclare(applicant=cls.user_with_canteens)
+            cls.canteen_centrale_diagnostic_teledeclared.teledeclare(
+                applicant=cls.user_with_canteens, skip_validations=True
+            )  # legacy production_type: not valid anymore
 
         tasks.canteen_fill_declaration_donnees_year_field()
 
