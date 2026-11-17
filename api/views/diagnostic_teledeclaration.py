@@ -149,7 +149,11 @@ class DiagnosticTeledeclarationPdfView(APIView):
         )
         volets = {
             "CANTEEN": DiagnosticTeledeclarationPdfView._get_canteen_fields(canteen),
-            "MEAL_COUNT": DiagnosticTeledeclarationPdfView._get_meal_count_fields(diagnostic),
+            "MEAL_COUNT": (
+                DiagnosticTeledeclarationPdfView._get_meal_count_fields(diagnostic)
+                if "nombre_repas_an" in get_teledeclaration_config(diagnostic.year)["APPROVISIONNEMENT"]
+                else []
+            ),
             "SAISIE": DiagnosticTeledeclarationPdfView._get_saisie_fields(diagnostic),
             "APPROVISIONNEMENT": (
                 DiagnosticTeledeclarationPdfView._get_volet_fields(
@@ -277,12 +281,7 @@ class DiagnosticTeledeclarationPdfView(APIView):
         Groupe: also returns the yearly meal count declared for each satellite
         """
         is_groupe = diagnostic.canteen_snapshot.get("production_type") == Canteen.ProductionType.GROUPE
-        appro_fields = get_teledeclaration_config(diagnostic.year)["APPROVISIONNEMENT"]
-        label_field_name = (
-            "satellites_nombre_repas_an_sum"
-            if is_groupe and "satellites_nombre_repas_an_sum" in appro_fields
-            else "nombre_repas_an"
-        )
+        label_field_name = "satellites_nombre_repas_an_sum" if is_groupe else "nombre_repas_an"
         label = get_teledeclaration_verbose_name(diagnostic.year, "APPROVISIONNEMENT", label_field_name)
         fields = [{"label": label, "value": diagnostic.canteen_yearly_meal_count}]
         if is_groupe and diagnostic.satellites_nombre_repas_an_list and diagnostic.satellites_snapshot:
