@@ -158,7 +158,6 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                     "fields": (
                         *Diagnostic.CANTEEN_FIELDS,
                         *Diagnostic.GROUPE_FIELDS,
-                        "satellites_nombre_repas_an_sum",
                     )
                 },
             ),
@@ -288,10 +287,3 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         return json_pretty(obj.groupe_snapshot)
 
     groupe_snapshot_pretty.short_description = Diagnostic._meta.get_field("groupe_snapshot").verbose_name
-
-    def satellites_nombre_repas_an_sum(self, obj):
-        return obj.satellites_nombre_repas_an_sum
-
-    satellites_nombre_repas_an_sum.short_description = (
-        "somme des nombres de repas par an des satellites (champ calculé)"
-    )

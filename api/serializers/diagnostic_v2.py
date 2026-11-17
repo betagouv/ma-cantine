@@ -1,5 +1,4 @@
 from drf_spectacular.utils import extend_schema_serializer
-from rest_framework import serializers
 
 from api.serializers.diagnostic import DiagnosticSerializer
 from api.serializers.utils import set_help_text_from_verbose_name
@@ -48,12 +47,6 @@ class DiagnosticV2Serializer(DiagnosticSerializer):
 
     v1_choice_value_aliases = {}  # v2: the model (French) values
 
-    satellites_nombre_repas_an_sum = serializers.IntegerField(
-        read_only=True,
-        allow_null=True,
-        help_text="Groupe : somme des nombres de repas par an des satellites (champ calculé)",
-    )  # property
-
     class Meta:
         model = Diagnostic
         fields = (
@@ -70,7 +63,6 @@ class DiagnosticV2Serializer(DiagnosticSerializer):
             "creation_date",
             "modification_date",
             *Diagnostic.GROUPE_FIELDS,
-            "satellites_nombre_repas_an_sum",
             *CREATE_ONLY_FIELDS,
         )
 

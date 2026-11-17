@@ -25,6 +25,7 @@ from data.utils import (
     CustomJSONEncoder,
     has_arrayfield_missing_query,
     make_optional_positive_decimal_field,
+    make_optional_positive_integer_field,
     to_decimal,
 )
 from data.validators import diagnostic as diagnostic_validators
@@ -515,6 +516,7 @@ class Diagnostic(
     GROUPE_FIELDS = [
         # new in 2026
         "satellites_nombre_repas_an_list",
+        "satellites_nombre_repas_an_sum",  # computed
     ]
 
     META_FIELDS = [
@@ -717,6 +719,9 @@ class Diagnostic(
         blank=True,
         encoder=CustomJSONEncoder,
     )
+    satellites_nombre_repas_an_sum = make_optional_positive_integer_field(
+        verbose_name="somme des nombres de repas par an des satellites (champ calculé)",
+    )
 
     # 1TD1Site
     generated_from_groupe_diagnostic = models.BooleanField(
@@ -888,11 +893,26 @@ class Diagnostic(
                     self.populate_required_fields_with_zero()
             self.populate_aggregated_values()
             self.populate_stats_values()
-            self.populate_cout_repas()
+            self.populate_satellites_nombre_repas_an_sum()
+            self.populate_cout_repas()  # after populate_satellites_nombre_repas_an_sum (see canteen_yearly_meal_count)
         self.set_is_filled()
 
     def set_is_filled(self):
         self.is_filled = self._is_filled()
+
+    def populate_satellites_nombre_repas_an_sum(self):
+        self.satellites_nombre_repas_an_sum = self.compute_satellites_nombre_repas_an_sum()
+
+    def compute_satellites_nombre_repas_an_sum(self) -> int | None:
+        """
+        [NEW in 2026] Groupe: sum of the nombre_repas_an of the satellites (None if no value)
+        """
+        value_list = [
+            item["nombre_repas_an"]
+            for item in self.satellites_nombre_repas_an_list or []
+            if isinstance(item, dict) and item.get("nombre_repas_an") is not None
+        ]
+        return sum(value_list) if value_list else None
 
     def populate_cout_repas(self):
         self.cout_repas = self.compute_cout_repas()
@@ -989,18 +1009,6 @@ class Diagnostic(
             Diagnostic.TeledeclarationMode.CENTRAL_APPRO,
             Diagnostic.TeledeclarationMode.CENTRAL_ALL,
         ]
-
-    @property
-    def satellites_nombre_repas_an_sum(self) -> int | None:
-        """
-        [NEW in 2026] Groupe: sum of the nombre_repas_an of the satellites (None if no value)
-        """
-        value_list = [
-            item["nombre_repas_an"]
-            for item in self.satellites_nombre_repas_an_list or []
-            if item.get("nombre_repas_an") is not None
-        ]
-        return sum(value_list) if value_list else None
 
     @property
     def canteen_yearly_meal_count(self):

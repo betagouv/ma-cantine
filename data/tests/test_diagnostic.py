@@ -1330,7 +1330,7 @@ class DiagnosticGroupeNombreRepasAnOptionalTest(TestCase):
 
 
 class DiagnosticGroupeSatellitesNombreRepasAnSumTest(TestCase):
-    def test_sum(self):
+    def test_compute(self):
         for value, expected in [
             ([], None),
             ([{"id": 1, "nombre_repas_an": None}], None),
@@ -1340,7 +1340,29 @@ class DiagnosticGroupeSatellitesNombreRepasAnSumTest(TestCase):
         ]:
             with self.subTest(value=value):
                 diagnostic = Diagnostic(satellites_nombre_repas_an_list=value)
-                self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, expected)
+                self.assertEqual(diagnostic.compute_satellites_nombre_repas_an_sum(), expected)
+
+    def test_populated_on_save(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, yearly_meal_count=1400
+        )
+        diagnostic = DiagnosticFactory(canteen=canteen_groupe, year=2026)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, 1400)  # prefilled
+
+        diagnostic.satellites_nombre_repas_an_list = [{"id": canteen_satellite.id, "nombre_repas_an": 2000}]
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, 2000)
+
+        # frozen once teledeclared
+        Diagnostic.objects.filter(id=diagnostic.id).update(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        diagnostic.refresh_from_db()
+        diagnostic.satellites_nombre_repas_an_list = [{"id": canteen_satellite.id, "nombre_repas_an": 3000}]
+        diagnostic.save(skip_validations=True)
+        diagnostic.refresh_from_db()
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, 2000)
 
 
 class DiagnosticGroupeCanteenYearlyMealCountTest(TestCase):
