@@ -1,20 +1,21 @@
 <script setup>
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
+import IconMacaronCantine from "@/components/IconMacaronCantine.vue"
+import diagnosticsMacaron from "@/services/diagnosticsMacaron.js"
 import ObservatoryGraphProductionType from "@/components/ObservatoryGraphProductionType.vue"
 import ObservatoryGraphEconomicModel from "@/components/ObservatoryGraphEconomicModel.vue"
 import ObservatoryGraphManagementType from "@/components/ObservatoryGraphManagementType.vue"
 import ObservatoryGraphSectors from "@/components/ObservatoryGraphSectors.vue"
 
 defineProps(["stats"])
-const canteenBadge = "/static/images/badges/badge-canteen.svg"
 </script>
 
 <template>
   <div>
     <ObservatoryBadgeTitle
       class="fr-mb-4w"
-      :image="canteenBadge"
-      color="#000090"
+      :macaron="IconMacaronCantine"
+      :color="diagnosticsMacaron.getColor('cantine')"
       title="Les restaurants collectifs du territoire"
     >
       Tous les restaurants collectifs ont l'obligation de s'inscrire sur ma cantine et de télédéclarer, chaque année,

@@ -36,11 +36,15 @@ const closeModal = () => {
         <DsfrTile
           :title="tile.title"
           titleTag="h2"
-          :imgSrc="tile.imgSrc"
           :details="tile.details"
           @click="openModal(tile)"
-          class="ma-cantine--tile-no-overflow"
-        />
+        >
+          <template #header>
+            <div class="fr-tile__pictogram">
+              <component :is="tile.macaron" />
+            </div>
+          </template>
+        </DsfrTile>
       </li>
     </ul>
     <AppModalIframe :opened="opened" :title="modal.title" :src="modal.to" @close="closeModal" />
