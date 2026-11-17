@@ -53,6 +53,7 @@ const nombreRepasAnSentence = computed(() => {
       mention="À partir des données couverts de chaque restaurant"
       :value="diagnostic?.satellitesNombreRepasAnSum"
       :error-message="sumErrorMessage"
+      tooltip="Ce champ n’est pas modifiable : il est calculé automatiquement en faisant la somme des couverts annuels de chacune des cantines du groupe. Si ce total est erroné, veuillez vérifier et modifier la donnée « couverts / an » de vos cantines ci-dessous."
     />
     <CanteensTableCouvertsGroupe />
   </div>
