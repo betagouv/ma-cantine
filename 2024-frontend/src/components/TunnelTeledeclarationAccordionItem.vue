@@ -110,7 +110,7 @@ const goToStep = (page) => router.push(page)
       :headersRow="header"
       :rows="rows"
       :no-scroll="true"
-      class="fr-mt-0 fr-mb-0"
+      class="fr-mt-0 fr-mb-0 tunnel-teledeclaration-accordion-item__table"
       size="sm"
     >
       <template #cell="{ colKey, cell }">
@@ -127,3 +127,12 @@ const goToStep = (page) => router.push(page)
     </div>
   </DsfrAccordion>
 </template>
+
+<style lang="scss">
+.tunnel-teledeclaration-accordion-item__table {
+  .fr-table__wrapper,
+  table {
+    width: 100% !important;
+  }
+}
+</style>
