@@ -47,9 +47,9 @@ const getPrettyDiagnosticValue = (field) => {
 }
 
 const getRowName = (field) => {
-  if (props.accordion.isCanteenFields) return field
+  if (props.accordion.isCanteenFields) return { label: field }
   const { labelRecap, hint } = tunnelTeledeclarationService.getField(field)
-  return hint ? `${labelRecap} (${hint})` : labelRecap
+  return { label: labelRecap, hint }
 }
 
 const getRowValue = (field) => {
@@ -62,7 +62,7 @@ const getFieldRow = (field) => {
   const displayedField = isGroupeMealCountField(field) ? "satellitesNombreRepasAnSum" : field
   return {
     name: {
-      label: getRowName(displayedField),
+      ...getRowName(displayedField),
       error: teledeclarationStore.getErrorMessage(field) || "",
     },
     value: getRowValue(displayedField) ?? "Non renseigné",
@@ -73,7 +73,8 @@ const getGroupeCanteenRow = (groupeCanteen) => {
   const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(groupeCanteen))
   return {
     name: {
-      label: `${groupeCanteen.name} ${siretSiren} (ID : ${groupeCanteen.id})`,
+      label: groupeCanteen.name,
+      hint: `${siretSiren}, ID : ${groupeCanteen.id}`,
       error: tunnelTeledeclarationService.getGroupeCanteenMealCountError(groupeCanteen, diagnosticErrors.value) || "",
     },
     value: groupeCanteen.nombreRepasAn ?? "Non renseigné",
@@ -114,7 +115,8 @@ const goToStep = (page) => router.push(page)
     >
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'name'">
-          <p>{{ cell.label }}</p>
+          <p :class="{ 'fr-mb-0': cell.hint }">{{ cell.label }}</p>
+          <p v-if="cell.hint" class="fr-text--xs fr-text-mention--grey">{{ cell.hint }}</p>
           <p v-if="cell.error" class="fr-message fr-message--error">{{ cell.error }}</p>
         </template>
         <p v-else>{{ cell }}</p>
