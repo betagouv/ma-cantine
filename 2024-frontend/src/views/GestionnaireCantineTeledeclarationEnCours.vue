@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue"
+import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
@@ -13,7 +13,6 @@ import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.
 import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
 import DiagnosticSummary from "@/components/DiagnosticSummary.vue"
 import DiagnosticPdf from "@/components/DiagnosticPdf.vue"
-import DiagnosticModalCancel from "@/components/DiagnosticModalCancel.vue"
 
 const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
@@ -32,7 +31,7 @@ const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédé
 const buttonTop = computed(() => {
   switch (true) {
     case isTeledeclared.value:
-      return { label: 'Modifier ma télédéclaration', icon: 'fr-icon-edit-line', openModal: true }
+      return null
     case hasDiagnostic.value:
       return { label: 'Reprendre ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproInformations" }
     default:
@@ -41,11 +40,7 @@ const buttonTop = computed(() => {
 })
 
 /* Navigation */
-const showCancelModal = ref(false)
-const onClickButtonTop = () => {
-  if (buttonTop.value.openModal) showCancelModal.value = true
-  else openTunnel(buttonTop.value.pageName)
-}
+const onClickButtonTop = () => openTunnel(buttonTop.value.pageName)
 
 const openTunnel = (pageName) => {
   if (!pageName) createDiagnostic()
@@ -76,8 +71,8 @@ const showError = (message) => rootStore.notifyServerError(message)
       :label="buttonTop.label"
       :icon="buttonTop.icon"
     />
+    <DiagnosticPdf v-if="isTeledeclared && diagnosticRecap" :diagnostic="diagnosticRecap" :canteen-id="canteenInformations.id" />
   </GestionnaireSidebarTitle>
-  <DiagnosticModalCancel :opened="showCancelModal" @close="showCancelModal = false" />
 
   <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters fr-grid-row--top">
     <div v-if="isTeledeclared" class="fr-col-12 fr-col-md-7">
@@ -96,11 +91,8 @@ const showError = (message) => rootStore.notifyServerError(message)
         La télédéclaration comporte 2 principales étapes : le volet approvisionnements (simplifiés ou détaillés) et les volets thématiques (facultatifs).
       </p>
     </div>
-    <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard v-if="isTeledeclared" title="Les documents essentiels :" :no-icon="true">
-        <DiagnosticPdf v-if="diagnosticRecap" :diagnostic="diagnosticRecap" :canteen-id="canteenInformations.id" />
-      </AppHelpCard>
-      <AppHelpCard v-else title="Infos utiles pour consolider vos données">
+    <div v-if="!isTeledeclared" class="fr-col-12 fr-col-md-5">
+      <AppHelpCard title="Infos utiles pour consolider vos données">
         <ul class="ma-cantine--unstyled-list fr-mb-0">
           <li class="fr-mb-1w">
             <a :href="documentation.teledeclarationMatrice" target="_blank">La matrice de télédéclaration</a>
