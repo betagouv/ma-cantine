@@ -573,7 +573,7 @@ class DiagnosticTeledeclarationJustificatif2026Test(APITestCase):
         self.assertEqual(
             meal_count_fields,
             [
-                {"label": "Total nombre de couverts par an", "value": 5000},
+                {"label": "Total des couverts annuels répartis entre vos cantines", "value": 5000},
                 {"label": f"Satellite 1 {satellite_1.siret} (ID : {satellite_1.id})", "value": 2000},
                 {"label": f"Satellite 2 {satellite_2.siret} (ID : {satellite_2.id})", "value": 3000},
             ],

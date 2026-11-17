@@ -276,7 +276,11 @@ class DiagnosticTeledeclarationPdfView(APIView):
         Groupe: also returns the yearly meal count declared for each satellite
         """
         is_groupe = diagnostic.canteen_snapshot.get("production_type") == Canteen.ProductionType.GROUPE
-        label = "Total nombre de couverts par an" if is_groupe else "Nombre de couverts par an"
+        label = (
+            "Total des couverts annuels répartis entre vos cantines"
+            if is_groupe
+            else get_teledeclaration_verbose_name(diagnostic.year, "APPROVISIONNEMENT", "nombre_repas_an")
+        )
         fields = [{"label": label, "value": diagnostic.canteen_yearly_meal_count}]
         if is_groupe and diagnostic.satellites_nombre_repas_an_list and diagnostic.satellites_snapshot:
             satellites_nombre_repas_an = {

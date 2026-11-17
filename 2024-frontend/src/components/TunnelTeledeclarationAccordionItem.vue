@@ -47,7 +47,7 @@ const getPrettyDiagnosticValue = (field) => {
 }
 
 const getRowName = (field, canteen) => {
-  if (isGroupeMealCountField(field)) return "Total nombre de couverts par an"
+  if (isGroupeMealCountField(field)) return "Total des couverts annuels répartis entre vos cantines"
   if (canteen) {
     const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(canteen))
     return `${canteen.name} ${siretSiren} (ID : ${canteen.id})`
