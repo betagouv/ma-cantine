@@ -30,29 +30,10 @@ const updateVenteEmporter = (value) => {
   <TunnelTeledeclarationVoletThematiqueBanner />
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
-      <p class="fr-mb-1w">
+      <p class="fr-mb-0">
         La mise à disposition de gobelets, de verres et d’assiettes jetables et de nombreux ustensiles en plastique à
-        usage unique est interdite pour tout type de restauration (y compris commerciale). Des mesures spécifiques concernent tout ou partie des secteurs de restauration collective :
+        usage unique est interdite pour tout type de restauration (y compris commerciale).
       </p>
-      <ul class="fr-mb-0">
-        <li>
-          <span class="fr-text--bold">pour l’ensemble des établissements recevant du public :</span> l'obligation de mettre à
-          disposition une fontaine à eau potable et l'interdiction de distribuer gratuitement des bouteilles en plastique
-        </li>
-        <li>
-          <span class="fr-text--bold">pour les cantines scolaires :</span> la fin de l'utilisation des bouteilles d'eau plate en
-          plastique
-        </li>
-        <li>
-          <span class="fr-text--bold">pour toute cantine pouvant restaurer simultanément au moins 20 personnes :</span>
-          l'obligation d'utiliser de la vaisselle réemployable
-        </li>
-        <li>
-          <span class="fr-text--bold">pour tous les établissements scolaires et universitaires, accueil d’enfants de moins de six ans, services de pédiatrie,
-          d'obstétrique et de maternité, centres périnataux de proximité, services de protection maternelle et infantile :</span>
-          la fin de l’utilisation de contenants de cuisson, réchauffe et service.
-        </li>
-      </ul>
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">
@@ -66,6 +47,17 @@ const updateVenteEmporter = (value) => {
       title="Interdiction des bouteilles en plastique et obligation de mise à disposition de fontaines à eau"
       :documentation="bouteillesDocumentation"
     />
+    <DsfrHighlight class="fr-ml-0">
+      <p>
+        <span class="fr-text--bold">Pour l’ensemble des établissements recevant du public :</span><br />
+        obligation de mise à disposition d’une fontaine à eau potable et l’interdiction de distribution gratuite de
+        bouteilles en plastique
+      </p>
+      <p>
+        <span class="fr-text--bold">Pour les cantines scolaires uniquement :</span><br />
+        fin de l'utilisation des bouteilles d'eau plate en plastique
+      </p>
+    </DsfrHighlight>
     <TunnelTeledeclarationField name="plastiqueBouteilleBoissonRemplace" />
     <TunnelTeledeclarationField name="plastiqueBouteilleRemplace" />
   </div>
@@ -78,6 +70,12 @@ const updateVenteEmporter = (value) => {
   </div>
   <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Obligation de vaisselle réemployable" :documentation="vaisselleDocumentation" />
+    <DsfrHighlight class="fr-ml-0">
+      <p>
+        <span class="fr-text--bold">Établissements concernés :</span><br />
+        toute cantine pouvant restaurer simultanément au moins 20 personnes
+      </p>
+    </DsfrHighlight>
     <TunnelTeledeclarationField name="plastiqueVaisselleJetableRemplace" />
   </div>
   <div class="fr-mb-6w ma-cantine--fields-group">
@@ -85,10 +83,23 @@ const updateVenteEmporter = (value) => {
       title="Fin de l’utilisation de contenants de cuisson, réchauffe et service"
       :documentation="contenantsDocumentation"
     />
+    <DsfrHighlight class="fr-ml-0">
+      <p>
+        <span class="fr-text--bold">Établissements concernés :</span><br />
+        scolaires et universitaires, accueil d’enfants de moins de six ans, services de pédiatrie, d'obstétrique et de
+        maternité, centres périnataux de proximité, services de protection maternelle et infantile.
+      </p>
+    </DsfrHighlight>
     <TunnelTeledeclarationField name="plastiqueContenantRemplace" />
   </div>
   <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Vente à emporter" :documentation="emporterDocumentation" />
+    <DsfrHighlight class="fr-ml-0">
+      <p>
+        <span class="fr-text--bold">Établissements concernés :</span><br />
+        tous les services de restauration collective proposant des repas à emporter.
+      </p>
+    </DsfrHighlight>
     <TunnelTeledeclarationField name="venteEmporter" @change="updateVenteEmporter" />
     <TunnelTeledeclarationField v-if="isVenteEmporter" name="plastiqueContenantEmporterRemplace" />
   </div>
