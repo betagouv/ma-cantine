@@ -264,7 +264,10 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         )
 
     def has_missing_data(self):
-        return self.exclude(is_filled_query())
+        """
+        Canteens not filled, or not clean (not valid)
+        """
+        return self.exclude(is_filled_query() & is_clean_query())
 
     def is_filled(self):
         return self.filter(is_filled_query())
@@ -330,6 +333,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
                 is_satellite_query()
                 & Q(groupe_id__isnull=False)
                 & is_filled_query()
+                & is_clean_query()
                 & Q(
                     diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                     has_diagnostic_teledeclared_for_year=False,

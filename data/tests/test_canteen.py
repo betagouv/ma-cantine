@@ -978,6 +978,20 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         # check again
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_missing_data_count, 1)
 
+    def test_satellites_missing_data_count_property_not_clean(self):
+        self.assertEqual(self.canteen_groupe_with_satellite.satellites_missing_data_count, 0)
+        # add to groupe a satellite filled, but not clean (daily_meal_count too low)
+        canteen_satellite_not_clean = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=self.canteen_groupe_with_satellite,
+            daily_meal_count=1,
+            skip_validations=True,
+        )
+        self.assertTrue(canteen_satellite_not_clean.is_filled)
+        self.assertFalse(canteen_satellite_not_clean.is_clean)
+        # check again
+        self.assertEqual(self.canteen_groupe_with_satellite.satellites_missing_data_count, 1)
+
     @freeze_time("2026-01-15")  # during the 2025 campaign the year is hardcoded in the query
     def test_satellites_already_teledeclared_count_property(self):
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_already_teledeclared_count, 0)

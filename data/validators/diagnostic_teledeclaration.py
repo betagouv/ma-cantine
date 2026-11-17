@@ -60,7 +60,7 @@ def validate_canteen_groupe_satellites(instance):
             raise ValidationError("Le groupe associe à ce diagnostic n'a pas de cantine satellite")
         if instance.canteen.satellites_missing_data_count > 0:
             raise ValidationError(
-                f"{instance.canteen.satellites_missing_data_count} satellites du groupe associée à ce diagnostic ne sont pas remplis"
+                f"{instance.canteen.satellites_missing_data_count} satellites du groupe associée à ce diagnostic ne sont pas remplis ou pas valides"
             )
 
 
