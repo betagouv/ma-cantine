@@ -47,7 +47,6 @@ const getPrettyDiagnosticValue = (field) => {
 }
 
 const getRowName = (field, canteen) => {
-  if (isGroupeMealCountField(field)) return tunnelTeledeclarationService.getField("satellitesNombreRepasAnSum").labelRecap
   if (canteen) {
     const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(canteen))
     return `${canteen.name} ${siretSiren} (ID : ${canteen.id})`
@@ -58,7 +57,6 @@ const getRowName = (field, canteen) => {
 }
 
 const getRowValue = (field, canteen) => {
-  if (isGroupeMealCountField(field)) return diagnostic.value.satellitesNombreRepasAnSum // For a group : the field is replaced by the sum
   if (canteen) return canteen.nombreRepasAn
   if (props.accordion.isCanteenFields) return canteenInformations.value[field]
   return getPrettyDiagnosticValue(field)
@@ -73,12 +71,14 @@ const rows = computed(() => {
   const fields = tunnelTeledeclarationService.getFieldsListFromGroup(props.accordion.fieldsGroupName)
   return fields.flatMap(field => {
     const canteens = field === "satellitesNombreRepasAnList" ? groupeCanteensMealCount.value : [null]
+    // For a group : the field is replaced by the sum (the errors are still those of nombreRepasAn)
+    const displayedField = isGroupeMealCountField(field) ? "satellitesNombreRepasAnSum" : field
     return canteens.map(canteen => ({
       name: {
-        label: getRowName(field, canteen),
+        label: getRowName(displayedField, canteen),
         error: getRowError(field, canteen) || "",
       },
-      value: getRowValue(field, canteen) ?? "Non renseigné",
+      value: getRowValue(displayedField, canteen) ?? "Non renseigné",
     }))
   })
 })
