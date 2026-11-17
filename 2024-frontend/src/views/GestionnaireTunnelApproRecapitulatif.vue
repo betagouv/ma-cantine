@@ -5,13 +5,14 @@ import { useStoreTeledeclaration } from '@/stores/teledeclaration'
 import { useStoreCanteen } from '@/stores/canteen'
 import { formatNumber } from '@/utils'
 import AppHelpCard from '@/components/AppHelpCard.vue'
+import AppLinkRouter from '@/components/AppLinkRouter.vue'
 import TunnelTeledeclarationAccordionsGroup from '@/components/TunnelTeledeclarationAccordionsGroup.vue'
 import TunnelTeledeclarationModal from '@/components/TunnelTeledeclarationModal.vue'
 import TunnelTeledeclarationMealCostField from '@/components/TunnelTeledeclarationMealCostField.vue'
 
 /* Stores */
 const teledeclarationStore = useStoreTeledeclaration()
-const { diagnostic, canBeTeledeclared } = storeToRefs(teledeclarationStore)
+const { diagnostic, canBeTeledeclared, hasSatellitesErrors } = storeToRefs(teledeclarationStore)
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const isGroupe = computed(() => canteenInformations.value.isGroupe)
@@ -67,6 +68,17 @@ const isModalOpened = ref(false)
         </AppHelpCard>
       </div>
     </div>
+    <DsfrAlert
+      v-if="isGroupe && hasSatellitesErrors"
+      type="error"
+      title="Erreurs detectées sur des cantines rattachées à votre groupe"
+      class="fr-mb-4w"
+    >
+      <p>
+        Vous ne pouvez pas télédéclarer tant que les cantines rattachées à votre groupe ne sont pas corrigées. Retrouvez les cantines concernées par ces erreurs sur la page :
+        <AppLinkRouter :to="{ name: 'GestionnaireCantineGroupe' }" title="Cantines du groupe" />
+      </p>
+    </DsfrAlert>
     <TunnelTeledeclarationAccordionsGroup />
     <TunnelTeledeclarationModal v-model:opened="isModalOpened" @close="isModalOpened = false" />
   </div>
