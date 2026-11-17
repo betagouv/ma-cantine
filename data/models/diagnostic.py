@@ -915,7 +915,7 @@ class Diagnostic(
         return (
             not self.year
             or not self.diagnostic_type
-            or (self.year and self.year >= 2026 and not self.nombre_repas_an)
+            or (self.year and self.year >= 2026 and not self.canteen_yearly_meal_count)
             or not self.valeur_totale
         )
 

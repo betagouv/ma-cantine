@@ -1276,6 +1276,59 @@ class CanteenGroupeSatellitesSyncSignalTest(TestCase):
         )
 
 
+class DiagnosticGroupeNombreRepasAnOptionalTest(TestCase):
+    """
+    [NEW in 2026] Groupe: nombre_repas_an can be empty (only filled via API or import),
+    the sum of the satellites' values is used instead
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe, yearly_meal_count=1400
+        )
+        cls.canteen_satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe, yearly_meal_count=1600
+        )
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
+    def test_groupe_without_nombre_repas_an(self):
+        diagnostic = DiagnosticFactory(
+            **{**VALID_DIAGNOSTIC_SIMPLE_2026, "nombre_repas_an": None, "valeur_totale": 6000},
+            canteen=self.canteen_groupe,
+        )  # satellites prefilled: 1400 + 1600
+        self.assertIsNone(diagnostic.nombre_repas_an)
+        self.assertEqual(diagnostic.canteen_yearly_meal_count, 3000)  # see DiagnosticGroupeCanteenYearlyMealCountTest
+        self.assertFalse(diagnostic.is_empty)
+        self.assertTrue(diagnostic.is_filled)
+        _, errors = diagnostic.is_clean()
+        self.assertNotIn("nombre_repas_an", errors)
+        self.assertNotIn("satellites_nombre_repas_an_list", errors)
+
+    def test_groupe_without_nombre_repas_an_nor_satellites_values(self):
+        Canteen.objects.filter(groupe=self.canteen_groupe).update(yearly_meal_count=None)  # no prefill
+        diagnostic = DiagnosticFactory(
+            **{**VALID_DIAGNOSTIC_SIMPLE_2026, "nombre_repas_an": None}, canteen=self.canteen_groupe
+        )
+        self.assertIsNone(diagnostic.canteen_yearly_meal_count)
+        self.assertTrue(diagnostic.is_empty)
+        self.assertFalse(diagnostic.is_filled)
+        _, errors = diagnostic.is_clean()
+        self.assertNotIn("nombre_repas_an", errors)
+        self.assertIn("satellites_nombre_repas_an_list", errors)  # each satellite's value is required
+
+    def test_site_nombre_repas_an_is_still_required(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026, canteen=self.canteen_site)
+        diagnostic.nombre_repas_an = None  # DiagnosticFactory fills the required fields
+        diagnostic.save()
+        self.assertIsNone(diagnostic.canteen_yearly_meal_count)
+        self.assertTrue(diagnostic.is_empty)
+        self.assertFalse(diagnostic.is_filled)
+        _, errors = diagnostic.is_clean()
+        self.assertIn("nombre_repas_an", errors)
+
+
 class DiagnosticGroupeSatellitesNombreRepasAnSumTest(TestCase):
     def test_sum(self):
         for value, expected in [

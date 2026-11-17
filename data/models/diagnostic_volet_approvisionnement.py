@@ -977,7 +977,7 @@ class DiagnosticVoletApprovisionnementMixin(models.Model):
             self.is_diagnostic_type_simple
             and self.valeur_totale_is_filled
             and all(
-                getattr(self, field) is not None
+                self._is_appro_required_field_filled(field)
                 for field in get_teledeclaration_fields_required(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
             )
         )
@@ -988,10 +988,19 @@ class DiagnosticVoletApprovisionnementMixin(models.Model):
             self.is_diagnostic_type_complete
             and self.valeur_totale_is_filled
             and all(
-                getattr(self, field) is not None
+                self._is_appro_required_field_filled(field)
                 for field in get_teledeclaration_fields_required(self.year, "APPROVISIONNEMENT", self.diagnostic_type)
             )
         )
+
+    def _is_appro_required_field_filled(self, field_name) -> bool:
+        """
+        [NEW in 2026] Groupe: nombre_repas_an can be empty, the sum of the satellites' values is used instead
+        (see canteen_yearly_meal_count)
+        """
+        if field_name == "nombre_repas_an":
+            return self.canteen_yearly_meal_count is not None
+        return getattr(self, field_name) is not None
 
     def populate_required_fields_with_zero(self):
         """

@@ -95,11 +95,15 @@ def validate_canteen_fields_required(instance):
     - clean_fields() (called by full_clean()) already does some checks
     - extra validation: depending on the year of the diagnostic
         - [NEW in 2026] nombre_repas_an is required
+            - except for groupes: only filled via API or import, the satellites' sum is used instead
+            (each satellite's value is required, see validate_satellites_nombre_repas_an_list)
     """
     errors = {}
     if instance.year:
         if int(instance.year) >= 2026:
             required_fields = instance.CANTEEN_FIELDS
+            if instance.canteen_id and instance.canteen.is_groupe:
+                required_fields = [field for field in required_fields if field != "nombre_repas_an"]
             for field in required_fields:
                 if getattr(instance, field) is None:
                     utils_utils.add_validation_error(

@@ -43,6 +43,7 @@
       },
       "index_code": 1,
       "index_metier": null,
+      "is_required_depends_on_canteen": true,
       "verbose_name": "Nombre de couverts par an"
     },
     "valeur_autres": {
