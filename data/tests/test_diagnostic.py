@@ -1302,7 +1302,7 @@ class DiagnosticGroupeNombreRepasAnOptionalTest(TestCase):
         self.assertEqual(diagnostic.canteen_yearly_meal_count, 3000)  # see DiagnosticGroupeCanteenYearlyMealCountTest
         self.assertFalse(diagnostic.is_empty)
         self.assertTrue(diagnostic.is_filled)
-        _, errors = diagnostic.is_clean()
+        _, errors = diagnostic._is_clean()
         self.assertNotIn("nombre_repas_an", errors)
         self.assertNotIn("satellites_nombre_repas_an_list", errors)
 
@@ -1314,7 +1314,7 @@ class DiagnosticGroupeNombreRepasAnOptionalTest(TestCase):
         self.assertIsNone(diagnostic.canteen_yearly_meal_count)
         self.assertTrue(diagnostic.is_empty)
         self.assertFalse(diagnostic.is_filled)
-        _, errors = diagnostic.is_clean()
+        _, errors = diagnostic._is_clean()
         self.assertNotIn("nombre_repas_an", errors)
         self.assertIn("satellites_nombre_repas_an_list", errors)  # each satellite's value is required
 
@@ -1325,7 +1325,7 @@ class DiagnosticGroupeNombreRepasAnOptionalTest(TestCase):
         self.assertIsNone(diagnostic.canteen_yearly_meal_count)
         self.assertTrue(diagnostic.is_empty)
         self.assertFalse(diagnostic.is_filled)
-        _, errors = diagnostic.is_clean()
+        _, errors = diagnostic._is_clean()
         self.assertIn("nombre_repas_an", errors)
 
 
@@ -1476,7 +1476,7 @@ class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
 
     def test_is_clean_returns_the_errors(self):
         diagnostic = DiagnosticFactory(canteen=self.canteen_groupe, year=2026, nombre_repas_an=1000)
-        is_clean, errors = diagnostic.is_clean()
+        is_clean, errors = diagnostic._is_clean()
         self.assertFalse(is_clean)
         self.assertIn("satellites_nombre_repas_an_list", errors)
 
@@ -1941,22 +1941,74 @@ class DiagnosticIsCleanMethodTest(TestCase):
 
     @freeze_time("2025-01-20")  # during the 2024 campaign
     def test_is_clean_without_raise_errors(self):
-        is_clean, errors = self.diagnostic_2024_simple_not_valid.is_clean(raise_errors=False)
+        is_clean, errors = self.diagnostic_2024_simple_not_valid._is_clean(raise_errors=False)
         self.assertFalse(is_clean)
         self.assertNotEqual(errors, {})
 
-        is_clean, errors = self.diagnostic_2024_simple_valid.is_clean(raise_errors=False)
+        is_clean, errors = self.diagnostic_2024_simple_valid._is_clean(raise_errors=False)
         self.assertTrue(is_clean)
         self.assertEqual(errors, {})
 
     @freeze_time("2025-01-20")  # during the 2024 campaign
     def test_is_clean_with_raise_errors(self):
         with self.assertRaises(ValidationError):
-            self.diagnostic_2024_simple_not_valid.is_clean(raise_errors=True)
+            self.diagnostic_2024_simple_not_valid._is_clean(raise_errors=True)
 
-        is_clean, errors = self.diagnostic_2024_simple_valid.is_clean(raise_errors=True)
+        is_clean, errors = self.diagnostic_2024_simple_valid._is_clean(raise_errors=True)
         self.assertTrue(is_clean)
         self.assertEqual(errors, {})
+
+
+class DiagnosticIsCleanFieldTest(TestCase):
+    @freeze_time("2026-11-17")  # outside of the 2024 campaign: validate_year_and_can_edit fails for 2024
+    def test_is_clean_field_excludes_current_date_rules(self):
+        diagnostic = DiagnosticFactory(
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
+        )
+        self.assertTrue(diagnostic.is_clean)
+        self.assertFalse(diagnostic._is_clean()[0])  # the live validation includes validate_year_and_can_edit
+
+    def test_is_clean_field_set_on_save(self):
+        diagnostic = DiagnosticFactory(
+            year=2024,
+            canteen=CanteenFactory(),
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            valeur_totale=1000,
+            valeur_bio=100,
+        )
+        diagnostic.refresh_from_db()
+        self.assertTrue(diagnostic.is_filled)
+        self.assertTrue(diagnostic.is_clean)
+        # becomes not valid: valeur_bio > valeur_totale
+        diagnostic.valeur_bio = 2000
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertTrue(diagnostic.is_filled)
+        self.assertFalse(diagnostic.is_clean)
+        # becomes valid again
+        diagnostic.valeur_bio = 200
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertTrue(diagnostic.is_clean)
+
+    def test_is_clean_field_groupe_satellites_nombre_repas_an_list(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, yearly_meal_count=1000
+        )
+        diagnostic = DiagnosticFactory(
+            year=2026, canteen=canteen_groupe, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
+        )
+        diagnostic.refresh_from_db()
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an_list, [{"id": canteen_satellite.id, "nombre_repas_an": 1000}]
+        )
+        self.assertTrue(diagnostic.is_clean)
+        # a satellite without value
+        diagnostic.satellites_nombre_repas_an_list = [{"id": canteen_satellite.id, "nombre_repas_an": None}]
+        diagnostic.save()
+        diagnostic.refresh_from_db()
+        self.assertFalse(diagnostic.is_clean)
 
 
 class DiagnosticVoletThematiqueIsFilledPropertyTest(TestCase):

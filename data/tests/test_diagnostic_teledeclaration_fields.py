@@ -69,6 +69,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
             "status",
             "applicant",
             "generated_from_purchases",
+            "is_clean",  # computed, not in OTHER_COMPUTED_FIELDS: not exposed in the API
         }
         unclassified_fields = [
             field.name

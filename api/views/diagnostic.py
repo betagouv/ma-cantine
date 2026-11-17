@@ -219,7 +219,7 @@ class DiagnosticCheckView(APIView):
 
         is_empty = diagnostic.is_empty  # property
         is_filled = diagnostic.is_filled
-        is_clean, errors = diagnostic.is_clean(raise_errors=False)
+        is_clean, errors = diagnostic._is_clean(raise_errors=False)
         is_teledeclared = diagnostic.is_teledeclared  # property
 
         response = {

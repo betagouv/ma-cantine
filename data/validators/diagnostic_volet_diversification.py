@@ -9,7 +9,7 @@ def validate_diversification_fields_required(instance):
         - [NEW in 2026] the volet is skipped if not started (none of its fields filled)
         - [NEW in 2026] plan_diversification_en_place is optional if the canteen serves 200 meals or less per day
           (loi EGalim: the plan is only mandatory above 200 meals per day)
-    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in _is_clean()
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:
@@ -33,7 +33,7 @@ def validate_diversification_plan_fields(instance):
     """
     - extra validation: depending on the year of the diagnostic
         - [NEW in 2026] plan_diversification_actions can only be filled if plan_diversification_en_place is True
-    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in _is_clean()
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:
@@ -52,7 +52,7 @@ def validate_diversification_menu_vegetarien_fields(instance):
     - extra validation: depending on the year of the diagnostic
         - [NEW in 2026] menu_vegetarien_bases can only be filled if a menu végétarien is proposed
           (menu_vegetarien_frequence filled & not JAMAIS)
-    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in _is_clean()
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:

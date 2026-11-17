@@ -109,7 +109,7 @@ class DiagnosticVoletGaspillageDonsFieldsValidatorTest(TestCase):
 
     def test_is_clean_returns_the_error(self):
         diagnostic = self._diagnostic(dons_convention=False, dons_frequence=12)
-        _, errors = diagnostic.is_clean()
+        _, errors = diagnostic._is_clean()
         self.assertIn("dons_frequence", errors)
-        _, errors = diagnostic.is_clean(skip_volets_thematiques=True)
+        _, errors = diagnostic._is_clean(skip_volets_thematiques=True)
         self.assertNotIn("dons_frequence", errors)

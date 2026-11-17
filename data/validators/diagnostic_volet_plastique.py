@@ -12,7 +12,7 @@ def validate_plastique_fields_required(instance):
           (see SECTOR_PLASTIQUE_BOUTEILLE_LIST)
         - [NEW in 2026] plastique_contenant_remplace is optional if none of the canteen's sectors is concerned
           (see SECTOR_PLASTIQUE_CONTENANT_LIST)
-    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in _is_clean()
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:
@@ -43,7 +43,7 @@ def validate_plastique_contenant_emporter_fields(instance):
     - extra validation: depending on the year of the diagnostic
         - [NEW in 2026] plastique_contenant_emporter_remplace is required if vente_emporter is True
         - [NEW in 2026] plastique_contenant_emporter_remplace can only be filled if vente_emporter is True
-    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in _is_clean()
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:

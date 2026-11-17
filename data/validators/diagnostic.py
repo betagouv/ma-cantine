@@ -119,7 +119,7 @@ def validate_satellites_nombre_repas_an_list(instance):
     - format: [{"id": <int>, "nombre_repas_an": <positive int or null>}, ...]
     - each satellite must have a value
     - the groupe's nombre_repas_an must be equal to the sum of the satellites' values
-    NOTE: not checked in save() (drafts can be filled progressively), but in clean(): is_clean() (/check & teledeclaration)
+    NOTE: not checked in save() (drafts can be filled progressively), but in clean(): _is_clean() (/check & teledeclaration)
     """
     errors = {}
     field_name = "satellites_nombre_repas_an_list"

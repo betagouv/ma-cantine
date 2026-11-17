@@ -9,7 +9,7 @@ def validate_gaspillage_fields_required(instance):
         - [NEW in 2026] the volet is skipped if not started (none of its fields filled)
         - [NEW in 2026] dons_convention is optional if the canteen serves less than 3000 meals per day
           (loi EGalim: the obligation only applies above 3000 meals per day)
-    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in _is_clean()
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:
@@ -33,7 +33,7 @@ def validate_gaspillage_dons_fields(instance):
     """
     - extra validation: depending on the year of the diagnostic
         - [NEW in 2026] dons_frequence, dons_quantite & dons_type_denrees can only be filled if dons_convention is True
-    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in _is_clean()
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:

@@ -125,9 +125,9 @@ class DiagnosticVoletDiversificationPlanFieldsValidatorTest(TestCase):
             plan_diversification_en_place=False,
             plan_diversification_actions=[Diagnostic.PlanDiversificationActions.PLATS_PRODUITS],
         )
-        _, errors = diagnostic.is_clean()
+        _, errors = diagnostic._is_clean()
         self.assertIn("plan_diversification_actions", errors)
-        _, errors = diagnostic.is_clean(skip_volets_thematiques=True)
+        _, errors = diagnostic._is_clean(skip_volets_thematiques=True)
         self.assertNotIn("plan_diversification_actions", errors)
 
 
@@ -199,7 +199,7 @@ class DiagnosticVoletDiversificationMenuVegetarienFieldsValidatorTest(TestCase):
             menu_vegetarien_frequence=Diagnostic.MenuVegetarienFrequence.JAMAIS,
             menu_vegetarien_bases=[Diagnostic.MenuVegetarienBase.SOJA],
         )
-        _, errors = diagnostic.is_clean()
+        _, errors = diagnostic._is_clean()
         self.assertIn("menu_vegetarien_bases", errors)
-        _, errors = diagnostic.is_clean(skip_volets_thematiques=True)
+        _, errors = diagnostic._is_clean(skip_volets_thematiques=True)
         self.assertNotIn("menu_vegetarien_bases", errors)
