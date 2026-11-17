@@ -1005,6 +1005,9 @@ class Diagnostic(
     @property
     def canteen_yearly_meal_count(self):
         if self.year >= 2026:
+            # groupe: nombre_repas_an can be empty (only filled via API or import), use the satellites' sum instead
+            if self.nombre_repas_an is None:
+                return self.satellites_nombre_repas_an_sum
             return self.nombre_repas_an
         else:
             if self.canteen_snapshot:
