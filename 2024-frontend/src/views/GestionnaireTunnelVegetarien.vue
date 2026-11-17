@@ -2,6 +2,7 @@
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationButtonReset from "@/components/TunnelTeledeclarationButtonReset.vue"
+import TunnelTeledeclarationVoletThematiqueBanner from "@/components/TunnelTeledeclarationVoletThematiqueBanner.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 
@@ -12,22 +13,13 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
 
 <template>
   <h2>Diversification des sources de protéines <br /> et menus végétariens</h2>
+  <TunnelTeledeclarationVoletThematiqueBanner />
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <p class="fr-mb-1w">
         Ce volet de la télédéclaration permet de s’auto-évaluer et informer vos convives en regard des obligations de
-        la loi :
+        la loi.
       </p>
-      <ul class="fr-mb-2w">
-        <li>
-          <strong>diversification des sources de protéines</strong> : obligatoire pour les restaurants collectifs servant plus de 200
-          couverts par jour en moyenne
-        </li>
-        <li><strong>menu végétarien hebdomadaire</strong> : cantines scolaires de la maternelle au lycée</li>
-        <li>
-          <strong>option végétarienne quotidienne en cas de choix multiple de menus</strong> : cantines de l’État et de ses opérateurs
-        </li>
-      </ul>
       <p class="fr-mb-0">
         En télédéclarant ce volet, vous contribuez à l’Observatoire EGalim en restauration collective et aux
         statistiques du rapport annuel au Parlement (données anonymisées).
@@ -52,11 +44,28 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
   </div>
   <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Diversification des sources de protéines" :documentation="diversificationDocumentation" />
+    <DsfrHighlight class="fr-ml-0">
+      <p>
+        <span class="fr-text--bold">Établissements concernés :</span><br />
+        tous les restaurants collectifs servant plus de 200 couverts par jour en moyenne, y compris ceux du secteur privé
+        (entreprises, prestataires…).
+      </p>
+    </DsfrHighlight>
     <TunnelTeledeclarationField name="planDiversificationEnPlace" />
     <TunnelTeledeclarationField name="planDiversificationActions" />
   </div>
   <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Menu végétarien" :documentation="menuVegetarienDocumentation" />
+    <DsfrHighlight class="fr-ml-0">
+      <p>
+        <span class="fr-text--bold">Pour les cantines scolaires de la maternelle au lycée :</span><br />
+        publics et privés : un menu végétarien obligatoire chaque semaine.
+      </p>
+      <p>
+        <span class="fr-text--bold">Pour les cantines de l’État et ses opérateurs :</span><br />
+        une option végétarienne quotidienne en cas de choix multiple de menus.
+      </p>
+    </DsfrHighlight>
     <TunnelTeledeclarationField name="serviceType" />
     <TunnelTeledeclarationField name="menuVegetarienFrequence" />
     <TunnelTeledeclarationField name="menuVegetarienBases" />
