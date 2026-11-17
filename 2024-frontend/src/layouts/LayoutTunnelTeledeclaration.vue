@@ -133,6 +133,7 @@ const quitTunnel = (to) => {
     quitRoute.value = to.fullPath
     showQuitModal.value = true
   }
+  else teledeclarationStore.refreshStore()
   return canQuit
 }
 
