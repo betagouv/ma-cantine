@@ -1,9 +1,10 @@
 <script setup>
 import { computed } from "vue"
+import diagnosticsMacaron from "@/services/diagnosticsMacaron.js"
 
 const props = defineProps(["color", "status"])
 
-const grey = "#AAAAAA"
+const grey = diagnosticsMacaron.getColor("grey")
 const white = "#FFFFFF"
 const isEmpty = computed(() => props.status === "empty")
 const isTeledeclared = computed(() => props.status === "teledeclared")

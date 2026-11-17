@@ -41,6 +41,7 @@ const currentCanteenAction = computed(() => {
 const teledeclarationStore = useStoreTeledeclaration()
 const { diagnoticCheck, isTeledeclared, diagnosticRecap } = storeToRefs(teledeclarationStore)
 const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTeledeclared.value, diagnoticCheck.value, diagnosticRecap.value))
+const macaronGrey = diagnosticsMacaron.getColor("grey")
 </script>
 <template>
   <div v-if="isInTeledeclaration || isInCorrection" class="gestionnaire-teledeclaration-nav fr-sidemenu">
@@ -69,7 +70,7 @@ const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTel
 </template>
 
 <style lang="scss">
-$macaron-grey: #AAAAAA;
+$macaron-grey: v-bind(macaronGrey);
 
 .gestionnaire-teledeclaration-nav {
   [href] {

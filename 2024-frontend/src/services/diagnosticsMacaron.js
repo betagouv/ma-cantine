@@ -1,3 +1,17 @@
+const colors = {
+  approvisionnement: "#18753C",
+  gaspillage: "#DDCA00",
+  information: "#FF9575",
+  diversification: "#A858A5",
+  plastique: "#8F8FD3",
+  cantine: "#000090",
+  grey: "#AAAAAA",
+}
+
+const getColor = (name) => {
+  return colors[name]
+}
+
 const isObjectiveReached = (key, recap) => {
   if (!key || !recap) return false
   const objectives = {
@@ -46,4 +60,4 @@ const getMacaronsStatus = (isTeledeclared, check, recap) => {
   }
 }
 
-export default { getMacaronsStatus, isObjectiveReached }
+export default { getMacaronsStatus, isObjectiveReached, getColor }

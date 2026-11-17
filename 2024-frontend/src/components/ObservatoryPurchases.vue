@@ -4,17 +4,19 @@ import stringsService from "@/services/strings"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
 import IconMacaronApprovisionnement from "@/components/IconMacaronApprovisionnement.vue"
+import diagnosticsMacaron from "@/services/diagnosticsMacaron.js"
 import GraphEgalim from "@/components/GraphEgalim.vue"
 import ObservatoryGraphMeatFrance from "@/components/ObservatoryGraphMeatFrance.vue"
 import ObservatoryGraphEgalim from "@/components/ObservatoryGraphEgalim.vue"
 
 defineProps(["stats"])
 const storeFilters = useStoreFilters()
+const approColor = diagnosticsMacaron.getColor("approvisionnement")
 </script>
 
 <template>
   <div class="observatory-purchases">
-    <ObservatoryBadgeTitle class="fr-mb-4w" :macaron="IconMacaronApprovisionnement" color="#18753C" title="Produits EGalim">
+    <ObservatoryBadgeTitle class="fr-mb-4w" :macaron="IconMacaronApprovisionnement" :color="approColor" title="Produits EGalim">
       Distribuer {{ stringsService.prettyPercent(50) }} de produits EGalim dont
       {{ stringsService.prettyPercent(20) }} de produits bio et distribuer au moins
       {{ stringsService.prettyPercent(60) }} de produits EGalim dans la famille de denrées "viandes et poissons".

@@ -1,7 +1,10 @@
 <script setup>
 import IconMacaronBase from "@/components/IconMacaronBase.vue"
+import diagnosticsMacaron from "@/services/diagnosticsMacaron.js"
+
+const color = diagnosticsMacaron.getColor("cantine")
 </script>
 
 <template>
-  <IconMacaronBase color="#000090" />
+  <IconMacaronBase :color="color" />
 </template>
