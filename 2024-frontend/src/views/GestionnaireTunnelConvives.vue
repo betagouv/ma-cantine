@@ -16,23 +16,11 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
   <TunnelTeledeclarationVoletThematiqueBanner />
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
-      <p class="fr-mb-1w">
+      <p class="fr-mb-0">
         Vos avancées en regard des objectifs de la loi EGalim doivent faire l’objet d’un affichage permanent à l’entrée
         du restaurant collectif lisible par tous les usager et par communication électronique, actualisé au moins une
-        fois par an, les établissements concernées :
+        fois par an.
       </p>
-      <ul class="fr-mb-0">
-        <li>
-          <span class="fr-text--bold">sur la part des produits EGalim :</span> les restaurants collectifs, publics ou
-          privés, y compris les restaurants administratifs ou restaurants d’entreprises.
-        </li>
-        <li>
-          <span class="fr-text--bold">sur l'information nutritionnelle</span> les restaurants collectifs, publics et
-          privés, des établissements scolaire et universitaire, des établissements d'accueil des enfants de moins de six
-          ans, des établissements de santé, des établissements sociaux et médico-sociaux et des établissements
-          pénitentiaires
-        </li>
-      </ul>
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">
@@ -54,6 +42,13 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
       title="Information des usagers sur la part des produits EGalim (dont bio) et/ou issus de Projets alimentaires territoriaux"
       :documentation="informationEgalimDocumentation"
     />
+    <DsfrHighlight class="fr-ml-0">
+      <p>
+        <span class="fr-text--bold">Établissements concernés :</span><br />
+        tous les restaurants collectifs, publics ou privés, y compris les restaurants administratifs ou restaurants
+        d’entreprises
+      </p>
+    </DsfrHighlight>
     <TunnelTeledeclarationField name="informationAffichagePermanent" />
     <TunnelTeledeclarationField name="informationElectroniqueAnnuelle" />
     <TunnelTeledeclarationField name="informationPartEgalim" />
@@ -61,6 +56,14 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
   </div>
   <div class="fr-mb-6w ma-cantine--fields-group">
     <TunnelTeledeclarationGroupTitle title="Information nutritionnelle" :documentation="informationNutritionnelleDocumentation" />
+    <DsfrHighlight class="fr-ml-0">
+      <p>
+        <span class="fr-text--bold">Établissements concernés :</span><br />
+        restaurants collectifs, publics et privés, des établissements scolaire et universitaire, des établissements
+        d'accueil des enfants de moins de six ans, des établissements de santé, des établissements sociaux et
+        médico-sociaux et des établissements pénitentiaires
+      </p>
+    </DsfrHighlight>
     <TunnelTeledeclarationField name="informationConsultationQualite" />
   </div>
 </template>
