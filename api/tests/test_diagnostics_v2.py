@@ -82,6 +82,7 @@ class DiagnosticV2ListApiTest(APITestCase):
         self.assertEqual(len(response.json()["results"]), 2)
 
 
+@freeze_time("2026-03-30")  # during the 2025 campaign
 class DiagnosticV2CreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -89,13 +90,13 @@ class DiagnosticV2CreateApiTest(APITestCase):
         cls.url = reverse("diagnostic_v2_list_create", kwargs={"canteen_pk": cls.canteen.id})
 
     def test_cannot_create_diagnostic_if_unauthenticated(self):
-        response = self.client.post(self.url, {"year": 2025})
+        response = self.client.post(self.url, {})
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
     def test_cannot_create_diagnostic_if_not_canteen_manager(self):
-        response = self.client.post(self.url, {"year": 2025})
+        response = self.client.post(self.url, {})
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -104,26 +105,38 @@ class DiagnosticV2CreateApiTest(APITestCase):
         self.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token.token}")
-        response = self.client.post(self.url, {"year": 2025})
+        response = self.client.post(self.url, {})
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertEqual(Diagnostic.objects.count(), 0)
 
     @authenticate
-    def test_cannot_create_diagnostic_without_year(self):
+    def test_cannot_create_diagnostic_outside_campaign(self):
+        """
+        Like the imports: diagnostics can only be created during the campaign (teledeclaration or correction)
+        """
         self.canteen.managers.add(authenticate.user)
 
-        response = self.client.post(self.url, {})
+        for date in [
+            "2026-01-11",  # before the 2025 campaign
+            "2026-04-30",  # after the 2025 correction campaign
+            "2026-11-16",  # during the year
+        ]:
+            with self.subTest(date=date), freeze_time(date):
+                response = self.client.post(self.url, {})
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertIn("year", response.json())
+                self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+                self.assertEqual(
+                    response.json()["detail"],
+                    ["Ce n'est pas possible de créer un bilan hors de la période de la campagne"],
+                )
+        self.assertEqual(Diagnostic.objects.count(), 0)
 
     @authenticate
     def test_create_diagnostic(self):
         self.canteen.managers.add(authenticate.user)
 
         payload = {
-            "year": 2025,
             "centralKitchenDiagnosticMode": Diagnostic.CentralKitchenDiagnosticMode.ALL,
             "creationSource": CreationSource.APP,
             "creationMtmSource": "mtm_source_value",
@@ -136,6 +149,7 @@ class DiagnosticV2CreateApiTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         body = response.json()
+        self.assertEqual(body["year"], 2025)
         self.assertNotIn("creationSource", body)  # write-only
         # the response contains all the volet fields (empty)
         self.assertIsNone(body["diagnosticType"])
@@ -143,7 +157,7 @@ class DiagnosticV2CreateApiTest(APITestCase):
         self.assertIn("informationSupports", body)
         diagnostic = Diagnostic.objects.get(id=body["id"])
         self.assertEqual(diagnostic.canteen, self.canteen)
-        self.assertEqual(diagnostic.year, 2025)
+        self.assertEqual(diagnostic.year, 2025)  # the current campaign year
         self.assertEqual(diagnostic.central_kitchen_diagnostic_mode, Diagnostic.CentralKitchenDiagnosticMode.ALL)
         self.assertEqual(diagnostic.creation_user, authenticate.user)
         self.assertEqual(diagnostic.creation_source, CreationSource.APP)
@@ -152,16 +166,39 @@ class DiagnosticV2CreateApiTest(APITestCase):
         self.assertIsNone(diagnostic.valeur_totale)
         self.assertIsNone(diagnostic.diagnostic_gaspillage_realise)
 
+    @authenticate
+    def test_create_diagnostic_year_is_ignored(self):
+        """
+        The year is not asked: it is always the current campaign year
+        """
+        self.canteen.managers.add(authenticate.user)
+
+        response = self.client.post(self.url, {"year": 2026})
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Diagnostic.objects.get(id=response.json()["id"]).year, 2025)
+
+    @authenticate
+    def test_create_diagnostic_during_correction_campaign(self):
+        self.canteen.managers.add(authenticate.user)
+
+        with freeze_time("2026-04-20"):  # during the 2025 correction campaign
+            response = self.client.post(self.url, {})
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Diagnostic.objects.get(id=response.json()["id"]).year, 2025)
+
     def test_create_diagnostic_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen.managers.add(user)
 
         self.client.credentials(Authorization=f"Bearer {token.token}")
-        response = self.client.post(self.url, {"year": 2025})
+        response = self.client.post(self.url, {})
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         diagnostic = Diagnostic.objects.get(id=response.json()["id"])
         self.assertEqual(diagnostic.canteen, self.canteen)
+        self.assertEqual(diagnostic.year, 2025)
         self.assertEqual(diagnostic.creation_user, user)
         self.assertEqual(diagnostic.creation_source, CreationSource.API)
         self.assertEqual(diagnostic.creation_source_api_oauth2_application, token.application)
@@ -172,7 +209,7 @@ class DiagnosticV2CreateApiTest(APITestCase):
         DiagnosticFactory(canteen=self.canteen, year=2025)
 
         with transaction.atomic():
-            response = self.client.post(self.url, {"year": 2025})
+            response = self.client.post(self.url, {})
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Diagnostic.objects.filter(canteen=self.canteen, year=2025).count(), 1)

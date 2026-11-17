@@ -4,6 +4,7 @@ from rest_framework import serializers
 from api.serializers.diagnostic import DiagnosticSerializer
 from api.serializers.utils import set_help_text_from_verbose_name
 from data.models import Diagnostic
+from data.models.diagnostic_teledeclaration_dates import get_current_campaign_year
 from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_fields_all,
     get_teledeclaration_fields_all_years,
@@ -13,6 +14,7 @@ CREATE_ONLY_FIELDS = ("creation_source", *Diagnostic.MATOMO_FIELDS)
 READ_ONLY_FIELDS = (
     "id",
     "canteen_id",
+    "year",  # set on create: the current campaign year (like the 2026 format imports)
     "status",
     "is_teledeclared",
     "is_filled",
@@ -41,6 +43,7 @@ class DiagnosticV2Serializer(DiagnosticSerializer):
     The diagnostic itself
     - write: only the diagnostic's own fields (each volet is edited via its own serializer)
     - read: also all the volets' fields (flat, filtered by year & diagnostic_type, see VOLET_V2_SERIALIZERS)
+    - create: the year is not asked, it is the current campaign year (creation only during the campaign, see the view)
     """
 
     v1_choice_value_aliases = {}  # v2: the model (French) values
@@ -73,20 +76,19 @@ class DiagnosticV2Serializer(DiagnosticSerializer):
 
     def get_fields(self):
         fields = super().get_fields()
-        fields["year"].required = True
-        fields["year"].allow_null = False
         # some fields are only available on create
         # and hidden from the docs (see extend_schema_serializer)
         for field in CREATE_ONLY_FIELDS:
             fields[field].write_only = True
             if self.instance is not None:
                 fields.pop(field, None)
-        # the year cannot be changed once the diagnostic is created
-        if self.instance is not None:
-            fields["year"].read_only = True
         for field in READ_ONLY_FIELDS:
             fields[field].read_only = True
         return fields
+
+    def create(self, validated_data):
+        validated_data["year"] = get_current_campaign_year()
+        return super().create(validated_data)
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
