@@ -46,41 +46,45 @@ const getPrettyDiagnosticValue = (field) => {
   return prettyValue ?? "Non renseigné"
 }
 
-const getRowName = (field, canteen) => {
-  if (canteen) {
-    const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(canteen))
-    return `${canteen.name} ${siretSiren} (ID : ${canteen.id})`
-  }
+const getRowName = (field) => {
   if (props.accordion.isCanteenFields) return field
   const { labelRecap, hint } = tunnelTeledeclarationService.getField(field)
   return hint ? `${labelRecap} (${hint})` : labelRecap
 }
 
-const getRowValue = (field, canteen) => {
-  if (canteen) return canteen.nombreRepasAn
+const getRowValue = (field) => {
   if (props.accordion.isCanteenFields) return canteenInformations.value[field]
   return getPrettyDiagnosticValue(field)
 }
 
-const getRowError = (field, canteen) => {
-  if (canteen) return tunnelTeledeclarationService.getGroupeCanteenMealCountError(canteen, diagnosticErrors.value)
-  return teledeclarationStore.getErrorMessage(field)
+const getFieldRow = (field) => {
+  // For a group : the field is replaced by the sum (the errors are still those of nombreRepasAn)
+  const displayedField = isGroupeMealCountField(field) ? "satellitesNombreRepasAnSum" : field
+  return {
+    name: {
+      label: getRowName(displayedField),
+      error: teledeclarationStore.getErrorMessage(field) || "",
+    },
+    value: getRowValue(displayedField) ?? "Non renseigné",
+  }
+}
+
+const getGroupeCanteenRow = (groupeCanteen) => {
+  const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(groupeCanteen))
+  return {
+    name: {
+      label: `${groupeCanteen.name} ${siretSiren} (ID : ${groupeCanteen.id})`,
+      error: tunnelTeledeclarationService.getGroupeCanteenMealCountError(groupeCanteen, diagnosticErrors.value) || "",
+    },
+    value: groupeCanteen.nombreRepasAn ?? "Non renseigné",
+  }
 }
 
 const rows = computed(() => {
   const fields = tunnelTeledeclarationService.getFieldsListFromGroup(props.accordion.fieldsGroupName)
-  return fields.flatMap(field => {
-    const canteens = field === "satellitesNombreRepasAnList" ? groupeCanteensMealCount.value : [null]
-    // For a group : the field is replaced by the sum (the errors are still those of nombreRepasAn)
-    const displayedField = isGroupeMealCountField(field) ? "satellitesNombreRepasAnSum" : field
-    return canteens.map(canteen => ({
-      name: {
-        label: getRowName(displayedField, canteen),
-        error: getRowError(field, canteen) || "",
-      },
-      value: getRowValue(displayedField, canteen) ?? "Non renseigné",
-    }))
-  })
+  const fieldsRows = fields.filter(field => field !== "satellitesNombreRepasAnList").map(getFieldRow)
+  const groupeCanteensRows = fields.includes("satellitesNombreRepasAnList") ? groupeCanteensMealCount.value.map(getGroupeCanteenRow) : []
+  return fieldsRows.concat(groupeCanteensRows)
 })
 
 const goToStep = (page) => router.push(page)
