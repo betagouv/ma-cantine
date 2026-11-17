@@ -542,6 +542,43 @@ class DiagnosticTeledeclarationJustificatif2026Test(APITestCase):
         canteen_fields = DiagnosticTeledeclarationPdfView.get_context(diagnostic_groupe)["volets"]["CANTEEN"]
         self.assertNotIn("Description", [field["label"] for field in canteen_fields])
 
+    def test_display_the_meal_count_of_each_satellite_if_groupe(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[self.user])
+        satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe,
+            name="Satellite 1",
+            yearly_meal_count=1000,
+        )
+        satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe,
+            name="Satellite 2",
+            yearly_meal_count=1000,
+        )
+        # the meal count declared for each satellite is different from the one of the satellite canteen
+        diagnostic_groupe = DiagnosticFactory(
+            canteen=canteen_groupe,
+            year=2026,
+            diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
+            satellites_nombre_repas_an_list=[
+                {"id": satellite_1.id, "nombre_repas_an": 2000},
+                {"id": satellite_2.id, "nombre_repas_an": 3000},
+            ],
+        )
+        diagnostic_groupe.teledeclare(self.user)
+
+        meal_count_fields = DiagnosticTeledeclarationPdfView._get_meal_count_fields(diagnostic_groupe)
+
+        self.assertEqual(
+            meal_count_fields,
+            [
+                {"label": "Total nombre de couverts par an", "value": 5000},
+                {"label": f"Satellite 1 {satellite_1.siret} (ID : {satellite_1.id})", "value": 2000},
+                {"label": f"Satellite 2 {satellite_2.siret} (ID : {satellite_2.id})", "value": 3000},
+            ],
+        )
+
     def test_display_the_cost_per_meal(self):
         diagnostic = self._teledeclared_diagnostic(valeur_totale=10000, nombre_repas_an=1000)
 
