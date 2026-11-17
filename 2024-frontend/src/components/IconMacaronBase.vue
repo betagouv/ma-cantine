@@ -7,7 +7,7 @@ const grey = "#AAAAAA"
 const white = "#FFFFFF"
 const isEmpty = computed(() => props.status === "empty")
 const isTeledeclared = computed(() => props.status === "teledeclared")
-const isObjectivesReached = computed(() => props.status === "objectivesReached")
+const isObjectivesReached = computed(() => !props.status || props.status === "objectivesReached")
 const hasFilledCircle = computed(() => isTeledeclared.value || isObjectivesReached.value)
 const mainColor = computed(() => (isEmpty.value ? grey : props.color))
 const iconFill = computed(() => (hasFilledCircle.value ? white : mainColor.value))
