@@ -4,6 +4,7 @@ import { useRouter } from "vue-router"
 import AppLinkRouter from "@/components/AppLinkRouter.vue"
 import DiagnosticSummaryAppro from "@/components/DiagnosticSummaryAppro.vue"
 import DiagnosticSummaryThematiques from "@/components/DiagnosticSummaryThematiques.vue"
+import DiagnosticModalCancel from "@/components/DiagnosticModalCancel.vue"
 
 const props = defineProps(['volets', 'open', 'anchorName', 'isTeledeclared', 'diagnosticRecap'])
 const activeAccordion = ref(props.open)
@@ -12,6 +13,7 @@ watch(() => props.open, (value) => activeAccordion.value = value)
 /* Navigation */
 const router = useRouter()
 const goToPage = (page) => router.push(page)
+const showCancelModal = ref(false)
 
 /* Sentence */
 const getSentence = (volet) => {
@@ -58,10 +60,12 @@ const isVoletTeledeclared = (volet) => {
         :volet-key="volet.key"
       />
       <div v-if="isVoletTeledeclared(volet)" class="ma-cantine--flex-end fr-mt-2w">
-        <DsfrButton v-if="!volet.isAppro" @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
+        <DsfrButton v-if="volet.isAppro" @click="showCancelModal = true" secondary label="Modifier mes approvisionnements" icon="fr-icon-edit-line" size="sm"/>
+        <DsfrButton v-else @click="goToPage(volet.page)" secondary :label="`Modifier le volet ${volet.title.toLowerCase()}`" icon="fr-icon-edit-line" size="sm"/>
       </div>
     </DsfrAccordion>
   </DsfrAccordionsGroup>
+  <DiagnosticModalCancel :opened="showCancelModal" @close="showCancelModal = false" />
 </template>
 
 <style lang="scss" scoped>

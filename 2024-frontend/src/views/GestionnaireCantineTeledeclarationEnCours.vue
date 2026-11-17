@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from "vue"
+import { computed } from "vue"
 import { storeToRefs } from "pinia"
 import { useRouter } from "vue-router"
 import { useStoreCanteen } from "@/stores/canteen.js"
@@ -13,7 +13,6 @@ import DiagnosticSatellitesLinked from "@/components/DiagnosticSatellitesLinked.
 import DiagnosticPurchasesLinked from "@/components/DiagnosticPurchasesLinked.vue"
 import DiagnosticSummary from "@/components/DiagnosticSummary.vue"
 import DiagnosticPdf from "@/components/DiagnosticPdf.vue"
-import DiagnosticModalCancel from "@/components/DiagnosticModalCancel.vue"
 
 const rootStore = useRootStore()
 const canteenStore = useStoreCanteen()
@@ -32,7 +31,7 @@ const pageTitle = computed(() => canteenInformations.value.isGroupe ? `Télédé
 const buttonTop = computed(() => {
   switch (true) {
     case isTeledeclared.value:
-      return { label: 'Modifier ma télédéclaration', icon: 'fr-icon-edit-line', openModal: true }
+      return null
     case hasDiagnostic.value:
       return { label: 'Reprendre ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproInformations" }
     default:
@@ -41,11 +40,7 @@ const buttonTop = computed(() => {
 })
 
 /* Navigation */
-const showCancelModal = ref(false)
-const onClickButtonTop = () => {
-  if (buttonTop.value.openModal) showCancelModal.value = true
-  else openTunnel(buttonTop.value.pageName)
-}
+const onClickButtonTop = () => openTunnel(buttonTop.value.pageName)
 
 const openTunnel = (pageName) => {
   if (!pageName) createDiagnostic()
@@ -77,7 +72,6 @@ const showError = (message) => rootStore.notifyServerError(message)
       :icon="buttonTop.icon"
     />
   </GestionnaireSidebarTitle>
-  <DiagnosticModalCancel :opened="showCancelModal" @close="showCancelModal = false" />
 
   <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters fr-grid-row--top">
     <div v-if="isTeledeclared" class="fr-col-12 fr-col-md-7">
