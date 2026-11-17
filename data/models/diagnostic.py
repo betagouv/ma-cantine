@@ -1,3 +1,4 @@
+import copy
 import operator
 from functools import reduce
 
@@ -944,24 +945,31 @@ class Diagnostic(
 
     def get_validation_errors(self, skip_volets_thematiques=False) -> dict:
         """
+        - the diagnostic is validated as it would be teledeclared: the appro fields not matching the diagnostic_type
+          are ignored (cleared on a copy, see clear_appro_fields_not_matching_diagnostic_type)
         - skip_volets_thematiques: if True, the volets thématiques are not checked (required fields & other rules)
         """
+        # copy: the manager keeps the values of the other type until the teledeclaration (can switch type)
+        diagnostic = copy.copy(self)
+        diagnostic.clear_appro_fields_not_matching_diagnostic_type()
         errors = {}
         try:
-            self.full_clean()
+            diagnostic.full_clean()
         except ValidationError as e:
             errors = e.message_dict
         if not skip_volets_thematiques:
             errors = utils_utils.merge_validation_errors(
                 errors,
-                diagnostic_volet_gaspillage_validators.validate_gaspillage_fields_required(self),
-                diagnostic_volet_gaspillage_validators.validate_gaspillage_dons_fields(self),
-                diagnostic_volet_diversification_validators.validate_diversification_fields_required(self),
-                diagnostic_volet_diversification_validators.validate_diversification_plan_fields(self),
-                diagnostic_volet_diversification_validators.validate_diversification_menu_vegetarien_fields(self),
-                diagnostic_volet_plastique_validators.validate_plastique_fields_required(self),
-                diagnostic_volet_plastique_validators.validate_plastique_contenant_emporter_fields(self),
-                diagnostic_volet_information_validators.validate_information_fields_required(self),
+                diagnostic_volet_gaspillage_validators.validate_gaspillage_fields_required(diagnostic),
+                diagnostic_volet_gaspillage_validators.validate_gaspillage_dons_fields(diagnostic),
+                diagnostic_volet_diversification_validators.validate_diversification_fields_required(diagnostic),
+                diagnostic_volet_diversification_validators.validate_diversification_plan_fields(diagnostic),
+                diagnostic_volet_diversification_validators.validate_diversification_menu_vegetarien_fields(
+                    diagnostic
+                ),
+                diagnostic_volet_plastique_validators.validate_plastique_fields_required(diagnostic),
+                diagnostic_volet_plastique_validators.validate_plastique_contenant_emporter_fields(diagnostic),
+                diagnostic_volet_information_validators.validate_information_fields_required(diagnostic),
             )
         # normalize the format: {"field": ["error1", ...]}
         return ValidationError(errors).message_dict if errors else {}
@@ -1143,11 +1151,11 @@ class Diagnostic(
         only the fields for that type (SIMPLE or COMPLETE) may be filled, the rest are cleared.
         NOTE: called from teledeclare() (not save()), so a manager can freely switch
         diagnostic_type while filling out a diagnostic without losing data until they actually
-        submit it.
+        submit it. Also called on a copy in get_validation_errors (so the errors match the diagnostic_type).
         NOTE: SIMPLIFIED_DIAGNOSTIC_FIELDS are kept regardless of type, since COMPLETE diagnostics
         derive them automatically (see populate_simplified_diagnostic_values).
         """
-        if not (self.year and int(self.year) >= 2026):
+        if diagnostic_validators.validate_year(self) or int(self.year) < 2026:
             return
         if not self.diagnostic_type or self.diagnostic_type not in Diagnostic.DiagnosticType.values:
             return

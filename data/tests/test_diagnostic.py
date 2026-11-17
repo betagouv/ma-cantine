@@ -1958,6 +1958,24 @@ class DiagnosticIsCleanMethodTest(TestCase):
         self.assertTrue(is_clean)
         self.assertEqual(errors, {})
 
+    @freeze_time("2027-01-30")  # during the 2026 campaign
+    def test_is_clean_ignores_appro_fields_not_matching_diagnostic_type(self):
+        diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
+        # COMPLETE-only field left over (ex: the manager started with a COMPLETE diagnostic)
+        diagnostic.valeur_viandes_volailles_bio = 2000  # > valeur_bio & valeur_totale
+        diagnostic.save()
+        self.assertRaises(ValidationError, diagnostic.full_clean)  # the model validation still sees it
+        is_clean, errors = diagnostic.is_clean(skip_volets_thematiques=True)
+        self.assertTrue(is_clean)
+        self.assertEqual(errors, {})
+        # not cleared (only on a copy): the manager can switch back to COMPLETE
+        self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 2000)
+        # the same value on a COMPLETE diagnostic is validated
+        diagnostic.diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
+        is_clean, errors = diagnostic.is_clean(skip_volets_thematiques=True)
+        self.assertFalse(is_clean)
+        self.assertIn("valeur_bio", errors)
+
 
 class DiagnosticVoletThematiqueIsFilledPropertyTest(TestCase):
     # a boolean field of each volet thématique (2026)
