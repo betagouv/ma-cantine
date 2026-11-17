@@ -331,6 +331,45 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.canteen_satellite_11.refresh_from_db()
         self.assertIsNone(self.canteen_satellite_11.groupe_id)
 
+    @authenticate
+    def test_canteen_groupe_satellite_link_unlink_syncs_the_groupe_diagnostic(self):
+        self.canteen_groupe_1.managers.add(authenticate.user)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_groupe_1, year=2026)
+        self.assertEqual(
+            [item["id"] for item in diagnostic.satellites_nombre_repas_an_list],
+            [self.canteen_satellite_11.id, self.canteen_satellite_12.id],
+        )
+
+        # link
+        url = reverse(
+            "canteen_groupe_satellite_link",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_0.id},
+        )
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
+        self.assertIn(
+            {"id": self.canteen_satellite_0.id, "nombre_repas_an": self.canteen_satellite_0.yearly_meal_count},
+            diagnostic.satellites_nombre_repas_an_list,
+        )
+        history = diagnostic.history.first()
+        self.assertEqual(history.history_user, authenticate.user)
+        self.assertEqual(
+            history.history_change_reason, f"Groupe satellites sync (canteen {self.canteen_satellite_0.id})"
+        )
+
+        # unlink
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
+        self.assertNotIn(
+            self.canteen_satellite_11.id, [item["id"] for item in diagnostic.satellites_nombre_repas_an_list]
+        )
+
     def test_canteen_groupe_satellite_link_unlink_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
         self.canteen_groupe_1.managers.add(user)

@@ -1,4 +1,5 @@
 from copy import deepcopy
+from unittest import mock
 from datetime import datetime
 from decimal import Decimal
 
@@ -1133,12 +1134,10 @@ class DiagnosticGroupeSatellitesNombreRepasAnListSyncTest(TestCase):
                 {"id": self.canteen_satellite_2.id, "nombre_repas_an": 1200},
             ],
         )
-        # a satellite leaves the groupe, a new one joins
-        canteen_satellite_3 = CanteenFactory(
-            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe, yearly_meal_count=1300
-        )
-        self.canteen_satellite_1.groupe = None
-        self.canteen_satellite_1.save()
+        # a satellite leaves the groupe, a new one joins (bypass the Canteen post_save signal)
+        canteen_satellite_3 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+        Canteen.objects.filter(id=canteen_satellite_3.id).update(groupe=self.canteen_groupe, yearly_meal_count=1300)
+        Canteen.objects.filter(id=self.canteen_satellite_1.id).update(groupe=None)
         diagnostic.save()
         diagnostic.refresh_from_db()
         self.assertEqual(
@@ -1182,6 +1181,99 @@ class DiagnosticGroupeSatellitesNombreRepasAnListSyncTest(TestCase):
         diagnostic.save(skip_validations=True)
         diagnostic.refresh_from_db()
         self.assertEqual(len(diagnostic.satellites_nombre_repas_an_list), 2)
+
+
+class CanteenGroupeSatellitesSyncSignalTest(TestCase):
+    """
+    Canteen post_save signal: sync the satellites_nombre_repas_an_list of the groupe's diagnostics
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_1 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe, yearly_meal_count=1100
+        )
+
+    def setUp(self):
+        self.diagnostic = DiagnosticFactory(
+            canteen=self.canteen_groupe,
+            year=2026,
+            satellites_nombre_repas_an_list=[{"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000}],
+        )
+
+    def _get_list(self, diagnostic):
+        diagnostic.refresh_from_db()
+        return diagnostic.satellites_nombre_repas_an_list
+
+    @mock.patch("macantine.tasks.update_canteen_geo_fields_from_siret")
+    @mock.patch("macantine.tasks.update_canteen_geo_data_from_insee_code")
+    def test_new_satellite_is_added_and_prefilled(self, *mocks):
+        # CanteenFactory skips the post_save signal on creation
+        canteen_satellite_2 = CanteenFactory.build(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe, yearly_meal_count=1200
+        )
+        canteen_satellite_2.save(skip_validations=True)
+        self.assertEqual(
+            self._get_list(self.diagnostic),
+            [
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000},  # kept
+                {"id": canteen_satellite_2.id, "nombre_repas_an": 1200},  # prefilled
+            ],
+        )
+
+    def test_existing_canteen_linked_is_added(self):
+        canteen_satellite_2 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, yearly_meal_count=1200
+        )
+        canteen_satellite_2.groupe = self.canteen_groupe
+        canteen_satellite_2.save()
+        self.assertEqual(
+            self._get_list(self.diagnostic),
+            [
+                {"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000},
+                {"id": canteen_satellite_2.id, "nombre_repas_an": 1200},
+            ],
+        )
+
+    def test_satellite_unlinked_is_removed(self):
+        self.canteen_satellite_1.groupe = None
+        self.canteen_satellite_1.save()
+        self.assertEqual(self._get_list(self.diagnostic), [])
+
+    def test_satellite_moved_to_another_groupe(self):
+        canteen_groupe_2 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        diagnostic_2 = DiagnosticFactory(canteen=canteen_groupe_2, year=2026)
+        self.canteen_satellite_1.groupe = canteen_groupe_2
+        self.canteen_satellite_1.save()
+        self.assertEqual(self._get_list(self.diagnostic), [])
+        self.assertEqual(self._get_list(diagnostic_2), [{"id": self.canteen_satellite_1.id, "nombre_repas_an": 1100}])
+
+    def test_satellite_deleted_is_removed(self):
+        self.canteen_satellite_1.delete()
+        self.assertEqual(self._get_list(self.diagnostic), [])
+
+    def test_teledeclared_diagnostic_is_not_synced(self):
+        Diagnostic.objects.filter(id=self.diagnostic.id).update(status=Diagnostic.DiagnosticStatus.SUBMITTED)
+        self.canteen_satellite_1.groupe = None
+        self.canteen_satellite_1.save()
+        self.assertEqual(
+            self._get_list(self.diagnostic), [{"id": self.canteen_satellite_1.id, "nombre_repas_an": 1000}]
+        )
+
+    def test_other_canteen_update_does_not_sync(self):
+        history_count = self.diagnostic.history.count()
+        self.canteen_satellite_1.name = "Nouveau nom"
+        self.canteen_satellite_1.save()
+        self.assertEqual(self.diagnostic.history.count(), history_count)
+
+    def test_history_change_reason(self):
+        self.canteen_satellite_1.groupe = None
+        self.canteen_satellite_1.save()
+        self.assertEqual(
+            self.diagnostic.history.first().history_change_reason,
+            f"Groupe satellites sync (canteen {self.canteen_satellite_1.id})",
+        )
 
 
 class DiagnosticGroupeSatellitesNombreRepasAnSumTest(TestCase):

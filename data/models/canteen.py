@@ -780,6 +780,22 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         )
         self._geo_fields_reset = False
 
+    def set_groupe_id_list_to_sync(self):
+        """
+        Used by the post_save signal (sync_groupe_diagnostics_satellites), because dirty fields are reset after save.
+        The diagnostics of a groupe need to be synced (see Diagnostic.sync_satellites_nombre_repas_an_list) when:
+        - a canteen is linked to the groupe (on creation or update)
+        - a canteen is unlinked from the groupe (the old groupe)
+        - a satellite of the groupe is deleted
+        """
+        dirty_fields = self.get_dirty_fields(check_relationship=True)
+        groupe_id_set = set()
+        if self._state.adding or "groupe" in dirty_fields:
+            groupe_id_set.update([dirty_fields.get("groupe"), self.groupe_id])
+        if "deletion_date" in dirty_fields:
+            groupe_id_set.add(self.groupe_id)
+        self._groupe_id_list_to_sync = [groupe_id for groupe_id in groupe_id_set if groupe_id]
+
     def set_is_filled(self):
         self.is_filled = self._is_filled()
 
@@ -812,6 +828,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         self.optimize_logo()
         self.reset_geo_fields_if_siret_or_city_insee_code_changed()
         self.set_should_fill_geo_fields()
+        self.set_groupe_id_list_to_sync()
         if not skip_validations:
             self.is_clean(raise_errors=True)
         self.set_is_filled()
@@ -1163,6 +1180,30 @@ def fill_geo_fields_from_siret(sender, instance, created, **kwargs):
         tasks.update_canteen_geo_fields_from_siret(instance)
     elif instance.city_insee_code:
         tasks.update_canteen_geo_data_from_insee_code(instance)
+
+
+@receiver(post_save, sender=Canteen)
+def sync_groupe_diagnostics_satellites(sender, instance, created, **kwargs):
+    """
+    [NEW in 2026] When a satellite is linked to (or unlinked from) a groupe, or deleted:
+    sync the satellites_nombre_repas_an_list of the groupe's diagnostics (2026+, not teledeclared)
+    - see set_groupe_id_list_to_sync() & Diagnostic.sync_satellites_nombre_repas_an_list()
+    - the history user is set by simple_history's HistoryRequestMiddleware (if in a request)
+    """
+    from data.models import Diagnostic
+
+    groupe_id_list = getattr(instance, "_groupe_id_list_to_sync", [])
+    if not groupe_id_list:
+        return
+    instance._groupe_id_list_to_sync = []
+    diagnostic_qs = Diagnostic.objects.not_teledeclared().filter(
+        canteen_id__in=groupe_id_list,
+        canteen__production_type=Canteen.ProductionType.GROUPE,
+        year__gte=2026,
+    )
+    for diagnostic in diagnostic_qs:
+        diagnostic._change_reason = f"Groupe satellites sync (canteen {instance.id})"
+        diagnostic.save()  # syncs satellites_nombre_repas_an_list
 
 
 class CanteenImage(models.Model):
