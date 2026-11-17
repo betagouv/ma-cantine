@@ -69,6 +69,8 @@ const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTel
 </template>
 
 <style lang="scss">
+$macaron-grey: #AAAAAA;
+
 .gestionnaire-teledeclaration-nav {
   [href] {
     background-image: none !important;
@@ -87,6 +89,11 @@ const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTel
 
   &__link {
     flex: 0 0 0.5rem;
+
+    &::before,
+    &::after {
+      background-color: $macaron-grey;
+    }
   }
 
   &__macarons {
@@ -94,8 +101,12 @@ const macaronsStatus = computed(() => diagnosticsMacaron.getMacaronsStatus(isTel
     display: flex;
     align-items: stretch;
     gap: 0.75rem;
-    border: 1px solid var(--border-default-grey);
+    border: 1px solid $macaron-grey;
     border-radius: 0.5rem;
+
+    .app-separator {
+      background-color: $macaron-grey;
+    }
 
     svg {
       flex: 0 0 1.375rem;
