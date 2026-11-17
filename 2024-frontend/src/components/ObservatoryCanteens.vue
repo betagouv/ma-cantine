@@ -1,19 +1,19 @@
 <script setup>
 import ObservatoryBadgeTitle from "@/components/ObservatoryBadgeTitle.vue"
+import IconMacaronCantine from "@/components/IconMacaronCantine.vue"
 import ObservatoryGraphProductionType from "@/components/ObservatoryGraphProductionType.vue"
 import ObservatoryGraphEconomicModel from "@/components/ObservatoryGraphEconomicModel.vue"
 import ObservatoryGraphManagementType from "@/components/ObservatoryGraphManagementType.vue"
 import ObservatoryGraphSectors from "@/components/ObservatoryGraphSectors.vue"
 
 defineProps(["stats"])
-const canteenBadge = "/static/images/badges/badge-canteen.svg"
 </script>
 
 <template>
   <div>
     <ObservatoryBadgeTitle
       class="fr-mb-4w"
-      :image="canteenBadge"
+      :macaron="IconMacaronCantine"
       color="#000090"
       title="Les restaurants collectifs du territoire"
     >

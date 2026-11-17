@@ -1,11 +1,11 @@
 <script setup>
-defineProps(["image", "title", "color"])
+defineProps(["macaron", "title", "color"])
 </script>
 
 <template>
   <div class="observatory-badge-title">
     <div class="observatory-badge-title__top fr-mb-2w">
-      <img :src="image" class="observatory-badge-title__image" alt="" />
+      <component :is="macaron" class="observatory-badge-title__image" />
       <h2 class="fr-h4 fr-mt-2w fr-mt-md-0 fr-ml-md-4w fr-mb-0" :style="`color: ${color}`">
         {{ title }}
       </h2>
