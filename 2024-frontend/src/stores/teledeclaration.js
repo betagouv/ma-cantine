@@ -20,6 +20,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const isSimple = computed(() => diagnostic.value?.diagnosticType === "SIMPLE")
   const isComplete = computed(() => diagnostic.value?.diagnosticType === "COMPLETE")
   const isSaved = ref(true)
+  const forceRenderRefresh = ref(0)
   const hasSelectAutofill = ref(false)
   const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
   const canBeTeledeclared = computed(() => canteenAction.value === "40_teledeclare")
@@ -251,6 +252,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     const fields = tunnelTeledeclaration.getFieldsListFromGroup(volet)
     fields.forEach((field) => setValue(field, null))
     diagnostic.value[voletTunnelProgressionFields[volet]] = null
+    forceRenderRefresh.value++
   }
 
   /* Empty store */
@@ -363,6 +365,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
     isSimple,
     isComplete,
     isSaved,
+    forceRenderRefresh,
     hasSelectAutofill,
     isTeledeclared,
     canBeTeledeclared,

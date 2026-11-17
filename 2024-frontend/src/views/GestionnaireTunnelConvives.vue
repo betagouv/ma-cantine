@@ -1,6 +1,7 @@
 <script setup>
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
+import TunnelTeledeclarationButtonReset from "@/components/TunnelTeledeclarationButtonReset.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 
@@ -43,6 +44,7 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
           <li>Référence juridique : article L. 230-5-1 du Code rural et de la pêche maritime.</li>
         </ul>
       </AppHelpCard>
+      <TunnelTeledeclarationButtonReset />
     </div>
   </div>
   <div class="fr-mb-6w ma-cantine--fields-group">

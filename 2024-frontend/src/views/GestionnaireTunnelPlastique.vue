@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia"
 import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
+import TunnelTeledeclarationButtonReset from "@/components/TunnelTeledeclarationButtonReset.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 
@@ -55,6 +56,7 @@ const updateVenteEmporter = (value) => {
       <AppHelpCard title="En savoir plus sur vos obligations">
         <a :href="documentation.interdictionPlastique" target="_blank">Consultez la documentation</a>
       </AppHelpCard>
+      <TunnelTeledeclarationButtonReset />
     </div>
   </div>
   <div class="fr-mb-6w ma-cantine--fields-group">

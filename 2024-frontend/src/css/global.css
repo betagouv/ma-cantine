@@ -274,3 +274,13 @@ address {
 .ma-cantine--width-100 {
     width: 100%;
 }
+
+.ma-cantine--width-2w {
+    width: 4rem
+}
+
+/* TAG */
+.ma-cantine--tag-blue {
+    background-color: var(--background-action-low-blue-france);
+    color: var(--text-action-high-blue-france);
+}
