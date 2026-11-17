@@ -226,6 +226,11 @@ address {
     white-space: nowrap;
 }
 
+.ma-cantine--table-wrap th,
+.ma-cantine--table-wrap td {
+    white-space: pre-wrap !important;
+}
+
 /* FORM */
 .ma-cantine--textarea {
     resize: vertical !important;

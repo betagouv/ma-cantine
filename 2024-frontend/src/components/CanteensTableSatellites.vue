@@ -143,6 +143,7 @@ const claimCanteen = (canteen) => {
     :pagination-options="[minPagination, 100, 200]"
     :rows-per-page="minPagination"
     pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
+    class="ma-cantine--table-wrap"
   >
     <template #header="{ label }">
       <AppRawHTML :html="label" />

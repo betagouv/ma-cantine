@@ -90,7 +90,7 @@ const updateMealCount = async (id, value) => {
     :pagination="showPagination"
     :pagination-options="[minPagination, 100, 200]"
     :rows-per-page="minPagination"
-    class="canteens-table-couverts-groupe"
+    class="ma-cantine--table-wrap"
     pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
   >
     <template #cell="{ colKey, cell }">
@@ -118,11 +118,3 @@ const updateMealCount = async (id, value) => {
     </template>
   </DsfrDataTable>
 </template>
-
-<style lang="scss">
-.canteens-table-couverts-groupe {
-  .fr-error-text {
-    white-space: pre-wrap;
-  }
-}
-</style>

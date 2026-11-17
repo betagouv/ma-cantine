@@ -24,23 +24,32 @@ const header = [
   {
     key: "name",
     label: "Nom de la cantine",
+    headerAttrs: { class: "fr-col-3" },
   },
   {
     key: "siret",
     label: "SIRET / SIREN",
+    headerAttrs: { class: "fr-col-1" },
   },
   {
     key: "city",
     label: "Commune </br> (code postal)",
+    headerAttrs: { class: "fr-col-2" },
   },
-  { key: "productionType", label: "Type" },
+  {
+    key: "productionType",
+    label: "Type",
+    headerAttrs: { class: "fr-col-2" },
+  },
   {
     key: "diagnostic",
     label: `Bilan ${lastYear}`,
+    headerAttrs: { class: "fr-col-2" },
   },
   {
     key: "actions",
     label: "Actions",
+    headerAttrs: { class: "fr-col-2" },
   },
 ]
 
@@ -97,7 +106,7 @@ const getDropdownLinks = (canteen) => {
   <DsfrDataTable
     title="Vos cantines"
     no-caption
-    class="canteens-table"
+    class="ma-cantine--table-wrap"
     :headers-row="header"
     :rows="rows"
     :pagination="showPagination"
@@ -156,15 +165,3 @@ const getDropdownLinks = (canteen) => {
     </template>
   </DsfrDataTable>
 </template>
-
-<style lang="scss">
-.canteens-table {
-  th:nth-child(1) {
-    width: 35% !important;
-  }
-  td:nth-child(1),
-  td:nth-child(4) {
-    white-space: pre-wrap !important;
-  }
-}
-</style>
