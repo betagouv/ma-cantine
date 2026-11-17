@@ -2,6 +2,7 @@
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationButtonReset from "@/components/TunnelTeledeclarationButtonReset.vue"
+import TunnelTeledeclarationVoletThematiqueBanner from "@/components/TunnelTeledeclarationVoletThematiqueBanner.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 
@@ -12,6 +13,7 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
 
 <template>
   <h2>Diversification des sources de protéines <br /> et menus végétariens</h2>
+  <TunnelTeledeclarationVoletThematiqueBanner />
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <p class="fr-mb-1w">

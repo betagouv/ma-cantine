@@ -5,6 +5,7 @@ import { useStoreTeledeclaration } from "@/stores/teledeclaration"
 import documentation from "@/data/documentation.json"
 import AppHelpCard from "@/components/AppHelpCard.vue"
 import TunnelTeledeclarationButtonReset from "@/components/TunnelTeledeclarationButtonReset.vue"
+import TunnelTeledeclarationVoletThematiqueBanner from "@/components/TunnelTeledeclarationVoletThematiqueBanner.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
 
@@ -26,6 +27,7 @@ const updateVenteEmporter = (value) => {
 
 <template>
   <h2>Substitution des plastiques et de l’usage unique</h2>
+  <TunnelTeledeclarationVoletThematiqueBanner />
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <p class="fr-mb-1w">
