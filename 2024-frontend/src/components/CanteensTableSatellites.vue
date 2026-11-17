@@ -20,16 +20,21 @@ const tableHeaders = [
   {
     key: "name",
     label: "Nom",
-    headerAttrs: { class: "fr-col-5" },
+    headerAttrs: { class: "fr-col-4" },
   },
   {
     key: "siretSiren",
     label: "SIRET / SIREN",
-    headerAttrs: { class: "fr-col-3" },
+    headerAttrs: { class: "fr-col-2" },
   },
   {
     key: "city",
     label: "Commune </br> (code postal)",
+    headerAttrs: { class: "fr-col-2" },
+  },
+  {
+    key: "status",
+    label: "Statut",
     headerAttrs: { class: "fr-col-2" },
   },
   {
@@ -47,6 +52,7 @@ const tableRows = computed(() => {
         const canteenSiretOrSiren = canteensTableService.getSiretOrSirenInfos(sat)
         const siretSiren = formatSiretOrSiren(canteenSiretOrSiren)
         const city = canteensTableService.getCityInfos(sat)
+        const status = sat.isFilled ? "" : "À corriger"
         const actions =  {
           links: getDropdownLinks(sat),
           canteen: sat,
@@ -56,6 +62,7 @@ const tableRows = computed(() => {
           name,
           siretSiren,
           city,
+          status,
           actions,
         }
       })
@@ -138,7 +145,7 @@ const claimCanteen = (canteen) => {
     no-caption
     :headers-row="tableHeaders"
     :rows="tableRows"
-    :sortable-rows="['name']"
+    :sortable-rows="['name', 'status']"
     :pagination="showPagination"
     :pagination-options="[minPagination, 100, 200]"
     :rows-per-page="minPagination"
@@ -161,6 +168,9 @@ const claimCanteen = (canteen) => {
             {{ cell.canteen }}
           </span>
         </p>
+      </template>
+      <template v-else-if="colKey === 'status'">
+        <DsfrBadge v-if="cell" :label="cell" type="error" small />
       </template>
       <template v-else-if="colKey === 'actions'">
         <div class="fr-grid-row fr-grid-row--right">
