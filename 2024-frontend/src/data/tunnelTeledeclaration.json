@@ -253,7 +253,7 @@
       "informationPartPat": {
         "type": "radio",
         "inline": true,
-        "tooltip": "Pour en savoir plus sur le (ou les) PAT de votre territoire, retrouvez le lien vers la carte des PAT en haut de la page.",
+        "tooltip": "Si votre territoire n’est pas couvert par un PAT ou qu’aucune démarche d’approvisionnement de proximité n’est proposées dans le cadre du PAT, veuillez sélectionner “non concerné”. Pour en savoir plus sur le (ou les) PAT de votre territoire, retrouvez le lien vers la carte des PAT en haut de la page.",
         "options": [
           {
             "label": "Oui",
