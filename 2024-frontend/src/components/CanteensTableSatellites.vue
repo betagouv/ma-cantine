@@ -7,13 +7,11 @@ import canteensTableService from "@/services/canteensTable.js"
 import urlService from "@/services/urls.js"
 import AppDropdownMenu from "@/components/AppDropdownMenu.vue"
 import AppRawHTML from "@/components/AppRawHTML.vue"
-import AppBadgeDiagnostic from "@/components/AppBadgeDiagnostic.vue"
 
 /* Settings */
 const minPagination = 50
 const props = defineProps(["satellites", "groupe"])
 const emit = defineEmits(["showModalRemoveSatellite", "updateSatellites"])
-const lastYear = window.TELEDECLARATION_YEAR
 const store = useRootStore()
 const showPagination = computed(() => props.satellites.length > minPagination)
 
@@ -22,26 +20,22 @@ const tableHeaders = [
   {
     key: "name",
     label: "Nom",
+    headerAttrs: { class: "fr-col-5" },
   },
   {
     key: "siretSiren",
     label: "SIRET / SIREN",
+    headerAttrs: { class: "fr-col-3" },
   },
   {
     key: "city",
     label: "Commune </br> (code postal)",
-  },
-  {
-    key: "yearlyMealCount",
-    label: "Couverts </br>annuels",
-  },
-  {
-    key: "diagnostic",
-    label: `Télédéclaration </br>${lastYear}`,
+    headerAttrs: { class: "fr-col-2" },
   },
   {
     key: "actions",
     label: "Actions",
+    headerAttrs: { class: "fr-col-2" },
   },
 ]
 
@@ -53,8 +47,6 @@ const tableRows = computed(() => {
         const canteenSiretOrSiren = canteensTableService.getSiretOrSirenInfos(sat)
         const siretSiren = formatSiretOrSiren(canteenSiretOrSiren)
         const city = canteensTableService.getCityInfos(sat)
-        const yearlyMealCount = canteensTableService.getYearlyMealCountInfos(sat)
-        const diagnostic = sat.action
         const actions =  {
           links: getDropdownLinks(sat),
           canteen: sat,
@@ -64,8 +56,6 @@ const tableRows = computed(() => {
           name,
           siretSiren,
           city,
-          yearlyMealCount,
-          diagnostic,
           actions,
         }
       })
@@ -148,7 +138,7 @@ const claimCanteen = (canteen) => {
     no-caption
     :headers-row="tableHeaders"
     :rows="tableRows"
-    :sortable-rows="['name', 'diagnostic']"
+    :sortable-rows="['name']"
     :pagination="showPagination"
     :pagination-options="[minPagination, 100, 200]"
     :rows-per-page="minPagination"
@@ -170,9 +160,6 @@ const claimCanteen = (canteen) => {
             {{ cell.canteen }}
           </span>
         </p>
-      </template>
-      <template v-else-if="colKey === 'diagnostic'">
-        <AppBadgeDiagnostic :action="cell" />
       </template>
       <template v-else-if="colKey === 'actions'">
         <div class="fr-grid-row fr-grid-row--right">
