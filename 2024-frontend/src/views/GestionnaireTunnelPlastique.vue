@@ -51,11 +51,11 @@ const updateVenteEmporter = (value) => {
       <p>
         <span class="fr-text--bold">Pour l’ensemble des établissements recevant du public :</span><br />
         obligation de mise à disposition d’une fontaine à eau potable et l’interdiction de distribution gratuite de
-        bouteilles en plastique
+        bouteilles en plastique.
       </p>
       <p>
         <span class="fr-text--bold">Pour les cantines scolaires uniquement :</span><br />
-        fin de l'utilisation des bouteilles d'eau plate en plastique
+        fin de l'utilisation des bouteilles d'eau plate en plastique.
       </p>
     </DsfrHighlight>
     <TunnelTeledeclarationField name="plastiqueBouteilleBoissonRemplace" />
@@ -73,7 +73,7 @@ const updateVenteEmporter = (value) => {
     <DsfrHighlight class="fr-ml-0">
       <p>
         <span class="fr-text--bold">Établissements concernés :</span><br />
-        toute cantine pouvant restaurer simultanément au moins 20 personnes
+        toute cantine pouvant restaurer simultanément au moins 20 personnes.
       </p>
     </DsfrHighlight>
     <TunnelTeledeclarationField name="plastiqueVaisselleJetableRemplace" />

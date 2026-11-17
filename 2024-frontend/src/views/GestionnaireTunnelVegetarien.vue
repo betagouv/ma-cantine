@@ -48,7 +48,7 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
       <p>
         <span class="fr-text--bold">Établissements concernés :</span><br />
         tous les restaurants collectifs servant plus de 200 couverts par jour en moyenne, y compris ceux du secteur privé
-        (entreprises, prestataires…)
+        (entreprises, prestataires…).
       </p>
     </DsfrHighlight>
     <TunnelTeledeclarationField name="planDiversificationEnPlace" />
@@ -58,12 +58,12 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
     <TunnelTeledeclarationGroupTitle title="Menu végétarien" :documentation="menuVegetarienDocumentation" />
     <DsfrHighlight class="fr-ml-0">
       <p>
-        <span class="fr-text--bold">Cantines scolaires de la maternelle au lycée :</span><br />
-        publics et privés : un menu végétarien obligatoire chaque semaine
+        <span class="fr-text--bold">Pour les cantines scolaires de la maternelle au lycée :</span><br />
+        publics et privés : un menu végétarien obligatoire chaque semaine.
       </p>
       <p>
-        <span class="fr-text--bold">Cantines de l’État et ses opérateurs :</span><br />
-        une option végétarienne quotidienne en cas de choix multiple de menus
+        <span class="fr-text--bold">Pour les cantines de l’État et ses opérateurs :</span><br />
+        une option végétarienne quotidienne en cas de choix multiple de menus.
       </p>
     </DsfrHighlight>
     <TunnelTeledeclarationField name="serviceType" />

@@ -46,7 +46,7 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
       <p>
         <span class="fr-text--bold">Établissements concernés :</span><br />
         tous les restaurants collectifs, publics ou privés, y compris les restaurants administratifs ou restaurants
-        d’entreprises
+        d’entreprises.
       </p>
     </DsfrHighlight>
     <TunnelTeledeclarationField name="informationAffichagePermanent" />
@@ -61,7 +61,7 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
         <span class="fr-text--bold">Établissements concernés :</span><br />
         restaurants collectifs, publics et privés, des établissements scolaire et universitaire, des établissements
         d'accueil des enfants de moins de six ans, des établissements de santé, des établissements sociaux et
-        médico-sociaux et des établissements pénitentiaires
+        médico-sociaux et des établissements pénitentiaires.
       </p>
     </DsfrHighlight>
     <TunnelTeledeclarationField name="informationConsultationQualite" />

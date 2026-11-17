@@ -64,7 +64,7 @@ const canteenEditLink = computed(() => ({
           Votre établissement est concerné par cette obligation car il sert plus de 3000 couverts par jour.
         </span>
         <br />
-        Cette information ne semble pas correcte ? Vous <AppLinkRouter :to="canteenEditLink" title="pouvez la corriger ici" />
+        Cette information ne semble pas correcte ? Vous <AppLinkRouter :to="canteenEditLink" title="pouvez la corriger ici" />.
       </p>
     </DsfrHighlight>
     <TunnelTeledeclarationField name="donsConvention" @change="updateDonsConvention" />
