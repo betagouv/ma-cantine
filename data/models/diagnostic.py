@@ -93,6 +93,10 @@ def is_filled_query():
     return Q(is_filled=True)
 
 
+def is_clean_query():
+    return Q(is_clean=True)
+
+
 def teledeclaration_mode_satellite_without_appro_query():
     return Q(teledeclaration_mode=Diagnostic.TeledeclarationMode.SATELLITE_WITHOUT_APPRO)
 
@@ -186,6 +190,9 @@ def is_teledeclared_query():
 class DiagnosticQuerySet(models.QuerySet):
     def filled(self):
         return self.filter(is_filled_query())
+
+    def filled_and_clean(self):
+        return self.filter(is_filled_query() & is_clean_query())
 
     def not_teledeclared(self):
         return self.exclude(is_teledeclared_query())
