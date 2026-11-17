@@ -90,7 +90,7 @@ const updateMealCount = async (id, value) => {
     :pagination="showPagination"
     :pagination-options="[minPagination, 100, 200]"
     :rows-per-page="minPagination"
-    class="ma-cantine--table-wrap"
+    class="ma-cantine--table-wrap ma-cantine--table-sort"
     pagination-wrapper-class="ma-cantine--table-pagination fr-mt-4w"
   >
     <template #cell="{ colKey, cell }">
