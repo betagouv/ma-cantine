@@ -36,6 +36,7 @@ const header = [
   { key: "name", label: "Champ" },
   { key: "value", label: "Valeur", headerAttrs: { class: "fr-col-2" } },
 ]
+const isGroupeMealCountField = (field) => props.accordion.fieldsGroupName === "couvertsGroupe" && field === "nombreRepasAn"
 
 const getPrettyDiagnosticValue = (field) => {
   const fieldData = tunnelTeledeclarationService.getField(field)
@@ -46,6 +47,7 @@ const getPrettyDiagnosticValue = (field) => {
 }
 
 const getRowName = (field, canteen) => {
+  if (isGroupeMealCountField(field)) return "Total nombre de couverts par an"
   if (canteen) {
     const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(canteen))
     return `${canteen.name} ${siretSiren} (ID : ${canteen.id})`
@@ -56,6 +58,7 @@ const getRowName = (field, canteen) => {
 }
 
 const getRowValue = (field, canteen) => {
+  if (isGroupeMealCountField(field)) return diagnostic.value.satellitesNombreRepasAnSum // For a group : the field is replaced by the sum
   if (canteen) return canteen.nombreRepasAn
   if (props.accordion.isCanteenFields) return canteenInformations.value[field]
   return getPrettyDiagnosticValue(field)
