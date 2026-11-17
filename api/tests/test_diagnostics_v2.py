@@ -215,6 +215,7 @@ class DiagnosticV2CreateApiTest(APITestCase):
         self.assertEqual(Diagnostic.objects.filter(canteen=self.canteen, year=2025).count(), 1)
 
 
+@freeze_time("2026-03-30")  # during the 2025 campaign
 class DiagnosticV2RetrieveUpdateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -357,6 +358,7 @@ class DiagnosticV2RetrieveUpdateApiTest(APITestCase):
         self.assertEqual(diagnostic.central_kitchen_diagnostic_mode, Diagnostic.CentralKitchenDiagnosticMode.ALL)
 
 
+@freeze_time("2026-03-30")  # during the 2025 campaign
 class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -498,6 +500,7 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
         self.diagnostic_simple_2025.refresh_from_db()
         self.assertEqual(self.diagnostic_simple_2025.valeur_totale, 2000)
 
+    @freeze_time("2027-01-20")  # during the 2026 campaign
     @authenticate
     def test_update_approvisionnement_returns_cout_repas(self):
         self.canteen.managers.add(authenticate.user)
@@ -523,6 +526,7 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
         )
         self.assertEqual(Decimal(response.json()["coutRepas"]), Decimal("2.50"))
 
+    @freeze_time("2025-03-30")  # during the 2024 campaign
     @authenticate
     def test_update_approvisionnement_with_new_diagnostic_type(self):
         """
@@ -571,11 +575,92 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
             diagnostic.teledeclare(applicant=authenticate.user)
             diagnostic.cancel()
 
-        response = self.client.patch(self._url(diagnostic), {"tunnelAppro": "fin"}, format="json")
+            response = self.client.patch(self._url(diagnostic), {"tunnelAppro": "fin"}, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.tunnel_appro, "fin")
+
+
+class DiagnosticV2UpdateCampaignApiTest(APITestCase):
+    """
+    Like the imports & the creation: a diagnostic can only be updated during the campaign (teledeclaration or correction),
+    and only the diagnostic of the current campaign year. Same rule for the diagnostic & all its volets.
+    """
+
+    URL_NAMES = [
+        "diagnostic_v2_retrieve_update",
+        "diagnostic_v2_approvisionnement_retrieve_update",
+        "diagnostic_v2_gaspillage_retrieve_update",
+        "diagnostic_v2_diversification_retrieve_update",
+        "diagnostic_v2_plastique_retrieve_update",
+        "diagnostic_v2_information_retrieve_update",
+    ]
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen = CanteenFactory()
+        cls.diagnostic_2025 = DiagnosticFactory(canteen=cls.canteen, year=2025)
+        cls.diagnostic_2024 = DiagnosticFactory(canteen=cls.canteen, year=2024)
+
+    def _url(self, url_name, diagnostic):
+        return reverse(url_name, kwargs={"canteen_pk": self.canteen.id, "pk": diagnostic.id})
+
+    @authenticate
+    def test_update_during_campaign(self):
+        self.canteen.managers.add(authenticate.user)
+
+        for date in [
+            "2026-01-12",  # start of the 2025 campaign
+            "2026-04-20",  # during the 2025 correction campaign
+        ]:
+            for url_name in self.URL_NAMES:
+                with self.subTest(date=date, url_name=url_name), freeze_time(date):
+                    response = self.client.patch(self._url(url_name, self.diagnostic_2025), {}, format="json")
+
+                    self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @authenticate
+    def test_cannot_update_outside_campaign(self):
+        self.canteen.managers.add(authenticate.user)
+
+        for date in [
+            "2026-01-11",  # before the 2025 campaign
+            "2026-04-30",  # after the 2025 correction campaign
+            "2026-11-16",  # during the year
+        ]:
+            for url_name in self.URL_NAMES:
+                with self.subTest(date=date, url_name=url_name), freeze_time(date):
+                    response = self.client.patch(self._url(url_name, self.diagnostic_2025), {}, format="json")
+
+                    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+                    self.assertEqual(
+                        response.json()["detail"],
+                        ["Ce n'est pas possible de modifier un bilan hors de la période de la campagne"],
+                    )
+                    # read-only access is still possible
+                    self.assertEqual(
+                        self.client.get(self._url(url_name, self.diagnostic_2025)).status_code, status.HTTP_200_OK
+                    )
+
+    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @authenticate
+    def test_cannot_update_diagnostic_of_another_year(self):
+        self.canteen.managers.add(authenticate.user)
+        diagnostic_2026 = DiagnosticFactory(canteen=self.canteen, year=2026)
+
+        for diagnostic in [self.diagnostic_2024, diagnostic_2026]:
+            for url_name in self.URL_NAMES:
+                with self.subTest(year=diagnostic.year, url_name=url_name):
+                    response = self.client.patch(self._url(url_name, diagnostic), {}, format="json")
+
+                    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+                    self.assertEqual(
+                        response.json()["detail"],
+                        [
+                            "Ce n'est pas possible de modifier un bilan d'une autre année que celle de la campagne en cours (2025)"
+                        ],
+                    )
 
 
 class DiagnosticV2DocumentationTest(APITestCase):
@@ -614,6 +699,7 @@ class DiagnosticV2UrlsTest(APITestCase):
                 )
 
 
+@freeze_time("2026-03-30")  # during the 2025 campaign
 class DiagnosticOtherVoletsV2ApiTest(APITestCase):
     """
     Common behaviour of the gaspillage / diversification / plastique / information volets
@@ -837,6 +923,7 @@ class DiagnosticVoletGaspillageV2ApiTest(APITestCase):
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 self.assertEqual("dechetsTotal" in response.json(), has_dechets_fields)
 
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_choice_values_in_french(self):
         diagnostic = DiagnosticFactory(
@@ -878,6 +965,7 @@ class DiagnosticVoletDiversificationV2ApiTest(APITestCase):
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 self.assertEqual("serviceType" in response.json(), has_service_type)
 
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_choice_values_in_french(self):
         """
@@ -913,6 +1001,7 @@ class DiagnosticVoletDiversificationV2ApiTest(APITestCase):
 
 
 class DiagnosticVoletInformationV2ApiTest(APITestCase):
+    @freeze_time("2026-03-30")  # during the 2025 campaign
     @authenticate
     def test_choice_values_in_french(self):
         """
@@ -951,11 +1040,11 @@ class DiagnosticVoletInformationV2ApiTest(APITestCase):
 
     @authenticate
     def test_fields_depend_on_year(self):
-        for year, expected_field, unexpected_field in [
-            (2025, "informationQualiteDurable", "informationPartEgalim"),
-            (2026, "informationPartEgalim", "informationQualiteDurable"),
+        for year, date, expected_field, unexpected_field in [
+            (2025, "2026-03-30", "informationQualiteDurable", "informationPartEgalim"),  # during the 2025 campaign
+            (2026, "2027-01-20", "informationPartEgalim", "informationQualiteDurable"),  # during the 2026 campaign
         ]:
-            with self.subTest(year=year):
+            with self.subTest(year=year), freeze_time(date):
                 diagnostic = DiagnosticFactory(year=year)
                 diagnostic.canteen.managers.add(authenticate.user)
                 url = reverse(
@@ -982,11 +1071,21 @@ class DiagnosticVoletInformationV2ApiTest(APITestCase):
 class DiagnosticVoletPlastiqueV2ApiTest(APITestCase):
     @authenticate
     def test_fields_depend_on_year(self):
-        for year, expected_field, unexpected_field in [
-            (2025, "plastiqueContenantCuissonRemplace", "plastiqueContenantRemplace"),
-            (2026, "plastiqueContenantRemplace", "plastiqueContenantCuissonRemplace"),
+        for year, date, expected_field, unexpected_field in [
+            (
+                2025,
+                "2026-03-30",
+                "plastiqueContenantCuissonRemplace",
+                "plastiqueContenantRemplace",
+            ),  # during the 2025 campaign
+            (
+                2026,
+                "2027-01-20",
+                "plastiqueContenantRemplace",
+                "plastiqueContenantCuissonRemplace",
+            ),  # during the 2026 campaign
         ]:
-            with self.subTest(year=year):
+            with self.subTest(year=year), freeze_time(date):
                 # empty: the factory fills plastique_contenant_cuisson_remplace randomly
                 diagnostic = DiagnosticFactory(year=year, plastique_contenant_cuisson_remplace=None)
                 diagnostic.canteen.managers.add(authenticate.user)
