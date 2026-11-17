@@ -1012,10 +1012,19 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             is_filled = bool(self.line_ministry)
         return is_filled
 
-    def _is_petite_structure(self) -> bool:
-        return compute_is_petite_structure(self)
-
     def _is_clean(self, raise_errors=False) -> tuple[bool, dict]:
+        """
+        Run the validations (full_clean()). Used in save() to set the is_clean field.
+
+        Edge cases not covered (yet): the stored is_clean can be stale, until the canteen is saved again
+        (or canteen_fill_computed_fields is run):
+        - some validations depend on other canteens, and are not recomputed when these change:
+            - siret uniqueness: another canteen takes (or releases) the same siret
+              (only possible with skip_validations, or when a canteen is deleted / restored)
+            - satellite: its groupe is no longer a groupe (production_type change)
+        - the validation rules change (new or stricter validators)
+        - the canteen is updated without save() (e.g. queryset update(), bulk_create())
+        """
         try:
             self.full_clean()
             return True, {}
@@ -1023,6 +1032,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             if raise_errors:
                 raise
             return False, e.message_dict
+
+    def _is_petite_structure(self) -> bool:
+        return compute_is_petite_structure(self)
 
     def has_diagnostic_for_year(self, year):
         has_diagnostic = self.diagnostics.filter(year=year).exists()
