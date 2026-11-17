@@ -35,11 +35,11 @@ const cancelTeledeclaration = () => {
 <template>
   <DsfrModal
     :opened="opened"
-    title="Modifier ma télédéclaration"
+    title="Modifier mes approvisonnements"
     icon="fr-icon-edit-line"
     @close="emit('close')"
   >
-    <p class="fr-h6">Attention : toute modification nécessite une nouvelle validation de télédéclaration.</p>
+    <p class="fr-h6">Attention : toute modification des approvisionnements nécessite une nouvelle validation de la télédéclaration.</p>
     <div class="fr-mb-3w">
       Si vous modifiez les informations de votre télédéclaration, son statut repassera automatiquement à
       <DsfrBadge label="À télédéclarer" type="warning" no-icon small />.
