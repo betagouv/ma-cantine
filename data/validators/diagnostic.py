@@ -32,74 +32,6 @@ def validate_year(instance):
     return errors
 
 
-def validate_satellites_nombre_repas_an_list(instance):
-    """
-    [NEW in 2026] Groupe: the nombre_repas_an of each satellite must be empty or a positive integer
-    - the structure (one item per satellite of the groupe) is rebuilt in save() (see sync_satellites_nombre_repas_an_list)
-    """
-    errors = {}
-    field_name = "satellites_nombre_repas_an_list"
-    value = getattr(instance, field_name)
-    error_message = (
-        'Format attendu : [{"id": <id de la cantine satellite>, "nombre_repas_an": <nombre entier positif ou null>}]'
-    )
-    if not isinstance(value, list) or not all(isinstance(item, dict) for item in value):
-        utils_utils.add_validation_error(errors, field_name, error_message)
-        return errors
-    for item in value:
-        nombre_repas_an = item.get("nombre_repas_an")
-        if nombre_repas_an is not None and (
-            not isinstance(nombre_repas_an, int)
-            or isinstance(nombre_repas_an, bool)
-            or not (0 <= nombre_repas_an <= 999999999)
-        ):
-            utils_utils.add_validation_error(errors, field_name, error_message)
-            return errors
-    return errors
-
-
-def validate_groupe_satellites_nombre_repas_an(instance):
-    """
-    [NEW in 2026] Groupe: the nombre_repas_an of each satellite (see satellites_nombre_repas_an_list)
-    - each satellite must have a value
-    - the groupe's nombre_repas_an must be equal to the sum of the satellites' values
-    NOTE: not checked in save() (drafts can be filled progressively), but by is_clean() (/check & teledeclaration)
-    """
-    errors = {}
-    if validate_year(instance) or int(instance.year) < 2026:
-        return errors
-    if not instance.canteen_id or not instance.canteen.is_groupe:
-        return errors
-    if validate_satellites_nombre_repas_an_list(instance):
-        return errors  # invalid format: already reported
-
-    from data.models import Canteen  # avoid circular import
-
-    satellite_dict = Canteen.all_objects.in_bulk([item["id"] for item in instance.satellites_nombre_repas_an_list])
-    for item in instance.satellites_nombre_repas_an_list:
-        satellite_name = getattr(satellite_dict.get(item["id"]), "name", item["id"])
-        if item["nombre_repas_an"] is None:
-            utils_utils.add_validation_error(
-                errors,
-                "satellites_nombre_repas_an_list",
-                f"Le nombre de repas par an du satellite « {satellite_name} » est obligatoire.",
-            )
-
-    satellites_nombre_repas_an_sum = instance.satellites_nombre_repas_an_sum
-    if (
-        instance.nombre_repas_an is not None
-        and satellites_nombre_repas_an_sum is not None
-        and instance.nombre_repas_an != satellites_nombre_repas_an_sum
-    ):
-        utils_utils.add_validation_error(
-            errors,
-            "nombre_repas_an",
-            f"Le nombre de repas par an du groupe ({instance.nombre_repas_an}) doit être égal à la somme "
-            f"des nombres de repas par an des satellites ({satellites_nombre_repas_an_sum}).",
-        )
-    return errors
-
-
 def validate_year_and_can_edit(instance):
     """
     - extra validation:
@@ -174,3 +106,69 @@ def validate_canteen_fields_required(instance):
                         errors, field, f"Ce champ est obligatoire pour l'année {instance.year}."
                     )
     return errors
+
+
+def validate_satellites_nombre_repas_an_list(instance):
+    """
+    [NEW in 2026] Groupe: the nombre_repas_an of each satellite (see satellites_nombre_repas_an_list)
+    - only for groupes (for the other diagnostics, the list is emptied in save(), see sync_satellites_nombre_repas_an_list)
+    - format: [{"id": <int>, "nombre_repas_an": <positive int or null>}, ...]
+    - each satellite must have a value
+    - the groupe's nombre_repas_an must be equal to the sum of the satellites' values
+    NOTE: not checked in save() (drafts can be filled progressively), but in clean(): is_clean() (/check & teledeclaration)
+    """
+    errors = {}
+    field_name = "satellites_nombre_repas_an_list"
+    if validate_year(instance) or int(instance.year) < 2026:
+        return errors
+    if not instance.canteen_id or not instance.canteen.is_groupe:
+        return errors
+
+    # format
+    value = getattr(instance, field_name)
+    if not isinstance(value, list) or not all(_is_valid_satellite_nombre_repas_an_item(item) for item in value):
+        utils_utils.add_validation_error(
+            errors,
+            field_name,
+            'Format attendu : [{"id": <id de la cantine satellite>, "nombre_repas_an": <nombre entier positif ou null>}]',
+        )
+        return errors
+
+    # each satellite must have a value
+    from data.models import Canteen  # avoid circular import
+
+    satellite_dict = Canteen.all_objects.in_bulk([item["id"] for item in value])
+    for item in value:
+        if item["nombre_repas_an"] is None:
+            satellite_name = getattr(satellite_dict.get(item["id"]), "name", item["id"])
+            utils_utils.add_validation_error(
+                errors, field_name, f"Le nombre de repas par an du satellite « {satellite_name} » est obligatoire."
+            )
+
+    # the groupe's nombre_repas_an must be equal to the sum
+    satellites_nombre_repas_an_sum = instance.satellites_nombre_repas_an_sum
+    if (
+        instance.nombre_repas_an is not None
+        and satellites_nombre_repas_an_sum is not None
+        and instance.nombre_repas_an != satellites_nombre_repas_an_sum
+    ):
+        utils_utils.add_validation_error(
+            errors,
+            "nombre_repas_an",
+            f"Le nombre de repas par an du groupe ({instance.nombre_repas_an}) doit être égal à la somme "
+            f"des nombres de repas par an des satellites ({satellites_nombre_repas_an_sum}).",
+        )
+    return errors
+
+
+def _is_valid_satellite_nombre_repas_an_item(item) -> bool:
+    if not isinstance(item, dict) or not isinstance(item.get("id"), int) or isinstance(item.get("id"), bool):
+        return False
+    nombre_repas_an = item.get("nombre_repas_an")
+    if nombre_repas_an is None:
+        return True
+    return (
+        isinstance(nombre_repas_an, int)
+        and not isinstance(nombre_repas_an, bool)
+        and 0 <= nombre_repas_an <= 999999999
+    )
