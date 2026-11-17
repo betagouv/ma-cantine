@@ -14,7 +14,9 @@ defineProps(["text", "mention", "value", "errorMessage", "tooltip"])
         <p v-if="mention" class="fr-text--sm fr-text-mention--grey fr-mb-0">{{ mention }}</p>
       </div>
       <div class="fr-col-12 fr-col-md-5 ma-cantine--flex-between ma-cantine--flex-top">
-        <TunnelTeledeclarationLockedInput :value="value" :label="text" :error-message="errorMessage" class="ma-cantine--flex-grow" />
+        <div class="ma-cantine--flex-grow">
+          <TunnelTeledeclarationLockedInput :value="value" :label="text" :error-message="errorMessage" />
+        </div>
         <AppTooltipHover v-if="tooltip" :content="tooltip" class="fr-ml-1w fr-mt-3v ma-cantine--flex-shrink-0" />
       </div>
     </div>
