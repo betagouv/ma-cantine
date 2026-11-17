@@ -23,19 +23,19 @@ const tableHeaders = [
     headerAttrs: { class: "fr-col-4" },
   },
   {
-    key: "siretSiren",
-    label: "SIRET / SIREN",
-    headerAttrs: { class: "fr-col-2" },
-  },
-  {
-    key: "city",
-    label: "Commune </br> (code postal)",
-    headerAttrs: { class: "fr-col-2" },
-  },
-  {
     key: "status",
     label: "Statut",
     headerAttrs: { class: "fr-col-2" },
+  },
+  {
+    key: "siretSiren",
+    label: "SIRET / SIREN",
+    headerAttrs: { class: "fr-col-3" },
+  },
+  {
+    key: "id",
+    label: "ID",
+    headerAttrs: { class: "fr-col-1" },
   },
   {
     key: "actions",
@@ -51,7 +51,7 @@ const tableRows = computed(() => {
         const name = canteensTableService.getSatelliteNameInfos(sat)
         const canteenSiretOrSiren = canteensTableService.getSiretOrSirenInfos(sat)
         const siretSiren = formatSiretOrSiren(canteenSiretOrSiren)
-        const city = canteensTableService.getCityInfos(sat)
+        const id = sat.id
         const status = sat.isFilled ? "" : "À corriger"
         const actions =  {
           links: getDropdownLinks(sat),
@@ -61,7 +61,7 @@ const tableRows = computed(() => {
         return {
           name,
           siretSiren,
-          city,
+          id,
           status,
           actions,
         }
