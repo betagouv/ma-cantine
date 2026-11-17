@@ -71,6 +71,7 @@ const showError = (message) => rootStore.notifyServerError(message)
       :label="buttonTop.label"
       :icon="buttonTop.icon"
     />
+    <DiagnosticPdf v-if="isTeledeclared && diagnosticRecap" :diagnostic="diagnosticRecap" :canteen-id="canteenInformations.id" />
   </GestionnaireSidebarTitle>
 
   <div class="fr-mb-5w fr-grid-row fr-grid-row--gutters fr-grid-row--top">
@@ -90,11 +91,8 @@ const showError = (message) => rootStore.notifyServerError(message)
         La télédéclaration comporte 2 principales étapes : le volet approvisionnements (simplifiés ou détaillés) et les volets thématiques (facultatifs).
       </p>
     </div>
-    <div class="fr-col-12 fr-col-md-5">
-      <AppHelpCard v-if="isTeledeclared" title="Les documents essentiels :" :no-icon="true">
-        <DiagnosticPdf v-if="diagnosticRecap" :diagnostic="diagnosticRecap" :canteen-id="canteenInformations.id" />
-      </AppHelpCard>
-      <AppHelpCard v-else title="Infos utiles pour consolider vos données">
+    <div v-if="!isTeledeclared" class="fr-col-12 fr-col-md-5">
+      <AppHelpCard title="Infos utiles pour consolider vos données">
         <ul class="ma-cantine--unstyled-list fr-mb-0">
           <li class="fr-mb-1w">
             <a :href="documentation.teledeclarationMatrice" target="_blank">La matrice de télédéclaration</a>
