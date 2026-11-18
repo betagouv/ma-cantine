@@ -28,7 +28,7 @@
         ]
       },
       "valeurTotale": {"shortName": "Total des achats alimentaires toutes familles de produits confondues"},
-      "valeurBio": {"shortName": "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »"},
+      "valeurBio": {"shortName": "Total des achats bio ou avec mention « en conversion vers l'agriculture biologique »"},
       "valeurBioDontCommerceEquitable": {"shortName": "Dont achats bio issus du commerce équitable", "tooltip": "Achats à comptabiliser également dans le champ « Total des achats bio ou avec mention en conversion vers l'agriculture biologique »", "isRelatedField": "horizontal"},
       "valeurSiqo": {"shortName": "Total des achats SIQO (hors bio) : Label Rouge, AOC / AOP, IGP, STG"},
       "valeurEgalimAutres": {"shortName": "Total des autres achats EGalim"},

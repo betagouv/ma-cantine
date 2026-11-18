@@ -330,7 +330,7 @@
       },
       "index_code": 3,
       "index_metier": "2.0.1",
-      "verbose_name": "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »"
+      "verbose_name": "Total des achats bio ou avec mention « en conversion vers l'agriculture biologique »"
     },
     "valeur_bio_dont_commerce_equitable": {
       "diagnostic_type": {

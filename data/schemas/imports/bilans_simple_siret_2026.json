@@ -43,7 +43,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_bio",
-      "title": "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »",
+      "title": "Total des achats bio ou avec mention « en conversion vers l'agriculture biologique »",
       "type": "any"
     },
     {

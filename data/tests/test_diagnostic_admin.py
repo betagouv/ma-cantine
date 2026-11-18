@@ -18,7 +18,7 @@ class DiagnosticAdminTest(TestCase):
     def test_get_form_labels_depend_on_the_year(self):
         for year, valeur_bio_label in [
             (2025, "Bio - Valeur annuelle HT"),
-            (2026, "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »"),
+            (2026, "Total des achats bio ou avec mention « en conversion vers l'agriculture biologique »"),
         ]:
             with self.subTest(year=year):
                 diagnostic = Diagnostic(year=year, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE)
@@ -51,6 +51,6 @@ class DiagnosticAdminTest(TestCase):
         self.assertContains(
             response,
             #  : non-breaking space before the label suffix (french locale)
-            "<label>Total des achats bio ou avec mention « En conversion vers l'agriculture biologique » :</label>",
+            "<label>Total des achats bio ou avec mention « en conversion vers l'agriculture biologique » :</label>",
             html=True,
         )
