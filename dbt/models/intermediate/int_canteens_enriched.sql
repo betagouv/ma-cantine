@@ -14,6 +14,7 @@ users as (
 canteen_managers_agg as (
     select
         m.canteen_id,
+        count(*)                                   as manager_count,
         string_agg(u.email, ', ' order by u.email) as manager_emails
     from managers as m
     inner join users as u on m.user_id = u.user_id
@@ -30,6 +31,7 @@ canteens_with_manager as (
 final as (
     select
         c.*,
+        coalesce(cma.manager_count, 0)               as manager_count,
         cma.manager_emails,
         -- `bool(line_ministry)` dans l'application (`Canteen.is_spe`) : la chaîne vide
         -- n'est pas un ministère. Un simple `is not null` en comptait 17 332 de trop.
