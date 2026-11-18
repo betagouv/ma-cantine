@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.db import IntegrityError, transaction
-from django.utils import timezone
 from simple_history.utils import update_change_reason
 
 from api.serializers import FullCanteenSerializer
@@ -11,7 +10,7 @@ from imports.views.base import BaseImportView
 from common.utils import siret as utils_siret
 from data.models import Canteen, Sector
 from data.models.creation_source import CreationSource
-from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
+from data.models.diagnostic_teledeclaration_dates import get_current_campaign_year, is_in_teledeclaration_or_correction
 
 from api.views.canteen_managers import AddManagerView
 from common.utils.camelize import camelize
@@ -173,7 +172,7 @@ class CanteensCreateImportView(BaseImportView):
                     {"groupe_id": f"Aucun groupe avec le numéro identifiant « {groupe_id} » trouvé sur la plateforme."}
                 )
         # Group did not teledeclare already
-        last_year = timezone.now().year - 1
+        last_year = get_current_campaign_year()
         if groupe and is_in_teledeclaration_or_correction():
             has_diagnostic_teledeclared_for_year = groupe.has_diagnostic_teledeclared_for_year(last_year)
             if has_diagnostic_teledeclared_for_year:

@@ -34,6 +34,7 @@ from data.utils import has_charfield_missing_query
 from data.validators import canteen as canteen_validators
 from data.models.diagnostic_teledeclaration_dates import (
     CAMPAIGN_DATES,
+    get_current_campaign_year,
     get_year_campaign_end_date_or_today_date,
     is_in_correction,
     is_in_teledeclaration,
@@ -932,7 +933,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     @property
     def satellites_already_teledeclared_count(self):
         if self.is_groupe:
-            year = timezone.now().year - 1
+            year = get_current_campaign_year()
             # same as filtering annotate_with_action_for_year on NOTHING_SATELLITE_TELEDECLARED & NOTHING
             return (
                 self.satellites.annotate_with_diagnostic_for_year(year)
