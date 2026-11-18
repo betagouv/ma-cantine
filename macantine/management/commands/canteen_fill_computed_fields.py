@@ -55,7 +55,7 @@ class Command(MaCantineBaseCommand):
         logger.info("Step 2: compute (& update) the fields")
         computed_true_count = {field_name: 0 for field_name in field_list}
         changed_count = 0
-        for index, canteen in enumerate(qs.iterator()):
+        for index, canteen in enumerate(qs.iterator(), start=1):
             values_before = {field_name: getattr(canteen, field_name) for field_name in field_list}
             # same as in save(), before computing the fields
             canteen.normalize_fields()

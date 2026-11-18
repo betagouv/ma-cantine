@@ -65,7 +65,7 @@ class Command(MaCantineBaseCommand):
         logger.info("Step 2: compute (& update) the fields (both draft & teledeclared diagnostics)")
         changed_count_per_field = {field_name: 0 for field_name in field_list}
         changed_count = 0
-        for index, diagnostic in enumerate(qs.iterator()):
+        for index, diagnostic in enumerate(qs.iterator(), start=1):
             values_before = {field_name: getattr(diagnostic, field_name) for field_name in field_list}
             # explicit call: save() doesn't populate the computed fields of teledeclared diagnostics (frozen)
             diagnostic.populate_computed_fields()

@@ -84,7 +84,7 @@ class Command(MaCantineBaseCommand):
         logger.info(
             "Step 3: Loop on the diagnostics of the groupes, and generate diagnostics teledeclared for their satellites"
         )
-        for index, diagnostic in enumerate(diagnostic_qs):
+        for index, diagnostic in enumerate(diagnostic_qs, start=1):
             process_groupe_diagnostic_teledeclared(diagnostic, apply=apply)
             if index % 100 == 0:
                 logger.info(

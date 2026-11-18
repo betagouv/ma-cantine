@@ -211,7 +211,7 @@ class Command(MaCantineBaseCommand):
         print("Diagnostics teledeclared (between v9 & v15):", diagnostic_qs.count())
 
         diagnostics_updated_count = 0
-        for index, diagnostic in enumerate(diagnostic_qs):
+        for index, diagnostic in enumerate(diagnostic_qs, start=1):
             canteen_snapshot_temp = diagnostic.canteen_snapshot
             if canteen_snapshot_temp:
                 sector_list_new = []
@@ -236,7 +236,7 @@ class Command(MaCantineBaseCommand):
         print("Diagnostics teledeclared (between v9 & v15):", diagnostic_qs.count())
 
         diagnostics_updated_count = 0
-        for index, diagnostic in enumerate(diagnostic_qs):
+        for index, diagnostic in enumerate(diagnostic_qs, start=1):
             satellites_snapshot_temp = diagnostic.satellites_snapshot
             if satellites_snapshot_temp:
                 for satellite in satellites_snapshot_temp:
@@ -270,7 +270,7 @@ class Command(MaCantineBaseCommand):
         communes_details = map_communes_infos()
 
         diagnostics_updated_count = 0
-        for index, diagnostic in enumerate(diagnostic_qs):
+        for index, diagnostic in enumerate(diagnostic_qs, start=1):
             canteen_snapshot_temp = diagnostic.canteen_snapshot
             if canteen_snapshot_temp:
                 city_insee_code = canteen_snapshot_temp.get("city_insee_code")
@@ -298,7 +298,7 @@ class Command(MaCantineBaseCommand):
         pat_mapping = map_pat_list_to_communes_insee_code()
 
         diagnostics_updated_count = 0
-        for index, diagnostic in enumerate(diagnostic_qs):
+        for index, diagnostic in enumerate(diagnostic_qs, start=1):
             canteen_snapshot_temp = diagnostic.canteen_snapshot
             if canteen_snapshot_temp:
                 city_insee_code = canteen_snapshot_temp.get("city_insee_code")
@@ -326,7 +326,7 @@ class Command(MaCantineBaseCommand):
         pat_mapping = map_pat_list_to_communes_insee_code()
 
         diagnostics_updated_count = 0
-        for index, diagnostic in enumerate(diagnostic_qs):
+        for index, diagnostic in enumerate(diagnostic_qs, start=1):
             satellites_snapshot_temp = diagnostic.satellites_snapshot
             if satellites_snapshot_temp:
                 for satellite in satellites_snapshot_temp:
