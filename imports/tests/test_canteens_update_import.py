@@ -212,7 +212,7 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
     @authenticate
     def test_error_groupe_with_teledeclaration_during_campaign(self):
         """
-        User cannot add a satellite to a groupe that has a teledeclared diagnostic for the current campaign during the teledeclaration campaign
+        User cannot update a satellite of a groupe that has a teledeclared diagnostic for the current campaign during the teledeclaration campaign
         """
         # Create a teledeclared diagnostic for the groupe
         self.groupe_canteen.managers.add(authenticate.user)
@@ -231,9 +231,99 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 1)
         self.assertIn(
+            "Vous ne pouvez pas modifier cette cantine, car son groupe « 9999999992 » possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir modifier la cantine.",
+            errors[0]["message"],
+        )
+
+    @freeze_time("2025-02-20")  # during the 2024 campaign
+    @authenticate
+    def test_error_add_to_groupe_with_teledeclaration_during_campaign(self):
+        """
+        User cannot add a canteen to a groupe that has a teledeclared diagnostic for the current campaign during the teledeclaration campaign
+        """
+        self.satellite_canteen.groupe = None
+        self.satellite_canteen.save(skip_validations=True)
+        # the groupe needs a satellite to teledeclare
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.groupe_canteen)
+        # Create a teledeclared diagnostic for the groupe
+        self.groupe_canteen.managers.add(authenticate.user)
+        self.satellite_canteen.managers.add(authenticate.user)
+        self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        # Import
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(self.url, {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(errors), 1)
+        self.assertIn(
             "Vous ne pouvez pas ajouter de restaurant satellite au groupe « 9999999992 », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir ajouter le(s) restaurant(s) satellite(s).",
             errors[0]["message"],
         )
+        self.satellite_canteen.refresh_from_db()
+        self.assertIsNone(self.satellite_canteen.groupe)
+
+    @freeze_time("2025-02-20")  # during the 2024 campaign
+    @authenticate
+    def test_error_remove_from_groupe_with_teledeclaration_during_campaign(self):
+        """
+        User cannot remove a satellite from a groupe that has a teledeclared diagnostic for the current campaign during the teledeclaration campaign
+        """
+        # Create a teledeclared diagnostic for the groupe
+        self.groupe_canteen.managers.add(authenticate.user)
+        self.satellite_canteen.managers.add(authenticate.user)
+        self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        # Import (empty groupe_id)
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_groupe_teledeclared_remove.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(self.url, {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(errors), 1)
+        self.assertIn(
+            "Vous ne pouvez pas modifier cette cantine, car son groupe « 9999999992 » possède un bilan télédéclaré",
+            errors[0]["message"],
+        )
+        self.satellite_canteen.refresh_from_db()
+        self.assertEqual(self.satellite_canteen.groupe, self.groupe_canteen)
+
+    @freeze_time("2025-02-20")  # during the 2024 campaign
+    @authenticate
+    def test_error_move_to_another_groupe_with_teledeclaration_during_campaign(self):
+        """
+        User cannot move a satellite from a groupe that has a teledeclared diagnostic for the current campaign
+        to another groupe during the teledeclaration campaign
+        """
+        CanteenFactory(id=9999999993, production_type=Canteen.ProductionType.GROUPE)
+        # Create a teledeclared diagnostic for the groupe
+        self.groupe_canteen.managers.add(authenticate.user)
+        self.satellite_canteen.managers.add(authenticate.user)
+        self.teledeclaration.teledeclare(applicant=authenticate.user)
+
+        # Import (groupe_id of the other groupe)
+        file_path = "./imports/tests/files/canteens/canteens_update_bad_groupe_teledeclared_move.csv"
+        with open(file_path) as canteen_file:
+            response = self.client.post(self.url, {"file": canteen_file})
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        errors = body["errors"]
+        self.assertEqual(body["count"], 0)
+        self.assertEqual(len(errors), 1)
+        self.assertIn(
+            "Vous ne pouvez pas modifier cette cantine, car son groupe « 9999999992 » possède un bilan télédéclaré",
+            errors[0]["message"],
+        )
+        self.satellite_canteen.refresh_from_db()
+        self.assertEqual(self.satellite_canteen.groupe, self.groupe_canteen)
 
     @authenticate
     def test_success_groupe_with_teledeclaration_cancelled_during_correction_campaign(self):
