@@ -42,7 +42,7 @@ const isModalOpened = ref(false)
     <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-2w">
       <div class="fr-col-12 fr-col-md-7">
         <h2 class="fr-h5">Votre télédéclaration vous semble-t-elle cohérente ?</h2>
-        <p v-if="canBeTeledeclared">Toutes vos données d’approvisionnement sont saisies, vous pouvez faire une relecture avant de soumettre votre télédéclaration.</p>
+        <p v-if="canBeTeledeclared">Toutes vos données d’approvisionnement sont saisies. Le récapitulatif de vos données est consultable ci-dessous. Vous pouvez donc vérifier vos données avant de soumettre votre télédéclaration.</p>
         <TunnelTeledeclarationMealCostField>
           <template #introduction>
             <p class="fr-mb-2w">
