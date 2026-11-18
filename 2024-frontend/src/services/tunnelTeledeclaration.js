@@ -30,7 +30,7 @@ const generateApproFields = () => {
     const customisation = tunnelApproCustomisation[apiKey] ?? {}
     fields[apiKey] = {
       apiKey,
-      shortName: customisation.shortName,
+      shortName: customisation.shortName ?? config.verbose_name,
       labelRecap: config.verbose_name,
       hint: getHintApproProps(customisation, config),
       tooltip: customisation.tooltip,

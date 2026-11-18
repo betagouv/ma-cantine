@@ -14,7 +14,6 @@
       "localCircuitCourt": ["valeurCircuitCourt", "valeurViandesVolaillesCircuitCourt", "valeurProduitsDeLaMerCircuitCourt", "valeurCharcuterieCircuitCourt", "valeurFruitsEtLegumesCircuitCourt", "valeurProduitsLaitiersCircuitCourt", "valeurBoulangerieCircuitCourt", "valeurAutresCircuitCourt", "valeurBoissonsCircuitCourt", "valeurLocal", "definitionLocal", "definitionLocalKm", "valeurViandesVolaillesLocal", "valeurProduitsDeLaMerLocal", "valeurCharcuterieLocal", "valeurFruitsEtLegumesLocal", "valeurProduitsLaitiersLocal", "valeurBoulangerieLocal", "valeurAutresLocal", "valeurBoissonsLocal", "valeurViandesVolailles", "valeurProduitsDeLaMer", "valeurCharcuterie", "valeurFruitsEtLegumes", "valeurProduitsLaitiers", "valeurBoulangerie", "valeurAutres", "valeurBoissons"]
     },
     "fields": {
-      "nombreRepasAn": {"shortName": "Nombre de couverts par an"},
       "satellitesNombreRepasAnSum": {"hint": "À partir des données couverts de chaque restaurant"},
       "diagnosticType": {
         "shortName": "Quel mode de saisie souhaitez-vous utiliser ?",
@@ -27,12 +26,8 @@
           {"label": "Saisie automatique : vous utilisez l'Outil de Suivi des Achats", "valueDisplay": "Saisie automatique", "value": "AUTO", "img": "/static/images/logo-osa-bleu.svg"}
         ]
       },
-      "valeurTotale": {"shortName": "Total des achats alimentaires toutes familles de produits confondues"},
-      "valeurBio": {"shortName": "Total des achats bio ou avec mention « en conversion vers l'agriculture biologique »"},
       "valeurBioDontCommerceEquitable": {"shortName": "Dont achats bio issus du commerce équitable", "tooltip": "Achats à comptabiliser également dans le champ « Total des achats bio ou avec mention en conversion vers l'agriculture biologique »", "isRelatedField": "horizontal"},
-      "valeurSiqo": {"shortName": "Total des achats SIQO (hors bio) : Label Rouge, AOC / AOP, IGP, STG"},
-      "valeurEgalimAutres": {"shortName": "Total des autres achats EGalim"},
-      "valeurEgalimAutresDontCommerceEquitable": {"shortName": "Dont total des achats non bio non SIQO issus du commerce équitable", "tooltip": "Achats à comptabiliser également dans le champ « Total des autres achats EGalim »", "isRelatedField": "horizontal"},
+      "valeurEgalimAutresDontCommerceEquitable": {"tooltip": "Achats à comptabiliser également dans le champ « Total des autres achats EGalim »", "isRelatedField": "horizontal"},
       "valeurExternalitesPerformance": {"shortName": "Achats prenant en compte les externalités environnementales"},
       "valeurViandesVolailles": {"shortName": "Total des achats en viandes et volailles fraîches et surgelées"},
       "valeurViandesVolaillesEgalim": {"shortName": "Achats EGalim en viandes et volailles fraîches et surgelées"},
@@ -81,7 +76,6 @@
       "valeurAutresLocal": {"shortName": "Autres produits frais, surgelés et d'épicerie"},
       "valeurBoissonsLocal": {"shortName": "Boissons"},
       "definitionLocal": {
-        "shortName": "Définition du « local » : périmètre administratif",
         "hint": "17bis : Veuillez renseigner le périmètre qui représente le mieux vos achats « locaux » : soit le périmètre majoritaire, soit la distance maximale",
         "type": "select",
         "options": [
@@ -93,7 +87,7 @@
           {"text": "Distance (en km)", "valueDisplay": "Distance (en km)", "value": "KM"}
         ]
       },
-      "definitionLocalKm": {"shortName": "Définition du « local » : distance (en km)", "hint": "17ter : Veuillez renseigner la distance qui représente le mieux vos achats « locaux » : soit la distance majoritaire, soit la distance maximale"},
+      "definitionLocalKm": {"hint": "17ter : Veuillez renseigner la distance qui représente le mieux vos achats « locaux » : soit la distance majoritaire, soit la distance maximale"},
       "valeurFruitsEtLegumesAocaop": {"shortName": "Fruits et légumes frais et surgelés"},
       "valeurCharcuterieAocaop": {"shortName": "Charcuteries"},
       "valeurProduitsLaitiersAocaop": {"shortName": "BOF (Produits laitiers, beurre et œufs)"},
