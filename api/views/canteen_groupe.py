@@ -125,7 +125,7 @@ class CanteenGroupeSatelliteUnlinkView(APIView):
                     correction_end_date = timezone.localtime(
                         get_year_correction_end_date_or_campaign_end_date_or_today_date(campaign_year)
                     ).strftime("%d/%m/%Y")
-                    error = f"La télédéclaration a été validée par votre groupe et les données de votre cantine sont déjà prises en compte pour cette télédéclaration. Vous pouvez demander à votre groupe d'annuler sa télédéclaration, ou alors vous pourrez renouveler votre demande à la fin de la campagne à partir du {correction_end_date}"
+                    error = f"Vous ne pouvez pas quitter le groupe car la télédéclaration a été validée par votre groupe et les données de votre cantine sont déjà prises en compte pour cette télédéclaration. Vous pouvez demander à votre groupe d'annuler sa télédéclaration, ou alors vous pourrez renouveler votre demande à la fin de la campagne à partir du {correction_end_date}"
                 return JsonResponse({"error": error}, status=status.HTTP_400_BAD_REQUEST)
 
         canteen_satellite.groupe = None
