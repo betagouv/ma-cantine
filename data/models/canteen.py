@@ -604,6 +604,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     )
 
     is_filled = models.BooleanField(default=False, verbose_name="cantine complétée ? (champ calculé)")
+    is_clean = models.BooleanField(default=False, verbose_name="cantine valide ? (champ calculé)")
     is_petite_structure = models.BooleanField(
         default=False, verbose_name="petite structure (expérimentation) ? (champ calculé)"
     )
@@ -799,6 +800,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     def set_is_filled(self):
         self.is_filled = self._is_filled()
 
+    def set_is_clean(self):
+        self.is_clean, _ = self._is_clean(raise_errors=False)
+
     def set_is_petite_structure(self):
         self.is_petite_structure = self._is_petite_structure()
 
@@ -823,14 +827,18 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         - set region from department
         - full_clean(): run validations (with extra validations in clean())
             - this can be skipped with skip_validations=True (USE WITH CAUTION)
+        - set is_clean & is_filled (always, even with skip_validations=True)
         """
         self.normalize_fields()
         self.optimize_logo()
         self.reset_geo_fields_if_siret_or_city_insee_code_changed()
         self.set_should_fill_geo_fields()
         self.set_groupe_id_list_to_sync()
-        if not skip_validations:
-            self.is_clean(raise_errors=True)
+        if skip_validations:
+            self.set_is_clean()
+        else:
+            self._is_clean(raise_errors=True)
+            self.is_clean = True
         self.set_is_filled()
         self.set_is_petite_structure()
         super().save(**kwargs)
@@ -1004,10 +1012,19 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             is_filled = bool(self.line_ministry)
         return is_filled
 
-    def _is_petite_structure(self) -> bool:
-        return compute_is_petite_structure(self)
+    def _is_clean(self, raise_errors=False) -> tuple[bool, dict]:
+        """
+        Run the validations (full_clean()). Used in save() to set the is_clean field.
 
-    def is_clean(self, raise_errors=False) -> tuple[bool, dict]:
+        Edge cases not covered (yet): the stored is_clean can be stale, until the canteen is saved again
+        (or canteen_fill_computed_fields is run):
+        - some validations depend on other canteens, and are not recomputed when these change:
+            - siret uniqueness: another canteen takes (or releases) the same siret
+              (only possible with skip_validations, or when a canteen is deleted / restored)
+            - satellite: its groupe is no longer a groupe (production_type change)
+        - the validation rules change (new or stricter validators)
+        - the canteen is updated without save() (e.g. queryset update(), bulk_create())
+        """
         try:
             self.full_clean()
             return True, {}
@@ -1015,6 +1032,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             if raise_errors:
                 raise
             return False, e.message_dict
+
+    def _is_petite_structure(self) -> bool:
+        return compute_is_petite_structure(self)
 
     def has_diagnostic_for_year(self, year):
         has_diagnostic = self.diagnostics.filter(year=year).exists()

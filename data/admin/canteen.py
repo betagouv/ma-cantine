@@ -79,6 +79,8 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "region",
         "department",
         "import_source",
+        "is_filled",
+        "is_clean",
     )
     search_fields = (
         "id",
@@ -121,7 +123,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         ("Images", {"fields": ("logo", "logo_display", "image_count")}),
         (
             "Informations supplémentaires",
-            {"fields": ("is_filled", "publication_status_display", "has_been_claimed")},
+            {"fields": ("is_filled", "is_clean", "publication_status_display", "has_been_claimed")},
         ),
         (
             "Expérimentation « Petites structures »",
@@ -152,6 +154,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "logo_display",
         "image_count",
         "is_filled",
+        "is_clean",
         "is_petite_structure",
         "publication_status_display",
         "has_been_claimed",
