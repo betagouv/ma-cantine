@@ -51,7 +51,7 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="Famille de produits « Viandes et volailles fraîches ou surgelées »" />
+    <TunnelTeledeclarationGroupTitle title="Famille de produits « Viandes et volailles fraîches et surgelées »" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in viandeFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
