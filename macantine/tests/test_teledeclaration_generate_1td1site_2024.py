@@ -9,6 +9,8 @@ from data.models import Diagnostic
 from data.models.canteen import Canteen, fill_geo_fields_from_siret
 from data.models.sector import Sector
 
+# NOTE: the legacy production_types (CENTRAL & CENTRAL_SERVING) are not valid anymore: teledeclare(skip_validations=True)
+
 
 class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
     @classmethod
@@ -40,7 +42,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Before the script is run
         self.assertEqual(Canteen.objects.count(), 3)
@@ -78,7 +80,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_serving_diagnostic.teledeclare(applicant=self.user)
+            central_serving_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
             call_command("canteen_migrate_central_to_groupe", apply=True)
 
@@ -132,8 +134,8 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_1_diagnostic.teledeclare(applicant=self.user)
-            central_2_diagnostic.teledeclare(applicant=self.user)
+            central_1_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
+            central_2_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Before the script is run
         self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 2)
@@ -206,7 +208,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
                 valeur_bio=2000,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 2)
 
@@ -250,7 +252,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
                 valeur_bio=2000,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 2)
 
@@ -288,7 +290,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -317,7 +319,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
 
         # Teledeclare the central again but without the satellite
         with freeze_time("2025-03-30"):  # during the 2024 campaign
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Re-run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -347,7 +349,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         central.delete(skip_validations=True)
 
@@ -387,7 +389,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         satellite_1.delete()
 
@@ -428,7 +430,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         satellite_1.hard_delete()
 
@@ -477,7 +479,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -508,7 +510,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -540,7 +542,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -566,7 +568,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -600,7 +602,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -634,7 +636,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -665,7 +667,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
                     Diagnostic.InvalidReason.VALEURS_INCOHERENTES
                 ],  # Fake invalid reason list is added
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -729,7 +731,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Change satellite informations
         satellite_siret.name = "Mon nouveau nom SIRET"
@@ -808,7 +810,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -862,7 +864,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Run the script
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -916,7 +918,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Change the meal count of the central
         central.yearly_meal_count = 9999
@@ -1451,7 +1453,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic_2023.teledeclare(applicant=self.user)
+            central_diagnostic_2023.teledeclare(applicant=self.user, skip_validations=True)
 
         with freeze_time("2025-03-30"):  # during the 2024 campaign
             central_diagnostic_2024 = DiagnosticFactory(
@@ -1460,7 +1462,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic_2024.teledeclare(applicant=self.user)
+            central_diagnostic_2024.teledeclare(applicant=self.user, skip_validations=True)
 
         with freeze_time("2026-03-30"):  # during the 2025 campaign
             central_diagnostic_2025 = DiagnosticFactory(
@@ -1469,7 +1471,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic_2025.teledeclare(applicant=self.user)
+            central_diagnostic_2025.teledeclare(applicant=self.user, skip_validations=True)
 
         # Before the script is run
         self.assertEqual(Diagnostic.all_objects.count(), 3)
@@ -1500,7 +1502,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
         call_command("teledeclaration_generate_1td1site", year=2024, apply=True)
@@ -1544,7 +1546,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
                 valeur_totale=10000,
                 valeur_bio=2000,
             )
-            central_diagnostic.teledeclare(applicant=self.user)
+            central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
             central_diagnostic.cancel()
 
         # Run the script

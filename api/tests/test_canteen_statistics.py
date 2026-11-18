@@ -52,7 +52,9 @@ class CanteenStatsApiTest(APITestCase):
                 plastique_ustensile_remplace=False,
                 information_qualite_durable=False,
             )
-            canteen_diagnostic_1.teledeclare(applicant=user)
+            canteen_diagnostic_1.teledeclare(
+                applicant=user, skip_validations=True
+            )  # legacy production_type: not valid anymore
             cls.canteen_2 = CanteenFactory(
                 siret="40419443300078",
                 city_insee_code="69123",
@@ -89,7 +91,9 @@ class CanteenStatsApiTest(APITestCase):
                 plastique_ustensile_remplace=True,
                 information_qualite_durable=True,
             )
-            canteen_diagnostic_2.teledeclare(applicant=user)
+            canteen_diagnostic_2.teledeclare(
+                applicant=user, skip_validations=True
+            )  # legacy production_type: not valid anymore
             cls.canteen_3 = CanteenFactory(
                 siret="21380185500015",
                 city_insee_code="38185",
