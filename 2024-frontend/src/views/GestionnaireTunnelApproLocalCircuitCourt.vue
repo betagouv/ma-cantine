@@ -107,9 +107,15 @@ const updateDefinitionLocal = (value) => {
   </div>
   <div v-if="!isComplete" class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle title="Total des achats par famille de produits" />
-    <p>
-      Pour chaque famille de produits renseignée dans les achats « local » ou circuit court, vous devez déclarer le total des achats de cette famille. Exemple : Vous indiquez 35€ de Charcuteries en circuit court, vous devez donc préciser ici le total des achats de Charcuteries effectués dans l’année. Les montants déjà inscrits sont issus de votre déclaration des données EGalim.
+    <p class="fr-mb-2w">
+      Pour chaque famille de produits renseignée dans les achats « local » ou circuit court, vous devez déclarer le total des achats de cette famille. Les montants déjà inscrits sont issus de votre déclaration des données EGalim.
     </p>
+    <DsfrHighlight class="fr-ml-0 fr-mb-2w">
+      <p>
+        <span class="fr-text--bold">Exemple :</span><br />
+        Vous indiquez 35€ de Charcuteries en circuit court, vous devez donc préciser ici le total des achats de Charcuteries effectués dans l’année.
+      </p>
+    </DsfrHighlight>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in totalAchatsFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
