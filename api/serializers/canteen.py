@@ -196,6 +196,7 @@ class SatelliteCanteenSerializer(serializers.ModelSerializer):
             "daily_meal_count",
             "yearly_meal_count",
             "can_be_claimed",
+            "is_clean",
             "publication_status",  # property
             "is_managed_by_user",  # annotate
             "action",  # annotate

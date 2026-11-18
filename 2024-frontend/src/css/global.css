@@ -140,6 +140,10 @@ address {
     max-width: 5rem !important;
 }
 
+.ma-cantine--table-sort .sortable-header {
+    align-items: center;
+}
+
 /* ICON */
 .ma-cantine--icon-xs::before {
     --icon-size: 1rem !important
@@ -224,6 +228,11 @@ address {
 /* WHITE SPACE */
 .ma-cantine--white-space-nowrap {
     white-space: nowrap;
+}
+
+.ma-cantine--table-wrap th,
+.ma-cantine--table-wrap td {
+    white-space: pre-wrap !important;
 }
 
 /* FORM */

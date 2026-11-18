@@ -24,6 +24,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   const hasSelectAutofill = ref(false)
   const isTeledeclared = computed(() => diagnostic.value?.isTeledeclared)
   const canBeTeledeclared = computed(() => canteenAction.value === "40_teledeclare")
+  const hasSatellitesErrors = computed(() => canteenAction.value === "36_fill_satellite_canteen_data")
   const visitedPagesSeparator = ","
   const tunnelApproVisitedPages = computed(() => diagnostic.value?.tunnelAppro?.split(visitedPagesSeparator) || [])
   const voletTunnelProgressionFields = {
@@ -356,6 +357,7 @@ const useStoreTeledeclaration = defineStore("teledeclaration", () => {
   return {
     diagnostic,
     canteenAction,
+    hasSatellitesErrors,
     diagnosticErrors,
     diagnoticCheck,
     diagnosticRecap,
