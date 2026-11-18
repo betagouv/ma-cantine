@@ -79,24 +79,24 @@ if (props.establishmentData) {
 <template>
   <section class="fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center">
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
+      <p>Tous les champs sont obligatoires, sauf ceux mentionnés “optionnel”.</p>
       <fieldset class="fr-mb-4w">
         <legend class="fr-h5 fr-mb-2w">1. Informations générales</legend>
         <DsfrInputGroup
           v-model="form.name"
-          label="Nom du groupe *"
+          label="Nom du groupe"
           :label-visible="true"
           :error-message="formatError(v$.name)"
         />
         <DsfrRadioButtonSet
-          legend="Mode de gestion *"
+          legend="Mode de gestion"
           v-model="form.managementType"
           :options="options.managementType"
           :error-message="formatError(v$.managementType)"
         />
         <DsfrInputGroup
           v-model="form.centralProducerSiret"
-          label="SIRET de la cuisine centrale"
-          hint="Optionnel"
+          label="SIRET de la cuisine centrale (optionnel)"
           :label-visible="true"
           :error-message="formatError(v$.centralProducerSiret)"
         />
@@ -120,7 +120,7 @@ if (props.establishmentData) {
           <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.dailyMealCount"
-              label="Nombre de repas par jour *"
+              label="Nombre de repas par jour"
               :label-visible="true"
               type="number"
               :error-message="formatError(v$.dailyMealCount)"
@@ -129,7 +129,7 @@ if (props.establishmentData) {
           <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.yearlyMealCount"
-              label="Nombre de repas par an *"
+              label="Nombre de repas par an"
               :label-visible="true"
               type="number"
               :error-message="formatError(v$.yearlyMealCount)"
