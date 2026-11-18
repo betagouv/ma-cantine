@@ -6,6 +6,43 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.62.1](https://github.com/betagouv/ma-cantine/compare/v2026.62.0...v2026.62.1) (2026-11-18)
+
+
+### Améliorations
+
+* **Cantines:** nouveau champ calculé 'is_clean' ([#7391](https://github.com/betagouv/ma-cantine/issues/7391)) ([484590f](https://github.com/betagouv/ma-cantine/commit/484590fbe7b6b5fde357e9d6bb2aa9d58f7365a3))
+* **Cantines:** nouvelle commande canteen_fill_computed_fields (is_filled, is_clean, is_petite_structure), remplace les commandes existantes ([#7672](https://github.com/betagouv/ma-cantine/issues/7672)) ([64a9b51](https://github.com/betagouv/ma-cantine/commit/64a9b51d5a32a0f39910b9d7ed152fb52b6839fa))
+* **Diagnostics:** action « Compléter le diagnostic » si le bilan est rempli mais pas valide (is_clean) ([#7679](https://github.com/betagouv/ma-cantine/issues/7679)) ([edb529e](https://github.com/betagouv/ma-cantine/commit/edb529e5fa8a62240cd9dbecbf17466cf78e6624))
+* **Diagnostics:** Groupe: nombre_repas_an facultatif (rempli seulement via API ou import), la somme des satellites est utilisée à la place ([#7662](https://github.com/betagouv/ma-cantine/issues/7662)) ([ed38271](https://github.com/betagouv/ma-cantine/commit/ed382712345f8aeee27682019482cbcbd2dee379))
+* **Diagnostics:** Groupe: pré-remplit satellites_nombre_repas_an_list avec le nombre de repas par an des nouveaux satellites ([#7651](https://github.com/betagouv/ma-cantine/issues/7651)) ([6ed9ab6](https://github.com/betagouv/ma-cantine/commit/6ed9ab6e7f53d8cfcdc260d77f2cc24637511f8c))
+* **Diagnostics:** Groupe: satellites_nombre_repas_an_sum devient un champ calculé (stocké) ([#7663](https://github.com/betagouv/ma-cantine/issues/7663)) ([e9bd93e](https://github.com/betagouv/ma-cantine/commit/e9bd93e3fb25f8555c5f35c2874e829ca59f9a1d))
+* **Diagnostics:** Groupe: si nombre_repas_an est vide, utilise la somme des satellites pour le nombre de repas par an (et le coût repas) ([#7661](https://github.com/betagouv/ma-cantine/issues/7661)) ([ca981b2](https://github.com/betagouv/ma-cantine/commit/ca981b2e2d97f7723a4e051a4150a2fa03698e27))
+* **Diagnostics:** Groupe: synchronise satellites_nombre_repas_an_list quand un satellite est rattaché, détaché ou supprimé ([#7653](https://github.com/betagouv/ma-cantine/issues/7653)) ([f01bfce](https://github.com/betagouv/ma-cantine/commit/f01bfce3651919db1f690bebc2d3a75a38e3c6be))
+* **Diagnostics:** nouveau champ calculé is_clean (règles ne dépendant que du bilan) ([#7678](https://github.com/betagouv/ma-cantine/issues/7678)) ([4d46b52](https://github.com/betagouv/ma-cantine/commit/4d46b52ee66a49b28eae2c3a210d66cc3a3ea70e))
+* **Groupe:** affiche les cantines rattachées au groupe en erreur ([#7680](https://github.com/betagouv/ma-cantine/issues/7680)) ([04d1d83](https://github.com/betagouv/ma-cantine/commit/04d1d831b4509b4a8fa027ab393a1f36da226bce))
+* inverse l'affichage obligatoire / optionnel dans les champs de formulaires vue3 ([#7685](https://github.com/betagouv/ma-cantine/issues/7685)) ([410aa39](https://github.com/betagouv/ma-cantine/commit/410aa39ca2ea48d129aaaaaf6569cb38d472599b))
+* **Télédéclaration:** centralise l'affichage des macarons et change leurs couleurs ([#7671](https://github.com/betagouv/ma-cantine/issues/7671)) ([31f3c38](https://github.com/betagouv/ma-cantine/commit/31f3c3857af2e2916126f8eba1dba92de99c45f9))
+* **Télédéclaration:** Couvert Groupe: amélioration des wordings ([#7681](https://github.com/betagouv/ma-cantine/issues/7681)) ([9073883](https://github.com/betagouv/ma-cantine/commit/90738839c41b83e0cc155d17b1914d1541cc8a2d))
+* **Télédéclaration:** Couverts Groupe: affiche le détail dans le justificatif et le récapitulatif ([#7675](https://github.com/betagouv/ma-cantine/issues/7675)) ([399b390](https://github.com/betagouv/ma-cantine/commit/399b3904b8d4d3c753ed97c84b1ac6ff27a76f51))
+* **Télédéclaration:** différents correctifs sur la page de la télédéclaration en cours ([#7673](https://github.com/betagouv/ma-cantine/issues/7673)) ([2258cce](https://github.com/betagouv/ma-cantine/commit/2258cced4a4eb48b8bc449e155164cba02217735))
+* **Télédéclaration:** Groupe: les satellites doivent aussi être valides (is_clean) pour télédéclarer ([#7677](https://github.com/betagouv/ma-cantine/issues/7677)) ([1c802a1](https://github.com/betagouv/ma-cantine/commit/1c802a130e62ddd62a5e08c16c3065ae825576fc))
+* **Télédéclaration:** la cantine doit être valide (is_clean) pour télédéclarer, sinon action « Compléter les infos de la cantine » ([#7676](https://github.com/betagouv/ma-cantine/issues/7676)) ([0083dca](https://github.com/betagouv/ma-cantine/commit/0083dcaec821b65fa8bff0bedada1029308e8de7))
+* **Télédéclaration:** repasse sur les textes ([#7683](https://github.com/betagouv/ma-cantine/issues/7683)) ([488361a](https://github.com/betagouv/ma-cantine/commit/488361abb7926ccbb014b6e3b68f0277554f889f))
+* **Télédéclaration:** Volets thématiques: améliore les messages les textes d'information ([#7667](https://github.com/betagouv/ma-cantine/issues/7667)) ([4f21bf3](https://github.com/betagouv/ma-cantine/commit/4f21bf3f61fbfc8968d41214beb185b9375aae9e))
+
+
+### Corrections (bugs, typos...)
+
+* **Canteen:** change le libellée des petites structures ([#7668](https://github.com/betagouv/ma-cantine/issues/7668)) ([4f5a025](https://github.com/betagouv/ma-cantine/commit/4f5a02521bcbecfa5a9e55337e63e7fdeff36951))
+* **Diagnostic:** corrige test is_clean ([#7684](https://github.com/betagouv/ma-cantine/issues/7684)) ([168dc80](https://github.com/betagouv/ma-cantine/commit/168dc80790a22d735ff5515e187e97e4818902c3))
+* **Diagnostics:** la validation ignore les champs appro ne correspondant pas au type de bilan (sans les vider) ([#7670](https://github.com/betagouv/ma-cantine/issues/7670)) ([0191347](https://github.com/betagouv/ma-cantine/commit/0191347c53699f83b7471e38bfe1b1b532124046))
+
+
+### Technique
+
+* **Diagnostics:** validateurs : fusionne les 2 validateurs de satellites_nombre_repas_an_list (seulement pour les groupes) ([#7660](https://github.com/betagouv/ma-cantine/issues/7660)) ([52d71ba](https://github.com/betagouv/ma-cantine/commit/52d71bac9e1d41c7c9d9ef835182f9583616c524))
+
 ## [2026.62.0](https://github.com/betagouv/ma-cantine/compare/v2026.61.1...v2026.62.0) (2026-11-17)
 
 
