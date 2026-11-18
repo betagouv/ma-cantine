@@ -89,7 +89,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_egalim_autres_dont_commerce_equitable",
-      "title": "Dont total des achats non bio issus du commerce équitable",
+      "title": "Dont total des achats non bio non SIQO issus du commerce équitable",
       "type": "any"
     },
     {
@@ -100,7 +100,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles",
-      "title": "Total des achats pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -111,7 +111,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_egalim",
-      "title": "Total des achats EGalim en viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats EGalim en viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -215,7 +215,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_europe",
-      "title": "Total des achats origine Europe (hors France) pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats origine Europe (hors France) pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -279,7 +279,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_france",
-      "title": "Total des achats origine France pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats origine France pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -343,7 +343,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_circuit_court",
-      "title": "Total des achats circuit court pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats circuit court pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -407,7 +407,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_local",
-      "title": "Total des achats locaux pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats locaux pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
