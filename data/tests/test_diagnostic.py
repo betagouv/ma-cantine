@@ -1461,6 +1461,34 @@ class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
         self.assertEqual(list(errors.keys()), ["satellites_nombre_repas_an_list"])
         self.assertIn("Satellite 2", str(errors["satellites_nombre_repas_an_list"]))
 
+    def test_groupe_with_a_site(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe, yearly_meal_count=1000
+        )
+        canteen_site = CanteenFactory(
+            name="Site", production_type=Canteen.ProductionType.ON_SITE, groupe=canteen_groupe, yearly_meal_count=500
+        )
+        diagnostic = DiagnosticFactory(canteen=canteen_groupe, year=2026, nombre_repas_an=1500)
+        # the site is in the list & in the sum
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an_list,
+            [
+                {"id": canteen_satellite.id, "nombre_repas_an": 1000},
+                {"id": canteen_site.id, "nombre_repas_an": 500},
+            ],
+        )
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, 1500)
+        self.assertEqual(diagnostic_validators.validate_satellites_nombre_repas_an_list(diagnostic), {})
+        # the site's value is required
+        diagnostic.satellites_nombre_repas_an_list = [
+            {"id": canteen_satellite.id, "nombre_repas_an": 1000},
+            {"id": canteen_site.id, "nombre_repas_an": None},
+        ]
+        errors = diagnostic_validators.validate_satellites_nombre_repas_an_list(diagnostic)
+        self.assertEqual(list(errors.keys()), ["satellites_nombre_repas_an_list"])
+        self.assertIn("la cantine « Site »", str(errors["satellites_nombre_repas_an_list"]))
+
     def test_nombre_repas_an_different_from_sum(self):
         errors = self._validate(self.canteen_groupe, nombre_repas_an=5000, value_1=1000, value_2=2000)
         self.assertEqual(list(errors.keys()), ["nombre_repas_an"])
