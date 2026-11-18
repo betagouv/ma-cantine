@@ -1965,14 +1965,14 @@ class DiagnosticIsCleanMethodTest(TestCase):
         diagnostic.valeur_viandes_volailles_bio = 2000  # > valeur_bio & valeur_totale
         diagnostic.save()
         self.assertRaises(ValidationError, diagnostic.full_clean)  # the model validation still sees it
-        is_clean, errors = diagnostic.is_clean(skip_volets_thematiques=True)
+        is_clean, errors = diagnostic._is_clean(skip_volets_thematiques=True)
         self.assertTrue(is_clean)
         self.assertEqual(errors, {})
         # not cleared (only on a copy): the manager can switch back to COMPLETE
         self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 2000)
         # the same value on a COMPLETE diagnostic is validated
         diagnostic.diagnostic_type = Diagnostic.DiagnosticType.COMPLETE
-        is_clean, errors = diagnostic.is_clean(skip_volets_thematiques=True)
+        is_clean, errors = diagnostic._is_clean(skip_volets_thematiques=True)
         self.assertFalse(is_clean)
         self.assertIn("valeur_bio", errors)
 
