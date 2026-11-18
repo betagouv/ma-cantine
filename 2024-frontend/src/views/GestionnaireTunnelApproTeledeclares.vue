@@ -12,7 +12,7 @@ const router = useRouter()
 const canteenStore = useStoreCanteen()
 const { canteenInformations } = storeToRefs(canteenStore)
 const isGroupe = computed(() => canteenInformations.value.isGroupe)
-const title = computed(() => isGroupe.value ? 'Compléter les volets thématiques' : 'Compléter les volets thématiques et votre page publique')
+const title = computed(() => isGroupe.value ? 'Complétez les volets thématiques' : 'Complétez les volets thématiques et votre page publique')
 
 /* Redirects */
 const topButtons = computed(() => {
@@ -46,7 +46,7 @@ const topButtons = computed(() => {
     class="fr-mb-4w"
   >
     <p>
-      Vous pouvez retrouver votre justificatif de déclaration et la synthèse de votre qualité de produits sur la <AppLinkRouter :title="`page de votre ${isGroupe ? 'groupe' : 'cantine'}`" :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" />.
+      Vous retrouverez votre justificatif de télédéclaration et la synthèse de votre positionnement par rapport aux obligations de la loi dans la <AppLinkRouter :title="`page de votre ${isGroupe ? 'groupe' : 'cantine'}`" :to="{ name: 'GestionnaireCantineTeledeclarationEnCours' }" />.
     </p>
   </DsfrAlert>
   <h2 class="fr-h5">{{ title }}</h2>
@@ -56,7 +56,7 @@ const topButtons = computed(() => {
   </p>
   <ul class="fr-mb-4w">
     <li v-if="!isGroupe">
-      <span class="ma-cantine--bold">Rendre visible votre prise en compte des objectifs de la loi EGalim</span> via votre page publique (moteur de recherche “Trouver une cantine”)
+      <span class="ma-cantine--bold">Rendre visible votre prise en compte des objectifs de la loi EGalim</span> via votre page publique (accessible via le moteur de recherche “Trouver une cantine”)
     </li>
     <li>
       <span class="ma-cantine--bold">Contribuer de manière anonyme à l’Observatoire EGalim</span> en restauration collective et au bilan statistique annuel, transmis chaque année au Parlement.
