@@ -95,13 +95,13 @@ const getCanteenInfos = (canteen) => {
 }
 
 const getCanteenStatus = (canteen) => {
-  const isSatellite = canteen.productionType === "site_cooked_elsewhere"
+  const canBeInGroupe = ["site_cooked_elsewhere", "site"].includes(canteen.productionType)
   const hasGroup = canteen.groupe !== null
   const inMyGroup = hasGroup && canteen.groupe== props.groupId
-  if (!isSatellite) return "not-a-satellite"
-  if (isSatellite && !hasGroup) return "add-satellite"
-  if (isSatellite && hasGroup && inMyGroup) return "my-group"
-  if (isSatellite && hasGroup && !inMyGroup) return "other-group"
+  if (!canBeInGroupe) return "not-allowed"
+  if (canBeInGroupe && !hasGroup) return "add-satellite"
+  if (canBeInGroupe && hasGroup && inMyGroup) return "my-group"
+  if (canBeInGroupe && hasGroup && !inMyGroup) return "other-group"
   return ""
 }
 
