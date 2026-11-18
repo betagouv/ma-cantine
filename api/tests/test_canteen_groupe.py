@@ -324,7 +324,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(
             response.json()["error"],
-            "Vous ne pouvez pas quitter le groupe car la télédéclaration a été validée par votre groupe et les données de votre cantine sont déjà prises en compte pour cette télédéclaration. Vous pouvez demander à votre groupe d'annuler sa télédéclaration, ou alors vous pourrez renouveler votre demande à la fin de la campagne à partir du 30/04/2025",
+            "Vous ne pouvez pas quitter le groupe car sa télédéclaration a été validée et les données de votre cantine ont été prises en compte. Vous pouvez demander à votre groupe d'annuler sa télédéclaration, ou alors vous pourrez renouveler votre demande à la fin de la campagne à partir du 30/04/2025",
         )
         self.canteen_satellite_11.refresh_from_db()
         self.assertEqual(self.canteen_satellite_11.groupe_id, self.canteen_groupe_1.id)
