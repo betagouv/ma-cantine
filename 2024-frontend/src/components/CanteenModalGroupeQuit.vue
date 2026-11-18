@@ -40,7 +40,7 @@ const quitGroupe = () => {
     @close="close"
   >
     <p>
-      En quittant le groupe vous vous engager à en rejoindre un autre ou à déclarer vos achats par vos propres moyens.
+      En quittant le groupe vous vous engagez à en rejoindre un autre ou à déclarer vos achats par vos propres moyens.
     </p>
     <p class="fr-text--bold">Confirmez-vous votre demande ?</p>
     <p v-if="errorMessage" class="fr-error-text fr-mb-0">{{ errorMessage }}</p>
