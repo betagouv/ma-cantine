@@ -2,7 +2,10 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
+import { useStoreCanteen } from '@/stores/canteen'
+import urlService from '@/services/urls.js'
 import documentation from '@/data/documentation.json'
+import AppLinkRouter from '@/components/AppLinkRouter.vue'
 import TunnelTeledeclarationField from '@/components/TunnelTeledeclarationField.vue'
 import TunnelTeledeclarationGroupTitle from '@/components/TunnelTeledeclarationGroupTitle.vue'
 
@@ -37,6 +40,15 @@ const localFields = [
   "valeurBoissonsLocal",
 ]
 
+/* Groupe */
+const canteenStore = useStoreCanteen()
+const { canteenInformations } = storeToRefs(canteenStore)
+const isGroupe = computed(() => canteenInformations.value.isGroupe)
+const canteenPage = computed(() => ({
+  name: 'CanteenPage',
+  params: { canteenUrlComponent: urlService.getCanteenUrl(canteenInformations.value) },
+}))
+
 /* Définition du local : la distance n'est attendue que pour le périmètre "KM" */
 const storeTeledeclaration = useStoreTeledeclaration()
 const { diagnostic, isComplete } = storeToRefs(storeTeledeclaration)
@@ -50,8 +62,12 @@ const updateDefinitionLocal = (value) => {
     <div class="fr-col-12">
       <h2>« Local » et circuit court</h2>
       <p class="fr-mb-0">
-        Étape facultative permettant de renseigner les achats en circuit court et/ou en « local ». Ces achats seront
-        valorisés sur la page publique de votre (ou vos) cantine(s).
+        Cette dernière étape du volet « Approvisionnements » de la télédéclaration est facultative.
+        <template v-if="!isGroupe">
+          Elle vous permet de valoriser vos efforts d’approvisionnements sur
+          <AppLinkRouter :to="canteenPage" title="la page publique de votre cantine" :is-blank="true" />.
+        </template>
+        En fonction de votre méthode de suivi, vous pouvez renseigner l’origine : pour une ou plusieurs familles, pour chacune des familles, ou pour le total de vos achats.
       </p>
     </div>
   </div>
@@ -91,10 +107,15 @@ const updateDefinitionLocal = (value) => {
   </div>
   <div v-if="!isComplete" class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle title="Total des achats par famille de produits" />
-    <p>
-      Pour chaque famille de produits renseignée dans les achats en circuit court ou en « local », vous devez déclarer
-      le total des achats de cette famille.
+    <p class="fr-mb-2w">
+      Pour chaque famille de produits renseignée dans les achats « local » ou circuit court, vous devez déclarer le total des achats de cette famille. Les montants déjà inscrits sont issus de votre déclaration des données EGalim.
     </p>
+    <DsfrHighlight class="fr-ml-0 fr-mb-2w">
+      <p>
+        <span class="fr-text--bold">Exemple :</span><br />
+        Vous indiquez 35€ de Charcuteries en circuit court, vous devez donc préciser ici le total des achats de Charcuteries effectués dans l’année.
+      </p>
+    </DsfrHighlight>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in totalAchatsFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />

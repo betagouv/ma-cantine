@@ -36,7 +36,7 @@ const getAutoOption = (option) => {
   const autoOption = { ...option, disabled: !hasPurchaseTotal.value }
   autoOption.label = hasPurchaseTotal.value ? `Saisie automatique : vous utilisez l'Outil Suivi des Achats avec ${formatNumber(purchaseSummary.value?.valeurTotale)}€ d'achats détectés` : "Saisie automatique : vous n'utilisez pas l'Outil Suivi des Achats"
   autoOption.hint = hasPurchaseTotal.value ? "Tous les champs de la télédéclaration seront automatiquement renseignés." : undefined
-  if (hasPurchaseTotal.value && hasPurchaseLocal.value) autoOption.hint += " Vous avez également des achats « locaux », un des champs de la catégorie n'est pas automatisable : « définition de local », vous devrez le renseigner manuellement pour finaliser votre télédéclaration."
+  if (hasPurchaseTotal.value && hasPurchaseLocal.value) autoOption.hint += " Néanmoins, pour vos achats « locaux », le champ « définition de local » n'est pas automatisable : vous devrez le renseigner manuellement pour finaliser votre télédéclaration."
   return autoOption
 }
 
@@ -61,8 +61,8 @@ const selectRadio = () => {
 <template>
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
-      <p>Plusieurs modes de saisie existent pour renseigner les données d’approvisionnements EGalim : simplifiée, détaillée et automatique.</p>
-      <p>La saisie automatique est disponible uniquement si vous utilisez <AppLinkRouter :to="{ name: 'PurchasesHome' }" title="Outil de Suivi des Achats" /> de <em>ma cantine</em>.</p>
+      <p>Deux modes de saisie existent pour renseigner les données d’approvisionnements : le mode de saisie simplifiée et le mode de saisie détaillée.</p>
+      <p>Si vous avez utilisé <AppLinkRouter :to="{ name: 'PurchasesHome' }" title="l'Outil de Suivi des Achats" />  (ou que vos fournisseurs utilisent l’API ma cantine), alors vous pouvez opter pour la saisie automatique.</p>
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="Télédéclaration simplifiée ou détaillée : laquelle choisir ?">

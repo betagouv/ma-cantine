@@ -24,7 +24,7 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
       :documentation="bioDocumentation"
     />
     <p>
-      Les achats en produits bio et issus du commerce équitable sont à renseigner dans le champ principal (achat bio ou en conversion) et, si vous en avez la possibilité, dans le champ facultatif « [...] dont bio équitable ». Ce sont les seuls achats qui peuvent être comptabilisés dans deux champs distincts de cette étape (double comptabilisation).
+      Renseignez ici la totalité de vos achats bio ou « en conversion vers l’agriculture biologique ». Pour le champ facultatif « Dont achats bio issus du commerce équitable », indiquez le montant de la part « commerce équitable » de vos achats bio. Ex : vous avez acheté 50€ de tomates bio et 50€ de café bio et équitable donc vous devez renseigner 100€ dans le total des achats bio et 50€ dans le champ « Dont achats bio issus du commerce équitable ».
     </p>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in bioFields" :key="field" class="fr-col-12 fr-col-md-6">
@@ -42,7 +42,7 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
     <p>
       SIQO = Signes officiels d'identification de la qualité et de l'origine.
       <br />
-      Renseigner ici le montant total des achats SIQO hors bio : Label Rouge, AOC/AOP, IGP, STG
+      Renseignez ici le montant total des achats SIQO hors bio : Label Rouge, AOC/AOP, IGP, STG
     </p>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-6">
@@ -51,7 +51,7 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
     </div>
   </div>
   <div class="fr-mb-6w">
-    <TunnelTeledeclarationGroupTitle title="Famille de produits « Viandes et volailles fraîches ou surgelées »" />
+    <TunnelTeledeclarationGroupTitle title="Famille de produits « Viandes et volailles fraîches et surgelées »" />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in viandeFamilleFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
@@ -72,6 +72,9 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
       badge="Nouveauté loi UPSA"
       :documentation="autresEgalimDocumentation"
     />
+    <p>
+      Renseignez ici la totalité de vos autres achats compatibles EGalim (HVE, CE2, RUP, Écolabel pêche durable, « produit de la ferme », commerce équitable, etc.) non comptabilisables dans les champs Bio et SIQO (hors bio) précédents. Pour le champ facultatif « Dont achats issus du commerce équitable », indiquez le montant de la part « commerce équitable » de vos achats compatibles EGalim non bio et non SIQO (hors bio). Ex : vous avez acheté 50€ de poissons Écolabel pêche durable, 25€ de haricots verts RUP et 25€ de sucre du commerce équitable, vous devez renseigner 100€ dans le total des autres achats EGalim et 25€ dans « Dont total des achats non bio non SIQO (hors bio) issus du commerce équitable »
+    </p>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in autresEgalimFields" :key="field" class="fr-col-12 fr-col-md-6">
         <TunnelTeledeclarationField :name="field" />
@@ -84,7 +87,7 @@ const autresEgalimDocumentation = `${documentation.qualiteDurabiliteProduits}#3-
       :documentation="documentation.criteresSelection"
     />
     <p>
-      Critères d'achat : total des achats réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs
+      Pour les produits répondant à des critères d'achat dans le cadre d’un marché public. Ces achats sont réalisés selon des modalités de sélection prenant en compte les coûts imputés aux externalités environnementales ou les performances environnementales et d’approvisionnements directs.
     </p>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-6">

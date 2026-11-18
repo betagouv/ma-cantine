@@ -15,7 +15,7 @@ const anchorName = "accordeons"
 const openedAccordion = ref(-1)
 
 const teledeclarationStore = useStoreTeledeclaration()
-const { isTeledeclared, hasDiagnostic, diagnoticCheck, diagnosticRecap } = storeToRefs(teledeclarationStore)
+const { isTeledeclared, diagnoticCheck, diagnosticRecap } = storeToRefs(teledeclarationStore)
 
 /* Volets */
 const volets = computed(() => {
@@ -77,7 +77,7 @@ const volets = computed(() => {
 </script>
 
 <template>
-  <div v-if="hasDiagnostic">
+  <div>
     <DiagnosticSummaryTile
       class="fr-mb-5w"
       :volets="volets"

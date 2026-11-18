@@ -330,7 +330,7 @@
       },
       "index_code": 3,
       "index_metier": "2.0.1",
-      "verbose_name": "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »"
+      "verbose_name": "Total des achats bio ou avec mention « en conversion vers l'agriculture biologique »"
     },
     "valeur_bio_dont_commerce_equitable": {
       "diagnostic_type": {
@@ -1140,7 +1140,7 @@
       },
       "index_code": 8,
       "index_metier": "4.0.2",
-      "verbose_name": "Dont total des achats non bio issus du commerce équitable"
+      "verbose_name": "Dont total des achats non bio non SIQO issus du commerce équitable"
     },
     "valeur_europe": {
       "diagnostic_type": {
@@ -2040,7 +2040,7 @@
       },
       "index_code": 9,
       "index_metier": "1.1",
-      "verbose_name": "Total des achats pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_aocaop": {
       "diagnostic_type": {
@@ -2055,7 +2055,7 @@
       },
       "index_code": 46,
       "index_metier": "4.1",
-      "verbose_name": "Total des achats AOC / AOP pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats AOC / AOP pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_bio": {
       "diagnostic_type": {
@@ -2070,7 +2070,7 @@
       },
       "index_code": 23,
       "index_metier": "2.1.1",
-      "verbose_name": "Total des achats bio ou en conversion pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats bio ou en conversion pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_bio_dont_commerce_equitable": {
       "diagnostic_type": {
@@ -2085,7 +2085,7 @@
       },
       "index_code": 24,
       "index_metier": "2.1.2",
-      "verbose_name": "Dont total des achats bio issus du commerce équitable pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Dont total des achats bio issus du commerce équitable pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_circuit_court": {
       "diagnostic_type": {
@@ -2100,7 +2100,7 @@
       },
       "index_code": 135,
       "index_metier": "16.1",
-      "verbose_name": "Total des achats circuit court pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats circuit court pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_commerce_equitable": {
       "diagnostic_type": {
@@ -2115,7 +2115,7 @@
       },
       "index_code": 87,
       "index_metier": "10.1",
-      "verbose_name": "Total des achats non bio issus du commerce équitable pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats non bio issus du commerce équitable pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_egalim": {
       "diagnostic_type": {
@@ -2130,7 +2130,7 @@
       },
       "index_code": 10,
       "index_metier": "1.1bis",
-      "verbose_name": "Total des achats EGalim en viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats EGalim en viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_europe": {
       "diagnostic_type": {
@@ -2145,7 +2145,7 @@
       },
       "index_code": 119,
       "index_metier": "15.1",
-      "verbose_name": "Total des achats origine Europe (hors France) pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats origine Europe (hors France) pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_externalites": {
       "diagnostic_type": {
@@ -2160,7 +2160,7 @@
       },
       "index_code": 103,
       "index_metier": "12.1",
-      "verbose_name": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_fermier": {
       "diagnostic_type": {
@@ -2175,7 +2175,7 @@
       },
       "index_code": 95,
       "index_metier": "11.1",
-      "verbose_name": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_france": {
       "diagnostic_type": {
@@ -2190,7 +2190,7 @@
       },
       "index_code": 127,
       "index_metier": "14.1",
-      "verbose_name": "Total des achats origine France pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats origine France pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_hve": {
       "diagnostic_type": {
@@ -2205,7 +2205,7 @@
       },
       "index_code": 70,
       "index_metier": "7.1",
-      "verbose_name": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_igp": {
       "diagnostic_type": {
@@ -2220,7 +2220,7 @@
       },
       "index_code": 54,
       "index_metier": "5.1",
-      "verbose_name": "Total des achats IGP pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats IGP pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_label_rouge": {
       "diagnostic_type": {
@@ -2235,7 +2235,7 @@
       },
       "index_code": 39,
       "index_metier": "3.1",
-      "verbose_name": "Total des achats Label Rouge pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats Label Rouge pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_local": {
       "diagnostic_type": {
@@ -2250,7 +2250,7 @@
       },
       "index_code": 143,
       "index_metier": "17.1",
-      "verbose_name": "Total des achats locaux pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats locaux pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_performance": {
       "diagnostic_type": {
@@ -2265,7 +2265,7 @@
       },
       "index_code": 111,
       "index_metier": "13.1",
-      "verbose_name": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_rup": {
       "diagnostic_type": {
@@ -2280,7 +2280,7 @@
       },
       "index_code": 79,
       "index_metier": "9.1",
-      "verbose_name": "Total des achats RUP pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats RUP pour la famille Viandes et volailles fraîches et surgelées"
     },
     "valeur_viandes_volailles_stg": {
       "diagnostic_type": {
@@ -2295,7 +2295,7 @@
       },
       "index_code": 62,
       "index_metier": "6.1",
-      "verbose_name": "Total des achats STG pour la famille Viandes et volailles fraîches ou surgelées"
+      "verbose_name": "Total des achats STG pour la famille Viandes et volailles fraîches et surgelées"
     }
   },
   "DIVERSIFICATION": {

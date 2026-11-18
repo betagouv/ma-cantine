@@ -57,10 +57,10 @@ const viandePoissonColor = computed(() => props.isTeledeclared ? "var(--ma-canti
                   <li class="diagnostic-summary-tile__appro-item ma-cantine--flex-gap-1">
                     <div class="diagnostic-summary-tile__square diagnostic-summary-tile__square--bio"></div>
                     <p v-if="isTeledeclared" class="fr-mb-0 fr-text--sm">
-                      et <span class="ma-cantine--bold">{{ formatNumber(approStats?.pourcentageBio) }}%</span> bio ou en Conversion
+                      et <span class="ma-cantine--bold">{{ formatNumber(approStats?.pourcentageBio) }}%</span> bio ou en conversion
                     </p>
                     <p v-else class="fr-mb-0 fr-text--sm">
-                      et {{ formatNumber(objectives?.bioPercentObjective) }}% Bio ou en Conversion
+                      et {{ formatNumber(objectives?.bioPercentObjective) }}% bio ou en conversion
                     </p>
                   </li>
                 </ul>

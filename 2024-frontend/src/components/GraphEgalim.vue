@@ -18,7 +18,7 @@ const title = "Objectifs EGalim"
 const gauges = computed(() => {
   const allGauges = [
     {
-      label: `au moins ${stringsService.prettyPercent(props.bioObjective)} d’achats Bio ou en conversion`,
+      label: `au moins ${stringsService.prettyPercent(props.bioObjective)} d’achats bio ou en conversion`,
       mention: props.mention,
       stat: props.bioPercent,
       objective: props.bioObjective,
@@ -30,7 +30,7 @@ const gauges = computed(() => {
       disabled: `le seuil des ${stringsService.prettyPercent(30)} SIQO, HVE ou fermiers sera comptabilisé dès implémentation des nouvelles catégories UPSA à partir des achats du 1er janvier 2027 pour télédéclaration en 2028`,
     },
     {
-      label: `au moins ${stringsService.prettyPercent(props.egalimObjective)} d’achats EGalim dont bio`,
+      label: `au moins ${stringsService.prettyPercent(props.egalimObjective)} d’achats EGalim`,
       stat: props.egalimPercent,
       objective: props.egalimObjective,
       color: "var(--ma-cantine-color-egalim)",

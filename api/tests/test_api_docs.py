@@ -11,7 +11,7 @@ class ApiDocsTest(TestCase):
         # most recent year (2026)
         self.assertEqual(
             properties["valeurBio"]["description"],
-            "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »",
+            "Total des achats bio ou avec mention « en conversion vers l'agriculture biologique »",
         )
         # v1 field exposed under its English name
         self.assertEqual(

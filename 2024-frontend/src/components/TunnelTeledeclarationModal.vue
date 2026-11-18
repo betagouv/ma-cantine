@@ -87,7 +87,7 @@ const displayError = (error) => {
       Vous allez effectuer une déclaration pour l’ensemble des cantines de votre groupe. Les cantines de votre groupe pourront ajouter des approvisionnements additionnels et compléter les volets thématiques.
     </p>
     <p>
-      Une fois votre télédéclaration effectuée, vous pourrez retrouver votre justificatif de télédéclaration et la synthèse de vos approvisionnement EGalim sur la page de votre {{ isGroupe ? 'groupe' : 'cantine' }}.
+      Une fois votre télédéclaration effectuée, vous retrouverez votre justificatif de télédéclaration et la synthèse de votre positionnement par rapport aux obligations de la loi dans la page de votre {{ isGroupe ? 'groupe' : 'cantine' }}.
     </p>
     <p>
       Votre télédéclaration reste modifiable jusqu'à la fin de la campagne de correction. Passé ce délai, si vous constatez des erreurs, il vous sera uniquement possible de masquer les données de votre télédéclaration affichées sur votre page publique.

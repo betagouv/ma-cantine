@@ -43,7 +43,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles",
-      "title": "Total des achats pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -163,7 +163,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_bio",
-      "title": "Total des achats bio ou en conversion pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats bio ou en conversion pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -171,7 +171,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_bio_dont_commerce_equitable",
-      "title": "Dont total des achats bio issus du commerce équitable pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Dont total des achats bio issus du commerce équitable pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -315,7 +315,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_label_rouge",
-      "title": "Total des achats Label Rouge pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats Label Rouge pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -389,7 +389,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_aocaop",
-      "title": "Total des achats AOC / AOP pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats AOC / AOP pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -453,7 +453,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_igp",
-      "title": "Total des achats IGP pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats IGP pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -517,7 +517,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_stg",
-      "title": "Total des achats STG pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats STG pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -584,7 +584,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_hve",
-      "title": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats avec certification environnementale – niveau 2 ou 3 (HVE) pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -680,7 +680,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_rup",
-      "title": "Total des achats RUP pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats RUP pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -768,7 +768,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_commerce_equitable",
-      "title": "Total des achats non bio issus du commerce équitable pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats non bio issus du commerce équitable pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -856,7 +856,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_fermier",
-      "title": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats de produits fermiers, 3°quater ou 4°bis pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -941,7 +941,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_externalites",
-      "title": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats de produits sélectionnés sur la base de critères d'externalités environnementales pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -1005,7 +1005,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_performance",
-      "title": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats de produits sélectionnés sur la base de critères de performance environnementale et d'approvisionnements directs pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -1069,7 +1069,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_europe",
-      "title": "Total des achats origine Europe (hors France) pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats origine Europe (hors France) pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -1133,7 +1133,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_france",
-      "title": "Total des achats origine France pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats origine France pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -1197,7 +1197,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_circuit_court",
-      "title": "Total des achats circuit court pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats circuit court pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {
@@ -1261,7 +1261,7 @@
       "doc_type": "number",
       "example": "1234,99",
       "name": "valeur_viandes_volailles_local",
-      "title": "Total des achats locaux pour la famille Viandes et volailles fraîches ou surgelées",
+      "title": "Total des achats locaux pour la famille Viandes et volailles fraîches et surgelées",
       "type": "any"
     },
     {

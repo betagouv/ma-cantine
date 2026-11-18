@@ -192,7 +192,7 @@ class TeledeclarationFieldsTest(SimpleTestCase):
         self.assertEqual(verbose_names_2025["valeur_bio"], "Bio - Valeur annuelle HT")
         self.assertEqual(
             verbose_names_2026["valeur_bio"],
-            "Total des achats bio ou avec mention « En conversion vers l'agriculture biologique »",
+            "Total des achats bio ou avec mention « en conversion vers l'agriculture biologique »",
         )
         # all the volets
         self.assertEqual(verbose_names_2025["plan_gaspillage_en_place"], "Plan d'action contre le gaspillage en place")
