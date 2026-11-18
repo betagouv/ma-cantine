@@ -20,8 +20,8 @@ const getSatelliteNameInfos = (canteen) => {
 }
 
 const getSatellitesCountSentence = (satellitesCount) => {
-  const number = satellitesCount === 0 ? "Aucun" : satellitesCount
-  const name = satellitesCount <= 1 ? "restaurant satellite" : "restaurants satellites"
+  const number = satellitesCount === 0 ? "Aucune" : satellitesCount
+  const name = satellitesCount <= 1 ? "cantine" : "cantines"
   return `${number} ${name}`
 }
 

@@ -141,7 +141,7 @@ const claimCanteen = (canteen) => {
 
 <template>
   <DsfrDataTable
-    title="Vos restaurants satellites"
+    title="Vos cantines"
     no-caption
     :headers-row="tableHeaders"
     :rows="tableRows"
