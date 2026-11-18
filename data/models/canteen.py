@@ -946,6 +946,13 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         return self.production_type and self.production_type == Canteen.ProductionType.ON_SITE_CENTRAL
 
     @property
+    def can_be_in_groupe(self) -> bool:
+        """
+        A groupe can contain satellites and sites
+        """
+        return self.production_type in [Canteen.ProductionType.ON_SITE_CENTRAL, Canteen.ProductionType.ON_SITE]
+
+    @property
     def central_kitchen(self):
         if self.groupe_id:
             return self.groupe

@@ -218,7 +218,7 @@ def validate_canteen_groupe_field(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the groupe field is a valid Canteen or empty
     - extra validation:
-        - if groupe: canteen must be a satellite
+        - if groupe: canteen must be a satellite or a site
         - if groupe: related canteen must be a groupe
         - if groupe: must not be self
     """
@@ -227,9 +227,11 @@ def validate_canteen_groupe_field(instance):
     try:
         value = getattr(instance, field_name)
         if value:
-            if not instance.is_satellite:
+            if not instance.can_be_in_groupe:
                 utils_utils.add_validation_error(
-                    errors, field_name, "Le champ ne peut être rempli que pour les restaurants satellites."
+                    errors,
+                    field_name,
+                    "Le champ ne peut être rempli que pour les restaurants satellites ou les restaurants avec cuisine sur place.",
                 )
             elif not value.is_groupe:
                 utils_utils.add_validation_error(
