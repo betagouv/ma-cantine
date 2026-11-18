@@ -8,6 +8,7 @@ import TunnelTeledeclarationButtonReset from "@/components/TunnelTeledeclaration
 import TunnelTeledeclarationVoletThematiqueBanner from "@/components/TunnelTeledeclarationVoletThematiqueBanner.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
+import AppFormMentionOptionalFields from "@/components/AppFormMentionOptionalFields.vue"
 
 /* Documentation */
 const bouteillesDocumentation = `${documentation.interdictionPlastique}#3-1-interdiction-des-bouteilles-en-plastique-et-obligation-de-mise-a-disposition-de-fontaines-a-eau`
@@ -34,6 +35,7 @@ const updateVenteEmporter = (value) => {
         La mise à disposition de gobelets, de verres et d’assiettes jetables et de nombreux ustensiles en plastique à
         usage unique est interdite pour tout type de restauration (y compris commerciale).
       </p>
+      <AppFormMentionOptionalFields />
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">

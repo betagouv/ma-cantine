@@ -6,6 +6,7 @@ import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import achats from "@/data/achats.json"
 import purchases from "@/services/purchases.js"
+import AppFormMentionOptionalFields from "@/components/AppFormMentionOptionalFields.vue"
 
 /* Props and emits */
 const props = defineProps(["purchaseData", "showCancelButton", "showDeleteButton", "errors", "isPetiteStructure"])
@@ -119,11 +120,12 @@ const formatPayload = (form) => {
 
 <template>
   <form class="purchase-form" @submit.prevent="">
+    <AppFormMentionOptionalFields />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-8">
         <DsfrInputGroup
           v-model="form.description"
-          label="Description du produit *"
+          label="Description du produit"
           label-visible
           list="descriptions"
           placeholder="Yaourts bio, légumes bio de juin..."
@@ -136,7 +138,7 @@ const formatPayload = (form) => {
       <div class="fr-col-12 fr-col-md-4">
         <DsfrInputGroup
           v-model="form.prixHt"
-          label="Prix HT (€) *"
+          label="Prix HT (€)"
           label-visible
           :error-message="formatError(v$.prixHt) || backendErrors.prixHt"
           class="fr-mb-4w"
@@ -148,7 +150,7 @@ const formatPayload = (form) => {
       <div class="fr-col-12 fr-col-md-8">
         <DsfrInputGroup
           v-model="form.fournisseur"
-          label="Fournisseur"
+          label="Fournisseur (optionnel)"
           label-visible
           list="providers"
           :error-message="backendErrors.fournisseur"
@@ -161,7 +163,7 @@ const formatPayload = (form) => {
         <DsfrInputGroup
           v-model="form.date"
           type="date"
-          label="Date d'achat *"
+          label="Date d'achat"
           label-visible
           :error-message="formatError(v$.date) || backendErrors.date"
           class="fr-mb-4w"
@@ -172,7 +174,7 @@ const formatPayload = (form) => {
     <DsfrRadioButtonSet
       class="purchase-form__inline-col fr-mb-4w"
       v-model="form.familleProduits"
-      :legend="props.isPetiteStructure ? 'Famille de produit' : 'Famille de produit *'"
+      :legend="props.isPetiteStructure ? 'Famille de produit (optionnel)' : 'Famille de produit'"
       inline
       :options="familleProduitOptions"
       :error-message="formatError(v$.familleProduits) || backendErrors.familleProduits"
@@ -189,7 +191,7 @@ const formatPayload = (form) => {
     <DsfrCheckboxSet
       class="purchase-form__inline-col fr-mb-2w"
       v-model="form.categoriesEgalim"
-      legend="Catégories EGalim"
+      legend="Catégories EGalim (optionnel)"
       :options="categoriesEgalimOptions"
       small
       inline
@@ -199,7 +201,7 @@ const formatPayload = (form) => {
       <div class="fr-col-12 fr-col-md-4">
         <DsfrSelect
           v-model="form.origine"
-          label="Origine"
+          label="Origine (optionnel)"
           :options="[{ value: '', text: '--' }, ...categoriesOriginesOptions]"
           :error-message="backendErrors.origine"
           class="fr-mb-4w"
@@ -211,7 +213,7 @@ const formatPayload = (form) => {
       <div class="fr-col-12 fr-col-md-12">
         <DsfrCheckboxSet
           v-model="form.estCircuitCourt"
-          legend="Circuit court"
+          legend="Circuit court (optionnel)"
           :options="estCircuitCourtOptions"
           :error-message="backendErrors.estCircuitCourt"
           small
@@ -224,7 +226,7 @@ const formatPayload = (form) => {
       <div class="fr-col-12 fr-col-md-4">
         <DsfrCheckboxSet
           v-model="form.estLocal"
-          legend="« Local »"
+          legend="« Local » (optionnel)"
           :options="estLocalOptions"
           :error-message="backendErrors.estLocal"
           small
@@ -236,7 +238,7 @@ const formatPayload = (form) => {
         <DsfrSelect
           v-if="showLocalDefinition"
           v-model="form.definitionLocal"
-          label="Précisez la provenance du produit"
+          label="Précisez la provenance du produit (optionnel)"
           labelVisible
           :options="[{ value: '', text: '--' }, ...definitionLocalOptions]"
           :error-message="backendErrors.definitionLocal"
@@ -247,7 +249,7 @@ const formatPayload = (form) => {
         <DsfrInputGroup
           v-if="showKMDefinition"
           v-model.number="form.definitionLocalKm"
-          label="Distance (en km)"
+          label="Distance (en km) (optionnel)"
           label-visible
           :error-message="backendErrors.definitionLocalKm"
         />

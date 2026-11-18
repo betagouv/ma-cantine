@@ -5,6 +5,7 @@ import TunnelTeledeclarationButtonReset from "@/components/TunnelTeledeclaration
 import TunnelTeledeclarationVoletThematiqueBanner from "@/components/TunnelTeledeclarationVoletThematiqueBanner.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
+import AppFormMentionOptionalFields from "@/components/AppFormMentionOptionalFields.vue"
 
 /* Documentation */
 const informationEgalimDocumentation = `${documentation.informationsConvives}#3-1-information-obligatoire-des-usagers`
@@ -21,6 +22,7 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
         du restaurant collectif lisible par tous les usager et par communication électronique, actualisé au moins une
         fois par an.
       </p>
+      <AppFormMentionOptionalFields />
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">

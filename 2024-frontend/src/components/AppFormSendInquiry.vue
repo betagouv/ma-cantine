@@ -6,6 +6,7 @@ import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import { trackEvent } from "@/services/matomo.js"
 import { inquiries } from "@/constants/form-send-inquiry.js"
+import AppFormMentionOptionalFields from "@/components/AppFormMentionOptionalFields.vue"
 
 /* Store */
 const store = useRootStore()
@@ -94,21 +95,22 @@ const sendInquiry = () => {
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-lg-8">
         <form class="fr-mb-4w" @submit.prevent="validateForm">
+          <AppFormMentionOptionalFields />
           <DsfrSelect
             v-model="form.inquiryType"
-            label="Type de demande *"
+            label="Type de demande"
             :label-visible="true"
             :options="inquiries"
             :error-message="formatError(v$.inquiryType)"
           />
           <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
             <div class="fr-col-12">
-              <DsfrInputGroup v-model="form.name" label="Prénom et Nom" :label-visible="true" />
+              <DsfrInputGroup v-model="form.name" label="Prénom et Nom (optionnel)" :label-visible="true" />
             </div>
             <div class="fr-col-12">
               <DsfrInputGroup
                 v-model="form.fromEmail"
-                label="Adresse électronique *"
+                label="Adresse électronique"
                 :label-visible="true"
                 :error-message="formatError(v$.fromEmail)"
               />
@@ -116,7 +118,7 @@ const sendInquiry = () => {
             <div class="fr-col-12">
               <DsfrInputGroup
                 v-model="form.siretOrSiren"
-                label="SIRET de la cantine ou SIREN de rattachement"
+                label="SIRET de la cantine ou SIREN de rattachement (optionnel)"
                 hint="Laissez le champ vide si la demande ne concerne pas une cantine"
                 :label-visible="true"
               />
@@ -126,7 +128,7 @@ const sendInquiry = () => {
           <DsfrInputGroup
             v-model="form.message"
             class="app-form-send-inquiry__textarea"
-            label="Message *"
+            label="Message"
             hint="Ne partagez pas d'informations sensibles (par ex. mot de passe, numéro de carte bleue, etc)"
             :label-visible="true"
             is-textarea

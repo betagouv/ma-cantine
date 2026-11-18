@@ -11,6 +11,7 @@ import sectorsService from "@/services/sectors"
 import openDataService from "@/services/openData.js"
 import options from "@/constants/canteen-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
+import AppFormMentionOptionalFields from "@/components/AppFormMentionOptionalFields.vue"
 
 /* Data */
 const store = useRootStore()
@@ -277,22 +278,23 @@ if (props.establishmentData) {
     class="canteen-form-restaurant fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
+      <AppFormMentionOptionalFields />
       <fieldset class="fr-mb-4w canteen-form-restaurant__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">1. Caractéristiques</legend>
         <DsfrRadioButtonSet
-          legend="Modèle économique *"
+          legend="Modèle économique"
           v-model="form.economicModel"
           :options="options.economicModel"
           :error-message="formatError(v$.economicModel)"
         />
         <DsfrRadioButtonSet
-          legend="Mode de gestion *"
+          legend="Mode de gestion"
           v-model="form.managementType"
           :options="options.managementType"
           :error-message="formatError(v$.managementType)"
         />
         <DsfrRadioButtonSet
-          legend="Mode de production *"
+          legend="Mode de production"
           v-model="form.productionType"
           :options="options.productionType"
           :error-message="formatError(v$.productionType)"
@@ -301,8 +303,7 @@ if (props.establishmentData) {
         <DsfrInputGroup
           v-if="showCentralProducerSiret"
           v-model="form.centralProducerSiret"
-          label="SIRET de la cuisine centrale"
-          hint="Optionnel"
+          label="SIRET de la cuisine centrale (optionnel)"
           :label-visible="true"
           :error-message="formatError(v$.centralProducerSiret)"
         />
@@ -331,7 +332,7 @@ if (props.establishmentData) {
         <legend class="fr-h5 fr-mb-2w">3. Coordonnées</legend>
         <DsfrInputGroup
           v-model="form.name"
-          label="Nom de la cantine *"
+          label="Nom de la cantine"
           :label-visible="true"
           hint="Choisir un nom précis pour votre établissement permet aux convives de vous trouver plus facilement. Par exemple :  École maternelle Olympe de Gouges, Centre Hospitalier de Bayonne..."
           :error-message="formatError(v$.name)"
@@ -340,7 +341,7 @@ if (props.establishmentData) {
           <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.postalCode"
-              label="Code postal *"
+              label="Code postal"
               hint="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
               :label-visible="true"
               :error-message="formatError(v$.postalCode)"
@@ -351,7 +352,7 @@ if (props.establishmentData) {
             <DsfrSelect
               class="fr-mb-0"
               v-model="form.citySelector"
-              label="Ville *"
+              label="Ville"
               hint="Indiquer le code postal pour pouvoir sélectionner une ville dans la liste"
               :label-visible="true"
               :error-message="emptyCity || formatError(v$.citySelector)"
@@ -365,7 +366,7 @@ if (props.establishmentData) {
         <legend class="fr-h5 fr-mb-2w">4. Secteur</legend>
         <DsfrMultiselect
           v-model="form.sectorList"
-          label="Secteurs *"
+          label="Secteurs"
           labelVisible
           hint="3 secteurs maximum"
           :options="sectorsOptions"
@@ -386,7 +387,7 @@ if (props.establishmentData) {
         <DsfrSelect
           v-if="showLineMinistry"
           v-model="form.lineMinistry"
-          label="Administration générale de tutelle (ministère ou ATE) *"
+          label="Administration générale de tutelle (ministère ou ATE)"
           hint="Hors fonction publique territoriale et hospitalière"
           labelVisible
           :options="lineMinistryOptions"
@@ -402,7 +403,7 @@ if (props.establishmentData) {
           <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.dailyMealCount"
-              label="Par jour *"
+              label="Par jour"
               :label-visible="true"
               type="number"
               :error-message="formatError(v$.dailyMealCount)"
@@ -411,7 +412,7 @@ if (props.establishmentData) {
           <div class="fr-col-12 fr-col-md-6">
             <DsfrInputGroup
               v-model="form.yearlyMealCount"
-              label="Par an *"
+              label="Par an"
               :label-visible="true"
               type="number"
               :error-message="formatError(v$.yearlyMealCount)"
