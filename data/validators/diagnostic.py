@@ -114,11 +114,12 @@ def validate_canteen_fields_required(instance):
 
 def validate_satellites_nombre_repas_an_list(instance):
     """
-    [NEW in 2026] Groupe: the nombre_repas_an of each satellite (see satellites_nombre_repas_an_list)
+    [NEW in 2026] Groupe: the nombre_repas_an of each canteen of the groupe (satellite or site)
+    (see satellites_nombre_repas_an_list)
     - only for groupes (for the other diagnostics, the list is emptied in save(), see sync_satellites_nombre_repas_an_list)
     - format: [{"id": <int>, "nombre_repas_an": <positive int or null>}, ...]
-    - each satellite must have a value
-    - the groupe's nombre_repas_an must be equal to the sum of the satellites' values
+    - each canteen must have a value
+    - the groupe's nombre_repas_an must be equal to the sum of the canteens' values
     NOTE: not checked in save() (drafts can be filled progressively), but in clean(): _is_clean() (/check & teledeclaration)
     """
     errors = {}
@@ -134,11 +135,11 @@ def validate_satellites_nombre_repas_an_list(instance):
         utils_utils.add_validation_error(
             errors,
             field_name,
-            'Format attendu : [{"id": <id de la cantine satellite>, "nombre_repas_an": <nombre entier positif ou null>}]',
+            'Format attendu : [{"id": <id de la cantine>, "nombre_repas_an": <nombre entier positif ou null>}]',
         )
         return errors
 
-    # each satellite must have a value
+    # each canteen must have a value
     from data.models import Canteen  # avoid circular import
 
     satellite_dict = Canteen.all_objects.in_bulk([item["id"] for item in value])
@@ -146,7 +147,7 @@ def validate_satellites_nombre_repas_an_list(instance):
         if item["nombre_repas_an"] is None:
             satellite_name = getattr(satellite_dict.get(item["id"]), "name", item["id"])
             utils_utils.add_validation_error(
-                errors, field_name, f"Le nombre de repas par an du satellite « {satellite_name} » est obligatoire."
+                errors, field_name, f"Le nombre de repas par an de la cantine « {satellite_name} » est obligatoire."
             )
 
     # the groupe's nombre_repas_an must be equal to the sum
@@ -161,7 +162,7 @@ def validate_satellites_nombre_repas_an_list(instance):
             errors,
             "nombre_repas_an",
             f"Le nombre de repas par an du groupe ({instance.nombre_repas_an}) doit être égal à la somme "
-            f"des nombres de repas par an des satellites ({satellites_nombre_repas_an_sum}).",
+            f"des nombres de repas par an des cantines du groupe ({satellites_nombre_repas_an_sum}).",
         )
     return errors
 
