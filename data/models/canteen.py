@@ -201,7 +201,8 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         )
         canteen_diagnostics = diagnostics.filter(canteen=OuterRef("pk"))
         groupe_diagnostics = diagnostics.filter(canteen=OuterRef("groupe_id"))
-        diagnostics_filled = diagnostics.filled()
+        # filled & clean (see Diagnostic.compute_is_clean: only the rules that depend on the diagnostic itself)
+        diagnostics_filled = diagnostics.filled_and_clean()
         groupe_diagnostics_with_cc_mode = groupe_diagnostics.filter(
             central_kitchen_diagnostic_mode__isnull=False
         ).exclude(central_kitchen_diagnostic_mode="")
