@@ -46,13 +46,13 @@ const quitGroupe = () => {
     <p v-if="errorMessage" class="fr-error-text fr-mb-0">{{ errorMessage }}</p>
     <div v-else class="ma-cantine--flex-end">
       <DsfrButton
-        tertiary
+        secondary
         label="Annuler"
         :disabled="loading"
         @click="close"
       />
       <DsfrButton
-        secondary
+        primary
         label="Valider"
         :disabled="loading"
         @click="quitGroupe"
