@@ -57,6 +57,10 @@ const valueBeforeAutofill = ref()
 
 /* Related vertical fields only display the hint */
 const displayedLabel = computed(() => isRelatedVertical.value ? "" : label.value)
+const inputLabel = computed(() => {
+  if (!displayedLabel.value || isRequired.value) return displayedLabel.value
+  return `${displayedLabel.value} (optionnel)`
+})
 
 /* Actions */
 const cleanValue = (value) => {
@@ -98,13 +102,13 @@ const resetField = () => {
       <AppSeparator class="fr-m-0" />
     </div>
     <div class="fr-col">
-      <DsfrInputGroup v-if="isNumber" v-model="field" :label="displayedLabel" :label-visible="true" :name="props.name" type="number" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" :placeholder="placeholder" min="0" :wrapper-class="{ 'tunnel-teledeclaration-field__autofill-group': displayAutofill }">
+      <DsfrInputGroup v-if="isNumber" v-model="field" :label="inputLabel" :label-visible="true" :name="props.name" type="number" @change="fieldChange" :error-message="errorMessage" :hint="hint" :placeholder="placeholder" min="0" :wrapper-class="{ 'tunnel-teledeclaration-field__autofill-group': displayAutofill }">
         <template #before-input>
           <TunnelTeledeclarationAutofill v-if="displayAutofill" :name="props.name" :value="field" @fill="fillField" @reset="resetField" class="tunnel-teledeclaration-field__container-tag" />
         </template>
       </DsfrInputGroup>
-      <DsfrInputGroup v-if="isText" v-model="field" :label="displayedLabel" :label-visible="true" :name="props.name" type="text" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" />
-      <DsfrInputGroup v-if="isTextarea" v-model="field" :label="displayedLabel" :label-visible="true" :name="props.name" is-textarea rows="4" class="ma-cantine--textarea" :required="isRequired" @change="fieldChange" :error-message="errorMessage" :hint="hint" />
+      <DsfrInputGroup v-if="isText" v-model="field" :label="inputLabel" :label-visible="true" :name="props.name" type="text" @change="fieldChange" :error-message="errorMessage" :hint="hint" />
+      <DsfrInputGroup v-if="isTextarea" v-model="field" :label="inputLabel" :label-visible="true" :name="props.name" is-textarea rows="4" class="ma-cantine--textarea" @change="fieldChange" :error-message="errorMessage" :hint="hint" />
       <DsfrSelect v-if="isSelect" v-model="field" :label="label" :label-visible="true" :name="props.name" :required="isRequired" :options="options" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint"/>
       <DsfrRadioButtonSet v-if="isRadio" v-model="field" :legend="label" :name="props.name" :required="isRequired" :options="radioOptions" :inline="isInline" @update:modelValue="fieldChange" :error-message="selectErrorMessage" :hint="hint" />
       <DsfrCheckboxSet v-if="isCheckboxes" v-model="field" :legend="label" :required="isRequired" :options="checkboxesOptions" :inline="isInline" @update:modelValue="fieldChange" :error-message="selectErrorMessage" />
