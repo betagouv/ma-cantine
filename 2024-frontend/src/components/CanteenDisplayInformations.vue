@@ -4,6 +4,7 @@ import { computedAsync } from "@vueuse/core"
 import { formatSiretOrSiren } from '@/utils'
 import AppFieldDisplay from '@/components/AppFieldDisplay.vue'
 import AppLinkRouter from '@/components/AppLinkRouter.vue'
+import CanteenModalGroupeQuit from '@/components/CanteenModalGroupeQuit.vue'
 import cantines from '@/data/cantines.json'
 import sectorsService from '@/services/sectors'
 import cantineService from '@/services/canteens'
@@ -18,6 +19,7 @@ const showCentralProducerSiret = computed(() => {
   return isFilled || isGroupe || isSatellite
 })
 const showGroupeInformations = computed(() => props.canteenInformation.groupe !== null)
+const quitGroupeModalOpened = ref(false)
 
 /* Tooltips */
 const tooltips = computed(() => {
@@ -70,6 +72,14 @@ const getPrettyLineMinistry = (canteenLineMinistry) => {
       <AppFieldDisplay :label="cantines.nameGroupe" :value="canteenInformation.groupe?.name" />
       <AppFieldDisplay :label="cantines.id" :value="canteenInformation.groupe?.id" />
       <AppFieldDisplay :label="`${cantines.sirenUniteLegaleName} du groupe`" :value="formatSiretOrSiren(canteenInformation.groupe?.sirenUniteLegale)" />
+      <div class="ma-cantine--text-center fr-mt-2w">
+        <DsfrButton secondary label="Quitter ce groupe" @click="quitGroupeModalOpened = true" />
+      </div>
+      <CanteenModalGroupeQuit
+        :opened="quitGroupeModalOpened"
+        :canteen="canteenInformation"
+        @close="quitGroupeModalOpened = false"
+      />
     </div>
     <div class="fr-my-6w">
       <h3 class="fr-h5">1. Caractéristiques</h3>
