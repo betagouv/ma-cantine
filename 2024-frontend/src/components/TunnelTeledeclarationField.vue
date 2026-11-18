@@ -57,7 +57,6 @@ const valueBeforeAutofill = ref()
 
 /* Related vertical fields only display the hint */
 const displayedLabel = computed(() => {
-  if (isRelatedVertical.value) return ""
   if (isRequired.value) return label.value
   return `${label.value} (optionnel)`
 })
@@ -101,7 +100,7 @@ const resetField = () => {
     <div v-if="isRelatedHorizontal" class="fr-col-2 fr-pr-3w ma-cantine--flex-start">
       <AppSeparator class="fr-m-0" />
     </div>
-    <div class="fr-col">
+    <div class="fr-col" :class="{'fr-pt-1w': isRelatedVertical}">
       <DsfrInputGroup v-if="isNumber" v-model="field" :label="displayedLabel" :label-visible="true" :name="props.name" type="number" @change="fieldChange" :error-message="errorMessage" :hint="hint" :placeholder="placeholder" min="0" :wrapper-class="{ 'tunnel-teledeclaration-field__autofill-group': displayAutofill }">
         <template #before-input>
           <TunnelTeledeclarationAutofill v-if="displayAutofill" :name="props.name" :value="field" @fill="fillField" @reset="resetField" class="tunnel-teledeclaration-field__container-tag" />
