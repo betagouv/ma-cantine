@@ -4,12 +4,11 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import JsonResponse
-from django.utils import timezone
 
 from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
 from api.serializers import SatelliteCanteenSerializer, FullCanteenSerializer
 from data.models import Canteen
-from data.models.diagnostic_teledeclaration_dates import is_in_teledeclaration_or_correction
+from data.models.diagnostic_teledeclaration_dates import get_current_campaign_year, is_in_teledeclaration_or_correction
 
 
 @extend_schema_view(
@@ -26,7 +25,7 @@ class CanteenGroupeSatellitesListView(ListAPIView):
         return Canteen.objects.get(pk=self.kwargs["canteen_pk"])
 
     def get_queryset(self):
-        year = timezone.now().year - 1
+        year = get_current_campaign_year()
         canteen_groupe = self._get_canteen()
         user = self.request.user
         return (
@@ -66,7 +65,7 @@ class CanteenGroupeSatelliteLinkView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if is_in_teledeclaration_or_correction():
-            if canteen_groupe.has_diagnostic_teledeclared_for_year(timezone.now().year - 1):
+            if canteen_groupe.has_diagnostic_teledeclared_for_year(get_current_campaign_year()):
                 return JsonResponse(
                     {
                         "error": "Vous ne pouvez pas ajouter de restaurant satellite en cours de campagne avec un bilan télédéclaré. En effet la télédéclaration fige les données, pour effectuer une modification durant la campagne vous devez : aller sur le bilan du groupe et cliquer sur 'corriger' la télédéclaration ; revenir sur cette page pour ajouter le restaurant satellite ; télédéclarer à nouveau le bilan du groupe.",
@@ -104,7 +103,7 @@ class CanteenGroupeSatelliteUnlinkView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if is_in_teledeclaration_or_correction():
-            if canteen_groupe.has_diagnostic_teledeclared_for_year(timezone.now().year - 1):
+            if canteen_groupe.has_diagnostic_teledeclared_for_year(get_current_campaign_year()):
                 return JsonResponse(
                     {
                         "error": "Vous ne pouvez pas retirer le restaurant satellite en cours de campagne avec un bilan télédéclaré. En effet la télédéclaration fige les données, pour effectuer une modification durant la campagne vous devez : aller sur le bilan du groupe et cliquer sur 'corriger' la télédéclaration ; revenir sur cette page pour retirer le restaurant satellite ; télédéclarer à nouveau le bilan du groupe.",
