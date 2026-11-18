@@ -194,6 +194,49 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
+    def test_satellite_manager_can_unlink_satellite(self):
+        # set user as manager of satellite_11 only (not of groupe_1)
+        self.canteen_satellite_11.managers.add(authenticate.user)
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.canteen_satellite_11.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite_11.groupe_id)
+
+    @authenticate
+    def test_satellite_manager_cannot_link_satellite(self):
+        # set user as manager of satellite_0 only (not of groupe_1)
+        self.canteen_satellite_0.managers.add(authenticate.user)
+        url = reverse(
+            "canteen_groupe_satellite_link",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_0.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.canteen_satellite_0.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite_0.groupe_id)
+
+    @authenticate
+    def test_satellite_manager_cannot_unlink_another_satellite(self):
+        # set user as manager of satellite_12 only
+        self.canteen_satellite_12.managers.add(authenticate.user)
+        # try to unlink satellite_11 (not managed by the user)
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.canteen_satellite_11.refresh_from_db()
+        self.assertEqual(self.canteen_satellite_11.groupe_id, self.canteen_groupe_1.id)
+
+    @authenticate
     def test_cannot_link_non_satellite(self):
         # set user as manager of group_1
         self.canteen_groupe_1.managers.add(authenticate.user)
