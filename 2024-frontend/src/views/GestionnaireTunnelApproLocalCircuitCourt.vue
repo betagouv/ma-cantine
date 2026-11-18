@@ -2,7 +2,10 @@
 import { computed } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useStoreTeledeclaration } from '@/stores/teledeclaration'
+import { useStoreCanteen } from '@/stores/canteen'
+import urlService from '@/services/urls.js'
 import documentation from '@/data/documentation.json'
+import AppLinkRouter from '@/components/AppLinkRouter.vue'
 import TunnelTeledeclarationField from '@/components/TunnelTeledeclarationField.vue'
 import TunnelTeledeclarationGroupTitle from '@/components/TunnelTeledeclarationGroupTitle.vue'
 
@@ -37,6 +40,15 @@ const localFields = [
   "valeurBoissonsLocal",
 ]
 
+/* Groupe */
+const canteenStore = useStoreCanteen()
+const { canteenInformations } = storeToRefs(canteenStore)
+const isGroupe = computed(() => canteenInformations.value.isGroupe)
+const canteenPage = computed(() => ({
+  name: 'CanteenPage',
+  params: { canteenUrlComponent: urlService.getCanteenUrl(canteenInformations.value) },
+}))
+
 /* Définition du local : la distance n'est attendue que pour le périmètre "KM" */
 const storeTeledeclaration = useStoreTeledeclaration()
 const { diagnostic, isComplete } = storeToRefs(storeTeledeclaration)
@@ -50,8 +62,12 @@ const updateDefinitionLocal = (value) => {
     <div class="fr-col-12">
       <h2>« Local » et circuit court</h2>
       <p class="fr-mb-0">
-        Étape facultative permettant de renseigner les achats en circuit court et/ou en « local ». Ces achats seront
-        valorisés sur la page publique de votre (ou vos) cantine(s).
+        Cette dernière étape du volet « Approvisionnements » de la télédéclaration est facultative.
+        <template v-if="!isGroupe">
+          Elle vous permet de valoriser vos efforts d’approvisionnements sur
+          <AppLinkRouter :to="canteenPage" title="la page publique de votre cantine" :is-blank="true" />.
+        </template>
+        En fonction de votre méthode de suivi, vous pouvez renseigner l’origine : pour une ou plusieurs familles, pour chacune des familles, ou pour le total de vos achats.
       </p>
     </div>
   </div>
