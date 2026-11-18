@@ -489,7 +489,7 @@
         ]
       },
       "actionsGaspillageAutre": {
-        "shortName": "Si vous avez réalisé d'autres actions vous pouvez les renseigner ici :",
+        "shortName": "Si vous avez réalisé d'autres actions vous pouvez les renseigner ici",
         "type": "textarea"
       },
       "donsConvention": {
