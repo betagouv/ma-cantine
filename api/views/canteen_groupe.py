@@ -4,11 +4,20 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import JsonResponse
+from django.utils import timezone
 
-from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
+from api.permissions import (
+    IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManagerUrlParam,
+    IsSatelliteManagerUrlParam,
+)
 from api.serializers import SatelliteCanteenSerializer, FullCanteenSerializer
 from data.models import Canteen
-from data.models.diagnostic_teledeclaration_dates import get_current_campaign_year, is_in_teledeclaration_or_correction
+from data.models.diagnostic_teledeclaration_dates import (
+    get_current_campaign_year,
+    get_year_correction_end_date_or_campaign_end_date_or_today_date,
+    is_in_teledeclaration_or_correction,
+)
 
 
 @extend_schema_view(
@@ -82,7 +91,11 @@ class CanteenGroupeSatelliteLinkView(APIView):
     post=extend_schema(summary="Enlever un restaurant satellite d'un groupe.", tags=["Cantines"]),
 )
 class CanteenGroupeSatelliteUnlinkView(APIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    # the groupe manager, or the satellite manager (to unlink their own satellite)
+    permission_classes = [
+        IsAuthenticatedOrTokenHasResourceScope,
+        IsCanteenManagerUrlParam | IsSatelliteManagerUrlParam,
+    ]
     required_scopes = ["canteen"]
     serializer_class = FullCanteenSerializer
 
@@ -103,13 +116,17 @@ class CanteenGroupeSatelliteUnlinkView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if is_in_teledeclaration_or_correction():
-            if canteen_groupe.has_diagnostic_teledeclared_for_year(get_current_campaign_year()):
-                return JsonResponse(
-                    {
-                        "error": "Vous ne pouvez pas retirer le restaurant satellite en cours de campagne avec un bilan télédéclaré. En effet la télédéclaration fige les données, pour effectuer une modification durant la campagne vous devez : aller sur le bilan du groupe et cliquer sur 'corriger' la télédéclaration ; revenir sur cette page pour retirer le restaurant satellite ; télédéclarer à nouveau le bilan du groupe.",
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+            campaign_year = get_current_campaign_year()
+            if canteen_groupe.has_diagnostic_teledeclared_for_year(campaign_year):
+                if canteen_groupe.managers.filter(id=request.user.id).exists():
+                    error = "Vous ne pouvez pas retirer le restaurant satellite en cours de campagne avec un bilan télédéclaré. En effet la télédéclaration fige les données, pour effectuer une modification durant la campagne vous devez : aller sur le bilan du groupe et cliquer sur 'corriger' la télédéclaration ; revenir sur cette page pour retirer le restaurant satellite ; télédéclarer à nouveau le bilan du groupe."
+                else:
+                    # the user is the satellite manager (see permission_classes)
+                    correction_end_date = timezone.localtime(
+                        get_year_correction_end_date_or_campaign_end_date_or_today_date(campaign_year)
+                    ).strftime("%d/%m/%Y")
+                    error = f"Vous ne pouvez pas quitter le groupe car sa télédéclaration a été validée et les données de votre cantine ont été prises en compte. Vous pouvez demander à votre groupe d'annuler sa télédéclaration, ou alors vous pourrez renouveler votre demande à la fin de la campagne à partir du {correction_end_date}"
+                return JsonResponse({"error": error}, status=status.HTTP_400_BAD_REQUEST)
 
         canteen_satellite.groupe = None
         canteen_satellite.save(skip_validations=True)

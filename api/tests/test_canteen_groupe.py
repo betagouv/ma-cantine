@@ -4,7 +4,7 @@ from rest_framework import status
 from freezegun import freeze_time
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen
 
 
@@ -194,6 +194,49 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     @authenticate
+    def test_satellite_manager_can_unlink_satellite(self):
+        # set user as manager of satellite_11 only (not of groupe_1)
+        self.canteen_satellite_11.managers.add(authenticate.user)
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.canteen_satellite_11.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite_11.groupe_id)
+
+    @authenticate
+    def test_satellite_manager_cannot_link_satellite(self):
+        # set user as manager of satellite_0 only (not of groupe_1)
+        self.canteen_satellite_0.managers.add(authenticate.user)
+        url = reverse(
+            "canteen_groupe_satellite_link",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_0.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.canteen_satellite_0.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite_0.groupe_id)
+
+    @authenticate
+    def test_satellite_manager_cannot_unlink_another_satellite(self):
+        # set user as manager of satellite_12 only
+        self.canteen_satellite_12.managers.add(authenticate.user)
+        # try to unlink satellite_11 (not managed by the user)
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.canteen_satellite_11.refresh_from_db()
+        self.assertEqual(self.canteen_satellite_11.groupe_id, self.canteen_groupe_1.id)
+
+    @authenticate
     def test_cannot_link_non_satellite(self):
         # set user as manager of group_1
         self.canteen_groupe_1.managers.add(authenticate.user)
@@ -259,6 +302,32 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         response = self.client.post(url)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_satellite_manager_cannot_unlink_during_teledeclaration_if_groupe_has_diagnostic_teledeclared(self):
+        # set user as manager of satellite_11 only (not of groupe_1)
+        self.canteen_satellite_11.managers.add(authenticate.user)
+        # create a diagnostic teledeclared for groupe_1 for year 2024 (by a groupe manager)
+        groupe_manager = UserFactory()
+        self.canteen_groupe_1.managers.add(groupe_manager)
+        DiagnosticFactory(canteen=self.canteen_groupe_1, year=2024, valeur_totale=100).teledeclare(
+            applicant=groupe_manager
+        )
+
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json()["error"],
+            "Vous ne pouvez pas quitter le groupe car sa télédéclaration a été validée et les données de votre cantine ont été prises en compte. Vous pouvez demander à votre groupe d'annuler sa télédéclaration, ou alors vous pourrez renouveler votre demande à la fin de la campagne à partir du 30/04/2025",
+        )
+        self.canteen_satellite_11.refresh_from_db()
+        self.assertEqual(self.canteen_satellite_11.groupe_id, self.canteen_groupe_1.id)
 
     @authenticate
     def test_can_link_satellite_when_groupe_has_cancelled_diagnostic(self):
@@ -369,6 +438,38 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertNotIn(
             self.canteen_satellite_11.id, [item["id"] for item in diagnostic.satellites_nombre_repas_an_list]
         )
+
+    @authenticate
+    def test_satellite_manager_unlink_syncs_the_groupe_diagnostic(self):
+        self.canteen_satellite_11.yearly_meal_count = 1000
+        self.canteen_satellite_11.save(skip_validations=True)
+        self.canteen_satellite_12.yearly_meal_count = 500
+        self.canteen_satellite_12.save(skip_validations=True)
+        diagnostic = DiagnosticFactory(canteen=self.canteen_groupe_1, year=2026)
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an_list,
+            [
+                {"id": self.canteen_satellite_11.id, "nombre_repas_an": 1000},
+                {"id": self.canteen_satellite_12.id, "nombre_repas_an": 500},
+            ],
+        )
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, 1500)
+
+        # set user as manager of satellite_11 only (not of groupe_1), then unlink
+        self.canteen_satellite_11.managers.add(authenticate.user)
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        diagnostic.refresh_from_db()
+        self.assertEqual(
+            diagnostic.satellites_nombre_repas_an_list,
+            [{"id": self.canteen_satellite_12.id, "nombre_repas_an": 500}],
+        )
+        self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, 500)
 
     def test_canteen_groupe_satellite_link_unlink_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
