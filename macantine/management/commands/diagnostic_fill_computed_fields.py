@@ -10,7 +10,7 @@ FIELD_LIST = (
     Diagnostic.APPRO_AGGREGATED_FIELDS
     + Diagnostic.APPRO_STATS_FIELDS
     + Diagnostic.OTHER_COMPUTED_FIELDS
-    + ["satellites_nombre_repas_an_sum"]
+    + ["satellites_nombre_repas_an_sum", "is_clean"]
 )
 
 

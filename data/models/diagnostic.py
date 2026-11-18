@@ -1,3 +1,4 @@
+import copy
 import operator
 from functools import reduce
 
@@ -741,6 +742,7 @@ class Diagnostic(
     )
 
     is_filled = models.BooleanField(default=False, verbose_name="bilan complété ? (champ calculé)")
+    is_clean = models.BooleanField(default=False, verbose_name="bilan valide ? (champ calculé)")
 
     # Data quality
     invalid_reason_list = ChoiceArrayField(
@@ -805,13 +807,28 @@ class Diagnostic(
 
     def clean(self):
         validation_errors = utils_utils.merge_validation_errors(
-            diagnostic_validators.validate_year(self),
+            # satellites whose groupe handles appro centrally don't declare their own diagnostic_type/appro fields
+            self._get_validation_errors_diagnostic_only(with_appro=not self._should_use_central_kitchen_appro()),
+            # rules that depend on the current date, or on the canteen (not in is_clean, see compute_is_clean)
             diagnostic_validators.validate_year_and_can_edit(self),
             diagnostic_validators.validate_canteen_fields_required(self),
+        )
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
+        return super().clean()
+
+    def _get_validation_errors_diagnostic_only(self, with_appro=True) -> dict:
+        """
+        The rules of clean() that only depend on the diagnostic itself (not on the current date, nor on the canteen)
+        - used by clean() & compute_is_clean()
+        - with_appro: if False, the diagnostic_type & appro rules are not checked
+        """
+        validation_errors = utils_utils.merge_validation_errors(
+            diagnostic_validators.validate_year(self),
             diagnostic_validators.validate_satellites_nombre_repas_an_list(self),
         )
-        # satellites whose groupe handles appro centrally don't declare their own diagnostic_type/appro fields
-        if not self._should_use_central_kitchen_appro():
+        if with_appro:
             validation_errors = utils_utils.merge_validation_errors(
                 validation_errors,
                 diagnostic_validators.validate_diagnostic_type(self),
@@ -827,10 +844,7 @@ class Diagnostic(
                 ),
                 diagnostic_volet_approvisionnement_validators.validate_definition_local(self),
             )
-        if validation_errors:
-            raise ValidationError(validation_errors)
-
-        return super().clean()
+        return validation_errors
 
     def save(self, skip_validations=False, **kwargs):
         """
@@ -896,9 +910,48 @@ class Diagnostic(
             self.populate_satellites_nombre_repas_an_sum()
             self.populate_cout_repas()  # after populate_satellites_nombre_repas_an_sum (see canteen_yearly_meal_count)
         self.set_is_filled()
+        self.set_is_clean()
 
     def set_is_filled(self):
         self.is_filled = self._is_filled()
+
+    def set_is_clean(self):
+        self.is_clean = self.compute_is_clean()
+
+    def compute_is_clean(self) -> bool:
+        """
+        Same field validations as teledeclare(), but only the rules that depend on the diagnostic itself
+        (like is_filled: no SQL, not the current date)
+        - included: clean_fields(), validate_year, the satellites list of a groupe, diagnostic_type & appro rules
+        - excluded:
+            - validate_year_and_can_edit: depends on the current date (the campaign is checked by the action & teledeclare())
+            - validate_canteen_fields_required: depends on the canteen (nombre_repas_an is already required by is_filled)
+            - the FK fields (canteen...) & unique constraints: SQL (enforced by the DB)
+            - the volets thématiques: not required to teledeclare (see get_validation_errors)
+        - the appro rules are always checked, even for satellites whose groupe handles appro (like is_filled)
+        - validated on a copy without the appro fields of the other diagnostic_type (like teledeclare())
+
+        Edge cases not covered (yet): the stored is_clean can be stale, until the diagnostic is saved again
+        (or diagnostic_fill_computed_fields is run):
+        - the validation rules change (new or stricter validators)
+        - the diagnostic is updated without save() (e.g. queryset update())
+        """
+        # the other rules need a valid year & diagnostic_type (both required to teledeclare)
+        if diagnostic_validators.validate_year(self) or diagnostic_validators.validate_diagnostic_type(self):
+            return False
+        diagnostic = copy.copy(self)
+        diagnostic.clear_appro_fields_not_matching_diagnostic_type()
+        try:
+            # also converts the values to their python type (needed by the other rules)
+            diagnostic.clean_fields(exclude=[field.name for field in self._meta.fields if field.is_relation])
+        except ValidationError:
+            return False
+        try:
+            return not diagnostic._get_validation_errors_diagnostic_only()
+        except (TypeError, ValueError):
+            # invalid values not caught by clean_fields() (e.g. "" for a blank field): not clean, and save() must
+            # not crash here (the database rejects them anyway)
+            return False
 
     def populate_satellites_nombre_repas_an_sum(self):
         self.satellites_nombre_repas_an_sum = self.compute_satellites_nombre_repas_an_sum()
@@ -966,7 +1019,7 @@ class Diagnostic(
         # normalize the format: {"field": ["error1", ...]}
         return ValidationError(errors).message_dict if errors else {}
 
-    def is_clean(self, raise_errors=False, skip_volets_thematiques=False) -> tuple[bool, dict]:
+    def _is_clean(self, raise_errors=False, skip_volets_thematiques=False) -> tuple[bool, dict]:
         errors = self.get_validation_errors(skip_volets_thematiques=skip_volets_thematiques)
         if errors and raise_errors:
             raise ValidationError(errors)
@@ -981,7 +1034,7 @@ class Diagnostic(
             return False
         if volet == "APPROVISIONNEMENT" and not self.diagnostic_type:
             return False
-        _, errors = self.is_clean(raise_errors=False)
+        _, errors = self._is_clean(raise_errors=False)
         volet_fields = get_teledeclaration_fields_all(self.year, volet, self.diagnostic_type)
         return not any(field in errors for field in volet_fields)
 
@@ -1180,7 +1233,7 @@ class Diagnostic(
         self.clear_appro_fields_not_matching_diagnostic_type()
         if not skip_validations:
             # field validations
-            self.is_clean(raise_errors=True, skip_volets_thematiques=True)
+            self._is_clean(raise_errors=True, skip_volets_thematiques=True)
 
         from api.serializers import CanteenTeledeclarationSerializer, SatelliteTeledeclarationSerializer
 

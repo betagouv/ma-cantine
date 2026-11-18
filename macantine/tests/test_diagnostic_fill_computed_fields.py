@@ -15,6 +15,18 @@ class DiagnosticFillComputedFieldsCommandTest(TestCase):
             Diagnostic.APPRO_AGGREGATED_FIELDS + Diagnostic.APPRO_STATS_FIELDS + Diagnostic.OTHER_COMPUTED_FIELDS
         )
 
+    def test_fill_is_clean_field(self):
+        diagnostic = DiagnosticFactory(
+            year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
+        )
+        # simulate existing data (field not computed yet)
+        Diagnostic.objects.filter(id=diagnostic.id).update(is_clean=False)
+
+        call_command("diagnostic_fill_computed_fields", "--year", 2024, "--field", "is_clean")
+
+        diagnostic.refresh_from_db()
+        self.assertTrue(diagnostic.is_clean)
+
     def test_run_on_diagnostic_teledeclared(self):
         diagnostic = self.canteen_site_diagnostic_2022
         diagnostic_modification_date_before = diagnostic.modification_date

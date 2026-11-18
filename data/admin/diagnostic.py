@@ -79,7 +79,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         "creation_date",
         "modification_date",
     )
-    list_filter = ("year", "diagnostic_type", "status", "creation_source", AllObjectsFilter)
+    list_filter = ("year", "diagnostic_type", "status", "creation_source", "is_filled", "is_clean", AllObjectsFilter)
     search_fields = (
         "id",
         "canteen__name",
@@ -98,6 +98,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
         *Diagnostic.APPRO_AGGREGATED_FIELDS,
         *Diagnostic.APPRO_STATS_FIELDS,
         *Diagnostic.OTHER_COMPUTED_FIELDS,
+        "is_clean",
         *Diagnostic.TELEDECLARATION_FIELDS,
         *Diagnostic.TELEDECLARATION_1TD1SITE_FIELDS,
         "applicant",
@@ -217,6 +218,7 @@ class DiagnosticAdmin(SimpleHistoryAdmin):
                         *Diagnostic.APPRO_AGGREGATED_FIELDS,
                         *Diagnostic.APPRO_STATS_FIELDS,
                         *Diagnostic.OTHER_COMPUTED_FIELDS,
+                        "is_clean",
                     )
                 },
             ),

@@ -90,9 +90,9 @@ class DiagnosticVoletPlastiqueContenantEmporterFieldsValidatorTest(TestCase):
 
     def test_is_clean_returns_the_error(self):
         diagnostic = get_plastique_diagnostic(field_empty=self.FIELD)
-        _, errors = diagnostic.is_clean()
+        _, errors = diagnostic._is_clean()
         self.assertIn(self.FIELD, errors)
-        _, errors = diagnostic.is_clean(skip_volets_thematiques=True)
+        _, errors = diagnostic._is_clean(skip_volets_thematiques=True)
         self.assertNotIn(self.FIELD, errors)
 
 

@@ -11,7 +11,7 @@ def validate_information_fields_required(instance):
         - [NEW in 2026] information_part_pat is optional if the canteen doesn't belong to a PAT (empty pat_list)
         - [NEW in 2026] information_consultation_qualite is optional if none of the canteen's sectors is concerned
           (see SECTOR_INFORMATION_CONSULTATION_QUALITE_LIST)
-    NOTE: not called in clean(): to avoid blocking teledeclaration, but in is_clean()
+    NOTE: not called in clean(): to avoid blocking teledeclaration, but in _is_clean()
     """
     errors = {}
     if instance.year and int(instance.year) >= 2026:
