@@ -112,11 +112,11 @@ const updateSatellites = (index) => {
 </script>
 <template>
   <DsfrModal :opened="open" title="Ajouter une cantine à mon groupe" @close="closeModal()" size="lg">
-    <p>Pour ajouter une cantine à votre groupe cette dernière doit : être enregistrée sur la plateforme, être de type "Restaurant satellite", ne doit pas déjà être associée à un groupe.</p>
+    <p>Pour ajouter une cantine à votre groupe cette dernière doit : être enregistrée sur la plateforme, être de type "Restaurant satellite" ou "Restaurant avec cuisine sur place", ne doit pas déjà être associée à un groupe.</p>
     <DsfrRadioButtonSet
       v-model="hasSiret"
       @change="resetSearch"
-      legend="Le restaurant satellite a-t-il un numéro SIRET ?"
+      legend="La cantine a-t-elle un numéro SIRET ?"
       :options="radioOptions"
       name="hasSiret"
       small
@@ -128,7 +128,7 @@ const updateSatellites = (index) => {
           v-if="hasSiret"
           v-model="search"
           button-text="Rechercher"
-          :placeholder="`Tapez le n° ${numberName} du restaurant satellite`"
+          :placeholder="`Tapez le n° ${numberName} de la cantine`"
           @search="searchByNumber"
           large
         />
