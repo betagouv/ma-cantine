@@ -37,7 +37,7 @@ const { hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
       <p v-if="isSimple" class="fr-mt-2w fr-mb-0">
         En saisie simplifiée, ces 12 catégories sont regroupées en quatre groupes (bio, SIQO (hors bio), autres EGalim, critères d'achats (pour les marchés publics)).
       </p>
-      <AppFormMentionOptionalFields class="fr-mt-2w fr-mb-0" />
+      <AppFormMentionOptionalFields />
       <div v-if="hasPurchaseTotal" class="ma-cantine--flex-between ma-cantine--flex-top ma-cantine--flex-gap-1 fr-mt-4w">
         <DsfrTag small class="ma-cantine--tag-blue ma-cantine--width-2w fr-mt-1v">
           <IconOSAMonochrome />

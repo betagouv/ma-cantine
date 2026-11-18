@@ -22,7 +22,7 @@ const informationNutritionnelleDocumentation = `${documentation.informationsConv
         du restaurant collectif lisible par tous les usager et par communication électronique, actualisé au moins une
         fois par an.
       </p>
-      <AppFormMentionOptionalFields class="fr-mt-2w fr-mb-0" />
+      <AppFormMentionOptionalFields />
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">

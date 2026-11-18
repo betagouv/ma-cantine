@@ -42,7 +42,7 @@ const canteenEditLink = computed(() => ({
       <p class="fr-mb-0">
         La lutte contre le gaspillage alimentaire est un levier essentiel pour l’atteinte des objectifs de la loi EGalim.
       </p>
-      <AppFormMentionOptionalFields class="fr-mt-2w fr-mb-0" />
+      <AppFormMentionOptionalFields />
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">

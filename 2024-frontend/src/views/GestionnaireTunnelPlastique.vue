@@ -35,7 +35,7 @@ const updateVenteEmporter = (value) => {
         La mise à disposition de gobelets, de verres et d’assiettes jetables et de nombreux ustensiles en plastique à
         usage unique est interdite pour tout type de restauration (y compris commerciale).
       </p>
-      <AppFormMentionOptionalFields class="fr-mt-2w fr-mb-0" />
+      <AppFormMentionOptionalFields />
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">

@@ -25,7 +25,7 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
         En télédéclarant ce volet, vous contribuez à l’Observatoire EGalim en restauration collective et aux
         statistiques du rapport annuel au Parlement (données anonymisées).
       </p>
-      <AppFormMentionOptionalFields class="fr-mt-2w fr-mb-0" />
+      <AppFormMentionOptionalFields />
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">
