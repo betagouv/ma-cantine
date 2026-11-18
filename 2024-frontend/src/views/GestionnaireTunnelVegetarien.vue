@@ -5,6 +5,7 @@ import TunnelTeledeclarationButtonReset from "@/components/TunnelTeledeclaration
 import TunnelTeledeclarationVoletThematiqueBanner from "@/components/TunnelTeledeclarationVoletThematiqueBanner.vue"
 import TunnelTeledeclarationGroupTitle from "@/components/TunnelTeledeclarationGroupTitle.vue"
 import TunnelTeledeclarationField from "@/components/TunnelTeledeclarationField.vue"
+import AppFormMentionOptionalFields from "@/components/AppFormMentionOptionalFields.vue"
 
 /* Documentation */
 const diversificationDocumentation = `${documentation.diversificationSourcesProteines}#2-1-la-diversification-des-sources-de-proteines-une-obligation-pour-tous-des-200-couverts-par-jour`
@@ -24,6 +25,7 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
         En télédéclarant ce volet, vous contribuez à l’Observatoire EGalim en restauration collective et aux
         statistiques du rapport annuel au Parlement (données anonymisées).
       </p>
+      <AppFormMentionOptionalFields class="fr-mt-2w fr-mb-0" />
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">
