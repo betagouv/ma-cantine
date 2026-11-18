@@ -32,7 +32,7 @@
       "valeurBioDontCommerceEquitable": {"shortName": "Dont achats bio issus du commerce équitable", "tooltip": "Achats à comptabiliser également dans le champ « Total des achats bio ou avec mention en conversion vers l'agriculture biologique »", "isRelatedField": "horizontal"},
       "valeurSiqo": {"shortName": "Total des achats SIQO (hors bio) : Label Rouge, AOC / AOP, IGP, STG"},
       "valeurEgalimAutres": {"shortName": "Total des autres achats EGalim"},
-      "valeurEgalimAutresDontCommerceEquitable": {"shortName": "Dont total des achats non bio issus du commerce équitable", "tooltip": "Achats à comptabiliser également dans le champ « Total des autres achats EGalim »", "isRelatedField": "horizontal"},
+      "valeurEgalimAutresDontCommerceEquitable": {"shortName": "Dont total des achats non bio non SIQO issus du commerce équitable", "tooltip": "Achats à comptabiliser également dans le champ « Total des autres achats EGalim »", "isRelatedField": "horizontal"},
       "valeurExternalitesPerformance": {"shortName": "Achats prenant en compte les externalités environnementales"},
       "valeurViandesVolailles": {"shortName": "Total des achats en viandes et volailles fraîches ou surgelées"},
       "valeurViandesVolaillesEgalim": {"shortName": "Achats EGalim en viandes et volailles fraîches ou surgelées"},

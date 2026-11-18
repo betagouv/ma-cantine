@@ -1140,7 +1140,7 @@
       },
       "index_code": 8,
       "index_metier": "4.0.2",
-      "verbose_name": "Dont total des achats non bio issus du commerce équitable"
+      "verbose_name": "Dont total des achats non bio non SIQO issus du commerce équitable"
     },
     "valeur_europe": {
       "diagnostic_type": {

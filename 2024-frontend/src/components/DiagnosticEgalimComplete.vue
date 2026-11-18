@@ -210,7 +210,7 @@ const rupImage = `${logosFolder}/rup.png`
   </div>
   <div class="fr-mb-6w">
     <TunnelTeledeclarationGroupTitle
-      title="Ecolabel pêche durable, 7°bis ou 7°ter, par famille de produits"
+      title="Ecolabel pêche durable, 7°bis ou 7°ter"
       badge="Nouveauté loi UPSA"
       :documentation="documentation.pecheDurable"
     />
@@ -237,7 +237,7 @@ const rupImage = `${logosFolder}/rup.png`
       :documentation="documentation.commerceEquitable"
     />
     <p>
-      Renseigner ici uniquement les achats en produits issus du commerce équitable non bio. Les achats en produits bio équitables sont à renseigner dans les champs « Bio » (obligatoire) ET « Bio issu du commerce équitable » (facultatif, en fonction de vos possibilités de suivi).
+      Renseignez ici uniquement les achats en produits issus du commerce équitable non bio. Les achats en produits bio équitables sont à renseigner dans les champs « Bio » (obligatoire) ET « Bio issu du commerce équitable » (facultatif, en fonction de vos possibilités de suivi).
     </p>
     <div class="fr-grid-row fr-grid-row--gutters">
       <div v-for="field in commerceEquitableFields" :key="field" class="fr-col-12 fr-col-md-6">

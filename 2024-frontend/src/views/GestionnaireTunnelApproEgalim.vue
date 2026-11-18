@@ -31,11 +31,12 @@ const { hasPurchaseTotal } = storeToRefs(storePurchaseSummary)
     <div class="fr-col-12 fr-col-md-7">
       <h2>Approvisionnements EGalim</h2>
       <p class="fr-mb-0">
-        Étape principale et obligatoire de la télédéclaration. Permet de renseigner vos achats au regard des 12
-        catégories EGalim. En télédéclaration simplifiée, ces 12 catégories sont regroupées en quatre groupes (bio,
-        SIQO, autres EGalim, critères d'achats).
+        Cette étape du volet « Approvisionnements » de la télédéclaration est obligatoire. Vous y renseignez vos achats au regard des 12 catégories EGalim.
       </p>
-      <div v-if="hasPurchaseTotal" class="ma-cantine--flex-between ma-cantine--flex-top ma-cantine--flex-gap-1 fr-mt-2w">
+      <p v-if="isSimple" class="fr-mt-2w fr-mb-0">
+        En saisie simplifiée, ces 12 catégories sont regroupées en quatre groupes (bio, SIQO (hors bio), autres EGalim, critères d'achats (pour les marchés publics)).
+      </p>
+      <div v-if="hasPurchaseTotal" class="ma-cantine--flex-between ma-cantine--flex-top ma-cantine--flex-gap-1 fr-mt-4w">
         <DsfrTag small class="ma-cantine--tag-blue ma-cantine--width-2w fr-mt-1v">
           <IconOSAMonochrome />
         </DsfrTag>
