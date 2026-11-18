@@ -46,6 +46,22 @@
       "is_required_depends_on_canteen": true,
       "verbose_name": "Nombre de couverts par an"
     },
+    "satellites_nombre_repas_an_sum": {
+      "description": "Champ calculé, uniquement affiché dans l'application et le justificatif",
+      "diagnostic_type": {
+        "COMPLETE": {
+          "is_present": false,
+          "is_required": false
+        },
+        "SIMPLE": {
+          "is_present": false,
+          "is_required": false
+        }
+      },
+      "index_code": null,
+      "index_metier": null,
+      "verbose_name": "Total des couverts annuels répartis entre vos cantines"
+    },
     "valeur_autres": {
       "diagnostic_type": {
         "COMPLETE": {

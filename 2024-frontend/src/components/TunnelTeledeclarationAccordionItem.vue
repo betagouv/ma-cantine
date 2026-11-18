@@ -36,6 +36,7 @@ const header = [
   { key: "name", label: "Champ" },
   { key: "value", label: "Valeur", headerAttrs: { class: "fr-col-2" } },
 ]
+const isGroupeMealCountField = (field) => props.accordion.fieldsGroupName === "couvertsGroupe" && field === "nombreRepasAn"
 
 const getPrettyDiagnosticValue = (field) => {
   const fieldData = tunnelTeledeclarationService.getField(field)
@@ -45,39 +46,46 @@ const getPrettyDiagnosticValue = (field) => {
   return prettyValue ?? "Non renseigné"
 }
 
-const getRowName = (field, canteen) => {
-  if (canteen) {
-    const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(canteen))
-    return `${canteen.name} ${siretSiren} (ID : ${canteen.id})`
-  }
-  if (props.accordion.isCanteenFields) return field
+const getRowName = (field) => {
+  if (props.accordion.isCanteenFields) return { label: field }
   const { labelRecap, hint } = tunnelTeledeclarationService.getField(field)
-  return hint ? `${labelRecap} (${hint})` : labelRecap
+  return { label: labelRecap, hint }
 }
 
-const getRowValue = (field, canteen) => {
-  if (canteen) return canteen.nombreRepasAn
+const getRowValue = (field) => {
   if (props.accordion.isCanteenFields) return canteenInformations.value[field]
   return getPrettyDiagnosticValue(field)
 }
 
-const getRowError = (field, canteen) => {
-  if (canteen) return tunnelTeledeclarationService.getGroupeCanteenMealCountError(canteen, diagnosticErrors.value)
-  return teledeclarationStore.getErrorMessage(field)
+const getFieldRow = (field) => {
+  // For a group : the field is replaced by the sum (the errors are still those of nombreRepasAn)
+  const displayedField = isGroupeMealCountField(field) ? "satellitesNombreRepasAnSum" : field
+  return {
+    name: {
+      ...getRowName(displayedField),
+      error: teledeclarationStore.getErrorMessage(field) || "",
+    },
+    value: getRowValue(displayedField) ?? "Non renseigné",
+  }
+}
+
+const getGroupeCanteenRow = (groupeCanteen) => {
+  const siretSiren = formatSiretOrSiren(canteensTableService.getSiretOrSirenInfos(groupeCanteen))
+  return {
+    name: {
+      label: groupeCanteen.name,
+      hint: `${siretSiren}, ID : ${groupeCanteen.id}`,
+      error: tunnelTeledeclarationService.getGroupeCanteenMealCountError(groupeCanteen, diagnosticErrors.value) || "",
+    },
+    value: groupeCanteen.nombreRepasAn ?? "Non renseigné",
+  }
 }
 
 const rows = computed(() => {
   const fields = tunnelTeledeclarationService.getFieldsListFromGroup(props.accordion.fieldsGroupName)
-  return fields.flatMap(field => {
-    const canteens = field === "satellitesNombreRepasAnList" ? groupeCanteensMealCount.value : [null]
-    return canteens.map(canteen => ({
-      name: {
-        label: getRowName(field, canteen),
-        error: getRowError(field, canteen) || "",
-      },
-      value: getRowValue(field, canteen) ?? "Non renseigné",
-    }))
-  })
+  const fieldsRows = fields.filter(field => field !== "satellitesNombreRepasAnList").map(getFieldRow)
+  const groupeCanteensRows = fields.includes("satellitesNombreRepasAnList") ? groupeCanteensMealCount.value.map(getGroupeCanteenRow) : []
+  return fieldsRows.concat(groupeCanteensRows)
 })
 
 const goToStep = (page) => router.push(page)
@@ -102,12 +110,13 @@ const goToStep = (page) => router.push(page)
       :headersRow="header"
       :rows="rows"
       :no-scroll="true"
-      class="fr-mt-0 fr-mb-0"
+      class="fr-mt-0 fr-mb-0 tunnel-teledeclaration-accordion-item__table"
       size="sm"
     >
       <template #cell="{ colKey, cell }">
         <template v-if="colKey === 'name'">
-          <p>{{ cell.label }}</p>
+          <p :class="{ 'fr-mb-0': cell.hint }">{{ cell.label }}</p>
+          <p v-if="cell.hint" class="fr-text--xs fr-text-mention--grey">{{ cell.hint }}</p>
           <p v-if="cell.error" class="fr-message fr-message--error">{{ cell.error }}</p>
         </template>
         <p v-else>{{ cell }}</p>
@@ -118,3 +127,12 @@ const goToStep = (page) => router.push(page)
     </div>
   </DsfrAccordion>
 </template>
+
+<style lang="scss">
+.tunnel-teledeclaration-accordion-item__table {
+  .fr-table__wrapper,
+  table {
+    width: 100% !important;
+  }
+}
+</style>

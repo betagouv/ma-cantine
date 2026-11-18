@@ -30,6 +30,7 @@ from data.models.diagnostic_teledeclaration_dates import (
     is_in_teledeclaration_or_correction,
 )
 from data.models.diagnostic_teledeclaration_fields import (
+    get_teledeclaration_config,
     get_teledeclaration_fields_all,
     get_teledeclaration_verbose_name,
 )
@@ -148,7 +149,11 @@ class DiagnosticTeledeclarationPdfView(APIView):
         )
         volets = {
             "CANTEEN": DiagnosticTeledeclarationPdfView._get_canteen_fields(canteen),
-            "MEAL_COUNT": DiagnosticTeledeclarationPdfView._get_meal_count_fields(diagnostic),
+            "MEAL_COUNT": (
+                DiagnosticTeledeclarationPdfView._get_meal_count_fields(diagnostic)
+                if "nombre_repas_an" in get_teledeclaration_config(diagnostic.year)["APPROVISIONNEMENT"]
+                else []
+            ),
             "SAISIE": DiagnosticTeledeclarationPdfView._get_saisie_fields(diagnostic),
             "APPROVISIONNEMENT": (
                 DiagnosticTeledeclarationPdfView._get_volet_fields(
@@ -273,8 +278,25 @@ class DiagnosticTeledeclarationPdfView(APIView):
     def _get_meal_count_fields(diagnostic):
         """
         Returns the yearly meal count, in the same format as the volets fields
+        Groupe: also returns the yearly meal count declared for each satellite
         """
-        return [{"label": "Nombre de couverts par an", "value": diagnostic.canteen_yearly_meal_count}]
+        is_groupe = diagnostic.canteen_snapshot.get("production_type") == Canteen.ProductionType.GROUPE
+        label_field_name = "satellites_nombre_repas_an_sum" if is_groupe else "nombre_repas_an"
+        label = get_teledeclaration_verbose_name(diagnostic.year, "APPROVISIONNEMENT", label_field_name)
+        fields = [{"label": label, "value": diagnostic.canteen_yearly_meal_count}]
+        if is_groupe and diagnostic.satellites_nombre_repas_an_list and diagnostic.satellites_snapshot:
+            satellites_nombre_repas_an = {
+                item["id"]: item.get("nombre_repas_an") for item in diagnostic.satellites_nombre_repas_an_list
+            }
+            for satellite in diagnostic.satellites_snapshot:
+                siret_or_siren = satellite.get("siret") or satellite.get("siren_unite_legale")
+                fields.append(
+                    {
+                        "label": f"{satellite.get('name')} {siret_or_siren} (ID : {satellite.get('id')})",
+                        "value": satellites_nombre_repas_an.get(satellite.get("id")),
+                    }
+                )
+        return fields
 
     @staticmethod
     def _get_canteen_override_data(diagnostic):

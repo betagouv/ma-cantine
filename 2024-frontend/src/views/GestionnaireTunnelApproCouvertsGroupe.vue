@@ -13,7 +13,8 @@ import CanteensTableCouvertsGroupe from "@/components/CanteensTableCouvertsGroup
 const teledeclarationStore = useStoreTeledeclaration()
 const { diagnostic } = storeToRefs(teledeclarationStore)
 const route = useRoute()
-const sumErrorMessage = computed(() => tunnelTeledeclarationService.getFieldError("nombreRepasAn", teledeclarationStore.getDisplayedErrors(route.meta)))
+const sumField = tunnelTeledeclarationService.getField("satellitesNombreRepasAnSum")
+const sumErrorMessage =computed(() => tunnelTeledeclarationService.getFieldError("nombreRepasAn", teledeclarationStore.getDisplayedErrors(route.meta)))
 const nombreRepasAnSentence = computed(() => {
   const count = diagnostic.value?.nombreRepasAn
   if (count == null) return null
@@ -50,8 +51,8 @@ const nombreRepasAnSentence = computed(() => {
       </p>
     </DsfrAlert>
     <TunnelTeledeclarationCalloutField
-      text="Total des couverts annuels répartis entre vos cantines"
-      mention="À partir des données couverts de chaque restaurant"
+      :text="sumField.labelRecap"
+      :mention="sumField.hint"
       :value="diagnostic?.satellitesNombreRepasAnSum"
       :error-message="sumErrorMessage"
     />

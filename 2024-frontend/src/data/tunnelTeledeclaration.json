@@ -15,6 +15,7 @@
     },
     "fields": {
       "nombreRepasAn": {"shortName": "Nombre de couverts par an"},
+      "satellitesNombreRepasAnSum": {"hint": "À partir des données couverts de chaque restaurant"},
       "diagnosticType": {
         "shortName": "Quel mode de saisie souhaitez-vous utiliser ?",
         "labelRecap": "Quel mode de saisie souhaitez-vous utiliser ?",
