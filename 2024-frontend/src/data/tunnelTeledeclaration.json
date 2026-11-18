@@ -22,8 +22,8 @@
         "required": true,
         "type": "radioRiche",
         "options": [
-          {"label": "Saisie simplifiée : vous ne distinguez pas vos achats par famille de produit (sauf Viandes et volailles) et vous regroupez les labels par groupes de catégories EGalim (Bio, SIQO, Autres, etc.)", "valueDisplay": "Saisie simplifiée", "value": "SIMPLE", "img": "/static/images/picto-dsfr/teledeclaration-saisie-simplifiee.svg", "hint": "11 champs dont 6 obligatoires"},
-          {"label": "Saisie détaillée : vous fonctionnez avec un suivi segmenté de vos achats par familles (8 familles) en suivant précisément chaque catégorie EGalim (Bio, Label Rouge, IGP, Commerce équitable, etc.)", "valueDisplay": "Saisie détaillée", "value": "COMPLETE", "img": "/static/images/picto-dsfr/teledeclaration-saisie-detaillee.svg", "hint": "100 champs, dont 75 obligatoires"},
+          {"label": "Saisie simplifiée : vous ne distinguez pas vos achats par famille de produits (sauf Viandes et volailles et Poissons et produits de la mer) et vous suivez la qualité de vos achats par groupes de catégories EGalim (Bio, SIQO, Autres, Critères d’achat)", "valueDisplay": "Saisie simplifiée", "value": "SIMPLE", "img": "/static/images/picto-dsfr/teledeclaration-saisie-simplifiee.svg", "hint": "11 champs dont 6 obligatoires"},
+          {"label": "Saisie détaillée : vous distinguez tous vos achats par famille de produits en segmentant précisément les labels au sein de chaque catégorie EGalim (Bio, Label Rouge, IGP, Commerce équitable, etc.)", "valueDisplay": "Saisie détaillée", "value": "COMPLETE", "img": "/static/images/picto-dsfr/teledeclaration-saisie-detaillee.svg", "hint": "100 champs, dont 75 obligatoires"},
           {"label": "Saisie automatique : vous utilisez l'Outil de Suivi des Achats", "valueDisplay": "Saisie automatique", "value": "AUTO", "img": "/static/images/logo-osa-bleu.svg"}
         ]
       },
