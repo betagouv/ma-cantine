@@ -117,7 +117,7 @@ const linkedCanteensLabel = computed(() => {
     </div>
     <div v-else-if="status === 'not-allowed'" class="fr-mt-1w">
       <DsfrBadge type="error" label="Erreur" small />
-      <p class="fr-mb-0 fr-mt-1v fr-text--sm">Ce type d'établissement n'est pas autorisé pour rejoindre une groupe.</p>
+      <p class="fr-mb-0 fr-mt-1v fr-text--sm">Ce type d'établissement n'est pas autorisé à rejoindre un groupe.</p>
     </div>
     <div v-else-if="status === 'other-group'" class="fr-mt-1w">
       <DsfrBadge type="error" label="Erreur" small />
