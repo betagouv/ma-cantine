@@ -77,7 +77,7 @@ const menuItems = computed(() =>  {
         Cette nouvelle version a été construite à partir de vos retours dans un souci de simplicité, de performance et de sécurité. <br/>
       </p>
       <p>
-        IMPORTANT : l’environnement propre aux bilans (ex. « Mon bilan annuel ») sera intégré dans une seconde version courant l’automne. <br/>
+        IMPORTANT : l’environnement propre aux bilans (ex. « Mon bilan annuel ») sera intégré dans une seconde version dans le courant de l’automne. <br/>
         En attendant, retrouvez vos données via les justificatifs de télédéclaration, page <AppLinkRouter :to="{ name: 'GestionnaireCantineTeledeclarations', hash: '#sidebar-canteen-content' }" title="Toutes les télédéclarations" />.
       </p>
       <p>Pour toute remarque ou question : <AppLinkMailto /></p>

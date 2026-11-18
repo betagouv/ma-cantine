@@ -35,7 +35,7 @@ const buttonTop = computed(() => {
     case hasDiagnostic.value:
       return { label: 'Reprendre ma télédéclaration', icon: 'ri-send-plane-line', pageName: "GestionnaireTunnelApproInformations" }
     default:
-      return { label: 'Faire ma télédéclaration', icon: 'ri-send-plane-line' }
+      return { label: 'Commencer ma télédéclaration', icon: 'ri-send-plane-line' }
   }
 })
 
@@ -82,17 +82,22 @@ const showError = (message) => rootStore.notifyServerError(message)
       </p>
     </div>
     <div v-else class="fr-col-12 fr-col-md-7">
-      <h3 class="fr-h5 fr-mb-4w">Réalisez le bilan de l’année précédente sur les différents volets de la loi EGalim.</h3>
+      <h3 class="fr-h5 fr-mb-4w">Complétez votre bilan EGalim de l’année dernière.</h3>
       <p v-if="canteenInformations.isGroupe">
         Vous allez télédéclarer de manière mutualisée au sein d’une même entité de gestion. Les montants d’achats seront répartis automatiquement au prorata du nombre de couverts annuels de chaque cantine du groupe.
         <strong>Les gestionnaires des cantines n’auront pas accès aux montants d’achats, mais uniquement aux résultats (en %).</strong>
       </p>
-      <p v-else>
-        La télédéclaration comporte 2 principales étapes : le volet approvisionnements (simplifiés ou détaillés) et les volets thématiques (facultatifs).
-      </p>
+      <div v-else>
+        <p>
+          Pour télédéclarer, vous devez compléter votre bilan des approvisionnements (volet obligatoire) et, si vous le souhaitez, renseigner vos autres actions en matière de gaspillage, menus végétariens, substitution des plastiques et informations des convives (volets optionnels).
+        </p>
+        <p>
+          Une fois ces informations remplies, pensez bien à valider vos bilans pour finaliser votre télédéclaration.
+        </p>
+      </div>
     </div>
     <div v-if="!isTeledeclared" class="fr-col-12 fr-col-md-5">
-      <AppHelpCard title="Infos utiles pour consolider vos données">
+      <AppHelpCard title="Documents utiles pour vous aider à faire votre télédéclaration">
         <ul class="ma-cantine--unstyled-list fr-mb-0">
           <li class="fr-mb-1w">
             <a :href="documentation.teledeclarationMatrice" target="_blank">La matrice de télédéclaration</a>
