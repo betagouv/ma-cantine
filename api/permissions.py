@@ -68,6 +68,20 @@ class IsCanteenManagerUrlParam(permissions.BasePermission):
         return canteen.managers.filter(id=request.user.id).exists()
 
 
+class IsSatelliteManagerUrlParam(permissions.BasePermission):
+    """
+    Looks for the url_param `satellite_pk` and checks the user is
+    manager of the satellite cantine
+    """
+
+    def has_permission(self, request, view):
+        satellite_id = view.kwargs.get("satellite_pk", None)
+        if not satellite_id:
+            return False
+        satellite = get_object_or_404(Canteen.objects.only("managers"), pk=satellite_id)
+        return satellite.managers.filter(id=request.user.id).exists()
+
+
 class IsLinkedCanteenManager(permissions.BasePermission):
     """
     This is for actions only permitted by managers of

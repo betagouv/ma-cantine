@@ -5,7 +5,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.http import JsonResponse
 
-from api.permissions import IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam
+from api.permissions import (
+    IsAuthenticatedOrTokenHasResourceScope,
+    IsCanteenManagerUrlParam,
+    IsSatelliteManagerUrlParam,
+)
 from api.serializers import SatelliteCanteenSerializer, FullCanteenSerializer
 from data.models import Canteen
 from data.models.diagnostic_teledeclaration_dates import get_current_campaign_year, is_in_teledeclaration_or_correction
@@ -82,7 +86,11 @@ class CanteenGroupeSatelliteLinkView(APIView):
     post=extend_schema(summary="Enlever un restaurant satellite d'un groupe.", tags=["Cantines"]),
 )
 class CanteenGroupeSatelliteUnlinkView(APIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope, IsCanteenManagerUrlParam]
+    # the groupe manager, or the satellite manager (to unlink their own satellite)
+    permission_classes = [
+        IsAuthenticatedOrTokenHasResourceScope,
+        IsCanteenManagerUrlParam | IsSatelliteManagerUrlParam,
+    ]
     required_scopes = ["canteen"]
     serializer_class = FullCanteenSerializer
 
