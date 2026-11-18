@@ -285,6 +285,36 @@ class CanteenActionTestCase(TestCase):
         )
 
     @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_groupe_satellite_not_clean_actions(self):
+        DiagnosticFactory(
+            canteen=self.canteen_groupe_1_with_satellites,
+            year=2024,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+            valeur_totale=100,
+        )
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_groupe_1_with_satellites.id).action, Canteen.Actions.TELEDECLARE
+        )
+        self.assertEqual(canteen_qs.get(id=self.canteen_satellite_11.id).action, Canteen.Actions.NOTHING_SATELLITE)
+
+        # satellite filled, but not clean (daily_meal_count too low, only possible with skip_validations)
+        self.canteen_satellite_11.daily_meal_count = 1
+        self.canteen_satellite_11.save(skip_validations=True)
+        self.assertTrue(self.canteen_satellite_11.is_filled)
+        self.assertFalse(self.canteen_satellite_11.is_clean)
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(
+            canteen_qs.get(id=self.canteen_groupe_1_with_satellites.id).action,
+            Canteen.Actions.FILL_SATELLITE_CANTEEN_DATA,
+        )
+        self.assertEqual(canteen_qs.get(id=self.canteen_satellite_11.id).action, Canteen.Actions.FILL_CANTEEN_DATA)
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
     def test_groupe_satellite_relationship_diagnostic_mode_all_teledeclaration_actions(self):
         # groupe with satellites and has diagnostic started
         canteen_groupe_diagnostic_2024 = DiagnosticFactory(

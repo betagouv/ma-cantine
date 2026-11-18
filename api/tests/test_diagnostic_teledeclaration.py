@@ -373,6 +373,31 @@ class DiagnosticTeledeclarationCreateApiTest(APITestCase):
 
     @authenticate
     @freeze_time("2025-03-30")  # during the 2024 campaign
+    def test_cannot_teledeclare_groupe_if_satellite_not_clean(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
+        CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL,
+            groupe=canteen_groupe,
+            daily_meal_count=1,  # filled, but not clean
+            skip_validations=True,
+        )
+        diagnostic = DiagnosticFactory(canteen=canteen_groupe, year=2024)
+
+        response = self.client.post(
+            reverse(
+                "diagnostic_teledeclaration_create",
+                kwargs={"canteen_pk": canteen_groupe.id, "pk": diagnostic.id},
+            )
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json()["detail"],
+            ["1 satellites du groupe associée à ce diagnostic ne sont pas remplis ou pas valides"],
+        )
+
+    @authenticate
+    @freeze_time("2025-03-30")  # during the 2024 campaign
     def test_cannot_teledeclare_if_bad_total(self):
         diagnostic = DiagnosticFactory(
             canteen=self.canteen_site, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
