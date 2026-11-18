@@ -823,6 +823,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             canteen_validators.validate_canteen_sector_list_field(self),
             canteen_validators.validate_canteen_line_ministry_field(self),
             canteen_validators.validate_canteen_groupe_field(self),
+            canteen_validators.validate_canteen_groupe_change(self),
             canteen_validators.validate_canteen_central_producer_siret_field(self),
         )
         if validation_errors:
@@ -834,6 +835,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         - set region from department
         - full_clean(): run validations (with extra validations in clean())
             - this can be skipped with skip_validations=True (USE WITH CAUTION)
+            - except the groupe change validation (always run)
         - set is_clean & is_filled (always, even with skip_validations=True)
         """
         self.normalize_fields()
@@ -842,6 +844,9 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         self.set_should_fill_geo_fields()
         self.set_groupe_id_list_to_sync()
         if skip_validations:
+            groupe_change_errors = canteen_validators.validate_canteen_groupe_change(self)
+            if groupe_change_errors:
+                raise ValidationError(groupe_change_errors)
             self.set_is_clean()
         else:
             self._is_clean(raise_errors=True)

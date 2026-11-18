@@ -82,7 +82,9 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             )
             central_serving_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
-            call_command("canteen_migrate_central_to_groupe", apply=True)
+            # (outside the campaign: a canteen cannot be linked to a groupe with a teledeclared diagnostic during the campaign)
+            with freeze_time("2025-07-01"):
+                call_command("canteen_migrate_central_to_groupe", apply=True)
 
         # Before the script is run
         self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
@@ -1097,7 +1099,9 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             )
             central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
-            call_command("canteen_migrate_central_to_groupe", apply=True)
+            # (outside the campaign: a canteen cannot be linked to a groupe with a teledeclared diagnostic during the campaign)
+            with freeze_time("2025-07-01"):
+                call_command("canteen_migrate_central_to_groupe", apply=True)
             # Save satellite canteen created
             new_canteen_id = central_diagnostic.satellites_snapshot[len(central_diagnostic.satellites_snapshot) - 1][
                 "id"
@@ -1175,7 +1179,9 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             )
             central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
-            call_command("canteen_migrate_central_to_groupe", apply=True)
+            # (outside the campaign: a canteen cannot be linked to a groupe with a teledeclared diagnostic during the campaign)
+            with freeze_time("2025-07-01"):
+                call_command("canteen_migrate_central_to_groupe", apply=True)
             # Save satellite canteen created
             new_canteen_id = central_diagnostic.satellites_snapshot[len(central_diagnostic.satellites_snapshot) - 1][
                 "id"
@@ -1253,7 +1259,9 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
             )
             central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
             # Need to add satellites to the snapshot with groupe migration
-            call_command("canteen_migrate_central_to_groupe", apply=True)
+            # (outside the campaign: a canteen cannot be linked to a groupe with a teledeclared diagnostic during the campaign)
+            with freeze_time("2025-07-01"):
+                call_command("canteen_migrate_central_to_groupe", apply=True)
             # Save satellite canteen created
             new_canteen_id = central_diagnostic.satellites_snapshot[len(central_diagnostic.satellites_snapshot) - 1][
                 "id"

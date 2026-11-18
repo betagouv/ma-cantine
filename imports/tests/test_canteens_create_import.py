@@ -331,7 +331,7 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
         self.assertEqual(len(body["canteens"]), 0)
         self.assertEqual(len(errors), 1)
         self.assertIn(
-            "Vous ne pouvez pas ajouter de restaurant satellite au groupe « 9999999992 », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir ajouter le(s) restaurant(s) satellite(s).",
+            "Champ 'Groupe' : Vous ne pouvez pas ajouter la cantine au groupe « 9999999992 », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration du groupe pour pouvoir ajouter la cantine.",
             errors[0]["message"],
         )
 
