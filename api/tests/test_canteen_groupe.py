@@ -237,17 +237,31 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertEqual(self.canteen_satellite_11.groupe_id, self.canteen_groupe_1.id)
 
     @authenticate
-    def test_cannot_link_non_satellite(self):
+    def test_cannot_link_non_satellite_or_site(self):
         # set user as manager of group_1
         self.canteen_groupe_1.managers.add(authenticate.user)
-        # try to link a non-satellite canteen
+        # try to link a groupe canteen
+        url = reverse(
+            "canteen_groupe_satellite_link",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_groupe_2.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    def test_can_link_site(self):
+        # set user as manager of group_1
+        self.canteen_groupe_1.managers.add(authenticate.user)
         url = reverse(
             "canteen_groupe_satellite_link",
             kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_site.id},
         )
         response = self.client.post(url)
 
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.canteen_site.refresh_from_db()
+        self.assertEqual(self.canteen_site.groupe_id, self.canteen_groupe_1.id)
 
     @authenticate
     def test_cannot_link_already_linked_satellite(self):
