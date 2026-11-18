@@ -11,6 +11,7 @@ import sectorsService from "@/services/sectors"
 import openDataService from "@/services/openData.js"
 import options from "@/constants/canteen-form-options"
 import CanteenEstablishmentSearch from "@/components/CanteenEstablishmentSearch.vue"
+import AppFormMentionOptionalFields from "@/components/AppFormMentionOptionalFields.vue"
 
 /* Data */
 const store = useRootStore()
@@ -277,7 +278,7 @@ if (props.establishmentData) {
     class="canteen-form-restaurant fr-background-alt--blue-france fr-p-3w fr-mt-4w fr-grid-row fr-grid-row--center"
   >
     <form class="fr-col-12 fr-col-lg-7 fr-background-default--grey fr-p-2w fr-p-md-7w" @submit.prevent="">
-      <p>Tous les champs sont obligatoires, sauf ceux mentionnés “optionnel”.</p>
+      <AppFormMentionOptionalFields />
       <fieldset class="fr-mb-4w canteen-form-restaurant__reduce-margin-bottom">
         <legend class="fr-h5 fr-mb-2w">1. Caractéristiques</legend>
         <DsfrRadioButtonSet

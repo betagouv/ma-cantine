@@ -6,6 +6,7 @@ import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import { trackEvent } from "@/services/matomo.js"
 import { inquiries } from "@/constants/form-send-inquiry.js"
+import AppFormMentionOptionalFields from "@/components/AppFormMentionOptionalFields.vue"
 
 /* Store */
 const store = useRootStore()
@@ -94,7 +95,7 @@ const sendInquiry = () => {
     <div class="fr-grid-row">
       <div class="fr-col-12 fr-col-lg-8">
         <form class="fr-mb-4w" @submit.prevent="validateForm">
-          <p>Tous les champs sont obligatoires, sauf ceux mentionnés “optionnel”.</p>
+          <AppFormMentionOptionalFields />
           <DsfrSelect
             v-model="form.inquiryType"
             label="Type de demande"

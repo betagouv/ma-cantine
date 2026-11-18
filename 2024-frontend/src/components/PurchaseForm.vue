@@ -6,6 +6,7 @@ import { useValidators } from "@/validators.js"
 import { formatError } from "@/utils.js"
 import achats from "@/data/achats.json"
 import purchases from "@/services/purchases.js"
+import AppFormMentionOptionalFields from "@/components/AppFormMentionOptionalFields.vue"
 
 /* Props and emits */
 const props = defineProps(["purchaseData", "showCancelButton", "showDeleteButton", "errors", "isPetiteStructure"])
@@ -119,7 +120,7 @@ const formatPayload = (form) => {
 
 <template>
   <form class="purchase-form" @submit.prevent="">
-    <p>Tous les champs sont obligatoires, sauf ceux mentionnés “optionnel”.</p>
+    <AppFormMentionOptionalFields />
     <div class="fr-grid-row fr-grid-row--gutters">
       <div class="fr-col-12 fr-col-md-8">
         <DsfrInputGroup
