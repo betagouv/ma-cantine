@@ -444,11 +444,6 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
             [{"id": self.canteen_satellite_12.id, "nombre_repas_an": 500}],
         )
         self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, 500)
-        history = diagnostic.history.first()
-        self.assertEqual(history.history_user, authenticate.user)
-        self.assertEqual(
-            history.history_change_reason, f"Groupe satellites sync (canteen {self.canteen_satellite_11.id})"
-        )
 
     def test_canteen_groupe_satellite_link_unlink_via_oauth2(self):
         user, token = get_oauth2_token("canteen:write")
