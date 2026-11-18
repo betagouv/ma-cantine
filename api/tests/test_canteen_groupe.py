@@ -4,7 +4,7 @@ from rest_framework import status
 from freezegun import freeze_time
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, DiagnosticFactory
+from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen
 
 
@@ -302,6 +302,32 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         response = self.client.post(url)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @authenticate
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_satellite_manager_cannot_unlink_during_teledeclaration_if_groupe_has_diagnostic_teledeclared(self):
+        # set user as manager of satellite_11 only (not of groupe_1)
+        self.canteen_satellite_11.managers.add(authenticate.user)
+        # create a diagnostic teledeclared for groupe_1 for year 2024 (by a groupe manager)
+        groupe_manager = UserFactory()
+        self.canteen_groupe_1.managers.add(groupe_manager)
+        DiagnosticFactory(canteen=self.canteen_groupe_1, year=2024, valeur_totale=100).teledeclare(
+            applicant=groupe_manager
+        )
+
+        url = reverse(
+            "canteen_groupe_satellite_unlink",
+            kwargs={"canteen_pk": self.canteen_groupe_1.id, "satellite_pk": self.canteen_satellite_11.id},
+        )
+        response = self.client.post(url)
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json()["error"],
+            "Vous ne pouvez pas quitter le groupe car la télédéclaration a été validée par votre groupe et les données de votre cantine sont déjà prises en compte pour cette télédéclaration. Vous pouvez demander à votre groupe d'annuler sa télédéclaration, ou alors vous pourrez renouveler votre demande à la fin de la campagne à partir du 30/04/2025",
+        )
+        self.canteen_satellite_11.refresh_from_db()
+        self.assertEqual(self.canteen_satellite_11.groupe_id, self.canteen_groupe_1.id)
 
     @authenticate
     def test_can_link_satellite_when_groupe_has_cancelled_diagnostic(self):
