@@ -52,7 +52,7 @@ const tableRows = computed(() => {
         const canteenSiretOrSiren = canteensTableService.getSiretOrSirenInfos(sat)
         const siretSiren = formatSiretOrSiren(canteenSiretOrSiren)
         const id = sat.id
-        const status = sat.isFilled ? "" : "À corriger"
+        const status = sat.isClean ? "" : "À corriger"
         const actions =  {
           links: getDropdownLinks(sat),
           canteen: sat,
