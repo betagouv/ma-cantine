@@ -28,7 +28,6 @@ const updateVenteEmporter = (value) => {
 
 <template>
   <h2>Substitution des plastiques et de l’usage unique</h2>
-  <TunnelTeledeclarationVoletThematiqueBanner />
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <p class="fr-mb-0">
@@ -36,6 +35,7 @@ const updateVenteEmporter = (value) => {
         usage unique est interdite pour tout type de restauration (y compris commerciale).
       </p>
       <AppFormMentionOptionalFields />
+      <TunnelTeledeclarationVoletThematiqueBanner />
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">

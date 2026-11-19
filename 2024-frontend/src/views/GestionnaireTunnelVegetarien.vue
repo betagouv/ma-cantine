@@ -14,7 +14,6 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
 
 <template>
   <h2>Diversification des sources de protéines <br /> et menus végétariens</h2>
-  <TunnelTeledeclarationVoletThematiqueBanner />
   <div class="fr-grid-row fr-grid-row--gutters fr-grid-row--top fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <p class="fr-mb-1w">
@@ -26,6 +25,7 @@ const menuVegetarienDocumentation = `${documentation.diversificationSourcesProte
         statistiques du rapport annuel au Parlement (données anonymisées).
       </p>
       <AppFormMentionOptionalFields />
+      <TunnelTeledeclarationVoletThematiqueBanner />
     </div>
     <div class="fr-col-12 fr-col-md-5">
       <AppHelpCard title="En savoir plus sur vos obligations">

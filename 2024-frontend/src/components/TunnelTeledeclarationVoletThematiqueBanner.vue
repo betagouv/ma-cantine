@@ -1,8 +1,13 @@
+<script setup>
+import { storeToRefs } from "pinia"
+import { useStoreCanteen } from "@/stores/canteen"
+
+const storeCanteen = useStoreCanteen()
+const { canteenInformations } = storeToRefs(storeCanteen)
+</script>
+
 <template>
-  <DsfrAlert
-    type="info"
-    small
-    description="Les cantines rattachées à votre groupe peuvent aussi télédéclarer ce volet thématique, si elles le font alors leurs valeurs remplaceront les vôtres dans leur télédéclaration."
-    class="fr-mb-4w"
-  />
+  <p v-if="canteenInformations?.isGroupe">
+    <span class="fr-text--bold">À noter :</span> Les cantines rattachées à votre groupe pourront télédéclarer leurs propres valeurs.
+  </p>
 </template>
