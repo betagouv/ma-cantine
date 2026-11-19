@@ -31,7 +31,6 @@ from api.serializers import (
     CanteenOpenDataSerializer,
     CanteenPreviewSerializer,
     CanteenStatusSerializer,
-    CanteenSummarySerializer,
     FullCanteenSerializer,
     PublicCanteenPreviewSerializer,
     PublicCanteenSerializer,
@@ -334,31 +333,6 @@ class UserCanteenPreviews(ListAPIView):
     required_scopes = ["canteen"]
     queryset = Canteen.objects.none()  # see get_queryset
     serializer_class = CanteenPreviewSerializer
-
-    def get_queryset(self):
-        return self.request.user.canteens.all()
-
-
-@extend_schema_view(
-    get=extend_schema(
-        summary="",
-        tags=["Cantines"],
-    )
-)
-class UserCanteenSummaries(ListAPIView):
-    permission_classes = [IsAuthenticatedOrTokenHasResourceScope]
-    required_scopes = ["canteen"]
-    queryset = Canteen.objects.none()  # see get_queryset
-    serializer_class = CanteenSummarySerializer
-    pagination_class = UserCanteensPagination
-    filter_backends = [
-        django_filters.DjangoFilterBackend,
-        UnaccentSearchFilter,
-        MaCantineOrderingFilter,
-    ]
-    filterset_class = UserCanteensFilterSet
-    search_fields = ["name", "siret"]
-    ordering_fields = ["name", "creation_date", "modification_date", "daily_meal_count"]
 
     def get_queryset(self):
         return self.request.user.canteens.all()

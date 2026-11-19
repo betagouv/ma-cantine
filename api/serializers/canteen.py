@@ -358,48 +358,6 @@ class FullCanteenSerializer(serializers.ModelSerializer):
         return canteen
 
 
-class CanteenSummarySerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)  # deprecated
-    lead_image = CanteenImageSerializer()
-    diagnostics = FullDiagnosticSerializer(many=True)
-    central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True)
-    publication_status = serializers.CharField(source="publication_status_display_to_public")
-
-    class Meta:
-        model = Canteen
-        fields = (
-            "id",
-            "name",
-            "city",
-            "city_insee_code",
-            "postal_code",
-            "epci",
-            "epci_lib",
-            "pat_list",
-            "pat_lib_list",
-            "department",
-            "department_lib",
-            "region",
-            "region_lib",
-            "sectors",  # deprecated: from "sectors_m2m" (frozen since the switch to sector_list)
-            "sector_list",
-            "daily_meal_count",
-            "yearly_meal_count",
-            "siret",
-            "siren_unite_legale",
-            "management_type",
-            "production_type",
-            "publication_status",  # property
-            "economic_model",
-            "is_satellite",
-            "modification_date",
-            "lead_image",
-            # the following can still be improved
-            "diagnostics",
-            "central_kitchen_diagnostics",  # can return a TD status instead of diagnostics
-        )
-
-
 class CanteenPreviewSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = Canteen
