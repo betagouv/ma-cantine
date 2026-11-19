@@ -5,6 +5,7 @@ import AppHeader from "@/components/AppHeader.vue"
 import AppFooter from "@/components/AppFooter.vue"
 import AppBreadcrumb from "@/components/AppBreadcrumb.vue"
 import AppBanners from "@/components/AppBanners.vue"
+import BannerEnv from "@/components/BannerEnv.vue"
 import NotificationCenter from "@/components/NotificationCenter.vue"
 
 const route = useRoute()
@@ -18,6 +19,7 @@ watch(route, (to) => {
 </script>
 
 <template>
+  <BannerEnv />
   <AppHeader v-if="!isFullscreen" :show-nav="!isTunnel" />
   <AppBanners v-if="!isFullscreen && !isTunnel" />
 
