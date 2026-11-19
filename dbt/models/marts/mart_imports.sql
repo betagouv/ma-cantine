@@ -40,6 +40,9 @@ select
     end                                                     as motif_echec,
     substring(i.message from 'schema ([A-Za-z_]+)\.json')   as schema_validata,
     i.message,
+    i.file_name                                             as fichier_nom,
+    -- extension en minuscules, vide si le nom n'a pas de point
+    lower(substring(i.file_name from '\.([^.]+)$'))        as fichier_extension,
     i.row_count                                             as nb_lignes,
     i.duration_seconds                                      as duree_secondes,
     i.user_id,

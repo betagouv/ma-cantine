@@ -25,6 +25,8 @@ renamed as (
         data ->> 'message'                                      as message,
         (data ->> 'count')::int                                 as row_count,
         (data ->> 'seconds')::numeric                           as duration_seconds,
+        -- IMPORT : nom du fichier importé (avec son extension), journalisé depuis le 11/2026
+        data ->> 'file_name'                                    as file_name,
         -- COMMAND : cron (exécution planifiée) ou manual ; vide pour les commandes reprises
         data ->> 'trigger'                                      as command_trigger,
         -- repris = reconstitué après coup (commandes eventlog_backfill_*), échec d'import
