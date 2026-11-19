@@ -6,6 +6,32 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.63.0](https://github.com/betagouv/ma-cantine/compare/v2026.62.1...v2026.63.0) (2026-11-19)
+
+
+### Nouveautés
+
+* **Cantine:** ajoute le bouton pour se détacher d'un groupe ([#7689](https://github.com/betagouv/ma-cantine/issues/7689)) ([880a972](https://github.com/betagouv/ma-cantine/commit/880a97281ce35f2790dee801c535ae3358ecc7f7))
+* **Groupe:** permet à une cantine rattachée à un groupe de se détacher ([#7687](https://github.com/betagouv/ma-cantine/issues/7687)) ([29380fd](https://github.com/betagouv/ma-cantine/commit/29380fd5a5b3b8bef566582055da22863dca9efc))
+
+
+### Améliorations
+
+* **Groupe:** permet d'utiliser une année de campagne personnalisée pour ajouter ou supprimer des satellites d'un groupe ([#7686](https://github.com/betagouv/ma-cantine/issues/7686)) ([7975c9f](https://github.com/betagouv/ma-cantine/commit/7975c9fe08d8ae68e5c53f54105102afa88b9a3a))
+
+
+### Technique
+
+* **Commandes:** logs de progression : enumerate(start=1) pour ne plus logger « 0 traités » au premier élément ([#7695](https://github.com/betagouv/ma-cantine/issues/7695)) ([23a0c7e](https://github.com/betagouv/ma-cantine/commit/23a0c7e308a5596f6ad66b540ef9c8cf9913c3f4))
+* **Diagnostics:** commande diagnostic_fill_computed_fields : mode dry run par défaut (--apply), met à jour seulement les bilans modifiés ([#7692](https://github.com/betagouv/ma-cantine/issues/7692)) ([1cc252f](https://github.com/betagouv/ma-cantine/commit/1cc252f533325a84498d973d706d1753134ac644))
+
+
+### Documentation
+
+* **ADR:** achats : noms de champs en français ([#7582](https://github.com/betagouv/ma-cantine/issues/7582)) ([399d566](https://github.com/betagouv/ma-cantine/commit/399d566b642442ce01420b6447d9a46d72b5bd39))
+* **ADR:** volet approvisionnement : noms de champs en français ([#7561](https://github.com/betagouv/ma-cantine/issues/7561)) ([7eee7f9](https://github.com/betagouv/ma-cantine/commit/7eee7f947426aa1cfd0f9dc0894fa1eec167d395))
+* **ADR:** volets thématiques : noms de champs & valeurs de choix en français ([#7552](https://github.com/betagouv/ma-cantine/issues/7552)) ([65ff46c](https://github.com/betagouv/ma-cantine/commit/65ff46cfb5da28c12422510436bd213f010d602e))
+
 ## [2026.62.1](https://github.com/betagouv/ma-cantine/compare/v2026.62.0...v2026.62.1) (2026-11-18)
 
 
