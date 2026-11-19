@@ -12,7 +12,6 @@ from .purchase import PurchaseAdmin  # noqa
 from .review import ReviewAdmin  # noqa
 from .communityevent import CommunityEventAdmin  # noqa
 from .partner import Partner  # noqa: F401
-from .partnertype import PartnerType  # noqa: F401
 from .videotutorial import VideoTutorial  # noqa: F401
 from .importfailure import ImportFailureAdmin  # noqa: F401
 from .eventlog import EventLogAdmin  # noqa: F401

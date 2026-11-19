@@ -2,11 +2,11 @@ from django.template.defaultfilters import linebreaks_filter
 from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 
-from data.models import Partner
+from data.models import Partner, PartnerType
 
 
 class PartnerShortSerializer(serializers.ModelSerializer):
-    types = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
+    types = serializers.ListField(source="type_lib_list", read_only=True)
     image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
@@ -28,7 +28,7 @@ class PartnerShortSerializer(serializers.ModelSerializer):
 
 
 class PartnerSerializer(serializers.ModelSerializer):
-    types = serializers.SlugRelatedField(many=True, read_only=True, slug_field="name")
+    types = serializers.ListField(source="type_lib_list", read_only=True)
     image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
@@ -52,6 +52,9 @@ class PartnerSerializer(serializers.ModelSerializer):
 
 
 class PartnerContactSerializer(serializers.ModelSerializer):
+    types = serializers.ListField(
+        source="type_list", child=serializers.ChoiceField(choices=PartnerType.choices), required=False
+    )
     image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:

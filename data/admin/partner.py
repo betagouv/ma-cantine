@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 
+from data.admin.utils import get_arrayfield_list_filter
 from data.models import Partner
 
 
@@ -27,11 +28,10 @@ class PartnerAdmin(admin.ModelAdmin):
         "creation_date",
         "modification_date",
     )
-    list_filter = ("published", "types", "sector_categories")
+    list_filter = ("published", get_arrayfield_list_filter("type_list", "Type d'acteur"), "sector_categories")
     actions = [publish]
 
     form = PartnerForm
-    filter_vertical = ("types",)
     fields = (
         "name",
         "categories",
@@ -39,7 +39,7 @@ class PartnerAdmin(admin.ModelAdmin):
         "long_description",
         "image",
         "website",
-        "types",
+        "type_list",
         "national",
         "departments",
         "sector_categories",
