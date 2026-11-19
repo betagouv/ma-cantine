@@ -1,5 +1,7 @@
 import filecmp
 import functools
+import os
+
 from data.factories import AccessTokenFactory, UserFactory
 from data.models import EventLog, ImportFailure
 
@@ -26,13 +28,14 @@ def assert_import_failure_created(self, user, type, file_path):
     self.assertEqual(ImportFailure.objects.first().import_type, type)
     self.assertTrue(filecmp.cmp(file_path, ImportFailure.objects.last().file.path, shallow=False))
     # EventLog
-    event_log = EventLog.objects.filter(category=EventLog.Category.IMPORT, status=EventLog.Status.FAILURE).first()
+    event_log = EventLog.objects.filter(category=EventLog.Category.IMPORT, status=EventLog.Status.FAILURE).last()
     self.assertIsNotNone(event_log)
     self.assertEqual(event_log.user, user)
     self.assertEqual(event_log.name, type)
-    self.assertEqual(set(event_log.data.keys()), {"message", "count", "seconds"})
+    self.assertEqual(set(event_log.data.keys()), {"message", "count", "seconds", "file_name"})
     self.assertTrue(event_log.data["message"])
     self.assertIsNone(event_log.data["count"])
+    self.assertEqual(event_log.data["file_name"], os.path.basename(file_path))
 
 
 NOT_CHECKED = object()
@@ -49,8 +52,9 @@ def assert_import_success_created(self, user, type, count=None, canteen=NOT_CHEC
     self.assertEqual(event_log.status, EventLog.Status.SUCCESS)
     self.assertEqual(event_log.user, user)
     self.assertEqual(event_log.name, type)
-    self.assertEqual(set(event_log.data.keys()), {"message", "count", "seconds"})
+    self.assertEqual(set(event_log.data.keys()), {"message", "count", "seconds", "file_name"})
     self.assertIsNone(event_log.data["message"])
+    self.assertTrue(event_log.data["file_name"])
     if count is not None:
         self.assertEqual(event_log.data["count"], count)
     if canteen is not NOT_CHECKED:

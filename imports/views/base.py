@@ -255,7 +255,12 @@ class BaseImportView(ABC, APIView):
             self.import_type,
             EventLog.Status.FAILURE,
             user=self.request.user,
-            data={"message": message, "count": None, "seconds": self._get_duration()},
+            data={
+                "message": message,
+                "count": None,
+                "seconds": self._get_duration(),
+                "file_name": self._get_file_name(),
+            },
         )
 
     def _log_success(self, response_data):
@@ -267,7 +272,12 @@ class BaseImportView(ABC, APIView):
             EventLog.Status.SUCCESS,
             user=self.request.user,
             canteen_id=next(iter(canteen_ids)) if len(canteen_ids) == 1 else None,
-            data={"message": None, "count": response_data.get("count"), "seconds": self._get_duration()},
+            data={
+                "message": None,
+                "count": response_data.get("count"),
+                "seconds": self._get_duration(),
+                "file_name": self._get_file_name(),
+            },
         )
 
     def _get_canteen_ids(self):
@@ -276,6 +286,10 @@ class BaseImportView(ABC, APIView):
         Override in subclasses.
         """
         return set()
+
+    def _get_file_name(self):
+        """Original name of the uploaded file (with its extension)"""
+        return self.file.name if self.file else None
 
     def _get_duration(self):
         return round(time.time() - self.start_time, 2)
