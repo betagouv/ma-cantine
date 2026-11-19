@@ -2503,3 +2503,25 @@ class DiagnosticModelDeleteTest(TestCase):
         self.user.delete()
         self.diagnostic.refresh_from_db()
         self.assertIsNone(self.diagnostic.applicant)
+
+
+class DiagnosticShouldUseCentralKitchenApproTest(TestCase):
+    def test_canteen_in_groupe(self):
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        DiagnosticFactory(
+            canteen=canteen_groupe,
+            year=2024,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+        )
+        for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL, Canteen.ProductionType.ON_SITE]:
+            with self.subTest(production_type=production_type):
+                canteen = CanteenFactory(production_type=production_type, groupe=canteen_groupe)
+                diagnostic = DiagnosticFactory(canteen=canteen, year=2024)
+                self.assertTrue(diagnostic._should_use_central_kitchen_appro())
+
+    def test_canteen_without_groupe(self):
+        for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL, Canteen.ProductionType.ON_SITE]:
+            with self.subTest(production_type=production_type):
+                canteen = CanteenFactory(production_type=production_type)
+                diagnostic = DiagnosticFactory(canteen=canteen, year=2024)
+                self.assertFalse(diagnostic._should_use_central_kitchen_appro())

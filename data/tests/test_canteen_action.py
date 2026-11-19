@@ -418,6 +418,32 @@ class CanteenActionTestCase(TestCase):
         )
 
     @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_groupe_site_relationship_diagnostic_mode_all_teledeclaration_actions(self):
+        # a site in a groupe has the same actions as a satellite
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_site_in_groupe = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, groupe=canteen_groupe)
+        canteen_groupe_diagnostic_2024 = DiagnosticFactory(
+            canteen=canteen_groupe,
+            year=2024,
+            central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
+        )
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(canteen_qs.get(id=canteen_groupe.id).action, Canteen.Actions.TELEDECLARE)
+        self.assertEqual(canteen_qs.get(id=canteen_site_in_groupe.id).action, Canteen.Actions.NOTHING_SATELLITE)
+
+        # groupe has diagnostic teledeclared
+        canteen_groupe_diagnostic_2024.teledeclare(applicant=canteen_groupe.managers.first())
+
+        canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
+
+        self.assertEqual(canteen_qs.get(id=canteen_groupe.id).action, Canteen.Actions.NOTHING)
+        self.assertEqual(
+            canteen_qs.get(id=canteen_site_in_groupe.id).action, Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED
+        )
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
     def test_groupe_satellite_relationship_diagnostic_mode_appro_teledeclaration_actions(self):
         # groupe with satellites and has diagnostic started
         canteen_groupe_diagnostic_2024 = DiagnosticFactory(
