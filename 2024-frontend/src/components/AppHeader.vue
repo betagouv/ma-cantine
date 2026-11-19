@@ -103,6 +103,10 @@ const navItems = computed(() => [
   },
 ])
 
+const logoSrc = computed(() =>
+  window.ENVIRONMENT !== "prod" ? "/static/images/ma-cantine-logo-demo.svg" : "/static/images/ma-cantine-logo-light.svg"
+)
+
 const navItemsForUser = computed(() => {
   return navItems.value.filter((parentItem) => {
     if (parentItem.authenticationState) return !!store.loggedUser
@@ -115,7 +119,7 @@ const navItemsForUser = computed(() => {
 <template>
   <DsfrHeader
     :logo-text
-    operatorImgSrc="/static/images/ma-cantine-logo-light.svg"
+    :operatorImgSrc="logoSrc"
     operatorImgAlt="ma cantine"
     operatorImgStyle="max-width: 15rem"
     :quickLinks
