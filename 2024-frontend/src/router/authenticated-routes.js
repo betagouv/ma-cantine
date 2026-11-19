@@ -72,7 +72,7 @@ const routes = [
     name: "GestionnaireCantineGroupeAjouter",
     component: GestionnaireCantineGroupeAjouter,
     meta: {
-      title: "Ajouter un groupe de restaurants satellites",
+      title: "Ajouter un groupe",
       breadcrumbs: [{ to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" }],
       siteMap: action,
     },
@@ -111,7 +111,7 @@ const routes = [
         name: "GestionnaireCantineGroupeModifier",
         component: GestionnaireCantineGroupeModifier,
         meta: {
-          title: "Modifier mon groupe de restaurants satellites",
+          title: "Modifier mon groupe",
           breadcrumbs: [
             { to: { name: "GestionnaireTableauDeBord" }, title: "Mon tableau de bord" },
             { to: { name: "GestionnaireCantine" }, useCanteenName: true },

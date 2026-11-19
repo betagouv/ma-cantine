@@ -17,7 +17,7 @@ const unlinkSatellite = () => {
       else {
         store.notify({
           title: "Retrait de la cantine effectué",
-          message: `La cantine « ${props.satellite.name} » ne fait plus partie de vos restaurants satellites.`,
+          message: `La cantine « ${props.satellite.name} » ne fait plus partie de votre groupe.`,
         })
         emit("satelliteRemoved")
       }
@@ -35,11 +35,11 @@ const unlinkSatellite = () => {
   <DsfrModal
     :opened="opened"
     class="canteen-button-unlink__modal fr-modal--opened"
-    :title="`Souhaitez-vous vraiment retirer «&nbsp;${satellite.name}&nbsp;» de vos restaurants satellites ?`"
+    :title="`Souhaitez-vous vraiment retirer «&nbsp;${satellite.name}&nbsp;» de votre groupe ?`"
     @close="emit('close')"
     :actions="[
       {
-        label: 'Je confirme le retrait du restaurant',
+        label: 'Je confirme le retrait de la cantine',
         onClick() {
           unlinkSatellite()
         },
@@ -55,7 +55,7 @@ const unlinkSatellite = () => {
   >
     <template #default>
       <p class="fr-mb-2w">
-        En confirmant cette demande « {{ satellite.name }} » ne fera plus partie des restaurants fournis par votre
+        En confirmant cette demande « {{ satellite.name }} » ne fera plus partie des cantines de votre
         groupe « {{ groupe.name }} » et donc :
       </p>
       <ul>

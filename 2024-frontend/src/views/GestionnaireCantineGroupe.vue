@@ -44,16 +44,16 @@ const satellitesCountSentence = computed(() => {
 })
 
 const getSatellitesPrettCount = (count) => {
-  if (count === 0) return "Aucun restaurant satellite"
-  else if (count === 1) return "1 restaurant satellite"
-  else return `${count} restaurants satellites`
+  if (count === 0) return "Aucune cantine"
+  else if (count === 1) return "1 cantine"
+  else return `${count} cantines`
 }
 
 const getSatellitesPrettyType = (count) => {
-  if (isSearching.value && count <= 1 ) return `trouvé pour la recherche « ${search.value} »`
-  if (isSearching.value && count > 1 ) return `trouvés pour la recherche « ${search.value} »`
-  if (!isSearching.value && count <= 1) return "renseigné"
-  if (!isSearching.value && count > 1) return "renseignés"
+  if (isSearching.value && count <= 1 ) return `trouvée pour la recherche « ${search.value} »`
+  if (isSearching.value && count > 1 ) return `trouvées pour la recherche « ${search.value} »`
+  if (!isSearching.value && count <= 1) return "renseignée"
+  if (!isSearching.value && count > 1) return "renseignées"
 }
 
 const showModalRemoveSatellite = (satellite) => {

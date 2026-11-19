@@ -8,7 +8,7 @@ const loading = ref(false)
 const error = ref(false)
 
 /* Add Satellite */
-const label = ref("Ajouter ce restaurant satellite à mon groupe")
+const label = ref("Ajouter la cantine à mon groupe")
 const addSatellite = () => {
   loading.value = true
   error.value = false

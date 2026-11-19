@@ -27,7 +27,7 @@ const links = [
   },
   {
     to: { name: "GestionnaireCantineGroupeAjouter" },
-    label: "Ajouter un groupe de restaurants satellites",
+    label: "Ajouter un groupe",
   },
   {
     to: { name: "GestionnaireImport" },
