@@ -1481,6 +1481,7 @@ class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
         self.assertEqual(diagnostic.satellites_nombre_repas_an_sum, 1500)
         self.assertEqual(diagnostic_validators.validate_satellites_nombre_repas_an_list(diagnostic), {})
         # the site's value is required
+        diagnostic.nombre_repas_an = 1000
         diagnostic.satellites_nombre_repas_an_list = [
             {"id": canteen_satellite.id, "nombre_repas_an": 1000},
             {"id": canteen_site.id, "nombre_repas_an": None},
