@@ -60,6 +60,39 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             2,
         )
 
+    def test_diagnostic_generated_for_site_in_groupe(self):
+        """
+        A site in a groupe is in the snapshot, so the script also generates its diagnostic.
+        """
+        groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[self.user])
+        satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=groupe)
+        site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, groupe=groupe)
+
+        with freeze_time("2026-03-30"):  # during the 2025 campaign
+            groupe_diagnostic = DiagnosticFactory(
+                canteen=groupe,
+                year=2025,
+                valeur_totale=10000,
+                valeur_bio=2000,
+            )
+            groupe_diagnostic.teledeclare(applicant=self.user)
+
+        self.assertEqual(
+            sorted(satellite_dict["id"] for satellite_dict in groupe_diagnostic.satellites_snapshot),
+            sorted([satellite.id, site.id]),
+        )
+
+        # Run the script
+        call_command("teledeclaration_generate_1td1site", year=2025, apply=True)
+
+        self.assertEqual(
+            Diagnostic.all_objects.in_year(2025)
+            .teledeclared()
+            .filter(generated_from_groupe_diagnostic=True, canteen=site)
+            .count(),
+            1,
+        )
+
     def test_when_script_run_again_delete_previous_generated_diagnostics(self):
         """
         Test that when the script is run again, it deletes the previous generated diagnostics and create one.

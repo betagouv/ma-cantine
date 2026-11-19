@@ -310,8 +310,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         if is_in_correction():
             conditions.append(
                 When(
-                    is_satellite_query()
-                    & Q(groupe_id__isnull=False)
+                    Q(groupe_id__isnull=False)
                     & Q(
                         has_diagnostic_teledeclared_for_year=False,
                         diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
@@ -332,8 +331,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         # anytime of the year
         conditions.append(
             When(
-                is_satellite_query()
-                & Q(groupe_id__isnull=False)
+                Q(groupe_id__isnull=False)
                 & is_filled_query()
                 & is_clean_query()
                 & Q(
@@ -345,8 +343,7 @@ class CanteenQuerySet(SoftDeletionQuerySet):
         )
         conditions.append(
             When(
-                is_satellite_query()
-                & Q(groupe_id__isnull=False)
+                Q(groupe_id__isnull=False)
                 & Q(
                     diagnostic_for_year_cc_mode=Diagnostic.CentralKitchenDiagnosticMode.ALL,
                     has_diagnostic_teledeclared_for_year=True,

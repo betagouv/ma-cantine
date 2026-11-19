@@ -1179,18 +1179,18 @@ class Diagnostic(
             return None
 
     def _should_use_central_kitchen_appro(self):
-        if self.canteen.is_satellite:
-            if self.canteen.groupe_id:
-                try:
-                    groupe = self.canteen.groupe
-                    existing_diagnostic = groupe.diagnostics.get(year=self.year)
-                    handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
-                        Diagnostic.CentralKitchenDiagnosticMode.APPRO,
-                        Diagnostic.CentralKitchenDiagnosticMode.ALL,
-                    ]
-                    return groupe.is_groupe and handles_satellite_data
-                except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned, Diagnostic.DoesNotExist):
-                    pass
+        # canteen in a groupe (satellite or site)
+        if self.canteen.groupe_id:
+            try:
+                groupe = self.canteen.groupe
+                existing_diagnostic = groupe.diagnostics.get(year=self.year)
+                handles_satellite_data = existing_diagnostic.central_kitchen_diagnostic_mode in [
+                    Diagnostic.CentralKitchenDiagnosticMode.APPRO,
+                    Diagnostic.CentralKitchenDiagnosticMode.ALL,
+                ]
+                return groupe.is_groupe and handles_satellite_data
+            except (Canteen.DoesNotExist, Canteen.MultipleObjectsReturned, Diagnostic.DoesNotExist):
+                pass
         return False
 
     def _get_teledeclaration_mode(self):
