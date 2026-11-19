@@ -33,7 +33,7 @@ class PartnersPagination(LimitOffsetPagination):
             for type_list in published_partners.values_list("type_list", flat=True)
             for partner_type in type_list
         }
-        self.types = [partner_type.label for partner_type in PartnerType if partner_type in type_list_in_use]
+        self.types = [partner_type.value for partner_type in PartnerType if partner_type in type_list_in_use]
         self.departments = []
         departments = published_partners.values_list("departments", flat=True).distinct()
         for depList in departments:
@@ -80,11 +80,9 @@ class PartnersView(ListCreateAPIView):
     def get_queryset(self):
         queryset = Partner.objects.filter(published=True)
 
-        # the filter is on the labels (the ones returned in the pagination "types")
         types = self.request.query_params.getlist("type", [])
         if types:
-            type_list = [partner_type.value for partner_type in PartnerType if partner_type.label in types]
-            queryset = queryset.filter(type_list__overlap=type_list)
+            queryset = queryset.filter(type_list__overlap=types)
         categories = self.request.query_params.getlist("category", [])
         if categories:
             queryset = queryset.filter(categories__overlap=categories)

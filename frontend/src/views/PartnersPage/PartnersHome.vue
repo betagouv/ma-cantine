@@ -360,7 +360,6 @@ export default {
       // Need to create a deep copy to avoid modifying the array elsewhere in the app
       departmentItems: JSON.parse(JSON.stringify(departmentItems)),
       sectorCategories: [],
-      typeItems: [],
       gratuityOptions: [
         {
           value: "free",
@@ -383,6 +382,11 @@ export default {
     },
     offset() {
       return (this.page - 1) * this.limit
+    },
+    typeItems() {
+      return this.$store.state.partnerTypes
+        .filter((partnerType) => this.types.includes(partnerType.id))
+        .map((partnerType) => ({ value: partnerType.id, text: partnerType.name }))
     },
     query() {
       let query = {}
@@ -420,7 +424,7 @@ export default {
         .then((response) => {
           this.partnerCount = response.count
           this.visiblePartners = response.results
-          this.typeItems = response.types
+          this.types = response.types
           this.setDepartments(response.departments)
           this.setSectorCategories(response.sectorCategories)
         })
