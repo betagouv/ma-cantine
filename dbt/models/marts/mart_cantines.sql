@@ -45,6 +45,7 @@ cantines as (
         declaration_donnees_2025,
         is_petite_structure,
         has_manager,
+        manager_count,
         manager_emails,
         creation_date,
         modification_date,
@@ -115,6 +116,7 @@ select
     -- vérifie que la présence d'un gestionnaire, malgré la description du schéma data.gouv.
     has_manager                                         as active_sur_ma_cantine,
 
+    manager_count                                       as nb_gestionnaires,
     manager_emails                                      as adresses_gestionnaires,
     creation_date::timestamp                            as date_creation,
     modification_date::date                             as date_modification,

@@ -136,6 +136,12 @@ models:
           Vrai si la cantine a au moins un gestionnaire. = `active_on_ma_cantine` dans le RNC
           (api/serializers/canteen.py:802) : le code ne vérifie que la présence d'un gestionnaire,
           malgré la description du schéma data.gouv.
+      - name: nb_gestionnaires
+        description: >
+          Nombre de gestionnaires de la cantine (0 sans gestionnaire), comptes de l'équipe ma cantine
+          compris, comme `adresses_gestionnaires`. Absent du RNC.
+        tests:
+          - not_null
       - name: adresses_gestionnaires
         description: Emails des gestionnaires, séparés par `, `. Absent du RNC (donnée personnelle).
       - name: date_creation
