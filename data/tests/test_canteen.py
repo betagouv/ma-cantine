@@ -371,11 +371,8 @@ class CanteenModelSaveTest(TransactionTestCase):
         canteen_groupe_deleted.delete()
         canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
 
-        # not a satellite: must be empty
-        for production_type in [
-            Canteen.ProductionType.GROUPE,
-            Canteen.ProductionType.ON_SITE,
-        ]:
+        # not a satellite or a site: must be empty
+        for production_type in [Canteen.ProductionType.GROUPE]:
             for TUPLE_OK in [(None, None)]:
                 with self.subTest(groupe=TUPLE_OK[0]):
                     canteen = CanteenFactory(production_type=production_type, groupe=TUPLE_OK[0])
@@ -383,8 +380,8 @@ class CanteenModelSaveTest(TransactionTestCase):
             for VALUE_NOT_OK in [canteen_groupe.id, canteen_groupe_deleted.id, canteen_site.id, 9999, "", "invalid"]:
                 with self.subTest(groupe=VALUE_NOT_OK):
                     self.assertRaises(ValueError, CanteenFactory, production_type=production_type, groupe=VALUE_NOT_OK)
-        # satellite: can be filled
-        for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL]:
+        # satellite or site: can be filled
+        for production_type in [Canteen.ProductionType.ON_SITE_CENTRAL, Canteen.ProductionType.ON_SITE]:
             for TUPLE_OK in [(None, None), (canteen_groupe, canteen_groupe)]:
                 with self.subTest(groupe=TUPLE_OK[0]):
                     canteen = CanteenFactory(production_type=production_type, groupe=TUPLE_OK[0])

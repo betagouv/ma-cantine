@@ -63,9 +63,9 @@ class CanteenGroupeSatelliteLinkView(APIView):
             canteen_satellite = Canteen.objects.get(pk=satellite_pk)
         except Canteen.DoesNotExist:
             return JsonResponse({"error": "Invalid canteen id"}, status=status.HTTP_404_NOT_FOUND)
-        if not canteen_satellite.is_satellite:
+        if not canteen_satellite.can_be_in_groupe:
             return JsonResponse(
-                {"error": "Only satellites can be linked to a groupe."},
+                {"error": "Only satellites and sites can be linked to a groupe."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         if canteen_satellite.groupe_id:
