@@ -6,8 +6,8 @@ from django.utils.translation import gettext_lazy as _
 
 from common.utils.images import optimize_image
 from data.fields import ChoiceArrayField
-from data.models.partnertype import PartnerType, PartnerTypeM2M, get_partner_type_lib_list_from_type_list
-from data.models.sector import SectorM2M, SectorCategory
+from data.models.partnertype import PartnerType, get_partner_type_lib_list_from_type_list
+from data.models.sector import SectorCategory
 from data.models.geo import Department
 
 
@@ -38,7 +38,6 @@ class Partner(models.Model):
     image = models.ImageField(null=True, blank=True, verbose_name="Photo / image")
     website = models.URLField(blank=True, null=True, verbose_name="Site web")
 
-    types = models.ManyToManyField(PartnerTypeM2M, blank=True, verbose_name="types d'acteur")
     type_list = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=PartnerType.choices),
         blank=True,
@@ -66,7 +65,6 @@ class Partner(models.Model):
         null=True,
         verbose_name="Le partenaire est présent dans tout le territoire national (tous les departements)",
     )
-    sectors_m2m = models.ManyToManyField(SectorM2M, blank=True, verbose_name="secteurs d'activité")
     sector_categories = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=SectorCategory.choices),
         blank=True,
