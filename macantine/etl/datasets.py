@@ -7,7 +7,16 @@ import time
 
 from oauth2_provider.models import get_access_token_model, get_application_model, get_refresh_token_model
 
-from data.models import Canteen, Diagnostic, EventLog, Oauth2ProviderApplicationExtra, Purchase, User, WasteMeasurement
+from data.models import (
+    Canteen,
+    Diagnostic,
+    EventLog,
+    Oauth2ProviderApplicationExtra,
+    Partner,
+    Purchase,
+    User,
+    WasteMeasurement,
+)
 
 from .analysis import ETL_ANALYSIS_RAW
 from .open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
@@ -42,6 +51,12 @@ def get_raw_analysis_datasets():
         ),
         "waste_measurements_raw_analysis": ETL_ANALYSIS_RAW("waste_measurements_raw", WasteMeasurement.objects.all()),
         "event_logs_raw_analysis": ETL_ANALYSIS_RAW("event_logs_raw", EventLog.objects.all()),
+        # partners: never export the contact details (of the person who submitted the partner)
+        "partners_raw_analysis": ETL_ANALYSIS_RAW(
+            "partners_raw",
+            Partner.objects.all(),
+            exclude_columns=["contact_name", "contact_email", "contact_message", "contact_phone_number"],
+        ),
         # OAuth2 (API): never export secrets & tokens
         "oauth2_applications_raw_analysis": ETL_ANALYSIS_RAW(
             "oauth2_applications_raw", get_application_model().objects.all(), exclude_columns=["client_secret"]

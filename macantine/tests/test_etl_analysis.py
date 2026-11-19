@@ -7,10 +7,11 @@ from data.factories import (
     ApplicationFactory,
     CanteenFactory,
     EventLogFactory,
+    PartnerFactory,
     RefreshTokenFactory,
     UserFactory,
 )
-from data.models import Canteen, EventLog, Sector, User
+from data.models import Canteen, EventLog, PartnerType, Sector, User
 from macantine.etl.analysis import ETL_ANALYSIS_RAW
 from macantine.etl.data_ware_house import copy_into_table, get_column_types
 from macantine.etl.datasets import get_raw_analysis_datasets
@@ -118,6 +119,26 @@ class RawETLAnalysisTest(TestCase):
         )
         with connection.cursor() as cursor:
             self.assertEqual(get_column_types(cursor, "test_event_logs_raw")["data"], "jsonb")
+
+    def test_copy_partners_without_contact_details(self):
+        PartnerFactory(
+            type_list=[PartnerType.LOGICIEL],
+            contact_name="Contact Name",
+            contact_email="contact@example.com",
+            contact_message="Contact message",
+            contact_phone_number="0102030405",
+        )
+
+        etl = get_raw_analysis_datasets()["partners_raw_analysis"]
+        etl.dataset_name = "test_partners_raw"
+        self.run_etl(etl)
+
+        self.assertEqual(fetch_all('SELECT type_list FROM "test_partners_raw"'), [('["logiciel"]',)])
+        with connection.cursor() as cursor:
+            column_types = get_column_types(cursor, "test_partners_raw")
+        self.assertEqual(column_types["type_list"], "jsonb")
+        for column in ["contact_name", "contact_email", "contact_message", "contact_phone_number"]:
+            self.assertNotIn(column, column_types)
 
 
 class OAuth2RawETLAnalysisTest(TestCase):
