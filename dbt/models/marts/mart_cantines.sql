@@ -78,6 +78,7 @@ select
     -- (= `sector_list` dans le RNC ; `categories` = catégories de tous les secteurs)
     {{ libelles_secteurs('sector_list') }}              as secteurs,
     {{ libelles_categories('sector_list') }}            as categories,
+    coalesce(jsonb_array_length(sector_list::jsonb), 0) as nb_secteurs,
 
     city_insee_code                                     as code_insee_commune,
     city                                                as libelle_commune,

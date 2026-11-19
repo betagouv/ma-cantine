@@ -85,6 +85,12 @@ models:
           l'ordre de première apparition (macro `libelles_categories`). Même résultat que
           `get_category_lib_list_from_sector_list` dans l'application. Remplace l'ancienne
           colonne `categorie` (catégorie du premier secteur seulement).
+      - name: nb_secteurs
+        description: >
+          Nombre de secteurs d'activité de la cantine (0 sans secteur), codes de `sector_list`
+          compris s'ils sont absents du référentiel (et donc de `secteurs`). Absent du RNC.
+        tests:
+          - not_null
       - name: code_insee_commune
         description: Code INSEE de la commune. = `city_insee_code` dans le RNC.
       - name: libelle_commune
