@@ -5,7 +5,8 @@ from django_otp.oath import totp
 from django_otp.plugins.otp_static.models import StaticDevice, StaticToken
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
-from data.factories import UserFactory
+from data.factories import PartnerFactory, UserFactory
+from data.models import PartnerType
 
 User = get_user_model()
 
@@ -258,6 +259,31 @@ class MaCantineAdminSiteCustomUrlsTest(TestCase):
     def test_custom_urls_registered_canteen(self):
         response = self.client.get("/admin/data/canteen-canteen-economic-model-textchoices/")
         self.assertEqual(response.status_code, 200)
+
+    def test_custom_urls_registered_partnertype(self):
+        PartnerFactory(type_list=[PartnerType.LOGICIEL, PartnerType.AUTRE])
+        PartnerFactory(type_list=[PartnerType.LOGICIEL])
+
+        response = self.client.get("/admin/data/partnertype-textchoices/")
+
+        self.assertEqual(response.status_code, 200)
+        rows = {row["value"]: row for row in response.context["rows"]}
+        self.assertEqual(len(rows), len(PartnerType))
+        self.assertEqual(rows[PartnerType.LOGICIEL]["partner_count"], 2)
+        self.assertEqual(rows[PartnerType.AUTRE]["partner_count"], 1)
+        self.assertEqual(rows[PartnerType.RESEAU]["partner_count"], 0)
+
+    def test_partner_changelist_filtered_by_type_list(self):
+        PartnerFactory(name="Logiciel", type_list=[PartnerType.LOGICIEL])
+        PartnerFactory(name="Autre", type_list=[PartnerType.AUTRE])
+        # user needs to be superuser to see the partner changelist
+        self.staff_not_superuser.is_superuser = True
+        self.staff_not_superuser.save()
+
+        response = self.client.get(reverse("admin:data_partner_changelist"), {"type_list": PartnerType.LOGICIEL})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual([partner.name for partner in response.context["cl"].result_list], ["Logiciel"])
 
     def test_synthetic_data_models_in_app_list(self):
         # user needs to be superuser to see synthetic models in app list
