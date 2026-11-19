@@ -53,11 +53,11 @@ const allCanteens = computedAsync(async () => {
   const allCanteens = await canteenService.fetchCanteensActions(lastYear)
   const canteensGroup = allCanteens.filter((canteen) => canteen.productionType === "groupe").map((canteen) => canteen.id)
   const canteensSatFiltered = allCanteens.filter((canteen) => {
-    const inMyGroup = canteen.productionType === "site_cooked_elsewhere" && canteensGroup.includes(canteen.groupe)
+    const inMyGroup = canteensGroup.includes(canteen.groupe) // satellite or site
     return inMyGroup ? false : true
   })
   isLoading.value = false
-  return canteensSatFiltered  // Always hide satellites on this page
+  return canteensSatFiltered  // Always hide the canteens of my groupes on this page
 }, [])
 
 const canteensGroup = computed(() => {
