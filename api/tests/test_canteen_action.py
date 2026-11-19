@@ -4,6 +4,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from data.factories import CanteenFactory
+from data.models import Sector
 
 
 class CanteenActionListApiTest(APITestCase):
@@ -32,7 +33,7 @@ class CanteenActionListApiTest(APITestCase):
 class CanteenActionDetailApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.canteen = CanteenFactory()
+        cls.canteen = CanteenFactory(sector_list=[Sector.EDUCATION_PRIMAIRE])
         cls.url = reverse("retrieve_actionable_canteen", kwargs={"pk": cls.canteen.id, "year": 2021})
 
     def test_cannot_retrieve_actionable_canteen_if_unauthenticated(self):
@@ -55,6 +56,8 @@ class CanteenActionDetailApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         body = response.json()
         self.assertTrue("action" in body)
+        self.assertEqual(body["sectorList"], [Sector.EDUCATION_PRIMAIRE])
+        self.assertNotIn("sectors", body)
 
 
 class UserCanteenActionListApiTest(APITestCase):

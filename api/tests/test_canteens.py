@@ -162,6 +162,20 @@ class CanteenListPreviewApiTest(APITestCase):
         self.assertEqual(body[0]["id"], canteen.id)
 
 
+class CanteenListSummaryApiTest(APITestCase):
+    @authenticate
+    def test_can_get_canteens_summaries(self):
+        CanteenFactory(managers=[authenticate.user], sector_list=[Sector.SANTE_HOPITAL, Sector.SOCIAL_EHPAD])
+        CanteenFactory()
+
+        response = self.client.get(reverse("user_canteens_summaries"))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(len(body["results"]), 1)
+        self.assertEqual(body["results"][0]["sectorList"], [Sector.SANTE_HOPITAL, Sector.SOCIAL_EHPAD])
+
+
 class CanteenDetailApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):

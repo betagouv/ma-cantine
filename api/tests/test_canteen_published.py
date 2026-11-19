@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, DiagnosticFactory, SectorM2MFactory, TeledeclarationFactory, UserFactory
+from data.factories import CanteenFactory, DiagnosticFactory, TeledeclarationFactory, UserFactory
 from data.models import Canteen, CanteenImage, Diagnostic, Sector, Teledeclaration
 from data.models.geo import Region
 
@@ -591,76 +591,6 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertEqual(len(body.get("departments")), 2)
         self.assertIn("75", body.get("departments"))
         self.assertIn("69", body.get("departments"))
-
-    def test_legacy_pagination_sectors(self):
-        """
-        The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
-        """
-        school = SectorM2MFactory(name="School")
-        enterprise = SectorM2MFactory(name="Enterprise")
-        administration = SectorM2MFactory(name="Administration")
-        # unused sectors shouldn't show up as an option
-        SectorM2MFactory(name="Unused")
-        CanteenFactory(sectors_m2m=[school, enterprise], name="Shiso")
-        CanteenFactory(sectors_m2m=[school], name="Wasabi")
-        CanteenFactory(sectors_m2m=[school], name="Mochi")
-        CanteenFactory(sectors_m2m=[administration], name="Umami")
-
-        url = f"{reverse('published_canteens')}"
-        response = self.client.get(url)
-        body = response.json()
-
-        self.assertEqual(len(body.get("sectors")), 3)
-        self.assertIn(school.id, body.get("sectors"))
-        self.assertIn(enterprise.id, body.get("sectors"))
-        self.assertIn(administration.id, body.get("sectors"))
-
-        url = f"{reverse('published_canteens')}?sectors={enterprise.id}"
-        response = self.client.get(url)
-        body = response.json()
-
-        self.assertEqual(len(body.get("sectors")), 3)
-        self.assertIn(school.id, body.get("sectors"))
-        self.assertIn(enterprise.id, body.get("sectors"))
-        self.assertIn(administration.id, body.get("sectors"))
-
-    def test_pagination_sectors(self):
-        """
-        The pagination endpoint should return all sectors that are used by canteens, even when the data is filtered by another sector
-        It should not return sectors from hidden canteens
-        """
-        school = SectorM2MFactory(name="School")
-        enterprise = SectorM2MFactory(name="Enterprise")
-        administration = SectorM2MFactory(name="Administration")
-        # unused sectors shouldn't show up as an option
-        unused = SectorM2MFactory(name="Unused")
-        CanteenFactory(sectors_m2m=[school, enterprise], name="Shiso")
-        CanteenFactory(sectors_m2m=[school, administration], name="Umami")
-        CanteenFactory(
-            line_ministry=Canteen.Ministries.ARMEE,
-            sectors_m2m=[unused],
-            sector_list=[Sector.ADMINISTRATION_PRISON],
-            name="Secret",
-            economic_model=Canteen.EconomicModel.PUBLIC,
-        )
-
-        url = f"{reverse('published_canteens')}"
-        response = self.client.get(url)
-        body = response.json()
-
-        self.assertEqual(len(body.get("sectors")), 3)
-        self.assertIn(school.id, body.get("sectors"))
-        self.assertIn(enterprise.id, body.get("sectors"))
-        self.assertIn(administration.id, body.get("sectors"))
-
-        url = f"{reverse('published_canteens')}?sectors={enterprise.id}"
-        response = self.client.get(url)
-        body = response.json()
-
-        self.assertEqual(len(body.get("sectors")), 3)
-        self.assertIn(school.id, body.get("sectors"))
-        self.assertIn(enterprise.id, body.get("sectors"))
-        self.assertIn(administration.id, body.get("sectors"))
 
     def test_pagination_management_types(self):
         CanteenFactory(management_type="conceded", name="Shiso")
