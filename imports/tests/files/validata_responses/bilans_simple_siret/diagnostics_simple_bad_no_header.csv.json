@@ -1,0 +1,59 @@
+{
+  "key": {
+    "file_sha256": "7817550abc5aa108c967e0ecd9aaef9e55dfeb2a1f27869f1522256a9cdf9c0f",
+    "schema": "bilans_simple_siret.json",
+    "schema_sha256": "0d95ce426faece73aace245bc0c038eca9341fe3aee5a206f5e0b7528a664026"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [
+        {
+          "message": "Les en-têtes doivent être uniques",
+          "tags": [],
+          "title": "En-têtes dupliquées",
+          "type": "duplicate-label"
+        }
+      ],
+      "stats": {
+        "errors": 1,
+        "fields": 0,
+        "rows": 0,
+        "rows_processed": -1,
+        "warnings": 0
+      },
+      "valid": false,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "21340172201787",
+        "A canteen",
+        "",
+        "17000",
+        "42126486200010",
+        "700",
+        "14000",
+        "Secondaire collège",
+        "site",
+        "conceded",
+        "public",
+        "",
+        "2020",
+        "1000",
+        "500",
+        "100.1",
+        "0",
+        "0",
+        "0",
+        "0",
+        "0"
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

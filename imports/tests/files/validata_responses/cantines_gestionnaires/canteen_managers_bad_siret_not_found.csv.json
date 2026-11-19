@@ -1,0 +1,39 @@
+{
+  "key": {
+    "file_sha256": "071d6c38035078223e89decfb8ac3f8b199f802888693cb1e70429aa2cd26b94",
+    "schema": "cantines_gestionnaires.json",
+    "schema_sha256": "58a7596fe11f2fb85e193950107980bdcf507825fd2c22471e35361bcb84c17f"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [],
+      "stats": {
+        "errors": 0,
+        "fields": 3,
+        "rows": 1,
+        "rows_processed": 1,
+        "warnings": 0
+      },
+      "valid": true,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "siret",
+        "gestionnaires_additionnels",
+        "source_donnees"
+      ],
+      [
+        "99999999999999",
+        "manager1@example.com,manager2@example.com",
+        "test_import"
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

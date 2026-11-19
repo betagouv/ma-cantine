@@ -1,0 +1,63 @@
+{
+  "key": {
+    "file_sha256": "a77f88c91b4c2ebeb3da8070fe705ab4cbebee136c2a0ee5c0c4442697d5d63c",
+    "schema": "cantines_modifier.json",
+    "schema_sha256": "5274e62738734089a7824ec49bb973a0e51259d3eb5794455b36f0784ce343e2"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [],
+      "stats": {
+        "errors": 0,
+        "fields": 15,
+        "rows": 1,
+        "rows_processed": 1,
+        "warnings": 0
+      },
+      "valid": true,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "cantine_id",
+        "siret",
+        "siren_unite_legale",
+        "nom",
+        "code_insee",
+        "siret_cuisine_centrale",
+        "nombre_repas_jour",
+        "nombre_repas_an",
+        "secteurs",
+        "type_production",
+        "type_gestion",
+        "modèle_économique",
+        "groupe_id",
+        "administration_tutelle",
+        "gestionnaires_additionnels"
+      ],
+      [
+        "9999999991",
+        "21340172201787",
+        "",
+        "Test Satellite",
+        "",
+        "",
+        "100",
+        "10000",
+        "Crèche",
+        "Restaurant satellite",
+        "Directe",
+        "Public",
+        "9999999992",
+        "",
+        ""
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

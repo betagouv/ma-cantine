@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
+from imports.tests.validata_replay import ValidataReplayMixin
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Sector
 from imports.models import ImportType
@@ -15,7 +16,7 @@ from data.models.creation_source import CreationSource
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class CanteensImportApiErrorTest(APITestCase):
+class CanteensImportApiErrorTest(ValidataReplayMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse("canteens_create_import")
@@ -301,7 +302,7 @@ class CanteensImportApiErrorTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
+class CanteensCreateImportApiGroupeTeledeclarationTest(ValidataReplayMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.groupe_canteen = CanteenFactory(id=9999999992, production_type=Canteen.ProductionType.GROUPE)
@@ -386,7 +387,7 @@ class CanteensCreateImportApiGroupeTeledeclarationTest(APITestCase):
 
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
-class CanteensImportApiSuccessTest(APITestCase):
+class CanteensImportApiSuccessTest(ValidataReplayMixin, APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.url = reverse("canteens_create_import")

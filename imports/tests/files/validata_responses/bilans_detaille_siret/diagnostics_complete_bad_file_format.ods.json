@@ -1,0 +1,19 @@
+{
+  "key": {
+    "file_sha256": "e6fa0c177c56399f7dcc435d9d0fd83022ca9a820bb41ed784dd9cd366251155",
+    "schema": "bilans_detaille_siret.json",
+    "schema_sha256": "2be187628ef1d0a36b716671efaafb097d048b33c9a36a2292435d6edccb0da3"
+  },
+  "response": {
+    "error": {
+      "message": "Please install \"frictionless[ods]\"",
+      "type": "source-error"
+    },
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "url": null,
+    "version": "0.12.5"
+  }
+}

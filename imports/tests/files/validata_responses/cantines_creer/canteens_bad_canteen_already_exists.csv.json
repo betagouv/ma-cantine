@@ -1,0 +1,57 @@
+{
+  "key": {
+    "file_sha256": "5fb8a304a5c995131ccd13883c1ab8ff29ff194028481aa6f103a8a62885a016",
+    "schema": "cantines_creer.json",
+    "schema_sha256": "14baa550fe10cafc836893f7f4da081057c2658b0657d2fed220f2fad7cd1057"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [],
+      "stats": {
+        "errors": 0,
+        "fields": 12,
+        "rows": 1,
+        "rows_processed": 1,
+        "warnings": 0
+      },
+      "valid": true,
+      "warnings": []
+    },
+    "resource_data": [
+      [
+        "siret",
+        "nom",
+        "siret_cuisine_centrale",
+        "nombre_repas_jour",
+        "nombre_repas_an",
+        "secteurs",
+        "type_production",
+        "type_gestion",
+        "modèle_économique",
+        "groupe_id",
+        "administration_tutelle",
+        "gestionnaires_additionnels"
+      ],
+      [
+        "21340172201787",
+        "A canteen",
+        "",
+        "700",
+        "14000",
+        "Cliniques,Hôpitaux",
+        "Restaurant avec cuisine sur place",
+        "Concédée",
+        "Public",
+        "",
+        "",
+        ""
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}

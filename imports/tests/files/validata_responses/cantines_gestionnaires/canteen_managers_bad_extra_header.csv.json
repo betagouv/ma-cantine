@@ -1,0 +1,46 @@
+{
+  "key": {
+    "file_sha256": "6b9af18b328a13c3a2ceec3bdb6b5e9a84b26df8c13b03c5ccf50a1acf1baeea",
+    "schema": "cantines_gestionnaires.json",
+    "schema_sha256": "58a7596fe11f2fb85e193950107980bdcf507825fd2c22471e35361bcb84c17f"
+  },
+  "response": {
+    "options": {
+      "ignore_header_case": "True",
+      "include_resource_data": "True"
+    },
+    "report": {
+      "errors": [],
+      "stats": {
+        "errors": 0,
+        "fields": 5,
+        "rows": 1,
+        "rows_processed": 1,
+        "warnings": 2
+      },
+      "valid": true,
+      "warnings": [
+        "Colonne surnuméraire : Retirez la colonne `extra_column1` non définie dans le schéma.",
+        "Colonne surnuméraire : Retirez la colonne `extra_column2` non définie dans le schéma."
+      ]
+    },
+    "resource_data": [
+      [
+        "siret",
+        "gestionnaires_additionnels",
+        "source_donnees",
+        "extra_column1",
+        "extra_column2"
+      ],
+      [
+        "21340172201787",
+        "manager1@example.com,manager2@example.com",
+        "test_import",
+        "extra1",
+        "extra2"
+      ]
+    ],
+    "url": null,
+    "version": "0.12.5"
+  }
+}
