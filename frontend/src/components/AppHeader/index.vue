@@ -20,7 +20,7 @@
           aria-label="ma cantine (aller à l'accueil) - République Française"
         >
           <img src="/static/images/Marianne-Republique-Francaise.svg" height="100" alt="" />
-          <img src="/static/images/ma-cantine-logo-light.svg" height="65" alt="" />
+          <img :src="logoSrc" height="65" alt="" />
         </router-link>
       </v-toolbar-title>
 
@@ -206,6 +206,10 @@ export default {
   data() {
     return {
       dashboardEnabled: window.ENABLE_DASHBOARD,
+      logoSrc:
+        window.ENVIRONMENT !== "prod"
+          ? "/static/images/ma-cantine-logo-demo.svg"
+          : "/static/images/ma-cantine-logo-light.svg",
       overlayMenu: false,
       navLinks: [
         {

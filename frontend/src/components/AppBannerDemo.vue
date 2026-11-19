@@ -6,11 +6,21 @@
           <p class="mb-0">
             <v-icon class="fr-notice__icon mr-2 mb-1">mdi-information</v-icon>
             <span class="fr-notice__title">
-              Environnement de démonstration : toutes les actions sont sans conséquence.
+              ATTENTION : Plateforme de test et de démonstration.
             </span>
             <span class="fr-notice__desc">
-              Le comportement est figé sur la période de télédéclaration (possibilité de créer un bilan de l'année n-1
-              et de le télédéclarer/corriger jusqu'à la fin de l'année n)
+              Pour toute action officielle, rendez-vous sur la
+              <a
+                class="fr-notice__link"
+                href="https://ma-cantine.agriculture.gouv.fr/"
+                target="_blank"
+                rel="noopener"
+                title="plateforme ma cantine - nouvelle fenêtre"
+              >
+                plateforme ma cantine
+                <v-icon small color="#b34000">mdi-open-in-new</v-icon></a
+              >. Toutes les actions sont sans conséquence. Le comportement est figé sur la période de télédéclaration
+              (possibilité de créer un bilan de l'année n-1 et de le télédéclarer / corriger jusqu'à la fin de l'année n)
             </span>
           </p>
         </div>
@@ -65,6 +75,10 @@ export default {
     flex-direction: row;
     justify-content: space-between;
     position: relative;
+  }
+
+  &__link {
+    color: inherit;
   }
 
   &__title {
