@@ -641,6 +641,14 @@ models:
         description: Schéma Validata cité dans le message d'échec, le cas échéant.
       - name: message
         description: Détail de l'échec, vide pour un import réussi.
+      - name: fichier_nom
+        description: >
+          Nom du fichier importé (avec son extension), tel qu'envoyé par l'utilisateur.
+          Vide pour les imports antérieurs à 11/2026 (non repris).
+      - name: fichier_extension
+        description: >
+          Extension du fichier importé, en minuscules (csv, tsv, xlsx…). Vide si le nom n'a pas
+          d'extension ou pour les imports antérieurs à 11/2026.
       - name: nb_lignes
         description: Nombre de lignes importées.
       - name: duree_secondes

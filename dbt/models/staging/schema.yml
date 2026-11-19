@@ -99,6 +99,10 @@ models:
         description: >
           Requested path. For a creation (POST on a collection route), it does not contain
           the id of the created object.
+      - name: file_name
+        description: >
+          IMPORT only: name of the imported file (with its extension), as uploaded by the user;
+          empty for the imports before 2026-11 (not backfilled).
       - name: command_trigger
         description: >
           COMMAND only: cron (scheduled run, clevercloud/cron.json) or manual;
