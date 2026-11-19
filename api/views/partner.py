@@ -14,7 +14,7 @@ from api.serializers import (
     PartnerSerializer,
     PartnerShortSerializer,
 )
-from data.models import Partner
+from data.models import Partner, PartnerType
 
 logger = logging.getLogger(__name__)
 
@@ -28,8 +28,12 @@ class PartnersPagination(LimitOffsetPagination):
 
     def paginate_queryset(self, queryset, request, view=None):
         published_partners = Partner.objects.filter(published=True)
-        self.types = published_partners.values_list("types__name", flat=True).distinct()
-        self.types = [t for t in self.types if t is not None]
+        type_list_in_use = {
+            partner_type
+            for type_list in published_partners.values_list("type_list", flat=True)
+            for partner_type in type_list
+        }
+        self.types = [partner_type.label for partner_type in PartnerType if partner_type in type_list_in_use]
         self.departments = []
         departments = published_partners.values_list("departments", flat=True).distinct()
         for depList in departments:
@@ -76,9 +80,11 @@ class PartnersView(ListCreateAPIView):
     def get_queryset(self):
         queryset = Partner.objects.filter(published=True)
 
+        # the filter is on the labels (the ones returned in the pagination "types")
         types = self.request.query_params.getlist("type", [])
         if types:
-            queryset = queryset.filter(types__name__in=types)
+            type_list = [partner_type.value for partner_type in PartnerType if partner_type.label in types]
+            queryset = queryset.filter(type_list__overlap=type_list)
         categories = self.request.query_params.getlist("category", [])
         if categories:
             queryset = queryset.filter(categories__overlap=categories)

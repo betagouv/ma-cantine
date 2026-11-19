@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from common.utils.images import optimize_image
 from data.fields import ChoiceArrayField
-from data.models.partnertype import PartnerType
+from data.models.partnertype import PartnerType, PartnerTypeM2M, get_partner_type_lib_list_from_type_list
 from data.models.sector import SectorM2M, SectorCategory
 from data.models.geo import Department
 
@@ -38,7 +38,14 @@ class Partner(models.Model):
     image = models.ImageField(null=True, blank=True, verbose_name="Photo / image")
     website = models.URLField(blank=True, null=True, verbose_name="Site web")
 
-    types = models.ManyToManyField(PartnerType, blank=True, verbose_name="types d'acteur")
+    types = models.ManyToManyField(PartnerTypeM2M, blank=True, verbose_name="types d'acteur")
+    type_list = ChoiceArrayField(
+        base_field=models.CharField(max_length=255, choices=PartnerType.choices),
+        blank=True,
+        default=list,
+        size=None,
+        verbose_name="types d'acteur",
+    )
     categories = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=PartnerCategory.choices),
         blank=True,
@@ -98,6 +105,10 @@ class Partner(models.Model):
 
     def __str__(self):
         return f'Partenaire "{self.name}"'
+
+    @property
+    def type_lib_list(self):
+        return get_partner_type_lib_list_from_type_list(self.type_list)
 
     def save(self, **kwargs):
         max_image_size = 1600

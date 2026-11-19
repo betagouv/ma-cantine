@@ -7,8 +7,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
-from data.factories import CanteenFactory, CommunityEventFactory, PartnerTypeFactory, VideoTutorialFactory
-from data.models import Canteen
+from data.factories import CanteenFactory, CommunityEventFactory, VideoTutorialFactory
+from data.models import Canteen, PartnerType
 
 
 INITIAL_DATA_BODY_KEYS = [
@@ -26,7 +26,6 @@ class InitialDataApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen = CanteenFactory()
-        cls.partner_type = PartnerTypeFactory()
         cls.community_event = CommunityEventFactory(
             start_date=timezone.now() - datetime.timedelta(days=1),
             end_date=timezone.now() + datetime.timedelta(days=1),
@@ -51,8 +50,8 @@ class InitialDataApiTest(APITestCase):
         self.assertEqual(len(body["sectors"]), 26)
         self.assertEqual(body["sectors"][0]["name"], "Restaurants des prisons")
 
-        self.assertEqual(len(body["partnerTypes"]), 1)
-        self.assertEqual(body["partnerTypes"][0]["name"], self.partner_type.name)
+        self.assertEqual(len(body["partnerTypes"]), len(PartnerType))
+        self.assertEqual(body["partnerTypes"][0]["name"], PartnerType.LOGICIEL.label)
 
         self.assertEqual(len(body["communityEvents"]), 1)
         self.assertEqual(body["communityEvents"][0]["title"], self.community_event.title)

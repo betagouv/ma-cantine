@@ -2,8 +2,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from data.factories import PartnerFactory, PartnerTypeFactory, UserFactory
-from data.models import Partner, SectorCategory, SectorM2M
+from data.factories import PartnerFactory, UserFactory
+from data.models import Partner, PartnerType, SectorCategory, SectorM2M
 
 
 class PartnersListApiTest(APITestCase):
@@ -18,20 +18,17 @@ class PartnersListApiTest(APITestCase):
         sector_category_1 = SectorCategory.ADMINISTRATION
         sector_category_2 = SectorCategory.AUTRES
         sector_category_3 = SectorCategory.EDUCATION
-        type = PartnerTypeFactory(name="Test type")
-        type_2 = PartnerTypeFactory(name="Test type 2")
-        PartnerTypeFactory(name="Unused type")
         partners = [
             PartnerFactory(departments=["01", "02"], published=True),
             PartnerFactory(departments=["01", "11"], published=True),
             PartnerFactory(departments=None, published=True),
         ]
-        partners[0].types.add(type)
+        partners[0].type_list = [PartnerType.LOGICIEL]
         partners[0].sector_categories = [sector_category_1]
         partners[0].save()
 
-        partners[1].types.add(type)  # add same type to two different partners to check deduplication
-        partners[1].types.add(type_2)
+        # add same type to two different partners to check deduplication
+        partners[1].type_list = [PartnerType.LOGICIEL, PartnerType.AUTRE]
         partners[1].sector_categories = [sector_category_2]
         partners[1].save()
         # don't add type to third partner to check null value filtering
@@ -45,9 +42,8 @@ class PartnersListApiTest(APITestCase):
             self.assertTrue(any(x["id"] == partner.id for x in results))
 
         types = body.get("types", [])
-        self.assertIn("Test type", types)
-        self.assertIn("Test type 2", types)
-        self.assertEqual(len(types), 2)
+        # labels, in the enum order
+        self.assertEqual(types, [PartnerType.LOGICIEL.label, PartnerType.AUTRE.label])
 
         departments = body.get("departments", [])
         self.assertIn("01", departments)
@@ -130,23 +126,16 @@ class PartnersListApiFilterTest(APITestCase):
         """
         Return the union of all partners based on the types requested
         """
-        good = PartnerTypeFactory(name="Good")
-        also = PartnerTypeFactory(name="Also good")
-        ignored = PartnerTypeFactory(name="Ignored")
-
-        find_me_1 = PartnerFactory(name="Find me", published=True)
-        find_me_1.types.add(good)
-        find_me_2 = PartnerFactory(name="Find me too", published=True)
-        find_me_2.types.add(ignored)
-        find_me_2.types.add(good)
-        find_me_3 = PartnerFactory(name="Me three", published=True)
-        find_me_3.types.add(also)
-        ignore_me = PartnerFactory(name="Ignore me", published=True)
-        ignore_me.types.add(ignored)
+        PartnerFactory(name="Find me", type_list=[PartnerType.LOGICIEL], published=True)
+        PartnerFactory(name="Find me too", type_list=[PartnerType.AUTRE, PartnerType.LOGICIEL], published=True)
+        PartnerFactory(name="Me three", type_list=[PartnerType.RESEAU], published=True)
+        PartnerFactory(name="Ignore me", type_list=[PartnerType.AUTRE], published=True)
         PartnerFactory(name="Typeless", published=True)
 
-        url = f"{self.url}?type=Good&type=Also good"
-        response = self.client.get(url)
+        # filter on the labels
+        response = self.client.get(
+            self.url, {"type": [PartnerType.LOGICIEL.label, PartnerType.RESEAU.label, "Type inconnu"]}
+        )
 
         body = response.json()
         results = body["results"]
@@ -215,7 +204,6 @@ class PartnersListApiFilterTest(APITestCase):
 class PartnerCreateApiTest(APITestCase):
     def test_can_create_partner_unauthenticated(self):
         sector_cateory = SectorM2M.Categories.ADMINISTRATION
-        partner_type = PartnerTypeFactory()
         self.assertEqual(Partner.objects.count(), 0)
 
         payload = {
@@ -224,7 +212,7 @@ class PartnerCreateApiTest(APITestCase):
             "published": True,
             "contactEmail": "test@example.com",
             "sector_categories": [sector_cateory.value],
-            "types": [partner_type.id],
+            "types": [PartnerType.ENTREPRISE_PRIVEE.value],
         }
         response = self.client.post(reverse("partners_list"), payload, format="json")
 
@@ -235,8 +223,7 @@ class PartnerCreateApiTest(APITestCase):
         self.assertEqual(partner.short_description, "This is a required field")
         self.assertEqual(partner.contact_email, "test@example.com")
         self.assertIn(sector_cateory, partner.sector_categories)
-        self.assertEqual(partner.types.count(), 1)
-        self.assertEqual(partner.types.first().id, partner_type.id)
+        self.assertEqual(partner.type_list, [PartnerType.ENTREPRISE_PRIVEE])
         self.assertFalse(partner.published, "A user can't create a published partner")  # draft
 
     def test_long_description_is_escaped(self):
@@ -258,13 +245,11 @@ class PartnerCreateApiTest(APITestCase):
 
 class PartnerDetailApiTest(APITestCase):
     def test_can_get_single_partner(self):
-        type = PartnerTypeFactory(name="Test type")
-        partner = PartnerFactory(published=True)
-        partner.types.add(type)
+        partner = PartnerFactory(published=True, type_list=[PartnerType.ENTREPRISE_PRIVEE])
 
         response = self.client.get(reverse("single_partner", kwargs={"pk": partner.id}))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("Test type", response.json()["types"])
+        self.assertEqual(response.json()["types"], [PartnerType.ENTREPRISE_PRIVEE.label])
 
     def test_can_get_published_partner_only(self):
         partner = PartnerFactory(name="I am secret", published=False)
