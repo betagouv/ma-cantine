@@ -32,17 +32,21 @@ class TeledeclarationFieldsTest(SimpleTestCase):
                     self.assertEqual([name for name, field in volet_fields.items() if not field["verbose_name"]], [])
 
     def test_every_field_exists_on_the_model(self):
+        # all the fields of the configuration (even the ones that are not present for any diagnostic_type)
         model_fields = {field.name for field in Diagnostic._meta.get_fields()}
         for year in TELEDECLARATION_YEARS:
-            for diagnostic_type in DIAGNOSTIC_TYPES:
-                with self.subTest(year=year, diagnostic_type=diagnostic_type):
-                    self.assertEqual(
-                        set(get_teledeclaration_fields_all(year, "APPROVISIONNEMENT", diagnostic_type)) - model_fields,
-                        set(),
-                    )
-            for volet in VOLETS[1:]:
+            for volet, volet_fields in get_teledeclaration_config(year).items():
                 with self.subTest(year=year, volet=volet):
-                    self.assertEqual(set(get_teledeclaration_fields_all(year, volet)) - model_fields, set())
+                    self.assertEqual(set(volet_fields) - model_fields, set())
+
+    def test_every_field_has_a_verbose_name(self):
+        for year in TELEDECLARATION_YEARS:
+            for volet, volet_fields in get_teledeclaration_config(year).items():
+                with self.subTest(year=year, volet=volet):
+                    fields_without_verbose_name = [
+                        name for name, field in volet_fields.items() if not field.get("verbose_name")
+                    ]
+                    self.assertEqual(fields_without_verbose_name, [])
 
     def test_every_model_field_is_classified(self):
         """
