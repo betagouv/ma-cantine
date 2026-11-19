@@ -6,7 +6,6 @@ from .user import UserFactory  # noqa
 from .canteen import CanteenFactory  # noqa
 from .diagnostic import CompleteDiagnosticFactory, DiagnosticFactory  # noqa
 from .wastemeasurement import WasteMeasurementFactory  # noqa
-from .sector import SectorM2MFactory  # noqa
 from .blogpost import BlogPostFactory  # noqa
 from .blogtag import BlogTagFactory  # noqa
 from .managerinvitation import ManagerInvitationFactory  # noqa

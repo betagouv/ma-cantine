@@ -34,17 +34,6 @@ def before_send(event, hint):
         UnicodeDecodeError,
     ]
 
-    try:
-        # Defered loading because at the time of loading this file
-        # the app registry is not ready yet.
-        # django.core.exceptions.AppRegistryNotReady: Apps aren't loaded yet.
-
-        from data.models import SectorM2M
-
-        exceptions.append(SectorM2M.DoesNotExist)
-    except Exception:
-        pass
-
     for exc in exceptions:
         if exception_type == exc and module in modules:
             return None
