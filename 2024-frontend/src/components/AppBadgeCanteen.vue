@@ -5,9 +5,9 @@ const props = defineProps(["canteen"])
 
 const badge = computed(() => {
   const isGroupe = props.canteen?.isGroupe
-  const isSatWithGroupe = props.canteen?.groupe !== null && props.canteen?.isSatellite
+  const isInGroupe = !!props.canteen?.groupe // satellite or site
   if (isGroupe) return { type: "info", label: "Groupe" }
-  else if (isSatWithGroupe) return { type: "new", label: "Cantine en gestion groupée" }
+  else if (isInGroupe) return { type: "new", label: "Cantine en gestion groupée" }
   return { type: "success", label: "Cantine" }
 })
 </script>
