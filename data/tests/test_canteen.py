@@ -711,6 +711,91 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertEqual(canteen.region, "32")
 
 
+class CanteenModelGroupeChangeValidationTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe_1 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_11 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe_1
+        )
+        cls.canteen_groupe_2 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite_21 = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe_2
+        )
+        cls.canteen_satellite_0 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+        # groupe_1 has a teledeclared diagnostic for the 2024 campaign
+        groupe_manager = UserFactory()
+        cls.canteen_groupe_1.managers.add(groupe_manager)
+        with freeze_time("2025-01-20"):  # during the 2024 campaign
+            cls.diagnostic_groupe_1 = DiagnosticFactory(canteen=cls.canteen_groupe_1, year=2024, valeur_totale=100)
+            cls.diagnostic_groupe_1.teledeclare(applicant=groupe_manager)
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_cannot_link_to_groupe_with_teledeclaration_during_campaign(self):
+        self.canteen_satellite_0.groupe = self.canteen_groupe_1
+        with self.assertRaises(ValidationError) as context:
+            self.canteen_satellite_0.save()
+        self.assertIn("Vous ne pouvez pas ajouter la cantine au groupe", str(context.exception.message_dict["groupe"]))
+        # also with skip_validations
+        with self.assertRaises(ValidationError):
+            self.canteen_satellite_0.save(skip_validations=True)
+        # also on creation
+        with self.assertRaises(ValidationError):
+            CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe_1)
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_cannot_unlink_from_groupe_with_teledeclaration_during_campaign(self):
+        self.canteen_satellite_11.groupe = None
+        with self.assertRaises(ValidationError) as context:
+            self.canteen_satellite_11.save()
+        self.assertIn("Vous ne pouvez pas retirer la cantine du groupe", str(context.exception.message_dict["groupe"]))
+        # also with skip_validations
+        with self.assertRaises(ValidationError):
+            self.canteen_satellite_11.save(skip_validations=True)
+        self.canteen_satellite_11.refresh_from_db()
+        self.assertEqual(self.canteen_satellite_11.groupe, self.canteen_groupe_1)
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_cannot_move_from_or_to_groupe_with_teledeclaration_during_campaign(self):
+        # from groupe_1 (teledeclared) to groupe_2
+        self.canteen_satellite_11.groupe = self.canteen_groupe_2
+        with self.assertRaises(ValidationError):
+            self.canteen_satellite_11.save(skip_validations=True)
+        # from groupe_2 to groupe_1 (teledeclared)
+        self.canteen_satellite_21.groupe = self.canteen_groupe_1
+        with self.assertRaises(ValidationError):
+            self.canteen_satellite_21.save(skip_validations=True)
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_can_update_canteen_without_groupe_change_during_campaign(self):
+        self.canteen_satellite_11.yearly_meal_count = 5000
+        self.canteen_satellite_11.save()
+        self.canteen_satellite_11.refresh_from_db()
+        self.assertEqual(self.canteen_satellite_11.yearly_meal_count, 5000)
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_can_link_unlink_groupe_without_teledeclaration_during_campaign(self):
+        self.canteen_satellite_0.groupe = self.canteen_groupe_2
+        self.canteen_satellite_0.save()
+        self.canteen_satellite_0.groupe = None
+        self.canteen_satellite_0.save()
+
+    @freeze_time("2025-01-20")  # during the 2024 campaign
+    def test_can_link_unlink_groupe_with_teledeclaration_cancelled_during_campaign(self):
+        self.diagnostic_groupe_1.cancel()
+        self.canteen_satellite_0.groupe = self.canteen_groupe_1
+        self.canteen_satellite_0.save()
+        self.canteen_satellite_11.groupe = None
+        self.canteen_satellite_11.save()
+
+    @freeze_time("2025-07-20")  # after the 2024 campaign
+    def test_can_link_unlink_groupe_with_teledeclaration_after_campaign(self):
+        self.canteen_satellite_0.groupe = self.canteen_groupe_1
+        self.canteen_satellite_0.save()
+        self.canteen_satellite_11.groupe = None
+        self.canteen_satellite_11.save()
+
+
 class CanteenModelDeleteTest(TestCase):
     @classmethod
     def setUpTestData(cls):

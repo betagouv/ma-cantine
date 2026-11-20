@@ -10,7 +10,6 @@ from imports.views.base import BaseImportView
 from common.utils import siret as utils_siret
 from data.models import Canteen, Sector
 from data.models.creation_source import CreationSource
-from data.models.diagnostic_teledeclaration_dates import get_current_campaign_year, is_in_teledeclaration_or_correction
 
 from api.views.canteen_managers import AddManagerView
 from common.utils.camelize import camelize
@@ -171,17 +170,6 @@ class CanteensCreateImportView(BaseImportView):
                 raise ValidationError(
                     {"groupe_id": f"Aucun groupe avec le numéro identifiant « {groupe_id} » trouvé sur la plateforme."}
                 )
-        # Group did not teledeclare already
-        last_year = get_current_campaign_year()
-        if groupe and is_in_teledeclaration_or_correction():
-            has_diagnostic_teledeclared_for_year = groupe.has_diagnostic_teledeclared_for_year(last_year)
-            if has_diagnostic_teledeclared_for_year:
-                raise ValidationError(
-                    {
-                        "groupe_id": f"Vous ne pouvez pas ajouter de restaurant satellite au groupe « {groupe_id} », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir ajouter le(s) restaurant(s) satellite(s)."
-                    }
-                )
-
         # Create canteen
         canteen = Canteen.objects.create(
             name=name,

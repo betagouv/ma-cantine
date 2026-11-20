@@ -1,4 +1,5 @@
 from common.utils import utils as utils_utils
+from data.models.diagnostic_teledeclaration_dates import get_current_campaign_year, is_in_teledeclaration_or_correction
 
 CANTEEN_DAILY_MEAL_COUNT_MIN = 3
 CANTEEN_YEARLY_MEAL_COUNT_MIN = 420
@@ -244,6 +245,46 @@ def validate_canteen_groupe_field(instance):
                     )
     except instance.DoesNotExist:
         utils_utils.add_validation_error(errors, field_name, "Cette cantine groupe n'existe pas.")
+    return errors
+
+
+def validate_canteen_groupe_change(instance):
+    """
+    - only if the groupe field changed (link, unlink, or move to another groupe), or on creation with a groupe
+    - during the teledeclaration (or correction) campaign: the old & new groupes must not have
+    a teledeclared diagnostic for the current campaign year (the teledeclaration freezes the groupe's canteens)
+    NOTE: also enforced in Canteen.save() with skip_validations=True
+    """
+    from data.models import Canteen  # avoid circular import
+
+    errors = {}
+    field_name = "groupe"
+    if instance._state.adding:
+        old_groupe_id = None
+    else:
+        dirty_fields = instance.get_dirty_fields(check_relationship=True)
+        if field_name not in dirty_fields:
+            return errors
+        old_groupe_id = dirty_fields[field_name]
+    new_groupe_id = instance.groupe_id
+    if old_groupe_id == new_groupe_id or not is_in_teledeclaration_or_correction():
+        return errors
+
+    campaign_year = get_current_campaign_year()
+    for groupe_id, message in [
+        (
+            old_groupe_id,
+            f"Vous ne pouvez pas retirer la cantine du groupe « {old_groupe_id} », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Pour retirer la cantine, vous devez annuler (corriger) la télédéclaration du groupe, puis télédéclarer à nouveau le bilan du groupe.",
+        ),
+        (
+            new_groupe_id,
+            f"Vous ne pouvez pas ajouter la cantine au groupe « {new_groupe_id} », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Pour ajouter la cantine, vous devez annuler (corriger) la télédéclaration du groupe, puis télédéclarer à nouveau le bilan du groupe.",
+        ),
+    ]:
+        if groupe_id:
+            groupe = Canteen.all_objects.filter(id=groupe_id).first()
+            if groupe and groupe.has_diagnostic_teledeclared_for_year(campaign_year):
+                utils_utils.add_validation_error(errors, field_name, message)
     return errors
 
 

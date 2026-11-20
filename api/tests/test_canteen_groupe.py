@@ -307,6 +307,10 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         response = self.client.post(url)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json()["error"],
+            f"Vous ne pouvez pas ajouter la cantine au groupe « {self.canteen_groupe_1.id} », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Pour ajouter la cantine, vous devez annuler (corriger) la télédéclaration du groupe, puis télédéclarer à nouveau le bilan du groupe.",
+        )
 
         # try to unlink a satellite from groupe_1
         url = reverse(
@@ -316,6 +320,10 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         response = self.client.post(url)
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(
+            response.json()["error"],
+            f"Vous ne pouvez pas retirer la cantine du groupe « {self.canteen_groupe_1.id} », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Pour retirer la cantine, vous devez annuler (corriger) la télédéclaration du groupe, puis télédéclarer à nouveau le bilan du groupe.",
+        )
 
     @authenticate
     @freeze_time("2025-01-20")  # during the 2024 campaign
