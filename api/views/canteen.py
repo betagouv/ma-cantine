@@ -38,7 +38,7 @@ from api.serializers import (
 )
 from api.views.utils import get_oauth_application, update_change_reason_with_auth
 from common.api.recherche_entreprises import fetch_geo_data_from_siren, fetch_geo_data_from_siret
-from data.models import Canteen, Diagnostic, Sector, SectorM2M
+from data.models import Canteen, Diagnostic, Sector
 from data.models.creation_source import CreationSource
 from data.utils import has_charfield_missing_query
 
@@ -59,7 +59,6 @@ class PublishedCanteensPagination(LimitOffsetPagination):
     default_limit = 12
     max_limit = 30
     departments = []
-    sectors = []
     management_types = []
     production_types = []
 
@@ -69,31 +68,6 @@ class PublishedCanteensPagination(LimitOffsetPagination):
         self.regions = set(filter(lambda x: x, queryset.values_list("region", flat=True)))
         self.management_types = set(filter(lambda x: x, queryset.values_list("management_type", flat=True)))
         self.production_types = set(filter(lambda x: x, queryset.values_list("production_type", flat=True)))
-
-        # Prepare sector filter options:
-        # we want to return all sectors that are available after the other filters,
-        # because the user can select multiple sectors (unlike other filter options)
-        all_sector_canteens = Canteen.objects.publicly_visible()
-        query_params = request.query_params
-        if query_params.get("department"):
-            all_sector_canteens = all_sector_canteens.filter(department=query_params.get("department"))
-        if query_params.get("region"):
-            all_sector_canteens = all_sector_canteens.filter(region=query_params.get("region"))
-        if query_params.get("min_daily_meal_count"):
-            all_sector_canteens = all_sector_canteens.filter(
-                daily_meal_count__gte=query_params.get("min_daily_meal_count")
-            )
-        if query_params.get("max_daily_meal_count"):
-            all_sector_canteens = all_sector_canteens.filter(
-                daily_meal_count__lte=query_params.get("max_daily_meal_count")
-            )
-        if query_params.get("management_type"):
-            all_sector_canteens = all_sector_canteens.filter(management_type=query_params.get("management_type"))
-        all_sector_canteens = filter_by_diagnostic_params(all_sector_canteens, query_params)
-
-        self.sectors = (
-            SectorM2M.objects.filter(canteen__in=list(all_sector_canteens)).values_list("id", flat=True).distinct()
-        )
 
         return super().paginate_queryset(queryset, request, view)
 
@@ -107,7 +81,6 @@ class PublishedCanteensPagination(LimitOffsetPagination):
                     ("results", data),
                     ("regions", self.regions),
                     ("departments", self.departments),
-                    ("sectors", self.sectors),
                     ("management_types", self.management_types),
                     ("production_types", self.production_types),
                 ]
@@ -567,4 +540,4 @@ class CanteenOpenDataListView(ListAPIView):
     serializer_class = CanteenOpenDataSerializer
 
     def get_queryset(self):
-        return Canteen.objects.prefetch_related("sectors_m2m", "managers").publicly_visible().order_by("creation_date")
+        return Canteen.objects.prefetch_related("managers").publicly_visible().order_by("creation_date")

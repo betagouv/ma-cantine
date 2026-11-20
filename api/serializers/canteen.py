@@ -359,7 +359,7 @@ class FullCanteenSerializer(serializers.ModelSerializer):
 
 
 class CanteenSummarySerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
-    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
+    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)  # deprecated
     lead_image = CanteenImageSerializer()
     diagnostics = FullDiagnosticSerializer(many=True)
     central_kitchen_diagnostics = CentralKitchenDiagnosticSerializer(many=True)
@@ -381,7 +381,8 @@ class CanteenSummarySerializer(ReadOnlySerializerMixin, serializers.ModelSeriali
             "department_lib",
             "region",
             "region_lib",
-            "sectors",  # from "sectors_m2m"
+            "sectors",  # deprecated: from "sectors_m2m" (frozen since the switch to sector_list)
+            "sector_list",
             "daily_meal_count",
             "yearly_meal_count",
             "siret",
@@ -410,7 +411,6 @@ class CanteenPreviewSerializer(ReadOnlySerializerMixin, serializers.ModelSeriali
 
 class CanteenActionsSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     # TODO: is it worth moving the job of fetching the specific diag required to the front?
-    sectors = serializers.PrimaryKeyRelatedField(source="sectors_m2m", many=True, read_only=True)
     publication_status = serializers.CharField(source="publication_status_display_to_public")
     lead_image = CanteenImageSerializer()
     diagnostics = FullDiagnosticSerializer(many=True)
@@ -432,7 +432,7 @@ class CanteenActionsSerializer(ReadOnlySerializerMixin, serializers.ModelSeriali
             "department_lib",
             "region",
             "region_lib",
-            "sectors",  # from "sectors_m2m"
+            "sector_list",
             "line_ministry",
             "daily_meal_count",
             "yearly_meal_count",

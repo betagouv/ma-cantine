@@ -212,7 +212,6 @@ export default {
       let contentLength = 0
       // canteen indicators
       contentLength += !!this.canteen.dailyMealCount && 1
-      contentLength += this.canteen.sectors?.length / 2 || 0
       contentLength += !!this.canteen.satelliteCanteensCount && 1
       contentLength += !!this.canteen.city && 1
       const hasIndicators = contentLength > 0
