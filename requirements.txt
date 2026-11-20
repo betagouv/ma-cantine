@@ -123,11 +123,11 @@ dbt-common==1.39.0
     #   dbt-adapters
     #   dbt-core
     #   dbt-postgres
-dbt-core==1.12.4
+dbt-core==1.12.7
     # via
     #   dbt-postgres
     #   ma-cantine
-dbt-core-experimental-parser==2.0.0rc1
+dbt-core-experimental-parser==2.0.11
     # via dbt-core
 dbt-extractor==0.6.0
     # via dbt-core
@@ -330,7 +330,7 @@ matplotlib-inline==0.2.2
     # via ipython
 mdurl==0.1.2
     # via markdown-it-py
-metricflow==0.212.0
+metricflow==0.214.0
     # via dbt-core
 more-itertools==10.8.0
     # via metricflow
@@ -396,7 +396,7 @@ pillow==13.0.0
     #   xhtml2pdf
 pillow-heif==1.8.1
     # via willow
-pip==26.2.1
+pip==26.3
     # via pip-api
 pip-api==0.0.34
     # via pip-audit
