@@ -10,7 +10,7 @@ def before_send(event, hint):
     """
 
     # only logged exceptions can be filtered out. The other events (e.g. unhandled exceptions captured by
-    # the Django & Celery integrations, errors logged without exception) have no "exc_info" and/or "log_record":
+    # the Django integration or by MaCantineBaseCommand, errors logged without exception) have no "exc_info" and/or "log_record":
     # unpacking them would raise, and Sentry drops the event when before_send raises
     exc_info = hint.get("exc_info")
     log_record = hint.get("log_record")
