@@ -156,6 +156,14 @@ class UserModelTest(TestCase):
         with self.assertNumQueries(1):
             list(User.objects.with_canteen_stats().with_canteen_diagnostic_stats())
 
+    def test_model_method_update_data_without_save(self):
+        user_qs = User.objects.with_canteen_stats().with_canteen_diagnostic_stats()
+        user_with_canteens = user_qs.get(id=self.user_with_canteens.id)
+        user_with_canteens.update_data(with_save=False)
+        self.assertEqual(user_with_canteens.data["nb_cantines"], 6)  # in memory
+        user_with_canteens.refresh_from_db()
+        self.assertIsNone(user_with_canteens.data)  # not saved
+
     def test_model_method_update_data(self):
         self.assertIsNone(self.user_with_canteens.data)
 
