@@ -1,9 +1,12 @@
+from datetime import timedelta
+
 from django.core.management import call_command
 from django.db.models.signals import post_save
 from django.test import TestCase
 from freezegun import freeze_time
 
 from api.tests.utils import assert_almost_equal
+from common.tests.utils import date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Diagnostic
 from data.models.canteen import Canteen, fill_geo_fields_from_siret
@@ -35,7 +38,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -73,7 +76,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_serving.siret
         )
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_serving_diagnostic = DiagnosticFactory(
                 canteen=central_serving,
                 year=2024,
@@ -119,7 +122,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         satellite_2 = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central_2.siret
         )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_1_diagnostic = DiagnosticFactory(
                 canteen=central_1,
                 year=2024,
@@ -188,7 +191,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None, managers=[self.user]
         )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             satellite_diagnostic = DiagnosticFactory(
                 canteen=satellite,
                 year=2024,
@@ -199,7 +202,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
 
         self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             satellite.central_producer_siret = central.siret
             satellite.save(skip_validations=True)
             self.assertEqual(satellite.central_producer_siret, central.siret)
@@ -232,7 +235,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None, managers=[self.user]
         )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             satellite_diagnostic = DiagnosticFactory(
                 canteen=satellite,
                 year=2024,
@@ -243,7 +246,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
 
         self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             satellite.central_producer_siret = central.siret
             satellite.save(skip_validations=True)
             self.assertEqual(satellite.central_producer_siret, central.siret)
@@ -276,7 +279,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=None, managers=[self.user]
         )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             satellite_diagnostic = DiagnosticFactory(
                 canteen=satellite,
                 year=2024,
@@ -306,7 +309,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         )
 
         # Update de SAT
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic.cancel()
             satellite.central_producer_siret = None
             satellite.save(skip_validations=True)
@@ -320,7 +323,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         )
 
         # Teledeclare the central again but without the satellite
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
         # Re-run the script
@@ -343,7 +346,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
         )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -383,7 +386,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -424,7 +427,7 @@ class Teledeclaration1Td1SiteScriptGenerationTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -474,7 +477,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -505,7 +508,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -537,7 +540,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -561,7 +564,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             production_type=Canteen.ProductionType.CENTRAL_SERVING, managers=[self.user], skip_validations=True
         )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -597,7 +600,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -631,7 +634,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -659,7 +662,7 @@ class Teledeclaration1Td1SiteTeledeclarationFieldsTest(TestCase):
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret
         )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -700,7 +703,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
         """
         The historical values of the canteen when the teledeclaration is done are kept in the generated diagnostics (don't use the current values).
         """
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             # factory build + save: to circumvent the factory and create a history entry
             central = CanteenFactory.build(
                 siret="21340172201787", production_type=Canteen.ProductionType.CENTRAL, city_insee_code="34172"
@@ -726,7 +729,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
                 management_type=Canteen.ManagementType.CONCEDED,
             )
             satellite_siren.save()
-        with freeze_time("2025-03-31"):  # during the 2024 campaign (1 day later)
+        with freeze_time(date_in_campaign(2024) + timedelta(days=1)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -805,7 +808,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             skip_validations=True,
         )
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -859,7 +862,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             skip_validations=True,
         )
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -913,7 +916,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             yearly_meal_count=550,
         )
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -964,7 +967,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
             central_producer_siret=central.siret,
             yearly_meal_count=420,
         )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(canteen=central, year=2024, valeur_totale=10000, valeur_bio=2000)
             central_diagnostic.teledeclare(applicant=self.user, skip_validations=True)
 
@@ -1031,7 +1034,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         Test that the total value is divided by the number of satellites.
         """
         total_value = 15000.50
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=self.central,
                 year=2024,
@@ -1052,7 +1055,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         """
         Test that when a central canteen teledeclares with mode ALL.
         """
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=self.central,
                 year=2024,
@@ -1089,7 +1092,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         self.central.production_type = Canteen.ProductionType.CENTRAL_SERVING
         self.central.save(skip_validations=True)
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=self.central,
                 year=2024,
@@ -1132,7 +1135,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         """
         Test that when a central canteen teledeclares in mode ALL with COMPLETE type.
         """
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=self.central,
                 year=2024,
@@ -1169,7 +1172,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         self.central.production_type = Canteen.ProductionType.CENTRAL_SERVING
         self.central.save(skip_validations=True)
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=self.central,
                 year=2024,
@@ -1212,7 +1215,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         """
         Test that when a central canteen teledeclares without mode.
         """
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=self.central,
                 year=2024,
@@ -1249,7 +1252,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         self.central.production_type = Canteen.ProductionType.CENTRAL_SERVING
         self.central.save(skip_validations=True)
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=self.central,
                 year=2024,
@@ -1292,7 +1295,7 @@ class Teledeclaration1Td1SiteTunnelFieldsValuesTest(TestCase):
         """
         Test that when a central canteen teledeclares in mode ALL with non appro fields, the values are copied in the generated diagnostics.
         """
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=self.central,
                 year=2024,
@@ -1329,7 +1332,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         site_1 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[self.user])
         site_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[self.user])
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic_site_1 = DiagnosticFactory(
                 canteen=site_1,
                 year=2024,
@@ -1374,7 +1377,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
             central_producer_siret="21380185500015",
             managers=[self.user],
         )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             satellite_diagnostic = DiagnosticFactory(
                 canteen=satellite,
                 year=2024,
@@ -1411,7 +1414,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         satellite = CanteenFactory(
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret="", managers=[self.user]
         )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             satellite_diagnostic = DiagnosticFactory(
                 canteen=satellite,
                 year=2024,
@@ -1454,7 +1457,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
 
-        with freeze_time("2024-03-30"):  # during the 2023 campaign
+        with freeze_time(date_in_campaign(2023)):
             central_diagnostic_2023 = DiagnosticFactory(
                 canteen=central,
                 year=2023,
@@ -1463,7 +1466,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
             )
             central_diagnostic_2023.teledeclare(applicant=self.user, skip_validations=True)
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic_2024 = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -1472,7 +1475,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
             )
             central_diagnostic_2024.teledeclare(applicant=self.user, skip_validations=True)
 
-        with freeze_time("2026-03-30"):  # during the 2025 campaign
+        with freeze_time(date_in_campaign(2025)):
             central_diagnostic_2025 = DiagnosticFactory(
                 canteen=central,
                 year=2025,
@@ -1503,7 +1506,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
         central = CanteenFactory(
             production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
         )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -1524,7 +1527,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
             production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
         )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             DiagnosticFactory(
                 canteen=central,
                 year=2024,
@@ -1547,7 +1550,7 @@ class Teledeclaration1Td1SiteNotConcernedByScriptTest(TestCase):
             production_type=Canteen.ProductionType.CENTRAL, managers=[self.user], skip_validations=True
         )
         CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, central_producer_siret=central.siret)
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,

@@ -5,6 +5,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from freezegun import freeze_time
 
+from common.tests.utils import date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic
 from macantine import tasks
@@ -18,7 +19,7 @@ class BrevoUserDataTest(TestCase):
     def _find_payload_for_user(contacts, user_email):
         return next(filter(lambda x: x.email == user_email, contacts))
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
     @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
     def test_user_without_canteen(self, batch_update_mock, create_contact_mock):
@@ -33,7 +34,7 @@ class BrevoUserDataTest(TestCase):
         payload = create_contact_mock.call_args[0][0]
         attributes = payload.attributes
 
-        self.assertEqual(attributes.get("MA_CANTINE_DATE_INSCRIPTION"), "2026-01-30")
+        self.assertEqual(attributes.get("MA_CANTINE_DATE_INSCRIPTION"), "2026-01-13")
         self.assertEqual(attributes.get("MA_CANTINE_COMPTE_DEV"), user_without_canteen.is_dev)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_2025"), 0)
@@ -85,9 +86,9 @@ class BrevoUserDataTest(TestCase):
     def test_user_with_canteen_site_diagnostic_td(self, batch_update_mock, create_contact_mock):
         user_with_canteen = UserFactory()
         canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[user_with_canteen])
-        with freeze_time("2023-03-30"):  # during the 2022 campaign
+        with freeze_time(date_in_campaign(2022)):
             DiagnosticFactory(year=2021, canteen=canteen_site)  # not teledeclared
-        with freeze_time("2026-01-30"):  # during the 2025 campaign
+        with freeze_time(date_in_campaign(2025)):
             DiagnosticFactory(year=2025, canteen=canteen_site).teledeclare(applicant=user_with_canteen)
 
         # run tasks to fill the Canteen.declaration_donnees_year & User.data fields
@@ -156,13 +157,13 @@ class BrevoUserDataTest(TestCase):
             groupe=canteen_groupe,
             managers=[user_with_canteen_sat],
         )
-        with freeze_time("2023-03-30"):  # during the 2022 campaign
+        with freeze_time(date_in_campaign(2022)):
             DiagnosticFactory(
                 year=2022,
                 canteen=canteen_groupe,
                 central_kitchen_diagnostic_mode=Diagnostic.CentralKitchenDiagnosticMode.APPRO,
             )  # not teledeclared
-        with freeze_time("2026-01-30"):  # during the 2025 campaign
+        with freeze_time(date_in_campaign(2025)):
             DiagnosticFactory(
                 year=2025,
                 canteen=canteen_groupe,

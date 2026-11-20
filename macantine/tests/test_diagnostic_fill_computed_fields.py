@@ -4,6 +4,7 @@ from django.core.management import CommandError, call_command
 from django.test import TestCase
 from freezegun import freeze_time
 
+from common.tests.utils import date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
@@ -143,7 +144,7 @@ class DiagnosticFillComputedFieldsCommandTest(TestCase):
             call_command("diagnostic_fill_computed_fields", "--year", 2022, "--field", "valeur_totale", "--apply")
 
 
-@freeze_time("2026-03-30")  # during the 2025 campaign
+@freeze_time(date_in_campaign(2025))
 class DiagnosticFillComputedFieldsCommandGeneratedFromGroupeTest(TestCase):
     def test_run_on_diagnostic_generated_from_groupe_diagnostic(self):
         user = UserFactory()

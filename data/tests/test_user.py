@@ -3,6 +3,7 @@ from django.utils import timezone
 from freezegun import freeze_time
 from django.core.exceptions import ValidationError
 
+from common.tests.utils import date_in_campaign
 from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
 from data.models import Canteen, User
 from macantine import tasks
@@ -65,7 +66,7 @@ class UserModelTest(TestCase):
 
         cls.canteen_site_deleted.delete()
 
-        with freeze_time("2026-01-30"):  # during the 2025 campaign
+        with freeze_time(date_in_campaign(2025)):
             cls.canteen_centrale_diagnostic_teledeclared.teledeclare(
                 applicant=cls.user_with_canteens, skip_validations=True
             )  # legacy production_type: not valid anymore

@@ -3,6 +3,8 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from common.tests.utils import date_before_campaign, date_in_campaign, date_in_campaign_correction
+
 
 class TeledeclarationCampaignDatesListApiTest(APITestCase):
     @classmethod
@@ -25,9 +27,9 @@ class TeledeclarationCampaignDatesRetrieveApiTest(APITestCase):
 
     def test_campaign_dates_retrieve(self):
         for date_freeze in [
-            {"date": "2025-01-01", "in_teledeclaration": False, "in_correction": False},
-            {"date": "2025-02-28", "in_teledeclaration": True, "in_correction": False},
-            {"date": "2025-04-20", "in_teledeclaration": False, "in_correction": True},
+            {"date": date_before_campaign(2024), "in_teledeclaration": False, "in_correction": False},
+            {"date": date_in_campaign(2024), "in_teledeclaration": True, "in_correction": False},
+            {"date": date_in_campaign_correction(2024), "in_teledeclaration": False, "in_correction": True},
         ]:
             with self.subTest(DATE=date_freeze["date"]):
                 with freeze_time(date_freeze["date"]):

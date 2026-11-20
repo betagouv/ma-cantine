@@ -2,6 +2,7 @@ from django.core.management import call_command
 from django.test import TestCase
 from freezegun import freeze_time
 
+from common.tests.utils import date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic
 
@@ -42,7 +43,7 @@ class CanteenFillDeclarationDonneesYearFieldCommandTest(TestCase):
             year=2024,
             valeur_totale=1000,
         )  # filled (2024)
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             cls.canteen_satellite_diagnostic_teledeclared.teledeclare(applicant=cls.user)
             cls.canteen_groupe_diagnostic_teledeclared.teledeclare(applicant=cls.user)
 

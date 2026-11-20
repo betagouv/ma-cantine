@@ -1,4 +1,3 @@
-from datetime import timedelta
 from decimal import Decimal
 from html import unescape
 
@@ -12,6 +11,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclarationPdfView
+from common.tests.utils import date_after_campaign, date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
@@ -42,7 +42,7 @@ class DiagnosticTeledeclarationJustificatifTest(APITestCase):
 
         for year, template_name in expected_templates.items():
             with self.subTest(year=year):
-                with freeze_time(CAMPAIGN_DATES[year]["teledeclaration_start_date"] + timedelta(days=1)):
+                with freeze_time(date_in_campaign(year)):
                     canteen = CanteenFactory(managers=[authenticate.user])
                     diagnostic = DiagnosticFactory(
                         canteen=canteen, year=year, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
@@ -62,7 +62,7 @@ class DiagnosticTeledeclarationJustificatifTest(APITestCase):
                 for other_template in all_templates - {expected_template}:
                     self.assertTemplateNotUsed(response, other_template)
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_cannot_generate_pdf_if_unauthenticated(self):
         user = UserFactory()
         diagnostic = DiagnosticFactory(year=2024)
@@ -77,7 +77,7 @@ class DiagnosticTeledeclarationJustificatifTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_cannot_generate_pdf_if_canteen_does_not_exist(self):
         diagnostic = DiagnosticFactory(year=2024)
@@ -89,7 +89,7 @@ class DiagnosticTeledeclarationJustificatifTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_cannot_generate_pdf_if_diagnostic_does_not_exist(self):
         diagnostic = DiagnosticFactory(year=2024)
@@ -101,7 +101,7 @@ class DiagnosticTeledeclarationJustificatifTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_cannot_generate_pdf_if_not_canteen_manager(self):
         user = UserFactory()
@@ -118,7 +118,7 @@ class DiagnosticTeledeclarationJustificatifTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_can_generate_pdf(self):
         canteen = CanteenFactory(managers=[authenticate.user])
@@ -133,7 +133,7 @@ class DiagnosticTeledeclarationJustificatifTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_can_generate_pdf_central(self):
         canteen_central = CanteenFactory(
@@ -154,7 +154,7 @@ class DiagnosticTeledeclarationJustificatifTest(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_can_generate_pdf_groupe_satellite(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
@@ -212,7 +212,7 @@ class DiagnosticTeledeclarationJustificatif2021Test(APITestCase):
 
     template_name = "teledeclaration_pdf/justificatif_2021/index.html"
 
-    @freeze_time("2022-08-30")  # during the 2021 campaign
+    @freeze_time(date_in_campaign(2021))
     @authenticate
     def test_can_generate_pdf_legacy_teledeclaration(self):
         canteen = CanteenFactory(managers=[authenticate.user])
@@ -231,7 +231,7 @@ class DiagnosticTeledeclarationJustificatif2021Test(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    @freeze_time("2023-03-30")  # during the 2022 campaign
+    @freeze_time(date_in_campaign(2022))
     def test_display_the_volet_answers(self):
         """
         The PDF templates read the diagnostic fields by name (diagnostic.__dict__ + overrides):
@@ -290,7 +290,7 @@ class DiagnosticTeledeclarationJustificatif2023Test(APITestCase):
 
     template_name = "teledeclaration_pdf/justificatif_2023/index.html"
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_display_the_volet_answers(self):
         """
         The PDF templates read the diagnostic fields by name (diagnostic.__dict__ + overrides):
@@ -343,7 +343,7 @@ class DiagnosticTeledeclarationJustificatif2023Test(APITestCase):
         # only in this version
         self.assertIn(Diagnostic.ActionsGaspillage.SENSIBILISATION.label, html)
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_does_not_display_the_fields_created_in_2026(self):
         fields_created_in_2026 = [
             ("PLASTIQUE", "plastique_bouteille_boisson_remplace"),
@@ -407,7 +407,7 @@ VOLET_ANSWERS_2026 = {
 }
 
 
-@freeze_time("2027-01-30")  # during the 2026 campaign
+@freeze_time(date_in_campaign(2026))
 class DiagnosticTeledeclarationJustificatif2026Test(APITestCase):
     template_name = "teledeclaration_pdf/justificatif_2026/index.html"
 
@@ -595,7 +595,7 @@ class DiagnosticTeledeclarationJustificatif2026Test(APITestCase):
         html = self._render(diagnostic)
         self.assertIn("Justificatif provisoire", html)
 
-        with freeze_time("2027-06-30"):  # after the 2026 campaign
+        with freeze_time(date_after_campaign(2026)):
             html = self._render(diagnostic)
             self.assertNotIn("Justificatif provisoire", html)
 
@@ -650,4 +650,4 @@ class DiagnosticTeledeclarationJustificatif2026Test(APITestCase):
 
         html = self._render(diagnostic)
 
-        self.assertIn("30 janvier 2027", html)
+        self.assertIn("2 janvier 2027", html)

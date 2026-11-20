@@ -1,14 +1,13 @@
 from copy import deepcopy
 from unittest import mock
-from datetime import datetime
 from decimal import Decimal
 
 from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase, TransactionTestCase, override_settings
-from django.utils import timezone
 from freezegun import freeze_time
 
+from common.tests.utils import date_after_campaign, date_in_campaign, date_in_campaign_correction
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models.definitionlocal import DefinitionLocal
 from data.models import Canteen, Sector
@@ -32,9 +31,6 @@ from data.validators import diagnostic_volet_information as diagnostic_volet_inf
 from data.validators import diagnostic_volet_plastique as diagnostic_volet_plastique_validators
 
 year_data = 2024
-date_in_teledeclaration_campaign = "2025-03-30"
-date_in_correction_campaign = "2025-04-20"
-date_in_last_teledeclaration_campaign = "2024-02-01"
 
 VALID_DIAGNOSTIC_SIMPLE_2024 = {
     "year": 2024,
@@ -87,7 +83,7 @@ VALID_DIAGNOSTIC_SIMPLE_2026 = {
 
 
 class DiagnosticModelSaveTest(TransactionTestCase):
-    @freeze_time("2026-01-30")  # during the 2025 campaign  # TODO: change to 2026
+    @freeze_time(date_in_campaign(2025))  # TODO: change to 2026
     def test_year_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_YEAR = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
         VALID_DIAGNOSTIC_WITHOUT_YEAR.pop("year")
@@ -112,7 +108,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(year=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-11-09")  # outside of a campaign, but the year is overridden (e.g. demo environment)
+    @freeze_time(date_after_campaign(2025))
     @override_settings(TELEDECLARATION_YEAR_OVERRIDE=2026)
     def test_year_validation_with_year_override(self):
         """
@@ -132,40 +128,40 @@ class DiagnosticModelSaveTest(TransactionTestCase):
 
     def test_can_edit_status_draft_validation(self):
         # DRAFT diagnostic cannot be edited during the campaign but not after
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.DRAFT)
             diagnostic.full_clean()  # should not raise
-        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             self.assertRaises(ValidationError, diagnostic.full_clean)
-        with freeze_time("2025-08-30"):  # after the 2024 correction campaign
+        with freeze_time(date_after_campaign(2024)):
             self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_can_edit_status_correction_validation(self):
         # CORRECTION diagnostic can be edited during the campaign & correction but not after correction
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
             diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
-        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             diagnostic.cancel()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
             diagnostic.full_clean()  # should not raise
-        with freeze_time("2025-08-30"):  # after the 2024 correction campaign
+        with freeze_time(date_after_campaign(2024)):
             self.assertRaises(ValidationError, diagnostic.full_clean)
 
     def test_can_edit_status_submitted_validation(self):
         # SUBMITTED diagnostic can be edited during the campaign & correction but not after campaign
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
             diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first(), skip_validations=True)
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.SUBMITTED)
             diagnostic.full_clean()  # should not raise
-        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             diagnostic.full_clean()  # should not raise
-        with freeze_time("2025-08-30"):  # after the 2024 correction campaign
+        with freeze_time(date_after_campaign(2024)):
             self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     def test_diagnostic_type_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_TYPE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_TYPE.pop("diagnostic_type")
@@ -195,7 +191,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises((ValueError, ValidationError), diagnostic.full_clean)
 
-    @freeze_time("2024-02-10")  # during the 2023 campaign
+    @freeze_time(date_in_campaign(2023))
     def test_diagnostic_appro_fields_required_before_2024_validation(self):
         # without
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
@@ -206,7 +202,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
         diagnostic.full_clean()
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     def test_diagnostic_simple_appro_fields_required_after_2025_validation(self):
         # without
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
@@ -217,7 +213,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
         diagnostic.full_clean()
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     def test_diagnostic_complete_appro_fields_required_after_2025_validation(self):
         VALID_DIAGNOSTIC_COMPLETE_2025 = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_COMPLETE_2025["diagnostic_type"] = Diagnostic.DiagnosticType.COMPLETE
@@ -230,7 +226,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_COMPLETE_2025)
         diagnostic.full_clean()
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_diagnostic_nombre_repas_an_required_only_once(self):
         # nombre_repas_an is checked both by validate_canteen_fields_required (CANTEEN_FIELDS) and
         # validate_appro_fields_required (it's also in the TD registry's fields_required) - it
@@ -242,7 +238,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
             diagnostic.full_clean()
         self.assertEqual(len(cm.exception.message_dict["nombre_repas_an"]), 1)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     def test_diagnostic_valeur_totale_validation(self):
         # TODO: add tests against each simple field / sum of each label / sum of egalim fields
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTALE = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
@@ -286,7 +282,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     def test_diagnostic_valeur_totale_extra_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT.pop("valeur_totale")
@@ -308,7 +304,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(valeur_totale=VALUE_NOT_OK, **VALID_DIAGNOSTIC_WITHOUT_VALEUR_TOTAL_HT)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     def test_diagnostic_valeur_famille(self):
         VALID_DIAGNOSTIC_COMPLETE_2025 = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         # default: ok
@@ -352,7 +348,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.family_sum("viandes_volailles"), 110)  # only APPRO_LABELS
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     def test_diagnostic_valeur_famille_bio(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
         # default (None): ok
@@ -369,7 +365,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.save()
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_diagnostic_valeur_label(self):
         VALID_DIAGNOSTIC_COMPLETE_2026 = VALID_DIAGNOSTIC_SIMPLE_2026.copy()
         # default: ok
@@ -390,7 +386,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.label_sum("bio"), 210)
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_diagnostic_valeur_origine_europe(self):
         """
         Same rules as test_diagnostic_valeur_label, but for an origine label (europe) instead of
@@ -411,7 +407,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.label_sum("europe"), 180)
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_diagnostic_valeur_origine_required_if_family_filled(self):
         # since 2026, valeur_europe (& france/circuit_court/local) becomes mandatory as soon as a
         # valeur_famille_europe is filled (unlike valeur_bio, it isn't auto-populated from the
@@ -426,7 +422,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026, valeur_europe=None)
         diagnostic.full_clean()  # should not raise
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_diagnostic_valeur_famille_required_if_sub_filled(self):
         # since 2026, valeur_<famille> becomes mandatory as soon as an origin sub-field is filled
         # for that family, even when valeur_<famille> itself is optional (true for every family
@@ -461,7 +457,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.valeur_charcuterie = 10
         diagnostic.full_clean()  # should not raise anymore
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_teledeclare_clears_appro_fields_not_matching_diagnostic_type(self):
         # since 2026, fields that don't belong to this diagnostic's type must be cleared before
         # teledeclaring (not before, so a manager can freely switch type while filling it out)
@@ -478,7 +474,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         self.assertEqual(diagnostic.valeur_bio, 200)
         self.assertEqual(diagnostic.valeur_totale, 1000)
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_teledeclare_does_not_clear_appro_fields_if_an_earlier_check_raises(self):
         # clearing must happen after every check that can raise, otherwise a failed teledeclare()
         # call would still leave the instance mutated (with nothing actually saved)
@@ -491,7 +487,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
             diagnostic.teledeclare(applicant=diagnostic.canteen.managers.first())
         self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_clear_appro_fields_not_matching_diagnostic_type_noop_if_type_empty_or_invalid(self):
         # nothing to clear against if the type isn't a real, known value
         for diagnostic_type in [None, ""]:
@@ -507,7 +503,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.clear_appro_fields_not_matching_diagnostic_type()
         self.assertEqual(diagnostic.valeur_viandes_volailles_bio, 30)
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_diagnostic_valeur_bio_dont_commerce_equitable(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok
@@ -523,7 +519,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.save()
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_diagnostic_valeur_egalim_autres_dont_commerce_equitable(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # default (None): ok
@@ -539,7 +535,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
         diagnostic.save()
         self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     def test_diagnostic_valeur_viandes_volailles_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_VIANDES_VOLAILLES.pop("valeur_viandes_volailles")
@@ -560,7 +556,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     def test_diagnostic_valeur_produits_de_la_mer_validation(self):
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER = VALID_DIAGNOSTIC_SIMPLE_2025.copy()
         VALID_DIAGNOSTIC_WITHOUT_VALEUR_PRODUITS_DE_LA_MER.pop("valeur_produits_de_la_mer")
@@ -573,7 +569,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign: definition_local only matters since 2026
+    @freeze_time(date_in_campaign(2026))  # definition_local only matters since 2026
     def test_definition_local_validation(self):
         """
         - field is optional
@@ -587,7 +583,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(year=2026, definition_local=VALUE_NOT_OK)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign: definition_local only matters since 2026
+    @freeze_time(date_in_campaign(2026))  # definition_local only matters since 2026
     def test_definition_local_km_validation(self):
         """
         - field is optional
@@ -636,13 +632,13 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 )
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-01-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     def test_definition_local_required_before_2026_validation(self):
         # before 2026, definition_local is not required even if a "_local" appro field is filled
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025, valeur_local=100, definition_local=None)
         diagnostic.full_clean()  # should not raise
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_definition_local_required_after_2026_validation(self):
         # since 2026, definition_local is required as soon as a "_local" appro field is filled
         # NOTE: the "_local" value must stay <= the corresponding family value (see validate_valeur_famille),
@@ -860,7 +856,7 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
             status=Diagnostic.DiagnosticStatus.SUBMITTED,
         )
 
-    @freeze_time(date_in_teledeclaration_campaign)
+    @freeze_time(date_in_campaign(2024))
     def test_editable_volet_fields_can_be_updated_during_the_teledeclaration_campaign(self):
         self.diagnostic.plan_gaspillage_en_place = True  # GASPILLAGE
         self.diagnostic.menu_vegetarien_frequence = Diagnostic.MenuVegetarienFrequence.QUOTIDIEN  # DIVERSIFICATION
@@ -876,14 +872,14 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
         self.assertEqual(self.diagnostic.tunnel_waste, "complet")
         self.assertTrue(self.diagnostic.is_teledeclared)  # unchanged
 
-    @freeze_time(date_in_correction_campaign)
+    @freeze_time(date_in_campaign_correction(2024))
     def test_editable_volet_fields_can_be_updated_during_the_correction_campaign(self):
         self.diagnostic.plan_gaspillage_en_place = True
         self.diagnostic.save()
         self.diagnostic.refresh_from_db()
         self.assertTrue(self.diagnostic.plan_gaspillage_en_place)
 
-    @freeze_time(date_in_teledeclaration_campaign)
+    @freeze_time(date_in_campaign(2024))
     def test_locked_fields_cannot_be_updated(self):
         for field_name, value in [
             ("valeur_bio", 500),  # APPROVISIONNEMENT
@@ -903,7 +899,7 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
                 self.assertNotEqual(getattr(diagnostic, field_name), value)
                 self.assertFalse(diagnostic.plan_gaspillage_en_place)
 
-    @freeze_time("2025-06-01")  # outside of the campaign
+    @freeze_time(date_after_campaign(2024))
     def test_editable_volet_fields_cannot_be_updated_outside_of_the_campaign(self):
         self.diagnostic.plan_gaspillage_en_place = True
         with self.assertRaisesMessage(ValidationError, "hors de la période de la campagne"):
@@ -911,17 +907,17 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
         self.diagnostic.refresh_from_db()
         self.assertFalse(self.diagnostic.plan_gaspillage_en_place)
 
-    @freeze_time(date_in_last_teledeclaration_campaign)  # campaign of another year
+    @freeze_time(date_in_campaign(2023))  # campaign of another year
     def test_editable_volet_fields_cannot_be_updated_during_another_year_campaign(self):
         self.diagnostic.plan_gaspillage_en_place = True
         with self.assertRaisesMessage(ValidationError, "pas dans la bonne année de télédéclaration"):
             self.diagnostic.save()
 
-    @freeze_time("2025-06-01")  # outside of the campaign
+    @freeze_time(date_after_campaign(2024))
     def test_save_without_changes_outside_of_the_campaign(self):
         self.diagnostic.save()  # no error
 
-    @freeze_time("2025-06-01")  # outside of the campaign
+    @freeze_time(date_after_campaign(2024))
     def test_skip_validations(self):
         self.diagnostic.valeur_bio = 500
         self.diagnostic.plan_gaspillage_en_place = True
@@ -930,14 +926,14 @@ class DiagnosticModelSaveSubmittedUpdateTest(TestCase):
         self.assertEqual(self.diagnostic.valeur_bio, 500)
         self.assertTrue(self.diagnostic.plan_gaspillage_en_place)
 
-    @freeze_time(date_in_teledeclaration_campaign)
+    @freeze_time(date_in_campaign(2024))
     def test_cancel_is_not_impacted(self):
         self.diagnostic.cancel()  # status changes: not an update of a teledeclared diagnostic
         self.diagnostic.refresh_from_db()
         self.assertFalse(self.diagnostic.is_teledeclared)
 
 
-@freeze_time("2024-02-10")  # during the 2023 campaign
+@freeze_time(date_in_campaign(2023))
 class Diagnostic2024ModelSaveTest(TransactionTestCase):
     def test_diagnostic_simple_2024_valid(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2024)
@@ -964,7 +960,7 @@ class Diagnostic2024ModelSaveTest(TransactionTestCase):
         diagnostic.full_clean()
 
 
-@freeze_time("2026-01-30")  # during the 2025 campaign
+@freeze_time(date_in_campaign(2025))
 class Diagnostic2025ModelSaveTest(TransactionTestCase):
     def test_diagnostic_simple_2025_valid(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2025)
@@ -1539,9 +1535,7 @@ class DiagnosticQuerySetTest(TestCase):
         cls.canteen_aberrant = CanteenFactory(siret="21130055300016", yearly_meal_count=1000)
         cls.canteen_deleted = CanteenFactory(
             siret="21730065600014",
-            deletion_date=timezone.make_aware(
-                datetime.strptime(date_in_teledeclaration_campaign, "%Y-%m-%d")
-            ),  # soft deleted
+            deletion_date=date_in_campaign(2024),  # soft deleted
         )
 
         for index, canteen in enumerate(
@@ -1557,7 +1551,7 @@ class DiagnosticQuerySetTest(TestCase):
             diagnostic = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data,
-                creation_date=date_in_teledeclaration_campaign,
+                creation_date=date_in_campaign(2024),
                 canteen=canteen,
                 valeur_totale=1000.00,
                 valeur_bio=200.00,
@@ -1565,17 +1559,17 @@ class DiagnosticQuerySetTest(TestCase):
                 valeur_externalites_performance=100.00,
                 valeur_egalim_autres=100.00,
             )
-            with freeze_time(date_in_teledeclaration_campaign):
+            with freeze_time(date_in_campaign(2024)):
                 diagnostic.teledeclare(applicant=canteen.managers.first(), skip_validations=True)
             diagnostic_last_year = DiagnosticFactory(
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 year=year_data - 1,
-                creation_date=date_in_last_teledeclaration_campaign,
+                creation_date=date_in_campaign(2023),
                 canteen=canteen,
                 valeur_totale=1000.00,
                 valeur_bio=200.00,
             )
-            with freeze_time(date_in_last_teledeclaration_campaign):
+            with freeze_time(date_in_campaign(2023)):
                 diagnostic_last_year.teledeclare(applicant=canteen.managers.first(), skip_validations=True)
             setattr(cls, f"diagnostic_canteen_valid_{index + 1}", diagnostic)
             setattr(cls, f"diagnostic_last_year_canteen_valid_{index + 1}", diagnostic_last_year)
@@ -1583,13 +1577,13 @@ class DiagnosticQuerySetTest(TestCase):
         cls.diagnostic_canteen_missing_siret = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
-            creation_date=date_in_teledeclaration_campaign,
+            creation_date=date_in_campaign(2024),
             canteen=cls.canteen_missing_siret,
             valeur_totale=1000.00,
             valeur_bio=200.00,
             invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SANS_SIRET_OU_SIREN],
         )
-        with freeze_time(date_in_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2024)):
             cls.diagnostic_canteen_missing_siret.teledeclare(
                 applicant=cls.canteen_missing_siret.managers.first(), skip_validations=True
             )
@@ -1597,13 +1591,13 @@ class DiagnosticQuerySetTest(TestCase):
         cls.diagnostic_canteen_cout_repas_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
-            creation_date=date_in_teledeclaration_campaign,
+            creation_date=date_in_campaign(2024),
             canteen=cls.canteen_cout_repas_aberrant,
             valeur_totale=1000000.00,  # cout_repas > 20
             valeur_bio=200.00,
             invalid_reason_list=[],  # not aberrant
         )
-        with freeze_time(date_in_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2024)):
             cls.diagnostic_canteen_cout_repas_aberrant.teledeclare(
                 applicant=cls.canteen_cout_repas_aberrant.managers.first(), skip_validations=True
             )
@@ -1611,13 +1605,13 @@ class DiagnosticQuerySetTest(TestCase):
         cls.diagnostic_canteen_valeur_totale_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
-            creation_date=date_in_teledeclaration_campaign,
+            creation_date=date_in_campaign(2024),
             canteen=cls.canteen_valeur_totale_aberrant,
             valeur_totale=1000001.00,  # aberrant but cout_repas < 20
             valeur_bio=200.00,
             invalid_reason_list=[],
         )
-        with freeze_time(date_in_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2024)):
             cls.diagnostic_canteen_valeur_totale_aberrant.teledeclare(
                 applicant=cls.canteen_valeur_totale_aberrant.managers.first(), skip_validations=True
             )
@@ -1625,13 +1619,13 @@ class DiagnosticQuerySetTest(TestCase):
         cls.diagnostic_canteen_aberrant = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
-            creation_date=date_in_teledeclaration_campaign,
+            creation_date=date_in_campaign(2024),
             canteen=cls.canteen_aberrant,
             valeur_totale=1000001.00,  # aberrant AND cout_repas > 20
             valeur_bio=200.00,
             invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
         )
-        with freeze_time(date_in_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2024)):
             cls.diagnostic_canteen_aberrant.teledeclare(
                 applicant=cls.canteen_aberrant.managers.first(), skip_validations=True
             )
@@ -1639,13 +1633,13 @@ class DiagnosticQuerySetTest(TestCase):
         cls.diagnostic_canteen_aberrant_2025 = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=2025,
-            creation_date=date_in_teledeclaration_campaign,
+            creation_date=date_in_campaign(2024),
             canteen=cls.canteen_aberrant,
             valeur_totale=50,  # cout_repas < 0.1
             valeur_bio=20,
             invalid_reason_list=[Diagnostic.InvalidReason.VALEURS_ABERRANTES],
         )
-        with freeze_time("2026-03-15"):  # during the 2025 campaign
+        with freeze_time(date_in_campaign(2025)):
             cls.diagnostic_canteen_aberrant_2025.teledeclare(
                 applicant=cls.canteen_aberrant.managers.first(), skip_validations=True
             )
@@ -1653,13 +1647,13 @@ class DiagnosticQuerySetTest(TestCase):
         cls.diagnostic_canteen_deleted = DiagnosticFactory(
             diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
             year=year_data,
-            creation_date=date_in_teledeclaration_campaign,
+            creation_date=date_in_campaign(2024),
             canteen=cls.canteen_deleted,
             valeur_totale=1000.00,
             valeur_bio=200.00,
             invalid_reason_list=[Diagnostic.InvalidReason.CANTINE_SOFT_SUPPRIMEE_PENDANT_CAMPAGNE],
         )
-        with freeze_time(date_in_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2024)):
             cls.diagnostic_canteen_deleted.teledeclare(
                 applicant=cls.canteen_deleted.managers.first(), skip_validations=True
             )
@@ -1968,7 +1962,7 @@ class DiagnosticIsCleanMethodTest(TestCase):
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
         )
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_is_clean_without_raise_errors(self):
         is_clean, errors = self.diagnostic_2024_simple_not_valid._is_clean(raise_errors=False)
         self.assertFalse(is_clean)
@@ -1978,7 +1972,7 @@ class DiagnosticIsCleanMethodTest(TestCase):
         self.assertTrue(is_clean)
         self.assertEqual(errors, {})
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_is_clean_with_raise_errors(self):
         with self.assertRaises(ValidationError):
             self.diagnostic_2024_simple_not_valid._is_clean(raise_errors=True)
@@ -1987,7 +1981,7 @@ class DiagnosticIsCleanMethodTest(TestCase):
         self.assertTrue(is_clean)
         self.assertEqual(errors, {})
 
-    @freeze_time("2027-01-30")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     def test_is_clean_ignores_appro_fields_not_matching_diagnostic_type(self):
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
         # COMPLETE-only field left over (ex: the manager started with a COMPLETE diagnostic)
@@ -2007,7 +2001,7 @@ class DiagnosticIsCleanMethodTest(TestCase):
 
 
 class DiagnosticIsCleanFieldTest(TestCase):
-    @freeze_time("2026-11-17")  # outside of the 2024 campaign: validate_year_and_can_edit fails for 2024
+    @freeze_time(date_after_campaign(2024))  # validate_year_and_can_edit fails for 2024
     def test_is_clean_field_excludes_current_date_rules(self):
         diagnostic = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
@@ -2317,7 +2311,7 @@ class DiagnosticMealPriceQuerySetAndPropertyTest(TestCase):
             valeur_totale=1000,
             valeur_bio=200,
         )
-        with freeze_time(date_in_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2024)):
             cls.canteen_groupe_teledeclared = CanteenFactory(
                 production_type=Canteen.ProductionType.GROUPE, yearly_meal_count=2000
             )
@@ -2496,7 +2490,7 @@ class DiagnosticModelDeleteTest(TestCase):
         self.assertIsNone(self.diagnostic.canteen)
 
     def test_delete_applicant(self):
-        with freeze_time(date_in_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2024)):
             self.diagnostic.teledeclare(applicant=self.user)
         self.assertIsNotNone(self.diagnostic.applicant)
         # delete

@@ -7,6 +7,7 @@ from freezegun import freeze_time
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret, mock_fetch_geo_data_from_siren
+from common.tests.utils import date_after_campaign, date_before_campaign, date_in_campaign, date_in_campaign_correction
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, SectorCategory, Teledeclaration
 from data.models.creation_source import CreationSource
@@ -932,13 +933,13 @@ class CanteenVisibleQuerySetAndPropertyTest(TestCase):
 class CanteenCreatedBeforeQuerySetTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        with freeze_time("2025-01-01"):  # before the 2024 campaign
+        with freeze_time(date_before_campaign(2024)):
             CanteenFactory()
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             CanteenFactory()
-        with freeze_time("2025-04-20"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             CanteenFactory()
-        with freeze_time("2025-06-30"):  # after the 2024 campaign
+        with freeze_time(date_after_campaign(2024)):
             CanteenFactory()
 
     def test_created_before_year_campaign_end_date(self):
@@ -956,11 +957,11 @@ class CanteenNotDeletedBeforeQuerySetTest(TestCase):
         canteen_deleted_before_2024_campaign_end = CanteenFactory()
         canteen_deleted_during_2024_campaign = CanteenFactory()
         canteen_deleted_after_2024_campaign = CanteenFactory()
-        with freeze_time("2025-01-01"):  # before the 2024 campaign
+        with freeze_time(date_before_campaign(2024)):
             canteen_deleted_before_2024_campaign_end.delete()
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             canteen_deleted_during_2024_campaign.delete()
-        with freeze_time("2025-06-30"):  # after the 2024 campaign
+        with freeze_time(date_after_campaign(2024)):
             canteen_deleted_after_2024_campaign.delete()
 
     def test_not_deleted_before_year_campaign_end_date(self):
@@ -1074,7 +1075,7 @@ class CanteenCentralAndSatelliteQuerySetAndPropertyTest(TestCase):
         # check again
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_missing_data_count, 1)
 
-    @freeze_time("2026-01-15")  # during the 2025 campaign the year is hardcoded in the query
+    @freeze_time(date_in_campaign(2025))  # the year is hardcoded in the query
     def test_satellites_already_teledeclared_count_property(self):
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_already_teledeclared_count, 0)
         self.assertEqual(self.canteen_groupe_with_satellite.satellites_count, 1)
@@ -1182,7 +1183,7 @@ class CanteenDiagnosticTeledeclarationQuerySetTest(TestCase):
             year=2023,
             valeur_totale=None,
         )  # missing data
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             cls.diagnostic_filled_teledeclared.teledeclare(applicant=user)
             cls.diagnostic_filled_cancelled.teledeclare(applicant=user)
             cls.diagnostic_filled_cancelled.cancel()
@@ -1792,7 +1793,7 @@ class CanteenModelPropertiesTest(TestCase):
             year=2024,
             valeur_totale=1000,
         )  # filled
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             td_to_cancel = Teledeclaration.create_from_diagnostic(diagnostic_filled, applicant=UserFactory())
             td_to_cancel.cancel()
         diagnostic_filled_and_submitted = DiagnosticFactory(
@@ -1801,7 +1802,7 @@ class CanteenModelPropertiesTest(TestCase):
             year=2024,
             valeur_totale=1000,
         )  # filled & submitted
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             Teledeclaration.create_from_diagnostic(diagnostic_filled_and_submitted, applicant=UserFactory())
 
         self.assertEqual(canteen_with_diagnostic_cancelled.get_declaration_donnees_year_display(2023), "")
@@ -1818,7 +1819,7 @@ class CanteenModelPropertiesTest(TestCase):
             "📩 Télédéclarée (par CC)",
         )
 
-    @freeze_time("2024-01-20")
+    @freeze_time(date_in_campaign(2023))
     def test_appro_in_past_ordered_year_desc(self):
         canteen = CanteenFactory()
         DiagnosticFactory(canteen=canteen, year=2024)

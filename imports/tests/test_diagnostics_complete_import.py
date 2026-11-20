@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
+from common.tests.utils import date_in_campaign, date_in_campaign_correction
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic
 from imports.models import ImportType
@@ -142,7 +143,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         self.assertEqual(errors[7]["field"], "siret")
         self.assertEqual(errors[7]["message"], "Les valeurs de cette colonne doivent être uniques")
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_model_validation_error(self):
         # TODO: update diagnostics_complete_bad.csv and add tests
@@ -190,7 +191,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1)
 
-        with freeze_time("2026-03-30"):  # during the 2025 campaign
+        with freeze_time(date_in_campaign(2025)):
             diagnostic.teledeclare(applicant=authenticate.user)
 
             file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
@@ -221,7 +222,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
             diagnostic.refresh_from_db()
             self.assertEqual(diagnostic.valeur_totale, 2000)
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_canteen_not_found_with_siret(self):
         self.assertEqual(Diagnostic.objects.count(), 0)
@@ -241,7 +242,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
             "Une cantine avec le siret « 21340172201787 » n'existe pas sur la plateforme.",
         )
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_user_not_canteen_manager(self):
         CanteenFactory(siret="21340172201787", managers=[])
@@ -275,7 +276,7 @@ class DiagnosticsCompleteImportApiErrorTest(APITestCase):
 
 @skipIf(settings.SKIP_TESTS_THAT_REQUIRE_INTERNET, "Skipping tests that require internet access")
 class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_diagnostics_created(self):
         """
@@ -318,7 +319,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_2.creation_user, authenticate.user)
         self.assertEqual(diagnostic_2.creation_source, CreationSource.IMPORT)
 
-    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     @authenticate
     def test_diagnostics_created_with_schema_version_2026(self):
         """
@@ -348,7 +349,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic.valeur_fruits_et_legumes, 100)
         self.assertEqual(diagnostic.valeur_fruits_et_legumes_bio, 20)
 
-    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     @authenticate
     def test_diagnostics_created_with_fields_not_in_file(self):
         """
@@ -374,7 +375,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertIsNone(diagnostic.nombre_repas_an)
         self.assertEqual(diagnostic.valeur_fruits_et_legumes, 0)  # required since 2026: set to 0 by save()
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_diagnostics_created_excel_file(self):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
@@ -400,7 +401,7 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         self.assertEqual(diagnostic_1.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
         self.assertEqual(diagnostic_1.creation_source, CreationSource.IMPORT)
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_update_existing_diagnostic(self):
         """
@@ -436,10 +437,10 @@ class DiagnosticsCompleteImportApiSuccessTest(APITestCase):
         canteen = CanteenFactory(siret="21340172201787", managers=[authenticate.user])
         diagnostic = DiagnosticFactory(canteen=canteen, year=2025, valeur_totale=1000, valeur_bio=200)
 
-        with freeze_time("2026-03-30"):  # during the 2025 campaign
+        with freeze_time(date_in_campaign(2025)):
             diagnostic.teledeclare(applicant=authenticate.user)
 
-        with freeze_time("2026-04-17"):  # during the 2025 correction campaign
+        with freeze_time(date_in_campaign_correction(2025)):
             diagnostic.cancel()
 
             file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_good_one_canteen_seperator_semicolon.csv"
@@ -472,7 +473,7 @@ class DiagnosticsCompleteImportIdApiTest(APITestCase):
             body["errors"][0]["message"], "Version de schéma « 2025 » inconnue. Valeurs possibles : 2026."
         )
 
-    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     @authenticate
     def test_canteen_not_found_with_id(self):
         file_path = "./imports/tests/files/diagnostics_complete/diagnostics_complete_2026_good_one_canteen_id.csv"
@@ -488,7 +489,7 @@ class DiagnosticsCompleteImportIdApiTest(APITestCase):
         self.assertEqual(body["errors"][0]["message"], "Une cantine avec l'id « 949 » n'existe pas sur la plateforme.")
         assert_import_failure_created(self, authenticate.user, ImportType.DIAGNOSTIC_COMPLETE_ID, file_path)
 
-    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     @authenticate
     def test_user_not_canteen_manager_with_id(self):
         CanteenFactory(id=949, managers=[])
@@ -505,7 +506,7 @@ class DiagnosticsCompleteImportIdApiTest(APITestCase):
         self.assertEqual(body["count"], 0)
         self.assertEqual(body["errors"][0]["message"], "Vous n'êtes pas un gestionnaire de cette cantine.")
 
-    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     @authenticate
     def test_diagnostics_created_with_id(self):
         canteen = CanteenFactory(id=949, managers=[authenticate.user])
