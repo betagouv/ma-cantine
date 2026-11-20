@@ -29,12 +29,13 @@ Les crons ne tournent pas en local (ni dans Docker). Pour lancer une tâche : `p
 
 ## En production
 
-Le fichier `cron.json` est déployé sur toutes les applications Clever Cloud qui utilisent ce dépôt (web, staging, demo...). Les crons ne tournent que sur l'application où `CRON_ENABLED=true`.
-On les fait tourner sur une application à part (historiquement appelée "celery"), pour que les tâches (qui consomment beaucoup de mémoire) ne ralentissent pas l'application web.
+Le fichier `cron.json` est déployé sur toutes les applications Clever Cloud qui utilisent ce dépôt (staging, demo, prod). Les crons ne tournent que sur les applications où `CRON_ENABLED=true` : les applications web de staging et de prod (pas de demo).
 
-Sur cette application, renseigner les mêmes variables d'environnement que le serveur web, plus :
+Il n'y a pas d'application dédiée aux tâches (l'ancienne application "celery") : les crons tournent sur l'application web, principalement la nuit (environ 1h de tâches par nuit en prod). Si une tâche consomme trop de mémoire, elle peut ralentir l'application web : surveiller les métriques de l'application Clever Cloud.
 
 ### Variables d'environnement
+
+À renseigner sur l'application web (en plus des variables habituelles) :
 
 1. Fonctionnement des crons :
     1. `CRON_ENABLED=true`

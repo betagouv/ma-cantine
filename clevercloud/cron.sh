@@ -6,7 +6,7 @@
 # - "bash -l" (login shell) is needed to load the app environment variables
 #   (calling this script with "/bin/bash ..." in cron.json would cancel it)
 
-# crons are installed on every app deployed from this repo (web & cron apps): only run them where enabled
+# crons are installed on every app deployed from this repo (staging, demo, prod): only run them where enabled
 if [[ "$CRON_ENABLED" != "true" ]]; then
     exit 0
 fi
