@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.utils import timezone
 from freezegun import freeze_time
 
@@ -105,14 +107,14 @@ def setUpTestData(cls, with_diagnostics=False):
                 valeur_externalites_performance=0,
                 valeur_egalim_autres=300,
             )
-        with freeze_time("2023-05-15"):  # during the 2022 campaign (1 day later)
+        with freeze_time(date_in_campaign(2022) + timedelta(days=1)):
             cls.canteen_site_earlier_diagnostic_2022 = DiagnosticFactory(
                 canteen=cls.canteen_site_earlier, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
             cls.canteen_site_earlier_diagnostic_2022.teledeclare(cls.canteen_site_manager_2)
-        with freeze_time("2023-05-16"):  # during the 2022 campaign (1 day later)
+        with freeze_time(date_in_campaign(2022) + timedelta(days=2)):
             cls.canteen_site_diagnostic_2022.teledeclare(cls.canteen_site_manager_1)
-        with freeze_time("2023-05-17"):  # during the 2022 campaign (1 day later)
+        with freeze_time(date_in_campaign(2022) + timedelta(days=3)):
             cls.canteen_groupe_diagnostic_2022 = DiagnosticFactory(
                 canteen=cls.canteen_groupe, year=2022, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )

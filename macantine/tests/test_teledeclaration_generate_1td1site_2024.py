@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django.core.management import call_command
 from django.db.models.signals import post_save
 from django.test import TestCase
@@ -725,7 +727,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
                 management_type=Canteen.ManagementType.CONCEDED,
             )
             satellite_siren.save()
-        with freeze_time("2025-03-31"):  # during the 2024 campaign (1 day later)
+        with freeze_time(date_in_campaign(2024) + timedelta(days=1)):
             central_diagnostic = DiagnosticFactory(
                 canteen=central,
                 year=2024,

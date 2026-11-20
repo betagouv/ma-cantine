@@ -1,3 +1,4 @@
+from datetime import timedelta
 from decimal import Decimal
 
 from django.core.management import call_command
@@ -678,7 +679,7 @@ class Teledeclaration1Td1SiteCanteenFieldsTest(TestCase):
                 management_type=Canteen.ManagementType.CONCEDED,
             )
             satellite_siren.save()
-        with freeze_time("2026-03-31"):  # during the 2025 campaign (1 day later)
+        with freeze_time(date_in_campaign(2025) + timedelta(days=1)):
             groupe_diagnostic = DiagnosticFactory(
                 canteen=groupe,
                 year=2025,
