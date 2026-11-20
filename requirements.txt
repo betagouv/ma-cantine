@@ -558,7 +558,7 @@ sqlparse==0.6.0
     #   django-debug-toolbar
 stack-data==0.6.3
     # via ipython
-svglib==2.2.0
+svglib==2.3.1
     # via xhtml2pdf
 tabulate==0.10.0
     # via metricflow
