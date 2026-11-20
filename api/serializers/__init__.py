@@ -12,7 +12,6 @@ from .canteen import (  # noqa: F401
     CanteenTeledeclarationSerializer,
     SatelliteTeledeclarationSerializer,
     MinimalCanteenSerializer,
-    CanteenSummarySerializer,
     CanteenOpenDataSerializer,
     CanteenExportSerializer,
     CanteenMinistriesSerializer,

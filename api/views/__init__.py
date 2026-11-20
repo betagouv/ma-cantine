@@ -12,7 +12,6 @@ from .canteen import (  # noqa: F401
     UserCanteenActions,
     UserCanteenCheckView,
     UserCanteenPreviews,
-    UserCanteenSummaries,
     UserCanteensView,
 )
 from .canteen_export import UserCanteenListExportView  # noqa: F401

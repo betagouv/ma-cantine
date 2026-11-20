@@ -73,7 +73,6 @@ from api.views import (
     UserCanteenManagersInvitationsView,
     UserCanteenManagersView,
     UserCanteenPreviews,
-    UserCanteenSummaries,
     UserCanteensView,
     UserInfoView,
     VegetarianExpeView,
@@ -99,7 +98,6 @@ urlpatterns = {
     ),
     path("canteenActions/<int:year>", UserCanteenActions.as_view(), name="user_canteens_actions"),
     path("canteenPreviews/", UserCanteenPreviews.as_view(), name="user_canteen_previews"),
-    path("canteenSummaries/", UserCanteenSummaries.as_view(), name="user_canteens_summaries"),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path(
         "export-cantines.xlsx",  # breaking from URL conventions for nicer filename
