@@ -681,6 +681,12 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         blank=True,
         verbose_name="état administratif du siret (obtenu via API Recherche Entreprises)",
     )
+    recherche_entreprises_data = models.JSONField(
+        # not null: simple_history's update_change_reason filters on every field, and JSONField=None matches JSON null
+        default=dict,
+        blank=True,
+        verbose_name="données de l'unité légale & de l'établissement (obtenues via API Recherche Entreprises)",
+    )
 
     # Campaign tracking
     creation_mtm_source = models.TextField(

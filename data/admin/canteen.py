@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.utils.html import format_html, format_html_join
 
 from data.admin.softdeletionadmin import SoftDeletionHistoryAdmin, SoftDeletionStatusFilter
-from data.admin.utils import get_arrayfield_list_filter
+from data.admin.utils import get_arrayfield_list_filter, json_pretty
 from data.models import Canteen
 from data.models.creation_source import CreationSource
 
@@ -105,6 +105,13 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
             },
         ),
         (
+            "Annuaire des entreprises",
+            {
+                "description": "ℹ️ Données récupérées via l'API Recherche Entreprises (à partir du SIRET, ou du SIREN de l'unité légale). Celles-ci ne sont pas modifiables.<br /><br /><hr />",
+                "fields": ("recherche_entreprises_data_pretty",),
+            },
+        ),
+        (
             "Informations générales",
             {
                 "fields": (
@@ -159,6 +166,7 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
         "publication_status_display",
         "has_been_claimed",
         *[field_name for field_name in Canteen.GEO_FIELDS if field_name not in ("city_insee_code",)],
+        "recherche_entreprises_data_pretty",
         *Canteen.TD_FIELDS,
         *Canteen.MATOMO_FIELDS,
         *Canteen.CREATION_META_FIELDS,
@@ -190,6 +198,13 @@ class CanteenAdmin(SoftDeletionHistoryAdmin):
     @admin.display(description="Siret (ou Siren)")
     def siret_or_siren_unite_legale_display(self, obj):
         return obj.siret_or_siren_unite_legale
+
+    def recherche_entreprises_data_pretty(self, obj):
+        return json_pretty(obj.recherche_entreprises_data)
+
+    recherche_entreprises_data_pretty.short_description = Canteen._meta.get_field(
+        "recherche_entreprises_data"
+    ).verbose_name
 
     def groupe_with_link(self, obj):
         if not obj.groupe:
