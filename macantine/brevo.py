@@ -8,7 +8,8 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 CONTACT_BULK_UPDATE_SIZE = 100
-CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD_DAYS = 1
+# hours (not 1 day): robust to the cron start time varying slightly from one night to the next
+CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD_HOURS = 12
 
 configuration = sib_api_v3_sdk.Configuration()
 configuration.api_key["api-key"] = settings.ANYMAIL.get("SENDINBLUE_API_KEY")

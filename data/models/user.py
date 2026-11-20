@@ -26,8 +26,8 @@ class UserQuerySet(models.QuerySet):
         return self.filter(brevo_last_update_date__isnull=True)
 
     def brevo_to_update(self):
-        one_day_ago = timezone.now() - timezone.timedelta(days=brevo.CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD_DAYS)
-        return self.exclude(brevo_is_deleted=True).filter(brevo_last_update_date__lte=one_day_ago)
+        threshold = timezone.now() - timezone.timedelta(hours=brevo.CONTACT_BULK_UPDATE_LAST_UPDATED_THRESHOLD_HOURS)
+        return self.exclude(brevo_is_deleted=True).filter(brevo_last_update_date__lte=threshold)
 
     def annotate_with_totp_device(self):
         return (
