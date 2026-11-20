@@ -41,7 +41,7 @@ Vous pouvez installer en local ou utiliser l'environnement [Docker](./docker.md)
 
 ### À installer localement
 
-- Python 3.11+
+- Python 3.12+
 - [uv](https://docs.astral.sh/uv/)
 - [Node et npm](https://nodejs.org/en/download/)
 - [Postgres](https://www.postgresql.org/download/)
