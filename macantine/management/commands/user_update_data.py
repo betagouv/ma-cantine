@@ -23,8 +23,10 @@ class Command(MaCantineBaseCommand):
         start = time.time()
 
         users_qs = User.objects.with_canteen_stats().with_canteen_diagnostic_stats()
+        users_count = 0
         for user in users_qs:
             user.update_data()
+            users_count += 1
 
         end = time.time()
-        logger.info(f"Updated {users_qs.count()} users in {end - start:.2f} seconds")
+        logger.info(f"Updated {users_count} users in {end - start:.2f} seconds")

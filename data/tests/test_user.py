@@ -151,6 +151,11 @@ class UserModelTest(TestCase):
         self.assertEqual(user_without_canteens.nb_cantines_td_2025, 0)
         self.assertEqual(user_without_canteens.nb_cantines_td_todo_2025, 0)
 
+    def test_queryset_with_canteen_stats_and_diagnostic_stats_single_query(self):
+        # annotations only: no prefetch of the canteens & diagnostics
+        with self.assertNumQueries(1):
+            list(User.objects.with_canteen_stats().with_canteen_diagnostic_stats())
+
     def test_model_method_update_data(self):
         self.assertIsNone(self.user_with_canteens.data)
 

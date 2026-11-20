@@ -45,7 +45,7 @@ class UserQuerySet(models.QuerySet):
     def with_canteen_stats(self):
         from data.models import Canteen
 
-        return self.prefetch_related("canteens").annotate(
+        return self.annotate(
             nb_cantines=Count("canteens", filter=canteen_not_deleted_query(), distinct=True),
             nb_cantines_groupe=Count(
                 "canteens",
@@ -79,7 +79,7 @@ class UserQuerySet(models.QuerySet):
 
     def with_canteen_diagnostic_stats(self):
         # TODO teledeclaration_campaign: add new year
-        return self.prefetch_related("canteens", "canteens__diagnostics").annotate(
+        return self.annotate(
             # bilans
             nb_cantines_bilan_2025=Count(
                 "canteens__diagnostics",
