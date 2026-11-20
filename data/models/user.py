@@ -342,13 +342,14 @@ class User(DirtyFieldsMixin, AbstractUser):
         if with_save:
             self.save()
 
-    def update_data(self):
+    def update_data(self, with_save=True):
         # need to have called the user with 'with_canteen_stats' & 'with_canteen_diagnostic_stats' queryset method
         self.data = {
             field: getattr(self, field) for field in self.DATA_CANTEEN_FIELDS + self.DATA_CANTEEN_DIAGNOSTIC_FIELDS
         }
         self.data["modification_date"] = timezone.now().isoformat()
-        self.save(update_fields=["data"])
+        if with_save:
+            self.save(update_fields=["data"])
 
     def get_brevo_data(self):
         """
