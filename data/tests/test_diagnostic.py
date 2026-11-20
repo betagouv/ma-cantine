@@ -108,7 +108,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
                 diagnostic = DiagnosticFactory(year=VALUE_NOT_OK_ON_FULL_CLEAN, **VALID_DIAGNOSTIC_WITHOUT_YEAR)
                 self.assertRaises(ValidationError, diagnostic.full_clean)
 
-    @freeze_time("2026-11-09")  # outside of a campaign, but the year is overridden (e.g. demo environment)
+    @freeze_time(date_after_campaign(2025))
     @override_settings(TELEDECLARATION_YEAR_OVERRIDE=2026)
     def test_year_validation_with_year_override(self):
         """
@@ -2001,7 +2001,7 @@ class DiagnosticIsCleanMethodTest(TestCase):
 
 
 class DiagnosticIsCleanFieldTest(TestCase):
-    @freeze_time("2026-11-17")  # outside of the 2024 campaign: validate_year_and_can_edit fails for 2024
+    @freeze_time(date_after_campaign(2024))  # validate_year_and_can_edit fails for 2024
     def test_is_clean_field_excludes_current_date_rules(self):
         diagnostic = DiagnosticFactory(
             year=2024, canteen=CanteenFactory(), diagnostic_type=Diagnostic.DiagnosticType.SIMPLE, valeur_totale=1000
