@@ -274,11 +274,11 @@ def validate_canteen_groupe_change(instance):
     for groupe_id, message in [
         (
             old_groupe_id,
-            f"Vous ne pouvez pas retirer la cantine du groupe « {old_groupe_id} », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration du groupe pour pouvoir retirer la cantine.",
+            f"Vous ne pouvez pas retirer la cantine du groupe « {old_groupe_id} », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Pour retirer la cantine, vous devez annuler (corriger) la télédéclaration du groupe, puis télédéclarer à nouveau le bilan du groupe.",
         ),
         (
             new_groupe_id,
-            f"Vous ne pouvez pas ajouter la cantine au groupe « {new_groupe_id} », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration du groupe pour pouvoir ajouter la cantine.",
+            f"Vous ne pouvez pas ajouter la cantine au groupe « {new_groupe_id} », car il possède un bilan télédéclaré (campagne de télédéclaration en cours). Pour ajouter la cantine, vous devez annuler (corriger) la télédéclaration du groupe, puis télédéclarer à nouveau le bilan du groupe.",
         ),
     ]:
         if groupe_id:

@@ -77,14 +77,9 @@ class CanteenGroupeSatelliteLinkView(APIView):
         canteen_satellite.groupe = canteen_groupe
         try:
             canteen_satellite.save(skip_validations=True)
-        except ValidationError:
+        except ValidationError as e:
             # the groupe has a teledeclared diagnostic during the campaign (see validate_canteen_groupe_change)
-            return JsonResponse(
-                {
-                    "error": "Vous ne pouvez pas ajouter de restaurant satellite en cours de campagne avec un bilan télédéclaré. En effet la télédéclaration fige les données, pour effectuer une modification durant la campagne vous devez : aller sur le bilan du groupe et cliquer sur 'corriger' la télédéclaration ; revenir sur cette page pour ajouter le restaurant satellite ; télédéclarer à nouveau le bilan du groupe.",
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return JsonResponse({"error": " ".join(e.message_dict["groupe"])}, status=status.HTTP_400_BAD_REQUEST)
         return Response(FullCanteenSerializer(canteen_groupe).data, status=status.HTTP_200_OK)
 
 
@@ -120,10 +115,10 @@ class CanteenGroupeSatelliteUnlinkView(APIView):
         canteen_satellite.groupe = None
         try:
             canteen_satellite.save(skip_validations=True)
-        except ValidationError:
+        except ValidationError as e:
             # the groupe has a teledeclared diagnostic during the campaign (see validate_canteen_groupe_change)
             if canteen_groupe.managers.filter(id=request.user.id).exists():
-                error = "Vous ne pouvez pas retirer le restaurant satellite en cours de campagne avec un bilan télédéclaré. En effet la télédéclaration fige les données, pour effectuer une modification durant la campagne vous devez : aller sur le bilan du groupe et cliquer sur 'corriger' la télédéclaration ; revenir sur cette page pour retirer le restaurant satellite ; télédéclarer à nouveau le bilan du groupe."
+                error = " ".join(e.message_dict["groupe"])
             else:
                 # the user is the satellite manager (see permission_classes)
                 correction_end_date = timezone.localtime(
