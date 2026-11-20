@@ -12,6 +12,7 @@ from api.tests.utils import authenticate, get_oauth2_token
 from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.recherche_entreprises import mock_fetch_geo_data_from_siret
+from common.tests.utils import date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, ManagerInvitationFactory, UserFactory
 from data.models import Canteen, Diagnostic, EventLog, Sector, Teledeclaration
 from data.models.creation_source import CreationSource
@@ -319,7 +320,7 @@ class CanteenDetailApiTest(APITestCase):
         self.assertEqual(body["centralKitchen"]["id"], canteen_groupe.id)
 
     @authenticate
-    @freeze_time("2024-01-20")
+    @freeze_time(date_in_campaign(2023))
     def test_can_get_canteen_badges(self):
         """
         The full representation of a canteen contains the badges earned for last year
@@ -355,7 +356,7 @@ class CanteenDetailApiTest(APITestCase):
         self.assertIsNone(badges["diversification"])
 
     @authenticate
-    @freeze_time("2024-02-20")
+    @freeze_time(date_in_campaign(2023))
     def test_can_get_canteen_badges_vegetarian_diversification_plan_rule(self):
         """
         The badges are computed with the canteen data at the time of the teledeclaration (canteen_snapshot)

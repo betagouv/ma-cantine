@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
-from common.tests.utils import date_in_campaign, date_in_campaign_correction
+from common.tests.utils import date_after_campaign, date_in_campaign, date_in_campaign_correction
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Sector
 from imports.models import ImportType
@@ -274,7 +274,7 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
             self.teledeclaration.teledeclare(applicant=authenticate.user)
 
         # Import
-        with freeze_time("2025-07-20"):
+        with freeze_time(date_after_campaign(2024)):
             file_path = "./imports/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
             with open(file_path) as canteen_file:
                 response = self.client.post(self.url, {"file": canteen_file})

@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
-from common.tests.utils import date_in_campaign
+from common.tests.utils import date_after_campaign, date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, SectorCategory
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
@@ -180,12 +180,10 @@ class CanteenStatsApiTest(APITestCase):
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_canteen_count_include_deletion_and_creation_dates(self):
-        # During the campaign
         with freeze_time(date_in_campaign(2023)):
             self.canteen_1.delete(skip_validations=True)  # legacy CENTRAL
 
-        # After the campaign
-        with freeze_time("2024-06-15"):
+        with freeze_time(date_after_campaign(2023)):
             self.canteen_3.delete()
             CanteenFactory()
 
@@ -511,7 +509,7 @@ class CanteenStatsApiTest(APITestCase):
             self.assertEqual(body["notes"]["canteenCountDescription"], "Au 11 juin 2024")  # end of campaign
 
     def test_notes_canteen_count_description_after_campaign(self):
-        with freeze_time("2024-11-01"):
+        with freeze_time(date_after_campaign(2023)):
             response = self.client.get(self.url, {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             body = response.json()

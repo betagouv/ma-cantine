@@ -1734,7 +1734,7 @@ class CanteenModelPropertiesTest(TestCase):
             "📩 Télédéclarée (par CC)",
         )
 
-    @freeze_time("2024-01-20")
+    @freeze_time(date_in_campaign(2023))
     def test_appro_in_past_ordered_year_desc(self):
         canteen = CanteenFactory()
         DiagnosticFactory(canteen=canteen, year=2024)
