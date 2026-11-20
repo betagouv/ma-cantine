@@ -1,6 +1,7 @@
 from freezegun import freeze_time
 
 from django.test import TestCase
+from common.tests.utils import date_after_campaign, date_in_campaign, date_in_campaign_correction
 from data.models import Canteen, Diagnostic, Sector
 from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory
 
@@ -25,7 +26,7 @@ class CanteenActionTestCase(TestCase):
             production_type=Canteen.ProductionType.ON_SITE,
         )
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_canteen_missing_data_actions(self):
         # has diagnostic, but missing data (yearly_meal_count)
         DiagnosticFactory(canteen=self.canteen_site, year=2024, valeur_totale=100)
@@ -93,7 +94,7 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.FILL_CANTEEN_DATA,
         )
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_canteen_not_clean_actions(self):
         DiagnosticFactory(canteen=self.canteen_site, year=2024, valeur_totale=100)
 
@@ -119,7 +120,7 @@ class CanteenActionTestCase(TestCase):
 
         self.assertEqual(canteen_qs.get(id=self.canteen_site.id).action, Canteen.Actions.TELEDECLARE)
 
-    @freeze_time("2025-08-30")  # after the 2024 campaign
+    @freeze_time(date_after_campaign(2024))
     def test_canteen_site_did_not_teledeclare_actions(self):
         # Without diagnostic
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
@@ -135,7 +136,7 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.DID_NOT_TELEDECLARE,
         )
 
-    @freeze_time("2025-08-30")  # after the 2024 campaign
+    @freeze_time(date_after_campaign(2024))
     def test_canteen_groupe_did_not_teledeclare_actions(self):
         DiagnosticFactory(
             canteen=self.canteen_groupe_1_with_satellites,
@@ -152,7 +153,7 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.DID_NOT_TELEDECLARE,
         )
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_canteen_diagnostic_not_clean_actions(self):
         diagnostic = DiagnosticFactory(
             canteen=self.canteen_site,
@@ -184,7 +185,7 @@ class CanteenActionTestCase(TestCase):
 
         self.assertEqual(canteen_qs.get(id=self.canteen_site.id).action, Canteen.Actions.TELEDECLARE)
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_canteen_teledeclaration_actions(self):
         for canteen in [
             self.canteen_site,
@@ -227,7 +228,7 @@ class CanteenActionTestCase(TestCase):
 
             self.assertEqual(canteen_qs.get(id=canteen.id).action, Canteen.Actions.NOTHING)
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_groupe_missing_data_actions(self):
         # missing satellites, no diagnostic, canteen missing data
         self.assertEqual(self.canteen_groupe_2_without_satellites.satellites.count(), 0)
@@ -316,7 +317,7 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.TELEDECLARE,
         )
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_groupe_satellite_not_clean_actions(self):
         DiagnosticFactory(
             canteen=self.canteen_groupe_1_with_satellites,
@@ -346,7 +347,7 @@ class CanteenActionTestCase(TestCase):
         )
         self.assertEqual(canteen_qs.get(id=self.canteen_satellite_11.id).action, Canteen.Actions.FILL_CANTEEN_DATA)
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_groupe_satellite_relationship_diagnostic_mode_all_teledeclaration_actions(self):
         # groupe with satellites and has diagnostic started
         canteen_groupe_diagnostic_2024 = DiagnosticFactory(
@@ -417,7 +418,7 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED,
         )
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_groupe_site_relationship_diagnostic_mode_all_teledeclaration_actions(self):
         # a site in a groupe has the same actions as a satellite
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
@@ -443,7 +444,7 @@ class CanteenActionTestCase(TestCase):
             canteen_qs.get(id=canteen_site_in_groupe.id).action, Canteen.Actions.NOTHING_SATELLITE_TELEDECLARED
         )
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_groupe_satellite_relationship_diagnostic_mode_appro_teledeclaration_actions(self):
         # groupe with satellites and has diagnostic started
         canteen_groupe_diagnostic_2024 = DiagnosticFactory(
@@ -493,7 +494,7 @@ class CanteenActionTestCase(TestCase):
             Canteen.Actions.NOTHING,  # TODO: should be FILL_DIAGNOSTIC
         )
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_groupe_satellite_relationship_diagnostic_mode_empty_teledeclaration_actions(self):
         # groupe with satellites, but no diagnostic
         canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
@@ -549,7 +550,7 @@ class CanteenActionTestCase(TestCase):
         )
         self.assertEqual(canteen_qs.get(id=self.canteen_satellite_11.id).action, Canteen.Actions.NOTHING)
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_groupe_satellite_when_diag_already_done(self):
         # Create the diags
         DiagnosticFactory(
@@ -584,11 +585,11 @@ class CanteenActionTestCase(TestCase):
         )
 
     def test_canteen_site_cancel_teledeclaration_actions(self):
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic_site = DiagnosticFactory(canteen=self.canteen_site, year=2024)
             diagnostic_site.teledeclare(applicant=self.canteen_site.managers.first())
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             diagnostic_site.cancel()
             canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
             self.assertEqual(
@@ -597,7 +598,7 @@ class CanteenActionTestCase(TestCase):
             )
 
     def test_canteen_groupe_mode_all_cancel_teledeclaration_actions(self):
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic_groupe = DiagnosticFactory(
                 canteen=self.canteen_groupe_1_with_satellites,
                 year=2024,
@@ -605,7 +606,7 @@ class CanteenActionTestCase(TestCase):
             )
             diagnostic_groupe.teledeclare(applicant=self.canteen_groupe_1_with_satellites.managers.first())
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             diagnostic_groupe.cancel()
             canteen_qs = Canteen.objects.annotate_with_action_for_year(2024)
             self.assertEqual(
