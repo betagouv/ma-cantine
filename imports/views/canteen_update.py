@@ -180,8 +180,15 @@ class CanteensUpdateImportView(BaseImportView):
                 raise ValidationError(
                     {"groupe_id": f"Aucun groupe avec le numéro identifiant « {groupe_id} » trouvé sur la plateforme."}
                 )
-        # Group did not teledeclare already
+        # Groups (current & new) did not teledeclare already
         last_year = get_current_campaign_year()
+        if canteen.groupe and is_in_teledeclaration_or_correction():
+            if canteen.groupe.has_diagnostic_teledeclared_for_year(last_year):
+                raise ValidationError(
+                    {
+                        "groupe_id": f"Vous ne pouvez pas modifier cette cantine, car son groupe « {canteen.groupe_id} » possède un bilan télédéclaré (campagne de télédéclaration en cours). Veuillez annuler la télédéclaration pour pouvoir modifier la cantine."
+                    }
+                )
         if groupe and is_in_teledeclaration_or_correction():
             has_diagnostic_teledeclared_for_year = groupe.has_diagnostic_teledeclared_for_year(last_year)
             if has_diagnostic_teledeclared_for_year:
