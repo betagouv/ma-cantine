@@ -6,6 +6,45 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.64.0](https://github.com/betagouv/ma-cantine/compare/v2026.63.0...v2026.64.0) (2026-11-20)
+
+
+### Nouveautés
+
+* **Groupe:** permet de rattacher une cantine site à un groupe ([#7690](https://github.com/betagouv/ma-cantine/issues/7690)) ([0a51e4a](https://github.com/betagouv/ma-cantine/commit/0a51e4a0883c37dcd87f42bbb63ca3267de1110a))
+
+
+### Améliorations
+
+* **Admin:** Partenaires: afficher les types d'acteur (TextChoices) et leurs valeurs ([#7709](https://github.com/betagouv/ma-cantine/issues/7709)) ([93fb9ef](https://github.com/betagouv/ma-cantine/commit/93fb9eff3db179b9cb2617ae6eb719a3f0cbe832))
+* **dbt:** mart_cantines, nouvelle colonne nb_gestionnaires ([#7682](https://github.com/betagouv/ma-cantine/issues/7682)) ([eb8ef19](https://github.com/betagouv/ma-cantine/commit/eb8ef198f747f70284439334eb04e7f8456a27fe))
+* **dbt:** mart_cantines, nouvelle colonne nb_secteurs ([#7706](https://github.com/betagouv/ma-cantine/issues/7706)) ([7305525](https://github.com/betagouv/ma-cantine/commit/73055256d7e36479c8be7b521635e27067e0b10b))
+* **dbt:** mart_imports, nouvelles colonnes fichier_nom & fichier_extension ([#7718](https://github.com/betagouv/ma-cantine/issues/7718)) ([30b71a5](https://github.com/betagouv/ma-cantine/commit/30b71a5c05ca66477f01c6f264bce083c6a793cd))
+* **ETL:** ajouter les partenaires dans les exports bruts (partners_raw, sans les coordonnées de contact) ([#7711](https://github.com/betagouv/ma-cantine/issues/7711)) ([71ee40c](https://github.com/betagouv/ma-cantine/commit/71ee40cae30a57b9f7ec29beeecf273f35750fd8))
+* **EventLog:** Imports : enregistrer le nom du fichier importé (succès & échec) ([#7717](https://github.com/betagouv/ma-cantine/issues/7717)) ([44cf2d0](https://github.com/betagouv/ma-cantine/commit/44cf2d031cc55c4691b2ab944d5614d7d86fc316))
+* **Groupe:** le badge & le tableau de bord traitent une cantine site dans un groupe comme un satellite ([#7702](https://github.com/betagouv/ma-cantine/issues/7702)) ([20cb909](https://github.com/betagouv/ma-cantine/commit/20cb909d179102c07c74c49e536c86f77af603ef))
+* **Groupe:** remplace les termes des cantines / restaurants satellites liés au groupe ([#7691](https://github.com/betagouv/ma-cantine/issues/7691)) ([bc0e9ae](https://github.com/betagouv/ma-cantine/commit/bc0e9ae836c590977c931ef3e36c0ee412335fab))
+* **Groupe:** une cantine site dans un groupe a les mêmes actions & règles d'appro qu'un satellite ([#7701](https://github.com/betagouv/ma-cantine/issues/7701)) ([1068ec2](https://github.com/betagouv/ma-cantine/commit/1068ec2e19b8f7b9b3722481f149bb2f1f1be7b0))
+* **Partenaires:** migrer le champ 'types' d'une relation (M2M) vers un champ liste (ArrayField) [1/2] ([#7708](https://github.com/betagouv/ma-cantine/issues/7708)) ([e71e7e7](https://github.com/betagouv/ma-cantine/commit/e71e7e7f6df57e8177e1b5e1dacf6398dacdfd41))
+
+
+### Corrections (bugs, typos...)
+
+* **Démo:** affiche plus distinctement l'environnement de démonstration ([#7707](https://github.com/betagouv/ma-cantine/issues/7707)) ([1137956](https://github.com/betagouv/ma-cantine/commit/113795678313513df3e8bf4d7e912504d75b9ff7))
+* **Imports:** Cantines: bloque la modification d'une cantine si son groupe actuel a télédéclaré pendant la campagne ([#7697](https://github.com/betagouv/ma-cantine/issues/7697)) ([b5d99f7](https://github.com/betagouv/ma-cantine/commit/b5d99f7eec4175944934335d2aa6369034fb9b9e))
+* **Télédéclaration:** corrige l'affichage du message pour les groupes ([#7700](https://github.com/betagouv/ma-cantine/issues/7700)) ([cae068b](https://github.com/betagouv/ma-cantine/commit/cae068bb764bd6b279445e4f89ef2ca3f21824c2))
+
+
+### Technique
+
+* **API:** Cantines: supprimer l'endpoint canteenSummaries (plus utilisé) ([#7715](https://github.com/betagouv/ma-cantine/issues/7715)) ([eeb4422](https://github.com/betagouv/ma-cantine/commit/eeb442274a54e23c91bd00fbf19873f2533613f5))
+* **Groupe:** centralise dans le modèle la règle de changement de groupe pendant la campagne ([#7698](https://github.com/betagouv/ma-cantine/issues/7698)) ([4328354](https://github.com/betagouv/ma-cantine/commit/4328354fa67a5beade1d06f35c289a6f6bcdeb2d))
+* **Partenaires:** filtre par type d'acteur sur les codes plutôt que les libellés ([#7721](https://github.com/betagouv/ma-cantine/issues/7721)) ([5d4361f](https://github.com/betagouv/ma-cantine/commit/5d4361fb3e7d69aba7fd6f9d10a205a19cb728aa))
+* **Partenaires:** supprimer les anciens champs M2M 'types' et 'sectors_m2m' et le modèle PartnerTypeM2M [2/2] ([#7710](https://github.com/betagouv/ma-cantine/issues/7710)) ([2c8af98](https://github.com/betagouv/ma-cantine/commit/2c8af987e2d1b115f35de4f125a0d0f1bf73fcf7))
+* **Secteurs:** ne plus lire l'ancien champ 'sectors_m2m' des cantines (API, pagination, affiche) ([#7714](https://github.com/betagouv/ma-cantine/issues/7714)) ([63242e9](https://github.com/betagouv/ma-cantine/commit/63242e9ba1590fc51f9a04abdf8f563c6ca97294))
+* **Secteurs:** supprimer l'ancien champ M2M 'sectors_m2m' des cantines et le modèle SectorM2M ([#7716](https://github.com/betagouv/ma-cantine/issues/7716)) ([72d8829](https://github.com/betagouv/ma-cantine/commit/72d88297ef0db2efb25b62796451931610ac7dca))
+* **Tests:** helpers pour figer les dates de campagne, dérivées de CAMPAIGN_DATES ([#7722](https://github.com/betagouv/ma-cantine/issues/7722)) ([06b3b9a](https://github.com/betagouv/ma-cantine/commit/06b3b9aa0ed2460ae2e1e9c639592606ad1da89e))
+
 ## [2026.63.0](https://github.com/betagouv/ma-cantine/compare/v2026.62.1...v2026.63.0) (2026-11-19)
 
 
