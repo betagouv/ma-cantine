@@ -1,6 +1,7 @@
 import json
 import logging
 import requests
+from django.utils import timezone
 
 from common.utils import siret as utils_siret
 from common.utils import utils as utils_utils
@@ -10,6 +11,21 @@ logger = logging.getLogger(__name__)
 
 RECHERCHE_ENTREPRISES_API_URL = "https://recherche-entreprises.api.gouv.fr/search"
 DEFAULT_PARAMS = "etat_administratif=A&page=1&per_page=1&mtm_campaign=ma-cantine"
+
+# Canteen.recherche_entreprises_data: subset of the API response (add fields as the need comes)
+RECHERCHE_ENTREPRISES_DATA_STATUS_OK = "ok"
+RECHERCHE_ENTREPRISES_DATA_STATUS_NOT_FOUND = "not_found"
+RECHERCHE_ENTREPRISES_DATA_UNITE_LEGALE_FIELDS = [
+    "etat_administratif",  # "A" (active), "C" (cessée)
+    "date_fermeture",
+    "nature_juridique",
+    "activite_principale",
+]
+RECHERCHE_ENTREPRISES_DATA_ETABLISSEMENT_FIELDS = [
+    "etat_administratif",  # "A" (active), "F" (fermé)
+    "date_fermeture",
+    "activite_principale",
+]
 
 
 def get_enseigne_name(etablissement):
@@ -153,11 +169,79 @@ def fetch_geo_data_from_siret(siret):
     return response
 
 
+def _find_matching_result(source, query, results):
+    """
+    Return the (unite_legale, etablissement) matching the query, or (None, None)
+    - SIRET: the unite_legale & its matching etablissement
+    - SIREN: the unite_legale only (its siege isn't the canteen)
+    """
+    for result in results:
+        if source == "siren":
+            if result["siren"] == query:
+                return result, None
+        else:
+            for etablissement in result.get("matching_etablissements") or []:
+                if etablissement["siret"] == query:
+                    return result, etablissement
+    return None, None
+
+
+def fetch_recherche_entreprises_data(siret=None, siren=None):
+    """
+    Fetch the data stored in Canteen.recherche_entreprises_data (using the SIRET, else the SIREN)
+    - status "ok": unite_legale (+ etablissement for a SIRET) subsets
+    - status "not_found": unknown (or invalid) SIRET / SIREN
+    - None if API error (HTTP error, rate limit, timeout, unexpected format): nothing should be stored
+
+    API rate limit : 400/min
+    Note: the etat_administratif=A param (DEFAULT_PARAMS) is ignored by the API when searching a SIRET / SIREN
+    """
+    source, query = ("siret", siret) if siret else ("siren", siren)
+    query = utils_utils.normalize_string(query)
+    data = {
+        "source": source,
+        "query": query,
+        "status": RECHERCHE_ENTREPRISES_DATA_STATUS_NOT_FOUND,
+        "fetch_date": timezone.now().isoformat(),
+        "unite_legale": None,
+        "etablissement": None,
+    }
+    is_valid_length = utils_siret.is_valid_length_siret if source == "siret" else utils_siret.is_valid_length_siren
+    if not query or not is_valid_length(query):
+        logger.warning(f"API Recherche Entreprises : Le {source.upper()} fourni est invalide : {query}")
+        return data
+
+    try:
+        api_url = f"{RECHERCHE_ENTREPRISES_API_URL}?{DEFAULT_PARAMS}&q={query}"
+        api_response = requests.get(api_url, timeout=30)
+        api_response.raise_for_status()
+        unite_legale, etablissement = _find_matching_result(source, query, api_response.json()["results"])
+        if unite_legale:
+            data["status"] = RECHERCHE_ENTREPRISES_DATA_STATUS_OK
+            data["unite_legale"] = {
+                field: unite_legale[field] for field in RECHERCHE_ENTREPRISES_DATA_UNITE_LEGALE_FIELDS
+            }
+            if etablissement:
+                data["etablissement"] = {
+                    field: etablissement[field] for field in RECHERCHE_ENTREPRISES_DATA_ETABLISSEMENT_FIELDS
+                }
+        return data
+    except requests.exceptions.RequestException as e:
+        logger.error(f"API Recherche Entreprises : {source.upper()} {query} : {e.__class__.__name__}\n{e}")
+    except (ValueError, KeyError, TypeError) as e:
+        logger.error(f"API Recherche Entreprises : {source.upper()} {query} : Unexpected response format\n{e}")
+    return None
+
+
 MOCK_SIREN_000000000_RESULTS = []
 MOCK_SIREN_923412845_RESULTS = [
     {
         "siren": "923412845",
         "nom_complet": "LA TURBINE",
+        "etat_administratif": "A",
+        "date_fermeture": None,
+        "nature_juridique": "9220",
+        "activite_principale": "94.99Z",
         "siege": {
             "code_postal": "59100",
             "commune": "59512",
@@ -176,6 +260,10 @@ MOCK_SIREN_213401722_RESULTS = [
     {
         "siren": "213401722",
         "nom_complet": "COMMUNE DE MONTPELLIER",
+        "etat_administratif": "A",
+        "date_fermeture": None,
+        "nature_juridique": "7210",
+        "activite_principale": "84.11Z",
         "siege": {
             "code_postal": "34070",
             "commune": "34172",
@@ -214,6 +302,10 @@ MOCK_SIRET_92341284500011_RESULTS = [
     {
         "siren": "923412845",
         "nom_complet": "LA TURBINE",
+        "etat_administratif": "A",
+        "date_fermeture": None,
+        "nature_juridique": "9220",
+        "activite_principale": "94.99Z",
         "siege": {
             "code_postal": "59100",
             "commune": "59512",
@@ -236,6 +328,7 @@ MOCK_SIRET_92341284500011_RESULTS = [
                 "libelle_commune": "ROUBAIX",
                 "liste_enseignes": None,
                 "region": "32",
+                "activite_principale": "94.99Z",
                 "siret": "92341284500011",
             }
         ],
@@ -245,6 +338,10 @@ MOCK_SIRET_21340172201787_RESULTS = [
     {
         "siren": "213401722",
         "nom_complet": "COMMUNE DE MONTPELLIER",
+        "etat_administratif": "A",
+        "date_fermeture": None,
+        "nature_juridique": "7210",
+        "activite_principale": "84.11Z",
         "siege": {
             "code_postal": "34070",
             "commune": "34172",
@@ -267,6 +364,7 @@ MOCK_SIRET_21340172201787_RESULTS = [
                 "libelle_commune": "MONTPELLIER",
                 "liste_enseignes": ["MAIRIE"],
                 "region": "76",
+                "activite_principale": "84.11Z",
                 "siret": "21340172201787",
             }
         ],
@@ -276,6 +374,10 @@ MOCK_SIRET_21380185500072_RESULTS = [
     {
         "siren": "213801855",
         "nom_complet": "SCE DES EAUX",
+        "etat_administratif": "A",
+        "date_fermeture": None,
+        "nature_juridique": "7210",
+        "activite_principale": "84.11Z",
         "siege": {
             "code_postal": "38000",
             "commune": "38185",
@@ -298,6 +400,7 @@ MOCK_SIRET_21380185500072_RESULTS = [
                 "libelle_commune": "GRENOBLE",
                 "liste_enseignes": ["SCE DES EAUX"],
                 "region": "84",
+                "activite_principale": "36.00Z",
                 "siret": "21380185500072",
             }
         ],

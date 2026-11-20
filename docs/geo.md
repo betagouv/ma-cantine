@@ -26,6 +26,8 @@ Le "pivot" est le champ `city_insee_code`. De là en découle, grâce aux APIs, 
 
 Elle nous permet de récupérer, à partir d'un Siret, le code Insee d'une cantine. Mais aussi d'autres informations géographiques et administratives.
 
+Une partie de ces informations administratives est stockée dans le champ `recherche_entreprises_data` (voir la FAQ ci-dessous).
+
 Plus d'infos dans [common/api/recherche_entreprises.py](../common/api/recherche_entreprises.py).
 
 ### Découpage Administratif
@@ -72,6 +74,16 @@ On stock actuellement en dure la liste des départements ([data/department_choic
 ### Comment compléter les données géographiques manquantes ?
 
 Lancer la commande `python manage.py canteen_fill_missing_geo_data_using_city_insee_code` ("apply") : elle remplit les champs vides des cantines ayant un `city_insee_code`, sans écraser les valeurs existantes.
+
+### Comment remplir le champ `recherche_entreprises_data` ?
+
+Lancer la commande `python manage.py canteen_update_recherche_entreprises_data` ("apply") : 1 appel API par Siret (ou Siren pour les cantines sans Siret) distinct.
+
+* Siret : données de l'unité légale & de l'établissement (`etat_administratif`, `date_fermeture`, `activite_principale`, + `nature_juridique` pour l'unité légale)
+* Siren : données de l'unité légale uniquement (son siège n'est pas la cantine)
+* `status` : `ok` ou `not_found` (Siret / Siren inconnu). En cas d'erreur API, la cantine n'est pas modifiée : relancer avec `--only-missing` (ne traite que les cantines jamais récupérées, ou dont le Siret / Siren a changé)
+
+Les champs stockés sont listés dans [common/api/recherche_entreprises.py](../common/api/recherche_entreprises.py) (`RECHERCHE_ENTREPRISES_DATA_*_FIELDS`), à compléter selon les besoins.
 
 ### Comment gérer la MAJ annuelle des communes et EPCI ?
 
