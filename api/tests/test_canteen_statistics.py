@@ -6,12 +6,12 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from common.cache.utils import CACHE_GET_QUERY_COUNT, CACHE_SET_QUERY_COUNT
+from common.tests.utils import date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic, Sector, SectorCategory
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
 
 year_data = 2023
-date_in_2023_teledeclaration_campaign = "2024-04-01"  # during the 2023 campaign
 STATS_ENDPOINT_QUERY_COUNT = 6
 # The "region" filter changes the queryset shape (an extra query), so the filtered,
 # never-cached path has a different query count than the cacheable year-only path above.
@@ -22,7 +22,7 @@ class CanteenStatsApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         user = UserFactory()
-        with freeze_time(date_in_2023_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2023)):
             cls.canteen_1 = CanteenFactory(
                 siret="21010034300016",
                 city_insee_code="01034",
@@ -181,7 +181,7 @@ class CanteenStatsApiTest(APITestCase):
 
     def test_canteen_count_include_deletion_and_creation_dates(self):
         # During the campaign
-        with freeze_time(date_in_2023_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2023)):
             self.canteen_1.delete(skip_validations=True)  # legacy CENTRAL
 
         # After the campaign
@@ -241,9 +241,7 @@ class CanteenStatsApiTest(APITestCase):
         fields for EGalim stats
         """
         past_year = 2021
-        date_in_2022_teledeclaration_campaign = "2022-08-30"
-
-        with freeze_time(date_in_2022_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2021)):
             user = UserFactory()
             canteen = CanteenFactory(siret="11007001800012", managers=[user])
             # Diagnostic that should display 20% Bio and 45% other EGalim
@@ -251,7 +249,7 @@ class CanteenStatsApiTest(APITestCase):
                 diagnostic_type=Diagnostic.DiagnosticType.SIMPLE,
                 canteen=canteen,
                 year=past_year,
-                creation_date=date_in_2022_teledeclaration_campaign,
+                creation_date=date_in_campaign(2021),
                 valeur_totale=1000,
                 valeur_bio=200,
                 valeur_siqo=150,
@@ -285,9 +283,7 @@ class CanteenStatsApiTest(APITestCase):
         fields for EGalim stats
         """
         past_year = 2021
-        date_in_2022_teledeclaration_campaign = "2022-08-30"
-
-        with freeze_time(date_in_2022_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2021)):
             user = UserFactory()
             canteen = CanteenFactory(siret="11007001800012", managers=[user])
             # Diagnostic that should display 20% Bio and 45% other EGalim
@@ -295,7 +291,7 @@ class CanteenStatsApiTest(APITestCase):
                 diagnostic_type=Diagnostic.DiagnosticType.COMPLETE,
                 canteen=canteen,
                 year=past_year,
-                creation_date=date_in_2022_teledeclaration_campaign,
+                creation_date=date_in_campaign(2021),
                 valeur_totale=1000,
                 valeur_viandes_volailles_bio=100,  # valeur_bio (part 1/2)
                 valeur_boissons_bio=100,  # valeur_bio (part 2/2)
@@ -508,7 +504,7 @@ class CanteenStatsApiTest(APITestCase):
         self.assertFalse("campaignInfo" in body["notes"])
 
     def test_notes_canteen_count_description_during_campaign(self):
-        with freeze_time(date_in_2023_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2023)):
             response = self.client.get(self.url, {"year": year_data})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             body = response.json()
@@ -522,11 +518,11 @@ class CanteenStatsApiTest(APITestCase):
             self.assertEqual(body["notes"]["canteenCountDescription"], "Au 11 juin 2024")
 
     def test_notes_canteen_count_description_campaign_not_found(self):
-        with freeze_time(date_in_2023_teledeclaration_campaign):
+        with freeze_time(date_in_campaign(2023)):
             response = self.client.get(self.url, {"year": 9999})
             self.assertEqual(response.status_code, status.HTTP_200_OK)
             body = response.json()
-            self.assertEqual(body["notes"]["canteenCountDescription"], "Au 1 avril 2024")
+            self.assertEqual(body["notes"]["canteenCountDescription"], "Au 9 janvier 2024")
 
     def test_notes_alert(self):
         response_2023 = self.client.get(self.url, {"year": year_data})

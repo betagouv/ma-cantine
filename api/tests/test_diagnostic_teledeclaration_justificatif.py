@@ -1,4 +1,3 @@
-from datetime import timedelta
 from decimal import Decimal
 from html import unescape
 
@@ -12,6 +11,7 @@ from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
 from api.views.diagnostic_teledeclaration import DiagnosticTeledeclarationPdfView
+from common.tests.utils import date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen, Diagnostic
 from data.models.diagnostic_teledeclaration_dates import CAMPAIGN_DATES
@@ -42,7 +42,7 @@ class DiagnosticTeledeclarationJustificatifTest(APITestCase):
 
         for year, template_name in expected_templates.items():
             with self.subTest(year=year):
-                with freeze_time(CAMPAIGN_DATES[year]["teledeclaration_start_date"] + timedelta(days=1)):
+                with freeze_time(date_in_campaign(year)):
                     canteen = CanteenFactory(managers=[authenticate.user])
                     diagnostic = DiagnosticFactory(
                         canteen=canteen, year=year, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE

@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
+from common.tests.utils import date_after_campaign
 from common.utils.camelize import camelize
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Diagnostic
@@ -866,7 +867,7 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
                 self.assertEqual(getattr(diagnostic, tunnel_field), "fin")
                 self.assertTrue(diagnostic.is_teledeclared)  # unchanged
 
-    @freeze_time("2026-06-01")  # outside of the 2025 campaign
+    @freeze_time(date_after_campaign(2025))
     @authenticate
     def test_cannot_update_volet_teledeclared_outside_of_the_campaign(self):
         diagnostic = self._create_diagnostic_teledeclared()
