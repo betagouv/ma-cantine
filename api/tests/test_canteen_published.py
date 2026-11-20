@@ -9,6 +9,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate
+from common.tests.utils import date_after_campaign, date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, TeledeclarationFactory, UserFactory
 from data.models import Canteen, CanteenImage, Diagnostic, Sector, Teledeclaration
 from data.models.geo import Region
@@ -333,7 +334,7 @@ class CanteenPublishedListFilterApiTest(APITestCase):
         self.assertEqual(results[2]["name"], "Wasabi")
         self.assertEqual(results[3]["name"], "Shiso")
 
-    @freeze_time("2025-08-30")  # after the 2024 campaign
+    @freeze_time(date_after_campaign(2024))
     def test_filter_appro_values(self):
         """
         Should be able to filter by bio %, sustainable %, combined % based on last year's diagnostic
@@ -1072,7 +1073,7 @@ class PublishedCanteenDetailApiTest(APITestCase):
         body = response.json()
         self.assertEqual(len(body.get("approDiagnostics")), 0)
 
-    @freeze_time("2024-02-10")  # during the 2023 campaign
+    @freeze_time(date_in_campaign(2023))
     def test_td_diags_not_redacted(self):
         user = UserFactory()
         canteen = CanteenFactory(redacted_appro_years=[2022, 2023], managers=[user])

@@ -3,6 +3,7 @@ from django.test import TestCase
 from freezegun import freeze_time
 from django.db.models.signals import post_save
 
+from common.tests.utils import date_in_campaign, date_in_campaign_correction
 from data.models.canteen import Canteen, fill_geo_fields_from_siret
 from data.models import Diagnostic
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
@@ -24,7 +25,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
     def test_submit_single_diagnostic_in_correction(self):
         canteen = CanteenFactory(name="First name", city_insee_code="38185", managers=[self.user])
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic = DiagnosticFactory(
                 canteen=canteen,
                 year=2024,
@@ -33,7 +34,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             )
             diagnostic.teledeclare(applicant=self.user)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
             diagnostic.refresh_from_db()
@@ -68,7 +69,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
         canteen_2 = CanteenFactory(managers=[self.user])
         canteen_3 = CanteenFactory(managers=[self.user])
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic_1 = DiagnosticFactory(canteen=canteen_1, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic_2 = DiagnosticFactory(canteen=canteen_2, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic_3 = DiagnosticFactory(canteen=canteen_3, year=2024, valeur_totale=10000, valeur_bio=2000)
@@ -80,7 +81,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 3)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             # cancel 2 teledeclarations
             diagnostic_1.cancel()
             diagnostic_2.cancel()
@@ -100,7 +101,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
     def test_skip_diagnostic_teledeclared(self):
         canteen = CanteenFactory(managers=[self.user])
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic_teledeclared = DiagnosticFactory(
                 canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000
             )
@@ -111,7 +112,7 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
             self.assertTrue(diagnostic_teledeclared.is_teledeclared)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             # Run the script
             call_command("teledeclaration_submit_correction", year=2024)
 
@@ -123,14 +124,14 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
     def test_skip_diagnostic_in_draft(self):
         canteen = CanteenFactory(managers=[self.user])
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic_draft = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
 
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 0)
             self.assertFalse(diagnostic_draft.is_teledeclared)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             # Run the script
             call_command("teledeclaration_submit_correction", year=2024)
 
@@ -141,14 +142,14 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
     def test_skip_diagnostic_if_diagnostic_validation_error(self):
         canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[self.user])
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic.teledeclare(applicant=self.user)
 
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             # Cancel the teledeclaration
             diagnostic.cancel()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
@@ -168,14 +169,14 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
     def test_skip_diagnostic_if_canteen_validation_error(self):
         canteen = CanteenFactory(managers=[self.user])
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic.teledeclare(applicant=self.user)
 
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             # Cancel the teledeclaration
             diagnostic.cancel()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
@@ -198,14 +199,14 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
             production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe
         )
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic = DiagnosticFactory(canteen=canteen_groupe, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic.teledeclare(applicant=self.user)
 
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             # Cancel the teledeclaration
             diagnostic.cancel()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
@@ -225,14 +226,14 @@ class TeledeclarationSubmitCorrectionScriptTest(TestCase):
     def test_skip_diagnostic_if_canteen_applicant_deleted(self):
         canteen = CanteenFactory(managers=[self.user])
 
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic = DiagnosticFactory(canteen=canteen, year=2024, valeur_totale=10000, valeur_bio=2000)
             diagnostic.teledeclare(applicant=self.user)
 
             # Before running the script
             self.assertEqual(Diagnostic.all_objects.in_year(2024).teledeclared().count(), 1)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             # Cancel the teledeclaration
             diagnostic.cancel()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)

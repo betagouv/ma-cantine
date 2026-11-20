@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
+from common.tests.utils import date_in_campaign, date_in_campaign_correction
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Sector
 from imports.models import ImportType
@@ -208,7 +209,7 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
         cls.teledeclaration = DiagnosticFactory(canteen=cls.groupe_canteen, year=2024)
         cls.url = reverse("canteens_update_import")
 
-    @freeze_time("2025-02-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_error_groupe_with_teledeclaration_during_campaign(self):
         """
@@ -242,10 +243,10 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
         """
         self.groupe_canteen.managers.add(authenticate.user)
         self.satellite_canteen.managers.add(authenticate.user)
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             self.teledeclaration.teledeclare(applicant=authenticate.user)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             self.teledeclaration.cancel()
 
             file_path = "./imports/tests/files/canteens/canteens_update_bad_groupe_teledeclared.csv"
@@ -269,7 +270,7 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
         self.satellite_canteen.managers.add(authenticate.user)
 
         # Create a teledeclared diagnostic for the groupe and the satellite
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             self.teledeclaration.teledeclare(applicant=authenticate.user)
 
         # Import
@@ -285,7 +286,7 @@ class CanteensUpdateImportApiGroupeTeledeclarationTest(APITestCase):
             self.assertEqual(len(body["canteens"]), 1)
             self.assertEqual(len(errors), 0)
 
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_success_groupe_teledeclaration_cancelled_during_campaign(self):
         """

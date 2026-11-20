@@ -12,6 +12,7 @@ from common.api.datagouv import mock_get_pat_csv, mock_get_pat_dataset_resource
 from common.api.decoupage_administratif import mock_fetch_communes, mock_fetch_epcis
 from common.api.datagouv import update_dataset_resources
 from common.api.validata import mock_post_validate_file_against_schema
+from common.tests.utils import date_in_campaign
 from data.models import Canteen, Diagnostic
 from macantine.etl.open_data import ETL_OPEN_DATA_CANTEEN, ETL_OPEN_DATA_TELEDECLARATIONS
 from macantine.tests.test_etl_common import setUpTestData as ETLCommonSetUpTestData
@@ -210,7 +211,7 @@ class TeledeclarationETLOpenDataTest(TestCase):
         self.assertEqual(canteen_site_diagnostic_2024["teledeclaration_ratio_bio"], Decimal("0.4"))
         self.assertEqual(canteen_site_diagnostic_2024["teledeclaration_ratio_egalim_hors_bio"], Decimal("0.3"))
 
-    @freeze_time("2023-05-14")  # during the 2022 campaign
+    @freeze_time(date_in_campaign(2022))
     def test_update_ressource(self, mock):
         dataset_id = "expected_dataset_id"
         api_key = "expected_api_key"

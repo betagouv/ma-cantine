@@ -4,6 +4,7 @@ from rest_framework import status
 from freezegun import freeze_time
 
 from api.tests.utils import authenticate, get_oauth2_token
+from common.tests.utils import date_in_campaign, date_in_campaign_correction
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen
 
@@ -290,7 +291,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_cannot_link_unlink_during_teledeclaration_if_groupe_has_diagnostic_teledeclared(self):
         # set user as manager of group_1
         self.canteen_groupe_1.managers.add(authenticate.user)
@@ -318,7 +319,7 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @authenticate
-    @freeze_time("2025-01-20")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     def test_satellite_manager_cannot_unlink_during_teledeclaration_if_groupe_has_diagnostic_teledeclared(self):
         # set user as manager of satellite_11 only (not of groupe_1)
         self.canteen_satellite_11.managers.add(authenticate.user)
@@ -346,11 +347,11 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
     @authenticate
     def test_can_link_satellite_when_groupe_has_cancelled_diagnostic(self):
         self.canteen_groupe_1.managers.add(authenticate.user)
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic = DiagnosticFactory(canteen=self.canteen_groupe_1, year=2024, valeur_totale=100)
             diagnostic.teledeclare(applicant=authenticate.user)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             diagnostic.cancel()
             url = reverse(
                 "canteen_groupe_satellite_link",
@@ -364,13 +365,13 @@ class CanteenGroupeSatelliteLinkUnlinkApiTest(APITestCase):
     @authenticate
     def test_can_unlink_satellite_when_groupe_has_cancelled_diagnostic(self):
         self.canteen_groupe_1.managers.add(authenticate.user)
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             self.canteen_satellite_11.groupe = self.canteen_groupe_1
             self.canteen_satellite_11.save()
             diagnostic = DiagnosticFactory(canteen=self.canteen_groupe_1, year=2024, valeur_totale=100)
             diagnostic.teledeclare(applicant=authenticate.user)
 
-        with freeze_time("2025-04-18"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             diagnostic.cancel()
             url = reverse(
                 "canteen_groupe_satellite_unlink",

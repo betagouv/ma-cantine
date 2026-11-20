@@ -1,6 +1,7 @@
 from django.utils import timezone
 from freezegun import freeze_time
 
+from common.tests.utils import date_in_campaign
 from data.models import Canteen, Sector
 from data.factories import CanteenFactory, UserFactory, DiagnosticFactory
 from data.models.diagnostic import Diagnostic
@@ -93,7 +94,7 @@ def setUpTestData(cls, with_diagnostics=False):
 
     if with_diagnostics:
         # 2022 campaign
-        with freeze_time("2023-05-14"):  # during the 2022 campaign
+        with freeze_time(date_in_campaign(2022)):
             cls.canteen_site_diagnostic_2022 = DiagnosticFactory(
                 canteen=cls.canteen_site,
                 year=2022,
@@ -118,7 +119,7 @@ def setUpTestData(cls, with_diagnostics=False):
             cls.canteen_groupe_diagnostic_2022.teledeclare(cls.canteen_groupe_manager)
 
         # 2023 campaign
-        with freeze_time("2024-04-01"):  # during the 2023 campaign
+        with freeze_time(date_in_campaign(2023)):
             cls.canteen_groupe_diagnostic_2023 = DiagnosticFactory(
                 canteen=cls.canteen_groupe, year=2023, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
@@ -141,7 +142,7 @@ def setUpTestData(cls, with_diagnostics=False):
             cls.canteen_site_armee_diagnostic_2023.teledeclare(cls.canteen_site_manager_2)
 
         # 2024 campaign
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             cls.canteen_groupe_diagnostic_2024 = DiagnosticFactory(
                 canteen=cls.canteen_groupe, year=2024, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )
@@ -163,7 +164,7 @@ def setUpTestData(cls, with_diagnostics=False):
             cls.canteen_site_diagnostic_2024.teledeclare(cls.canteen_site_manager_1)
 
         # 2025 campaign
-        with freeze_time("2026-01-30"):  # during the 2025 campaign
+        with freeze_time(date_in_campaign(2025)):
             cls.canteen_groupe_diagnostic_2025 = DiagnosticFactory(
                 canteen=cls.canteen_groupe, year=2025, diagnostic_type=Diagnostic.DiagnosticType.SIMPLE
             )

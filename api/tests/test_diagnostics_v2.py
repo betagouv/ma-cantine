@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from common.tests.utils import date_after_campaign
+from common.tests.utils import date_after_campaign, date_in_campaign, date_in_campaign_correction
 from common.utils.camelize import camelize
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Diagnostic
@@ -83,7 +83,7 @@ class DiagnosticV2ListApiTest(APITestCase):
         self.assertEqual(len(response.json()["results"]), 2)
 
 
-@freeze_time("2026-03-30")  # during the 2025 campaign
+@freeze_time(date_in_campaign(2025))
 class DiagnosticV2CreateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -183,7 +183,7 @@ class DiagnosticV2CreateApiTest(APITestCase):
     def test_create_diagnostic_during_correction_campaign(self):
         self.canteen.managers.add(authenticate.user)
 
-        with freeze_time("2026-04-20"):  # during the 2025 correction campaign
+        with freeze_time(date_in_campaign_correction(2025)):
             response = self.client.post(self.url, {})
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -216,7 +216,7 @@ class DiagnosticV2CreateApiTest(APITestCase):
         self.assertEqual(Diagnostic.objects.filter(canteen=self.canteen, year=2025).count(), 1)
 
 
-@freeze_time("2026-03-30")  # during the 2025 campaign
+@freeze_time(date_in_campaign(2025))
 class DiagnosticV2RetrieveUpdateApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -335,7 +335,7 @@ class DiagnosticV2RetrieveUpdateApiTest(APITestCase):
         )
         self.assertEqual(self.diagnostic.history.first().history_source_api_oauth2_application, token.application)
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_cannot_update_locked_fields_of_diagnostic_teledeclared(self):
         diagnostic = DiagnosticFactory(
@@ -359,7 +359,7 @@ class DiagnosticV2RetrieveUpdateApiTest(APITestCase):
         self.assertEqual(diagnostic.central_kitchen_diagnostic_mode, Diagnostic.CentralKitchenDiagnosticMode.ALL)
 
 
-@freeze_time("2026-03-30")  # during the 2025 campaign
+@freeze_time(date_in_campaign(2025))
 class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -501,7 +501,7 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
         self.diagnostic_simple_2025.refresh_from_db()
         self.assertEqual(self.diagnostic_simple_2025.valeur_totale, 2000)
 
-    @freeze_time("2027-01-20")  # during the 2026 campaign
+    @freeze_time(date_in_campaign(2026))
     @authenticate
     def test_update_approvisionnement_returns_cout_repas(self):
         self.canteen.managers.add(authenticate.user)
@@ -527,7 +527,7 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
         )
         self.assertEqual(Decimal(response.json()["coutRepas"]), Decimal("2.50"))
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_update_approvisionnement_with_new_diagnostic_type(self):
         """
@@ -555,7 +555,7 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
         self.assertEqual(self.diagnostic_without_type_2024.diagnostic_type, Diagnostic.DiagnosticType.COMPLETE)
         self.assertEqual(self.diagnostic_without_type_2024.valeur_viandes_volailles_bio, 50)
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_cannot_update_approvisionnement_teledeclared(self):
         diagnostic = DiagnosticFactory(year=2024, valeur_totale=1000, status=Diagnostic.DiagnosticStatus.SUBMITTED)
@@ -572,7 +572,7 @@ class DiagnosticVoletApprovisionnementV2ApiTest(APITestCase):
     def test_can_update_approvisionnement_cancelled(self):
         diagnostic = DiagnosticFactory(year=2021)
         diagnostic.canteen.managers.add(authenticate.user)
-        with freeze_time("2022-08-30"):  # during the 2021 campaign
+        with freeze_time(date_in_campaign(2021)):
             diagnostic.teledeclare(applicant=authenticate.user)
             diagnostic.cancel()
 
@@ -644,7 +644,7 @@ class DiagnosticV2UpdateCampaignApiTest(APITestCase):
                         self.client.get(self._url(url_name, self.diagnostic_2025)).status_code, status.HTTP_200_OK
                     )
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_cannot_update_diagnostic_of_another_year(self):
         self.canteen.managers.add(authenticate.user)
@@ -700,7 +700,7 @@ class DiagnosticV2UrlsTest(APITestCase):
                 )
 
 
-@freeze_time("2026-03-30")  # during the 2025 campaign
+@freeze_time(date_in_campaign(2025))
 class DiagnosticOtherVoletsV2ApiTest(APITestCase):
     """
     Common behaviour of the gaspillage / diversification / plastique / information volets
@@ -851,7 +851,7 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
         diagnostic.canteen.managers.add(authenticate.user)
         return diagnostic
 
-    @freeze_time("2026-02-01")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_can_update_volet_teledeclared(self):
         diagnostic = self._create_diagnostic_teledeclared()
@@ -883,7 +883,7 @@ class DiagnosticOtherVoletsV2ApiTest(APITestCase):
 
 
 class DiagnosticVoletGaspillageV2ApiTest(APITestCase):
-    @freeze_time("2024-03-01")  # during the 2023 campaign
+    @freeze_time(date_in_campaign(2023))
     @authenticate
     def test_dechets_total_conversion(self):
         """
@@ -924,7 +924,7 @@ class DiagnosticVoletGaspillageV2ApiTest(APITestCase):
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 self.assertEqual("dechetsTotal" in response.json(), has_dechets_fields)
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_choice_values_in_french(self):
         diagnostic = DiagnosticFactory(
@@ -966,7 +966,7 @@ class DiagnosticVoletDiversificationV2ApiTest(APITestCase):
                 self.assertEqual(response.status_code, status.HTTP_200_OK)
                 self.assertEqual("serviceType" in response.json(), has_service_type)
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_choice_values_in_french(self):
         """
@@ -1002,7 +1002,7 @@ class DiagnosticVoletDiversificationV2ApiTest(APITestCase):
 
 
 class DiagnosticVoletInformationV2ApiTest(APITestCase):
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_choice_values_in_french(self):
         """

@@ -4,6 +4,7 @@ from unittest import skip
 from django.core.management import call_command
 from django.test import TestCase
 
+from common.tests.utils import date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
 from data.models import Canteen
 
@@ -76,7 +77,7 @@ class CanteenMigrateCentralToGroupeCommandTest(TestCase):
         cls.canteen_groupe_1 = CanteenFactory(
             production_type=Canteen.ProductionType.GROUPE,
         )
-        with freeze_time("2025-03-30"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             # create a diagnostic teledeclared for canteen_central_1
             cls.diagnostic_canteen_central_1 = DiagnosticFactory(
                 canteen=cls.canteen_central_1,

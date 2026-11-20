@@ -8,7 +8,7 @@ from freezegun import freeze_time
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from common.tests.utils import date_after_campaign
+from common.tests.utils import date_after_campaign, date_before_campaign, date_in_campaign, date_in_campaign_correction
 from common.utils.camelize import camelize
 from api.serializers.diagnostic import V1_FIELD_ALIASES, ManagerDiagnosticSerializer
 from api.tests.utils import authenticate, get_oauth2_token
@@ -31,11 +31,11 @@ class DiagnosticListApiTest(APITestCase):
         cls.user = UserFactory()
         cls.canteen = CanteenFactory(managers=[cls.user])
         cls.diagnostic_2022_cancelled = DiagnosticFactory(canteen=cls.canteen, year=2022)
-        with freeze_time("2023-03-30"):  # during the 2022 campaign
+        with freeze_time(date_in_campaign(2022)):
             cls.diagnostic_2022_cancelled.teledeclare(applicant=cls.user)
             cls.diagnostic_2022_cancelled.cancel()
         cls.diagnostic_2021_teledeclared = DiagnosticFactory(canteen=cls.canteen, year=2021)
-        with freeze_time("2022-08-30"):  # during the 2021 campaign
+        with freeze_time(date_in_campaign(2021)):
             cls.diagnostic_2021_teledeclared.teledeclare(applicant=cls.user)
         cls.url = reverse("diagnostic_list_create", kwargs={"canteen_pk": cls.canteen.id})
 
@@ -1043,7 +1043,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         diagnostic.refresh_from_db()
         self.assertEqual(diagnostic.dechets_total, Decimal("1.23456"))
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_can_update_editable_volet_fields_of_diagnostic_teledeclared(self):
         diagnostic = DiagnosticFactory(
@@ -1060,7 +1060,7 @@ class DiagnosticUpdateApiTest(APITestCase):
         self.assertEqual(diagnostic.tunnel_waste, "fin")
         self.assertTrue(diagnostic.is_teledeclared)  # unchanged
 
-    @freeze_time("2025-03-30")  # during the 2024 campaign
+    @freeze_time(date_in_campaign(2024))
     @authenticate
     def test_cannot_update_locked_fields_of_diagnostic_teledeclared(self):
         diagnostic = DiagnosticFactory(
@@ -1097,7 +1097,7 @@ class DiagnosticUpdateApiTest(APITestCase):
     def test_can_update_diagnostic_cancelled(self):
         diagnostic = DiagnosticFactory(year=2021)
         diagnostic.canteen.managers.add(authenticate.user)
-        with freeze_time("2022-08-30"):  # during the 2021 campaign
+        with freeze_time(date_in_campaign(2021)):
             diagnostic.teledeclare(applicant=authenticate.user)
             diagnostic.cancel()
 
@@ -1121,10 +1121,10 @@ class DiagnosticUpdateApiTest(APITestCase):
         """
         diagnostic = DiagnosticFactory(year=2024, service_type=Diagnostic.ServiceType.MENU_UNIQUE)
         diagnostic.canteen.managers.add(authenticate.user)
-        with freeze_time("2025-01-20"):  # during the 2024 campaign
+        with freeze_time(date_in_campaign(2024)):
             diagnostic.teledeclare(applicant=authenticate.user)
 
-        with freeze_time("2025-04-17"):  # during the 2024 correction campaign
+        with freeze_time(date_in_campaign_correction(2024)):
             diagnostic.cancel()
             self.assertEqual(diagnostic.status, Diagnostic.DiagnosticStatus.CORRECTION)
 
@@ -1162,7 +1162,7 @@ class DiagnosticListRecapApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        with freeze_time("2025-01-01"):  # before the 2024 campaign
+        with freeze_time(date_before_campaign(2024)):
             cls.canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user])
         cls.url = reverse("diagnostic_list_recap", kwargs={"canteen_pk": cls.canteen.id})
 
@@ -1212,7 +1212,7 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertEqual(body[0]["year"], 2024)
 
         # create another canteen later
-        with freeze_time("2026-03-15"):  # during the 2025 campaign
+        with freeze_time(date_in_campaign(2025)):
             canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[authenticate.user])
 
         url = reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen.id})
@@ -1222,7 +1222,7 @@ class DiagnosticListRecapApiTest(APITestCase):
         body = response.json()
         self.assertEqual(body[0]["year"], 2025)
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_list_recap_diagnostics_site(self):
         self.canteen.managers.add(authenticate.user)
@@ -1276,7 +1276,7 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertIn("objectifsGaspillageAtteints", thematiques_stats)
         self.assertTrue(thematiques_stats["objectifsInformationAtteints"])
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_list_recap_diagnostics_notes(self):
         for canteen_region, egalim_group, bio_percent_objective, egalim_percent_objective in [
@@ -1285,7 +1285,7 @@ class DiagnosticListRecapApiTest(APITestCase):
             (Region.guadeloupe, "groupe_1", 5, 20),
         ]:
             with self.subTest(canteen_region=canteen_region):
-                with freeze_time("2025-01-01"):  # before the 2024 campaign
+                with freeze_time(date_before_campaign(2024)):
                     canteen = CanteenFactory(region=canteen_region, managers=[authenticate.user])
 
                 response = self.client.get(reverse("diagnostic_list_recap", kwargs={"canteen_pk": canteen.id}))
@@ -1301,7 +1301,7 @@ class DiagnosticListRecapApiTest(APITestCase):
                         },
                     )
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_list_recap_diagnostics_groupe_appro_only_with_satellite(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
@@ -1380,7 +1380,7 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertIsNotNone(body[0]["generatedFromGroupeDiagnosticId"])
         self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], Diagnostic.CentralKitchenDiagnosticMode.APPRO)
 
-    @freeze_time("2026-03-30")  # during the 2025 campaign
+    @freeze_time(date_in_campaign(2025))
     @authenticate
     def test_list_recap_diagnostics_groupe_all_with_satellite(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[authenticate.user])
@@ -1448,12 +1448,12 @@ class DiagnosticListRecapApiTest(APITestCase):
         self.assertEqual(body[0]["generatedFromGroupeDiagnosticMode"], Diagnostic.CentralKitchenDiagnosticMode.ALL)
 
 
-@freeze_time("2026-03-30")  # during the 2025 campaign
+@freeze_time(date_in_campaign(2025))
 class DiagnosticRecapApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
-        with freeze_time("2025-01-01"):  # before the 2024 campaign
+        with freeze_time(date_before_campaign(2024)):
             cls.canteen = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE, managers=[cls.user])
         cls.diagnostic = DiagnosticFactory(
             canteen=cls.canteen,
@@ -1553,7 +1553,7 @@ class DiagnosticRecapApiTest(APITestCase):
         self.assertEqual(response.json(), list_recap_2025)
 
 
-@freeze_time("2026-03-30")  # during the 2025 campaign
+@freeze_time(date_in_campaign(2025))
 class DiagnosticDetailCheckApiTest(APITestCase):
     @classmethod
     def setUpTestData(cls):
@@ -1982,7 +1982,7 @@ class DiagnosticGroupeSatellitesNombreRepasAnSumApiTest(APITestCase):
                 self.assertEqual(body["nombreRepasAn"], 5000)
                 self.assertEqual(body["satellitesNombreRepasAnSum"], 3000)
 
-    @freeze_time("2027-01-20")  # during the 2026 campaign (v2: update only during the campaign)
+    @freeze_time(date_in_campaign(2026))  # (v2: update only during the campaign)
     def test_read_only(self):
         self.client.force_authenticate(user=self.user)
         for url in self.url_list:
@@ -2024,7 +2024,7 @@ class DiagnosticGroupeSatellitesNombreRepasAnListApiTest(APITestCase):
                     [{"id": self.canteen_satellite.id, "nombreRepasAn": 1000}],
                 )
 
-    @freeze_time("2027-01-20")  # during the 2026 campaign (v2: update only during the campaign)
+    @freeze_time(date_in_campaign(2026))  # (v2: update only during the campaign)
     def test_read_only(self):
         self.client.force_authenticate(user=self.user)
         for url in self.url_list:
