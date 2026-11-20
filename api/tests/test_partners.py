@@ -42,8 +42,8 @@ class PartnersListApiTest(APITestCase):
             self.assertTrue(any(x["id"] == partner.id for x in results))
 
         types = body.get("types", [])
-        # labels, in the enum order
-        self.assertEqual(types, [PartnerType.LOGICIEL.label, PartnerType.AUTRE.label])
+        # codes, in the enum order
+        self.assertEqual(types, [PartnerType.LOGICIEL.value, PartnerType.AUTRE.value])
 
         departments = body.get("departments", [])
         self.assertIn("01", departments)
@@ -132,9 +132,8 @@ class PartnersListApiFilterTest(APITestCase):
         PartnerFactory(name="Ignore me", type_list=[PartnerType.AUTRE], published=True)
         PartnerFactory(name="Typeless", published=True)
 
-        # filter on the labels
         response = self.client.get(
-            self.url, {"type": [PartnerType.LOGICIEL.label, PartnerType.RESEAU.label, "Type inconnu"]}
+            self.url, {"type": [PartnerType.LOGICIEL.value, PartnerType.RESEAU.value, "inconnu"]}
         )
 
         body = response.json()
