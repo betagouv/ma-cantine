@@ -15,11 +15,12 @@ logger = logging.getLogger(__name__)
 class Command(MaCantineBaseCommand):
     """
     Script to cleanup the canteen geolocation data (using the SIRET) (API Recherche Entreprises)
-    - empty API response: canteen SIRET is probably unknown, reset geolocation data (siret_inconnu will be updated)
-    - API response with etat_administratif != "A": canteen SIRET is probably closed, reset geolocation data (siret_etat_administratif will be updated)
-    - API response with cityInseeCode different from canteen city_insee_code: reset geolocation data
-    - API response with postalCode different from canteen postal_code: reset geolocation data
-    - API response with cityInseeCode identical to canteen city_insee_code: update siret_etat_administratif
+    - empty API response: canteen SIRET is probably unknown (siret_inconnu will be updated)
+    - API error (response without city_insee_code: HTTP error, rate limit, timeout...): canteen skipped (unchanged)
+    - API response with etat_administratif != "A": canteen SIRET is probably closed (siret_etat_administratif will be updated)
+    - API response with city_insee_code different from canteen city_insee_code: reset geolocation data
+    - API response with postal_code different from canteen postal_code: reset geolocation data
+    - API response found: siret_inconnu & siret_etat_administratif are updated (also after a reset)
 
     Usage:
     - python manage.py canteen_update_geolocation_data_using_siret
@@ -56,6 +57,7 @@ class Command(MaCantineBaseCommand):
 
         results = {
             "canteen_siret_unknown": [],
+            "canteen_siret_api_error": [],
             "canteen_siret_closed": [],
             "canteen_siret_city_insee_code_mismatch": [],
             "canteen_siret_city_insee_code_ok": 0,
@@ -70,15 +72,18 @@ class Command(MaCantineBaseCommand):
         logger.info(f"Found {canteen_qs.count()} canteens with SIRET to process")
 
         for index, canteen in enumerate(canteen_qs):
-            pending_changes = {}
+            siret_fields = {}  # siret_* values from the API (set again after a possible reset_geo_fields)
             response, source = self._get_geo_data(canteen.siret, cache_by_siret)
             if not response:
                 if enable_logging:
                     logger.warning(f"Canteen {canteen.id} - {canteen.siret} - city_insee_code absent")
-                if not canteen.siret_inconnu:
-                    pending_changes["siret_inconnu"] = True
-                    pending_changes["siret_etat_administratif"] = None
+                siret_fields = {"siret_inconnu": True, "siret_etat_administratif": None}
                 results["canteen_siret_unknown"].append(canteen.id)
+            elif not response.get("city_insee_code"):
+                # API error (fetch_geo_data_from_siret returns {"siret": ...}): don't touch the canteen
+                if enable_logging:
+                    logger.warning(f"Canteen {canteen.id} - {canteen.siret} - API error ({source})")
+                results["canteen_siret_api_error"].append(canteen.id)
             else:
                 city_insee_code = response.get("city_insee_code")
                 postal_code = response.get("postal_code")
@@ -108,10 +113,13 @@ class Command(MaCantineBaseCommand):
                     if enable_logging:
                         logger.warning(f"Canteen {canteen.id} - {canteen.siret} - établissement fermé")
                     results["canteen_siret_closed"].append(canteen.id)
-                # check if etat_administratif has changed
-                if canteen.siret_etat_administratif != etat_administratif:
-                    pending_changes["siret_etat_administratif"] = etat_administratif
+                siret_fields = {"siret_inconnu": False, "siret_etat_administratif": etat_administratif}
 
+            pending_changes = {
+                field_name: field_value
+                for field_name, field_value in siret_fields.items()
+                if getattr(canteen, field_name) != field_value
+            }
             should_update = (
                 (len(pending_changes) > 0)
                 or (canteen.id in results["canteen_siret_city_insee_code_mismatch"])
@@ -124,10 +132,9 @@ class Command(MaCantineBaseCommand):
                         canteen.reset_geo_fields(with_city_insee_code=True, with_save=False)
                     elif canteen.id in results["canteen_siret_postal_code_mismatch"]:
                         canteen.reset_geo_fields(with_city_insee_code=False, with_save=False)
-                    # after reset_geo_fields, because siret_* have been reset
-                    if len(pending_changes) > 0:
-                        for field_name, field_value in pending_changes.items():
-                            setattr(canteen, field_name, field_value)
+                    # after reset_geo_fields (it resets siret_*): set all of them, not only the changed ones
+                    for field_name, field_value in siret_fields.items():
+                        setattr(canteen, field_name, field_value)
 
                     canteen._change_reason = "Données de localisation MAJ"
                     canteen.save(skip_validations=True)
@@ -137,6 +144,7 @@ class Command(MaCantineBaseCommand):
                 time.sleep(1)  # avoid hitting API rate limits
 
         logger.info(f"canteen_siret_unknown: {len(results['canteen_siret_unknown'])}")
+        logger.info(f"canteen_siret_api_error: {len(results['canteen_siret_api_error'])}")
         logger.info(f"canteen_siret_closed: {len(results['canteen_siret_closed'])}")
         logger.info(f"canteen_siret_city_insee_code_ok: {results['canteen_siret_city_insee_code_ok']}")
         logger.info(
