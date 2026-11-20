@@ -54,14 +54,15 @@ def user_to_brevo_payload(user, bulk=True):
 
 
 def update_existing_brevo_contacts(users_to_update, today):
+    from data.models import User
+
     for chunk in users_to_update:
         contacts = [user_to_brevo_payload(user) for user in chunk]
         update_object = sib_api_v3_sdk.UpdateBatchContacts(contacts)
         try:
             contacts_api_instance.update_batch_contacts(update_object)
-            for user in chunk:
-                user.brevo_last_update_date = today
-                user.save()
+            # direct update: skips User.save() (validations, avatar optimization...)
+            User.objects.filter(id__in=[user.id for user in chunk]).update(brevo_last_update_date=today)
         except requests.exceptions.HTTPError as e:
             logger.warning(f"Bulk updating Brevo users: One or more of the users don't exist. {e}")
         except Exception as e:
@@ -70,12 +71,14 @@ def update_existing_brevo_contacts(users_to_update, today):
 
 
 def create_new_brevo_contacts(users_to_create, today):
+    from data.models import User
+
     for user in users_to_create:
         try:
             contact = user_to_brevo_payload(user, bulk=False)
             contacts_api_instance.create_contact(contact)
-            user.brevo_last_update_date = today
-            user.save()
+            # direct update: skips User.save() (validations, avatar optimization...)
+            User.objects.filter(id=user.id).update(brevo_last_update_date=today)
         except Exception as e:
             logger.exception(f"Error creating/updating an individual Brevo user {e}", stack_info=True)
         time.sleep(0.1)  # API rate limit is 10 req per second
