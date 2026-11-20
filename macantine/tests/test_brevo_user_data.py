@@ -3,11 +3,12 @@ from unittest import mock
 # import sib_api_v3_sdk
 from django.core.management import call_command
 from django.test import TestCase
+from django.utils import timezone
 from freezegun import freeze_time
 
 from common.tests.utils import date_in_campaign
 from data.factories import CanteenFactory, DiagnosticFactory, UserFactory
-from data.models import Canteen, Diagnostic
+from data.models import Canteen, Diagnostic, User
 from macantine import tasks
 
 
@@ -205,3 +206,40 @@ class BrevoUserDataTest(TestCase):
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_2025"), 0)
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_BILAN_TODO_2025"), 1)  # TODO: should we set to 0?
         self.assertEqual(attributes.get("MA_CANTINE_NB_CANTINES_TD_2025"), 1)  # groupe has td
+
+
+class BrevoUserSyncDateTest(TestCase):
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
+    def test_sync_sets_brevo_last_update_date_without_user_save(self, batch_update_mock, create_contact_mock):
+        user_to_create = UserFactory()
+        user_to_update = UserFactory()
+        two_days_ago = timezone.now() - timezone.timedelta(days=2)
+        User.objects.filter(id=user_to_update.id).update(brevo_last_update_date=two_days_ago)
+
+        # direct update: no User.save() (validations, avatar optimization...)
+        with mock.patch.object(User, "save") as save_mock:
+            call_command("user_update_brevo_contacts")
+        save_mock.assert_not_called()
+        create_contact_mock.assert_called_once()
+        batch_update_mock.assert_called_once()
+
+        user_to_create.refresh_from_db()
+        user_to_update.refresh_from_db()
+        self.assertIsNotNone(user_to_create.brevo_last_update_date)
+        self.assertGreater(user_to_update.brevo_last_update_date, two_days_ago)
+
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact", side_effect=Exception("Brevo error"))
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts", side_effect=Exception("Brevo error"))
+    def test_sync_error_keeps_brevo_last_update_date(self, batch_update_mock, create_contact_mock):
+        user_to_create = UserFactory()
+        user_to_update = UserFactory()
+        two_days_ago = timezone.now() - timezone.timedelta(days=2)
+        User.objects.filter(id=user_to_update.id).update(brevo_last_update_date=two_days_ago)
+
+        call_command("user_update_brevo_contacts")
+
+        user_to_create.refresh_from_db()
+        user_to_update.refresh_from_db()
+        self.assertIsNone(user_to_create.brevo_last_update_date)
+        self.assertEqual(user_to_update.brevo_last_update_date, two_days_ago)
