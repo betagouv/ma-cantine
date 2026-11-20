@@ -6,7 +6,7 @@
 
 # Want to help us make this template better? Share your feedback here: https://forms.gle/ybq9Krt8jtBL3iCk7
 
-ARG PYTHON_VERSION=3.11
+ARG PYTHON_VERSION=3.12
 # Use a Python image with uv pre-installed
 FROM ghcr.io/astral-sh/uv:python${PYTHON_VERSION}-bookworm-slim as base
 

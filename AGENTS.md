@@ -11,7 +11,7 @@ This file provides guidance to AI coding agents (Claude Code, GitHub Copilot, et
 ## Tech Stack
 
 **Backend:**
-- Python 3.11+, Django 5.1, Django REST Framework, Wagtail CMS
+- Python 3.12+, Django 5.1, Django REST Framework, Wagtail CMS
 - PostgreSQL database, Redis/Celery for async tasks
 - Sentry for error tracking, Brevo for email, S3-compatible storage
 

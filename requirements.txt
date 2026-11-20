@@ -31,8 +31,6 @@ asn1crypto==1.5.1
     #   pyhanko-certvalidator
 asttokens==3.0.2
     # via stack-data
-async-timeout==5.0.1 ; python_full_version < '3.11.3'
-    # via redis
 attrs==26.1.0
     # via
     #   aiohttp
@@ -595,7 +593,6 @@ typing-extensions==4.16.0
     #   dbt-core
     #   django-stubs-ext
     #   django-tasks
-    #   ipython
     #   jwcrypto
     #   mashumaro
     #   metricflow

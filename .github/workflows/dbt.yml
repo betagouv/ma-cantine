@@ -33,7 +33,7 @@ jobs:
           enable-cache: true
           # same as backend.yml: without it, uv picks the latest Python of the runner (3.14),
           # for which some dependencies have no wheel yet (e.g. pillow-heif)
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install dependencies
         run: |
