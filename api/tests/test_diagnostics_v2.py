@@ -7,7 +7,12 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from common.tests.utils import date_after_campaign, date_in_campaign, date_in_campaign_correction
+from common.tests.utils import (
+    date_after_campaign,
+    date_before_campaign,
+    date_in_campaign,
+    date_in_campaign_correction,
+)
 from common.utils.camelize import camelize
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Diagnostic
@@ -119,8 +124,8 @@ class DiagnosticV2CreateApiTest(APITestCase):
         self.canteen.managers.add(authenticate.user)
 
         for date in [
-            "2026-01-11",  # before the 2025 campaign
-            "2026-04-30",  # after the 2025 correction campaign
+            date_before_campaign(2025),
+            date_after_campaign(2025),
             "2026-11-16",  # during the year
         ]:
             with self.subTest(date=date), freeze_time(date):
@@ -613,7 +618,7 @@ class DiagnosticV2UpdateCampaignApiTest(APITestCase):
 
         for date in [
             "2026-01-12",  # start of the 2025 campaign
-            "2026-04-20",  # during the 2025 correction campaign
+            date_in_campaign_correction(2025),
         ]:
             for url_name in self.URL_NAMES:
                 with self.subTest(date=date, url_name=url_name), freeze_time(date):
@@ -626,8 +631,8 @@ class DiagnosticV2UpdateCampaignApiTest(APITestCase):
         self.canteen.managers.add(authenticate.user)
 
         for date in [
-            "2026-01-11",  # before the 2025 campaign
-            "2026-04-30",  # after the 2025 correction campaign
+            date_before_campaign(2025),
+            date_after_campaign(2025),
             "2026-11-16",  # during the year
         ]:
             for url_name in self.URL_NAMES:
@@ -1041,11 +1046,11 @@ class DiagnosticVoletInformationV2ApiTest(APITestCase):
 
     @authenticate
     def test_fields_depend_on_year(self):
-        for year, date, expected_field, unexpected_field in [
-            (2025, "2026-03-30", "informationQualiteDurable", "informationPartEgalim"),  # during the 2025 campaign
-            (2026, "2027-01-20", "informationPartEgalim", "informationQualiteDurable"),  # during the 2026 campaign
+        for year, expected_field, unexpected_field in [
+            (2025, "informationQualiteDurable", "informationPartEgalim"),
+            (2026, "informationPartEgalim", "informationQualiteDurable"),
         ]:
-            with self.subTest(year=year), freeze_time(date):
+            with self.subTest(year=year), freeze_time(date_in_campaign(year)):
                 diagnostic = DiagnosticFactory(year=year)
                 diagnostic.canteen.managers.add(authenticate.user)
                 url = reverse(
@@ -1072,21 +1077,11 @@ class DiagnosticVoletInformationV2ApiTest(APITestCase):
 class DiagnosticVoletPlastiqueV2ApiTest(APITestCase):
     @authenticate
     def test_fields_depend_on_year(self):
-        for year, date, expected_field, unexpected_field in [
-            (
-                2025,
-                "2026-03-30",
-                "plastiqueContenantCuissonRemplace",
-                "plastiqueContenantRemplace",
-            ),  # during the 2025 campaign
-            (
-                2026,
-                "2027-01-20",
-                "plastiqueContenantRemplace",
-                "plastiqueContenantCuissonRemplace",
-            ),  # during the 2026 campaign
+        for year, expected_field, unexpected_field in [
+            (2025, "plastiqueContenantCuissonRemplace", "plastiqueContenantRemplace"),
+            (2026, "plastiqueContenantRemplace", "plastiqueContenantCuissonRemplace"),
         ]:
-            with self.subTest(year=year), freeze_time(date):
+            with self.subTest(year=year), freeze_time(date_in_campaign(year)):
                 # empty: the factory fills plastique_contenant_cuisson_remplace randomly
                 diagnostic = DiagnosticFactory(year=year, plastique_contenant_cuisson_remplace=None)
                 diagnostic.canteen.managers.add(authenticate.user)

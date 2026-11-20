@@ -9,7 +9,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from api.tests.utils import assert_import_failure_created, assert_import_success_created, authenticate
-from common.tests.utils import date_in_campaign, date_in_campaign_correction
+from common.tests.utils import date_after_campaign, date_in_campaign, date_in_campaign_correction
 from data.factories import CanteenFactory, DiagnosticFactory
 from data.models import Canteen, Diagnostic
 from imports.models import ImportType
@@ -385,9 +385,8 @@ class DiagnosticsSimpleImportApiErrorTest(APITestCase):
                 "./imports/tests/files/diagnostics_simple/diagnostics_simple_2026_good_one_canteen.csv",
                 "2026",
             ),
-            # after the 2025 correction campaign
             (
-                "2026-06-01",
+                date_after_campaign(2025),
                 "./imports/tests/files/diagnostics_simple/diagnostics_simple_good_one_canteen_seperator_semicolon.csv",
                 "2025",
             ),
