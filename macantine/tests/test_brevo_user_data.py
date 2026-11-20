@@ -1,3 +1,4 @@
+import logging
 from unittest import mock
 
 # import sib_api_v3_sdk
@@ -243,3 +244,19 @@ class BrevoUserSyncDateTest(TestCase):
         user_to_update.refresh_from_db()
         self.assertIsNone(user_to_create.brevo_last_update_date)
         self.assertEqual(user_to_update.brevo_last_update_date, two_days_ago)
+
+    @mock.patch("macantine.brevo.contacts_api_instance.create_contact")
+    @mock.patch("macantine.brevo.contacts_api_instance.update_batch_contacts")
+    def test_sync_logs_counts(self, batch_update_mock, create_contact_mock):
+        UserFactory.create_batch(2)
+        user_to_update = UserFactory()
+        two_days_ago = timezone.now() - timezone.timedelta(days=2)
+        User.objects.filter(id=user_to_update.id).update(brevo_last_update_date=two_days_ago)
+
+        # logging is disabled in the tests (see macantine/tests/__init__.py): enable it for this test only
+        logging.disable(logging.NOTSET)
+        self.addCleanup(logging.disable, logging.CRITICAL)
+        with self.assertLogs("macantine.management.commands.user_update_brevo_contacts", level="INFO") as logs:
+            call_command("user_update_brevo_contacts")
+        # counted before the sync
+        self.assertTrue(any("(2 to create, 1 to update)" in message for message in logs.output))
