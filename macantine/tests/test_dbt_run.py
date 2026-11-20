@@ -3,7 +3,7 @@ from unittest import mock
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 
-from common.models import CommandLog
+from data.models import EventLog
 
 # dbt must be imported at collection time: importing it while freezegun is active (freeze_time) raises
 # "TypeError: metaclass conflict" (pydantic.v1 subclasses datetime.date, which freezegun replaces).
@@ -19,7 +19,9 @@ class DbtRunTest(TestCase):
 
         call_command("dbt_run")
 
-        self.assertEqual(CommandLog.objects.get(command_name="dbt_run").status, CommandLog.Status.SUCCESS)
+        self.assertEqual(
+            EventLog.objects.get(category=EventLog.Category.COMMAND, name="dbt_run").status, EventLog.Status.SUCCESS
+        )
         calls = dbt_runner_mock.return_value.invoke.call_args_list
         self.assertEqual(len(calls), 2)
         deps_args, run_args = calls[0].args[0], calls[1].args[0]

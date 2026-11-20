@@ -3,7 +3,7 @@ from unittest import mock
 from django.core.management import CommandError, call_command
 from django.test import TestCase
 
-from common.models import CommandLog
+from data.models import EventLog
 
 
 @mock.patch("macantine.management.commands.export_dataset.export_datasets")
@@ -14,7 +14,10 @@ class ExportDatasetCommandTest(TestCase):
         datasets = export_datasets_mock.call_args.args[0]
         self.assertIn("canteens_raw_analysis", datasets)
         self.assertIn("event_logs_raw_analysis", datasets)
-        self.assertEqual(CommandLog.objects.get(command_name="export_dataset").status, CommandLog.Status.SUCCESS)
+        self.assertEqual(
+            EventLog.objects.get(category=EventLog.Category.COMMAND, name="export_dataset").status,
+            EventLog.Status.SUCCESS,
+        )
 
     def test_canteen_opendata(self, export_datasets_mock):
         call_command("export_dataset", model="Canteen", destination="opendata")
@@ -31,4 +34,7 @@ class ExportDatasetCommandTest(TestCase):
             call_command("export_dataset", model="Canteen", destination="analysis")
 
         export_datasets_mock.assert_not_called()
-        self.assertEqual(CommandLog.objects.get(command_name="export_dataset").status, CommandLog.Status.FAILURE)
+        self.assertEqual(
+            EventLog.objects.get(category=EventLog.Category.COMMAND, name="export_dataset").status,
+            EventLog.Status.FAILURE,
+        )

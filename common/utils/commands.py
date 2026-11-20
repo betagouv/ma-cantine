@@ -4,7 +4,6 @@ import io
 from django.utils import timezone
 from django.core.management.base import BaseCommand
 
-from common.models import CommandLog
 from data.models import EventLog
 
 
@@ -19,12 +18,9 @@ TRIGGER_MANUAL = "manual"
 class MaCantineBaseCommand(BaseCommand):
     """
     Custom base command that automatically logs execution
-    - creates a CommandLog entry
-        - input_data: captures args (positional) & options (named)
-        - output_data: captures INFO-level logs and above
     - creates an EventLog entry (category COMMAND)
         - data: args, options, trigger, seconds, message (the error, if the command failed)
-          & output (INFO-level logs and above, same as the CommandLog output_data,
+          & output (captured INFO-level logs and above,
             limited to EVENT_LOG_OUTPUT_MAX_LENGTH: the start and the end are kept)
 
     Every command gets a --trigger option: "cron" for the scheduled runs (clevercloud/cron.json), "manual" by default
@@ -74,16 +70,6 @@ class MaCantineBaseCommand(BaseCommand):
     @staticmethod
     def _log_run(command_name, input_data, start_date, log_contents, error=None):
         end_date = timezone.now()
-        status = CommandLog.Status.FAILURE if error else CommandLog.Status.SUCCESS
-
-        CommandLog.objects.create(
-            command_name=command_name,
-            input_data=input_data,
-            status=status,
-            output_data=log_contents,
-            start_date=start_date,
-            end_date=end_date,
-        )
         # never raises (logging must not break the command)
         EventLog.log(
             category=EventLog.Category.COMMAND,
