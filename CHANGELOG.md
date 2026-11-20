@@ -6,6 +6,32 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.64.1](https://github.com/betagouv/ma-cantine/compare/v2026.64.0...v2026.64.1) (2026-11-20)
+
+
+### Améliorations
+
+* **Cantines:** nouveau champ recherche_entreprises_data (données de l'unité légale & de l'établissement via l'API Recherche Entreprises) ([#7738](https://github.com/betagouv/ma-cantine/issues/7738)) ([e4c632d](https://github.com/betagouv/ma-cantine/commit/e4c632d3bab5819850ab614663a848da69bc600e))
+* **Cantines:** nouvelle commande canteen_update_recherche_entreprises_data pour remplir le champ recherche_entreprises_data (via SIRET, ou SIREN) ([#7739](https://github.com/betagouv/ma-cantine/issues/7739)) ([8492846](https://github.com/betagouv/ma-cantine/commit/84928460bf0f3d75c74fdb9be4a63eb35c6e265e))
+* **EventLog:** Commandes : enregistrer la sortie (output, limitée à 10 000 caractères) ([#7723](https://github.com/betagouv/ma-cantine/issues/7723)) ([bd8ddb7](https://github.com/betagouv/ma-cantine/commit/bd8ddb75fb80aeb45cc7f19974e6c3036afc082a))
+* **Utilisateurs:** commande user_update_data : enregistre par lots (bulk_update), sans passer par User.save() ([#7731](https://github.com/betagouv/ma-cantine/issues/7731)) ([dca7f11](https://github.com/betagouv/ma-cantine/commit/dca7f11198f4ef2cb18ff711070d0ed619d8e043))
+
+
+### Corrections (bugs, typos...)
+
+* **Brevo:** commande user_update_brevo_contacts : seuil de 12h (au lieu de 24h) pour ne plus sauter de nuit ([#7734](https://github.com/betagouv/ma-cantine/issues/7734)) ([48178c9](https://github.com/betagouv/ma-cantine/commit/48178c9330ad98e80c73850853cb1dc6b78906bd))
+* **Cantines:** commande canteen_update_geolocation_data_using_siret : ignore les erreurs API (au lieu de réinitialiser les données géo) & met toujours à jour les champs siret_* ([#7737](https://github.com/betagouv/ma-cantine/issues/7737)) ([f0b0a18](https://github.com/betagouv/ma-cantine/commit/f0b0a18f36320ef994c2e6b945414ce79e28d45e))
+
+
+### Technique
+
+* **Brevo:** commande user_update_brevo_contacts : log des compteurs corrigé (comptés avant la synchro) & itertools.batched ([#7735](https://github.com/betagouv/ma-cantine/issues/7735)) ([7d8b67a](https://github.com/betagouv/ma-cantine/commit/7d8b67ac4c7d485fdb08acbfe3240cbdfd3bc4f5))
+* **Brevo:** commande user_update_brevo_contacts : met à jour brevo_last_update_date sans passer par User.save() ([#7733](https://github.com/betagouv/ma-cantine/issues/7733)) ([b0be25e](https://github.com/betagouv/ma-cantine/commit/b0be25ebcb9fc26d1c853b9f197006605a411464))
+* **deps:** met à jour dbt-core (1.12.7) & pip (26.3) (vulnérabilités) ([#7726](https://github.com/betagouv/ma-cantine/issues/7726)) ([72b742c](https://github.com/betagouv/ma-cantine/commit/72b742cff10ee7010439c8f26d580d970c39892f))
+* **EventLog:** supprimer le modèle CommandLog (remplacé par EventLog COMMAND) ([#7724](https://github.com/betagouv/ma-cantine/issues/7724)) ([b635d96](https://github.com/betagouv/ma-cantine/commit/b635d967ba729302f257133fdc133929eca53e0a))
+* **python:** passage à Python 3.12 ([#7727](https://github.com/betagouv/ma-cantine/issues/7727)) ([8abb331](https://github.com/betagouv/ma-cantine/commit/8abb3313f20cebab08c52a1984192a2369d7e4e7))
+* **Utilisateurs:** commande user_update_data : supprime le prefetch inutile des cantines & diagnostics ([#7730](https://github.com/betagouv/ma-cantine/issues/7730)) ([16f8f83](https://github.com/betagouv/ma-cantine/commit/16f8f833bc6552ff4e80944d1a6574364008771d))
+
 ## [2026.64.0](https://github.com/betagouv/ma-cantine/compare/v2026.63.0...v2026.64.0) (2026-11-20)
 
 
