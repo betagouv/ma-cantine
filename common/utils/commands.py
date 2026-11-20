@@ -10,6 +10,8 @@ from data.models import EventLog
 
 DJANGO_DEFAULT_OPTIONS = {"no_color", "settings", "traceback", "verbosity", "pythonpath", "force_color", "skip_checks"}
 EVENT_LOG_MESSAGE_MAX_LENGTH = 1000
+EVENT_LOG_OUTPUT_MAX_LENGTH = 10000
+EVENT_LOG_OUTPUT_TRUNCATION_MARKER = "\n[...]\n"
 TRIGGER_CRON = "cron"
 TRIGGER_MANUAL = "manual"
 
@@ -21,7 +23,9 @@ class MaCantineBaseCommand(BaseCommand):
         - input_data: captures args (positional) & options (named)
         - output_data: captures INFO-level logs and above
     - creates an EventLog entry (category COMMAND)
-        - data: args, options, trigger, seconds & message (the error, if the command failed)
+        - data: args, options, trigger, seconds, message (the error, if the command failed)
+          & output (INFO-level logs and above, same as the CommandLog output_data,
+            limited to EVENT_LOG_OUTPUT_MAX_LENGTH: the start and the end are kept)
 
     Every command gets a --trigger option: "cron" for the scheduled runs (clevercloud/cron.json), "manual" by default
     """
@@ -90,5 +94,14 @@ class MaCantineBaseCommand(BaseCommand):
                 "trigger": input_data["options"].get("trigger"),
                 "seconds": round((end_date - start_date).total_seconds(), 2),
                 "message": str(error)[:EVENT_LOG_MESSAGE_MAX_LENGTH] if error else None,
+                "output": _truncate_output(log_contents),
             },
         )
+
+
+def _truncate_output(output):
+    """Keep the start (how the command began) and the end (summary, error) of a long output"""
+    if len(output) <= EVENT_LOG_OUTPUT_MAX_LENGTH:
+        return output
+    half = EVENT_LOG_OUTPUT_MAX_LENGTH // 2
+    return output[:half] + EVENT_LOG_OUTPUT_TRUNCATION_MARKER + output[-half:]

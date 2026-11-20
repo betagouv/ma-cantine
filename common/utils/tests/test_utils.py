@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.core.management import CommandError, call_command
 
+from common.utils import commands as commands_utils
 from common.utils import utils as utils_utils
 from common.models import CommandLog
 from data.models import EventLog
@@ -53,10 +54,11 @@ class CommandsTest(TestCase):
         self.assertEqual(event_log.name, "canteen_delete")
         self.assertEqual(event_log.status, EventLog.Status.SUCCESS)
         self.assertIsNone(event_log.user)
-        self.assertEqual(set(event_log.data.keys()), {"args", "options", "trigger", "seconds", "message"})
+        self.assertEqual(set(event_log.data.keys()), {"args", "options", "trigger", "seconds", "message", "output"})
         self.assertEqual(event_log.data["trigger"], "manual")  # default
         self.assertEqual(event_log.data["options"]["canteen_siret_list"], "92341284500011,23456789012345")
         self.assertIsNone(event_log.data["message"])
+        self.assertEqual(event_log.data["output"], CommandLog.objects.get().output_data)
 
     def test_ma_cantine_base_command_creates_event_log_on_failure(self):
         # unknown combination: the command raises a CommandError
@@ -68,7 +70,22 @@ class CommandsTest(TestCase):
         self.assertEqual(event_log.name, "export_dataset")
         self.assertEqual(event_log.status, EventLog.Status.FAILURE)
         self.assertIn("No dataset for Canteen (analysis)", event_log.data["message"])
+        self.assertIn("ERROR: No dataset for Canteen (analysis)", event_log.data["output"])
         self.assertEqual(CommandLog.objects.get().status, CommandLog.Status.FAILURE)
+
+    def test_ma_cantine_base_command_output_is_truncated(self):
+        short_output = "INFO - Start task\n"
+        self.assertEqual(commands_utils._truncate_output(short_output), short_output)
+
+        long_output = "INFO - first line\n" + "INFO - line\n" * 2000 + "INFO - last line\n"
+        output = commands_utils._truncate_output(long_output)
+        self.assertEqual(
+            len(output),
+            commands_utils.EVENT_LOG_OUTPUT_MAX_LENGTH + len(commands_utils.EVENT_LOG_OUTPUT_TRUNCATION_MARKER),
+        )
+        self.assertTrue(output.startswith("INFO - first line\n"))
+        self.assertIn(commands_utils.EVENT_LOG_OUTPUT_TRUNCATION_MARKER, output)
+        self.assertTrue(output.endswith("INFO - last line\n"))
 
     def test_ma_cantine_base_command_trigger(self):
         call_command("canteen_delete", "--canteen-siret-list", "92341284500011", "--trigger", "cron")
