@@ -96,6 +96,17 @@ class UserModelTest(TestCase):
         User.objects.filter(id=self.user_without_canteens.id).update(brevo_is_deleted=True)
         self.assertEqual(User.objects.brevo_to_update().count(), 0)
 
+    def test_queryset_brevo_to_update_threshold(self):
+        # synced last night, slightly less than 24h ago (the cron start time varies): to update
+        almost_one_day_ago = timezone.now() - timezone.timedelta(hours=24) + timezone.timedelta(seconds=1)
+        User.objects.filter(id=self.user_with_canteens.id).update(brevo_last_update_date=almost_one_day_ago)
+        self.assertEqual(list(User.objects.brevo_to_update()), [self.user_with_canteens])
+
+        # synced a few hours ago (e.g. command run again manually): not to update
+        six_hours_ago = timezone.now() - timezone.timedelta(hours=6)
+        User.objects.filter(id=self.user_with_canteens.id).update(brevo_last_update_date=six_hours_ago)
+        self.assertEqual(User.objects.brevo_to_update().count(), 0)
+
     def test_queryset_annotate_with_totp_device(self):
         user_qs = User.objects.annotate_with_totp_device()
 
