@@ -298,38 +298,3 @@ def annotate_with_sector_category_list(queryset):
         )
     )
     return queryset
-
-
-class SectorM2M(models.Model):
-    class Categories(models.TextChoices):
-        ADMINISTRATION = "administration", "Administration"
-        ENTERPRISE = "enterprise", "Entreprise"
-        EDUCATION = "education", "Enseignement"
-        HEALTH = "health", "Santé"
-        SOCIAL = "social", "Social / Médico-social"
-        LEISURE = "leisure", "Loisirs"
-        AUTRES = "autres", "Autres"
-
-    name = models.TextField()
-    category = models.CharField(
-        max_length=50,
-        choices=Categories.choices,
-        null=True,
-        blank=True,
-        verbose_name="catégorie",
-    )
-    has_line_ministry = models.BooleanField(default=False, verbose_name="Afficher le champ « Ministère de tutelle »")
-
-    creation_date = models.DateTimeField(auto_now_add=True)
-    modification_date = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        verbose_name = "secteur d'activité"
-        verbose_name_plural = "secteurs d'activité"
-
-    def __str__(self):
-        return self.name
-
-    @classmethod
-    def choices(cls):
-        return [(x.id, x.__str__()) for x in cls.objects.all()]

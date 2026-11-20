@@ -26,7 +26,6 @@ from data.models.sector import (
     ADMINISTRATION_SECTOR_LIST,
     SECTOR_HAS_LINE_MINISTRY_LIST,
     Sector,
-    SectorM2M,
     annotate_with_sector_category_list,
 )
 from data.models.canteen_petite_structure import compute_is_petite_structure
@@ -544,7 +543,6 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
     region = models.CharField(max_length=3, null=True, blank=True, choices=Region.choices, verbose_name="région")
     region_lib = models.CharField(max_length=255, null=True, blank=True, verbose_name="nom de la région")
 
-    sectors_m2m = models.ManyToManyField(SectorM2M, blank=True, verbose_name="secteurs d'activité")
     sector_list = ChoiceArrayField(
         base_field=models.CharField(max_length=255, choices=Sector.choices),
         default=list,

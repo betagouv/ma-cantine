@@ -7,7 +7,6 @@ from django.db.models.signals import post_save
 from data.models import Canteen
 from data.models.sector import Sector
 
-from .sector import SectorM2MFactory
 from .user import UserFactory
 
 SIRET_LIST_USED_IN_TESTS = [
@@ -292,17 +291,6 @@ class CanteenFactory(factory.django.DjangoModelFactory):
         obj = model_class(*args, **kwargs)
         obj.save(skip_validations=skip_validations)
         return obj
-
-    @factory.post_generation
-    def sectors_m2m(self, create, extracted, **kwargs):
-        if not create or extracted == []:
-            return
-        if extracted:
-            for sector in extracted:
-                self.sectors_m2m.add(sector)
-        else:
-            for _ in range(random.randint(1, 3)):
-                self.sectors_m2m.add(SectorM2MFactory())
 
     @factory.post_generation
     def managers(self, create, extracted, **kwargs):

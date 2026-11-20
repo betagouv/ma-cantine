@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 
 from data.factories import PartnerFactory, UserFactory
-from data.models import Partner, PartnerType, SectorCategory, SectorM2M
+from data.models import Partner, PartnerType, SectorCategory
 
 
 class PartnersListApiTest(APITestCase):
@@ -202,7 +202,7 @@ class PartnersListApiFilterTest(APITestCase):
 
 class PartnerCreateApiTest(APITestCase):
     def test_can_create_partner_unauthenticated(self):
-        sector_cateory = SectorM2M.Categories.ADMINISTRATION
+        sector_cateory = SectorCategory.ADMINISTRATION
         self.assertEqual(Partner.objects.count(), 0)
 
         payload = {

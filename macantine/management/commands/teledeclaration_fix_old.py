@@ -187,6 +187,9 @@ class Command(MaCantineBaseCommand):
                                 # additional info
                                 new_canteen.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
                                 new_canteen.central_producer_siret = diagnostic.canteen_snapshot.get("siret")
+                                new_canteen.sector_list = get_sector_list_from_old_sector_dict_list(
+                                    canteen_satellite.get("sectors", [])
+                                )
                                 # soft-delete the canteen (set to the last day of the teledeclaration year)
                                 new_canteen.deletion_date = diagnostic.teledeclaration_date.replace(month=12, day=31)
                                 # save with change_reason
@@ -195,9 +198,6 @@ class Command(MaCantineBaseCommand):
                                     new_canteen,
                                     f"Script: recreate_canteen_hard_deleted (diagnostic_id {diagnostic.id})",
                                 )
-                                # M2M: sectors
-                                for sector in canteen_satellite.get("sectors", []):
-                                    new_canteen.sectors_m2m.add(sector["id"])
                             canteens_created_count += 1
                 else:
                     print(f"Canteen satellite in Diagnostic {diagnostic.id} has no id, skipping")
