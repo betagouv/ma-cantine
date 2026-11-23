@@ -53,18 +53,10 @@ const selectEstablishment = (canteenInfos) => {
 /* Sectors */
 const sectorsOptions = ref([])
 sectorsService.getSectors().then((sectors) => {
-  const options = []
-  for (let i = 0; i < sectors.length; i++) {
-    const sector = sectors[i]
+  sectorsOptions.value = sectorsService.sortSectors(sectors).map((sector) => {
     const { name, value, categoryName, hasLineMinistry } = sector
-    options.push({ name: name, sectorId: value, hasLineMinistry, hint: categoryName })
-  }
-  const optionsSortedAlphabetically = options.sort((sectorBefore, sectorAfter) => {
-    if (sectorBefore.name < sectorAfter.name) return -1
-    else if (sectorBefore.name > sectorAfter.name) return 1
-    else return 0
+    return { name: name, sectorId: value, hasLineMinistry, hint: categoryName }
   })
-  sectorsOptions.value = optionsSortedAlphabetically
 })
 
 /* Line Ministry */
