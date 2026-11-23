@@ -1256,8 +1256,12 @@ class Diagnostic(
         self.canteen_snapshot = serialized_canteen
 
         # satellites data
+        # ordered by id: deterministic (the default ordering -creation_date can have ties),
+        # same order as satellites_nombre_repas_an_list (see sync_satellites_nombre_repas_an_list)
         if self.canteen.is_groupe_or_central_cuisine:
-            serialized_satellites = [SatelliteTeledeclarationSerializer(x).data for x in self.canteen.satellites]
+            serialized_satellites = [
+                SatelliteTeledeclarationSerializer(x).data for x in self.canteen.satellites.order_by("id")
+            ]
             self.satellites_snapshot = serialized_satellites
 
         # applicant data
