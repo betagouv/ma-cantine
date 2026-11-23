@@ -228,7 +228,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
 
     @freeze_time(date_in_campaign(2026))
     def test_diagnostic_nombre_repas_an_required_only_once(self):
-        # nombre_repas_an is checked both by validate_canteen_fields_required (CANTEEN_FIELDS) and
+        # nombre_repas_an is checked both by validate_canteen_fields (CANTEEN_FIELDS) and
         # validate_appro_fields_required (it's also in the TD registry's fields_required) - it
         # should only be flagged once, not twice with the same message
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
@@ -1396,6 +1396,36 @@ class DiagnosticGroupeCanteenYearlyMealCountTest(TestCase):
         self.assertEqual(diagnostic.cout_repas, 6)
 
 
+class DiagnosticCanteenFieldsValidatorTest(TestCase):
+    def test_nombre_repas_an_required(self):
+        errors = diagnostic_validators.validate_canteen_fields(Diagnostic(year=2026, nombre_repas_an=None))
+        self.assertEqual(list(errors.keys()), ["nombre_repas_an"])
+        self.assertIn("obligatoire", str(errors["nombre_repas_an"]))
+        # not before 2026
+        self.assertEqual(diagnostic_validators.validate_canteen_fields(Diagnostic(year=2025)), {})
+        # not for groupes (see DiagnosticGroupeNombreRepasAnOptionalTest)
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        diagnostic = Diagnostic(canteen=canteen_groupe, year=2026, nombre_repas_an=None)
+        self.assertEqual(diagnostic_validators.validate_canteen_fields(diagnostic), {})
+
+    def test_nombre_repas_an_min(self):
+        for value, is_valid in [(0, False), (2, False), (3, True), (1000, True)]:
+            with self.subTest(value=value):
+                errors = diagnostic_validators.validate_canteen_fields(Diagnostic(year=2026, nombre_repas_an=value))
+                if is_valid:
+                    self.assertEqual(errors, {})
+                else:
+                    self.assertEqual(list(errors.keys()), ["nombre_repas_an"])
+                    self.assertIn("au moins égal à 3", str(errors["nombre_repas_an"]))
+
+    def test_is_clean_returns_the_errors(self):
+        diagnostic = DiagnosticFactory(**{**VALID_DIAGNOSTIC_SIMPLE_2026, "nombre_repas_an": 2})
+        is_clean, errors = diagnostic._is_clean()
+        self.assertFalse(is_clean)
+        self.assertIn("nombre_repas_an", errors)
+        self.assertFalse(diagnostic.is_clean)
+
+
 class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -1456,6 +1486,15 @@ class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
         errors = self._validate(self.canteen_groupe, nombre_repas_an=1000, value_1=1000)
         self.assertEqual(list(errors.keys()), ["satellites_nombre_repas_an_list"])
         self.assertIn("Satellite 2", str(errors["satellites_nombre_repas_an_list"]))
+
+    def test_satellite_value_below_min(self):
+        errors = self._validate(self.canteen_groupe, nombre_repas_an=1002, value_1=1000, value_2=2)
+        self.assertEqual(list(errors.keys()), ["satellites_nombre_repas_an_list"])
+        self.assertIn("Satellite 2", str(errors["satellites_nombre_repas_an_list"]))
+        self.assertIn("au moins égal à 3", str(errors["satellites_nombre_repas_an_list"]))
+        # the min is valid
+        errors = self._validate(self.canteen_groupe, nombre_repas_an=1003, value_1=1000, value_2=3)
+        self.assertEqual(errors, {})
 
     def test_groupe_with_a_site(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)

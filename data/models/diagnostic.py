@@ -816,9 +816,8 @@ class Diagnostic(
         validation_errors = utils_utils.merge_validation_errors(
             # satellites whose groupe handles appro centrally don't declare their own diagnostic_type/appro fields
             self._get_validation_errors_diagnostic_only(with_appro=not self._should_use_central_kitchen_appro()),
-            # rules that depend on the current date, or on the canteen (not in is_clean, see compute_is_clean)
+            # rules that depend on the current date (not in is_clean, see compute_is_clean)
             diagnostic_validators.validate_year_and_can_edit(self),
-            diagnostic_validators.validate_canteen_fields_required(self),
         )
         if validation_errors:
             raise ValidationError(validation_errors)
@@ -827,12 +826,13 @@ class Diagnostic(
 
     def _get_validation_errors_diagnostic_only(self, with_appro=True) -> dict:
         """
-        The rules of clean() that only depend on the diagnostic itself (not on the current date, nor on the canteen)
+        The rules of clean() that only depend on the diagnostic itself (not on the current date)
         - used by clean() & compute_is_clean()
         - with_appro: if False, the diagnostic_type & appro rules are not checked
         """
         validation_errors = utils_utils.merge_validation_errors(
             diagnostic_validators.validate_year(self),
+            diagnostic_validators.validate_canteen_fields(self),
             diagnostic_validators.validate_satellites_nombre_repas_an_list(self),
         )
         if with_appro:
@@ -929,10 +929,10 @@ class Diagnostic(
         """
         Same field validations as teledeclare(), but only the rules that depend on the diagnostic itself
         (like is_filled: no SQL, not the current date)
-        - included: clean_fields(), validate_year, the satellites list of a groupe, diagnostic_type & appro rules
+        - included: clean_fields(), validate_year, validate_canteen_fields, the satellites list of a groupe,
+        diagnostic_type & appro rules
         - excluded:
             - validate_year_and_can_edit: depends on the current date (the campaign is checked by the action & teledeclare())
-            - validate_canteen_fields_required: depends on the canteen (nombre_repas_an is already required by is_filled)
             - the FK fields (canteen...) & unique constraints: SQL (enforced by the DB)
             - the volets thématiques: not required to teledeclare (see get_validation_errors)
         - the appro rules are always checked, even for satellites whose groupe handles appro (like is_filled)
