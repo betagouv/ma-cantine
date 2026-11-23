@@ -1,3 +1,5 @@
+from django.core.exceptions import NON_FIELD_ERRORS
+
 from common.utils import utils as utils_utils
 from data.models.diagnostic_teledeclaration_dates import get_current_campaign_year, is_in_teledeclaration_or_correction
 
@@ -313,6 +315,24 @@ def validate_canteen_groupe_change(instance):
             groupe = Canteen.all_objects.filter(id=groupe_id).first()
             if groupe and groupe.has_diagnostic_teledeclared_for_year(campaign_year):
                 utils_utils.add_validation_error(errors, field_name, message)
+    return errors
+
+
+def validate_canteen_groupe_delete(instance):
+    """
+    - only called by Canteen.delete() (not in clean())
+    - if groupe: no satellite canteen must be linked to it
+    NOTE: non-field error (the API returns {"detail": [...]})
+    """
+    errors = {}
+    if instance.is_groupe:
+        satellites_count = instance.satellites.count()
+        if satellites_count > 0:
+            utils_utils.add_validation_error(
+                errors,
+                NON_FIELD_ERRORS,
+                f"Impossible de supprimer ce groupe car il a encore {satellites_count} satellite(s) rattaché(s).",
+            )
     return errors
 
 
