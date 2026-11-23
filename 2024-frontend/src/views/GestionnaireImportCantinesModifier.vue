@@ -37,7 +37,7 @@ const successMessage = (count) => count > 1
     :exampleFile
     :filePreviews
     :links
-    adminCallout
+    :adminCallout="true"
     apiUrl="importCanteens/update"
     :successMessage
   >

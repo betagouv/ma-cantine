@@ -11,17 +11,7 @@ import ImportHelp from "@/components/ImportHelp.vue"
 
 /* Router and Props */
 const route = useRoute()
-const props = defineProps({
-  schemaFile: String,
-  exampleFile: Object,
-  filePreviews: Object,
-  links: Array,
-  apiUrl: String,
-  apiImportType: String,
-  schemaVersion: String,
-  adminCallout: Boolean,
-  successMessage: Function,
-})
+const props = defineProps(["schemaFile", "exampleFile", "filePreviews", "links", "apiUrl", "apiImportType", "schemaVersion", "adminCallout", "successMessage"])
 
 /* Success */
 const showModal = ref(false)

@@ -13,7 +13,7 @@ const successMessage = (count) => count > 1
 <template>
   <LayoutImport
     :schemaFile
-    adminCallout
+    :adminCallout="true"
     apiUrl="importCanteensManagers"
     :successMessage
   />
