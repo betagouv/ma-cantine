@@ -57,7 +57,8 @@ class Command(MaCantineBaseCommand):
             logger.info("Dry run mode, no changes will be applied.")
 
         # all_objects: also include the diagnostics generated from a groupe diagnostic
-        qs = Diagnostic.all_objects.in_year(year)
+        # select_related: the canteen is needed to compute is_clean (avoid 1 query per diagnostic)
+        qs = Diagnostic.all_objects.in_year(year).select_related("canteen")
 
         logger.info("Step 1: find the diagnostics for the specified year")
         logger.info(f"Found {qs.count()} diagnostics for year {year}")
