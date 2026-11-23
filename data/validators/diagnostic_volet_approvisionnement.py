@@ -12,7 +12,7 @@ def validate_appro_fields_required(instance):
       BUT most of the model fields are optional...
     - extra validation: depending on the year & diagnostic_type of the diagnostic
         - e.g. before 2025, only valeur_totale is required
-    NOTE: nombre_repas_an is excluded, it's already checked by validate_canteen_fields_required
+    NOTE: nombre_repas_an is excluded, it's already checked by validate_canteen_fields
     (it would otherwise be flagged twice, since it's also a CANTEEN_FIELDS entry)
     """
     errors = {}

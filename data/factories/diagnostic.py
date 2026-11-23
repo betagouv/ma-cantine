@@ -23,9 +23,9 @@ def _fill_required_fields(obj):
     if obj.year and obj.diagnostic_type and int(obj.year) >= 2026:
         for field_name in Diagnostic.CANTEEN_FIELDS:
             if field_name == "nombre_repas_an" and obj.canteen_id and obj.canteen.is_groupe:
-                continue  # not required for groupes (see validate_canteen_fields_required)
+                continue  # not required for groupes (see validate_canteen_fields)
             if getattr(obj, field_name) is None:
-                setattr(obj, field_name, 1000)  # nombre_repas_an must be >= 3 (see validate_nombre_repas_an)
+                setattr(obj, field_name, 1000)  # nombre_repas_an must be >= 3 (see validate_canteen_fields)
 
 
 def _save_after_postgeneration(instance, create, results):

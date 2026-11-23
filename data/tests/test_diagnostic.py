@@ -228,7 +228,7 @@ class DiagnosticModelSaveTest(TransactionTestCase):
 
     @freeze_time(date_in_campaign(2026))
     def test_diagnostic_nombre_repas_an_required_only_once(self):
-        # nombre_repas_an is checked both by validate_canteen_fields_required (CANTEEN_FIELDS) and
+        # nombre_repas_an is checked both by validate_canteen_fields (CANTEEN_FIELDS) and
         # validate_appro_fields_required (it's also in the TD registry's fields_required) - it
         # should only be flagged once, not twice with the same message
         diagnostic = DiagnosticFactory(**VALID_DIAGNOSTIC_SIMPLE_2026)
@@ -1396,11 +1396,22 @@ class DiagnosticGroupeCanteenYearlyMealCountTest(TestCase):
         self.assertEqual(diagnostic.cout_repas, 6)
 
 
-class DiagnosticNombreRepasAnValidatorTest(TestCase):
-    def test_validate(self):
-        for value, is_valid in [(None, True), (0, False), (2, False), (3, True), (1000, True)]:
+class DiagnosticCanteenFieldsValidatorTest(TestCase):
+    def test_nombre_repas_an_required(self):
+        errors = diagnostic_validators.validate_canteen_fields(Diagnostic(year=2026, nombre_repas_an=None))
+        self.assertEqual(list(errors.keys()), ["nombre_repas_an"])
+        self.assertIn("obligatoire", str(errors["nombre_repas_an"]))
+        # not before 2026
+        self.assertEqual(diagnostic_validators.validate_canteen_fields(Diagnostic(year=2025)), {})
+        # not for groupes (see DiagnosticGroupeNombreRepasAnOptionalTest)
+        canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        diagnostic = Diagnostic(canteen=canteen_groupe, year=2026, nombre_repas_an=None)
+        self.assertEqual(diagnostic_validators.validate_canteen_fields(diagnostic), {})
+
+    def test_nombre_repas_an_min(self):
+        for value, is_valid in [(0, False), (2, False), (3, True), (1000, True)]:
             with self.subTest(value=value):
-                errors = diagnostic_validators.validate_nombre_repas_an(Diagnostic(year=2026, nombre_repas_an=value))
+                errors = diagnostic_validators.validate_canteen_fields(Diagnostic(year=2026, nombre_repas_an=value))
                 if is_valid:
                     self.assertEqual(errors, {})
                 else:
