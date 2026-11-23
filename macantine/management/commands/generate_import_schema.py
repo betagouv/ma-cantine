@@ -13,6 +13,7 @@ from data.models.diagnostic_teledeclaration_fields import (
     get_teledeclaration_import_fields_required,
     get_teledeclaration_verbose_name,
 )
+from data.validators.diagnostic import DIAGNOSTIC_NOMBRE_REPAS_AN_MIN
 
 COMMON_FIELDS = {
     "cantine_id": {
@@ -261,6 +262,8 @@ class Command(BaseCommand):
         elif isinstance(model_field, models.IntegerField):
             field_definition["type"] = "integer"
             field_definition["example"] = "1234"
+            if name == "nombre_repas_an":
+                field_definition["description"] = f"Minimum {DIAGNOSTIC_NOMBRE_REPAS_AN_MIN}."
         # e.g. valeur_totale: type "any" to accept both decimal separators ("." & ",")
         # (a Table Schema number only accepts one decimalChar). The value is then checked by the model (DecimalField)
         else:
