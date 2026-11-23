@@ -46,6 +46,12 @@ export default {
   Not the best solution but the quickest before all pages are migrated to vue3
 */
 
+.app-banner-env {
+  position: sticky;
+  top: 0;
+  z-index: 3; // above the header (2) and the unfocused skip links (1)
+}
+
 .app-banner-env .fr-notice {
   padding-bottom: 1rem;
   padding-top: 1rem;

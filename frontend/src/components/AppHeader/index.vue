@@ -1,6 +1,5 @@
 <template>
   <div v-if="!!this.$route.name">
-    <SkipLinks />
     <v-toolbar
       color="white"
       ref="appbar"
@@ -194,12 +193,11 @@
 
 <script>
 import LogoutButton from "./LogoutButton"
-import SkipLinks from "./SkipLinks"
 import documentation from "../../../../2024-frontend/src/data/documentation.json"
 
 export default {
   name: "AppHeader",
-  components: { LogoutButton, SkipLinks },
+  components: { LogoutButton },
   data() {
     return {
       dashboardEnabled: window.ENABLE_DASHBOARD,
