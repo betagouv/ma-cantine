@@ -18,7 +18,7 @@
       "constraints": {
         "required": true
       },
-      "description": "",
+      "description": "Minimum 3.",
       "example": "1234",
       "name": "nombre_repas_an",
       "title": "Nombre de couverts par an",
