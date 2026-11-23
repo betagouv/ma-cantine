@@ -1,46 +1,20 @@
 <script setup>
-import { ref } from "vue"
-import { useRoute } from "vue-router"
-import ImportExplanation from "@/components/ImportExplanation.vue"
-import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
-import ImportFileUpload from "@/components/ImportFileUpload.vue"
-import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-import ImportHelp from "@/components/ImportHelp.vue"
-import ImportAdminCallout from "@/components/ImportAdminCallout.vue"
-
-/* Store and Router */
-const route = useRoute()
+import LayoutImport from "@/layouts/LayoutImport.vue"
 
 /* Data */
 const schemaFile = "cantines_gestionnaires.json"
 
 /* Success */
-const showModal = ref(false)
-const canteenCount = ref(0)
-
-const success = (count) => {
-  canteenCount.value = count
-  showModal.value = true
-}
+const successMessage = (count) => count > 1
+  ? "Vos cantines sont modifiées."
+  : "Votre cantine est modifiée."
 </script>
 
 <template>
-  <h1 class="fr-col-12 fr-col-md-7">{{ route.meta.title }}</h1>
-  <ImportExplanation />
-  <ImportSchemaTable :schemaFile />
-  <ImportAdminCallout />
-  <ImportFileUpload
-    @success="success"
+  <LayoutImport
+    :schemaFile
+    adminCallout
     apiUrl="importCanteensManagers"
+    :successMessage
   />
-  <ImportSuccessModal
-    :opened="showModal"
-    :message="
-      canteenCount > 1
-        ? 'Vos cantines sont modifiées.'
-        : 'Votre cantine est modifiée.'
-    "
-    @close="showModal = false"
-  />
-  <ImportHelp />
 </template>
