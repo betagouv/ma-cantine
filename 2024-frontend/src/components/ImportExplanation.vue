@@ -3,7 +3,7 @@ defineProps(["exampleFile", "links"])
 </script>
 
 <template>
-  <section class="fr-grid-row fr-grid-row--bottom">
+  <section class="fr-grid-row fr-grid-row--bottom fr-mb-4w">
     <div class="fr-col-12 fr-col-md-7">
       <h2 class="fr-h5">Comment ça marche ?</h2>
       <p class="fr-mb-1w">Nous scannons la structure du fichier, puis les valeurs des cellules avant d’importer.</p>
