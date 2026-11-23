@@ -1,10 +1,13 @@
 <template>
   <v-app>
     <WidgetHeader class="ma-4 mb-0 constrained" v-if="isWidget" />
-    <AppHeader class="mx-auto constrained" v-else-if="!fullscreen" />
+    <template v-else-if="!fullscreen">
+      <SkipLinks />
+      <AppBannerDemo />
+      <AppHeader />
+    </template>
 
     <v-main id="contenu" style="width: 100%" :class="{ 'mb-10': !isWidget, 'fill-height': fullscreen }" role="main">
-      <AppBannerDemo v-if="!isWidget && !fullscreen" />
       <AppBanner v-if="!isWidget && !fullscreen" />
       <AppBannerAlert v-if="!isWidget && !fullscreen" />
       <WebinaireBanner @hide="hideBanner" v-if="showWebinaireBanner && !fullscreen" />
@@ -27,6 +30,7 @@
 
 <script>
 import AppHeader from "@/components/AppHeader"
+import SkipLinks from "@/components/AppHeader/SkipLinks"
 import AppBanner from "@/components/AppBanner"
 import AppBannerDemo from "@/components/AppBannerDemo"
 import AppBannerAlert from "@/components/AppBannerAlert"
@@ -40,6 +44,7 @@ import { readCookie, largestId, bannerCookieName, hideCommunityEventsBanner } fr
 export default {
   components: {
     AppHeader,
+    SkipLinks,
     AppBanner,
     AppBannerDemo,
     AppBannerAlert,
