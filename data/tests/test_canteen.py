@@ -1,5 +1,5 @@
 import requests_mock
-from django.core.exceptions import ValidationError
+from django.core.exceptions import NON_FIELD_ERRORS, ValidationError
 from django.db import IntegrityError
 from django.test import TestCase, TransactionTestCase
 from freezegun import freeze_time
@@ -12,6 +12,7 @@ from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, U
 from data.models import Canteen, Diagnostic, Sector, SectorCategory, Teledeclaration
 from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region
+from data.validators import canteen as canteen_validators
 
 
 class CanteenModelSaveTest(TransactionTestCase):
@@ -797,6 +798,20 @@ class CanteenModelGroupeChangeValidationTest(TestCase):
         self.canteen_satellite_11.save()
 
 
+class CanteenGroupeDeleteValidatorTest(TestCase):
+    def test_validate(self):
+        canteen_groupe_without_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        canteen_groupe_with_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=canteen_groupe_with_satellites)
+        canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
+        self.assertEqual(canteen_validators.validate_canteen_groupe_delete(canteen_groupe_without_satellites), {})
+        self.assertEqual(canteen_validators.validate_canteen_groupe_delete(canteen_site), {})
+        errors = canteen_validators.validate_canteen_groupe_delete(canteen_groupe_with_satellites)
+        self.assertEqual(list(errors.keys()), [NON_FIELD_ERRORS])
+        self.assertIn("1 satellite(s) rattaché(s)", str(errors[NON_FIELD_ERRORS]))
+
+
 class CanteenModelDeleteTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -857,7 +872,12 @@ class CanteenModelDeleteTest(TestCase):
 
     def test_cannot_soft_delete_groupe_with_active_satellites(self):
         self.assertEqual(self.canteen_groupe_2_with_active_satellites.satellites.count(), 1)
-        self.assertRaises(ValidationError, self.canteen_groupe_2_with_active_satellites.delete)
+        with self.assertRaises(ValidationError) as context:
+            self.canteen_groupe_2_with_active_satellites.delete()
+        self.assertEqual(
+            context.exception.messages,
+            ["Impossible de supprimer ce groupe car il a encore 1 satellite(s) rattaché(s)."],
+        )
         # even with skip_validations
         self.assertRaises(ValidationError, self.canteen_groupe_2_with_active_satellites.delete, skip_validations=True)
 

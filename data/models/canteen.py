@@ -5,6 +5,7 @@ from dirtyfields import DirtyFieldsMixin
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import ArrayField
 from django.core.validators import ValidationError
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.db import models
 from django.db.models import BooleanField, Case, Count, Exists, F, Func, OuterRef, Q, Subquery, Value, When
 from django.db.models.functions import Coalesce, Length
@@ -864,14 +865,12 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
         """
         Override the SoftDeletionModel delete method
         - add the skip_validations parameter to skip validations (USE WITH CAUTION)
-        - if groupe: make sure no satellite cantines are linked to it
+        - if groupe: make sure no satellite cantines are linked to it (see validate_canteen_groupe_delete)
+            - always run, even with skip_validations=True
         """
-        if self.is_groupe:
-            satellites_count = self.satellites.count()
-            if satellites_count > 0:
-                raise ValidationError(
-                    f"Impossible de supprimer ce groupe car il a encore {satellites_count} satellites(s) de rattaché(s)."
-                )
+        groupe_delete_errors = canteen_validators.validate_canteen_groupe_delete(self)
+        if groupe_delete_errors:
+            raise ValidationError(groupe_delete_errors[NON_FIELD_ERRORS])
         super().delete(skip_validations=skip_validations, **kwargs)
 
     @property
