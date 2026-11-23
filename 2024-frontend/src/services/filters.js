@@ -66,15 +66,12 @@ const getCharacteristicsOptions = () => {
 
 const getSectorsOptions = async () => {
   const sectorsBackend = await sectorsService.getSectors()
-  const sectorsOptions = []
-  sectorsBackend.forEach((sector) => {
-    const label = `${sector.categoryName} - ${sector.name}`
-    const option = {
-      label,
-      value: { value: sector.value, label },
-    }
-    sectorsOptions.push(option)
-  })
+  const sectorsSorted = sectorsService.sortSectors(sectorsBackend)
+  const sectorsOptions = sectorsSorted.map((sector) => ({
+    label: sector.name,
+    hint: sector.categoryName,
+    value: { value: sector.value, label: sector.name },
+  }))
   return sectorsOptions
 }
 
