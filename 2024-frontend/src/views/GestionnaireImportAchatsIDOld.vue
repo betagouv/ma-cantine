@@ -38,7 +38,7 @@ const successMessage = (count) => count > 1
     apiImportType="id"
     :successMessage
   >
-    <template #warning>
+    <template #before-title>
       <ImportDeprecatedWarningPurchases :redirectTo="{ name: 'GestionnaireImportAchatsID' }" />
     </template>
     Notre outil d’import de masse vous permet d’ajouter les achats de toutes vos cantines d’un coup.

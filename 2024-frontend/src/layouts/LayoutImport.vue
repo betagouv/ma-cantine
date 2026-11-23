@@ -34,7 +34,7 @@ const success = (count) => {
 </script>
 
 <template>
-  <slot name="warning"></slot>
+  <slot name="before-title"></slot>
   <h1>{{ route.meta.title }}</h1>
   <p v-if="$slots.default" class="fr-col-12 fr-col-md-7">
     <slot></slot>

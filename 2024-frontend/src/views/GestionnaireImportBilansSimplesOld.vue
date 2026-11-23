@@ -39,7 +39,7 @@ const successMessage = (count) => count > 1
     schemaVersion="2025"
     :successMessage
   >
-    <template #warning>
+    <template #before-title>
       <ImportDeprecatedWarningDiagnostics :redirectTo="{ name: 'GestionnaireImportBilansSimples' }" />
     </template>
     Notre outil d'import de masse vous permet d'ajouter les bilans simplifiés de toutes vos cantines d'un coup.

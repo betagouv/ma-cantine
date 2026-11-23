@@ -31,7 +31,7 @@ const successMessage = (count) => count > 1
     schemaVersion="2025"
     :successMessage
   >
-    <template #warning>
+    <template #before-title>
       <ImportDeprecatedWarningDiagnostics :redirectTo="{ name: 'GestionnaireImportBilansSimplesSIRET' }" />
     </template>
     Notre outil d'import de masse vous permet d'ajouter les bilans simplifiés de vos cantines avec numéro SIRET d'un coup.
