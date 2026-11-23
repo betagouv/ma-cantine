@@ -1,7 +1,7 @@
 <script setup>
 import documentation from "@/data/documentation.json"
 import LayoutImport from "@/layouts/LayoutImport.vue"
-import ImportDeprecatedWarningPurchases from "@/components/ImportDeprecatedWarningPurchases.vue"
+import ImportDeprecatedWarning from "@/components/ImportDeprecatedWarning.vue"
 
 /* Data */
 const schemaFile = "achats_id_old.json"
@@ -39,7 +39,7 @@ const successMessage = (count) => count > 1
     :successMessage
   >
     <template #before-title>
-      <ImportDeprecatedWarningPurchases :redirectTo="{ name: 'GestionnaireImportAchatsID' }" />
+      <ImportDeprecatedWarning :isPurchases="true" :redirectTo="{ name: 'GestionnaireImportAchatsID' }" />
     </template>
     Notre outil d’import de masse vous permet d’ajouter les achats de toutes vos cantines d’un coup.
     <strong>Si vous avez moins de 10 achats,</strong>

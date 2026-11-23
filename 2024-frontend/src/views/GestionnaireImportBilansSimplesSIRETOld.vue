@@ -1,6 +1,6 @@
 <script setup>
 import LayoutImport from "@/layouts/LayoutImport.vue"
-import ImportDeprecatedWarningDiagnostics from "@/components/ImportDeprecatedWarningDiagnostics.vue"
+import ImportDeprecatedWarning from "@/components/ImportDeprecatedWarning.vue"
 
 /* Data */
 const schemaFile = "bilans_simple_siret.json"
@@ -32,7 +32,7 @@ const successMessage = (count) => count > 1
     :successMessage
   >
     <template #before-title>
-      <ImportDeprecatedWarningDiagnostics :redirectTo="{ name: 'GestionnaireImportBilansSimplesSIRET' }" />
+      <ImportDeprecatedWarning :isDiagnostics="true" :redirectTo="{ name: 'GestionnaireImportBilansSimplesSIRET' }" />
     </template>
     Notre outil d'import de masse vous permet d'ajouter les bilans simplifiés de vos cantines avec numéro SIRET d'un coup.
   </LayoutImport>
