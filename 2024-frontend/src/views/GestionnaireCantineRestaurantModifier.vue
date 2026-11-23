@@ -36,8 +36,14 @@ const saveCanteen = (props) => {
   canteenService
     .updateCanteen(form, canteenId)
     .then((canteen) => {
-      if(canteen.id) goToCanteenPage(canteen)
-      else store.notifyServerError(canteen)
+      if (canteen.id) {
+        store.notify({
+          title: "Cantine mise à jour",
+          message: `Les modifications de la cantine « ${canteen.name} » ont été enregistrées. Vous pouvez retrouver les informations sur sa page.`,
+          status: "success",
+        })
+        goToCanteenPage(canteen)
+      } else store.notifyServerError(canteen)
   })
     .catch((e) => store.notifyServerError(e))
 }
