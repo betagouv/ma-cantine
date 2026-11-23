@@ -1,16 +1,13 @@
 <template>
   <div v-if="!!this.$route.name">
     <SkipLinks />
-    <v-app-bar
-      app
-      clipped-right
+    <v-toolbar
       color="white"
       ref="appbar"
       :style="dashboardEnabled ? 'padding: 0 calc((100vw - 79.3rem)/2);' : 'padding: 0 calc((100vw - 78rem)/2);'"
       height="116px"
       extension-height="56px"
       id="en-tete"
-      hide-on-scroll
       role="banner"
     >
       <v-toolbar-title class="align-self-center outline-focus-within">
@@ -191,7 +188,7 @@
           </nav>
         </v-card>
       </v-dialog>
-    </v-app-bar>
+    </v-toolbar>
   </div>
 </template>
 
@@ -338,6 +335,7 @@ export default {
 
 <style scoped lang="scss">
 #en-tete {
+  z-index: 2;
   filter: drop-shadow(0 1px 3px rgba(0, 0, 18, 0.16));
 
   // DSFR navigation
