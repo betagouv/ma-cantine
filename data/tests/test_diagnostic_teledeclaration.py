@@ -390,11 +390,11 @@ class DiagnosticTeledeclaredSnapshotsTest(TestCase):
         self.assertEqual(self.diagnostic_site.canteen_snapshot["publication_comments"], "Commentaire de publication")
 
     def test_diagnostic_satellites_snapshot(self):
-        # groupe (default canteen ordering when snapshot is -creation_date)
+        # groupe (ordered by id)
         self.assertIsNotNone(self.diagnostic_groupe.satellites_snapshot)
         self.assertEqual(len(self.diagnostic_groupe.satellites_snapshot), 2)
-        self.assertEqual(self.diagnostic_groupe.satellites_snapshot[0]["id"], self.canteen_satellite_2.id)
-        self.assertEqual(self.diagnostic_groupe.satellites_snapshot[1]["id"], self.canteen_satellite_1.id)
+        self.assertEqual(self.diagnostic_groupe.satellites_snapshot[0]["id"], self.canteen_satellite_1.id)
+        self.assertEqual(self.diagnostic_groupe.satellites_snapshot[1]["id"], self.canteen_satellite_2.id)
         # site
         self.assertIsNone(self.diagnostic_site.satellites_snapshot)
 
