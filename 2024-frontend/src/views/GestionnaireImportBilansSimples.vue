@@ -56,7 +56,6 @@ const success = (count) => {
     apiUrl="importDiagnostics/simple"
     apiImportType="id"
     schemaVersion="2026"
-    eventMatomo="import-diagnostics-simple-id-success"
   />
   <ImportSuccessModal
     :opened="showModal"

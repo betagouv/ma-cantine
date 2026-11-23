@@ -49,7 +49,6 @@ const success = (count) => {
     apiUrl="importDiagnostics/simple"
     apiImportType="siret"
     schemaVersion="2026"
-    eventMatomo="import-diagnostics-simple-siret-success"
   />
   <ImportSuccessModal
     :opened="showModal"

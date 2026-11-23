@@ -48,7 +48,7 @@ const success = (count) => {
   <ImportExplanation :exampleFile />
   <ImportFilesExample :filePreviews />
   <ImportSchemaTable :schemaFile />
-  <ImportFileUpload @success="success" apiUrl="importPurchasesOld" apiImportType="siret" eventMatomo="import-purchases-siret-old-success"/>
+  <ImportFileUpload @success="success" apiUrl="importPurchasesOld" apiImportType="siret"/>
   <ImportSuccessModal
     :opened="showModal"
     :message="

@@ -57,7 +57,6 @@ const success = (count) => {
     @success="success"
     apiUrl="importPurchases"
     apiImportType="id"
-    eventMatomo="import-purchases-id-success"
   />
   <ImportSuccessModal
     :opened="showModal"
