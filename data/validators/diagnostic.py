@@ -8,6 +8,8 @@ from data.models.diagnostic_teledeclaration_dates import (
 )
 from common.utils import utils as utils_utils
 
+DIAGNOSTIC_NOMBRE_REPAS_AN_MIN = 3
+
 
 def validate_year(instance):
     """
@@ -112,6 +114,22 @@ def validate_canteen_fields_required(instance):
     return errors
 
 
+def validate_nombre_repas_an(instance):
+    """
+    - clean_fields() (called by full_clean()) already checks that the value is an integer >= 0
+    - extra validation:
+        - [NEW in 2026] nombre_repas_an must be >= 3 (if filled, see validate_canteen_fields_required)
+    """
+    errors = {}
+    field_name = "nombre_repas_an"
+    value = getattr(instance, field_name)
+    if value is not None and value < DIAGNOSTIC_NOMBRE_REPAS_AN_MIN:
+        utils_utils.add_validation_error(
+            errors, field_name, f"Le champ doit être au moins égal à {DIAGNOSTIC_NOMBRE_REPAS_AN_MIN}."
+        )
+    return errors
+
+
 def validate_satellites_nombre_repas_an_list(instance):
     """
     [NEW in 2026] Groupe: the nombre_repas_an of each canteen of the groupe (satellite or site)
@@ -119,7 +137,8 @@ def validate_satellites_nombre_repas_an_list(instance):
     - only for groupes (for the other diagnostics, the list is emptied in save(), see sync_satellites_nombre_repas_an_list)
     - format: [{"id": <int>, "nombre_repas_an": <positive int or null>}, ...]
     - each canteen must have a value
-    - the groupe's nombre_repas_an must be equal to the sum of the canteens' values
+    - each canteen's value must be >= 3
+    - the groupe''s nombre_repas_an must be equal to the sum of the canteens' values
     NOTE: not checked in save() (drafts can be filled progressively), but in clean(): _is_clean() (/check & teledeclaration)
     """
     errors = {}
@@ -139,7 +158,7 @@ def validate_satellites_nombre_repas_an_list(instance):
         )
         return errors
 
-    # each canteen must have a value
+    # each canteen must have a value (>= 3)
     from data.models import Canteen  # avoid circular import
 
     satellite_dict = Canteen.all_objects.in_bulk([item["id"] for item in value])
@@ -148,6 +167,14 @@ def validate_satellites_nombre_repas_an_list(instance):
             satellite_name = getattr(satellite_dict.get(item["id"]), "name", item["id"])
             utils_utils.add_validation_error(
                 errors, field_name, f"Le nombre de repas par an de la cantine « {satellite_name} » est obligatoire."
+            )
+        elif item["nombre_repas_an"] < DIAGNOSTIC_NOMBRE_REPAS_AN_MIN:
+            satellite_name = getattr(satellite_dict.get(item["id"]), "name", item["id"])
+            utils_utils.add_validation_error(
+                errors,
+                field_name,
+                f"Le nombre de repas par an de la cantine « {satellite_name} » doit être au moins égal à "
+                f"{DIAGNOSTIC_NOMBRE_REPAS_AN_MIN}.",
             )
 
     # the groupe's nombre_repas_an must be equal to the sum

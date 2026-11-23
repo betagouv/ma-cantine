@@ -1396,6 +1396,25 @@ class DiagnosticGroupeCanteenYearlyMealCountTest(TestCase):
         self.assertEqual(diagnostic.cout_repas, 6)
 
 
+class DiagnosticNombreRepasAnValidatorTest(TestCase):
+    def test_validate(self):
+        for value, is_valid in [(None, True), (0, False), (2, False), (3, True), (1000, True)]:
+            with self.subTest(value=value):
+                errors = diagnostic_validators.validate_nombre_repas_an(Diagnostic(year=2026, nombre_repas_an=value))
+                if is_valid:
+                    self.assertEqual(errors, {})
+                else:
+                    self.assertEqual(list(errors.keys()), ["nombre_repas_an"])
+                    self.assertIn("au moins égal à 3", str(errors["nombre_repas_an"]))
+
+    def test_is_clean_returns_the_errors(self):
+        diagnostic = DiagnosticFactory(**{**VALID_DIAGNOSTIC_SIMPLE_2026, "nombre_repas_an": 2})
+        is_clean, errors = diagnostic._is_clean()
+        self.assertFalse(is_clean)
+        self.assertIn("nombre_repas_an", errors)
+        self.assertFalse(diagnostic.is_clean)
+
+
 class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -1456,6 +1475,15 @@ class DiagnosticSatellitesNombreRepasAnListValidatorTest(TestCase):
         errors = self._validate(self.canteen_groupe, nombre_repas_an=1000, value_1=1000)
         self.assertEqual(list(errors.keys()), ["satellites_nombre_repas_an_list"])
         self.assertIn("Satellite 2", str(errors["satellites_nombre_repas_an_list"]))
+
+    def test_satellite_value_below_min(self):
+        errors = self._validate(self.canteen_groupe, nombre_repas_an=1002, value_1=1000, value_2=2)
+        self.assertEqual(list(errors.keys()), ["satellites_nombre_repas_an_list"])
+        self.assertIn("Satellite 2", str(errors["satellites_nombre_repas_an_list"]))
+        self.assertIn("au moins égal à 3", str(errors["satellites_nombre_repas_an_list"]))
+        # the min is valid
+        errors = self._validate(self.canteen_groupe, nombre_repas_an=1003, value_1=1000, value_2=3)
+        self.assertEqual(errors, {})
 
     def test_groupe_with_a_site(self):
         canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)

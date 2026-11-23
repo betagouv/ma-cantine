@@ -25,7 +25,7 @@ def _fill_required_fields(obj):
             if field_name == "nombre_repas_an" and obj.canteen_id and obj.canteen.is_groupe:
                 continue  # not required for groupes (see validate_canteen_fields_required)
             if getattr(obj, field_name) is None:
-                setattr(obj, field_name, 0)
+                setattr(obj, field_name, 1000)  # nombre_repas_an must be >= 3 (see validate_nombre_repas_an)
 
 
 def _save_after_postgeneration(instance, create, results):

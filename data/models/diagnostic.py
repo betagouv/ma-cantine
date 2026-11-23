@@ -833,6 +833,7 @@ class Diagnostic(
         """
         validation_errors = utils_utils.merge_validation_errors(
             diagnostic_validators.validate_year(self),
+            diagnostic_validators.validate_nombre_repas_an(self),
             diagnostic_validators.validate_satellites_nombre_repas_an_list(self),
         )
         if with_appro:
@@ -929,7 +930,8 @@ class Diagnostic(
         """
         Same field validations as teledeclare(), but only the rules that depend on the diagnostic itself
         (like is_filled: no SQL, not the current date)
-        - included: clean_fields(), validate_year, the satellites list of a groupe, diagnostic_type & appro rules
+        - included: clean_fields(), validate_year, validate_nombre_repas_an, the satellites list of a groupe,
+        diagnostic_type & appro rules
         - excluded:
             - validate_year_and_can_edit: depends on the current date (the campaign is checked by the action & teledeclare())
             - validate_canteen_fields_required: depends on the canteen (nombre_repas_an is already required by is_filled)
