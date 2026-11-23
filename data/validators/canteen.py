@@ -93,6 +93,34 @@ def validate_canteen_production_type_field(instance):
     return errors
 
 
+def validate_canteen_production_type_change(instance):
+    """
+    - only if the production_type field changed, from GROUPE to another type
+    - the groupe must not have canteens (satellites or sites) attached to it
+    """
+    from data.models import Canteen  # avoid circular import
+
+    errors = {}
+    field_name = "production_type"
+    if instance._state.adding:
+        return errors
+    dirty_fields = instance.get_dirty_fields()
+    if field_name not in dirty_fields:
+        return errors
+    old_value = dirty_fields[field_name]
+    if old_value != instance.ProductionType.GROUPE or instance.is_groupe:
+        return errors
+
+    satellites_count = Canteen.objects.filter(groupe_id=instance.id).count()
+    if satellites_count > 0:
+        utils_utils.add_validation_error(
+            errors,
+            field_name,
+            f"Impossible de modifier le type de ce groupe car il a encore {satellites_count} cantine(s) rattachée(s).",
+        )
+    return errors
+
+
 def validate_canteen_economic_model_field(instance):
     """
     - clean_fields() (called by full_clean()) already checks that the value is in the choices

@@ -12,6 +12,7 @@ from data.factories import CanteenFactory, DiagnosticFactory, PurchaseFactory, U
 from data.models import Canteen, Diagnostic, Sector, SectorCategory, Teledeclaration
 from data.models.creation_source import CreationSource
 from data.models.geo import Department, Region
+from data.validators import canteen as canteen_validators
 
 
 class CanteenModelSaveTest(TransactionTestCase):
@@ -710,6 +711,40 @@ class CanteenModelSaveTest(TransactionTestCase):
         self.assertEqual(canteen.pat_list, ["1415"])
         self.assertEqual(canteen.department, "59")
         self.assertEqual(canteen.region, "32")
+
+
+class CanteenModelProductionTypeChangeValidationTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=cls.canteen_groupe
+        )
+        cls.canteen_groupe_without_satellites = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_site = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+
+    def test_groupe_with_satellites_cannot_change_production_type(self):
+        self.canteen_groupe.production_type = Canteen.ProductionType.ON_SITE
+        with self.assertRaises(ValidationError) as context:
+            self.canteen_groupe.save()
+        self.assertIn(
+            "Impossible de modifier le type de ce groupe car il a encore 1 cantine(s) rattachée(s).",
+            context.exception.message_dict["production_type"],
+        )
+
+    def test_groupe_without_satellites_can_change_production_type(self):
+        self.canteen_groupe_without_satellites.production_type = Canteen.ProductionType.ON_SITE
+        errors = canteen_validators.validate_canteen_production_type_change(self.canteen_groupe_without_satellites)
+        self.assertEqual(errors, {})
+
+    def test_groupe_with_satellites_can_change_other_fields(self):
+        self.canteen_groupe.name = "Nouveau nom"
+        self.assertEqual(canteen_validators.validate_canteen_production_type_change(self.canteen_groupe), {})
+        self.canteen_groupe.save()
+
+    def test_not_groupe_can_change_production_type(self):
+        self.canteen_site.production_type = Canteen.ProductionType.ON_SITE_CENTRAL
+        self.assertEqual(canteen_validators.validate_canteen_production_type_change(self.canteen_site), {})
 
 
 class CanteenModelGroupeChangeValidationTest(TestCase):

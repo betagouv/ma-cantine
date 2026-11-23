@@ -822,6 +822,7 @@ class Canteen(DirtyFieldsMixin, SoftDeletionModel):
             canteen_validators.validate_canteen_siret_or_siren_unite_legale(self),
             canteen_validators.validate_canteen_management_type_field(self),
             canteen_validators.validate_canteen_production_type_field(self),
+            canteen_validators.validate_canteen_production_type_change(self),
             canteen_validators.validate_canteen_economic_model_field(self),
             canteen_validators.validate_canteen_meal_count_fields(self),
             canteen_validators.validate_canteen_sector_list_field(self),
