@@ -35,10 +35,12 @@ const success = (count) => {
 
 <template>
   <slot name="before-title"></slot>
-  <h1>{{ route.meta.title }}</h1>
-  <p v-if="$slots.default" class="fr-col-12 fr-col-md-7">
-    <slot></slot>
-  </p>
+  <div class="fr-col-12 fr-col-md-7">
+    <h1>{{ route.meta.title }}</h1>
+    <p v-if="$slots.default">
+      <slot></slot>
+    </p>
+  </div>
   <ImportExplanation :exampleFile :links />
   <ImportFilesExample v-if="filePreviews" :filePreviews />
   <ImportSchemaTable :schemaFile />
