@@ -6,6 +6,48 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.65.0](https://github.com/betagouv/ma-cantine/compare/v2026.64.0...v2026.65.0) (2026-11-24)
+
+
+### Nouveautés
+
+* **Diagnostics:** nombre de repas par an minimum 3 (cantines & satellites) ([#7747](https://github.com/betagouv/ma-cantine/issues/7747)) ([2454d85](https://github.com/betagouv/ma-cantine/commit/2454d8561afb1d9cdc3954774d3402cf0aa1ba1e))
+
+
+### Améliorations
+
+* **Bandeau démo:** positionne le bandeau au dessus du menu pour l'ancien frontend ([#7743](https://github.com/betagouv/ma-cantine/issues/7743)) ([c2e36d9](https://github.com/betagouv/ma-cantine/commit/c2e36d9f5dd4cf8b656ef6726110e807c8cd525b))
+* **Cantines:** nouveau champ recherche_entreprises_data (données de l'unité légale & de l'établissement via l'API Recherche Entreprises) ([#7738](https://github.com/betagouv/ma-cantine/issues/7738)) ([e4c632d](https://github.com/betagouv/ma-cantine/commit/e4c632d3bab5819850ab614663a848da69bc600e))
+* **Cantines:** nouvelle commande canteen_update_recherche_entreprises_data pour remplir le champ recherche_entreprises_data (via SIRET, ou SIREN) ([#7739](https://github.com/betagouv/ma-cantine/issues/7739)) ([8492846](https://github.com/betagouv/ma-cantine/commit/84928460bf0f3d75c74fdb9be4a63eb35c6e265e))
+* **Cantines:** un groupe avec des cantines rattachées ne peut pas changer de type ([#7751](https://github.com/betagouv/ma-cantine/issues/7751)) ([869935e](https://github.com/betagouv/ma-cantine/commit/869935e4ecdec349554cbedb1a3cd5ca53d105f8))
+* **Diagnostics:** Imports: indique le minimum de 3 repas par an dans les schémas des bilans 2026 ([#7748](https://github.com/betagouv/ma-cantine/issues/7748)) ([59a743e](https://github.com/betagouv/ma-cantine/commit/59a743ec30232a676be6cca76d9635bfd73a18e1))
+* **EventLog:** Commandes : enregistrer la sortie (output, limitée à 10 000 caractères) ([#7723](https://github.com/betagouv/ma-cantine/issues/7723)) ([bd8ddb7](https://github.com/betagouv/ma-cantine/commit/bd8ddb75fb80aeb45cc7f19974e6c3036afc082a))
+* **Imports:** créé un modèle pour gérer l'affichage des pages ([#7745](https://github.com/betagouv/ma-cantine/issues/7745)) ([13e2810](https://github.com/betagouv/ma-cantine/commit/13e281045d05eb2555610129fc31919a768e2734))
+* **Page établissement:** ajouter une notification quand l'établissement a été modifié ([#7753](https://github.com/betagouv/ma-cantine/issues/7753)) ([cf5f10c](https://github.com/betagouv/ma-cantine/commit/cf5f10cb0f48d9a4caafbe9b419113c8495ae57e))
+* **Secteurs:** ré-organise l'affichage entre la création de cantine et l'observatoire ([#7755](https://github.com/betagouv/ma-cantine/issues/7755)) ([cbcfa2c](https://github.com/betagouv/ma-cantine/commit/cbcfa2c9facd226dbf07ad30c4ba7c14e7831697))
+* **Télédéclaration:** supprime les anciennes pages ([#7127](https://github.com/betagouv/ma-cantine/issues/7127)) ([59bcb9f](https://github.com/betagouv/ma-cantine/commit/59bcb9f73fd66db2ed5b53c6bbe283c5939e24f6))
+* **Utilisateurs:** commande user_update_data : enregistre par lots (bulk_update), sans passer par User.save() ([#7731](https://github.com/betagouv/ma-cantine/issues/7731)) ([dca7f11](https://github.com/betagouv/ma-cantine/commit/dca7f11198f4ef2cb18ff711070d0ed619d8e043))
+
+
+### Corrections (bugs, typos...)
+
+* **Brevo:** commande user_update_brevo_contacts : seuil de 12h (au lieu de 24h) pour ne plus sauter de nuit ([#7734](https://github.com/betagouv/ma-cantine/issues/7734)) ([48178c9](https://github.com/betagouv/ma-cantine/commit/48178c9330ad98e80c73850853cb1dc6b78906bd))
+* **Cantines:** commande canteen_update_geolocation_data_using_siret : ignore les erreurs API (au lieu de réinitialiser les données géo) & met toujours à jour les champs siret_* ([#7737](https://github.com/betagouv/ma-cantine/issues/7737)) ([f0b0a18](https://github.com/betagouv/ma-cantine/commit/f0b0a18f36320ef994c2e6b945414ce79e28d45e))
+* **Imports:** supprime le tracking matomo ([#7744](https://github.com/betagouv/ma-cantine/issues/7744)) ([682221c](https://github.com/betagouv/ma-cantine/commit/682221cde1706e79db855dcd2adb1fd70ccee544))
+* **Télédéclaration:** ordonne les satellites du snapshot par id ([#7754](https://github.com/betagouv/ma-cantine/issues/7754)) ([cf8e492](https://github.com/betagouv/ma-cantine/commit/cf8e4923a906a8762cad8c3c82988513d5b6522f))
+
+
+### Technique
+
+* **Brevo:** commande user_update_brevo_contacts : log des compteurs corrigé (comptés avant la synchro) & itertools.batched ([#7735](https://github.com/betagouv/ma-cantine/issues/7735)) ([7d8b67a](https://github.com/betagouv/ma-cantine/commit/7d8b67ac4c7d485fdb08acbfe3240cbdfd3bc4f5))
+* **Brevo:** commande user_update_brevo_contacts : met à jour brevo_last_update_date sans passer par User.save() ([#7733](https://github.com/betagouv/ma-cantine/issues/7733)) ([b0be25e](https://github.com/betagouv/ma-cantine/commit/b0be25ebcb9fc26d1c853b9f197006605a411464))
+* **Cantines:** déplace la règle de suppression d'un groupe dans les validateurs ([#7752](https://github.com/betagouv/ma-cantine/issues/7752)) ([a9fe08f](https://github.com/betagouv/ma-cantine/commit/a9fe08f6be171e176e997dadc9fa41e8070e786d))
+* **deps:** met à jour dbt-core (1.12.7) & pip (26.3) (vulnérabilités) ([#7726](https://github.com/betagouv/ma-cantine/issues/7726)) ([72b742c](https://github.com/betagouv/ma-cantine/commit/72b742cff10ee7010439c8f26d580d970c39892f))
+* **Diagnostics:** select_related canteen dans diagnostic_fill_computed_fields ([#7750](https://github.com/betagouv/ma-cantine/issues/7750)) ([86a226c](https://github.com/betagouv/ma-cantine/commit/86a226c3b96cad46ad42440f25815ca7ed6b8900))
+* **EventLog:** supprimer le modèle CommandLog (remplacé par EventLog COMMAND) ([#7724](https://github.com/betagouv/ma-cantine/issues/7724)) ([b635d96](https://github.com/betagouv/ma-cantine/commit/b635d967ba729302f257133fdc133929eca53e0a))
+* **python:** passage à Python 3.12 ([#7727](https://github.com/betagouv/ma-cantine/issues/7727)) ([8abb331](https://github.com/betagouv/ma-cantine/commit/8abb3313f20cebab08c52a1984192a2369d7e4e7))
+* **Utilisateurs:** commande user_update_data : supprime le prefetch inutile des cantines & diagnostics ([#7730](https://github.com/betagouv/ma-cantine/issues/7730)) ([16f8f83](https://github.com/betagouv/ma-cantine/commit/16f8f833bc6552ff4e80944d1a6574364008771d))
+
 ## [2026.64.0](https://github.com/betagouv/ma-cantine/compare/v2026.63.0...v2026.64.0) (2026-11-20)
 
 
