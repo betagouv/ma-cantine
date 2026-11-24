@@ -32,7 +32,6 @@ const success = (count) => {
   <ImportFileUpload
     @success="success"
     apiUrl="importCanteensManagers"
-    eventMatomo="import-canteen-managers-success"
   />
   <ImportSuccessModal
     :opened="showModal"

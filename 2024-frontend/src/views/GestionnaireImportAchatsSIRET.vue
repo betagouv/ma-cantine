@@ -50,7 +50,6 @@ const success = (count) => {
     @success="success"
     apiUrl="importPurchases"
     apiImportType="siret"
-    eventMatomo="import-purchases-siret-success"
   />
   <ImportSuccessModal
     :opened="showModal"

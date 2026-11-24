@@ -59,7 +59,6 @@ const success = (count) => {
   <ImportFileUpload
     @success="success"
     apiUrl="importCanteens/update"
-    eventMatomo="import-canteen-update-success"
   />
   <ImportSuccessModal
     :opened="showModal"

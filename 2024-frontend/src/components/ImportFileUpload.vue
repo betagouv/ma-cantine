@@ -3,7 +3,6 @@ import AppSeparator from "@/components/AppSeparator.vue"
 import { reactive, ref } from "vue"
 import { useRouter } from "vue-router"
 import { useRootStore } from "@/stores/root"
-import { trackEvent } from "@/services/matomo.js"
 import { importFile } from "@/services/imports.js"
 import AppLoader from "@/components/AppLoader.vue"
 
@@ -11,7 +10,7 @@ import AppLoader from "@/components/AppLoader.vue"
 const store = useRootStore()
 const router = useRouter()
 const emit = defineEmits(["success"])
-const props = defineProps(["apiUrl", "apiImportType", "eventMatomo", "schemaVersion"])
+const props = defineProps(["apiUrl", "apiImportType", "schemaVersion"])
 
 /* Data */
 const pictoDocument = "/static/images/picto-dsfr/document-add.svg"
@@ -22,11 +21,10 @@ const isProcessingFile = ref(false)
 const upload = (file) => {
   if (isProcessingFile.value) return
   isProcessingFile.value = true
-  const fileExtension = file[0].name.split(".").pop()
   initErrors()
   importFile({ file: file, apiUrl: props.apiUrl, importType: props.apiImportType, schemaVersion: props.schemaVersion })
     .then((json) => {
-      if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count, file: fileExtension })
+      if (json.count >= 1) successUpload({ seconds: json.seconds, count: json.count })
       else if (json.duplicateFile) duplicatedUpload(json.duplicatePurchases)
       else if (json.errors.length > 0) errorUpload({ count: json.errors.length, errors: json.errors })
       isProcessingFile.value = false
@@ -38,11 +36,10 @@ const upload = (file) => {
 }
 
 const successUpload = (params) => {
-  const { seconds, count, file } = params
+  const { seconds, count } = params
   const message = `Fichier traité en ${Math.round(seconds)} secondes`
   store.notify({ message })
   emit("success", count)
-  trackEvent({ category: "import", action: props.eventMatomo, value: file })
 }
 
 const duplicatedUpload = (purchases) => {
