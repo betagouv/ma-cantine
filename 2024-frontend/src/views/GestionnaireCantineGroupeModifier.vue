@@ -39,8 +39,14 @@ const saveGroup = (props) => {
   canteenService
     .updateCanteen(form, canteenId)
     .then((canteen) => {
-      if(canteen.id) goToCanteenPage(canteen)
-      else store.notifyServerError()
+      if (canteen.id) {
+        store.notify({
+          title: "Groupe mis à jour",
+          message: `Les modifications du groupe « ${canteen.name} » ont été enregistrées. Vous pouvez retrouver les informations sur sa page.`,
+          status: "success",
+        })
+        goToCanteenPage(canteen)
+      } else store.notifyServerError()
     })
     .catch((e) => { store.notifyServerError(e) })
 }
