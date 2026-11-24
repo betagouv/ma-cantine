@@ -1,17 +1,6 @@
 <script setup>
-import { ref } from "vue"
-import { useRoute } from "vue-router"
 import documentation from "@/data/documentation.json"
-import ImportExplanation from "@/components/ImportExplanation.vue"
-import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
-import ImportFileUpload from "@/components/ImportFileUpload.vue"
-import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-import ImportFilesExample from "@/components/ImportFilesExample.vue"
-import ImportHelp from "@/components/ImportHelp.vue"
-import ImportAdminCallout from "@/components/ImportAdminCallout.vue"
-
-/* Router */
-const route = useRoute()
+import LayoutImport from "@/layouts/LayoutImport.vue"
 
 /* Data */
 const schemaFile = "cantines_modifier.json"
@@ -37,37 +26,22 @@ const links = [
 ]
 
 /* Success */
-const showModal = ref(false)
-const canteenCount = ref(0)
-
-const success = (count) => {
-  canteenCount.value = count
-  showModal.value = true
-}
+const successMessage = (count) => count > 1
+  ? "Vos cantines sont modifiées et sont maintenant disponibles dans votre tableau de bord."
+  : "Votre cantine est modifiée et est maintenant disponible dans votre tableau de bord."
 </script>
 
 <template>
-  <h1>{{ route.meta.title }}</h1>
-  <p class="fr-col-12 fr-col-md-7">
+  <LayoutImport
+    :schemaFile
+    :exampleFile
+    :filePreviews
+    :links
+    :adminCallout="true"
+    apiUrl="importCanteens/update"
+    :successMessage
+  >
     Notre outil d'import de masse vous permet de modifier vos cantines d'un coup via leur numéro ID.
     Vous pouvez modifier des cantines inscrites avec leur numéro SIRET ou avec le numéro SIREN d'une unité légale.
-  </p>
-  <ImportExplanation :exampleFile :links />
-  <ImportFilesExample :filePreviews />
-  <ImportSchemaTable :schemaFile />
-  <ImportAdminCallout />
-  <ImportFileUpload
-    @success="success"
-    apiUrl="importCanteens/update"
-  />
-  <ImportSuccessModal
-    :opened="showModal"
-    :message="
-      canteenCount > 1
-        ? 'Vos cantines sont modifiées et sont maintenant disponibles dans votre tableau de bord.'
-        : 'Votre cantine est modifiée et est maintenant disponible dans votre tableau de bord.'
-    "
-    @close="showModal = false"
-  />
-  <ImportHelp />
+  </LayoutImport>
 </template>

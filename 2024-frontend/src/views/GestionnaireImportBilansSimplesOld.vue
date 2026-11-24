@@ -1,17 +1,7 @@
 <script setup>
-import { ref } from "vue"
-import { useRoute } from "vue-router"
 import documentation from "@/data/documentation.json"
-import ImportExplanation from "@/components/ImportExplanation.vue"
-import ImportHelp from "@/components/ImportHelp.vue"
-import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
-import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-import ImportFileUpload from "@/components/ImportFileUpload.vue"
-import ImportDeprecatedWarningDiagnostics from "@/components/ImportDeprecatedWarningDiagnostics.vue"
-import ImportFilesExample from "@/components/ImportFilesExample.vue"
-
-/* Router */
-const route = useRoute()
+import LayoutImport from "@/layouts/LayoutImport.vue"
+import ImportDeprecatedWarning from "@/components/ImportDeprecatedWarning.vue"
 
 /* Data */
 const schemaFile = "bilans_simple_id.json"
@@ -32,36 +22,26 @@ const links = [
   }
 ]
 
-/* Sucess */
-const showModal = ref(false)
-const diagnosticsCount = ref(0)
-const successMessage = ref("")
-
-const success = (count) => {
-  diagnosticsCount.value = count
-  successMessage.value = count > 1 ? `Les ${count} bilans simples ont été importés avec succès` : 'Le bilan simple a été importé avec succès'
-  showModal.value = true
-}
+/* Success */
+const successMessage = (count) => count > 1
+  ? `Les ${count} bilans simples ont été importés avec succès`
+  : "Le bilan simple a été importé avec succès"
 </script>
 
 <template>
-  <ImportDeprecatedWarningDiagnostics :redirectTo="{ name: 'GestionnaireImportBilansSimples' }" />
-  <h1>{{ route.meta.title }}</h1>
-  <p class="fr-col-12 fr-col-md-7">
-    Notre outil d'import de masse vous permet d'ajouter les bilans simplifiés de toutes vos cantines d'un coup.
-  </p>
-  <ImportExplanation :exampleFile :links />
-  <ImportFilesExample :filePreviews />
-  <ImportSchemaTable :schemaFile />
-  <ImportFileUpload
-    @success="success"
+  <LayoutImport
+    :schemaFile
+    :exampleFile
+    :filePreviews
+    :links
     apiUrl="importDiagnostics/simple"
     apiImportType="id"
-    schemaVersion="2025"/>
-  <ImportSuccessModal
-    :opened="showModal"
-    :message="successMessage"
-    @close="showModal = false"
-  />
-  <ImportHelp />
+    schemaVersion="2025"
+    :successMessage
+  >
+    <template #before-title>
+      <ImportDeprecatedWarning :isDiagnostics="true" :redirectTo="{ name: 'GestionnaireImportBilansSimples' }" />
+    </template>
+    Notre outil d'import de masse vous permet d'ajouter les bilans simplifiés de toutes vos cantines d'un coup.
+  </LayoutImport>
 </template>

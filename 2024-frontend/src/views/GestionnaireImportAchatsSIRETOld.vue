@@ -1,16 +1,6 @@
 <script setup>
-import { ref } from "vue"
-import { useRoute } from "vue-router"
-import ImportExplanation from "@/components/ImportExplanation.vue"
-import ImportHelp from "@/components/ImportHelp.vue"
-import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
-import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-import ImportFileUpload from "@/components/ImportFileUpload.vue"
-import ImportFilesExample from "@/components/ImportFilesExample.vue"
-import ImportDeprecatedWarningPurchases from "@/components/ImportDeprecatedWarningPurchases.vue"
-
-/* Router */
-const route = useRoute()
+import LayoutImport from "@/layouts/LayoutImport.vue"
+import ImportDeprecatedWarning from "@/components/ImportDeprecatedWarning.vue"
 
 /* Data */
 const schemaFile = "achats_siret_old.json"
@@ -25,38 +15,28 @@ const filePreviews = {
   altError: "Exemple de fichier rejeté pour importer des achats, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 
-/* Sucess */
-const showModal = ref(false)
-const purchaseCount = ref(0)
-
-const success = (count) => {
-  purchaseCount.value = count
-  showModal.value = true
-}
+/* Success */
+const successMessage = (count) => count > 1
+  ? "Vos achats sont enregistrés et sont maintenant disponibles."
+  : "Votre achat est enregistré et est maintenant disponible."
 </script>
 
 <template>
-  <ImportDeprecatedWarningPurchases :redirectTo="{ name: 'GestionnaireImportAchatsSIRET' }" />
-  <h1>{{ route.meta.title }}</h1>
-  <p class="fr-col-12 fr-col-md-7">
+  <LayoutImport
+    :schemaFile
+    :exampleFile
+    :filePreviews
+    apiUrl="importPurchasesOld"
+    apiImportType="siret"
+    :successMessage
+  >
+    <template #before-title>
+      <ImportDeprecatedWarning :isPurchases="true" :redirectTo="{ name: 'GestionnaireImportAchatsSIRET' }" />
+    </template>
     Notre outil d’import de masse vous permet d’ajouter les achats de toutes vos cantines d’un coup.
     <strong>Si vous avez moins de 10 achats,</strong>
     il est plus rapide de les saisir directement
     <router-link :to="{ name: 'PurchasesHome' }">sur la plateforme</router-link>
     .
-  </p>
-  <ImportExplanation :exampleFile />
-  <ImportFilesExample :filePreviews />
-  <ImportSchemaTable :schemaFile />
-  <ImportFileUpload @success="success" apiUrl="importPurchasesOld" apiImportType="siret"/>
-  <ImportSuccessModal
-    :opened="showModal"
-    :message="
-      purchaseCount > 1
-        ? 'Vos achats sont enregistrés et sont maintenant disponibles.'
-        : 'Votre achat est enregistré et est maintenant disponible.'
-    "
-    @close="showModal = false"
-  />
-  <ImportHelp />
+  </LayoutImport>
 </template>

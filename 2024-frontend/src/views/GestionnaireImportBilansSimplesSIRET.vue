@@ -1,15 +1,5 @@
 <script setup>
-import { ref } from "vue"
-import { useRoute } from "vue-router"
-import ImportExplanation from "@/components/ImportExplanation.vue"
-import ImportHelp from "@/components/ImportHelp.vue"
-import ImportSchemaTable from "@/components/ImportSchemaTable.vue"
-import ImportSuccessModal from "@/components/ImportSuccessModal.vue"
-import ImportFileUpload from "@/components/ImportFileUpload.vue"
-import ImportFilesExample from "@/components/ImportFilesExample.vue"
-
-/* Router */
-const route = useRoute()
+import LayoutImport from "@/layouts/LayoutImport.vue"
 
 /* Data */
 const schemaFile = "bilans_simple_siret_2026.json"
@@ -24,36 +14,22 @@ const filePreviews = {
   altError: "Exemple de fichier rejeté pour importer des bilans simples, qui contient des erreurs dans les colonnes ou les valeurs",
 }
 
-/* Sucess */
-const showModal = ref(false)
-const diagnosticsCount = ref(0)
-const successMessage = ref("")
-
-const success = (count) => {
-  diagnosticsCount.value = count
-  successMessage.value = count > 1 ? `Les ${count} bilans simples ont été importés avec succès` : 'Le bilan simple a été importé avec succès'
-  showModal.value = true
-}
+/* Success */
+const successMessage = (count) => count > 1
+  ? `Les ${count} bilans simples ont été importés avec succès`
+  : "Le bilan simple a été importé avec succès"
 </script>
 
 <template>
-  <h1>{{ route.meta.title }}</h1>
-  <p class="fr-col-12 fr-col-md-7">
-    Notre outil d'import de masse vous permet d'ajouter les bilans simplifiés de vos cantines avec numéro SIRET d'un coup.
-  </p>
-  <ImportExplanation :exampleFile />
-  <ImportFilesExample :filePreviews />
-  <ImportSchemaTable :schemaFile />
-  <ImportFileUpload
-    @success="success"
+  <LayoutImport
+    :schemaFile
+    :exampleFile
+    :filePreviews
     apiUrl="importDiagnostics/simple"
     apiImportType="siret"
     schemaVersion="2026"
-  />
-  <ImportSuccessModal
-    :opened="showModal"
-    :message="successMessage"
-    @close="showModal = false"
-  />
-  <ImportHelp />
+    :successMessage
+  >
+    Notre outil d'import de masse vous permet d'ajouter les bilans simplifiés de vos cantines avec numéro SIRET d'un coup.
+  </LayoutImport>
 </template>
