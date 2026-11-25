@@ -17,14 +17,21 @@ RECHERCHE_ENTREPRISES_DATA_STATUS_OK = "ok"
 RECHERCHE_ENTREPRISES_DATA_STATUS_NOT_FOUND = "not_found"
 RECHERCHE_ENTREPRISES_DATA_UNITE_LEGALE_FIELDS = [
     "etat_administratif",  # "A" (active), "C" (cessée)
-    "date_fermeture",
-    "nature_juridique",
-    "activite_principale",
+    "date_fermeture",  # e.g. "2025-05-18" (null if active)
+    "nature_juridique",  # INSEE catégorie juridique, e.g. "7210" (commune)
+    "activite_principale",  # NAF code, e.g. "84.11Z" (administration publique générale)
 ]
 RECHERCHE_ENTREPRISES_DATA_ETABLISSEMENT_FIELDS = [
     "etat_administratif",  # "A" (active), "F" (fermé)
-    "date_fermeture",
-    "activite_principale",
+    "date_fermeture",  # e.g. "2025-05-18" (null if active)
+    "activite_principale",  # NAF code, e.g. "56.29B" (autres services de restauration)
+    "adresse",  # e.g. "3 RUE DU CHEMIN DE FER 59100 ROUBAIX"
+    "latitude",  # string, e.g. "50.693979573878"
+    "longitude",  # string, e.g. "3.16664533133567"
+    # also in the API response, but not stored:
+    # "coordonnees",  # "latitude,longitude": duplicate of latitude & longitude, e.g. "50.693979573878,3.16664533133567"
+    # "geo_adresse",  # address normalized with the BAN (mixed case): always empty (null) in the API responses
+    # "geo_id",  # BAN address id: always empty (null) in the API responses
 ]
 
 
@@ -329,6 +336,9 @@ MOCK_SIRET_92341284500011_RESULTS = [
                 "liste_enseignes": None,
                 "region": "32",
                 "activite_principale": "94.99Z",
+                "adresse": "3 RUE DU CHEMIN DE FER 59100 ROUBAIX",
+                "latitude": "50.693979573878",
+                "longitude": "3.16664533133567",
                 "siret": "92341284500011",
             }
         ],
@@ -365,6 +375,9 @@ MOCK_SIRET_21340172201787_RESULTS = [
                 "liste_enseignes": ["MAIRIE"],
                 "region": "76",
                 "activite_principale": "84.11Z",
+                "adresse": "1 PL GEORGES FRECHE 34070 MONTPELLIER",
+                "latitude": "43.599168",
+                "longitude": "3.896652",
                 "siret": "21340172201787",
             }
         ],
@@ -401,6 +414,9 @@ MOCK_SIRET_21380185500072_RESULTS = [
                 "liste_enseignes": ["SCE DES EAUX"],
                 "region": "84",
                 "activite_principale": "36.00Z",
+                "adresse": "11 BD JEAN PAIN 38000 GRENOBLE",
+                "latitude": "45.186775",
+                "longitude": "5.736387",
                 "siret": "21380185500072",
             }
         ],
