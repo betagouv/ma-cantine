@@ -10,9 +10,9 @@ from data.factories import CanteenFactory
 from data.models import Canteen
 
 
-@patch("macantine.management.commands.canteen_update_recherche_entreprises_data.time.sleep")
+@patch("macantine.management.commands.canteen_update_recherche_entreprises_data_using_siret_or_siren.time.sleep")
 @requests_mock.Mocker()
-class CanteenUpdateRechercheEntreprisesDataCommandTest(TestCase):
+class CanteenUpdateRechercheEntreprisesDataUsingSiretOrSirenCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.canteen_siret = CanteenFactory(siret="21340172201787", city_insee_code="34172")
@@ -54,7 +54,7 @@ class CanteenUpdateRechercheEntreprisesDataCommandTest(TestCase):
         self._mock_api(mock)
         modification_date = Canteen.objects.get(id=self.canteen_siret.id).modification_date
 
-        call_command("canteen_update_recherche_entreprises_data", apply=True)
+        call_command("canteen_update_recherche_entreprises_data_using_siret_or_siren", apply=True)
 
         self.assertEqual(mock.call_count, 6)  # 1 call per distinct SIRET / SIREN
         self._refresh_all()
@@ -86,7 +86,7 @@ class CanteenUpdateRechercheEntreprisesDataCommandTest(TestCase):
     def test_command_dry_run(self, mock_sleep, mock):
         self._mock_api(mock)
 
-        call_command("canteen_update_recherche_entreprises_data")
+        call_command("canteen_update_recherche_entreprises_data_using_siret_or_siren")
 
         self._refresh_all()
         self.assertEqual(Canteen.all_objects.exclude(recherche_entreprises_data={}).count(), 0)
@@ -102,7 +102,7 @@ class CanteenUpdateRechercheEntreprisesDataCommandTest(TestCase):
             recherche_entreprises_data={**already_fetched, "query": "21340172201795"}
         )
 
-        call_command("canteen_update_recherche_entreprises_data", only_missing=True, apply=True)
+        call_command("canteen_update_recherche_entreprises_data_using_siret_or_siren", only_missing=True, apply=True)
 
         self.assertEqual(mock.call_count, 5)  # 21340172201787 skipped
         self._refresh_all()
