@@ -26,9 +26,9 @@ class Command(MaCantineBaseCommand):
     - saves with a queryset update: no post_save signal, no history, modification_date is not updated
 
     Usage:
-    - python manage.py canteen_update_recherche_entreprises_data
-    - python manage.py canteen_update_recherche_entreprises_data --apply
-    - python manage.py canteen_update_recherche_entreprises_data --only-missing --apply
+    - python manage.py canteen_update_recherche_entreprises_data_using_siret_or_siren
+    - python manage.py canteen_update_recherche_entreprises_data_using_siret_or_siren --apply
+    - python manage.py canteen_update_recherche_entreprises_data_using_siret_or_siren --only-missing --apply
     """
 
     help = "Fill the canteens' recherche_entreprises_data field using their SIRET (or SIREN)"
@@ -48,7 +48,7 @@ class Command(MaCantineBaseCommand):
         )
 
     def handle(self, *args, **options):
-        logger.info("Start task: canteen_update_recherche_entreprises_data")
+        logger.info("Start task: canteen_update_recherche_entreprises_data_using_siret_or_siren")
         only_missing = options["only_missing"]
         apply = options["apply"]
 
@@ -92,7 +92,7 @@ class Command(MaCantineBaseCommand):
         logger.info(f"Status not_found: {results[RECHERCHE_ENTREPRISES_DATA_STATUS_NOT_FOUND]}")
         logger.info(f"API errors: {results['api_error']} ({results['canteen_api_error']} canteens unchanged)")
         logger.info(f"Canteens {'updated' if apply else 'to update'}: {results['canteen_updated']}")
-        logger.info("End of task: canteen_update_recherche_entreprises_data")
+        logger.info("End of task: canteen_update_recherche_entreprises_data_using_siret_or_siren")
 
     @staticmethod
     def _get_canteen_ids_by_identifier(only_missing):
