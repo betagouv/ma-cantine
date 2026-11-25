@@ -160,7 +160,14 @@ class TestFetchRechercheEntreprisesData(unittest.TestCase):
         )
         self.assertEqual(
             data["etablissement"],
-            {"etat_administratif": "F", "date_fermeture": "2000-05-01", "activite_principale": "36.00Z"},
+            {
+                "etat_administratif": "F",
+                "date_fermeture": "2000-05-01",
+                "activite_principale": "36.00Z",
+                "adresse": "11 BD JEAN PAIN 38000 GRENOBLE",
+                "latitude": "45.186775",
+                "longitude": "5.736387",
+            },
         )
 
     def test_siret_not_found(self, mock):

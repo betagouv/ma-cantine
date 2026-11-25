@@ -79,7 +79,7 @@ Lancer la commande `python manage.py canteen_fill_missing_geo_data_using_city_in
 
 Lancer la commande `python manage.py canteen_update_recherche_entreprises_data_using_siret_or_siren` ("apply") : 1 appel API par Siret (ou Siren pour les cantines sans Siret) distinct.
 
-* Siret : données de l'unité légale & de l'établissement (`etat_administratif`, `date_fermeture`, `activite_principale`, + `nature_juridique` pour l'unité légale)
+* Siret : données de l'unité légale & de l'établissement (`etat_administratif`, `date_fermeture`, `activite_principale`, + `nature_juridique` pour l'unité légale, + `adresse`, `latitude` & `longitude` pour l'établissement)
 * Siren : données de l'unité légale uniquement (son siège n'est pas la cantine)
 * `status` : `ok` ou `not_found` (Siret / Siren inconnu). En cas d'erreur API, la cantine n'est pas modifiée : relancer avec `--only-missing` (ne traite que les cantines jamais récupérées, ou dont le Siret / Siren a changé)
 
