@@ -141,3 +141,8 @@ class Invitation(models.Model):
                 invitation.invited_canteen.groupe = invitation.creation_canteen
                 invitation.invited_canteen.save(skip_validations=True)
             self._answer(invitation, Invitation.Status.ACCEPTED, user)
+
+    def decline(self, user):
+        with transaction.atomic():
+            invitation = self._get_pending_invitation_for_update()
+            self._answer(invitation, Invitation.Status.DECLINED, user)
