@@ -6,6 +6,34 @@ Ressources :
 - [release-please](https://github.com/google-github-actions/release-please-action) (automated releases)
 - [Semantic Versioning](https://semver.org/) & [Calendar Versioning](https://calver.org/)
 
+## [2026.66.0](https://github.com/betagouv/ma-cantine/compare/v2026.65.0...v2026.66.0) (2026-11-27)
+
+
+### Nouveautés
+
+* **Groupe:** API : endpoint GET /invitations ([#7770](https://github.com/betagouv/ma-cantine/issues/7770)) ([66c45ac](https://github.com/betagouv/ma-cantine/commit/66c45ac88ca6669a3d5a3737e128470b5f402669))
+* **Groupe:** API : endpoint POST /invitations (créer une invitation) ([#7773](https://github.com/betagouv/ma-cantine/issues/7773)) ([a3be4ce](https://github.com/betagouv/ma-cantine/commit/a3be4ce360390c9aee8813401541f547cc7a2e6b))
+* **Groupe:** Invitation : accepter (modèle + endpoint POST /invitations/&lt;id&gt;/accept) ([#7771](https://github.com/betagouv/ma-cantine/issues/7771)) ([eb1f247](https://github.com/betagouv/ma-cantine/commit/eb1f247de28e577e1f3daedf4400815ed543ef73))
+* **Groupe:** Invitation : annuler (modèle + endpoint POST /invitations/&lt;id&gt;/cancel) ([#7774](https://github.com/betagouv/ma-cantine/issues/7774)) ([cb491aa](https://github.com/betagouv/ma-cantine/commit/cb491aa3d05c5ca0e03b06214250975e5a76874b))
+* **Groupe:** Invitation : refuser (modèle + endpoint POST /invitations/&lt;id&gt;/decline) ([#7772](https://github.com/betagouv/ma-cantine/issues/7772)) ([fb08840](https://github.com/betagouv/ma-cantine/commit/fb088408c35ea2967f335b14daac5f81bdd55927))
+* **Groupe:** nouveau modèle Invitation (pour ajouter un restaurant satellite à un groupe) ([#7766](https://github.com/betagouv/ma-cantine/issues/7766)) ([e985aba](https://github.com/betagouv/ma-cantine/commit/e985abac73d2df4e033e879bf6f71a07f341d35a))
+
+
+### Améliorations
+
+* **Cantines:** recherche_entreprises_data : stocke aussi l'adresse & les coordonnées (latitude, longitude) de l'établissement ([#7762](https://github.com/betagouv/ma-cantine/issues/7762)) ([2777bef](https://github.com/betagouv/ma-cantine/commit/2777bef620be9ad20e05ad4d37a508f566ff372f))
+* **Groupe:** API : /invitations : ajoute la direction (envoyée / reçue) & son filtre ([#7775](https://github.com/betagouv/ma-cantine/issues/7775)) ([0a88941](https://github.com/betagouv/ma-cantine/commit/0a88941593f76dd74dfc7d385e0ccdc26f7f2b3f))
+* **Groupe:** Invitation : ajoute les règles de validation ([#7767](https://github.com/betagouv/ma-cantine/issues/7767)) ([5f4505b](https://github.com/betagouv/ma-cantine/commit/5f4505bf4f283c8ee9f0d35b3dce6cf10c10a43e))
+
+
+### Technique
+
+* **Cantines:** renomme la commande canteen_update_recherche_entreprises_data en canteen_update_recherche_entreprises_data_using_siret_or_siren ([#7761](https://github.com/betagouv/ma-cantine/issues/7761)) ([a819f98](https://github.com/betagouv/ma-cantine/commit/a819f98f9898824fd93e1d09d81ed2a896a75b05))
+* **CI:** adopter le lockfile des workflows GitHub Actions (actions.lock) ([#7758](https://github.com/betagouv/ma-cantine/issues/7758)) ([33ad98a](https://github.com/betagouv/ma-cantine/commit/33ad98a633c2c58fcd8d76655a928cfc270231a4))
+* **CI:** màj des GitHub Actions vers leur dernière version majeure ([#7757](https://github.com/betagouv/ma-cantine/issues/7757)) ([2320f23](https://github.com/betagouv/ma-cantine/commit/2320f230a0d4d54dd9ea213ad696b0fdfbeef220))
+* **deps:** Dependabot: màj mensuelle des GitHub Actions ([#7760](https://github.com/betagouv/ma-cantine/issues/7760)) ([a769897](https://github.com/betagouv/ma-cantine/commit/a7698978b34706725eed171484a77dd983a1b6a8))
+* **GitHub Actions:** vérifier le lockfile des workflows ([#7759](https://github.com/betagouv/ma-cantine/issues/7759)) ([4b1742f](https://github.com/betagouv/ma-cantine/commit/4b1742f76e7279920e3582a60d411029395052f3))
+
 ## [2026.65.0](https://github.com/betagouv/ma-cantine/compare/v2026.64.0...v2026.65.0) (2026-11-24)
 
 
