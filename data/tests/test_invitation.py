@@ -1,8 +1,11 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.utils import timezone
+from freezegun import freeze_time
 
-from data.factories import CanteenFactory, InvitationFactory, UserFactory
+from common.tests.utils import date_in_campaign
+
+from data.factories import CanteenFactory, DiagnosticFactory, InvitationFactory, UserFactory
 from data.models import Canteen, Invitation
 
 
@@ -128,3 +131,74 @@ class InvitationModelSaveTest(TestCase):
             answer_user=None,
         )
         self.assertIsNone(invitation.answer_user)
+
+
+class InvitationModelAnswerTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_groupe_2 = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+
+    def setUp(self):
+        self.invitation = InvitationFactory(
+            creation_canteen=self.canteen_groupe, invited_canteen=self.canteen_satellite
+        )
+
+    def test_accept(self):
+        self.invitation.accept(self.user)
+        self.assertEqual(self.invitation.status, Invitation.Status.ACCEPTED)
+        self.assertEqual(self.invitation.answer_user, self.user)
+        self.assertIsNotNone(self.invitation.answer_date)
+        self.canteen_satellite.refresh_from_db()
+        self.assertEqual(self.canteen_satellite.groupe, self.canteen_groupe)
+
+    def test_decline_and_cancel(self):
+        for method_name, status in [("decline", Invitation.Status.DECLINED), ("cancel", Invitation.Status.CANCELLED)]:
+            with self.subTest(method_name=method_name):
+                invitation = InvitationFactory(creation_canteen=self.canteen_groupe)
+                getattr(invitation, method_name)(self.user)
+                self.assertEqual(invitation.status, status)
+                self.assertEqual(invitation.answer_user, self.user)
+                self.assertIsNotNone(invitation.answer_date)
+                invitation.invited_canteen.refresh_from_db()
+                self.assertIsNone(invitation.invited_canteen.groupe)
+
+    def test_cannot_answer_if_not_pending(self):
+        self.invitation.decline(self.user)
+        for method_name in ["accept", "decline", "cancel"]:
+            with self.subTest(method_name=method_name):
+                with self.assertRaises(ValidationError) as context:
+                    getattr(self.invitation, method_name)(self.user)
+                self.assertIn("L'invitation n'est plus en attente.", context.exception.message_dict["status"])
+        self.assertEqual(self.invitation.status, Invitation.Status.DECLINED)
+        self.canteen_satellite.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite.groupe)
+
+    def test_cannot_accept_if_canteen_linked_to_a_groupe_since(self):
+        self.canteen_satellite.groupe = self.canteen_groupe_2
+        self.canteen_satellite.save()
+        with self.assertRaises(ValidationError) as context:
+            self.invitation.accept(self.user)
+        self.assertIn(
+            "Cette cantine est déjà rattachée à un groupe.", context.exception.message_dict["invited_canteen"]
+        )
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.status, Invitation.Status.SENT)
+        self.canteen_satellite.refresh_from_db()
+        self.assertEqual(self.canteen_satellite.groupe, self.canteen_groupe_2)
+
+    @freeze_time(date_in_campaign(2024))
+    def test_cannot_accept_during_teledeclaration_if_groupe_has_diagnostic_teledeclared(self):
+        # a groupe needs a manager & at least 1 satellite to teledeclare
+        self.canteen_groupe.managers.add(self.user)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe)
+        DiagnosticFactory(canteen=self.canteen_groupe, year=2024, valeur_totale=100).teledeclare(applicant=self.user)
+        with self.assertRaises(ValidationError) as context:
+            self.invitation.accept(self.user)
+        self.assertIn("groupe", context.exception.message_dict)
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.status, Invitation.Status.SENT)
+        self.canteen_satellite.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite.groupe)
