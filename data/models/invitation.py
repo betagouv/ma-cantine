@@ -69,6 +69,7 @@ class Invitation(models.Model):
         validation_errors = utils_utils.merge_validation_errors(
             invitation_validators.validate_invitation_creation_canteen_field(self),
             invitation_validators.validate_invitation_invited_canteen_field(self),
+            invitation_validators.validate_invitation_answer_fields(self),
         )
         if validation_errors:
             raise ValidationError(validation_errors)

@@ -1,7 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.test import TestCase
+from django.utils import timezone
 
-from data.factories import CanteenFactory, InvitationFactory
+from data.factories import CanteenFactory, InvitationFactory, UserFactory
 from data.models import Canteen, Invitation
 
 
@@ -71,7 +72,12 @@ class InvitationModelSaveTest(TestCase):
 
     def test_invitation_invited_canteen_with_answered_invitations(self):
         for status in [Invitation.Status.ACCEPTED, Invitation.Status.DECLINED, Invitation.Status.CANCELLED]:
-            InvitationFactory(creation_canteen=self.canteen_groupe, invited_canteen=self.canteen_site, status=status)
+            InvitationFactory(
+                creation_canteen=self.canteen_groupe,
+                invited_canteen=self.canteen_site,
+                status=status,
+                answer_date=timezone.now(),
+            )
         invitation = InvitationFactory(creation_canteen=self.canteen_groupe, invited_canteen=self.canteen_site)
         self.assertEqual(invitation.status, Invitation.Status.SENT)
 
@@ -84,4 +90,35 @@ class InvitationModelSaveTest(TestCase):
         self.canteen_satellite.groupe = self.canteen_groupe
         self.canteen_satellite.save()
         invitation.status = Invitation.Status.ACCEPTED
+        invitation.answer_date = timezone.now()
         invitation.save()
+
+    def test_invitation_pending_answer_fields_must_be_empty(self):
+        user = UserFactory()
+        for field_name, value in [("answer_user", user), ("answer_date", timezone.now())]:
+            with self.subTest(field_name=field_name):
+                with self.assertRaises(ValidationError) as context:
+                    InvitationFactory(creation_canteen=self.canteen_groupe, **{field_name: value})
+                self.assertIn(
+                    "Le champ doit être vide tant que l'invitation est en attente.",
+                    context.exception.message_dict[field_name],
+                )
+
+    def test_invitation_answered_answer_date_must_be_filled(self):
+        for status in [Invitation.Status.ACCEPTED, Invitation.Status.DECLINED, Invitation.Status.CANCELLED]:
+            with self.subTest(status=status):
+                with self.assertRaises(ValidationError) as context:
+                    InvitationFactory(creation_canteen=self.canteen_groupe, status=status)
+                self.assertIn(
+                    "Le champ doit être rempli une fois que l'invitation a reçu une réponse.",
+                    context.exception.message_dict["answer_date"],
+                )
+
+    def test_invitation_answered_answer_user_can_be_empty(self):
+        invitation = InvitationFactory(
+            creation_canteen=self.canteen_groupe,
+            status=Invitation.Status.DECLINED,
+            answer_date=timezone.now(),
+            answer_user=None,
+        )
+        self.assertIsNone(invitation.answer_user)

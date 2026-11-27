@@ -68,3 +68,29 @@ def validate_invitation_invited_canteen_field(instance):
         # already handled by clean_fields()
         pass
     return errors
+
+
+def validate_invitation_answer_fields(instance):
+    """
+    - extra validation:
+        - if the invitation is pending (SENT): answer_user & answer_date must be empty
+        - if the invitation is answered (ACCEPTED, DECLINED, CANCELLED): answer_date must be filled
+          (answer_user can be empty: the user may have been deleted since)
+    """
+    from data.models import Invitation  # avoid circular import
+
+    errors = {}
+    if instance.status == Invitation.Status.SENT:
+        if instance.answer_user_id:
+            utils_utils.add_validation_error(
+                errors, "answer_user", "Le champ doit être vide tant que l'invitation est en attente."
+            )
+        if instance.answer_date:
+            utils_utils.add_validation_error(
+                errors, "answer_date", "Le champ doit être vide tant que l'invitation est en attente."
+            )
+    elif not instance.answer_date:
+        utils_utils.add_validation_error(
+            errors, "answer_date", "Le champ doit être rempli une fois que l'invitation a reçu une réponse."
+        )
+    return errors
