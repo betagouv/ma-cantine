@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "apexcharts": "^4.0.0",
+    "apexcharts": "^8.9.1",
     "html2pdf.js": "^0.14.0",
     "qrcode.vue": "^1.7.0",
     "vue": "^2.7.16",
