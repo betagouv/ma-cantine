@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14' and sys_platform == 'win32'",
@@ -972,16 +972,17 @@ wheels = [
 
 [[package]]
 name = "django-anymail"
-version = "12.0"
+version = "15.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django" },
+    { name = "idna" },
     { name = "requests" },
     { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/91/cd/34eca54757511df252ae8b56f5b75f3d137cc51ba53c7c5c74b8d449fa0d/django_anymail-12.0.tar.gz", hash = "sha256:65789c1b0f42915aa0450a4f173f77572d4c552979b748ddd8125af41972ad30", size = 95175, upload-time = "2024-09-09T19:30:00.181Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/33/54/9bdd14efe04826a16f46eefb1a555017b64f73907087a2da1feec47949aa/django_anymail-15.3.tar.gz", hash = "sha256:37b8731308a5f181d359a896ea8981d787936c37d1b95f473f514b0e648fbf8b", size = 110793, upload-time = "2026-11-24T17:18:30.603Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/3d/09/83c613d8781d56af7b8736c7c968f8dc0487763b2680ae9d726a7313c9de/django_anymail-12.0-py3-none-any.whl", hash = "sha256:de8458d713d0f9776da9ed04dcd3a0161be23e9ecbcb49dcf149219700ecd274", size = 131312, upload-time = "2024-09-09T19:29:58.528Z" },
+    { url = "https://files.pythonhosted.org/packages/db/10/e1bd7ff01ddbf4353d0ad46919883e08902b26ddc04d90300d9ee964880b/django_anymail-15.3-py3-none-any.whl", hash = "sha256:b2a27c5129a3cedaebe93348839aa4776e238ddcd040ca4e0ae5f5bb15fb10a7", size = 151000, upload-time = "2026-11-24T17:18:29.255Z" },
 ]
 
 [[package]]
@@ -1890,7 +1891,7 @@ requires-dist = [
     { name = "dbt-core", specifier = ">=1.9.0" },
     { name = "dbt-postgres", specifier = ">=1.9.0" },
     { name = "django", specifier = "==5.2.18" },
-    { name = "django-anymail", specifier = "==12.0" },
+    { name = "django-anymail", specifier = "==15.3" },
     { name = "django-celery-results", specifier = "==2.6.0" },
     { name = "django-ckeditor", specifier = "==6.7.3" },
     { name = "django-csp", specifier = "==3.8" },
@@ -2544,7 +2545,7 @@ name = "pexpect"
 version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ptyprocess", marker = "sys_platform != 'emscripten' and sys_platform != 'win32'" },
+    { name = "ptyprocess" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/42/92/cc564bf6381ff43ce1f4d06852fc19a2f11d180f23dc32d9588bee2f149d/pexpect-4.9.0.tar.gz", hash = "sha256:ee7d41123f3c9911050ea2c2dac107568dc43b2d3b0c7557a33212c398ead30f", size = 166450, upload-time = "2023-11-25T09:07:26.339Z" }
 wheels = [
