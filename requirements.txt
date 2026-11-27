@@ -175,7 +175,7 @@ django==5.2.18
     #   laces
     #   ma-cantine
     #   wagtail
-django-anymail==12.0
+django-anymail==15.3
     # via ma-cantine
 django-celery-results==2.6.0
     # via ma-cantine
