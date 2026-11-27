@@ -14,7 +14,7 @@
     "html2pdf.js": "^0.14.0",
     "qrcode.vue": "^1.7.0",
     "vue": "^2.7.16",
-    "vue-apexcharts": "^1.7.1",
+    "vue-apexcharts": "^1.7.2",
     "vue-matomo": "^4.2.0",
     "vue-router": "^3.6.5",
     "vue-select": "^3.20.4",
