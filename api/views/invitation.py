@@ -91,3 +91,29 @@ class UserInvitationAcceptView(GenericAPIView):
         invitation.accept(request.user)
 
         return Response(self.get_serializer(invitation).data)
+
+
+@extend_schema_view(
+    post=extend_schema(
+        summary="Refuser une invitation.",
+        description="Uniquement par un gestionnaire de la cantine invitée.",
+        tags=["Cantines"],
+    ),
+)
+class UserInvitationDeclineView(GenericAPIView):
+    permission_classes = [IsAuthenticated, IsInvitedCanteenManager]
+    queryset = Invitation.objects.none()  # see get_queryset
+    serializer_class = InvitationSerializer
+
+    def get_queryset(self):
+        # 404 if the invitation does not concern the user
+        user = self.request.user
+        return Invitation.objects.for_user(user).annotate_with_direction(user)
+
+    def post(self, request, *args, **kwargs):
+        invitation = self.get_object()  # also checks IsInvitedCanteenManager (403)
+
+        # if ValidationError, it will be raised (and handled by custom_exception_handler)
+        invitation.decline(request.user)
+
+        return Response(self.get_serializer(invitation).data)
