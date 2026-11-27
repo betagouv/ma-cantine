@@ -5,7 +5,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView, ListCreateAPIView
 from rest_framework.response import Response
 
-from api.permissions import IsAuthenticated, IsInvitedCanteenManager
+from api.permissions import IsAuthenticated, IsCreationCanteenManager, IsInvitedCanteenManager
 from api.serializers import InvitationCreateSerializer, InvitationSerializer
 from data.models import Invitation
 
@@ -115,5 +115,31 @@ class UserInvitationDeclineView(GenericAPIView):
 
         # if ValidationError, it will be raised (and handled by custom_exception_handler)
         invitation.decline(request.user)
+
+        return Response(self.get_serializer(invitation).data)
+
+
+@extend_schema_view(
+    post=extend_schema(
+        summary="Annuler une invitation.",
+        description="Uniquement par un gestionnaire de la cantine qui a envoyé l'invitation.",
+        tags=["Cantines"],
+    ),
+)
+class UserInvitationCancelView(GenericAPIView):
+    permission_classes = [IsAuthenticated, IsCreationCanteenManager]
+    queryset = Invitation.objects.none()  # see get_queryset
+    serializer_class = InvitationSerializer
+
+    def get_queryset(self):
+        # 404 if the invitation does not concern the user
+        user = self.request.user
+        return Invitation.objects.for_user(user).annotate_with_direction(user)
+
+    def post(self, request, *args, **kwargs):
+        invitation = self.get_object()  # also checks IsCreationCanteenManager (403)
+
+        # if ValidationError, it will be raised (and handled by custom_exception_handler)
+        invitation.cancel(request.user)
 
         return Response(self.get_serializer(invitation).data)

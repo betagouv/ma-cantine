@@ -419,3 +419,70 @@ class UserInvitationDeclineApiTest(APITestCase):
         self.assertIn("L'invitation n'est plus en attente.", response.json()["status"])
         self.invitation.refresh_from_db()
         self.assertEqual(self.invitation.status, Invitation.Status.CANCELLED)
+
+
+class UserInvitationCancelApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+
+    def setUp(self):
+        self.invitation = InvitationFactory(
+            creation_canteen=self.canteen_groupe, invited_canteen=self.canteen_satellite
+        )
+        self.url = reverse("user_invitation_cancel", kwargs={"pk": self.invitation.id})
+
+    def test_cannot_cancel_if_unauthenticated(self):
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_cancel_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.canteen_groupe.managers.add(user)
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_cancel_if_invitation_does_not_exist_or_does_not_concern_user(self):
+        for url in [self.url, reverse("user_invitation_cancel", kwargs={"pk": 9999})]:
+            with self.subTest(url=url):
+                response = self.client.post(url)
+                self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_cancel_if_only_invited_canteen_manager(self):
+        self.canteen_satellite.managers.add(authenticate.user)
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.status, Invitation.Status.SENT)
+
+    @authenticate
+    def test_cancel(self):
+        self.canteen_groupe.managers.add(authenticate.user)
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.invitation.id)
+        self.assertEqual(body["status"], Invitation.Status.CANCELLED)
+        self.assertEqual(body["direction"], Invitation.Direction.SENT)
+        self.assertIsNotNone(body["answerDate"])
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.status, Invitation.Status.CANCELLED)
+        self.assertEqual(self.invitation.answer_user, authenticate.user)
+        self.canteen_satellite.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite.groupe)
+
+    @authenticate
+    def test_cannot_cancel_if_not_pending(self):
+        self.canteen_groupe.managers.add(authenticate.user)
+        Invitation.objects.filter(id=self.invitation.id).update(
+            status=Invitation.Status.DECLINED, answer_date=timezone.now()
+        )
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("L'invitation n'est plus en attente.", response.json()["status"])
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.status, Invitation.Status.DECLINED)

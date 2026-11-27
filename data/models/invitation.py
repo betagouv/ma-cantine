@@ -146,3 +146,8 @@ class Invitation(models.Model):
         with transaction.atomic():
             invitation = self._get_pending_invitation_for_update()
             self._answer(invitation, Invitation.Status.DECLINED, user)
+
+    def cancel(self, user):
+        with transaction.atomic():
+            invitation = self._get_pending_invitation_for_update()
+            self._answer(invitation, Invitation.Status.CANCELLED, user)
