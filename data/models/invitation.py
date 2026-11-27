@@ -1,7 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Case, Q, Value, When
+from django.utils import timezone
 
 from common.utils import utils as utils_utils
 from data.validators import invitation as invitation_validators
@@ -108,3 +109,35 @@ class Invitation(models.Model):
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
+
+    def _get_pending_invitation_for_update(self):
+        """
+        - lock the invitation (to avoid concurrent answers), must be called in a transaction
+        - the invitation must still be pending (SENT)
+        """
+        invitation = Invitation.objects.select_for_update().get(pk=self.pk)
+        if invitation.status != Invitation.Status.SENT:
+            raise ValidationError({"status": "L'invitation n'est plus en attente."})
+        return invitation
+
+    def _answer(self, invitation, status, user):
+        invitation.status = status
+        invitation.answer_user = user
+        invitation.answer_date = timezone.now()
+        invitation.save()
+        self.refresh_from_db()
+
+    def accept(self, user):
+        """
+        - re-run the validations on fresh data (the canteens may have changed since the invitation was sent)
+        - ADD_SATELLITE: link the invited canteen to the groupe
+            - skip_validations=True: like CanteenGroupeSatelliteLinkView (the satellite data may be incomplete)
+            - the groupe change validation is always run (see Canteen.save)
+        """
+        with transaction.atomic():
+            invitation = self._get_pending_invitation_for_update()
+            invitation.full_clean()
+            if invitation.category == Invitation.Category.ADD_SATELLITE:
+                invitation.invited_canteen.groupe = invitation.creation_canteen
+                invitation.invited_canteen.save(skip_validations=True)
+            self._answer(invitation, Invitation.Status.ACCEPTED, user)
