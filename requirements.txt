@@ -315,7 +315,7 @@ lxml==6.1.3
     # via
     #   pyhanko
     #   svglib
-markdown-it-py==4.2.0
+markdown-it-py==4.3.0
     # via rich
 markupsafe==3.0.3
     # via jinja2
