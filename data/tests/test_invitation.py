@@ -35,13 +35,19 @@ class InvitationModelSaveTest(TestCase):
             InvitationFactory(creation_canteen=self.canteen_groupe, invited_canteen=None)
         self.assertIn("Le champ ne peut pas être vide.", context.exception.message_dict["invited_canteen"])
 
-    def test_invitation_invited_canteen_cannot_be_groupe(self):
-        with self.assertRaises(ValidationError) as context:
-            InvitationFactory(creation_canteen=self.canteen_groupe, invited_canteen=self.canteen_groupe_2)
-        self.assertIn(
-            "Le champ ne peut pas être une cantine de type 'Groupe'.",
-            context.exception.message_dict["invited_canteen"],
-        )
+    def test_invitation_invited_canteen_must_be_satellite_or_site(self):
+        # CENTRAL & CENTRAL_SERVING are no longer allowed on save (legacy data only)
+        canteen_central = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE)
+        Canteen.objects.filter(id=canteen_central.id).update(production_type=Canteen.ProductionType.CENTRAL)
+        canteen_central.refresh_from_db()
+        for invited_canteen in [self.canteen_groupe_2, canteen_central]:
+            with self.subTest(invited_canteen=invited_canteen):
+                with self.assertRaises(ValidationError) as context:
+                    InvitationFactory(creation_canteen=self.canteen_groupe, invited_canteen=invited_canteen)
+                self.assertIn(
+                    "Le champ doit être un restaurant satellite ou un restaurant avec cuisine sur place.",
+                    context.exception.message_dict["invited_canteen"],
+                )
 
     def test_invitation_invited_canteen_already_in_groupe(self):
         canteen_satellite_in_groupe = CanteenFactory(

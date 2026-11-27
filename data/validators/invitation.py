@@ -26,7 +26,7 @@ def validate_invitation_invited_canteen_field(instance):
     - clean_fields() (called by full_clean()) already checks that the invited_canteen field is a valid Canteen or empty
     - extra validation (for ADD_SATELLITE invitations):
         - invited_canteen must be filled
-        - invited_canteen cannot be a groupe
+        - invited_canteen must be a satellite or a site (cannot be a groupe or a central)
         - if the invitation is pending (SENT):
             - invited_canteen cannot be already linked to a groupe
             - invited_canteen cannot have another pending invitation (from this groupe or another one)
@@ -41,9 +41,11 @@ def validate_invitation_invited_canteen_field(instance):
         value = getattr(instance, field_name)
         if not value:
             utils_utils.add_validation_error(errors, field_name, "Le champ ne peut pas être vide.")
-        elif value.is_groupe:
+        elif not value.can_be_in_groupe:
             utils_utils.add_validation_error(
-                errors, field_name, "Le champ ne peut pas être une cantine de type 'Groupe'."
+                errors,
+                field_name,
+                "Le champ doit être un restaurant satellite ou un restaurant avec cuisine sur place.",
             )
         elif instance.status == Invitation.Status.SENT:
             if value.groupe_id:
