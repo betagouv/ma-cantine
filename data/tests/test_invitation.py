@@ -191,6 +191,19 @@ class InvitationModelAnswerTest(TestCase):
             self.invitation_declined.decline(self.user)
         self.assertIn("L'invitation n'est plus en attente.", context.exception.message_dict["status"])
 
+    def test_cancel(self):
+        self.invitation.cancel(self.user)
+        self.assertEqual(self.invitation.status, Invitation.Status.CANCELLED)
+        self.assertEqual(self.invitation.answer_user, self.user)
+        self.assertIsNotNone(self.invitation.answer_date)
+        self.canteen_satellite.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite.groupe)
+
+    def test_cannot_cancel_if_not_pending(self):
+        with self.assertRaises(ValidationError) as context:
+            self.invitation_declined.cancel(self.user)
+        self.assertIn("L'invitation n'est plus en attente.", context.exception.message_dict["status"])
+
     @freeze_time(date_in_campaign(2024))
     def test_cannot_accept_during_teledeclaration_if_groupe_has_diagnostic_teledeclared(self):
         # a groupe needs a manager & at least 1 satellite to teledeclare
