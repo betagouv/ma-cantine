@@ -21,3 +21,10 @@ updates:
       interval: "monthly"
     cooldown:
       default-days: 7
+  - package-ecosystem: "github-actions"
+    target-branch: "staging"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    cooldown:
+      default-days: 7
