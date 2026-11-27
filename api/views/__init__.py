@@ -61,7 +61,12 @@ from .diagnostic_teledeclaration import (  # noqa: F401
 )
 from .initial import InitialDataView  # noqa: F401
 from .inquiry import InquiryView  # noqa: F401
-from .invitation import UserInvitationAcceptView, UserInvitationDeclineView, UserInvitationsView  # noqa: F401
+from .invitation import (  # noqa: F401
+    UserInvitationAcceptView,
+    UserInvitationCancelView,
+    UserInvitationDeclineView,
+    UserInvitationsView,
+)
 from .message import MessageCreateView  # noqa: F401
 from .partner import PartnersView, PartnerView  # noqa: F401
 from .partnertype import PartnerTypeListView  # noqa: F401

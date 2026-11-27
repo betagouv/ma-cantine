@@ -94,6 +94,16 @@ class IsInvitedCanteenManager(permissions.BasePermission):
         return obj.invited_canteen.managers.filter(id=request.user.id).exists()
 
 
+class IsCreationCanteenManager(permissions.BasePermission):
+    """
+    This is for actions only permitted by managers of
+    the creation canteen of this Invitation (e.g. cancel)
+    """
+
+    def has_object_permission(self, request, view, obj):
+        return obj.creation_canteen.managers.filter(id=request.user.id).exists()
+
+
 class IsLinkedCanteenManager(permissions.BasePermission):
     """
     This is for actions only permitted by managers of
