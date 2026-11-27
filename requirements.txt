@@ -211,7 +211,7 @@ django-storages==1.14.6
     # via ma-cantine
 django-stubs-ext==6.1.0
     # via django-tasks
-django-taggit==6.1.0
+django-taggit==7.0.0
     # via wagtail
 django-tasks==0.7.0
     # via wagtail
