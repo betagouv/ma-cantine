@@ -128,3 +128,39 @@ class InvitationModelSaveTest(TestCase):
             answer_user=None,
         )
         self.assertIsNone(invitation.answer_user)
+
+
+class InvitationQuerySetTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory()
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE, managers=[cls.user])
+        cls.canteen_groupe_other = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite = CanteenFactory(
+            production_type=Canteen.ProductionType.ON_SITE_CENTRAL, managers=[cls.user]
+        )
+        cls.canteen_satellite_other = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+        cls.canteen_satellite_other_2 = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+        cls.invitation_sent = InvitationFactory(
+            creation_canteen=cls.canteen_groupe, invited_canteen=cls.canteen_satellite_other
+        )
+        cls.invitation_received = InvitationFactory(
+            creation_canteen=cls.canteen_groupe_other, invited_canteen=cls.canteen_satellite
+        )
+        cls.invitation_other = InvitationFactory(
+            creation_canteen=cls.canteen_groupe_other, invited_canteen=cls.canteen_satellite_other_2
+        )
+
+    def test_for_user(self):
+        self.assertEqual(set(Invitation.objects.for_user(self.user)), {self.invitation_sent, self.invitation_received})
+        self.assertEqual(Invitation.objects.for_user(UserFactory()).count(), 0)
+
+    def test_annotate_with_direction(self):
+        invitations = Invitation.objects.for_user(self.user).annotate_with_direction(self.user)
+        self.assertEqual(invitations.get(id=self.invitation_sent.id).direction, Invitation.Direction.SENT)
+        self.assertEqual(invitations.get(id=self.invitation_received.id).direction, Invitation.Direction.RECEIVED)
+
+    def test_annotate_with_direction_user_manages_both_canteens(self):
+        self.canteen_groupe_other.managers.add(self.user)
+        invitation = Invitation.objects.annotate_with_direction(self.user).get(id=self.invitation_received.id)
+        self.assertEqual(invitation.direction, Invitation.Direction.RECEIVED)

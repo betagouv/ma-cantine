@@ -9,6 +9,7 @@ from .canteen import MinimalCanteenSerializer
 class InvitationSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer):
     creation_canteen = MinimalCanteenSerializer()
     invited_canteen = MinimalCanteenSerializer()
+    direction = serializers.CharField()  # annotated
 
     class Meta:
         model = Invitation
@@ -18,6 +19,7 @@ class InvitationSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer)
             "status",
             "creation_canteen",
             "invited_canteen",
+            "direction",  # annotated
             "creation_date",
             "answer_date",
         )
