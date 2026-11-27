@@ -9,6 +9,7 @@ from .wastemeasurement import WasteMeasurementFactory  # noqa
 from .blogpost import BlogPostFactory  # noqa
 from .blogtag import BlogTagFactory  # noqa
 from .managerinvitation import ManagerInvitationFactory  # noqa
+from .invitation import InvitationFactory  # noqa
 from .teledeclaration import TeledeclarationFactory  # noqa
 from .purchase import PurchaseFactory  # noqa
 from .reservationexpe import ReservationExpeFactory  # noqa

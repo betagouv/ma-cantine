@@ -1,5 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
+
+from common.utils import utils as utils_utils
+from data.validators import invitation as invitation_validators
 
 from .canteen import Canteen
 
@@ -60,3 +64,15 @@ class Invitation(models.Model):
 
     def __str__(self):
         return f"Invitation {self.get_category_display()} de {self.creation_canteen} ({self.get_status_display()})"
+
+    def clean(self):
+        validation_errors = utils_utils.merge_validation_errors(
+            invitation_validators.validate_invitation_creation_canteen_field(self),
+            invitation_validators.validate_invitation_invited_canteen_field(self),
+        )
+        if validation_errors:
+            raise ValidationError(validation_errors)
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
