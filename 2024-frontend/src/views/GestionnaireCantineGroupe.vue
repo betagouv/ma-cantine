@@ -72,6 +72,13 @@ const updateSearch = () => {
 const clickSearch = () => {
   isSearching.value = true
 }
+
+/* Tabs */
+const selectedTab = ref(0)
+const tabTitles = [
+  { title: "Cantines du groupe", tabId: "tab-cantines-groupe", panelId: "panel-cantines-groupe" },
+  { title: "Cantines invitées", tabId: "tab-cantines-invitees", panelId: "panel-cantines-invitees" },
+]
 </script>
 <template>
   <div class="gestionnaire-cantine-groupe">
@@ -87,27 +94,34 @@ const clickSearch = () => {
         Si ce n’est pas le cas : contactez le (ou les) gestionnaire(s) de la cantine concernée afin qu’il(s) vous invite(nt). Les cantines dont vous êtes gestionnaire sont soulignées et clicables.
       </DsfrAlert>
     </div>
-    <div class="fr-grid-row fr-mb-2w fr-grid-row--middle">
-      <div class="fr-col-12 fr-col-md-6">
-        <p class="fr-mb-md-0">{{ satellitesCountSentence }}</p>
-      </div>
-      <div class="fr-col-12 fr-col-md-6">
-        <DsfrSearchBar
-          v-model="search"
-          label="Rechercher"
-          button-text="Rechercher"
-          placeholder="Rechercher par le nom, siret ou siren de l'établissement"
-          @update:modelValue="updateSearch"
-          @search="clickSearch"
-        />
-      </div>
-    </div>
-    <CanteensTableSatellites
-      v-if="satellitesDisplayed.length > 0"
-      :satellites="satellitesDisplayed"
-      :groupe="canteenInformations"
-      @updateSatellites="onSatellitesChanged"
-      @showModalRemoveSatellite="showModalRemoveSatellite" />
+    <DsfrTabs v-model="selectedTab" tab-list-name="Cantines du groupe et cantines invitées" :tab-titles="tabTitles">
+      <DsfrTabContent panel-id="panel-cantines-groupe" tab-id="tab-cantines-groupe">
+        <div class="fr-grid-row fr-mb-2w fr-grid-row--middle">
+          <div class="fr-col-12 fr-col-md-6">
+            <p class="fr-mb-md-0">{{ satellitesCountSentence }}</p>
+          </div>
+          <div class="fr-col-12 fr-col-md-6">
+            <DsfrSearchBar
+              v-model="search"
+              label="Rechercher"
+              button-text="Rechercher"
+              placeholder="Rechercher par le nom, siret ou siren de l'établissement"
+              @update:modelValue="updateSearch"
+              @search="clickSearch"
+            />
+          </div>
+        </div>
+        <CanteensTableSatellites
+          v-if="satellitesDisplayed.length > 0"
+          :satellites="satellitesDisplayed"
+          :groupe="canteenInformations"
+          @updateSatellites="onSatellitesChanged"
+          @showModalRemoveSatellite="showModalRemoveSatellite" />
+      </DsfrTabContent>
+      <DsfrTabContent panel-id="panel-cantines-invitees" tab-id="tab-cantines-invitees">
+        <p>Invitation à ajouter</p>
+      </DsfrTabContent>
+    </DsfrTabs>
     <CanteenModalSatelliteAdd
       :open="modalAddSatelliteOpened"
       :groupId="canteenInformations.id"
