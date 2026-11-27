@@ -82,6 +82,18 @@ class IsSatelliteManagerUrlParam(permissions.BasePermission):
         return satellite.managers.filter(id=request.user.id).exists()
 
 
+class IsInvitedCanteenManager(permissions.BasePermission):
+    """
+    This is for actions only permitted by managers of
+    the invited canteen of this Invitation (e.g. accept)
+    """
+
+    def has_object_permission(self, request, view, obj):
+        if not obj.invited_canteen_id:
+            return False
+        return obj.invited_canteen.managers.filter(id=request.user.id).exists()
+
+
 class IsLinkedCanteenManager(permissions.BasePermission):
     """
     This is for actions only permitted by managers of

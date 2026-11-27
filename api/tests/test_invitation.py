@@ -1,10 +1,12 @@
 from django.urls import reverse
 from django.utils import timezone
 from rest_framework import status
+from freezegun import freeze_time
 from rest_framework.test import APITestCase
 
 from api.tests.utils import authenticate, get_oauth2_token
-from data.factories import CanteenFactory, InvitationFactory, UserFactory
+from common.tests.utils import date_in_campaign
+from data.factories import CanteenFactory, DiagnosticFactory, InvitationFactory, UserFactory
 from data.models import Canteen, Invitation
 
 
@@ -242,3 +244,101 @@ class UserInvitationCreateApiTest(APITestCase):
         response = self.client.post(self.url, payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn("Le champ doit être une cantine de type 'Groupe'.", response.json()["creationCanteen"])
+
+
+class UserInvitationAcceptApiTest(APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.canteen_groupe = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_groupe_other = CanteenFactory(production_type=Canteen.ProductionType.GROUPE)
+        cls.canteen_satellite = CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL)
+
+    def setUp(self):
+        self.invitation = InvitationFactory(
+            creation_canteen=self.canteen_groupe, invited_canteen=self.canteen_satellite
+        )
+        self.url = reverse("user_invitation_accept", kwargs={"pk": self.invitation.id})
+
+    def test_cannot_accept_if_unauthenticated(self):
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_cannot_accept_via_oauth2(self):
+        user, token = get_oauth2_token("canteen:write")
+        self.canteen_satellite.managers.add(user)
+        self.client.credentials(Authorization=f"Bearer {token.token}")
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @authenticate
+    def test_cannot_accept_if_invitation_does_not_exist_or_does_not_concern_user(self):
+        for url in [self.url, reverse("user_invitation_accept", kwargs={"pk": 9999})]:
+            with self.subTest(url=url):
+                response = self.client.post(url)
+                self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @authenticate
+    def test_cannot_accept_if_only_creation_canteen_manager(self):
+        self.canteen_groupe.managers.add(authenticate.user)
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.status, Invitation.Status.SENT)
+
+    @authenticate
+    def test_accept(self):
+        self.canteen_satellite.managers.add(authenticate.user)
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        body = response.json()
+        self.assertEqual(body["id"], self.invitation.id)
+        self.assertEqual(body["status"], Invitation.Status.ACCEPTED)
+        self.assertEqual(body["direction"], Invitation.Direction.RECEIVED)
+        self.assertIsNotNone(body["answerDate"])
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.status, Invitation.Status.ACCEPTED)
+        self.assertEqual(self.invitation.answer_user, authenticate.user)
+        self.canteen_satellite.refresh_from_db()
+        self.assertEqual(self.canteen_satellite.groupe, self.canteen_groupe)
+
+    @authenticate
+    def test_cannot_accept_if_not_pending(self):
+        self.canteen_satellite.managers.add(authenticate.user)
+        Invitation.objects.filter(id=self.invitation.id).update(
+            status=Invitation.Status.CANCELLED, answer_date=timezone.now()
+        )
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("L'invitation n'est plus en attente.", response.json()["status"])
+        self.canteen_satellite.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite.groupe)
+
+    @authenticate
+    def test_cannot_accept_if_canteen_linked_to_a_groupe_since(self):
+        self.canteen_satellite.managers.add(authenticate.user)
+        self.canteen_satellite.groupe = self.canteen_groupe_other
+        self.canteen_satellite.save()
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("Cette cantine est déjà rattachée à un groupe.", response.json()["invitedCanteen"])
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.status, Invitation.Status.SENT)
+
+    @authenticate
+    @freeze_time(date_in_campaign(2024))
+    def test_cannot_accept_during_teledeclaration_if_groupe_has_diagnostic_teledeclared(self):
+        self.canteen_satellite.managers.add(authenticate.user)
+        # a groupe needs a manager & at least 1 satellite to teledeclare
+        groupe_manager = UserFactory()
+        self.canteen_groupe.managers.add(groupe_manager)
+        CanteenFactory(production_type=Canteen.ProductionType.ON_SITE_CENTRAL, groupe=self.canteen_groupe)
+        DiagnosticFactory(canteen=self.canteen_groupe, year=2024, valeur_totale=100).teledeclare(
+            applicant=groupe_manager
+        )
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn("groupe", response.json())
+        self.invitation.refresh_from_db()
+        self.assertEqual(self.invitation.status, Invitation.Status.SENT)
+        self.canteen_satellite.refresh_from_db()
+        self.assertIsNone(self.canteen_satellite.groupe)
