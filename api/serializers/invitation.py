@@ -23,3 +23,13 @@ class InvitationSerializer(ReadOnlySerializerMixin, serializers.ModelSerializer)
             "creation_date",
             "answer_date",
         )
+
+
+class InvitationCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invitation
+        fields = (
+            "category",
+            "creation_canteen",
+            "invited_canteen",
+        )
