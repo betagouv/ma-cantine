@@ -76,6 +76,7 @@ from api.views import (
     UserCanteensView,
     UserInfoView,
     UserInvitationAcceptView,
+    UserInvitationDeclineView,
     UserInvitationsView,
     VegetarianExpeView,
     VideoTutorialListView,
@@ -105,6 +106,11 @@ urlpatterns = {
         "invitations/<int:pk>/accept/",
         UserInvitationAcceptView.as_view(),
         name="user_invitation_accept",
+    ),
+    path(
+        "invitations/<int:pk>/decline/",
+        UserInvitationDeclineView.as_view(),
+        name="user_invitation_decline",
     ),
     path("canteens/", UserCanteensView.as_view(), name="user_canteens"),
     path(
