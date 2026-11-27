@@ -5,6 +5,7 @@ from .wastemeasurement import WasteMeasurementAdmin  # noqa
 from .blogpost import BlogPost  # noqa
 from .blogtag import BlogTag  # noqa
 from .managerinvitation import ManagerInvitation  # noqa
+from .invitation import InvitationAdmin  # noqa
 from .reservationexpe import ReservationExpeAdmin  # noqa
 from .vegetarianexpe import VegetarianExpeAdmin  # noqa
 from .message import MessageAdmin  # noqa
