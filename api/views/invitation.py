@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django_filters import rest_framework as django_filters
 from drf_spectacular.utils import extend_schema, extend_schema_view
 from rest_framework.generics import ListAPIView
@@ -9,9 +8,11 @@ from data.models import Invitation
 
 
 class InvitationFilterSet(django_filters.FilterSet):
+    direction = django_filters.ChoiceFilter(choices=Invitation.Direction.choices)  # annotated
+
     class Meta:
         model = Invitation
-        fields = ["category", "status", "creation_canteen", "invited_canteen"]
+        fields = ["category", "status", "creation_canteen", "invited_canteen", "direction"]
 
 
 @extend_schema_view(
@@ -22,18 +23,17 @@ class InvitationFilterSet(django_filters.FilterSet):
     ),
 )
 class UserInvitationsListView(ListAPIView):
-    permission_classes = [IsAuthenticated]  # not available via OAuth2 (yet)
+    permission_classes = [IsAuthenticated]
     queryset = Invitation.objects.none()  # see get_queryset
     serializer_class = InvitationSerializer
     filter_backends = [django_filters.DjangoFilterBackend]
     filterset_class = InvitationFilterSet
 
     def get_queryset(self):
-        user_canteen_ids = self.request.user.canteens.values("id")
+        user = self.request.user
         return (
-            Invitation.objects.filter(
-                Q(creation_canteen_id__in=user_canteen_ids) | Q(invited_canteen_id__in=user_canteen_ids)
-            )
+            Invitation.objects.for_user(user)
+            .annotate_with_direction(user)
             .select_related("creation_canteen", "invited_canteen")
             .order_by("-creation_date")
         )

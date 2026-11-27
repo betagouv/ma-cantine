@@ -84,6 +84,9 @@ class UserInvitationsListApiTest(APITestCase):
         self.assertEqual(invitation_received["status"], Invitation.Status.SENT)
         self.assertEqual(invitation_received["creationCanteen"]["id"], self.canteen_groupe_other.id)
         self.assertEqual(invitation_received["invitedCanteen"]["id"], self.canteen_satellite.id)
+        self.assertEqual(invitation_received["direction"], Invitation.Direction.RECEIVED)
+        invitation_sent = next(invitation for invitation in body if invitation["id"] == self.invitation_sent.id)
+        self.assertEqual(invitation_sent["direction"], Invitation.Direction.SENT)
         self.assertIn("creationDate", invitation_received)
         self.assertIsNone(invitation_received["answerDate"])
         self.assertNotIn("creationUser", invitation_received)
@@ -103,6 +106,15 @@ class UserInvitationsListApiTest(APITestCase):
             ({"status": Invitation.Status.SENT}, {self.invitation_sent.id, self.invitation_received.id}),
             (
                 {"creation_canteen": self.canteen_groupe.id, "status": Invitation.Status.SENT},
+                {self.invitation_sent.id},
+            ),
+            (
+                {"direction": Invitation.Direction.SENT},
+                {self.invitation_sent.id, self.invitation_sent_declined.id},
+            ),
+            ({"direction": Invitation.Direction.RECEIVED}, {self.invitation_received.id}),
+            (
+                {"direction": Invitation.Direction.SENT, "status": Invitation.Status.SENT},
                 {self.invitation_sent.id},
             ),
             # filtering on a canteen not managed by the user does not leak its invitations
